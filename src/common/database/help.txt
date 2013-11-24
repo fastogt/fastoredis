@@ -1,0 +1,5 @@
+sudo apt-get install libsqlite3-dev 
+sudo apt-get install libmysqlcppconn-dev
+http://oradim.blogspot.com/2009/08/getting-started-with-occi-linux-version_16.html
+sudo apt-get install libpq-dev
+http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html

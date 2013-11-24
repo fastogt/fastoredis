@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/@PROJECT_NAME_LOWERCASE@">
+    <file>icons/logo.png</file>
+    </qresource>
+</RCC>

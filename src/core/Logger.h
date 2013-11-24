@@ -1,0 +1,34 @@
+#pragma once
+
+#include <QObject>
+#include <QString>
+#include <string>
+
+#include "common/patterns/singleton_pattern.hpp"
+#include "common/log_levels.hpp"
+
+namespace fastoredis
+{
+    class Logger
+        : public QObject, public common::patterns::lazy_singleton<Logger>
+    {
+        friend class common::patterns::lazy_singleton<Logger>;
+        Q_OBJECT
+    public:
+        void print(const char *mess, common::logging::LEVEL_LOG level, bool notify);
+        void print(const std::string &mess, common::logging::LEVEL_LOG level, bool notify);
+        void print(const QString &mess, common::logging::LEVEL_LOG level, bool notify);
+    Q_SIGNALS:
+        void printed(const QString &mess, common::logging::LEVEL_LOG level);
+
+    private:
+        Logger();
+        ~Logger();
+    };
+
+    template<typename T>
+    inline void LOG_MSG(const T &mess, common::logging::LEVEL_LOG level, bool notify = true)
+    {
+        return Logger::instance().print(mess, level, notify);
+    }
+}
