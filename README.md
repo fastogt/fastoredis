@@ -2,13 +2,13 @@ About FastoRedis
 ===============
 
 FastoRedis &mdash; is a crossplatform Redis management tool. <br />
-Visit our site: [www.fastoredis.org](http://www.fastoredis.org)
+Visit our site: [www.fastoredis.org](http://www.fastoredisinprocess.org)
 
 Download
 ========
 
 You can download compiled version (for Mac OS X, Windows and Linux) from our site:<br />
-[www.FastoRedis.org](http://www.fastoredis.org)
+[www.FastoRedis.org](http://www.fastoredisinprocess.org)
 
 <!-- https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8 -->
 
@@ -19,12 +19,12 @@ Contributions are always welcome! Just try to follow our coding style: [FastoRed
 Build
 =====
 
-Build documentation: [Build FastoRedis](https://github.com/fastoredis/fastoredis/wiki/Build)
+Build documentation: [Build FastoRedis](https://github.com/fasto/fastoredis/wiki/Build)
 
 License
 =======
 
-Copyright (C) 2013 Fasto, Inc (http://www.fasto.com)
+Copyright (C) 2013 Fasto, Inc (http://www.fastoinprocess.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 
