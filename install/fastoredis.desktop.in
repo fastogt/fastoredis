@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Exec=@SHORTPRODUCTNAME@
-Name=Robomongo
+Name=@PROJECT_NAME@
 GenericName=The IDE for mongodb working.
 GenericName[de]=Die IDE der
 Icon=@ICONNAME@

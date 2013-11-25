@@ -15,6 +15,7 @@
 
 #include "core/SettingsManager.h"
 #include "core/Logger.h"
+#include "shell/ShellWidget.h"
 
 namespace fastoredis
 {
@@ -66,6 +67,9 @@ namespace fastoredis
 
         QMenu *helpMenu = menuBar()->addMenu("Help");
         helpMenu->addAction(aboutAction);
+
+        ShellWidget *shellW = new ShellWidget;
+        setCentralWidget(shellW);
 
         LogWidget *log = new LogWidget(this);
         VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, common::logging::LEVEL_LOG)), log, SLOT(addMessage(const QString&, common::logging::LEVEL_LOG))));
