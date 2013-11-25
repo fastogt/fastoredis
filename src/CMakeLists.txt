@@ -23,13 +23,19 @@ SET(SOURCES_GUI
 
 SET(HEADERS_CORE_TO_MOC
     core/Logger.h
+    core/RedisClient.h
 )
 SET(HEADERS_CORE
     core/SettingsManager.h
+    core/ConnectionSettings.h
+    core/events/Events.hpp
+    core/events/EventsInfo.hpp
 )
 SET(SOURCES_CORE
     core/SettingsManager.cpp
+    core/ConnectionSettings.cpp
     core/Logger.cpp
+    core/RedisClient.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/ShellWidget.h
