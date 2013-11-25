@@ -64,9 +64,9 @@ ENDIF()
 
 add_subdirectory(common)
 add_subdirectory(third-party/redis)
-MESSAGE("HEADERS: ${HEADERS}")
+
 IF(BOOST_ENABLED)
-INTEGRATE_BOOST(system)
+    INTEGRATE_BOOST(system)
 SET(ALL_LIBS ${ALL_LIBS} ${Boost_LIBRARIES})
 ENDIF()
 
