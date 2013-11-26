@@ -23,6 +23,7 @@ namespace fastoredis
         void exit();
         void about();
         void openPreferences();
+        void connectToDatabase();
 
     private:
         void createStatusBar();

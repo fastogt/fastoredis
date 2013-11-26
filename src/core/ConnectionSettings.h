@@ -2,18 +2,34 @@
 
 #include <string>
 
+#include <boost/intrusive_ptr.hpp>
+
+#include "common/boost_extension.hpp"
+
 namespace fastoredis
 {
     class IConnectionSettingsBase
+            : public common::boost_extension::intrusive_ptr_base<IConnectionSettingsBase>
     {
     public:
+        enum connectionTypes
+        {
+            REDIS
+        };
+
         virtual std::string fullAdress() const = 0;
+
         std::string connectionName() const;
         void setConnectionName(const std::string &name);
+
+        virtual connectionTypes connectionType() const = 0;
+
     protected:
         IConnectionSettingsBase(const std::string &connectionName);
         std::string connectionName_;
     };
+
+    typedef boost::intrusive_ptr<IConnectionSettingsBase> IConnectionSettingsBasePtr;
 
     class RedisConnectionSettings
             : public IConnectionSettingsBase
@@ -52,11 +68,21 @@ namespace fastoredis
 
     public:
         RedisConnectionSettings(const std::string &connectionName, const config &info);
+
         virtual std::string fullAdress() const;
+        virtual connectionTypes connectionType() const;
 
         config info() const;
         void setInfo(const config& info);
     private:
         config info_;
     };
+
+    typedef boost::intrusive_ptr<RedisConnectionSettings> RedisConnectionSettingsPtr;
+
+    namespace details
+    {
+        std::string toStdString(IConnectionSettingsBase *setting);
+        IConnectionSettingsBase *fromStdString(const std::string &val);
+    }
 }

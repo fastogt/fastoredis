@@ -12,6 +12,7 @@
 #include "gui/LogWidget.h"
 #include "gui/AboutDialog.h"
 #include "gui/PreferencesDialog.h"
+#include "gui/ConnectionsDialog.h"
 
 #include "core/SettingsManager.h"
 #include "core/Logger.h"
@@ -42,6 +43,10 @@ namespace fastoredis
         VERIFY(connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs())));
 
         // Exit action
+        QAction *connectAction = new QAction("&Connect", this);
+        VERIFY(connect(connectAction, SIGNAL(triggered()), this, SLOT(connectToDatabase())));
+
+        // Exit action
         QAction *exitAction = new QAction("&Exit", this);
         exitAction->setShortcut(QKeySequence::Quit);
         VERIFY(connect(exitAction, SIGNAL(triggered()), this, SLOT(close())));
@@ -52,6 +57,7 @@ namespace fastoredis
         fileMenu->addAction(_saveAction);
         fileMenu->addAction(_saveAsAction);
         fileMenu->addSeparator();
+        fileMenu->addAction(connectAction);
         fileMenu->addAction(exitAction);
 
         QAction *preferencesAction = new QAction("Preferences",this);
@@ -118,6 +124,12 @@ namespace fastoredis
     void MainWindow::openPreferences()
     {
         PreferencesDialog dlg(this);
+        dlg.exec();
+    }
+
+    void MainWindow::connectToDatabase()
+    {
+        ConnectionsDialog dlg(this);
         dlg.exec();
     }
 }

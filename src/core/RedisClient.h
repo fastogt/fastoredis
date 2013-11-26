@@ -9,13 +9,15 @@ QT_END_NAMESPACE
 
 namespace fastoredis
 {
+    class RedisConnectionSettings;
+
     class RedisClient
             : public QObject
     {
         Q_OBJECT
     public:
         typedef QObject base_class;
-        RedisClient(const RedisConnectionSettings &settings);
+        RedisClient(const RedisConnectionSettingsPtr &settings);
 
     protected:
         void customEvent(QEvent *event);
@@ -25,6 +27,6 @@ namespace fastoredis
 
     private:
         QThread *_thread;
-        const RedisConnectionSettings settings_;
+        const RedisConnectionSettingsPtr settings_;
     };
 }

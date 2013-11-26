@@ -44,4 +44,26 @@ namespace fastoredis
     {
         info_ =  info;
     }
+
+    IConnectionSettingsBase::connectionTypes RedisConnectionSettings::connectionType() const
+    {
+        return REDIS;
+    }
+
+    namespace details
+    {
+        std::string toStdString(IConnectionSettingsBase *setting)
+        {
+            std::string result;
+            if(setting){
+
+            }
+            return result;
+        }
+
+        IConnectionSettingsBase *fromStdString(const std::string &val)
+        {
+            return NULL;
+        }
+    }
 }
