@@ -3,9 +3,11 @@
 #include <QThread>
 #include "common/macros.h"
 
+#include "core/ConnectionSettings.h"
+
 namespace fastoredis
 {
-    RedisClient::RedisClient(const RedisConnectionSettings &settings)
+    RedisClient::RedisClient(const RedisConnectionSettingsPtr &settings)
         :settings_(settings)
     {
         _thread = new QThread(this);

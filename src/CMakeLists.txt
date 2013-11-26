@@ -8,6 +8,8 @@ SET(HEADERS_GUI_TO_MOC
     gui/LogWidget.h
     gui/AboutDialog.h
     gui/PreferencesDialog.h
+    gui/ConnectionsDialog.h
+    gui/ConnectionDialog.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
@@ -19,6 +21,8 @@ SET(SOURCES_GUI
     gui/LogWidget.cpp
     gui/AboutDialog.cpp
     gui/PreferencesDialog.cpp
+    gui/ConnectionsDialog.cpp
+    gui/ConnectionDialog.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC

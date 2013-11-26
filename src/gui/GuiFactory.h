@@ -14,5 +14,10 @@ namespace fastoredis
         friend class common::patterns::lazy_singleton<GuiFactory>;
         const QIcon &openIcon() const;
         const QIcon &mainWindowIcon() const;
+        const QIcon &connectIcon() const;
+        const QIcon &redisConnectionIcon() const;
+        const QIcon &serverIcon() const;
+        const QIcon &addIcon() const;
+        const QIcon &messageBoxInformationIcon() const;
     };
 }
