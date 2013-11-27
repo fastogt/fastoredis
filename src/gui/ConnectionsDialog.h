@@ -20,6 +20,10 @@ namespace fastoredis
         IConnectionSettingsBase *selectedConnection() const;
         virtual void accept();
 
+    private Q_SLOTS:
+        void add();
+        void remove();
+
     private:
         void add(IConnectionSettingsBase *con);
         QTreeWidget *_listWidget;

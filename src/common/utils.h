@@ -1,6 +1,7 @@
 #pragma once
 #include <typeinfo>
 #include <tr1/type_traits>
+#include <vector>
 #include "common/macros.h"
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
 #include <thread>
@@ -9,6 +10,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/function.hpp>
+#include <boost/lexical_cast.hpp>
 #endif
 #define HAS_MEMBER(CLASS_NAME,FUNC_MUST_BE) static_assert(std::is_member_function_pointer<decltype(&CLASS_NAME::FUNC_MUST_BE)>::value, "Class does not contain member " #FUNC_MUST_BE "!")
 namespace common
@@ -62,6 +64,29 @@ namespace utils
             enum {value = N };
         };
     }
+    namespace enums
+    {
+        template<typename type, int size>
+        inline type findTypeInArray(const char *(&arr)[size], const char *text)
+        {
+            for (int i=0; i < size;++i ){
+                if (strcmp(text,arr[i])==0){
+                    return static_cast<type>(i);
+                }
+            }
+            return static_cast<type>(0);
+        }
+
+        template<int size>
+        inline std::vector<unicode_string> convertToVector(const char *(&arr)[size])
+        {
+            std::vector<unicode_string> res;
+            for (int i=0; i < size;++i ){
+                res.push_back(arr[i]);
+            }
+            return res;
+        }
+    }
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
     namespace string_utils
     {
@@ -92,64 +117,12 @@ namespace utils
             unionCast._from = _value;
             return unionCast._to;
         }
-        template<typename convert_to,typename convert_from,class enable=void>
+        template<typename convert_to,typename convert_from>
         struct defualt_converter
         {
-            convert_to operator()(convert_from src)const
+            convert_to operator()(const convert_from &src)const
             {
-              return src;
-            }
-        };
-        template<typename convert_to,typename convert_from>
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
-        struct defualt_converter<convert_to,convert_from,typename std::enable_if<std::is_same<convert_to,long>::value >::type>
-#elif defined(BOOST_SUPPORT_ENABLED)
-        struct defualt_converter<convert_to,convert_from,typename boost::enable_if<boost::is_same<convert_to,long> >::type>
-#endif
-        {
-            convert_to operator()(convert_from src)const
-            {
-                unicode_char buff[32]={0};
-                sprintf(buff, "%ld", src);
-                return buff;
-            }
-        };
-        template<typename convert_to,typename convert_from>
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
-        struct defualt_converter<convert_to,convert_from,typename std::enable_if<std::is_integral<convert_from>::value >::type>
-#elif defined(BOOST_SUPPORT_ENABLED)
-        struct defualt_converter<convert_to,convert_from,typename boost::enable_if<boost::is_integral<convert_from> >::type>
-#endif
-        {
-            convert_to operator()(convert_from src)const
-            {
-                unicode_char buff[32]={0};
-                sprintf(buff, "%d", src);
-                return buff;
-            }
-        };
-        template<typename convert_to>
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
-        struct defualt_converter<convert_to,unicode_string,typename std::enable_if<std::is_integral<convert_to>::value >::type>
-#elif defined(BOOST_SUPPORT_ENABLED)
-        struct defualt_converter<convert_to,unicode_string,typename boost::enable_if<boost::is_integral<convert_to> >::type>
-#endif
-        {
-            convert_to operator()(const unicode_string &src)const
-            {
-                return std::atoi(src.c_str());
-            }
-        };
-        template<typename convert_to>
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
-        struct defualt_converter<convert_to,const unicode_char *,typename std::enable_if<std::is_integral<convert_to>::value >::type>
-#elif defined(BOOST_SUPPORT_ENABLED)
-        struct defualt_converter<convert_to,const unicode_char *,typename boost::enable_if<boost::is_integral<convert_to> >::type>
-#endif
-        {
-            convert_to operator()(const unicode_char *src)const
-            {
-                return std::atoi(src);
+                return boost::lexical_cast<convert_to>(src);
             }
         };
         template<typename convert_to,typename convert_from>

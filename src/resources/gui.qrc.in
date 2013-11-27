@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/@PROJECT_NAME_LOWERCASE@">
     <file>icons/logo.png</file>
+    <file>icons/add.png</file>
+    <file>icons/remove.png</file>
+    <file>icons/save.png</file>
     </qresource>
 </RCC>

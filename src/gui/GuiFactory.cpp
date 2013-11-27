@@ -37,7 +37,13 @@ namespace fastoredis
 
     const QIcon &GuiFactory::addIcon() const
     {
-        static QIcon open;
+        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/add.png");
+        return open;
+    }
+
+    const QIcon &GuiFactory::removeIcon() const
+    {
+        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/remove.png");
         return open;
     }
 

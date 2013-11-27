@@ -51,10 +51,11 @@ namespace storages
 		{
 			typedef detail::load_funct load_struct;
             static const unicode_char* path_to_save()
-			{
+            {
 				typedef mpl_template_string::template_string<init_vector> path_to_save_t;
                 return path_to_save_t::template_string_value_path();
 			}
+
 			template<typename fusion_t>
 			static bool load(fusion_t &fuc);
 			template<typename fusion_t>
@@ -65,8 +66,7 @@ namespace storages
 		bool ini_storage<init_vector>::save(const fusion_t &fuc)
 		{
             std::ofstream output(path_to_save());
-			if(output.is_open())
-			{
+			if(output.is_open()){
 				boost::property_tree::ptree pt;
                 boost::property_tree::ptree &settings= pt.add("settings","");
 				boost::fusion::for_each(fuc, detail::save_funct(settings));	
@@ -79,9 +79,9 @@ namespace storages
 		template<typename init_vector>template<typename fusion_t>
 		bool ini_storage<init_vector>::load(fusion_t &fuc)
         {
-            std::ifstream input(path_to_save());
-			if(input.is_open())
-			{
+            const unicode_char* path = path_to_save();
+            std::ifstream input(path);
+			if(input.is_open()){
 				boost::property_tree::ptree pt;
 				boost::property_tree::ini_parser::read_ini(input, pt);
 				try

@@ -2,7 +2,16 @@
 
 #include <QDialog>
 
+QT_BEGIN_NAMESPACE
+class QComboBox;
+class QLineEdit;
+class QDialogButtonBox;
+class QPushButton;
+QT_END_NAMESPACE
+
 #include "global/global.h"
+
+#include "core/ConnectionSettings.h"
 
 namespace fastoredis
 {
@@ -12,16 +21,23 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        ConnectionDialog(IConnectionSettingsBase *connection, QWidget *parent = 0);
+        ConnectionDialog(const IConnectionSettingsBasePtr &connection, QWidget *parent = 0);
 
     public Q_SLOTS:
         virtual void accept();
 
     private Q_SLOTS:
         void testConnection();
+        void typeConnectionChange(const QString &value);
 
     private:
         bool validateAndApply();
-        IConnectionSettingsBase *const connection_;
+        const IConnectionSettingsBasePtr connection_;
+        QLineEdit *connectionName_;
+        QComboBox *typeConnection_;
+        QLineEdit *host_;
+        QLineEdit *port_;
+        QPushButton *testButton_;
+        QDialogButtonBox *buttonBox_;
     };
 }
