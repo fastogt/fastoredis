@@ -1,30 +1,46 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <boost/intrusive_ptr.hpp>
-
 #include "common/boost_extension.hpp"
 
 namespace fastoredis
 {
+    typedef std::pair<std::string, unsigned> hostAndPort;
+
     class IConnectionSettingsBase
             : public common::boost_extension::intrusive_ptr_base<IConnectionSettingsBase>
     {
     public:
+
         enum connectionTypes
         {
+            UNKNOWN = 0,
             REDIS
         };
 
+        static inline connectionTypes badConnectionType()
+        {
+            return UNKNOWN;
+        }
         virtual std::string fullAdress() const = 0;
+
+        virtual hostAndPort host() const = 0;
+        virtual void setHost(const hostAndPort &host) = 0;
 
         std::string connectionName() const;
         void setConnectionName(const std::string &name);
 
-        virtual connectionTypes connectionType() const = 0;
+        virtual connectionTypes connectionType() const;
+        static IConnectionSettingsBase *fromStdString(const std::string &val);
+        std::string toString() const;
 
+        virtual ~IConnectionSettingsBase();
     protected:
+        virtual std::string toStringImpl() const = 0;
+
         IConnectionSettingsBase(const std::string &connectionName);
         std::string connectionName_;
     };
@@ -37,8 +53,7 @@ namespace fastoredis
         typedef IConnectionSettingsBase base_class;
         typedef char *sds;
         struct config {
-            char *hostip;
-            int hostport;
+            hostAndPort host;
             char *hostsocket;
             long repeat;
             long interval;
@@ -67,14 +82,20 @@ namespace fastoredis
         };
 
     public:
-        RedisConnectionSettings(const std::string &connectionName, const config &info);
+        RedisConnectionSettings(const std::string &connectionName, const config &info = config());
 
         virtual std::string fullAdress() const;
+
+        virtual hostAndPort host() const;
+        virtual void setHost(const hostAndPort &host);
+
         virtual connectionTypes connectionType() const;
 
         config info() const;
         void setInfo(const config& info);
+
     private:
+        virtual std::string toStringImpl() const;
         config info_;
     };
 
@@ -82,7 +103,12 @@ namespace fastoredis
 
     namespace details
     {
-        std::string toStdString(IConnectionSettingsBase *setting);
-        IConnectionSettingsBase *fromStdString(const std::string &val);
+        std::vector<std::string> supportedConnectionTypes();
+
+        std::string toStdString(IConnectionSettingsBase::connectionTypes t);
+        IConnectionSettingsBase::connectionTypes toConnectionType(const std::string &text);
+
+        std::string toStdString(const hostAndPort &host);
+        hostAndPort toHostAndPort(const std::string &host);
     }
 }

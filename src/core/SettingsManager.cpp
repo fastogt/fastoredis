@@ -12,7 +12,7 @@ namespace std
     {
         typedef fastoredis::SettingsManager::ConnectionSettingsContainerType cont_t;
         for(cont_t::const_iterator it = info.begin(); it != info.end(); ++it){
-            stream << fastoredis::details::toStdString((*it).get());
+            stream << (*it)->toString();
         }
         return stream;
     }
@@ -59,11 +59,24 @@ namespace fastoredis
         GET_SETTING(genereted_settings::setting_style).set_value(st);
     }
 
-    void SettingsManager::addConnection(const IConnectionSettingsBasePtr &con)
-    {
-        if(con){
+    void SettingsManager::addConnection(const IConnectionSettingsBasePtr &connection){
+        if(connection){
             SettingsManager::ConnectionSettingsContainerType conCont = GET_SETTING(genereted_settings::setting_connections_).value();
-            conCont.push_back(con);
+            ConnectionSettingsContainerType::iterator it = std::find(conCont.begin(),conCont.end(),connection);
+            if (it == conCont.end()) {
+                conCont.push_back(connection);
+            }
+            GET_SETTING(genereted_settings::setting_connections_).set_value(conCont);
+        }
+    }
+
+    void SettingsManager::removeConnection(const IConnectionSettingsBasePtr &connection){
+        if(connection){
+            SettingsManager::ConnectionSettingsContainerType conCont = GET_SETTING(genereted_settings::setting_connections_).value();
+            ConnectionSettingsContainerType::iterator it = std::find(conCont.begin(),conCont.end(),connection);
+            if (it != conCont.end()) {
+                conCont.erase(it);
+            }
             GET_SETTING(genereted_settings::setting_connections_).set_value(conCont);
         }
     }

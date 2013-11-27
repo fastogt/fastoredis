@@ -7,11 +7,13 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QToolButton>
+#include <QMessageBox>
 
 #include "core/SettingsManager.h"
 #include "common/qt_helper/converter_patterns.h"
 #include "gui/GuiFactory.h"
 #include "core/ConnectionSettings.h"
+#include "gui/ConnectionDialog.h"
 
 namespace fastoredis
 {
@@ -19,15 +21,15 @@ namespace fastoredis
             : public QTreeWidgetItem
     {
     public:
-        ConnectionListWidgetItem(IConnectionSettingsBase *connection): connection_(connection) { refreshFields(); }
-        IConnectionSettingsBase *connection() { return connection_; }
+        ConnectionListWidgetItem(const IConnectionSettingsBasePtr &connection): connection_(connection) { refreshFields(); }
+        IConnectionSettingsBasePtr connection() { return connection_; }
 
         void refreshFields()
         {
             setText(0, common::utils_qt::toQString(connection_->connectionName()));
             IConnectionSettingsBase::connectionTypes conType = connection_->connectionType();
             if(conType == IConnectionSettingsBase::REDIS){
-                RedisConnectionSettings *red = dynamic_cast<RedisConnectionSettings*>(connection_);
+                RedisConnectionSettings *red = dynamic_cast<RedisConnectionSettings*>(connection_.get());
                 VERIFY(red);
 
                 setText(1, common::utils_qt::toQString(red->fullAdress()));
@@ -36,7 +38,7 @@ namespace fastoredis
         }
 
     private:
-        IConnectionSettingsBase *connection_;
+        IConnectionSettingsBasePtr connection_;
     };
 
     /**
@@ -84,9 +86,19 @@ namespace fastoredis
         bottomLayout->addWidget(buttonBox);
 
         QHBoxLayout *toolBarLayout = new QHBoxLayout;
+
         QToolButton *addB = new QToolButton;
         addB->setIcon(GuiFactory::instance().addIcon());
+        VERIFY(connect(addB, SIGNAL(clicked()), this, SLOT(add())));
         toolBarLayout->addWidget(addB);
+
+        QToolButton *rmB = new QToolButton;
+        rmB->setIcon(GuiFactory::instance().removeIcon());
+        VERIFY(connect(rmB, SIGNAL(clicked()), this, SLOT(remove())));
+        toolBarLayout->addWidget(rmB);
+
+        QSpacerItem *hSpacer = new QSpacerItem(300,0,QSizePolicy::Expanding);
+        toolBarLayout->addSpacerItem(hSpacer);
 
         QVBoxLayout *firstColumnLayout = new QVBoxLayout;
         firstColumnLayout->addLayout(toolBarLayout);
@@ -110,7 +122,42 @@ namespace fastoredis
 
     void ConnectionsDialog::add(IConnectionSettingsBase *con)
     {
-        _connectionItems.push_back(new ConnectionListWidgetItem(con));
+        ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
+        _listWidget->addTopLevelItem(item);
+        _connectionItems.push_back(item);
+    }
+
+    void ConnectionsDialog::add()
+    {
+        IConnectionSettingsBasePtr p = new RedisConnectionSettings("New Connection");
+        ConnectionDialog dlg(p,this);
+        int result = dlg.exec();
+        if(result == QDialog::Accepted){
+            SettingsManager::instance().addConnection(p);
+        }
+    }
+
+    void ConnectionsDialog::remove()
+    {
+        ConnectionListWidgetItem *currentItem =
+                    dynamic_cast<ConnectionListWidgetItem *>(_listWidget->currentItem());
+
+        // Do nothing if no item selected
+        if (!currentItem)
+            return;
+
+        // Ask user
+        int answer = QMessageBox::question(this,
+            "Connections",
+            QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+        if (answer != QMessageBox::Yes)
+            return;
+
+        IConnectionSettingsBasePtr connection = currentItem->connection();
+        delete currentItem;
+        SettingsManager::instance().removeConnection(connection);
     }
 
     IConnectionSettingsBase *ConnectionsDialog::selectedConnection() const
