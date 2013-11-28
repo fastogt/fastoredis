@@ -25,7 +25,7 @@ namespace fastoredis
     {
         using namespace common;
         unicode_string style = SettingsManager::instance().currentStyle();
-        fastoredis::details::applyStyle(utils_qt::toQString(style));
+        fastoredis::detail::applyStyle(utils_qt::toQString(style));
 
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiFactory::instance().mainWindowIcon());

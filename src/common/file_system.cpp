@@ -231,8 +231,7 @@ namespace file_system
          if(!result.empty()&&result[0]=='~')
          {
              char* home = getenv("HOME");
-             if(home)
-             {
+             if(home){
                  unicode_string tmp=result;
                  result = home;
                  result += tmp.substr(1);

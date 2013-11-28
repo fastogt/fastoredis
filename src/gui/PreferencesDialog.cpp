@@ -30,7 +30,7 @@ namespace fastoredis
         QLabel *stylesLabel = new QLabel("Styles:");
         stylesLayout->addWidget(stylesLabel);
         _stylesComboBox = new QComboBox();
-        _stylesComboBox->addItems(details::getSupportedStyles());
+        _stylesComboBox->addItems(detail::getSupportedStyles());
         stylesLayout->addWidget(_stylesComboBox);
         layout->addLayout(stylesLayout);   
 
@@ -52,7 +52,7 @@ namespace fastoredis
 
     void PreferencesDialog::accept()
     {
-        details::applyStyle(_stylesComboBox->currentText());
+        detail::applyStyle(_stylesComboBox->currentText());
         SettingsManager::instance().setCurrentStyle(common::utils_qt::toStdString(_stylesComboBox->currentText()));
 
         return BaseClass::accept();

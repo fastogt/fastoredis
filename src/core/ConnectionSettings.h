@@ -40,6 +40,7 @@ namespace fastoredis
         virtual ~IConnectionSettingsBase();
     protected:
         virtual std::string toStringImpl() const = 0;
+        virtual void initFromStringImpl(const std::string &val) = 0;
 
         IConnectionSettingsBase(const std::string &connectionName);
         std::string connectionName_;
@@ -96,12 +97,13 @@ namespace fastoredis
 
     private:
         virtual std::string toStringImpl() const;
+        virtual void initFromStringImpl(const std::string &val);
         config info_;
     };
 
     typedef boost::intrusive_ptr<RedisConnectionSettings> RedisConnectionSettingsPtr;
 
-    namespace details
+    namespace detail
     {
         std::vector<std::string> supportedConnectionTypes();
 

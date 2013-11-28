@@ -27,6 +27,39 @@ namespace fastoredis
     IConnectionSettingsBase *IConnectionSettingsBase::fromStdString(const std::string &val)
     {
         IConnectionSettingsBase *result = NULL;
+        if(!val.empty()){
+            int crT = boost::lexical_cast<int>(val[0]);
+            switch(crT)
+            {
+            case REDIS:
+                result = new RedisConnectionSettings("");
+                break;
+            default:
+                break;
+            }
+            if(result){
+                size_t len = val.size();
+                int comma = 0;
+                int start = 0;
+                for(size_t i=0; i < len; ++i ){
+                    char ch = val[i];
+                    if(ch == ','){
+                        if(comma == 1){
+                            std::string name = val.substr(start+1,i-start-1);
+                            result->setConnectionName(name);
+                        }
+                        else if(comma == 2){
+                            std::string host = val.substr(start+1,i-start-1);
+                            result->setHost(detail::toHostAndPort(host));
+                            result->initFromStringImpl(val.c_str()+i);
+                            break;
+                        }
+                        comma++;
+                        start = i;
+                    }
+                }
+            }
+        }
         return result;
     }
 
@@ -36,7 +69,7 @@ namespace fastoredis
         connectionTypes crT = connectionType();
         if(crT != badConnectionType()){
             std::stringstream str;
-            str << crT << ',' << connectionName() << ',' << details::toStdString(host());
+            str << crT << ',' << connectionName() << ',' << detail::toStdString(host()) << ',';
             res+=str.str();
             res+=toStringImpl();
         }
@@ -74,6 +107,11 @@ namespace fastoredis
         info_.host = host;
     }
 
+    void RedisConnectionSettings::initFromStringImpl(const std::string &val)
+    {
+
+    }
+
     std::string RedisConnectionSettings::toStringImpl() const
     {
         std::string result;
@@ -83,7 +121,7 @@ namespace fastoredis
 
     std::string RedisConnectionSettings::fullAdress() const
     {
-        return details::toStdString(info_.host);
+        return detail::toStdString(info_.host);
     }
 
     RedisConnectionSettings::config RedisConnectionSettings::info() const
@@ -101,7 +139,7 @@ namespace fastoredis
         return REDIS;
     }
 
-    namespace details
+    namespace detail
     {
         std::vector<std::string> supportedConnectionTypes()
         {
@@ -136,6 +174,11 @@ namespace fastoredis
         hostAndPort toHostAndPort(const std::string &host)
         {
             hostAndPort res;
+            size_t del = host.find_first_of(':');
+            if(del != std::string::npos){
+                res.first = host.substr(0, del);
+                res.second = boost::lexical_cast<unsigned>(host.substr(del + 1));
+            }
             return res;
         }
     }

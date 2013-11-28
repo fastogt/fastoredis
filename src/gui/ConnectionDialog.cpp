@@ -25,11 +25,11 @@ namespace fastoredis
         connectionName_->setText(utils_qt::toQString(connection_->connectionName()));
 
         typeConnection_ = new QComboBox;
-        std::vector<unicode_string> supt = details::supportedConnectionTypes();
+        std::vector<unicode_string> supt = detail::supportedConnectionTypes();
         for(std::vector<unicode_string>::const_iterator it = supt.begin(); it != supt.end(); ++it){
             typeConnection_->addItem(utils_qt::toQString(*it));
         }
-        typeConnection_->setCurrentText(utils_qt::toQString(details::toStdString(connection_->connectionType())));
+        typeConnection_->setCurrentText(utils_qt::toQString(detail::toStdString(connection_->connectionType())));
         VERIFY(connect(typeConnection_, SIGNAL(currentTextChanged(const QString&)), this, SLOT(typeConnectionChange(const QString&))));
 
         hostAndPort h = connection_->host();
@@ -75,7 +75,7 @@ namespace fastoredis
 
     void ConnectionDialog::typeConnectionChange(const QString &value)
     {
-        IConnectionSettingsBase::connectionTypes currentType = details::toConnectionType(common::utils_qt::toStdString(value));
+        IConnectionSettingsBase::connectionTypes currentType = detail::toConnectionType(common::utils_qt::toStdString(value));
         bool isValidType = currentType != IConnectionSettingsBase::badConnectionType();
         connectionName_->setEnabled(isValidType);
         host_->setEnabled(isValidType);
