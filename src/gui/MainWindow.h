@@ -8,6 +8,8 @@ QT_END_NAMESPACE
 
 namespace fastoredis
 {
+    class MainWidget;
+
     class MainWindow
             : public QMainWindow
     {
@@ -23,10 +25,10 @@ namespace fastoredis
         void exit();
         void about();
         void openPreferences();
-        void connectToDatabase();
 
     private:
         void createStatusBar();
+        MainWidget *const mainWidget() const;
 
         QAction *_openAction;
         QAction *_saveAction;

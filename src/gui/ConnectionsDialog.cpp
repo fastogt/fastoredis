@@ -27,8 +27,8 @@ namespace fastoredis
         void refreshFields()
         {
             setText(0, common::utils_qt::toQString(connection_->connectionName()));
-            IConnectionSettingsBase::connectionTypes conType = connection_->connectionType();
-            if(conType == IConnectionSettingsBase::REDIS){
+            connectionTypes conType = connection_->connectionType();
+            if(conType == REDIS){
                 RedisConnectionSettings *red = dynamic_cast<RedisConnectionSettings*>(connection_.get());
                 VERIFY(red);
 
@@ -76,9 +76,9 @@ namespace fastoredis
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
-        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        buttonBox->button(QDialogButtonBox::Save)->setIcon(GuiFactory::instance().serverIcon());
-        buttonBox->button(QDialogButtonBox::Save)->setText("C&onnect");
+        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
+        buttonBox->button(QDialogButtonBox::Ok)->setIcon(GuiFactory::instance().serverIcon());
+        buttonBox->button(QDialogButtonBox::Ok)->setText("Open");
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
@@ -97,6 +97,11 @@ namespace fastoredis
         VERIFY(connect(rmB, SIGNAL(clicked()), this, SLOT(remove())));
         toolBarLayout->addWidget(rmB);
 
+        QToolButton *editB = new QToolButton;
+        editB->setIcon(GuiFactory::instance().editIcon());
+        VERIFY(connect(editB, SIGNAL(clicked()), this, SLOT(edit())));
+        toolBarLayout->addWidget(editB);
+
         QSpacerItem *hSpacer = new QSpacerItem(300,0,QSizePolicy::Expanding);
         toolBarLayout->addSpacerItem(hSpacer);
 
@@ -111,7 +116,7 @@ namespace fastoredis
         // Populate list with connections
         SettingsManager::ConnectionSettingsContainerType connections = SettingsManager::instance().connections();
         for (SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
-            IConnectionSettingsBase *connectionModel = (*it).get();
+            IConnectionSettingsBasePtr connectionModel = (*it);
             add(connectionModel);
         }
 
@@ -120,7 +125,7 @@ namespace fastoredis
             _listWidget->setCurrentItem(_listWidget->topLevelItem(0));
     }
 
-    void ConnectionsDialog::add(IConnectionSettingsBase *con)
+    void ConnectionsDialog::add(const IConnectionSettingsBasePtr &con)
     {
         ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
         _listWidget->addTopLevelItem(item);
@@ -129,11 +134,12 @@ namespace fastoredis
 
     void ConnectionsDialog::add()
     {
-        IConnectionSettingsBasePtr p = new RedisConnectionSettings("New Connection");
+        IConnectionSettingsBasePtr p(new RedisConnectionSettings("New Connection"));
         ConnectionDialog dlg(p,this);
         int result = dlg.exec();
         if(result == QDialog::Accepted){
             SettingsManager::instance().addConnection(p);
+            add(p);
         }
     }
 
@@ -160,9 +166,39 @@ namespace fastoredis
         SettingsManager::instance().removeConnection(connection);
     }
 
-    IConnectionSettingsBase *ConnectionsDialog::selectedConnection() const
+    void ConnectionsDialog::edit()
     {
-        return NULL;
+        ConnectionListWidgetItem *currentItem =
+                    dynamic_cast<ConnectionListWidgetItem *>(_listWidget->currentItem());
+
+        // Do nothing if no item selected
+        if (!currentItem)
+            return;
+
+        IConnectionSettingsBasePtr oldConnection = currentItem->connection();
+        IConnectionSettingsBasePtr newConnection(oldConnection->clone());
+
+        ConnectionDialog dlg(newConnection,this);
+        int result = dlg.exec();
+        if(result == QDialog::Accepted){
+            delete currentItem;
+            SettingsManager::instance().removeConnection(oldConnection);
+            SettingsManager::instance().addConnection(newConnection);
+            add(newConnection);
+        }
+    }
+
+    IConnectionSettingsBasePtr ConnectionsDialog::selectedConnection() const
+    {
+        IConnectionSettingsBasePtr res;
+
+        ConnectionListWidgetItem *currentItem =
+                    dynamic_cast<ConnectionListWidgetItem *>(_listWidget->currentItem());
+        if (currentItem){
+            res = currentItem->connection();
+        }
+
+        return res;
     }
 
     /**

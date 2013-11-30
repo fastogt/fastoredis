@@ -49,8 +49,6 @@ namespace fastoredis
         inputLayout->addWidget(typeConnection_);
         inputLayout->addLayout(hostAndPortLayout);
 
-
-
         testButton_ = new QPushButton("&Test");
         testButton_->setIcon(GuiFactory::instance().messageBoxInformationIcon());
         VERIFY(connect(testButton_, SIGNAL(clicked()), this, SLOT(testConnection())));
@@ -75,8 +73,8 @@ namespace fastoredis
 
     void ConnectionDialog::typeConnectionChange(const QString &value)
     {
-        IConnectionSettingsBase::connectionTypes currentType = detail::toConnectionType(common::utils_qt::toStdString(value));
-        bool isValidType = currentType != IConnectionSettingsBase::badConnectionType();
+        connectionTypes currentType = detail::toConnectionType(common::utils_qt::toStdString(value));
+        bool isValidType = currentType != detail::badConnectionType();
         connectionName_->setEnabled(isValidType);
         host_->setEnabled(isValidType);
         port_->setEnabled(isValidType);

@@ -19,6 +19,9 @@ namespace fastoredis
         const QIcon &serverIcon() const;
         const QIcon &addIcon() const;
         const QIcon &removeIcon() const;
+        const QIcon &editIcon() const;
         const QIcon &messageBoxInformationIcon() const;
+        const QIcon &executeIcon() const;
+        const QIcon &stopIcon() const;
     };
 }

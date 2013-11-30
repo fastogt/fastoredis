@@ -47,11 +47,11 @@ public:
             char ch = *it;
             if(ch == ','){
                 std::string enc( binary_text(text.begin()), binary_text(text.end()));
-                fastoredis::IConnectionSettingsBase * item = fastoredis::IConnectionSettingsBase::fromStdString(enc);
+                fastoredis::IConnectionSettingsBasePtr item(fastoredis::IConnectionSettingsBase::fromStdString(enc));
                 if(item){
                     result.push_back(item);
                 }
-                text.empty();
+                text.clear();
             }
             else{
                 text += ch;

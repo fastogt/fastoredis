@@ -1,30 +1,16 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
-#include <boost/intrusive_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include "common/boost_extension.hpp"
+#include "core/ConnectionTypes.h"
+#include "core/HostAndPort.h"
 
 namespace fastoredis
 {
-    typedef std::pair<std::string, unsigned> hostAndPort;
-
     class IConnectionSettingsBase
-            : public common::boost_extension::intrusive_ptr_base<IConnectionSettingsBase>
     {
     public:
 
-        enum connectionTypes
-        {
-            UNKNOWN = 0,
-            REDIS
-        };
-
-        static inline connectionTypes badConnectionType()
-        {
-            return UNKNOWN;
-        }
         virtual std::string fullAdress() const = 0;
 
         virtual hostAndPort host() const = 0;
@@ -37,6 +23,7 @@ namespace fastoredis
         static IConnectionSettingsBase *fromStdString(const std::string &val);
         std::string toString() const;
 
+        virtual IConnectionSettingsBase* clone () const = 0;
         virtual ~IConnectionSettingsBase();
     protected:
         virtual std::string toStringImpl() const = 0;
@@ -46,7 +33,7 @@ namespace fastoredis
         std::string connectionName_;
     };
 
-    typedef boost::intrusive_ptr<IConnectionSettingsBase> IConnectionSettingsBasePtr;
+    typedef boost::shared_ptr<IConnectionSettingsBase> IConnectionSettingsBasePtr;
 
     class RedisConnectionSettings
             : public IConnectionSettingsBase
@@ -95,22 +82,12 @@ namespace fastoredis
         config info() const;
         void setInfo(const config& info);
 
+        virtual IConnectionSettingsBase* clone () const;
     private:
         virtual std::string toStringImpl() const;
         virtual void initFromStringImpl(const std::string &val);
         config info_;
     };
 
-    typedef boost::intrusive_ptr<RedisConnectionSettings> RedisConnectionSettingsPtr;
-
-    namespace detail
-    {
-        std::vector<std::string> supportedConnectionTypes();
-
-        std::string toStdString(IConnectionSettingsBase::connectionTypes t);
-        IConnectionSettingsBase::connectionTypes toConnectionType(const std::string &text);
-
-        std::string toStdString(const hostAndPort &host);
-        hostAndPort toHostAndPort(const std::string &host);
-    }
+    typedef boost::shared_ptr<RedisConnectionSettings> RedisConnectionSettingsPtr;
 }
