@@ -8,7 +8,7 @@ namespace fastoredis
 {
     const QString AppStyle::StyleName = "Native";
 
-    namespace details
+    namespace detail
     {
         void applyStyle(const QString &styleName)
         {

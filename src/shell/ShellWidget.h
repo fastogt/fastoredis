@@ -6,6 +6,8 @@ class QTextEdit;
 class QAction;
 QT_END_NAMESPACE
 
+#include "core/IServer.h"
+
 namespace fastoredis
 {
     class ShellWidget
@@ -14,12 +16,17 @@ namespace fastoredis
         Q_OBJECT
     public:
         typedef QWidget base_class;
-        ShellWidget(QWidget* parent = 0);
+        ShellWidget(const IServerPtr &server, QWidget* parent = 0);
 
     private Q_SLOTS:
         void showContextMenu(const QPoint &pt);
+        void execute();
+        void stop();
+        void connectToServer();
+        void disconnectFromServer();
 
     private:
+        const IServerPtr _server;
         QTextEdit *_input;
         QAction *_clear;
     };

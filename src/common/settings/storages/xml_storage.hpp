@@ -65,7 +65,7 @@ namespace storages
 		template<typename init_vector>template<typename fusion_t>
 		bool xml_storage<init_vector>::save(const fusion_t &fuc)
 		{
-			std::ofstream output(path_to_save());
+            std::ofstream output(path_to_save().c_str());
 			using boost::property_tree::ptree;
 			if(output.is_open())
 			{
@@ -81,7 +81,7 @@ namespace storages
 		template<typename init_vector>template<typename fusion_t>
 		bool xml_storage<init_vector>::load(fusion_t &fuc)
 		{
-			std::ifstream input(path_to_save());
+            std::ifstream input(path_to_save().c_str());
 			using boost::property_tree::ptree;
 			if(input.is_open())
 			{

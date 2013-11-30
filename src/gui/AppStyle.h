@@ -21,7 +21,7 @@
 
 namespace fastoredis
 {
-    namespace details
+    namespace detail
     {
         void applyStyle(const QString &styleName);
         QStringList getSupportedStyles();

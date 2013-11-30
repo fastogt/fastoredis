@@ -22,10 +22,11 @@ namespace storages
                     typedef typename type_t::value_type value_type;
                     value_type result = item.value();
                     boost::property_tree::ptree::const_assoc_iterator it = set_.find( item.key() );
-					if( it != set_.not_found() )
-					{
+					if( it != set_.not_found() ){
 						ptree::value_type const& v = (*it);
-                        result = v.second.get<value_type>("");
+                        boost::property_tree::ptree node = v.second;
+                        std::string str = node.get<std::string>("");
+                        result = node.get<value_type>("");
 					}
 					item.load_value(result);
 				}
@@ -50,7 +51,7 @@ namespace storages
 		struct ini_storage
 		{
 			typedef detail::load_funct load_struct;
-            static const unicode_char* path_to_save()
+            static std::string path_to_save()
             {
 				typedef mpl_template_string::template_string<init_vector> path_to_save_t;
                 return path_to_save_t::template_string_value_path();
@@ -65,7 +66,7 @@ namespace storages
 		template<typename init_vector>template<typename fusion_t>
 		bool ini_storage<init_vector>::save(const fusion_t &fuc)
 		{
-            std::ofstream output(path_to_save());
+            std::ofstream output(path_to_save().c_str());
 			if(output.is_open()){
 				boost::property_tree::ptree pt;
                 boost::property_tree::ptree &settings= pt.add("settings","");
@@ -79,13 +80,12 @@ namespace storages
 		template<typename init_vector>template<typename fusion_t>
 		bool ini_storage<init_vector>::load(fusion_t &fuc)
         {
-            const unicode_char* path = path_to_save();
-            std::ifstream input(path);
-			if(input.is_open()){
-				boost::property_tree::ptree pt;
-				boost::property_tree::ini_parser::read_ini(input, pt);
+            std::ifstream input(path_to_save().c_str());
+            if(input.is_open()){
+				boost::property_tree::ptree pt;				
 				try
 				{
+                    boost::property_tree::ini_parser::read_ini(input, pt);
                     const boost::property_tree::ptree& settings = pt.get_child("settings");
 					boost::fusion::for_each(fuc, detail::load_funct(settings));				
 				}

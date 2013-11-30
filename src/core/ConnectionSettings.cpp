@@ -1,14 +1,14 @@
 #include "core/ConnectionSettings.h"
 
+#include "boost/lexical_cast.hpp"
+#include "common/macros.h"
 #include <stdio.h>
-#include "common/utils.h"
 
 namespace
 {
     const unsigned port = 27017;
     const char *defaultServerHost = "localhost";
     const char *defaultNameConnection = "New Connection";
-    const char *connnectionType[fastoredis::IConnectionSettingsBase::REDIS+1] = { "Unknown", "Redis" };
 }
 
 namespace fastoredis
@@ -19,7 +19,7 @@ namespace fastoredis
 
     }
 
-    IConnectionSettingsBase::connectionTypes IConnectionSettingsBase::connectionType() const
+    connectionTypes IConnectionSettingsBase::connectionType() const
     {
         return UNKNOWN;
     }
@@ -27,6 +27,39 @@ namespace fastoredis
     IConnectionSettingsBase *IConnectionSettingsBase::fromStdString(const std::string &val)
     {
         IConnectionSettingsBase *result = NULL;
+        if(!val.empty()){
+            int crT = boost::lexical_cast<int>(val[0]);
+            switch(crT)
+            {
+            case REDIS:
+                result = new RedisConnectionSettings("");
+                break;
+            default:
+                break;
+            }
+            if(result){
+                size_t len = val.size();
+                int comma = 0;
+                int start = 0;
+                for(size_t i=0; i < len; ++i ){
+                    char ch = val[i];
+                    if(ch == ','){
+                        if(comma == 1){
+                            std::string name = val.substr(start+1,i-start-1);
+                            result->setConnectionName(name);
+                        }
+                        else if(comma == 2){
+                            std::string host = val.substr(start+1,i-start-1);
+                            result->setHost(detail::toHostAndPort(host));
+                            result->initFromStringImpl(val.c_str()+i);
+                            break;
+                        }
+                        comma++;
+                        start = i;
+                    }
+                }
+            }
+        }
         return result;
     }
 
@@ -34,9 +67,9 @@ namespace fastoredis
     {
         std::string res;
         connectionTypes crT = connectionType();
-        if(crT != badConnectionType()){
+        if(crT != detail::badConnectionType()){
             std::stringstream str;
-            str << crT << ',' << connectionName() << ',' << details::toStdString(host());
+            str << crT << ',' << connectionName() << ',' << detail::toStdString(host()) << ',';
             res+=str.str();
             res+=toStringImpl();
         }
@@ -74,6 +107,11 @@ namespace fastoredis
         info_.host = host;
     }
 
+    void RedisConnectionSettings::initFromStringImpl(const std::string &val)
+    {
+
+    }
+
     std::string RedisConnectionSettings::toStringImpl() const
     {
         std::string result;
@@ -83,7 +121,7 @@ namespace fastoredis
 
     std::string RedisConnectionSettings::fullAdress() const
     {
-        return details::toStdString(info_.host);
+        return detail::toStdString(info_.host);
     }
 
     RedisConnectionSettings::config RedisConnectionSettings::info() const
@@ -96,47 +134,14 @@ namespace fastoredis
         info_ =  info;
     }
 
-    IConnectionSettingsBase::connectionTypes RedisConnectionSettings::connectionType() const
+    connectionTypes RedisConnectionSettings::connectionType() const
     {
         return REDIS;
     }
 
-    namespace details
+    IConnectionSettingsBase *RedisConnectionSettings::clone() const
     {
-        std::vector<std::string> supportedConnectionTypes()
-        {
-            return common::utils::enums::convertToVector(connnectionType);
-        }
-
-        std::string toStdString(IConnectionSettingsBase::connectionTypes t)
-        {
-            std::string result;
-            int count = sizeof(connnectionType)/sizeof(*connnectionType);
-            if(t < count){
-                result = connnectionType[t];
-            }
-            return result;
-        }
-
-        IConnectionSettingsBase::connectionTypes toConnectionType(const std::string &text)
-        {
-            return common::utils::enums::findTypeInArray<IConnectionSettingsBase::connectionTypes>(connnectionType,text.c_str());
-        }
-
-        std::string toStdString(const hostAndPort &host)
-        {
-            unicode_char buff[512] = {0};
-            const char* h = host.first.c_str();
-            if(h){
-                sprintf(buff,"%s:%u", h, host.second);
-            }
-            return buff;
-        }
-
-        hostAndPort toHostAndPort(const std::string &host)
-        {
-            hostAndPort res;
-            return res;
-        }
+        RedisConnectionSettings *red = new RedisConnectionSettings(*this);
+        return red;
     }
 }

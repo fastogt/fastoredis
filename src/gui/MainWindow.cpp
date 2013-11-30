@@ -13,10 +13,10 @@
 #include "gui/AboutDialog.h"
 #include "gui/PreferencesDialog.h"
 #include "gui/ConnectionsDialog.h"
+#include "gui/MainWidget.h"
 
 #include "core/SettingsManager.h"
 #include "core/Logger.h"
-#include "shell/ShellWidget.h"
 
 namespace fastoredis
 {
@@ -25,7 +25,7 @@ namespace fastoredis
     {
         using namespace common;
         unicode_string style = SettingsManager::instance().currentStyle();
-        fastoredis::details::applyStyle(utils_qt::toQString(style));
+        fastoredis::detail::applyStyle(utils_qt::toQString(style));
 
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
@@ -43,10 +43,6 @@ namespace fastoredis
         VERIFY(connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs())));
 
         // Exit action
-        QAction *connectAction = new QAction("&Connect", this);
-        VERIFY(connect(connectAction, SIGNAL(triggered()), this, SLOT(connectToDatabase())));
-
-        // Exit action
         QAction *exitAction = new QAction("&Exit", this);
         exitAction->setShortcut(QKeySequence::Quit);
         VERIFY(connect(exitAction, SIGNAL(triggered()), this, SLOT(close())));
@@ -57,7 +53,6 @@ namespace fastoredis
         fileMenu->addAction(_saveAction);
         fileMenu->addAction(_saveAsAction);
         fileMenu->addSeparator();
-        fileMenu->addAction(connectAction);
         fileMenu->addAction(exitAction);
 
         QAction *preferencesAction = new QAction("Preferences",this);
@@ -74,8 +69,8 @@ namespace fastoredis
         QMenu *helpMenu = menuBar()->addMenu("Help");
         helpMenu->addAction(aboutAction);
 
-        ShellWidget *shellW = new ShellWidget;
-        setCentralWidget(shellW);
+        MainWidget *mainW = new MainWidget;
+        setCentralWidget(mainW);
 
         LogWidget *log = new LogWidget(this);
         VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, common::logging::LEVEL_LOG)), log, SLOT(addMessage(const QString&, common::logging::LEVEL_LOG))));
@@ -96,11 +91,18 @@ namespace fastoredis
 
     void MainWindow::createStatusBar()
     {
-
     }
 
     void MainWindow::open()
     {
+        ConnectionsDialog dlg(this);
+        int result = dlg.exec();
+        if(result == QDialog::Accepted){
+            MainWidget *wid = mainWidget();
+            if(wid){
+                wid->addWidgetBySetting(dlg.selectedConnection());
+            }
+        }
     }
 
     void MainWindow::save()
@@ -127,10 +129,11 @@ namespace fastoredis
         dlg.exec();
     }
 
-    void MainWindow::connectToDatabase()
+    MainWidget *const MainWindow::mainWidget() const
     {
-        ConnectionsDialog dlg(this);
-        dlg.exec();
+        MainWidget *wid = qobject_cast<MainWidget*>(centralWidget());
+        VERIFY(wid);
+        return wid;
     }
 }
 

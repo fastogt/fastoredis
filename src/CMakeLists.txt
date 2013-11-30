@@ -10,36 +10,51 @@ SET(HEADERS_GUI_TO_MOC
     gui/PreferencesDialog.h
     gui/ConnectionsDialog.h
     gui/ConnectionDialog.h
+    gui/MainWidget.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
-    gui/AppStyle.cpp
 )
 SET(SOURCES_GUI
     gui/MainWindow.cpp
+    gui/AppStyle.cpp
     gui/GuiFactory.cpp
     gui/LogWidget.cpp
     gui/AboutDialog.cpp
     gui/PreferencesDialog.cpp
     gui/ConnectionsDialog.cpp
     gui/ConnectionDialog.cpp
+    gui/MainWidget.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
     core/Logger.h
-    core/RedisClient.h
+    core/IDriver.h
+    core/IServer.h
+    core/RedisServer.h
+    core/RedisDriver.h
+    core/ServersManager.h
 )
 SET(HEADERS_CORE
+    core/ConnectionTypes.h
     core/SettingsManager.h
     core/ConnectionSettings.h
+    core/events/ErrorInfo.hpp
     core/events/Events.hpp
     core/events/EventsInfo.hpp
+    core/HostAndPort.h
 )
 SET(SOURCES_CORE
+    core/ConnectionTypes.cpp
     core/SettingsManager.cpp
     core/ConnectionSettings.cpp
     core/Logger.cpp
-    core/RedisClient.cpp
+    core/RedisDriver.cpp
+    core/IDriver.cpp
+    core/IServer.cpp
+    core/RedisServer.cpp
+    core/ServersManager.cpp
+    core/HostAndPort.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/ShellWidget.h

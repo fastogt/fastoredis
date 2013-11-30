@@ -33,29 +33,31 @@ namespace common
             public:
                 typedef value_t value_type;
                 typedef QEvent base_class;
+                typedef QObject *const senders_type;
+                typedef std::vector<QObject*> reciver_type;
                 enum { EventType = event_t };
 
-                Event(QObject *const sender, const value_t &initValue)
-                    : base_class((base_class::Type)EventType), sender_(sender), value_(initValue){}
+                Event(senders_type sender, const value_t &initValue)
+                    : base_class((base_class::Type)EventType), _sender(sender), _value(initValue){}
 
-                QObject *const sender() const
+                senders_type sender() const
                 {
-                    return sender_;
+                    return _sender;
                 }
 
                 void setValue(const value_t &val)
                 {
-                    value_ = val;
+                    _value = val;
                 }
 
                 value_t value() const
                 {
-                    return value_;
+                    return _value;
                 }
 
             private:
-                QObject *const sender_;
-                value_t value_;
+                senders_type _sender;
+                value_t _value;
             };
 
             template<typename error_t>
@@ -72,7 +74,7 @@ namespace common
                     return errorInfo_;
                 }
 
-            private:
+            protected:
                 error_type errorInfo_;
             };
 

@@ -4,5 +4,6 @@
     <file>icons/add.png</file>
     <file>icons/remove.png</file>
     <file>icons/save.png</file>
+    <file>icons/redis.png</file>
     </qresource>
 </RCC>

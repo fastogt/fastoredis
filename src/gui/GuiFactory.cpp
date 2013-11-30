@@ -47,10 +47,27 @@ namespace fastoredis
         return open;
     }
 
+    const QIcon &GuiFactory::editIcon() const
+    {
+        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/save.png");
+        return open;
+    }
+
     const QIcon &GuiFactory::messageBoxInformationIcon() const
     {
         static QIcon open = qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation);
         return open;
     }
 
+    const QIcon &GuiFactory::executeIcon() const
+    {
+        static QIcon open = qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation);
+        return open;
+    }
+
+    const QIcon &GuiFactory::stopIcon() const
+    {
+        static QIcon open = qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation);
+        return open;
+    }
 }
