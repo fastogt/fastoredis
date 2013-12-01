@@ -16,8 +16,8 @@ namespace fastoredis
     protected:
         void customEvent(QEvent *event);
         virtual void initImpl();
-        virtual void connectImpl(const EventsInfo::ConnectInfoResponce &res);
-        virtual void executeImpl(const EventsInfo::ExecuteInfoResponce &res);
-        virtual void disconnectImpl(const EventsInfo::DisConnectInfoResponce &res);
+        virtual void connectImpl(EventsInfo::ConnectInfoResponce &res);
+        virtual void executeImpl(EventsInfo::ExecuteInfoResponce &res);
+        virtual void disconnectImpl(EventsInfo::DisConnectInfoResponce &res);
     };
 }

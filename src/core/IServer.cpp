@@ -65,6 +65,15 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::stopCurrentEvent()
+    {
+        EventsInfo::InteruptInfoRequest req;
+        emit startedInterupt(req);
+        EventsInfo::InteruptInfoResponce res(req);
+        _drv->interuptEvent(req, res);
+        emit finishedInterupt(res);
+    }
+
     IServer::~IServer()
     {
 

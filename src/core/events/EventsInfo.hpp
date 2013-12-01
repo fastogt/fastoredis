@@ -11,7 +11,7 @@ namespace fastoredis
                 : public common::utils_qt::EventInfo<Error::ErrorInfo>
         {
             typedef common::utils_qt::EventInfo<Error::ErrorInfo> base_class;
-            EventInfoBase(const Error::ErrorInfo &er)
+            EventInfoBase(const Error::ErrorInfo &er = Error::ErrorInfo())
                 : base_class(er){}
         };
 
@@ -80,6 +80,29 @@ namespace fastoredis
             {
                 base_class::errorInfo_ = er;
             }
+        };
+
+        struct InteruptInfoRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            InteruptInfoRequest(const Error::ErrorInfo &er = Error::ErrorInfo())
+                : base_class(er)
+            {
+
+            }
+        };
+
+        struct InteruptInfoResponce
+                : InteruptInfoRequest
+        {
+            typedef InteruptInfoRequest base_class;
+            InteruptInfoResponce(const base_class &request, const Error::ErrorInfo &er = Error::ErrorInfo())
+                : base_class(request)
+            {
+                base_class::errorInfo_ = er;
+            }
+            EventInfoBase _interuptedEvent;
         };
     }
 }

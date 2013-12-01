@@ -22,17 +22,17 @@ namespace fastoredis
 
     }
 
-    void RedisDriver::connectImpl(const EventsInfo::ConnectInfoResponce &res)
+    void RedisDriver::connectImpl(EventsInfo::ConnectInfoResponce &res)
     {
 
     }
 
-    void RedisDriver::executeImpl(const EventsInfo::ExecuteInfoResponce &res)
+    void RedisDriver::executeImpl(EventsInfo::ExecuteInfoResponce &res)
     {
 
     }
 
-    void RedisDriver::disconnectImpl(const EventsInfo::DisConnectInfoResponce &res)
+    void RedisDriver::disconnectImpl(EventsInfo::DisConnectInfoResponce &res)
     {
 
     }

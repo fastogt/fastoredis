@@ -4,9 +4,9 @@
 #include <QMenu>
 #include <QAction>
 #include <QPlainTextEdit>
-#include <QTextEdit>
 #include <QToolBar>
 #include <QAction>
+#include <Qsci/qsciscintilla.h>
 
 #include "common/macros.h"
 #include "gui/GuiFactory.h"
@@ -18,7 +18,7 @@ namespace fastoredis
     {
 
         QVBoxLayout *hlayout = new QVBoxLayout(this);
-        hlayout->setContentsMargins(0,0,0,0);
+        hlayout->setContentsMargins(0, 0, 0, 0);
 
         QToolBar *bar = new QToolBar;
         QAction *connectAction = new QAction(GuiFactory::instance().connectIcon(), "Connect", bar);
@@ -33,7 +33,7 @@ namespace fastoredis
 
         hlayout->addWidget(bar);
 
-        _input  = new QTextEdit;
+        _input  = new QsciScintilla;
         _input->setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(_input,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
         hlayout->addWidget(_input);
@@ -47,7 +47,7 @@ namespace fastoredis
     {
         QMenu *menu = _input->createStandardContextMenu();
         menu->addAction(_clear);
-        _clear->setEnabled(!_input->toPlainText().isEmpty());
+        _clear->setEnabled(!text().isEmpty());
 
         menu->exec(_input->mapToGlobal(pt));
         delete menu;
@@ -55,13 +55,12 @@ namespace fastoredis
 
     void ShellWidget::execute()
     {
-        QString text = _input->toPlainText();
-        _server->execute(text);
+        _server->execute(text());
     }
 
     void ShellWidget::stop()
     {
-
+        _server->stopCurrentEvent();
     }
 
     void ShellWidget::connectToServer()
@@ -72,5 +71,27 @@ namespace fastoredis
     void ShellWidget::disconnectFromServer()
     {
         _server->disconnect();
+    }
+
+    void ShellWidget::setText(const QString &text)
+    {
+        _input->setText(text);
+    }
+
+    QString ShellWidget::text() const
+    {
+        return _input->text();
+    }
+
+    void ShellWidget::reload()
+    {
+
+    }
+
+    ShellWidget *ShellWidget::duplicate(ShellWidget *src, const QString &text)
+    {
+        ShellWidget *result = new ShellWidget(src->_server, src->parentWidget());
+        result->setText(text);
+        return result;
     }
 }

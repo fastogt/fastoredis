@@ -11,6 +11,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/ConnectionsDialog.h
     gui/ConnectionDialog.h
     gui/MainWidget.h
+    gui/MainTabBar.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
@@ -25,6 +26,7 @@ SET(SOURCES_GUI
     gui/ConnectionsDialog.cpp
     gui/ConnectionDialog.cpp
     gui/MainWidget.cpp
+    gui/MainTabBar.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
@@ -33,7 +35,6 @@ SET(HEADERS_CORE_TO_MOC
     core/IServer.h
     core/RedisServer.h
     core/RedisDriver.h
-    core/ServersManager.h
 )
 SET(HEADERS_CORE
     core/ConnectionTypes.h
@@ -43,6 +44,7 @@ SET(HEADERS_CORE
     core/events/Events.hpp
     core/events/EventsInfo.hpp
     core/HostAndPort.h
+    core/ServersManager.h
 )
 SET(SOURCES_CORE
     core/ConnectionTypes.cpp
@@ -89,6 +91,7 @@ ENDIF()
 
 add_subdirectory(common)
 add_subdirectory(third-party/redis)
+add_subdirectory(third-party/qscintilla/Qt4Qt5)
 
 IF(BOOST_ENABLED)
     INTEGRATE_BOOST(system)
@@ -111,7 +114,7 @@ QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 CONFIGURE_FILE("resources/gui.qrc.in" "${CMAKE_CURRENT_LIST_DIR}/resources/gui.qrc" @ONLY IMMEDIATE)
 SET(RESOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/gui.qrc)
 QTX_ADD_RESOURCES(RES_SRC ${RESOURCES})
-SET(INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/third-party/redis/redis/src)
+SET(INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR} third-party/redis/redis/src third-party/qscintilla/Qt4Qt5)
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 SOURCE_GROUP("Header Files" FILES ${HEADERS} ${HEADERS_TOMOC})
 SOURCE_GROUP("Source Files" FILES ${SOURCES})
@@ -120,7 +123,7 @@ SOURCE_GROUP("Platform Files" FILES ${PLATFORM_HDRS} ${PLATFORM_SRCS})
 SOURCE_GROUP("Resources" FILES ${RES_SRC} ${RESOURCE_OS})
 
 SET(ALL_SOURCES ${HEADERS} ${HEADERS_TOMOC} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_SRCS} ${RES_SRC} ${ICON_FILE} ${RESOURCE_OS} ${BOOST_SOURCES})
-SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY} ${Qt5Core_QTMAIN_LIBRARIES} ${PLATFORM_LIBRARIES} common redis-cli)
+SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY} ${Qt5Core_QTMAIN_LIBRARIES} ${PLATFORM_LIBRARIES} qscintilla2 common redis-cli)
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")

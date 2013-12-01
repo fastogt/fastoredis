@@ -25,7 +25,13 @@ namespace fastoredis
 
     const QIcon &GuiFactory::connectIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/redis.png");
+        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/connect.png");
+        return main;
+    }
+
+    const QIcon &GuiFactory::disConnectIcon() const
+    {
+        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/disconnect.png");
         return main;
     }
 
@@ -49,7 +55,7 @@ namespace fastoredis
 
     const QIcon &GuiFactory::editIcon() const
     {
-        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/save.png");
+        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/edit.png");
         return open;
     }
 
@@ -61,13 +67,13 @@ namespace fastoredis
 
     const QIcon &GuiFactory::executeIcon() const
     {
-        static QIcon open = qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation);
-        return open;
+        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/start.png");
+        return start;
     }
 
     const QIcon &GuiFactory::stopIcon() const
     {
-        static QIcon open = qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation);
-        return open;
+        static QIcon stop(":"PROJECT_NAME_LOWERCASE"/icons/stop.png");
+        return stop;
     }
 }

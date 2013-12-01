@@ -24,7 +24,11 @@ namespace fastoredis
         //async
         void connect();
         void disconnect();
+
         void execute(const QString &script);
+
+        //sync
+        void stopCurrentEvent();
 
         virtual ~IServer();
 
@@ -37,6 +41,9 @@ namespace fastoredis
 
         void startedExecute(const EventsInfo::ExecuteInfoRequest &req);
         void finishedExecute(const EventsInfo::ExecuteInfoResponce &res);
+
+        void startedInterupt(const EventsInfo::InteruptInfoRequest &req);
+        void finishedInterupt(const EventsInfo::InteruptInfoResponce &res);
 
     protected:
         void notify(QEvent *ev);
