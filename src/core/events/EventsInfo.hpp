@@ -35,6 +35,7 @@ namespace fastoredis
             {
                 base_class::errorInfo_ = er;
             }
+            std::string _prompt;
         };
 
         struct DisonnectInfoRequest

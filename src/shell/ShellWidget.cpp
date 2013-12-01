@@ -21,12 +21,24 @@ namespace fastoredis
         hlayout->setContentsMargins(0, 0, 0, 0);
 
         QToolBar *bar = new QToolBar;
-        QAction *connectAction = new QAction(GuiFactory::instance().connectIcon(), "Connect", bar);
-        VERIFY(connect(connectAction, SIGNAL(triggered()), this, SLOT(connectToServer())));
-        bar->addAction(connectAction);
+
+        _connectAction = new QAction(GuiFactory::instance().connectIcon(), "Connect", bar);
+        VERIFY(connect(_connectAction, SIGNAL(triggered()), this, SLOT(connectToServer())));
+        bar->addAction(_connectAction);
+        _disConnectAction = new QAction(GuiFactory::instance().disConnectIcon(), "Disconnect", bar);
+        VERIFY(connect(_disConnectAction, SIGNAL(triggered()), this, SLOT(disconnectFromServer())));
+        bar->addAction(_disConnectAction);
+        syncConnectionActions(true);
+
+        VERIFY(connect(_server.get(), SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), this, SLOT(startConnect(const EventsInfo::ConnectInfoRequest &))));
+        VERIFY(connect(_server.get(), SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)), this, SLOT(finishConnect(const EventsInfo::ConnectInfoResponce &))));
+        VERIFY(connect(_server.get(), SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)), this, SLOT(startDisconnect(const EventsInfo::DisonnectInfoRequest &))));
+        VERIFY(connect(_server.get(), SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)), this, SLOT(finishDisconnect(const EventsInfo::DisConnectInfoResponce &))));
+
         QAction *executeAction = new QAction(GuiFactory::instance().executeIcon(), "Execute", bar);
         VERIFY(connect(executeAction, SIGNAL(triggered()), this, SLOT(execute())));
         bar->addAction(executeAction);
+
         QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), "Stop", bar);
         VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
         bar->addAction(stopAction);
@@ -39,7 +51,6 @@ namespace fastoredis
         hlayout->addWidget(_input);
         _clear = new QAction("Clear All", this);
         VERIFY(connect(_clear, SIGNAL(triggered()),_input, SLOT(clear())));
-
         setLayout(hlayout);
     }
 
@@ -93,5 +104,34 @@ namespace fastoredis
         ShellWidget *result = new ShellWidget(src->_server, src->parentWidget());
         result->setText(text);
         return result;
+    }
+
+    void ShellWidget::syncConnectionActions(bool isConnectAct)
+    {
+        _connectAction->setVisible(isConnectAct);
+        _disConnectAction->setVisible(!isConnectAct);
+    }
+
+    void ShellWidget::startConnect(const EventsInfo::ConnectInfoRequest &req)
+    {
+        syncConnectionActions(true);
+    }
+
+    void ShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce &res)
+    {
+        Error::ErrorInfo er = res.errorInfo();
+        if(!er.isError()){
+            syncConnectionActions(false);
+        }
+    }
+
+    void ShellWidget::startDisconnect(const EventsInfo::DisonnectInfoRequest &req)
+    {
+        syncConnectionActions(false);
+    }
+
+    void ShellWidget::finishDisconnect(const EventsInfo::DisConnectInfoResponce &res)
+    {
+        syncConnectionActions(true);
     }
 }

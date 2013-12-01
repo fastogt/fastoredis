@@ -38,38 +38,14 @@ namespace fastoredis
     class RedisConnectionSettings
             : public IConnectionSettingsBase
     {
+    public:
         typedef IConnectionSettingsBase base_class;
-        typedef char *sds;
         struct config {
             hostAndPort host;
-            char *hostsocket;
-            long repeat;
-            long interval;
+            std::string hostsocket;
             int dbnum;
-            int interactive;
-            int shutdown;
-            int monitor_mode;
-            int pubsub_mode;
-            int latency_mode;
-            int latency_history;
-            int cluster_mode;
-            int cluster_reissue_command;
-            int slave_mode;
-            int pipe_mode;
-            int pipe_timeout;
-            int getrdb_mode;
-            int stat_mode;
-            char *rdb_filename;
-            int bigkeys;
-            int stdinarg; /* get last arg from stdin. (-x option) */
-            char *auth;
-            int output; /* output mode, see OUTPUT_* defines */
-            sds mb_delim;
-            char prompt[128];
-            char *eval;
+            std::string auth;
         };
-
-    public:
         RedisConnectionSettings(const std::string &connectionName, const config &info = config());
 
         virtual std::string fullAdress() const;

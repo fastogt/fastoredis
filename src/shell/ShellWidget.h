@@ -6,6 +6,7 @@ class QAction;
 QT_END_NAMESPACE
 
 #include "core/IServer.h"
+#include "core/events/EventsInfo.hpp"
 
 class QsciScintilla;
 
@@ -32,8 +33,17 @@ namespace fastoredis
         void connectToServer();
         void disconnectFromServer();
 
+        void startConnect(const EventsInfo::ConnectInfoRequest &req);
+        void finishConnect(const EventsInfo::ConnectInfoResponce &res);
+        void startDisconnect(const EventsInfo::DisonnectInfoRequest &req);
+        void finishDisconnect(const EventsInfo::DisConnectInfoResponce &res);
+
     private:
+        void syncConnectionActions(bool isConnectAct);
+
         const IServerPtr _server;
+        QAction *_connectAction;
+        QAction *_disConnectAction;
         QsciScintilla *_input;
         QAction *_clear;
     };
