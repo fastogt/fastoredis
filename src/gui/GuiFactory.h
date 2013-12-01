@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QIcon>
+
 #include "global/global.h"
 #include "common/patterns/singleton_pattern.hpp"
 
@@ -15,6 +16,7 @@ namespace fastoredis
         const QIcon &openIcon() const;
         const QIcon &mainWindowIcon() const;
         const QIcon &connectIcon() const;
+        const QIcon &disConnectIcon() const;
         const QIcon &redisConnectionIcon() const;
         const QIcon &serverIcon() const;
         const QIcon &addIcon() const;

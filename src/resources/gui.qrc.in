@@ -3,7 +3,12 @@
     <file>icons/logo.png</file>
     <file>icons/add.png</file>
     <file>icons/remove.png</file>
+    <file>icons/edit.png</file>
     <file>icons/save.png</file>
     <file>icons/redis.png</file>
+    <file>icons/start.png</file>
+    <file>icons/stop.png</file>
+    <file>icons/connect.png</file>
+    <file>icons/disconnect.png</file>
     </qresource>
 </RCC>

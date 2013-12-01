@@ -57,6 +57,11 @@ namespace fastoredis
         return base_class::customEvent(event);
     }
 
+    void IDriver::interuptEvent(const EventsInfo::InteruptInfoRequest &req, EventsInfo::InteruptInfoResponce &res)
+    {
+
+    }
+
     void IDriver::init()
     {
         initImpl();

@@ -61,7 +61,7 @@ namespace fastoredis
 
     void ShellWidget::stop()
     {
-
+        _server->stopCurrentEvent();
     }
 
     void ShellWidget::connectToServer()

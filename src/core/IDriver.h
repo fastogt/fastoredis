@@ -22,6 +22,9 @@ namespace fastoredis
         const IConnectionSettingsBasePtr &settings() const;
         virtual ~IDriver();
 
+        //sync
+        void interuptEvent(const EventsInfo::InteruptInfoRequest &req, EventsInfo::InteruptInfoResponce &res);
+
     protected:
         IDriver(const IConnectionSettingsBasePtr &settings);
         virtual void customEvent(QEvent *event);
@@ -31,13 +34,15 @@ namespace fastoredis
 
     protected:
         virtual void initImpl() = 0;
-        virtual void connectImpl(const EventsInfo::ConnectInfoResponce &res) = 0;
-        virtual void disconnectImpl(const EventsInfo::DisConnectInfoResponce &res) = 0;
-        virtual void executeImpl(const EventsInfo::ExecuteInfoResponce &res) = 0;
+
+        virtual void connectImpl(EventsInfo::ConnectInfoResponce &res) = 0;
+        virtual void disconnectImpl(EventsInfo::DisConnectInfoResponce &res) = 0;
+        virtual void executeImpl(EventsInfo::ExecuteInfoResponce &res) = 0;
+
 
     private:
         QThread *_thread;
-        const IConnectionSettingsBasePtr _settings;
+        const IConnectionSettingsBasePtr _settings;        
     };
 
     typedef boost::shared_ptr<IDriver> IDriverPtr;
