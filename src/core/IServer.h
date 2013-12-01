@@ -44,6 +44,7 @@ namespace fastoredis
 
         void startedInterupt(const EventsInfo::InteruptInfoRequest &req);
         void finishedInterupt(const EventsInfo::InteruptInfoResponce &res);
+
     protected:
         void notify(QEvent *ev);
         virtual void customEvent(QEvent *event);

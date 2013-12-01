@@ -11,6 +11,7 @@ namespace fastoredis
         Q_OBJECT
     public:
         typedef IServer base_class;
+
     private:
         RedisServer(const IDriverPtr &drv);
         RedisServer(const IServerPtr &srv);
