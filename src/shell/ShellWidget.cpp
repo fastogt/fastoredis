@@ -6,67 +6,82 @@
 #include <QPlainTextEdit>
 #include <QToolBar>
 #include <QAction>
-#include <Qsci/qsciscintilla.h>
+#include <QProgressBar>
+#include <QSplitter>
 
-#include "common/macros.h"
+#include "common/qt_helper/converter_patterns.h"
 #include "gui/GuiFactory.h"
+#include "shell/RedisShell.h"
 
 namespace fastoredis
 {
     ShellWidget::ShellWidget(const IServerPtr &server, QWidget *parent)
         : base_class(parent), _server(server)
     {
-
-        QVBoxLayout *hlayout = new QVBoxLayout(this);
+        QVBoxLayout *mainlayout = new QVBoxLayout(this);
+        QHBoxLayout *hlayout = new QHBoxLayout(this);
         hlayout->setContentsMargins(0, 0, 0, 0);
 
-        QToolBar *bar = new QToolBar;
-
-        _connectAction = new QAction(GuiFactory::instance().connectIcon(), "Connect", bar);
+        QToolBar *conbar = new QToolBar;
+        conbar->setMovable(true);
+        _connectAction = new QAction(GuiFactory::instance().connectIcon(), "Connect", conbar);
         VERIFY(connect(_connectAction, SIGNAL(triggered()), this, SLOT(connectToServer())));
-        bar->addAction(_connectAction);
-        _disConnectAction = new QAction(GuiFactory::instance().disConnectIcon(), "Disconnect", bar);
+        conbar->addAction(_connectAction);
+        _disConnectAction = new QAction(GuiFactory::instance().disConnectIcon(), "Disconnect", conbar);
         VERIFY(connect(_disConnectAction, SIGNAL(triggered()), this, SLOT(disconnectFromServer())));
-        bar->addAction(_disConnectAction);
-        syncConnectionActions(true);
+        conbar->addAction(_disConnectAction);
+        syncConnectionActions();
 
         VERIFY(connect(_server.get(), SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), this, SLOT(startConnect(const EventsInfo::ConnectInfoRequest &))));
         VERIFY(connect(_server.get(), SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)), this, SLOT(finishConnect(const EventsInfo::ConnectInfoResponce &))));
         VERIFY(connect(_server.get(), SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)), this, SLOT(startDisconnect(const EventsInfo::DisonnectInfoRequest &))));
         VERIFY(connect(_server.get(), SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)), this, SLOT(finishDisconnect(const EventsInfo::DisConnectInfoResponce &))));
+        VERIFY(connect(_server.get(), SIGNAL(progressChanged(const EventsInfo::ProgressResponceInfo &)), this, SLOT(progressChange(const EventsInfo::ProgressResponceInfo &))));
 
-        QAction *executeAction = new QAction(GuiFactory::instance().executeIcon(), "Execute", bar);
+        QToolBar *exeBar = new QToolBar;
+        exeBar->setMovable(true);
+        QAction *executeAction = new QAction(GuiFactory::instance().executeIcon(), "Execute", exeBar);
         VERIFY(connect(executeAction, SIGNAL(triggered()), this, SLOT(execute())));
-        bar->addAction(executeAction);
+        exeBar->addAction(executeAction);
 
-        QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), "Stop", bar);
+        QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), "Stop", exeBar);
         VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
-        bar->addAction(stopAction);
+        exeBar->addAction(stopAction);
 
-        hlayout->addWidget(bar);
+        hlayout->addWidget(conbar);
+        hlayout->addWidget(exeBar);
 
-        _input  = new QsciScintilla;
+        QSplitter *splitter = new QSplitter;
+        splitter->setOrientation(Qt::Horizontal);
+        splitter->setHandleWidth(1);
+        splitter->setContentsMargins(0, 0, 0, 0);
+        hlayout->addWidget(splitter);
+        _workProgressBar = new QProgressBar;
+        hlayout->addWidget(_workProgressBar);
+
+        mainlayout->addLayout(hlayout);
+
+        _input = new RedisShell();
         _input->setContextMenuPolicy(Qt::CustomContextMenu);
-        VERIFY(connect(_input,SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
-        hlayout->addWidget(_input);
-        _clear = new QAction("Clear All", this);
-        VERIFY(connect(_clear, SIGNAL(triggered()),_input, SLOT(clear())));
-        setLayout(hlayout);
-    }
+        VERIFY(connect(_input, SIGNAL(showAutocompletion(const QString &)), this, SLOT(showAutocompletion(const QString &))));
 
-    void ShellWidget::showContextMenu(const QPoint &pt)
-    {
-        QMenu *menu = _input->createStandardContextMenu();
-        menu->addAction(_clear);
-        _clear->setEnabled(!text().isEmpty());
+        mainlayout->addWidget(_input);
 
-        menu->exec(_input->mapToGlobal(pt));
-        delete menu;
+        setLayout(mainlayout);
     }
 
     void ShellWidget::execute()
     {
-        _server->execute(text());
+        QString selected = _input->selectedText();
+        if(selected.isEmpty()){
+            selected = _input->text();
+        }
+        _server->execute(selected);
+    }
+
+    QString ShellWidget::text() const
+    {
+        return _input->text();
     }
 
     void ShellWidget::stop()
@@ -84,16 +99,6 @@ namespace fastoredis
         _server->disconnect();
     }
 
-    void ShellWidget::setText(const QString &text)
-    {
-        _input->setText(text);
-    }
-
-    QString ShellWidget::text() const
-    {
-        return _input->text();
-    }
-
     void ShellWidget::reload()
     {
 
@@ -102,36 +107,43 @@ namespace fastoredis
     ShellWidget *ShellWidget::duplicate(ShellWidget *src, const QString &text)
     {
         ShellWidget *result = new ShellWidget(src->_server, src->parentWidget());
-        result->setText(text);
+        result->_input->setText(text);
         return result;
     }
 
-    void ShellWidget::syncConnectionActions(bool isConnectAct)
+    void ShellWidget::syncConnectionActions()
     {
-        _connectAction->setVisible(isConnectAct);
-        _disConnectAction->setVisible(!isConnectAct);
+        _connectAction->setVisible(!_server->isConnected());
+        _disConnectAction->setVisible(_server->isConnected());
     }
 
     void ShellWidget::startConnect(const EventsInfo::ConnectInfoRequest &req)
     {
-        syncConnectionActions(true);
+        syncConnectionActions();
     }
 
     void ShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce &res)
     {
-        Error::ErrorInfo er = res.errorInfo();
-        if(!er.isError()){
-            syncConnectionActions(false);
-        }
+        syncConnectionActions();
     }
 
     void ShellWidget::startDisconnect(const EventsInfo::DisonnectInfoRequest &req)
     {
-        syncConnectionActions(false);
+        syncConnectionActions();
     }
 
     void ShellWidget::finishDisconnect(const EventsInfo::DisConnectInfoResponce &res)
     {
-        syncConnectionActions(true);
+        syncConnectionActions();
+    }
+
+    void ShellWidget::progressChange(const EventsInfo::ProgressResponceInfo &res)
+    {
+        _workProgressBar->setValue(res._progress);
+    }
+
+    void ShellWidget::showAutocompletion(const QString &prefix)
+    {
+        //_input->refreshCompleteList(_server->getAutoComplete(prefix));
     }
 }

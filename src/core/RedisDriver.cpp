@@ -84,6 +84,12 @@ namespace fastoredis
             }
         }
 
+        void disconnect()
+        {
+            redisFree(_context);
+            _context = NULL;
+        }
+
         ~pimpl()
         {
             if(_context){
@@ -98,6 +104,11 @@ namespace fastoredis
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
         :base_class(settings), _impl(new pimpl)
     {
+    }
+
+    bool RedisDriver::isConnected() const
+    {
+        return _impl->_context;
     }
 
     void RedisDriver::customEvent(QEvent *event)
@@ -135,6 +146,6 @@ namespace fastoredis
 
     void RedisDriver::disconnectImpl(EventsInfo::DisConnectInfoResponce &res)
     {
-
+        _impl->disconnect();
     }
 }

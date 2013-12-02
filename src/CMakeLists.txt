@@ -12,6 +12,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/ConnectionDialog.h
     gui/MainWidget.h
     gui/MainTabBar.h
+    gui/FastoEditor.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
@@ -27,6 +28,7 @@ SET(SOURCES_GUI
     gui/ConnectionDialog.cpp
     gui/MainWidget.cpp
     gui/MainTabBar.cpp
+    gui/FastoEditor.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
@@ -60,11 +62,17 @@ SET(SOURCES_CORE
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/ShellWidget.h
+    shell/RedisShell.h
+    shell/RedisApi.h
+    shell/RedisLexer.h
 )
 SET(HEADERS_SHELL
 )
 SET(SOURCES_SHELL
     shell/ShellWidget.cpp
+    shell/RedisShell.cpp
+    shell/RedisLexer.cpp
+    shell/RedisApi.cpp
 )
 
 IF(WIN32)

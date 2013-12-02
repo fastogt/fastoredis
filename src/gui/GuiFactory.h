@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QIcon>
+#include <QFont>
 
 #include "global/global.h"
 #include "common/patterns/singleton_pattern.hpp"
@@ -25,5 +26,6 @@ namespace fastoredis
         const QIcon &messageBoxInformationIcon() const;
         const QIcon &executeIcon() const;
         const QIcon &stopIcon() const;
+        QFont font() const;
     };
 }

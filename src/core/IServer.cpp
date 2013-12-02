@@ -12,18 +12,29 @@ namespace fastoredis
     IServer::IServer(const IDriverPtr &drv)
         : _drv(drv)
     {
-
     }
 
     IServer::IServer(const IServerPtr &srv)
         : _drv(srv->driver())
     {
-        VERIFY(QObject::connect(srv.get(),SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)),this,SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)),Qt::DirectConnection));
-        VERIFY(QObject::connect(srv.get(),SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)),this,SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)),Qt::DirectConnection));
-        VERIFY(QObject::connect(srv.get(),SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)),this,SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)),Qt::DirectConnection));
-        VERIFY(QObject::connect(srv.get(),SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)),this,SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)),Qt::DirectConnection));
-        VERIFY(QObject::connect(srv.get(),SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)),this,SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)),Qt::DirectConnection));
-        VERIFY(QObject::connect(srv.get(),SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)),this,SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)),Qt::DirectConnection));
+        syncServers(srv.get(), this);
+    }
+
+    void IServer::syncServers(IServer *src, IServer *dsc)
+    {
+        VERIFY(QObject::connect(src,SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)),dsc,SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(src,SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)),dsc,SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(src,SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)),dsc,SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(src,SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)),dsc,SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(src,SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)),dsc,SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(src,SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)),dsc,SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)),Qt::DirectConnection));
+
+        VERIFY(QObject::connect(dsc,SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)),src,SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(dsc,SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)),src,SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(dsc,SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)),src,SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(dsc,SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)),src,SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(dsc,SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)),src,SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)),Qt::DirectConnection));
+        VERIFY(QObject::connect(dsc,SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)),src,SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)),Qt::DirectConnection));
     }
 
     IDriverPtr IServer::driver() const
@@ -74,6 +85,11 @@ namespace fastoredis
         emit finishedInterupt(res);
     }
 
+    bool IServer::isConnected() const
+    {
+        _drv->isConnected();
+    }
+
     IServer::~IServer()
     {
 
@@ -81,6 +97,7 @@ namespace fastoredis
 
     void IServer::notify(QEvent *ev)
     {
+        emit progressChanged(0);
         qApp->postEvent(_drv.get(),ev);
     }
 
@@ -92,18 +109,27 @@ namespace fastoredis
             ConnectResponceEvent *ev = static_cast<ConnectResponceEvent*>(event);
             ConnectResponceEvent::value_type v = ev->value();
             emit finishedConnect(v);
+            emit progressChanged(100);
         }
         else if(type == static_cast<QEvent::Type>(DisconnectResponceEvent::EventType))
         {
             DisconnectResponceEvent *ev = static_cast<DisconnectResponceEvent*>(event);
             DisconnectResponceEvent::value_type v = ev->value();
             emit finishedDisconnect(v);
+            emit progressChanged(100);
         }
         else if(type == static_cast<QEvent::Type>(ExecuteRequestEvent::EventType))
         {
             ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);
             ExecuteRequestEvent::value_type v = ev->value();
             emit finishedExecute(v);
+            emit progressChanged(100);
+        }
+        else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
+        {
+            ProgressResponceEvent *ev = static_cast<ProgressResponceEvent*>(event);
+            ProgressResponceEvent::value_type v = ev->value();
+            emit progressChanged(v);
         }
         return base_class::customEvent(event);
     }

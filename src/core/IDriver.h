@@ -10,7 +10,20 @@ QT_END_NAMESPACE
 #include "core/events/EventsInfo.hpp"
 
 namespace fastoredis
-{    
+{
+    namespace detail
+    {
+        class Progresser
+        {
+        public:
+            Progresser(QObject *sen, QObject *rec);
+            ~Progresser();
+        private:
+            QObject *_sender;
+            QObject *_reciver;
+        };
+    }
+
     class IDriver
             : public QObject
     {
@@ -24,21 +37,20 @@ namespace fastoredis
 
         //sync
         void interuptEvent(const EventsInfo::InteruptInfoRequest &req, EventsInfo::InteruptInfoResponce &res);
-
-    protected:
-        IDriver(const IConnectionSettingsBasePtr &settings);
-        virtual void customEvent(QEvent *event);
+        virtual bool isConnected() const = 0;
 
     private Q_SLOTS:
         void init();
 
     protected:
+        IDriver(const IConnectionSettingsBasePtr &settings);
+        virtual void customEvent(QEvent *event);
+        void reply(QObject *reciver, QEvent *ev);
         virtual void initImpl() = 0;
 
         virtual void connectImpl(EventsInfo::ConnectInfoResponce &res) = 0;
         virtual void disconnectImpl(EventsInfo::DisConnectInfoResponce &res) = 0;
         virtual void executeImpl(EventsInfo::ExecuteInfoResponce &res) = 0;
-
 
     private:
         QThread *_thread;

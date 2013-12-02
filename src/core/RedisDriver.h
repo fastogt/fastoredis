@@ -14,6 +14,8 @@ namespace fastoredis
         RedisDriver(const IConnectionSettingsBasePtr &settings);
         virtual ~RedisDriver();
 
+        virtual bool isConnected() const;
+
     protected:
         void customEvent(QEvent *event);
         virtual void initImpl();

@@ -105,5 +105,13 @@ namespace fastoredis
             }
             EventInfoBase _interuptedEvent;
         };
+
+        struct ProgressResponceInfo
+        {
+            ProgressResponceInfo(int pr)
+                : _progress(pr){}
+
+            const int _progress;
+        };
     }
 }

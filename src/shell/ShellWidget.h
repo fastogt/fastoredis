@@ -3,15 +3,15 @@
 #include "global/global.h"
 QT_BEGIN_NAMESPACE
 class QAction;
+class QProgressBar;
 QT_END_NAMESPACE
 
 #include "core/IServer.h"
 #include "core/events/EventsInfo.hpp"
 
-class QsciScintilla;
-
 namespace fastoredis
 {
+    class RedisShell;
     class ShellWidget
             : public QWidget
     {
@@ -20,14 +20,12 @@ namespace fastoredis
         typedef QWidget base_class;
         ShellWidget(const IServerPtr &server, QWidget* parent = 0);
 
-        QString text() const;
-        void setText(const QString &text);
-
         void reload();
         static ShellWidget *duplicate(ShellWidget *src, const QString &text);
 
+        QString text() const;
+
     private Q_SLOTS:
-        void showContextMenu(const QPoint &pt);
         void execute();
         void stop();
         void connectToServer();
@@ -38,13 +36,16 @@ namespace fastoredis
         void startDisconnect(const EventsInfo::DisonnectInfoRequest &req);
         void finishDisconnect(const EventsInfo::DisConnectInfoResponce &res);
 
+        void progressChange(const EventsInfo::ProgressResponceInfo &res);
+        void showAutocompletion(const QString &prefix);
+
     private:
-        void syncConnectionActions(bool isConnectAct);
+        void syncConnectionActions();
 
         const IServerPtr _server;
         QAction *_connectAction;
         QAction *_disConnectAction;
-        QsciScintilla *_input;
-        QAction *_clear;
+        RedisShell *_input;
+        QProgressBar *_workProgressBar;
     };
 }
