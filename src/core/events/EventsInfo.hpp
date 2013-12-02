@@ -35,6 +35,7 @@ namespace fastoredis
             {
                 base_class::errorInfo_ = er;
             }
+            std::string _prompt;
         };
 
         struct DisonnectInfoRequest
@@ -103,6 +104,14 @@ namespace fastoredis
                 base_class::errorInfo_ = er;
             }
             EventInfoBase _interuptedEvent;
+        };
+
+        struct ProgressResponceInfo
+        {
+            ProgressResponceInfo(int pr)
+                : _progress(pr){}
+
+            const int _progress;
         };
     }
 }

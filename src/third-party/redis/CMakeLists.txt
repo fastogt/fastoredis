@@ -31,7 +31,7 @@ SET(SOURCES_REDIS
     redis/deps/hiredis/hiredis.c
     redis/deps/linenoise/linenoise.c
     redis/deps/hiredis/net.c
-    #redis/src/redis-cli.c
+    redis/src/redis-cli.c
     redis/src/release.c
     redis/src/sds.c
     redis/src/zmalloc.c

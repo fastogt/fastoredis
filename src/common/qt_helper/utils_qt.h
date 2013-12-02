@@ -34,7 +34,6 @@ namespace common
                 typedef value_t value_type;
                 typedef QEvent base_class;
                 typedef QObject *const senders_type;
-                typedef std::vector<QObject*> reciver_type;
                 enum { EventType = event_t };
 
                 Event(senders_type sender, const value_t &initValue)
@@ -72,6 +71,11 @@ namespace common
                 error_type errorInfo() const
                 {
                     return errorInfo_;
+                }
+
+                void setErrorInfo(const error_type &er)
+                {
+                    errorInfo_ = er;
                 }
 
             protected:
