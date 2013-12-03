@@ -1,13 +1,9 @@
 #include "shell/RedisApi.h"
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 #include <help.h>
-#ifdef __cplusplus
-}
-#endif
 
 #include "common/qt_helper/converter_patterns.h"
+
 namespace
 {
     QStringList getList()

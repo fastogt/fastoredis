@@ -118,10 +118,10 @@ namespace fastoredis
             emit finishedDisconnect(v);
             emit progressChanged(100);
         }
-        else if(type == static_cast<QEvent::Type>(ExecuteRequestEvent::EventType))
+        else if(type == static_cast<QEvent::Type>(ExecuteResponceEvent::EventType))
         {
-            ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);
-            ExecuteRequestEvent::value_type v = ev->value();
+            ExecuteResponceEvent *ev = static_cast<ExecuteResponceEvent*>(event);
+            ExecuteResponceEvent::value_type v = ev->value();
             emit finishedExecute(v);
             emit progressChanged(100);
         }

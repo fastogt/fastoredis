@@ -10,6 +10,13 @@ extern "C" {
 #endif
 
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */
+namespace
+{
+    const char *toCString(const std::string &val)
+    {
+        return val.empty() ? NULL : val.c_str();
+    }
+}
 
 namespace fastoredis
 {
@@ -19,11 +26,12 @@ namespace fastoredis
 
         void connect(const hostAndPort &h, const std::string &hostsock, const std::string &a, int dbnum, EventsInfo::ConnectInfoResponce &res)
         {
+            using namespace error;
             if(!_context){
-                const char *hostip = h.first.c_str();
+                const char *hostip = toCString(h.first);
                 int hostport = h.second;
-                const char *hostsocket = hostsock.empty() ? NULL : hostsock.c_str();
-                const char *auth = a.empty() ? NULL : a.c_str();
+                const char *hostsocket = toCString(hostsock);
+                const char *auth = toCString(a);
                 if(hostsocket){
                     _context = redisConnectUnix(hostsocket);
                 }
@@ -31,7 +39,7 @@ namespace fastoredis
                     _context = redisConnect(hostip,hostport);
                 }
                 if(_context->err){
-                    Error::ErrorInfo e(_context->errstr, Error::ErrorInfo::_ERROR);
+                    ErrorInfo e(_context->errstr, ErrorInfo::ERROR);
                     res.setErrorInfo(e);
                     redisFree(_context);
                     _context = NULL;
@@ -48,7 +56,7 @@ namespace fastoredis
                         freeReplyObject(reply);
                     }
                     else{
-                        Error::ErrorInfo e("AUTH", Error::ErrorInfo::_ERROR);
+                        ErrorInfo e("AUTH", ErrorInfo::ERROR);
                         res.setErrorInfo(e);
                         return;
                     }
@@ -60,7 +68,7 @@ namespace fastoredis
                         freeReplyObject(reply);
                     }
                     else{
-                        Error::ErrorInfo e("SELECT", Error::ErrorInfo::_ERROR);
+                        ErrorInfo e("SELECT", ErrorInfo::ERROR);
                         res.setErrorInfo(e);
                         return;
                     }
@@ -81,6 +89,27 @@ namespace fastoredis
                 snprintf(prompt+len,sizeof(prompt)-len,"> ");
 
                 res._prompt = prompt;
+            }
+        }
+
+        void query(EventsInfo::ExecuteInfoResponce &res)
+        {
+            using namespace error;
+            const char *command = toCString(res._text);
+            if(command){
+                redisReply *reply = static_cast<redisReply *>(redisCommand(_context,"%s",command));
+                if (reply != NULL) {
+                    res._out = new FastoObject(static_cast<fastoType>(reply->type), reply->str);
+                    if(reply->type == REDIS_REPLY_ERROR){
+                        ErrorInfo e(reply->str, ErrorInfo::ERROR);
+                        res.setErrorInfo(e);
+                    }
+                    freeReplyObject(reply);
+                }
+            }
+            else{
+                ErrorInfo e("Empty command", ErrorInfo::ERROR);
+                res.setErrorInfo(e);
             }
         }
 
@@ -141,7 +170,7 @@ namespace fastoredis
 
     void RedisDriver::executeImpl(EventsInfo::ExecuteInfoResponce &res)
     {
-
+        _impl->query(res);
     }
 
     void RedisDriver::disconnectImpl(EventsInfo::DisConnectInfoResponce &res)
