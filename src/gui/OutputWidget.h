@@ -9,6 +9,7 @@ QT_END_NAMESPACE
 
 namespace fastoredis
 {
+    class FastoEditor;
     class OutputWidget
             : public QWidget
     {
@@ -21,5 +22,8 @@ namespace fastoredis
     public Q_SLOTS:
         void startExecute(const EventsInfo::ExecuteInfoRequest &);
         void finishExecute(const EventsInfo::ExecuteInfoResponce &);
+
+    private:
+        FastoEditor *_editor;
     };
 }

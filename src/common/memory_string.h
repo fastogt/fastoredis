@@ -1,5 +1,7 @@
 #pragma once
+
 #include "common/macros.h"
+
 namespace common
 {
     class memory_string

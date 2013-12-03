@@ -15,7 +15,7 @@ namespace fastoredis
         virtual ~RedisDriver();
 
         virtual bool isConnected() const;
-
+        static QStringList allCommands();
     protected:
         void customEvent(QEvent *event);
         virtual void initImpl();
