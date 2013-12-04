@@ -87,7 +87,7 @@ namespace fastoredis
 
     bool IServer::isConnected() const
     {
-        _drv->isConnected();
+        return _drv->isConnected();
     }
 
     IServer::~IServer()

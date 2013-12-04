@@ -1,5 +1,5 @@
 #pragma once
-#ifdef __GXX_RTTI
+
 #include "mpl_string/string_template.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -104,4 +104,3 @@ namespace storages
 	}
 }
 }
-#endif

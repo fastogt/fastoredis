@@ -1,6 +1,6 @@
 #pragma once
 #include <typeinfo>
-#include <tr1/type_traits>
+#include <type_traits>
 #include <vector>
 #include "common/macros.h"
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
