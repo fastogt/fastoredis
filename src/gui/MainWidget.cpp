@@ -3,10 +3,10 @@
 #include <QTabBar>
 
 #include "core/ServersManager.h"
-#include "shell/ShellWidget.h"
 #include "gui/MainTabBar.h"
 #include "gui/GuiFactory.h"
 #include "common/macros.h"
+#include "gui/QueryWidget.h"
 
 namespace fastoredis
 {
@@ -30,24 +30,24 @@ namespace fastoredis
     {
         IServerPtr server = ServersManager::instance().createServer(setting);
         if(server){
-            ShellWidget *queryWidget = new ShellWidget(server,this);
+            QueryWidget *queryWidget = new QueryWidget(server);
             addWidgetToTab(queryWidget, server->name());
-        }        
+        }
     }
 
-    ShellWidget *MainWidget::currentWidget() const
+    QueryWidget *MainWidget::currentWidget() const
     {
-        return qobject_cast<ShellWidget *>(base_class::currentWidget());
+        return qobject_cast<QueryWidget *>(base_class::currentWidget());
     }
 
-    ShellWidget *MainWidget::widget(int index) const
+    QueryWidget *MainWidget::widget(int index) const
     {
-        return qobject_cast<ShellWidget *>(base_class::widget(index));
+        return qobject_cast<QueryWidget *>(base_class::widget(index));
     }
 
     void MainWidget::closeTab(int index)
     {
-        ShellWidget * shw = widget(index);
+        QueryWidget * shw = widget(index);
         if(shw){
             removeTab(index);
             delete shw;
@@ -57,7 +57,7 @@ namespace fastoredis
     void MainWidget::createNewTab()
     {
         int curIndex = currentIndex();
-        ShellWidget * shw = widget(curIndex);
+        QueryWidget * shw = widget(curIndex);
         if(shw){
             openNewTab(shw, tabText(curIndex), QString());
         }
@@ -66,16 +66,16 @@ namespace fastoredis
     void MainWidget::duplicateCurrentTab()
     {
         int curIndex = currentIndex();
-        ShellWidget * shw = widget(curIndex);
+        QueryWidget * shw = widget(curIndex);
         if(shw){
-            openNewTab(shw, tabText(curIndex), shw->text());
+           openNewTab(shw, tabText(curIndex), shw->inputText());
         }
     }
 
     void MainWidget::reloadeCurrentTab()
     {
         int curIndex = currentIndex();
-        ShellWidget * shw = widget(curIndex);
+        QueryWidget * shw = widget(curIndex);
         if(shw){
             shw->reload();
         }
@@ -102,9 +102,9 @@ namespace fastoredis
         setCurrentWidget(wid);
     }
 
-    void MainWidget::openNewTab(ShellWidget *src, const QString &title, const QString &text)
+    void MainWidget::openNewTab(QueryWidget *src, const QString &title, const QString &text)
     {
-        ShellWidget *newWid = ShellWidget::duplicate(src, text);
+        QueryWidget *newWid = QueryWidget::duplicate(src, text);
         DCHECK(newWid);
         addWidgetToTab(newWid, title);
     }

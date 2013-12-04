@@ -21,7 +21,7 @@ namespace fastoredis
 
     connectionTypes IConnectionSettingsBase::connectionType() const
     {
-        return UNKNOWN;
+        return detail::badConnectionType();
     }
 
     IConnectionSettingsBase *IConnectionSettingsBase::fromStdString(const std::string &val)

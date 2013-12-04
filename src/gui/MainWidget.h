@@ -6,7 +6,7 @@
 
 namespace fastoredis
 {
-    class ShellWidget;
+    class QueryWidget;
 
     class MainWidget
             : public QTabWidget
@@ -16,9 +16,9 @@ namespace fastoredis
         typedef QTabWidget base_class;
         explicit MainWidget(QWidget *parent=0);
         void addWidgetBySetting(const IConnectionSettingsBasePtr &setting);
-        ShellWidget *currentWidget() const;
-        ShellWidget *widget(int index) const;
-        void closeTab(int index);
+        QueryWidget *currentWidget() const;
+        QueryWidget *widget(int index) const;
+        void closeTab(int index);        
 
     private Q_SLOTS:
         void createNewTab();
@@ -29,6 +29,6 @@ namespace fastoredis
 
     private:
         void addWidgetToTab(QWidget *wid, const QString &title);
-        void openNewTab(ShellWidget *src, const QString &title, const QString &text);
+        void openNewTab(QueryWidget *src, const QString &title, const QString &text);
     };
 }

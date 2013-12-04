@@ -2,6 +2,10 @@ SET(HEADERS_GLOBAL
     global/global.h
 )
 
+SET(SOURCES_GLOBAL
+    global/global.cpp
+)
+
 SET(HEADERS_GUI_TO_MOC
     gui/MainWindow.h
     gui/AppStyle.h
@@ -13,6 +17,8 @@ SET(HEADERS_GUI_TO_MOC
     gui/MainWidget.h
     gui/MainTabBar.h
     gui/FastoEditor.h
+    gui/QueryWidget.h
+    gui/OutputWidget.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
@@ -29,6 +35,8 @@ SET(SOURCES_GUI
     gui/MainWidget.cpp
     gui/MainTabBar.cpp
     gui/FastoEditor.cpp
+    gui/QueryWidget.cpp
+    gui/OutputWidget.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
@@ -42,7 +50,6 @@ SET(HEADERS_CORE
     core/ConnectionTypes.h
     core/SettingsManager.h
     core/ConnectionSettings.h
-    core/events/ErrorInfo.hpp
     core/events/Events.hpp
     core/events/EventsInfo.hpp
     core/HostAndPort.h
@@ -115,7 +122,7 @@ IF(SSH_ENABLED)
 ENDIF(SSH_ENABLED)
 
 SET(HEADERS ${HEADERS} ${HEADERS_GLOBAL} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
-SET(SOURCES ${SOURCES} main.cpp ${SOURCES_GUI} ${SOURCES_CORE} ${SOURCES_SHELL})
+SET(SOURCES ${SOURCES} main.cpp ${SOURCES_GLOBAL} ${SOURCES_GUI} ${SOURCES_CORE} ${SOURCES_SHELL})
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC} ${HEADERS_SHELL_TO_MOC})
 
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})

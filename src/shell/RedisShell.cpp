@@ -33,42 +33,7 @@ namespace fastoredis
         if((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Return) ){
             emit executed();
         }
-        if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Tab) {
-
-        }
-        if((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Space)){
-
-        }
-
         return base_class::keyPressEvent(keyEvent);
     }
-
-    /*void RedisShell::refreshCompleteList(const QStringList &ls)
-    {
-        QStringListModel * model = static_cast<QStringListModel *>(_completer->model());
-        model->setStringList(ls);
-
-        int currentLine = 0;
-        int currentIndex = 0;
-        getCursorPosition(&currentLine, &currentIndex);
-        int height = (currentLine+1) * textHeight(-1) + 8;
-
-        QRect rec = rect();
-        QPoint tl = rec.topLeft();
-        QPoint tr = rec.topRight();
-        QRect r(tl, tr);
-        r.setHeight(height);
-        _completer->complete(r);
-        _completer->setCurrentRow(0);
-    }
-
-    void RedisShell::onCompletionActivate(const QString &text)
-    {
-        int currentLine = 0;
-        int currentIndex = 0;
-        getCursorPosition(&currentLine, &currentIndex);
-        setSelection(currentLine, 0, currentLine, currentIndex);
-        replaceSelectedText(text);
-    }*/
 }
 

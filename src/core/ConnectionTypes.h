@@ -1,13 +1,12 @@
 #pragma once
 
-#include <vector>
-#include <string>
+#include "global/global.h"
 
 namespace fastoredis
 {
     enum connectionTypes
     {
-        UNKNOWN = 0,
+        DBUNKNOWN = 0,
         REDIS
     };
 
@@ -15,7 +14,7 @@ namespace fastoredis
     {
         static inline connectionTypes badConnectionType()
         {
-            return UNKNOWN;
+            return DBUNKNOWN;
         }
         std::vector<std::string> supportedConnectionTypes();
         std::string toStdString(connectionTypes t);

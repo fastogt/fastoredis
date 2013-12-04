@@ -17,7 +17,6 @@ namespace fastoredis
 
     Q_SIGNALS:
         void executed();
-        void showAutocompletion(const QString &prefix);
 
     private Q_SLOTS:
         void showContextMenu(const QPoint &pt);

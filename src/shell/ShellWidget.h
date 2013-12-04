@@ -20,10 +20,15 @@ namespace fastoredis
         typedef QWidget base_class;
         ShellWidget(const IServerPtr &server, QWidget* parent = 0);
 
-        void reload();
-        static ShellWidget *duplicate(ShellWidget *src, const QString &text);
-
+        const IServerPtr &server() const;
         QString text() const;
+
+    Q_SIGNALS:
+        void startedExecute(const EventsInfo::ExecuteInfoRequest &);
+        void finishedExecute(const EventsInfo::ExecuteInfoResponce &);
+
+    public Q_SLOTS:
+        void setText(const QString& text);
 
     private Q_SLOTS:
         void execute();
@@ -34,15 +39,15 @@ namespace fastoredis
         void startConnect(const EventsInfo::ConnectInfoRequest &req);
         void finishConnect(const EventsInfo::ConnectInfoResponce &res);
         void startDisconnect(const EventsInfo::DisonnectInfoRequest &req);
-        void finishDisconnect(const EventsInfo::DisConnectInfoResponce &res);
+        void finishDisconnect(const EventsInfo::DisConnectInfoResponce &res);        
 
         void progressChange(const EventsInfo::ProgressResponceInfo &res);
-        void showAutocompletion(const QString &prefix);
 
     private:
         void syncConnectionActions();
 
         const IServerPtr _server;
+        QAction *_executeAction;
         QAction *_connectAction;
         QAction *_disConnectAction;
         RedisShell *_input;
