@@ -10,6 +10,7 @@ namespace fastoredis
 {
     enum fastoType
     {
+        ROOT = -1,
         UNKNOWN = 0,
         STRING = 1,
         ARRAY = 2,
@@ -74,14 +75,20 @@ namespace fastoredis
         };
     }
 
+    class FastoObject;
+
+    typedef boost::intrusive_ptr<FastoObject> FastoObjectPtr;
+
     class FastoObject
             : public common::boost_extension::intrusive_ptr_base<FastoObject>
     {
     public:
         typedef unsigned int uint32_t;
         typedef char value_type;
+        typedef std::vector<FastoObjectPtr> child_container_type;
 
-        explicit FastoObject(const fastoType &type, const value_type *memory);
+        FastoObject(const FastoObjectPtr &parent, const fastoType &type, const value_type *memory);
+        FastoObject(const FastoObjectPtr &parent, const fastoType &type, const value_type *memory, uint32_t size);
 
         ~FastoObject();
 
@@ -91,14 +98,21 @@ namespace fastoredis
         const value_type *begin()const;
         const value_type *end() const;
 
+        static FastoObjectPtr createRoot();
+        void addChildren(const FastoObjectPtr &child);
+
+        friend std::string toStdString(const FastoObjectPtr &obj);
     private:
+        FastoObject(); //only for root
         FastoObject(const FastoObject& other);
-        FastoObject& operator=(const FastoObject &other);
+        FastoObject &operator=(const FastoObject &other);
+
+        const FastoObjectPtr _parent;
+        child_container_type _childrens;
 
         const fastoType _type;
         uint32_t size_;
         value_type *memory_;
     };
 
-    typedef boost::intrusive_ptr<FastoObject> FastoObjectPtr;
 }

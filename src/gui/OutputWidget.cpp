@@ -26,7 +26,7 @@ namespace fastoredis
     {
         _editor->clear();
         FastoObjectPtr ptr = res._out;
-        std::string str = ptr->c_str();
+        std::string str = toStdString(ptr);
         _editor->setText(common::utils_qt::toQString(str));
     }
 }

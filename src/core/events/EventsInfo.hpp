@@ -77,7 +77,7 @@ namespace fastoredis
         {
             typedef ExecuteInfoRequest base_class;            
             ExecuteInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
-                : base_class(request)
+                : base_class(request), _out(FastoObject::createRoot())
             {
                 base_class::errorInfo_ = er;
             }

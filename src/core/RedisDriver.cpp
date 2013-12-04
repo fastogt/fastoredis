@@ -171,9 +171,7 @@ namespace fastoredis
             using namespace error;
             const char *command = toCString(res._text);
             ErrorInfo er;
-            std::string out;
-            repl(command, out, er);
-            res._out = new FastoObject(STRING,out.c_str());
+            repl(command, res._out, er);
         }
 
         void disconnect()
@@ -308,149 +306,53 @@ namespace fastoredis
             er = error::ErrorInfo(buff, error::ErrorInfo::E_ERROR);
         }
 
-        sds cliFormatReplyTTY(redisReply *r, char *prefix) {
-            sds out = sdsempty();
-            switch (r->type) {
-            case REDIS_REPLY_ERROR:
-                out = sdscatprintf(out,"(error) %s\n", r->str);
-            break;
-            case REDIS_REPLY_STATUS:
-                out = sdscat(out,r->str);
-                out = sdscat(out,"\n");
-            break;
-            case REDIS_REPLY_INTEGER:
-                out = sdscatprintf(out,"(integer) %lld\n",r->integer);
-            break;
-            case REDIS_REPLY_STRING:
-                /* If you are producing output for the standard output we want
-                * a more interesting output with quoted characters and so forth */
-                out = sdscatrepr(out,r->str,r->len);
-                out = sdscat(out,"\n");
-            break;
-            case REDIS_REPLY_NIL:
-                out = sdscat(out,"(nil)\n");
-            break;
-            case REDIS_REPLY_ARRAY:
-                if (r->elements == 0) {
-                    out = sdscat(out,"(empty list or set)\n");
-                } else {
-                    unsigned int i, idxlen = 0;
-                    char _prefixlen[16];
-                    char _prefixfmt[16];
-                    sds _prefix;
-                    sds tmp;
-
-                    /* Calculate chars needed to represent the largest index */
-                    i = r->elements;
-                    do {
-                        idxlen++;
-                        i /= 10;
-                    } while(i);
-
-                    /* Prefix for nested multi bulks should grow with idxlen+2 spaces */
-                    memset(_prefixlen,' ',idxlen+2);
-                    _prefixlen[idxlen+2] = '\0';
-                    _prefix = sdscat(sdsnew(prefix),_prefixlen);
-
-                    /* Setup prefix format for every entry */
-                    snprintf(_prefixfmt,sizeof(_prefixfmt),"%%s%%%dd) ",idxlen);
-
-                    for (i = 0; i < r->elements; i++) {
-                        /* Don't use the prefix for the first element, as the parent
-                         * caller already prepended the index number. */
-                        out = sdscatprintf(out,_prefixfmt,i == 0 ? "" : prefix,i+1);
-
-                        /* Format the multi bulk entry */
-                        tmp = cliFormatReplyTTY(r->element[i],_prefix);
-                        out = sdscatlen(out,tmp,sdslen(tmp));
-                        sdsfree(tmp);
-                    }
-                    sdsfree(_prefix);
-                }
-            break;
-            default:
-                sprintf(out ,"Unknown reply type: %d\n", r->type);
-            }
-            return out;
-        }
-        sds cliFormatReplyRaw(redisReply *r) {
-            sds out = sdsempty(), tmp;
-            size_t i;
+        void cliFormatReplyRaw(FastoObjectPtr &out, redisReply *r) {
 
             switch (r->type) {
             case REDIS_REPLY_NIL:
-                /* Nothing... */
                 break;
             case REDIS_REPLY_ERROR:
-                out = sdscatlen(out,r->str,r->len);
-                out = sdscatlen(out,"\n",1);
+                out->addChildren(new FastoObject(out, ERROR, r->str, r->len));
                 break;
             case REDIS_REPLY_STATUS:
+                out->addChildren(new FastoObject(out, STATUS, r->str, r->len));
+                break;
             case REDIS_REPLY_STRING:
-                out = sdscatlen(out,r->str,r->len);
+                out->addChildren(new FastoObject(out, STRING, r->str, r->len));
                 break;
             case REDIS_REPLY_INTEGER:
-                out = sdscatprintf(out,"%lld",r->integer);
+            {
+                char tmp[128] = {0};
+                sprintf(tmp,"%lld",r->integer);
+                out->addChildren(new FastoObject(out, INTEGER, tmp));
                 break;
+            }
             case REDIS_REPLY_ARRAY:
-                for (i = 0; i < r->elements; i++) {
-                    if (i > 0) out = sdscat(out,config.mb_delim);
-                    tmp = cliFormatReplyRaw(r->element[i]);
-                    out = sdscatlen(out,tmp,sdslen(tmp));
-                    sdsfree(tmp);
+                for (size_t i = 0; i < r->elements; i++) {
+                    cliFormatReplyRaw(out, r->element[i]);
                 }
                 break;
             default:
-                sprintf(out ,"Unknown reply type: %d\n", r->type);
-            }
-            return out;
-        }
-        sds cliFormatReplyCSV(redisReply *r) {
-            unsigned int i;
-
-            sds out = sdsempty();
-            switch (r->type) {
-            case REDIS_REPLY_ERROR:
-                out = sdscat(out,"ERROR,");
-                out = sdscatrepr(out,r->str,strlen(r->str));
-            break;
-            case REDIS_REPLY_STATUS:
-                out = sdscatrepr(out,r->str,r->len);
-            break;
-            case REDIS_REPLY_INTEGER:
-                out = sdscatprintf(out,"%lld",r->integer);
-            break;
-            case REDIS_REPLY_STRING:
-                out = sdscatrepr(out,r->str,r->len);
-            break;
-            case REDIS_REPLY_NIL:
-                out = sdscat(out,"NIL\n");
-            break;
-            case REDIS_REPLY_ARRAY:
-                for (i = 0; i < r->elements; i++) {
-                    sds tmp = cliFormatReplyCSV(r->element[i]);
-                    out = sdscatlen(out,tmp,sdslen(tmp));
-                    if (i != r->elements-1) out = sdscat(out,",");
-                    sdsfree(tmp);
+                {
+                    char tmp2[128] = {0};
+                    sprintf(tmp2 ,"Unknown reply type: %d\n", r->type);
+                    out->addChildren(new FastoObject(out, ERROR, tmp2));
                 }
-            break;
-            default:
-                sprintf(out ,"Unknown reply type: %d\n", r->type);
             }
-            return out;
         }
 
-        void cliOutputCommandHelp(std::string &out, struct commandHelp *help, int group) {
+        void cliOutputCommandHelp(FastoObjectPtr &out, struct commandHelp *help, int group) {
             char buff[1024] = {0};
             sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s\r\n", help->name, help->params, help->summary, help->since);
-            out += buff;
+            out->addChildren(new FastoObject(out, STRING, buff));
             if (group) {
                 char buff2[1024] = {0};
                 sprintf(buff2,"  group: %s\r\n", commandGroups[help->group]);
-                out +=buff2;
+                out->addChildren(new FastoObject(out, STRING, buff2));
             }
         }
-        void cliOutputGenericHelp(std::string &out) {
+
+        void cliOutputGenericHelp(FastoObjectPtr &out) {
             sds version = cliVersion();
             char buff[512] = {0};
             sprintf(buff,
@@ -461,10 +363,11 @@ namespace fastoredis
                 "      \"quit\" to exit\r\n",
                 version
             );
-            out += buff;
+            out->addChildren(new FastoObject(out, STRING, buff));
             sdsfree(version);
         }
-        void cliOutputHelp(std::string &out, int argc, char **argv) {
+
+        void cliOutputHelp(FastoObjectPtr &out, int argc, char **argv) {
             int i, j, len;
             int group = -1;
             helpEntry *entry;
@@ -505,9 +408,9 @@ namespace fastoredis
                     }
                 }
             }
-            out += "\r\n";
         }
-        int cliReadReply(std::string &out, error::ErrorInfo& er, int output_raw_strings) {
+
+        int cliReadReply(FastoObjectPtr &out, error::ErrorInfo& er, int output_raw_strings) {
             void *_reply;
             redisReply *reply;
 
@@ -545,31 +448,20 @@ namespace fastoredis
                 if (config.interactive){
                     char redir[512] = {0};
                     sprintf(redir, "-> Redirected to slot [%d] located at %s:%d\n", slot, config.hostip, config.hostport);
-                    out += redir;
+                    out->addChildren(new FastoObject(out, STRING, redir));
                 }
                 config.cluster_reissue_command = 1;
                 cliRefreshPrompt();
             }
             else{
-                if (output_raw_strings) {
-                    out += cliFormatReplyRaw(reply);
-                } else {
-                    if (config.output == OUTPUT_RAW) {
-                        out += cliFormatReplyRaw(reply);
-                        out += "\n";
-                    } else if (config.output == OUTPUT_STANDARD) {
-                        out += cliFormatReplyTTY(reply,"");
-                    } else if (config.output == OUTPUT_CSV) {
-                        out += cliFormatReplyCSV(reply);
-                        out += "\n";
-                    }
-                }
+                cliFormatReplyRaw(out, reply);
             }
 
             freeReplyObject(reply);
             return REDIS_OK;
         }
-        int cliSendCommand(std::string &out, error::ErrorInfo& er, int argc, char **argv, int repeat)
+
+        int cliSendCommand(FastoObjectPtr &out, error::ErrorInfo& er, int argc, char **argv, int repeat)
         {
             char *command = argv[0];
             size_t *argvlen;
@@ -636,7 +528,8 @@ namespace fastoredis
             free(argvlen);
             return REDIS_OK;
         }
-        void repl(const char *line, std::string &out, error::ErrorInfo &er) {
+
+        void repl(const char *line, FastoObjectPtr &out, error::ErrorInfo &er) {
             sds historyfile = NULL;
             int history = 0;
             int argc;
@@ -662,7 +555,7 @@ namespace fastoredis
                 if (historyfile) linenoiseHistorySave(historyfile);
 
                     if (argv == NULL) {
-                        out += "Invalid argument(s)\n";
+                        out->addChildren(new FastoObject(out, STRING, "Invalid argument(s)\n"));
                         return ;
                     }
                     else if (argc > 0)
@@ -715,7 +608,7 @@ namespace fastoredis
                             if (elapsed >= 500) {
                                 char time[128] = {0};
                                 sprintf(time,"(%.2fs)\n",(double)elapsed/1000);
-                                out += time;
+                                out->addChildren(new FastoObject(out, STRING, time));
                             }
                         }
                     }
