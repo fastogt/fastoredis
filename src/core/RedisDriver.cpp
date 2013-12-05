@@ -117,7 +117,7 @@ namespace fastoredis
 {
     struct RedisDriver::pimpl
     {
-        pimpl(): context(NULL)
+        pimpl(): _interrupt(false), context(NULL)
         {
             config.hostip = sdsnew("127.0.0.1");
             config.hostport = 6379;
@@ -159,6 +159,12 @@ namespace fastoredis
             config.auth = const_cast<char*>(toCString(conf.auth));
             config.dbnum = conf.dbnum;
             ErrorInfo er;
+
+            if(_interrupt){
+                res.setErrorInfo(error::ErrorInfo("Interrupted connect.", error::ErrorInfo::E_INTERRUPTED));
+                return;
+            }
+
             if(cliConnect(0, er) == REDIS_ERR){
                 res.setErrorInfo(er);
             }
@@ -168,9 +174,34 @@ namespace fastoredis
         void query(EventsInfo::ExecuteInfoResponce &res)
         {
             using namespace error;
-            const char *command = toCString(res._text);
+            const char *inputLine = toCString(res._text);
+
             ErrorInfo er;
-            repl(command, res._out, er);
+            if(!inputLine)
+                return;
+
+            cliRefreshPrompt();
+
+            size_t length = strlen(inputLine);
+            int offset = 0;
+            for(size_t n = 0; n < length; ++n){
+                if(_interrupt){
+                    res.setErrorInfo(error::ErrorInfo("Interrupted exec.", error::ErrorInfo::E_INTERRUPTED));
+                    return;
+                }
+
+                if(inputLine[n] == '\n' || n == length-1){
+                    char command[128] = {0};
+                    if(n == length-1){
+                        strcpy(command, inputLine + offset);
+                    }
+                    else{
+                        strncpy(command, inputLine + offset, n - offset);
+                    }
+                    offset = n + 1;
+                    repl_impl(command, res._out, er);
+                }
+            }
         }
 
         void disconnect()
@@ -186,7 +217,7 @@ namespace fastoredis
                 context = NULL;
             }
         }
-
+        volatile bool _interrupt;
         redisContext *context;
     private:
         struct config {
@@ -577,30 +608,6 @@ namespace fastoredis
                 sdsfreesplitres(argv,argc);
             }
         }
-
-        void repl(const char *inputLine, FastoObjectPtr &out, error::ErrorInfo &er) {
-
-            if(!inputLine)
-                return;
-
-            cliRefreshPrompt();
-
-            size_t length = strlen(inputLine);
-            int offset = 0;
-            for(size_t n = 0; n < length; ++n){
-                if(inputLine[n] == '\n' || n == length-1){
-                    char command[128] = {0};
-                    if(n == length-1){
-                        strcpy(command, inputLine + offset);
-                    }
-                    else{
-                        strncpy(command, inputLine + offset, n - offset);
-                    }
-                    offset = n + 1;
-                    repl_impl(command, out, er);
-                }
-            }
-        }
     };
 
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
@@ -622,7 +629,8 @@ namespace fastoredis
 
     void RedisDriver::customEvent(QEvent *event)
     {
-        return base_class::customEvent(event);
+        base_class::customEvent(event);
+        _impl->_interrupt = false;
     }
 
     void RedisDriver::initImpl()
@@ -652,5 +660,10 @@ namespace fastoredis
     void RedisDriver::disconnectImpl(EventsInfo::DisConnectInfoResponce &res)
     {
         _impl->disconnect();
+    }
+
+    void RedisDriver::interrupt()
+    {
+        _impl->_interrupt = true;
     }
 }

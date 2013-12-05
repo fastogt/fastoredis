@@ -24,7 +24,7 @@ namespace fastoredis
     {
         struct ErrorInfo
         {
-            enum ErrorsType { E_NONE, E_EXCEPTION, E_ERROR, E_INTERUPTED };
+            enum ErrorsType { E_NONE, E_EXCEPTION, E_ERROR, E_INTERRUPTED };
             ErrorInfo():_description(),_errorType(E_NONE){}
             ErrorInfo(const std::string &desc, ErrorsType errorType):_description(desc),_errorType(errorType) {}
             bool isError() const { return _errorType != E_NONE; }

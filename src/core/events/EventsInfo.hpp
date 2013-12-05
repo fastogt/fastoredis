@@ -84,29 +84,6 @@ namespace fastoredis
             FastoObjectPtr _out;
         };
 
-        struct InteruptInfoRequest
-                : public EventInfoBase
-        {
-            typedef EventInfoBase base_class;
-            InteruptInfoRequest(const error::ErrorInfo &er = error::ErrorInfo())
-                : base_class(er)
-            {
-
-            }
-        };
-
-        struct InteruptInfoResponce
-                : InteruptInfoRequest
-        {
-            typedef InteruptInfoRequest base_class;
-            InteruptInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
-                : base_class(request)
-            {
-                base_class::errorInfo_ = er;
-            }
-            EventInfoBase _interuptedEvent;
-        };
-
         struct ProgressResponceInfo
         {
             ProgressResponceInfo(int pr)

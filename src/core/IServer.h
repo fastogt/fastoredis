@@ -42,9 +42,6 @@ namespace fastoredis
         void startedExecute(const EventsInfo::ExecuteInfoRequest &req);
         void finishedExecute(const EventsInfo::ExecuteInfoResponce &res);
 
-        void startedInterupt(const EventsInfo::InteruptInfoRequest &req);
-        void finishedInterupt(const EventsInfo::InteruptInfoResponce &res);
-
         void progressChanged(const EventsInfo::ProgressResponceInfo &res);
 
     protected:

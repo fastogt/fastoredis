@@ -78,11 +78,7 @@ namespace fastoredis
 
     void IServer::stopCurrentEvent()
     {
-        EventsInfo::InteruptInfoRequest req;
-        emit startedInterupt(req);
-        EventsInfo::InteruptInfoResponce res(req);
-        _drv->interuptEvent(req, res);
-        emit finishedInterupt(res);
+        _drv->interrupt();
     }
 
     bool IServer::isConnected() const
