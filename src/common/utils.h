@@ -1,6 +1,5 @@
 #pragma once
 #include <typeinfo>
-#include <tr1/type_traits>
 #include <vector>
 #include "common/macros.h"
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
@@ -189,73 +188,6 @@ namespace utils
             boost::function<type_t()> func_;
         };
 #endif
-    }
-    namespace call_back_definitions
-    {
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
-        template<typename return_t,typename... args>
-        struct func_saver
-        {
-            typedef return_t(*func_type)(args...);
-        };
-#endif
-        template<typename source_t,typename destr_t,typename value_ts,typename value_td,typename return_ts = void>
-        struct connection_type_func
-        {
-            typedef value_ts value_type_source;
-            typedef value_td value_type_destr;
-            typedef source_t source_type;
-            typedef destr_t destr_type;
-            typedef return_ts return_type_source;
-
-                    typedef typename std::tr1::add_reference<source_type>::type reference_source_type;
-                    typedef typename std::tr1::add_reference<destr_type>::type reference_destr_type;
-                    typedef typename std::tr1::add_pointer<source_type>::type pointer_source_type;
-                    typedef typename std::tr1::add_pointer<destr_type>::type pointer_destr_type;
-
-            typedef return_type_source (source_t::*set_func_type)(value_type_source);
-            typedef value_type_destr (destr_t::*get_func_type)() const;
-
-            connection_type_func(set_func_type set_func=NULL,get_func_type get_func=NULL)
-                :ptr_func_set(set_func),ptr_func_get(get_func)
-            {
-
-            }
-            void operator()(const reference_source_type source,const reference_destr_type destr)
-            {
-                sync(source,destr,converter::defualt_converter<value_ts,value_td>());
-            }
-            void operator()(pointer_source_type source,pointer_destr_type destr)
-            {
-                operator()(*source,*destr);
-            }
-            template<typename converter_t>
-            void operator()(pointer_source_type source,pointer_destr_type destr,converter_t c=0)
-            {
-                operator()(*source,*destr,c);
-            }
-            template<typename converter_t>
-            void operator()(const reference_source_type source,const reference_destr_type destr,converter_t converter)
-            {
-                sync(source,destr,converter);
-            }
-        private:
-            template<typename converter_t>
-            void sync(const reference_source_type source,const reference_destr_type destr,converter_t converter)
-            {
-                if(ptr_func_set&&ptr_func_get)
-                {
-                ((source.*ptr_func_set)(converter(((destr.*ptr_func_get)()))));
-                }
-            }
-            set_func_type ptr_func_set;
-            get_func_type ptr_func_get;
-        };
-        template<typename source_t,typename destr_t,typename value_ts,typename value_td,typename return_ts>
-        connection_type_func<source_t,destr_t,value_ts,value_td,return_ts> make_conection_type(return_ts (source_t::*s_ptr)(value_ts),value_td (destr_t::*d_ptr)() const)
-        {
-            return connection_type_func<source_t,destr_t,value_ts,value_td,return_ts>(s_ptr,d_ptr);
-        }
     }
     namespace delete_wrappers
     {

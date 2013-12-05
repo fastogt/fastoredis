@@ -9,7 +9,6 @@ extern "C" {
 #include <anet.h>
 #include <help.h>
 #include <sds.h>
-#include <linenoise/linenoise.h>
 #include "version.h"
 #include "release.h"
 #ifdef __cplusplus
@@ -312,14 +311,14 @@ namespace fastoredis
             case REDIS_REPLY_NIL:
                 break;
             case REDIS_REPLY_ERROR:
-                out->addChildren(new FastoObject(out, ERROR, r->str, r->len));
-                break;
             case REDIS_REPLY_STATUS:
-                out->addChildren(new FastoObject(out, STATUS, r->str, r->len));
-                break;
             case REDIS_REPLY_STRING:
-                out->addChildren(new FastoObject(out, STRING, r->str, r->len));
+            {
+                FastoObject *obj = new FastoObject(out, static_cast<fastoType>(r->type), r->str, r->len);
+                obj->append('\n');
+                out->addChildren(obj);
                 break;
+            }
             case REDIS_REPLY_INTEGER:
             {
                 char tmp[128] = {0};
@@ -410,20 +409,20 @@ namespace fastoredis
             }
         }
 
-        int cliReadReply(FastoObjectPtr &out, error::ErrorInfo& er, int output_raw_strings) {
+        int cliReadReply(FastoObjectPtr &out, error::ErrorInfo& er) {
             void *_reply;
             redisReply *reply;
 
             if (redisGetReply(context,&_reply) != REDIS_OK) {
                 if (config.shutdown)
                     return REDIS_OK;
-                if (config.interactive) {
-                    /* Filter cases where we should reconnect */
-                    if (context->err == REDIS_ERR_IO && errno == ECONNRESET)
-                        return REDIS_ERR;
-                    if (context->err == REDIS_ERR_EOF)
-                        return REDIS_ERR;
-                }
+\
+                /* Filter cases where we should reconnect */
+                if (context->err == REDIS_ERR_IO && errno == ECONNRESET)
+                    return REDIS_ERR;
+                if (context->err == REDIS_ERR_EOF)
+                    return REDIS_ERR;
+
                 cliPrintContextError(er);
                 return REDIS_ERR; /* avoid compiler warning */
             }
@@ -444,12 +443,10 @@ namespace fastoredis
                 *s = '\0';
                 sdsfree(config.hostip);
                 config.hostip = sdsnew(p+1);
-                config.hostport = atoi(s+1);
-                if (config.interactive){
-                    char redir[512] = {0};
-                    sprintf(redir, "-> Redirected to slot [%d] located at %s:%d\n", slot, config.hostip, config.hostport);
-                    out->addChildren(new FastoObject(out, STRING, redir));
-                }
+                config.hostport = atoi(s+1);                
+                char redir[512] = {0};
+                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d\n", slot, config.hostip, config.hostport);
+                out->addChildren(new FastoObject(out, STRING, redir));
                 config.cluster_reissue_command = 1;
                 cliRefreshPrompt();
             }
@@ -465,7 +462,6 @@ namespace fastoredis
         {
             char *command = argv[0];
             size_t *argvlen;
-            int output_raw;
 
             if (!strcasecmp(command,"help") || !strcasecmp(command,"?")) {
                 cliOutputHelp(out, --argc, ++argv);
@@ -474,18 +470,6 @@ namespace fastoredis
 
             if (context == NULL)
                 return REDIS_ERR;
-
-            output_raw = 0;
-            if (!strcasecmp(command,"info") ||
-                (argc == 2 && !strcasecmp(command,"cluster") &&
-                              (!strcasecmp(argv[1],"nodes") ||
-                               !strcasecmp(argv[1],"info"))) ||
-                (argc == 2 && !strcasecmp(command,"client") &&
-                               !strcasecmp(argv[1],"list")))
-
-            {
-                output_raw = 1;
-            }
 
             if (!strcasecmp(command,"shutdown")) config.shutdown = 1;
             if (!strcasecmp(command,"monitor")) config.monitor_mode = 1;
@@ -501,7 +485,7 @@ namespace fastoredis
             while(repeat--) {
                 redisAppendCommandArgv(context,argc,(const char**)argv,argvlen);
                 while (config.monitor_mode) {
-                    if (cliReadReply(out, er, output_raw) != REDIS_OK){
+                    if (cliReadReply(out, er) != REDIS_OK){
                         return REDIS_ERR;
                     }
                 }
@@ -509,12 +493,12 @@ namespace fastoredis
                 if (config.pubsub_mode) {
                     if (config.output != OUTPUT_RAW)
                     while (1) {
-                        if (cliReadReply(out, er, output_raw) != REDIS_OK)
+                        if (cliReadReply(out, er) != REDIS_OK)
                             return REDIS_ERR;
                     }
                 }
 
-                if (cliReadReply(out, er, output_raw) != REDIS_OK) {
+                if (cliReadReply(out, er) != REDIS_OK) {
                     free(argvlen);
                     return REDIS_ERR;
                 } else {
@@ -529,73 +513,51 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        void repl(const char *line, FastoObjectPtr &out, error::ErrorInfo &er) {
-            sds historyfile = NULL;
-            int history = 0;
-            int argc;
-            sds *argv;
+        void repl_impl(const char *command, FastoObjectPtr &out, error::ErrorInfo &er) {
+            if (command[0] != '\0') {
+                int argc;
+                sds *argv = sdssplitargs(command,&argc);
 
-            config.interactive = 1;
-
-            /* Only use history when stdin is a tty. */
-            if (isatty(fileno(stdin))) {
-                history = 1;
-
-                if (getenv("HOME") != NULL) {
-                    historyfile = sdscatprintf(sdsempty(),"%s/.rediscli_history",getenv("HOME"));
-                    linenoiseHistoryLoad(historyfile);
+                if (argv == NULL) {
+                    out->addChildren(new FastoObject(out, STRING, "Invalid argument(s)\n"));
                 }
-            }
-
-            cliRefreshPrompt();
-
-            if (line[0] != '\0') {
-                argv = sdssplitargs(line,&argc);
-                if (history) linenoiseHistoryAdd(line);
-                if (historyfile) linenoiseHistorySave(historyfile);
-
-                    if (argv == NULL) {
-                        out->addChildren(new FastoObject(out, STRING, "Invalid argument(s)\n"));
-                        return ;
-                    }
-                    else if (argc > 0)
+                else if (argc > 0)
+                {
+                    if (strcasecmp(argv[0],"quit") == 0 ||
+                    strcasecmp(argv[0],"exit") == 0)
                     {
-                        if (strcasecmp(argv[0],"quit") == 0 ||
-                            strcasecmp(argv[0],"exit") == 0)
-                        {
-                            config.shutdown = 1;
-                        } else if (argc == 3 && !strcasecmp(argv[0],"connect")) {
-                            sdsfree(config.hostip);
-                            config.hostip = sdsnew(argv[1]);
-                            config.hostport = atoi(argv[2]);
-                            cliRefreshPrompt();
-                            cliConnect(1, er);
-                        } else if (argc == 1 && !strcasecmp(argv[0],"clear")) {
-                            //linenoiseClearScreen();
-                            return;
-                        } else {
-                            long long start_time = mstime(), elapsed;
-                            int repeat, skipargs = 0;
+                        config.shutdown = 1;
+                    } else if (argc == 3 && !strcasecmp(argv[0],"connect")) {
+                        sdsfree(config.hostip);
+                        config.hostip = sdsnew(argv[1]);
+                        config.hostport = atoi(argv[2]);
+                        cliRefreshPrompt();
+                        cliConnect(1, er);
+                    } else if (argc == 1 && !strcasecmp(argv[0],"clear")) {
+                        //linenoiseClearScreen();
+                    } else {
+                                long long start_time = mstime(), elapsed;
+                                int repeat, skipargs = 0;
 
-                            repeat = atoi(argv[0]);
-                            if (argc > 1 && repeat) {
-                                skipargs = 1;
-                            } else {
-                                repeat = 1;
-                            }
+                                repeat = atoi(argv[0]);
+                                if (argc > 1 && repeat) {
+                                    skipargs = 1;
+                                } else {
+                                    repeat = 1;
+                                }
 
-                            while (1) {
+                                while (1) {
                                 config.cluster_reissue_command = 0;
                                 if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                                    != REDIS_OK)
+                                != REDIS_OK)
                                 {
                                     cliConnect(1, er);
 
-                                    /* If we still cannot send the command print error.
-                                     * We'll try to reconnect the next time. */
-                                    if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                                        != REDIS_OK)
-                                        cliPrintContextError(er);
+                                /* If we still cannot send the command print error.
+                                * We'll try to reconnect the next time. */
+                                if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
+                                != REDIS_OK)
+                                    cliPrintContextError(er);
                                 }
                                 /* Issue the command again if we got redirected in cluster mode */
                                 if (config.cluster_mode && config.cluster_reissue_command) {
@@ -603,19 +565,42 @@ namespace fastoredis
                                 } else {
                                     break;
                                 }
+                                }
+                                    elapsed = mstime()-start_time;
+                                if (elapsed >= 500) {
+                                    char time[128] = {0};
+                                    sprintf(time,"(%.2fs)\n",(double)elapsed/1000);
+                                    out->addChildren(new FastoObject(out, STRING, time));
+                                }
                             }
-                            elapsed = mstime()-start_time;
-                            if (elapsed >= 500) {
-                                char time[128] = {0};
-                                sprintf(time,"(%.2fs)\n",(double)elapsed/1000);
-                                out->addChildren(new FastoObject(out, STRING, time));
-                            }
-                        }
+                }
+                sdsfreesplitres(argv,argc);
+            }
+        }
+
+        void repl(const char *inputLine, FastoObjectPtr &out, error::ErrorInfo &er) {
+
+            if(!inputLine)
+                return;
+
+            cliRefreshPrompt();
+
+            size_t length = strlen(inputLine);
+            int offset = 0;
+            for(size_t n = 0; n < length; ++n){
+                if(inputLine[n] == '\n' || n == length-1){
+                    char command[128] = {0};
+                    if(n == length-1){
+                        strcpy(command, inputLine + offset);
                     }
-                    /* Free the argument vector */
-                    sdsfreesplitres(argv,argc);
+                    else{
+                        strncpy(command, inputLine + offset, n - offset);
+                    }
+                    offset = n + 1;
+                    repl_impl(command, out, er);
                 }
             }
+        }
     };
 
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)

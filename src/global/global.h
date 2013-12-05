@@ -97,12 +97,14 @@ namespace fastoredis
         const value_type *const c_str() const;
         const value_type *begin()const;
         const value_type *end() const;
+        void append(value_type c);
 
         static FastoObjectPtr createRoot();
         void addChildren(const FastoObjectPtr &child);
 
         friend std::string toStdString(const FastoObjectPtr &obj);
     private:
+        void alloc(uint32_t strlen_result);
         FastoObject(); //only for root
         FastoObject(const FastoObject& other);
         FastoObject &operator=(const FastoObject &other);
@@ -111,6 +113,7 @@ namespace fastoredis
         child_container_type _childrens;
 
         const fastoType _type;
+        uint32_t alloc_size_;
         uint32_t size_;
         value_type *memory_;
     };

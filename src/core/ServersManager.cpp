@@ -40,7 +40,7 @@ namespace fastoredis
 
     IServerPtr ServersManager::findServerBySetting(const IConnectionSettingsBasePtr &settings) const
     {
-        for(ssize_t i = 0; i < _servers.size(); ++i){
+        for(size_t i = 0; i < _servers.size(); ++i){
             IServerPtr drp = _servers[i];
             IDriverPtr curDr = drp->driver();
             if(curDr->settings() == settings){
