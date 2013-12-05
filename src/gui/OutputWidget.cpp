@@ -4,6 +4,9 @@
 #include <QMenu>
 
 #include "gui/FastoEditor.h"
+#include "gui/FastoTableView.h"
+#include "gui/FastoTreeView.h"
+#include "gui/FastoTreeModel.h"
 #include "common/qt_helper/converter_patterns.h"
 
 namespace fastoredis
@@ -24,9 +27,9 @@ namespace fastoredis
 
     void OutputWidget::finishExecute(const EventsInfo::ExecuteInfoResponce &res)
     {
-        _editor->clear();
+        _textEditor->clear();
         FastoObjectPtr ptr = res._out;
         std::string str = toStdString(ptr);
-        _editor->setText(common::utils_qt::toQString(str));
+        _textEditor->setText(common::utils_qt::toQString(str));
     }
 }

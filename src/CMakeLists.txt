@@ -19,6 +19,9 @@ SET(HEADERS_GUI_TO_MOC
     gui/FastoEditor.h
     gui/QueryWidget.h
     gui/OutputWidget.h
+    gui/FastoTreeView.h
+    gui/FastoTreeModel.h
+    gui/FastoTableView.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
@@ -37,6 +40,10 @@ SET(SOURCES_GUI
     gui/FastoEditor.cpp
     gui/QueryWidget.cpp
     gui/OutputWidget.cpp
+    gui/FastoTreeView.cpp
+    gui/FastoTreeModel.cpp
+    gui/FastoTableView.cpp
+
 )
 
 SET(HEADERS_CORE_TO_MOC

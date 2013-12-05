@@ -64,7 +64,7 @@ namespace fastoredis
     {
         EventsInfo::DisonnectInfoRequest req;
         emit startedDisconnect(req);
-        QEvent *ev = new Events::DisconnectRequestEvent(this,req);
+        QEvent *ev = new Events::DisconnectRequestEvent(this, req);
         notify(ev);
     }
 
@@ -72,7 +72,7 @@ namespace fastoredis
     {
         EventsInfo::ExecuteInfoRequest req(common::utils_qt::toStdString(script));
         emit startedExecute(req);
-        QEvent *ev = new Events::ExecuteRequestEvent(this,req);
+        QEvent *ev = new Events::ExecuteRequestEvent(this, req);
         notify(ev);
     }
 
