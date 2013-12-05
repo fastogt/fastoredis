@@ -8,16 +8,16 @@
 namespace fastoredis
 {
     FastoObject::FastoObject(const FastoObjectPtr &parent, const fastoType &type, const value_type *memory)
-        : _parent(parent), _type(type), size_(strlen(memory)),
-          memory_((value_type*)calloc(size_+1,sizeof(value_type)))
+        : _parent(parent), _type(type), alloc_size_(strlen(memory)+1), size_(alloc_size_-1),
+          memory_((value_type*)calloc(alloc_size_,sizeof(value_type)))
     {
         DCHECK(memory_);
         memcpy(memory_,memory,size_);
     }
 
     FastoObject::FastoObject(const FastoObjectPtr &parent, const fastoType &type, const value_type *memory, uint32_t size)
-        : _parent(parent), _type(type), size_(size),
-          memory_((value_type*)calloc(size_+1,sizeof(value_type)))
+        : _parent(parent), _type(type), alloc_size_(size+1), size_(size),
+          memory_((value_type*)calloc(alloc_size_,sizeof(value_type)))
     {
         DCHECK(memory_);
         memcpy(memory_,memory,size_);
@@ -48,13 +48,36 @@ namespace fastoredis
         return memory_+size_;
     }
 
+    void FastoObject::append(value_type c)
+    {
+        alloc(size_ + 1);
+        if(memory_)
+        {
+            memory_[size_++] = c;
+        }
+        DCHECK(size_<=alloc_size_);
+    }
+
+    void FastoObject::alloc(uint32_t strlen_result)
+    {
+        if(alloc_size_<strlen_result+1)
+        {
+            alloc_size_=strlen_result*2+1;
+            memory_ = (unicode_char*)realloc(memory_, alloc_size_);
+            if(memory_)
+            {
+               memset(memory_+size_,0,alloc_size_-size_);
+            }
+        }
+    }
+
     FastoObject::~FastoObject()
     {
         free(memory_);
     }
 
     FastoObject::FastoObject()
-        :_parent(NULL), _type(ROOT), size_(0), memory_(NULL)
+        :_parent(NULL), _type(ROOT), alloc_size_(0), size_(0), memory_(NULL)
     {
 
     }

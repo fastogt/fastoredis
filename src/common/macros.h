@@ -25,9 +25,7 @@ typedef std::basic_ostream<unicode_char> unicode_ostream;
 typedef std::basic_istream<unicode_char> unicode_istream;
 typedef std::basic_ofstream<unicode_char> unicode_ofstream;
 typedef std::basic_ifstream<unicode_char> unicode_ifstream;
-#ifdef OS_WIN
-typedef int ssize_t;	
-#endif
+
 namespace common
 {
 enum tribool

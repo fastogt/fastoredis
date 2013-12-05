@@ -66,6 +66,7 @@ namespace fastoredis
 
         _input = new RedisShell();
         _input->setContextMenuPolicy(Qt::CustomContextMenu);
+        VERIFY(connect(_input, SIGNAL(executed()), this, SLOT(execute())));
 
         mainlayout->addWidget(_input);
 
@@ -78,6 +79,7 @@ namespace fastoredis
         if(selected.isEmpty()){
             selected = _input->text();
         }
+
         _server->execute(selected);
     }
 
