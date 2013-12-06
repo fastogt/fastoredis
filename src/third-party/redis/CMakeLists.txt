@@ -26,11 +26,11 @@ SET(HEADERS_REDIS
 
 SET(SOURCES_REDIS
     #redis/src/ae.c
-    #redis/src/anet.c
+    redis/src/anet.c
     redis/src/crc64.c
     redis/deps/hiredis/hiredis.c
     #redis/deps/linenoise/linenoise.c
-    #redis/deps/hiredis/net.c
+    redis/deps/hiredis/net.c
     #redis/src/redis-cli.c
     redis/src/release.c
     redis/src/sds.c

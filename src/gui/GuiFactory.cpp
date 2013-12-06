@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QStyle>
 
+#include "common/macros.h"
+
 namespace fastoredis
 {
     const QIcon &GuiFactory::openIcon() const
@@ -92,7 +94,34 @@ namespace fastoredis
 
     const QIcon &GuiFactory::getIcon(fastoType type) const
     {
-        static QIcon stop(":"PROJECT_NAME_LOWERCASE"/icons/stop.png");
-        return stop;
+        switch(type)
+        {
+        case UNKNOWN:
+            static QIcon u(":"PROJECT_NAME_LOWERCASE"/icons/unknown.png");
+            return u;
+        case STRING:
+            static QIcon s(":"PROJECT_NAME_LOWERCASE"/icons/string.png");
+            return s;
+        case ARRAY:
+            static QIcon a(":"PROJECT_NAME_LOWERCASE"/icons/array.png");
+            return a;
+        case INTEGER:
+            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/integer.png");
+            return i;
+        case NIL:
+            static QIcon n(":"PROJECT_NAME_LOWERCASE"/icons/null.png");
+            return n;
+        case STATUS:
+            static QIcon st(":"PROJECT_NAME_LOWERCASE"/icons/status.png");
+            return st;
+        case ERROR:
+            static QIcon er(":"PROJECT_NAME_LOWERCASE"/icons/error.png");
+            return er;
+        case ROOT:
+            static QIcon r(":"PROJECT_NAME_LOWERCASE"/icons/root.png");
+            return r;
+        default:
+            DCHECK(0);
+        }
     }
 }
