@@ -9,22 +9,22 @@
 namespace fastoredis
 {
     enum fastoType
-    {
-        ROOT = -1,
+    {        
         UNKNOWN = 0,
         STRING = 1,
         ARRAY = 2,
         INTEGER = 3,
         NIL = 4,
         STATUS = 5,
-        ERROR = 6
+        ERROR = 6,
+        ROOT = 7
     };
 
     namespace error
     {
         struct ErrorInfo
         {
-            enum ErrorsType { E_NONE, E_EXCEPTION, E_ERROR, E_INTERUPTED };
+            enum ErrorsType { E_NONE, E_EXCEPTION, E_ERROR, E_INTERRUPTED };
             ErrorInfo():_description(),_errorType(E_NONE){}
             ErrorInfo(const std::string &desc, ErrorsType errorType):_description(desc),_errorType(errorType) {}
             bool isError() const { return _errorType != E_NONE; }
@@ -35,6 +35,9 @@ namespace fastoredis
 
     namespace detail
     {
+        std::string toStdString(fastoType t);
+        fastoType toFastoType(const std::string &text);
+
         template<fastoType type>
         struct FastoTraits;
 
@@ -87,8 +90,8 @@ namespace fastoredis
         typedef char value_type;
         typedef std::vector<FastoObjectPtr> child_container_type;
 
-        FastoObject(const FastoObjectPtr &parent, const fastoType &type, const value_type *memory);
-        FastoObject(const FastoObjectPtr &parent, const fastoType &type, const value_type *memory, uint32_t size);
+        FastoObject(const FastoObjectPtr &parent, const value_type *memory, const fastoType &type);
+        FastoObject(const FastoObjectPtr &parent, const value_type *memory, uint32_t size, const fastoType &type);
 
         ~FastoObject();
 
@@ -99,23 +102,24 @@ namespace fastoredis
         const value_type *end() const;
         void append(value_type c);
 
-        static FastoObjectPtr createRoot();
+        child_container_type childrens() const;
+        static FastoObjectPtr createRoot(const value_type *memory);
         void addChildren(const FastoObjectPtr &child);
+        bool isRoot() const;
 
         friend std::string toStdString(const FastoObjectPtr &obj);
     private:
         void alloc(uint32_t strlen_result);
-        FastoObject(); //only for root
         FastoObject(const FastoObject& other);
         FastoObject &operator=(const FastoObject &other);
 
         const FastoObjectPtr _parent;
         child_container_type _childrens;
 
-        const fastoType _type;
         uint32_t alloc_size_;
         uint32_t size_;
         value_type *memory_;
+        const fastoType _type;
     };
 
 }

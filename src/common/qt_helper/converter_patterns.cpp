@@ -3,15 +3,21 @@ namespace common{
 namespace utils_qt
 {
     template<>
-    QString toQString<std::string>(const std::string &value)
+    QString toQString<std::string>(std::string value)
     {
         return QString::fromUtf8(value.c_str(),value.size());
     }
 
     template<>
-    QString toQString<std::wstring>(const std::wstring &value)
+    QString toQString<std::wstring>(std::wstring value)
     {
         return  QString((const QChar*)value.c_str(), value.length());
+    }
+
+    template<>
+    QString toQString<const char*>(const char *value)
+    {
+        return QString::fromUtf8(value, strlen(value));
     }
 
     unicode_string toStdString(const QString &value)

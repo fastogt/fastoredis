@@ -117,7 +117,7 @@ namespace fastoredis
 {
     struct RedisDriver::pimpl
     {
-        pimpl(): context(NULL)
+        pimpl(): _interrupt(false), context(NULL)
         {
             config.hostip = sdsnew("127.0.0.1");
             config.hostport = 6379;
@@ -141,10 +141,10 @@ namespace fastoredis
             config.stdinarg = 0;
             config.auth = NULL;
             config.eval = NULL;
-            if (!isatty(fileno(stdout)) && (getenv("FAKETTY") == NULL))
+            /*if (!isatty(fileno(stdout)) && (getenv("FAKETTY") == NULL))
                 config.output = OUTPUT_RAW;
             else
-                config.output = OUTPUT_STANDARD;
+                config.output = OUTPUT_STANDARD;*/
             config.mb_delim = sdsnew("\n");
         }
 
@@ -159,6 +159,12 @@ namespace fastoredis
             config.auth = const_cast<char*>(toCString(conf.auth));
             config.dbnum = conf.dbnum;
             ErrorInfo er;
+
+            if(_interrupt){
+                res.setErrorInfo(error::ErrorInfo("Interrupted connect.", error::ErrorInfo::E_INTERRUPTED));
+                return;
+            }
+
             if(cliConnect(0, er) == REDIS_ERR){
                 res.setErrorInfo(er);
             }
@@ -168,9 +174,37 @@ namespace fastoredis
         void query(EventsInfo::ExecuteInfoResponce &res)
         {
             using namespace error;
-            const char *command = toCString(res._text);
+            const char *inputLine = toCString(res._text);
+
             ErrorInfo er;
-            repl(command, res._out, er);
+            if(!inputLine)
+                return;
+
+            cliRefreshPrompt();
+
+            size_t length = strlen(inputLine);
+            int offset = 0;
+            res._out = FastoObject::createRoot(inputLine);
+            for(size_t n = 0; n < length; ++n){
+                if(_interrupt){
+                    res.setErrorInfo(error::ErrorInfo("Interrupted exec.", error::ErrorInfo::E_INTERRUPTED));
+                    return;
+                }
+
+                if(inputLine[n] == '\n' || n == length-1){
+                    char command[128] = {0};
+                    if(n == length-1){
+                        strcpy(command, inputLine + offset);
+                    }
+                    else{
+                        strncpy(command, inputLine + offset, n - offset);
+                    }
+                    offset = n + 1;
+                    FastoObjectPtr child = new FastoObject(res._out, command, ARRAY);
+                    res._out->addChildren(child);
+                    repl_impl(command, child, er);
+                }
+            }
         }
 
         void disconnect()
@@ -186,7 +220,7 @@ namespace fastoredis
                 context = NULL;
             }
         }
-
+        volatile bool _interrupt;
         redisContext *context;
     private:
         struct config {
@@ -314,8 +348,7 @@ namespace fastoredis
             case REDIS_REPLY_STATUS:
             case REDIS_REPLY_STRING:
             {
-                FastoObject *obj = new FastoObject(out, static_cast<fastoType>(r->type), r->str, r->len);
-                obj->append('\n');
+                FastoObject *obj = new FastoObject(out, r->str, r->len, static_cast<fastoType>(r->type));
                 out->addChildren(obj);
                 break;
             }
@@ -323,31 +356,35 @@ namespace fastoredis
             {
                 char tmp[128] = {0};
                 sprintf(tmp,"%lld",r->integer);
-                out->addChildren(new FastoObject(out, INTEGER, tmp));
+                out->addChildren(new FastoObject(out, tmp, INTEGER));
                 break;
             }
             case REDIS_REPLY_ARRAY:
+            {
+                FastoObjectPtr child = new FastoObject(out, out->c_str(), ARRAY);
+                out->addChildren(child);
                 for (size_t i = 0; i < r->elements; i++) {
-                    cliFormatReplyRaw(out, r->element[i]);
+                    cliFormatReplyRaw(child, r->element[i]);
                 }
                 break;
+            }
             default:
                 {
                     char tmp2[128] = {0};
-                    sprintf(tmp2 ,"Unknown reply type: %d\n", r->type);
-                    out->addChildren(new FastoObject(out, ERROR, tmp2));
+                    sprintf(tmp2 ,"Unknown reply type: %d", r->type);
+                    out->addChildren(new FastoObject(out, tmp2, ERROR));
                 }
             }
         }
 
         void cliOutputCommandHelp(FastoObjectPtr &out, struct commandHelp *help, int group) {
             char buff[1024] = {0};
-            sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s\r\n", help->name, help->params, help->summary, help->since);
-            out->addChildren(new FastoObject(out, STRING, buff));
+            sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
+            out->addChildren(new FastoObject(out, buff, STRING));
             if (group) {
                 char buff2[1024] = {0};
-                sprintf(buff2,"  group: %s\r\n", commandGroups[help->group]);
-                out->addChildren(new FastoObject(out, STRING, buff2));
+                sprintf(buff2,"  group: %s", commandGroups[help->group]);
+                out->addChildren(new FastoObject(out, buff2, STRING));
             }
         }
 
@@ -359,10 +396,10 @@ namespace fastoredis
                 "Type: \"help @<group>\" to get a list of commands in <group>\r\n"
                 "      \"help <command>\" for help on <command>\r\n"
                 "      \"help <tab>\" to get a list of possible help topics\r\n"
-                "      \"quit\" to exit\r\n",
+                "      \"quit\" to exit",
                 version
             );
-            out->addChildren(new FastoObject(out, STRING, buff));
+            out->addChildren(new FastoObject(out, buff, STRING));
             sdsfree(version);
         }
 
@@ -445,8 +482,8 @@ namespace fastoredis
                 config.hostip = sdsnew(p+1);
                 config.hostport = atoi(s+1);                
                 char redir[512] = {0};
-                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d\n", slot, config.hostip, config.hostport);
-                out->addChildren(new FastoObject(out, STRING, redir));
+                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
+                out->addChildren(new FastoObject(out, redir, STRING));
                 config.cluster_reissue_command = 1;
                 cliRefreshPrompt();
             }
@@ -519,7 +556,7 @@ namespace fastoredis
                 sds *argv = sdssplitargs(command,&argc);
 
                 if (argv == NULL) {
-                    out->addChildren(new FastoObject(out, STRING, "Invalid argument(s)\n"));
+                    out->addChildren(new FastoObject(out, "Invalid argument(s)", STRING));
                 }
                 else if (argc > 0)
                 {
@@ -569,36 +606,12 @@ namespace fastoredis
                                     elapsed = mstime()-start_time;
                                 if (elapsed >= 500) {
                                     char time[128] = {0};
-                                    sprintf(time,"(%.2fs)\n",(double)elapsed/1000);
-                                    out->addChildren(new FastoObject(out, STRING, time));
+                                    sprintf(time,"(%.2fs)",(double)elapsed/1000);
+                                    out->addChildren(new FastoObject(out, time, STRING));
                                 }
                             }
                 }
                 sdsfreesplitres(argv,argc);
-            }
-        }
-
-        void repl(const char *inputLine, FastoObjectPtr &out, error::ErrorInfo &er) {
-
-            if(!inputLine)
-                return;
-
-            cliRefreshPrompt();
-
-            size_t length = strlen(inputLine);
-            int offset = 0;
-            for(size_t n = 0; n < length; ++n){
-                if(inputLine[n] == '\n' || n == length-1){
-                    char command[128] = {0};
-                    if(n == length-1){
-                        strcpy(command, inputLine + offset);
-                    }
-                    else{
-                        strncpy(command, inputLine + offset, n - offset);
-                    }
-                    offset = n + 1;
-                    repl_impl(command, out, er);
-                }
             }
         }
     };
@@ -622,7 +635,8 @@ namespace fastoredis
 
     void RedisDriver::customEvent(QEvent *event)
     {
-        return base_class::customEvent(event);
+        base_class::customEvent(event);
+        _impl->_interrupt = false;
     }
 
     void RedisDriver::initImpl()
@@ -652,5 +666,10 @@ namespace fastoredis
     void RedisDriver::disconnectImpl(EventsInfo::DisConnectInfoResponce &res)
     {
         _impl->disconnect();
+    }
+
+    void RedisDriver::interrupt()
+    {
+        _impl->_interrupt = true;
     }
 }

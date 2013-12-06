@@ -19,9 +19,13 @@ SET(HEADERS_GUI_TO_MOC
     gui/FastoEditor.h
     gui/QueryWidget.h
     gui/OutputWidget.h
+    gui/FastoTreeView.h
+    gui/FastoTreeModel.h
+    gui/FastoTableView.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
+    gui/FastoTreeItem.h
 )
 SET(SOURCES_GUI
     gui/MainWindow.cpp
@@ -37,6 +41,10 @@ SET(SOURCES_GUI
     gui/FastoEditor.cpp
     gui/QueryWidget.cpp
     gui/OutputWidget.cpp
+    gui/FastoTreeView.cpp
+    gui/FastoTreeModel.cpp
+    gui/FastoTableView.cpp
+    gui/FastoTreeItem.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
@@ -142,11 +150,8 @@ SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY} ${Qt5Core_QTMAIN_L
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
-    ADD_DEPENDENCIES(${PROJECT_NAME} build_mongoclient)
 ELSEIF(MSVC)
     ADD_APP_EXECUTABLE_MSVC(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
-    ADD_DEPENDENCIES(${PROJECT_NAME} mongoclient_release)
-    ADD_DEPENDENCIES(${PROJECT_NAME} mongoclient_debug)
 ELSE()
     MESSAGE(FATAL_ERROR "NOT SUPPORTED COMPILER!!!")
 ENDIF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)

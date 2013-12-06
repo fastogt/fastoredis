@@ -1,15 +1,15 @@
 #pragma once
 
-#include "xml_storage.hpp"
-#include "memory_storage.hpp"
-#include "ini_storage.hpp"
+#include "common/settings/storages/xml_storage.hpp"
+#include "common/settings/storages/memory_storage.hpp"
+#include "common/settings/storages/ini_storage.hpp"
 #include <boost/fusion/container/vector.hpp>
 #include <boost/fusion/include/as_vector.hpp>
 #include <boost/fusion/container/vector/convert.hpp>
 #include <boost/fusion/include/find.hpp>
 #include <boost/mpl/count_if.hpp>
 #ifdef OS_WIN
-#include "registry_storage.hpp"
+    #include "common/settings/storages/registry_storage.hpp"
 #endif
 
 //#define TINY_member(z, n, unused) typedef BOOST_PP_CAT(T,n) BOOST_PP_CAT(t,n);=> as mpl::vector member typedef BOOST_PP_REPEAT(FUSION_MAX_VECTOR_SIZE, TINY_member,~)

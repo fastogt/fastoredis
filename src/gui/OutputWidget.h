@@ -10,6 +10,10 @@ QT_END_NAMESPACE
 namespace fastoredis
 {
     class FastoEditor;
+    class FastoTreeView;
+    class FastoTableView;
+    class FastoTreeModel;
+
     class OutputWidget
             : public QWidget
     {
@@ -24,6 +28,9 @@ namespace fastoredis
         void finishExecute(const EventsInfo::ExecuteInfoResponce &);
 
     private:
-        FastoEditor *_editor;
+        FastoTreeModel *_treeModel;
+        FastoTreeView *_treeView;
+        FastoTableView *_tableView;
+        FastoEditor *_textView;
     };
 }

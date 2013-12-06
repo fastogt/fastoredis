@@ -3,21 +3,33 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "common/macros.h"
+#include "common/utils.h"
+
+namespace
+{
+    const char *fastoTypeM[fastoredis::ROOT+1] = {"Unknown",
+                                                   "String",
+                                                   "Array",
+                                                   "Integer",
+                                                   "Nil",
+                                                   "Status",
+                                                   "Error",
+                                                   "Root"};
+}
 
 namespace fastoredis
 {
-    FastoObject::FastoObject(const FastoObjectPtr &parent, const fastoType &type, const value_type *memory)
-        : _parent(parent), _type(type), alloc_size_(strlen(memory)+1), size_(alloc_size_-1),
-          memory_((value_type*)calloc(alloc_size_,sizeof(value_type)))
+    FastoObject::FastoObject(const FastoObjectPtr &parent, const value_type *memory, const fastoType &type)
+        : _parent(parent), alloc_size_(strlen(memory)+1), size_(alloc_size_-1),
+          memory_((value_type*)calloc(alloc_size_,sizeof(value_type))), _type(type)
     {
         DCHECK(memory_);
         memcpy(memory_,memory,size_);
     }
 
-    FastoObject::FastoObject(const FastoObjectPtr &parent, const fastoType &type, const value_type *memory, uint32_t size)
-        : _parent(parent), _type(type), alloc_size_(size+1), size_(size),
-          memory_((value_type*)calloc(alloc_size_,sizeof(value_type)))
+    FastoObject::FastoObject(const FastoObjectPtr &parent, const value_type *memory, uint32_t size, const fastoType &type)
+        : _parent(parent), alloc_size_(size+1), size_(size),
+          memory_((value_type*)calloc(alloc_size_,sizeof(value_type))), _type(type)
     {
         DCHECK(memory_);
         memcpy(memory_,memory,size_);
@@ -76,15 +88,9 @@ namespace fastoredis
         free(memory_);
     }
 
-    FastoObject::FastoObject()
-        :_parent(NULL), _type(ROOT), alloc_size_(0), size_(0), memory_(NULL)
+    FastoObjectPtr FastoObject::createRoot(const value_type *memory)
     {
-
-    }
-
-    FastoObjectPtr FastoObject::createRoot()
-    {
-        FastoObjectPtr result = new FastoObject;
+        FastoObjectPtr result = new FastoObject(NULL,memory,ROOT);
         return result;
     }
 
@@ -93,6 +99,11 @@ namespace fastoredis
         if(child){
             _childrens.push_back(child);
         }
+    }
+
+    bool FastoObject::isRoot() const
+    {
+        return type() == ARRAY || type() == ROOT;
     }
 
     std::string toStdString(const FastoObjectPtr &obj)
@@ -105,8 +116,32 @@ namespace fastoredis
             }
             if(obj->c_str()){
                 result += obj->c_str();
+                result += '\n';
             }
         }
         return result;
+    }
+
+    FastoObject::child_container_type FastoObject::childrens() const
+    {
+        return _childrens;
+    }
+
+    namespace detail
+    {
+        std::string toStdString(fastoType t)
+        {
+            std::string result;
+            int count = sizeof(fastoTypeM)/sizeof(*fastoTypeM);
+            if(t < count){
+                result = fastoTypeM[t];
+            }
+            return result;
+        }
+
+        fastoType toFastoType(const std::string &text)
+        {
+            return common::utils::enums::findTypeInArray<fastoType>(fastoTypeM,text.c_str());
+        }
     }
 }

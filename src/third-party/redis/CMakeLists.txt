@@ -16,20 +16,20 @@ SET(HEADERS_REDIS
     redis/src/fmacros.h
     redis/src/help.h
     redis/deps/hiredis/hiredis.h
-    redis/deps/linenoise/linenoise.h
+    #redis/deps/linenoise/linenoise.h
     redis/deps/hiredis/net.h
-    #redis/src/release.h
+    redis/src/release.h
     redis/src/sds.h
     redis/src/version.h
     redis/src/zmalloc.h
 )
 
 SET(SOURCES_REDIS
-    redis/src/ae.c
+    #redis/src/ae.c
     redis/src/anet.c
     redis/src/crc64.c
     redis/deps/hiredis/hiredis.c
-    redis/deps/linenoise/linenoise.c
+    #redis/deps/linenoise/linenoise.c
     redis/deps/hiredis/net.c
     #redis/src/redis-cli.c
     redis/src/release.c

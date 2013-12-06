@@ -64,7 +64,7 @@ namespace fastoredis
     {
         EventsInfo::DisonnectInfoRequest req;
         emit startedDisconnect(req);
-        QEvent *ev = new Events::DisconnectRequestEvent(this,req);
+        QEvent *ev = new Events::DisconnectRequestEvent(this, req);
         notify(ev);
     }
 
@@ -72,17 +72,13 @@ namespace fastoredis
     {
         EventsInfo::ExecuteInfoRequest req(common::utils_qt::toStdString(script));
         emit startedExecute(req);
-        QEvent *ev = new Events::ExecuteRequestEvent(this,req);
+        QEvent *ev = new Events::ExecuteRequestEvent(this, req);
         notify(ev);
     }
 
     void IServer::stopCurrentEvent()
     {
-        EventsInfo::InteruptInfoRequest req;
-        emit startedInterupt(req);
-        EventsInfo::InteruptInfoResponce res(req);
-        _drv->interuptEvent(req, res);
-        emit finishedInterupt(res);
+        _drv->interrupt();
     }
 
     bool IServer::isConnected() const

@@ -44,12 +44,12 @@ ENDIF(NOT BOOST_ENABLED)
 ENDIF(SETTINGS_SUPPORT)
 
 IF(SETTINGS_SUPPORT AND BOOST_ENABLED)
-IF(WINDOWS)
-SET(PLATFORM_DEPENDED_STORAGES settings/storages/registry_storage.hpp)
-ENDIF()
-SET(STORAGES settings/storages/storages_def.h settings/storages/memory_storage.hpp settings/storages/xml_storage.hpp settings/storages/ini_storage.hpp)
-SET(MPL_STRING settings/storages/mpl_string/initializer_vector.h settings/storages/mpl_string/mpl.h settings/storages/mpl_string/string_template.h)
-SET(SETTINGS_SOURCES settings/settings.hpp ${STORAGES} ${PLATFORM_DEPENDED_STORAGES} ${MPL_STRING} ${SETTINGS_HDR})
+    IF(WIN32)
+        SET(PLATFORM_DEPENDED_STORAGES settings/storages/registry_storage.hpp)
+    ENDIF()
+    SET(STORAGES settings/storages/storages_def.h settings/storages/memory_storage.hpp settings/storages/xml_storage.hpp settings/storages/ini_storage.hpp)
+    SET(MPL_STRING settings/storages/mpl_string/initializer_vector.h settings/storages/mpl_string/mpl.h settings/storages/mpl_string/string_template.h)
+    SET(SETTINGS_SOURCES settings/settings.hpp ${STORAGES} ${PLATFORM_DEPENDED_STORAGES} ${MPL_STRING} ${SETTINGS_HDR})
 ENDIF(SETTINGS_SUPPORT AND BOOST_ENABLED)
 
 IF(QT_ENABLED)
@@ -68,7 +68,7 @@ SET(PATTERNS_SOURCES
         patterns/singleton_pattern.hpp)
 SET(FILE_PARSERS file_parsers/parser_ini.h file_parsers/parser_ini.cpp)
 SET(MULTI_THREADING_SOURCES 
-	    multi_threading/lockers.h
+        multi_threading/lockers.h
         multi_threading/lockers.cpp
         multi_threading/thread_safe_containers.hpp
         multi_threading/common_headers.hpp
@@ -78,7 +78,7 @@ SET(MULTI_THREADING_SOURCES
         multi_threading/pthread_thread_pool_impl.hpp
         multi_threading/pthread_wrapper.hpp)
 IF(BOOST_ENABLED)
-SET(MULTI_THREADING_SOURCES ${MULTI_THREADING_SOURCES} multi_threading/boost_thread_pool_impl.hpp)
+    SET(MULTI_THREADING_SOURCES ${MULTI_THREADING_SOURCES} multi_threading/boost_thread_pool_impl.hpp)
 ENDIF(BOOST_ENABLED)
 
 SET(COMMON_SOURCES runtime_bitset.h runtime_bitset.cpp log_levels.hpp logger.h logger.cpp common_config.h

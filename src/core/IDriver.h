@@ -36,7 +36,7 @@ namespace fastoredis
         virtual ~IDriver();
 
         //sync
-        void interuptEvent(const EventsInfo::InteruptInfoRequest &req, EventsInfo::InteruptInfoResponce &res);
+        virtual void interrupt() = 0;
         virtual bool isConnected() const = 0;
 
     private Q_SLOTS:

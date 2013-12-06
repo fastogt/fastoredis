@@ -23,7 +23,7 @@ namespace fastoredis
     }
 
     IDriver::IDriver(const IConnectionSettingsBasePtr &settings)
-        :_settings(settings)
+        : _settings(settings)
     {
         _thread = new QThread(this);
         moveToThread(_thread);
@@ -63,11 +63,6 @@ namespace fastoredis
     void IDriver::reply(QObject *reciver, QEvent *ev)
     {
         qApp->postEvent(reciver, ev);
-    }
-
-    void IDriver::interuptEvent(const EventsInfo::InteruptInfoRequest &req, EventsInfo::InteruptInfoResponce &res)
-    {
-
     }
 
     void IDriver::init()

@@ -89,4 +89,10 @@ namespace fastoredis
 #endif
         return textFont;
     }
+
+    const QIcon &GuiFactory::getIcon(fastoType type) const
+    {
+        static QIcon stop(":"PROJECT_NAME_LOWERCASE"/icons/stop.png");
+        return stop;
+    }
 }
