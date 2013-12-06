@@ -165,8 +165,9 @@ namespace lock_free//windows
                                 }
                             }
                             m_iterations++;
-                            if(thread_t::hardware_concurrency() > 1) { YieldProcessor(); }
-                            else { SwitchToThread(); }
+                            //please test behavior
+                           /* if(thread_t::hardware_concurrency() > 1) { YieldProcessor(); }
+                            else { SwitchToThread(); }*/
                         }
                     }
                 }
