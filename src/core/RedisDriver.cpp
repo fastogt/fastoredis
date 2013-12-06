@@ -184,6 +184,7 @@ namespace fastoredis
 
             size_t length = strlen(inputLine);
             int offset = 0;
+            res._out = FastoObject::createRoot(inputLine);
             for(size_t n = 0; n < length; ++n){
                 if(_interrupt){
                     res.setErrorInfo(error::ErrorInfo("Interrupted exec.", error::ErrorInfo::E_INTERRUPTED));
@@ -199,7 +200,9 @@ namespace fastoredis
                         strncpy(command, inputLine + offset, n - offset);
                     }
                     offset = n + 1;
-                    repl_impl(command, res._out, er);
+                    FastoObjectPtr child = new FastoObject(res._out, command, ARRAY);
+                    res._out->addChildren(child);
+                    repl_impl(command, child, er);
                 }
             }
         }
@@ -345,8 +348,7 @@ namespace fastoredis
             case REDIS_REPLY_STATUS:
             case REDIS_REPLY_STRING:
             {
-                FastoObject *obj = new FastoObject(out, static_cast<fastoType>(r->type), r->str, r->len);
-                obj->append('\n');
+                FastoObject *obj = new FastoObject(out, r->str, r->len, static_cast<fastoType>(r->type));
                 out->addChildren(obj);
                 break;
             }
@@ -354,31 +356,35 @@ namespace fastoredis
             {
                 char tmp[128] = {0};
                 sprintf(tmp,"%lld",r->integer);
-                out->addChildren(new FastoObject(out, INTEGER, tmp));
+                out->addChildren(new FastoObject(out, tmp, INTEGER));
                 break;
             }
             case REDIS_REPLY_ARRAY:
+            {
+                FastoObjectPtr child = new FastoObject(out, out->c_str(), ARRAY);
+                out->addChildren(child);
                 for (size_t i = 0; i < r->elements; i++) {
-                    cliFormatReplyRaw(out, r->element[i]);
+                    cliFormatReplyRaw(child, r->element[i]);
                 }
                 break;
+            }
             default:
                 {
                     char tmp2[128] = {0};
-                    sprintf(tmp2 ,"Unknown reply type: %d\n", r->type);
-                    out->addChildren(new FastoObject(out, ERROR, tmp2));
+                    sprintf(tmp2 ,"Unknown reply type: %d", r->type);
+                    out->addChildren(new FastoObject(out, tmp2, ERROR));
                 }
             }
         }
 
         void cliOutputCommandHelp(FastoObjectPtr &out, struct commandHelp *help, int group) {
             char buff[1024] = {0};
-            sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s\r\n", help->name, help->params, help->summary, help->since);
-            out->addChildren(new FastoObject(out, STRING, buff));
+            sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
+            out->addChildren(new FastoObject(out, buff, STRING));
             if (group) {
                 char buff2[1024] = {0};
-                sprintf(buff2,"  group: %s\r\n", commandGroups[help->group]);
-                out->addChildren(new FastoObject(out, STRING, buff2));
+                sprintf(buff2,"  group: %s", commandGroups[help->group]);
+                out->addChildren(new FastoObject(out, buff2, STRING));
             }
         }
 
@@ -390,10 +396,10 @@ namespace fastoredis
                 "Type: \"help @<group>\" to get a list of commands in <group>\r\n"
                 "      \"help <command>\" for help on <command>\r\n"
                 "      \"help <tab>\" to get a list of possible help topics\r\n"
-                "      \"quit\" to exit\r\n",
+                "      \"quit\" to exit",
                 version
             );
-            out->addChildren(new FastoObject(out, STRING, buff));
+            out->addChildren(new FastoObject(out, buff, STRING));
             sdsfree(version);
         }
 
@@ -476,8 +482,8 @@ namespace fastoredis
                 config.hostip = sdsnew(p+1);
                 config.hostport = atoi(s+1);                
                 char redir[512] = {0};
-                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d\n", slot, config.hostip, config.hostport);
-                out->addChildren(new FastoObject(out, STRING, redir));
+                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
+                out->addChildren(new FastoObject(out, redir, STRING));
                 config.cluster_reissue_command = 1;
                 cliRefreshPrompt();
             }
@@ -550,7 +556,7 @@ namespace fastoredis
                 sds *argv = sdssplitargs(command,&argc);
 
                 if (argv == NULL) {
-                    out->addChildren(new FastoObject(out, STRING, "Invalid argument(s)\n"));
+                    out->addChildren(new FastoObject(out, "Invalid argument(s)", STRING));
                 }
                 else if (argc > 0)
                 {
@@ -600,8 +606,8 @@ namespace fastoredis
                                     elapsed = mstime()-start_time;
                                 if (elapsed >= 500) {
                                     char time[128] = {0};
-                                    sprintf(time,"(%.2fs)\n",(double)elapsed/1000);
-                                    out->addChildren(new FastoObject(out, STRING, time));
+                                    sprintf(time,"(%.2fs)",(double)elapsed/1000);
+                                    out->addChildren(new FastoObject(out, time, STRING));
                                 }
                             }
                 }

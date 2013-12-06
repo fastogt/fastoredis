@@ -7,16 +7,70 @@
 #include "gui/FastoTableView.h"
 #include "gui/FastoTreeView.h"
 #include "gui/FastoTreeModel.h"
+#include "gui/FastoTreeItem.h"
 #include "common/qt_helper/converter_patterns.h"
+
+namespace
+{
+    fastoredis::FastoTreeItem *createItem(fastoredis::FastoTreeItem *parent, const fastoredis::FastoObjectPtr &item)
+    {
+        fastoredis::FastoTreeItem *result = NULL;
+        if(item->isRoot()){
+            char size[128] = {0};
+            fastoredis::FastoObject::child_container_type cont = item->childrens();
+            sprintf(size, "{%u}", cont.size());
+            result = new fastoredis::FastoTreeItem( common::utils_qt::toQString(item->c_str()), size, item->type(), parent);
+        }
+        else{
+            result = new fastoredis::FastoTreeItem( "foo" ,common::utils_qt::toQString(item->c_str()), item->type(), parent);
+        }
+
+        if(parent){
+            parent->addChildren(result);
+        }
+        return result;
+    }
+
+    void parseRedisImpl(fastoredis::FastoTreeItem *root, const fastoredis::FastoObjectPtr &item)
+    {
+        fastoredis::FastoTreeItem *child = createItem(root,item);
+
+        fastoredis::FastoObject::child_container_type cont = item->childrens();
+        for(fastoredis::FastoObject::child_container_type::const_iterator it = cont.begin(); it != cont.end(); ++it){
+            fastoredis::FastoObjectPtr obj = *it;
+            parseRedisImpl(child, obj);
+        }
+    }
+
+    fastoredis::FastoTreeItem *parseOutput(const fastoredis::EventsInfo::ExecuteInfoResponce::result_type &res)
+    {
+        fastoredis::FastoTreeItem *result = createItem(NULL,res);
+        fastoredis::FastoObject::child_container_type cont = res->childrens();
+        for(fastoredis::FastoObject::child_container_type::const_iterator it = cont.begin(); it != cont.end(); ++it){
+            fastoredis::FastoObjectPtr command = *it;
+            parseRedisImpl(result, command);
+        }
+        return result;
+    }
+}
 
 namespace fastoredis
 {
     OutputWidget::OutputWidget(QWidget* parent)
         : base_class(parent)
     {
-        _textEditor = new FastoEditor(this);
+        _treeView = new FastoTreeView(this);
+        _treeModel = new FastoTreeModel(_treeView);
+        _treeView->setModel(_treeModel);
+
+        _tableView = new FastoTableView(this);
+
+        _textView = new FastoEditor(this);
         QVBoxLayout *mainL = new QVBoxLayout;
-        mainL->addWidget(_textEditor);
+        mainL->addWidget(_treeView);
+        mainL->addWidget(_tableView);
+
+        mainL->addWidget(_textView);
         setLayout(mainL);
     }
 
@@ -27,9 +81,13 @@ namespace fastoredis
 
     void OutputWidget::finishExecute(const EventsInfo::ExecuteInfoResponce &res)
     {
-        _textEditor->clear();
-        FastoObjectPtr ptr = res._out;
-        std::string str = toStdString(ptr);
-        _textEditor->setText(common::utils_qt::toQString(str));
+        _textView->clear();
+        FastoTreeItem *root = parseOutput(res._out);
+        if(root){
+            _treeModel->setRoot(root);
+        }
+        //FastoObjectPtr ptr = res._out;
+        //std::string str = toStdString(ptr);
+        //_textView->setText(common::utils_qt::toQString(str));
     }
 }

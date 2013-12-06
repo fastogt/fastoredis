@@ -12,6 +12,7 @@ namespace fastoredis
     class FastoEditor;
     class FastoTreeView;
     class FastoTableView;
+    class FastoTreeModel;
 
     class OutputWidget
             : public QWidget
@@ -27,8 +28,9 @@ namespace fastoredis
         void finishExecute(const EventsInfo::ExecuteInfoResponce &);
 
     private:
+        FastoTreeModel *_treeModel;
         FastoTreeView *_treeView;
         FastoTableView *_tableView;
-        FastoEditor *_textEditor;
+        FastoEditor *_textView;
     };
 }

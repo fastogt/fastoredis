@@ -27,5 +27,6 @@ namespace fastoredis
         const QIcon &executeIcon() const;
         const QIcon &stopIcon() const;
         QFont font() const;
+        const QIcon &getIcon(fastoType type) const;
     };
 }

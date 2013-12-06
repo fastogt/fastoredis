@@ -75,13 +75,14 @@ namespace fastoredis
         struct ExecuteInfoResponce
                 : ExecuteInfoRequest
         {
-            typedef ExecuteInfoRequest base_class;            
+            typedef ExecuteInfoRequest base_class;
+            typedef FastoObjectPtr result_type;
             ExecuteInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
-                : base_class(request), _out(FastoObject::createRoot())
+                : base_class(request), _out()
             {
                 base_class::errorInfo_ = er;
             }
-            FastoObjectPtr _out;
+            result_type _out;
         };
 
         struct ProgressResponceInfo
