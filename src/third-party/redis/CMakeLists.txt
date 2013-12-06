@@ -11,13 +11,13 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR} redis/deps/hiredis/ redis/deps/lin
 
 SET(HEADERS_REDIS
     redis/src/ae.h
-    redis/src/anet.h
+    #redis/src/anet.h
     redis/src/crc64.h
     redis/src/fmacros.h
     redis/src/help.h
     redis/deps/hiredis/hiredis.h
-    redis/deps/linenoise/linenoise.h
-    redis/deps/hiredis/net.h
+    #redis/deps/linenoise/linenoise.h
+    #redis/deps/hiredis/net.h
     #redis/src/release.h
     redis/src/sds.h
     redis/src/version.h
@@ -25,12 +25,12 @@ SET(HEADERS_REDIS
 )
 
 SET(SOURCES_REDIS
-    redis/src/ae.c
-    redis/src/anet.c
+    #redis/src/ae.c
+    #redis/src/anet.c
     redis/src/crc64.c
     redis/deps/hiredis/hiredis.c
-    redis/deps/linenoise/linenoise.c
-    redis/deps/hiredis/net.c
+    #redis/deps/linenoise/linenoise.c
+    #redis/deps/hiredis/net.c
     #redis/src/redis-cli.c
     redis/src/release.c
     redis/src/sds.c

@@ -109,6 +109,7 @@ namespace lock_free //unix
 }
 }
 #elif defined _WIN32
+#include <windows.h>
 namespace multi_threading
 {
 namespace lock_free//windows

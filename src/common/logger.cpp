@@ -27,65 +27,65 @@ namespace
 namespace common
 {
     namespace logging
-{
-unicode_ostream& logger::get_cout()
-{
-#ifdef UNICODE
-   return std::wcout;
-#else
-   return std::cout;
-#endif
-}
-unicode_istream& logger::get_cin()
-{
-#ifdef UNICODE
-   return std::wcin;
-#else
-   return std::cin;
-#endif
-}
-unicode_ostream &logger::get_cerr()
-{
-#ifdef UNICODE
-   return std::wcerr;
-#else
-   return std::cerr;
-#endif
-}
-unicode_char logger::get_endl()
-{
-   return UTEXT('\n');
-}
-logger::logger()
-    : m_outStream(NULL)
-{
-#ifdef NDEBUG
-    m_outStream = new unicode_ofstream(get_logger_path());
-    unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(m_outStream);
-    if(!file||(file&&!file->is_open()))
     {
-         m_outStream  = &get_cerr();
-         *m_outStream << traits_level<WARNING>::text << UTEXT(" ") << "Output file not open!" <<  UTEXT("\n");
+    unicode_ostream& logger::get_cout()
+    {
+    #ifdef UNICODE
+       return std::wcout;
+    #else
+       return std::cout;
+    #endif
     }
-    *m_outStream << UTEXT("LOG STARTED\n");
-#else
-    m_outStream = &get_cerr();
-#endif
-}
-logger::~logger(void)
-{
-    m_outStream->flush();
-    if(m_outStream&&m_outStream!=&get_cerr())
+    unicode_istream& logger::get_cin()
     {
-#ifdef __GXX_RTTI
+    #ifdef UNICODE
+       return std::wcin;
+    #else
+       return std::cin;
+    #endif
+    }
+    unicode_ostream &logger::get_cerr()
+    {
+    #ifdef UNICODE
+       return std::wcerr;
+    #else
+       return std::cerr;
+    #endif
+    }
+    unicode_char logger::get_endl()
+    {
+       return UTEXT('\n');
+    }
+    logger::logger()
+        : m_outStream(NULL)
+    {
+    #ifdef NDEBUG
+        m_outStream = new unicode_ofstream(get_logger_path());
         unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(m_outStream);
-        if(file)
+        if(!file||(file&&!file->is_open()))
         {
-            file->close();
+             m_outStream  = &get_cerr();
+             *m_outStream << traits_level<WARNING>::text << UTEXT(" ") << "Output file not open!" <<  UTEXT("\n");
         }
-#endif
-       delete m_outStream;
+        *m_outStream << UTEXT("LOG STARTED\n");
+    #else
+        m_outStream = &get_cerr();
+    #endif
     }
-}
-}
+    logger::~logger(void)
+    {
+        m_outStream->flush();
+        if(m_outStream&&m_outStream!=&get_cerr())
+        {
+    #ifdef __GXX_RTTI
+            unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(m_outStream);
+            if(file)
+            {
+                file->close();
+            }
+    #endif
+           delete m_outStream;
+        }
+    }
+    }
 }

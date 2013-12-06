@@ -1,9 +1,12 @@
-#ifndef REGISTRY_STORAGE_H
-#define REGISTRY_STORAGE_H
+#pragma once
+
 #define REGISTER_SUPPORT
+
 #include "mpl_string/string_template.h"
 #include <boost/fusion/include/for_each.hpp>
 #include <Windows.h>
+namespace common
+{
 namespace storages
 {
 	namespace windows
@@ -23,10 +26,12 @@ namespace storages
 						key_path_t(HKEY_LOCAL_MACHINE,"HKEY_LOCAL_MACHINE"),
 						key_path_t(HKEY_USERS,"HKEY_USERS")
 					};
+
 					HKEY result;
-					for (auto i=std::begin(mas_hkey_string);i!=std::end(mas_hkey_string);++i)
+                    int count = sizeof(mas_hkey_string)/sizeof(*mas_hkey_string);
+                    for (int i = 0; i < count; ++i)
 					{
-						const key_path_t item = *i;
+                        const key_path_t item = mas_hkey_string[i];
 						if(item.second.compare(path)==0)
 						{
 							result = item.first;
@@ -43,9 +48,8 @@ namespace storages
 					{
 						result.first = translate_to_hkey(path.substr (0,pos));
 						result.second = path.c_str() + pos+1;
-						if(*result.second.rbegin()=='\\')
-						{
-							result.second.pop_back();
+                        if(*result.second.rbegin() == '\\'){
+                            result.second = result.second.substr(0, result.second.length()-2);
 						}
 					}
 					return result;
@@ -91,7 +95,7 @@ namespace storages
 					}
 				};
 				template<typename type_t>
-				struct convert_traits<type_t,typename boost::enable_if<boost::is_integral<type_t>>::type >
+                struct convert_traits<type_t,typename boost::enable_if<boost::is_integral<type_t> >::type >
 				{					
 					static const DWORD type_of_key = REG_DWORD;
 					typedef int bufer_type;
@@ -191,7 +195,7 @@ namespace storages
 				typedef detail::load_funct load_struct;
 				static const char *path_to_save()
 				{
-					typedef mpl_template_string::template_string<init_vector> path_to_save_t;
+                    typedef mpl_template_string::template_string<init_vector> path_to_save_t;
 					return path_to_save_t::template_string_value();
 				}
 				template<typename fusion_t>
@@ -212,4 +216,4 @@ namespace storages
 		}
 	}
 }
-#endif //REGISTRY_STORAGE_H
+}

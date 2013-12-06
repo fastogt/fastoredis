@@ -5,7 +5,7 @@
 namespace fastoredis
 {
     class FastoTableView
-            : public QTreeView
+            : public QTableView
     {        
         Q_OBJECT
     public:

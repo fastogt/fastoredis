@@ -141,10 +141,10 @@ namespace fastoredis
             config.stdinarg = 0;
             config.auth = NULL;
             config.eval = NULL;
-            if (!isatty(fileno(stdout)) && (getenv("FAKETTY") == NULL))
+            /*if (!isatty(fileno(stdout)) && (getenv("FAKETTY") == NULL))
                 config.output = OUTPUT_RAW;
             else
-                config.output = OUTPUT_STANDARD;
+                config.output = OUTPUT_STANDARD;*/
             config.mb_delim = sdsnew("\n");
         }
 

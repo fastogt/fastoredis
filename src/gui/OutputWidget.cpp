@@ -14,9 +14,9 @@ namespace fastoredis
     OutputWidget::OutputWidget(QWidget* parent)
         : base_class(parent)
     {
-        _editor = new FastoEditor(this);
+        _textEditor = new FastoEditor(this);
         QVBoxLayout *mainL = new QVBoxLayout;
-        mainL->addWidget(_editor);
+        mainL->addWidget(_textEditor);
         setLayout(mainL);
     }
 
