@@ -230,17 +230,19 @@ namespace common
         }
         unicode_string prepare_path(unicode_string result)
         {
-    #ifdef OS_POSIX
              if(!result.empty()&&result[0]=='~')
              {
+             #ifdef OS_POSIX
                  char* home = getenv("HOME");
+             #else
+                 char* home = getenv("USERPROFILE");
+             #endif
                  if(home){
                      unicode_string tmp=result;
                      result = home;
                      result += tmp.substr(1);
                  }
              }
-    #endif
              return result;
         }
         unicode_string prepare_path(const unicode_char *path)

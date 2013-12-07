@@ -12,8 +12,8 @@ namespace fastoredis
     QueryWidget::QueryWidget(const IServerPtr &server, QWidget* parent)
         : base_class(parent)
     {
-        _shellWidget = new ShellWidget(server,this);
-        _outputWidget = new OutputWidget(this);
+        _shellWidget = new ShellWidget(server);
+        _outputWidget = new OutputWidget;
         VERIFY(connect(_shellWidget, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), _outputWidget, SLOT(startExecute(const EventsInfo::ExecuteInfoRequest &))));
         VERIFY(connect(_shellWidget, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), _outputWidget, SLOT(finishExecute(const EventsInfo::ExecuteInfoResponce &))));
 
