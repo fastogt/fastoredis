@@ -46,9 +46,24 @@
 /* Defined in hiredis.c */
 void __redisSetError(redisContext *c, int type, const char *str);
 
-void strerror_r(int err,const char *text, int size)
+int strerror_r(int err, char *text, int size)
 {
+    #define UPREFIX "Unknown error: %u"
+    unsigned int errnum = err;
+    int retval = 0;
+    size_t slen = 0;
+    if (errnum < (unsigned int) sys_nerr) {
+        memcpy(text, sys_errlist[errnum], size);
+        slen = strlen(text);
+    } else {
+        slen = snprintf(text, size, UPREFIX, errnum);
+        retval = EINVAL;
+    }
 
+    if (slen >= size)
+        retval = ERANGE;
+
+    return retval;
 }
 
 static void __redisSetErrorFromErrno(redisContext *c, int type, const char *prefix) {
@@ -116,7 +131,7 @@ static int redisContextWaitReady(redisContext *c, int fd, const struct timeval *
     FD_SET(fd, &master_set);
 
     struct timeval timeout;
-    timeout.tv_sec  = -1;
+    timeout.tv_sec  = 60;
     timeout.tv_usec = 0;
 
     /* Only use timeout when not NULL. */
@@ -209,12 +224,12 @@ int redisContextConnectTcp(redisContext *c, const char *addr, int port, struct t
         }
     }
     for (p = servinfo; p != NULL; p = p->ai_next) {
-        if ((s = socket(p->ai_family,p->ai_socktype,p->ai_protocol)) == -1)
+        if ((s = socket(p->ai_family ,p->ai_socktype, p->ai_protocol)) == -1)
             continue;
 
         if (redisSetBlocking(c,s,0) != REDIS_OK)
             goto error;
-        if (connect(s,p->ai_addr,p->ai_addrlen) == -1) {
+        if (connect(s, p->ai_addr, p->ai_addrlen) == -1) {
             if (errno == EHOSTUNREACH) {
                 close(s);
                 continue;

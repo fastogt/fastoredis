@@ -92,7 +92,9 @@ namespace fastoredis
     }
 
     IDriver::~IDriver()
-    {
-
+    {        
+        _thread->quit();
+        if (!_thread->wait(2000))
+            _thread->terminate();
     }
 }

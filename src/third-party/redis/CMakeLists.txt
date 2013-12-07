@@ -28,18 +28,19 @@ INCLUDE_DIRECTORIES(redis/src)
 SET(SOURCES_REDIS_PLATFORM
     net.c
     anet.c
+    hiredis.c
 )
 ELSE()
 SET(SOURCES_REDIS_PLATFORM
     redis/src/anet.c
     redis/deps/hiredis/net.c
+    redis/deps/hiredis/hiredis.c
 )
 ENDIF()
 
 SET(SOURCES_REDIS
     #redis/src/ae.c
     redis/src/crc64.c
-    redis/deps/hiredis/hiredis.c
     #redis/deps/linenoise/linenoise.c
     #redis/src/redis-cli.c
     redis/src/release.c

@@ -584,31 +584,31 @@ namespace fastoredis
                                 }
 
                                 while (1) {
-                                config.cluster_reissue_command = 0;
-                                if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                                != REDIS_OK)
-                                {
-                                    cliConnect(1, er);
+                                    config.cluster_reissue_command = 0;
+                                    if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
+                                    != REDIS_OK)
+                                    {
+                                        cliConnect(1, er);
 
-                                /* If we still cannot send the command print error.
-                                * We'll try to reconnect the next time. */
-                                if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                                != REDIS_OK)
-                                    cliPrintContextError(er);
-                                }
-                                /* Issue the command again if we got redirected in cluster mode */
-                                if (config.cluster_mode && config.cluster_reissue_command) {
-                                    cliConnect(1, er);
-                                } else {
-                                    break;
-                                }
+                                    /* If we still cannot send the command print error.
+                                    * We'll try to reconnect the next time. */
+                                    if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
+                                    != REDIS_OK)
+                                        cliPrintContextError(er);
+                                    }
+                                    /* Issue the command again if we got redirected in cluster mode */
+                                    if (config.cluster_mode && config.cluster_reissue_command) {
+                                        cliConnect(1, er);
+                                    } else {
+                                        break;
+                                    }
                                 }
                                     elapsed = mstime()-start_time;
-                                if (elapsed >= 500) {
+                                /*if (elapsed >= 500) {
                                     char time[128] = {0};
                                     sprintf(time,"(%.2fs)",(double)elapsed/1000);
                                     out->addChildren(new FastoObject(out, time, STRING));
-                                }
+                                }*/
                             }
                 }
                 sdsfreesplitres(argv,argc);
