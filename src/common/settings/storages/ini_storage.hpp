@@ -66,7 +66,9 @@ namespace storages
 		template<typename init_vector>template<typename fusion_t>
 		bool ini_storage<init_vector>::save(const fusion_t &fuc)
 		{
-            std::ofstream output(path_to_save().c_str());
+            std::string path = path_to_save();
+            const char *path_c = path.c_str();
+            std::ofstream output(path_c);
 			if(output.is_open()){
 				boost::property_tree::ptree pt;
                 boost::property_tree::ptree &settings= pt.add("settings","");
@@ -80,7 +82,12 @@ namespace storages
 		template<typename init_vector>template<typename fusion_t>
 		bool ini_storage<init_vector>::load(fusion_t &fuc)
         {
-            std::ifstream input(path_to_save().c_str());
+            std::string path = path_to_save();
+            const char *path_c = path.c_str();
+            std::ifstream input(path_c);
+            if(!input.is_open()){
+                input.open(path_c, std::ios_base::in | std::ios_base::out | std::ios_base::trunc);
+            }
             if(input.is_open()){
 				boost::property_tree::ptree pt;				
 				try

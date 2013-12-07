@@ -6,7 +6,18 @@
 
 #include "core/ConnectionSettings.h"
 #include "core/events/Events.hpp"
-
+#ifdef OS_WIN
+#include <winsock2.h>
+struct WinsockInit {
+        WinsockInit() {
+            WSADATA d;
+            if ( WSAStartup(MAKEWORD(2,2), &d) != 0 ) {
+                _exit(1);
+            }
+        }
+        ~WinsockInit(){ WSACleanup(); }
+    } winsock_init;
+#endif
 namespace fastoredis
 {
     namespace detail
@@ -81,7 +92,9 @@ namespace fastoredis
     }
 
     IDriver::~IDriver()
-    {
-
+    {        
+        _thread->quit();
+        if (!_thread->wait(2000))
+            _thread->terminate();
     }
 }

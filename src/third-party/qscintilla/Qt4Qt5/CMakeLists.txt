@@ -1,21 +1,17 @@
-cmake_minimum_required(VERSION 2.8)
-project(qscintilla2)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+PROJECT(qscintilla2)
 INCLUDE(../../../../cmake/integrate-qt.cmake)
 DETECT_QT()
+
 IF(DEVELOPER_QT5)
-SET(QT_COMPONENTS_TO_USE
-        Qt5Widgets
-        Qt5PrintSupport
-)
+    SET(QT_COMPONENTS_TO_USE Qt5Widgets Qt5PrintSupport)
 ELSE()
-SET(QT_COMPONENTS_TO_USE
-    QtCore
-	QtGui
-)
+    SET(QT_COMPONENTS_TO_USE QtCore QtGui)
 ENDIF()
+
 INTEGRATE_QT(${QT_COMPONENTS_TO_USE})
-include_directories(. ../include ../lexlib ../src)
-add_definitions(-DQSCINTILLA_MAKE_DLL -DSCINTILLA_QT -DSCI_LEXER)
+INCLUDE_DIRECTORIES(. ../include ../lexlib ../src)
+ADD_DEFINITIONS(-DQSCINTILLA_MAKE_DLL -DSCINTILLA_QT -DSCI_LEXER)
 
 set(HEADERS_TO_MOC
     ./Qsci/qsciscintilla.h
@@ -302,19 +298,13 @@ set(SOURCES
 )
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TO_MOC})
 SOURCE_GROUP("Generated" FILES ${MOC_FILES})
-source_group(sources FILES
-	${HEADERS}
-	${SOURCES}
-)
+SOURCE_GROUP(sources FILES ${HEADERS} ${SOURCES} )
 SET(TS_FILES qscintilla_cs.ts qscintilla_de.ts qscintilla_es.ts qscintilla_fr.ts qscintilla_pt_br.ts qscintilla_ru.ts)
 #QTX_ADD_TRANSLATION(QM_FILES ${TS_FILES})
 #source_group("translations" FILES ${TS_FILES})
 #source_group("qm-files" FILES ${QM_FILES})
 
-add_library(qscintilla2 STATIC
-        ${MOC_FILES}
-        ${HEADERS}
-	    ${SOURCES}
+ADD_LIBRARY(qscintilla2 STATIC ${MOC_FILES} ${HEADERS} ${SOURCES}
        # ${QM_FILES}
 )
 

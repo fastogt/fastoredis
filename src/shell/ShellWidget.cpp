@@ -18,8 +18,8 @@ namespace fastoredis
     ShellWidget::ShellWidget(const IServerPtr &server, QWidget *parent)
         : base_class(parent), _server(server)
     {
-        QVBoxLayout *mainlayout = new QVBoxLayout(this);
-        QHBoxLayout *hlayout = new QHBoxLayout(this);
+        QVBoxLayout *mainlayout = new QVBoxLayout;
+        QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0, 0, 0, 0);
 
         QToolBar *conbar = new QToolBar;

@@ -8,6 +8,7 @@
 #include "gui/FastoTreeView.h"
 #include "gui/FastoTreeModel.h"
 #include "gui/FastoTreeItem.h"
+//#include "gui/FastoTableModel.h"
 #include "common/qt_helper/converter_patterns.h"
 
 namespace
@@ -22,7 +23,13 @@ namespace
             result = new fastoredis::FastoTreeItem( common::utils_qt::toQString(item->c_str()), size, item->type(), parent);
         }
         else{
-            result = new fastoredis::FastoTreeItem( "foo" ,common::utils_qt::toQString(item->c_str()), item->type(), parent);
+            QString varName;
+            QString parenKey = parent->key();
+            int index = parenKey.startsWith("get", Qt::CaseInsensitive);
+            if(index != -1){
+                varName = parenKey.mid(index+2);
+            }
+            result = new fastoredis::FastoTreeItem( varName ,common::utils_qt::toQString(item->c_str()), item->type(), parent);
         }
 
         if(parent){
@@ -64,6 +71,9 @@ namespace fastoredis
         _treeView->setModel(_treeModel);
 
         _tableView = new FastoTableView(this);
+         //FastoTableModel* mod = new FastoTableModel(_tableView);
+         //mod->setSourceModel(_treeModel);
+         _tableView->setModel(_treeModel);
 
         _textView = new FastoEditor(this);
         QVBoxLayout *mainL = new QVBoxLayout;
@@ -82,9 +92,11 @@ namespace fastoredis
     void OutputWidget::finishExecute(const EventsInfo::ExecuteInfoResponce &res)
     {
         _textView->clear();
-        FastoTreeItem *root = parseOutput(res._out);
-        if(root){
-            _treeModel->setRoot(root);
+        if(res._out){
+            FastoTreeItem *root = parseOutput(res._out);
+            if(root){
+                _treeModel->setRoot(root);
+            }
         }
         //FastoObjectPtr ptr = res._out;
         //std::string str = toStdString(ptr);

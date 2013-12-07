@@ -10,5 +10,12 @@
     <file>icons/stop.png</file>
     <file>icons/connect.png</file>
     <file>icons/disconnect.png</file>
+    <file>icons/status.png</file>
+    <file>icons/root.png</file>
+    <file>icons/error.png</file>
+    <file>icons/string.png</file>
+    <file>icons/unknown.png</file>
+    <file>icons/null.png</file>
+    <file>icons/integer.png</file>
     </qresource>
 </RCC>

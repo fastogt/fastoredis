@@ -6,7 +6,11 @@
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/remove_whitespace.hpp>
 #include <boost/archive/iterators/insert_linebreaks.hpp>
+#ifdef OS_WIN
+#define INI_PATH ('~','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
+#else
 #define INI_PATH ('~','/','.','c','o','n','f','i','g','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
+#endif
 #define style ('s','t','y','l','e')
 #define connections_ ('c','o','n','n','e','c','t','i','o','n','s')
 

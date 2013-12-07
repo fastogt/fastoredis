@@ -22,6 +22,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/FastoTreeView.h
     gui/FastoTreeModel.h
     gui/FastoTableView.h
+    gui/FastoTableModel.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
@@ -45,6 +46,7 @@ SET(SOURCES_GUI
     gui/FastoTreeModel.cpp
     gui/FastoTableView.cpp
     gui/FastoTreeItem.cpp
+    gui/FastoTableModel.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
@@ -146,7 +148,7 @@ SOURCE_GROUP("Platform Files" FILES ${PLATFORM_HDRS} ${PLATFORM_SRCS})
 SOURCE_GROUP("Resources" FILES ${RES_SRC} ${RESOURCE_OS})
 
 SET(ALL_SOURCES ${HEADERS} ${HEADERS_TOMOC} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_SRCS} ${RES_SRC} ${ICON_FILE} ${RESOURCE_OS} ${BOOST_SOURCES})
-SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY} ${Qt5Core_QTMAIN_LIBRARIES} ${PLATFORM_LIBRARIES} qscintilla2 common redis-cli)
+SET(ALL_LIBS ${ALL_LIBS} qscintilla2 ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY} ${Qt5Core_QTMAIN_LIBRARIES} ${PLATFORM_LIBRARIES} common redis-cli)
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
