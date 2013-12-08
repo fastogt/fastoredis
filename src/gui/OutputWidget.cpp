@@ -2,14 +2,19 @@
 
 #include <QHBoxLayout>
 #include <QMenu>
+#include <QToolButton>
+#include <QSplitter>
 
 #include "gui/FastoEditor.h"
 #include "gui/FastoTableView.h"
 #include "gui/FastoTreeView.h"
 #include "gui/FastoTreeModel.h"
 #include "gui/FastoTreeItem.h"
+#include "gui/GuiFactory.h"
+#include "gui/IconLabel.h"
 //#include "gui/FastoTableModel.h"
 #include "common/qt_helper/converter_patterns.h"
+#include "common/time.h"
 
 namespace
 {
@@ -76,7 +81,18 @@ namespace fastoredis
          _tableView->setModel(_treeModel);
 
         _textView = new FastoEditor(this);
+        _timeLabel = new IconLabel(GuiFactory::instance().timeIcon(),common::utils_qt::toQString(common::time::msTimeToString(0)));
+
         QVBoxLayout *mainL = new QVBoxLayout;
+        QHBoxLayout *topL = new QHBoxLayout;
+        QSplitter *splitter = new QSplitter;
+        splitter->setOrientation(Qt::Horizontal);
+        splitter->setHandleWidth(1);
+        splitter->setContentsMargins(0, 0, 0, 0);
+        topL->addWidget(splitter);
+        topL->addWidget(_timeLabel);
+
+        mainL->addLayout(topL);
         mainL->addWidget(_treeView);
         mainL->addWidget(_tableView);
 
@@ -98,6 +114,7 @@ namespace fastoredis
                 _treeModel->setRoot(root);
             }
         }
+        _timeLabel->setText(common::utils_qt::toQString(common::time::msTimeToString(res.elapsedTime())));
         //FastoObjectPtr ptr = res._out;
         //std::string str = toStdString(ptr);
         //_textView->setText(common::utils_qt::toQString(str));

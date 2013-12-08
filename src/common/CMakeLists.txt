@@ -83,7 +83,7 @@ ENDIF(BOOST_ENABLED)
 
 SET(COMMON_SOURCES runtime_bitset.h runtime_bitset.cpp log_levels.hpp logger.h logger.cpp common_config.h
 macros.h macros.cpp mpl.hpp utils.h utils.cpp file_system.h file_system.cpp
-boost_extension.hpp smart_ptr.hpp url.h url.cpp memory_string.h memory_string.cpp
+boost_extension.hpp smart_ptr.hpp url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp
 ${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${FILE_PARSERS} ${DATABASE_SUPPORT_SOURCES} ${SETTINGS_SOURCES} ${MULTI_THREADING_SOURCES})
 
 SET(COMMON_LIBS ${DATABASE_SUPPORT_LIBS})

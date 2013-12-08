@@ -3,6 +3,7 @@
 #include <QWidget>
 QT_BEGIN_NAMESPACE
 class QAction;
+class QToolButton;
 QT_END_NAMESPACE
 
 #include "core/events/EventsInfo.hpp"
@@ -13,6 +14,7 @@ namespace fastoredis
     class FastoTreeView;
     class FastoTableView;
     class FastoTreeModel;
+    class IconLabel;
 
     class OutputWidget
             : public QWidget
@@ -27,7 +29,8 @@ namespace fastoredis
         void startExecute(const EventsInfo::ExecuteInfoRequest &);
         void finishExecute(const EventsInfo::ExecuteInfoResponce &);
 
-    private:
+    private: 
+        IconLabel *_timeLabel;
         FastoTreeModel *_treeModel;
         FastoTreeView *_treeView;
         FastoTableView *_tableView;

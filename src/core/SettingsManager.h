@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include "global/global.h"
 #include "common/patterns/singleton_pattern.hpp"
 

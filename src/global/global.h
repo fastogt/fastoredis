@@ -121,5 +121,4 @@ namespace fastoredis
         value_type *memory_;
         const fastoType _type;
     };
-
 }

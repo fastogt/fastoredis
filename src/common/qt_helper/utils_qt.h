@@ -39,24 +39,19 @@ namespace common
                 Event(senders_type sender, const value_t &initValue)
                     : base_class((base_class::Type)EventType), _sender(sender), _value(initValue){}
 
+                const value_t &value() const
+                {
+                    return _value;
+                }
+
                 senders_type sender() const
                 {
                     return _sender;
                 }
 
-                void setValue(const value_t &val)
-                {
-                    _value = val;
-                }
-
-                value_t value() const
-                {
-                    return _value;
-                }
-
             private:
+                const value_t _value;
                 senders_type _sender;
-                value_t _value;
             };
 
             template<typename error_t>

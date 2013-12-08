@@ -229,55 +229,53 @@ namespace utils
     }
     namespace compare
     {
-    template <typename T>
-    struct RuntimeCmp
-            :public std::binary_function<const T&,const T&,bool>
-    {
-        inline bool operator()(const T &t1,const T &t2)const
+        template <typename T>
+        struct RuntimeCmp
+                :public std::binary_function<const T&,const T&,bool>
         {
-            return t1<t2;
-        }
-    };
+            inline bool operator()(const T &t1,const T &t2)const
+            {
+                return t1<t2;
+            }
+        };
 
-    template <typename T>
-    struct RuntimeCmp<T*>
-            :public std::binary_function<const T*,const T*,bool>
-    {
-        inline bool operator()(const T* t1,const T* t2)const
+        template <typename T>
+        struct RuntimeCmp<T*>
+                :public std::binary_function<const T*,const T*,bool>
         {
-            return (*t1)<(*t2);
-        }
-    };
+            inline bool operator()(const T* t1,const T* t2)const
+            {
+                return (*t1)<(*t2);
+            }
+        };
 
-    template<typename T,typename U>
-    struct RuntimeCmp<std::pair<T,U> >
-        :public std::binary_function<const std::pair<T,U>,const std::pair<T,U>,bool>
-    {
-        inline bool operator()(const std::pair<T,U> &t1,const std::pair<T,U> &t2)const
+        template<typename T,typename U>
+        struct RuntimeCmp<std::pair<T,U> >
+            :public std::binary_function<const std::pair<T,U>,const std::pair<T,U>,bool>
         {
-                if(t1.first==t2.first)
-                {
-                    return t1.second<t2.second;
-                }
-                return t1.first<t2.first;
-        }
-    };
-#ifdef __GXX_RTTI
-    template <typename is_type>
-    struct run_time_type
-    {
-        template <typename type>
-        inline bool operator()(const type &t)const
+            inline bool operator()(const std::pair<T,U> &t1,const std::pair<T,U> &t2)const
+            {
+                    if(t1.first==t2.first)
+                    {
+                        return t1.second<t2.second;
+                    }
+                    return t1.first<t2.first;
+            }
+        };
+        template <typename is_type>
+        struct run_time_type
         {
-            return typeid(t)==typeid(is_type);
-        }
-        template <typename type>
-        inline bool operator()(type *t)const
-        {
-            return typeid(*t)==typeid(is_type);
-        }
-    };
-#endif
+            template <typename type>
+            inline bool operator()(const type &t)const
+            {
+                return typeid(t)==typeid(is_type);
+            }
+            template <typename type>
+            inline bool operator()(type *t)const
+            {
+                return typeid(*t)==typeid(is_type);
+            }
+        };
     }
     namespace algoritm
     {

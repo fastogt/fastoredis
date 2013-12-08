@@ -11,6 +11,7 @@
 
 #include "common/qt_helper/converter_patterns.h"
 #include "gui/GuiFactory.h"
+#include "gui/IconLabel.h"
 #include "shell/RedisShell.h"
 
 namespace fastoredis
@@ -30,6 +31,14 @@ namespace fastoredis
         _disConnectAction = new QAction(GuiFactory::instance().disConnectIcon(), "Disconnect", conbar);
         VERIFY(connect(_disConnectAction, SIGNAL(triggered()), this, SLOT(disconnectFromServer())));
         conbar->addAction(_disConnectAction);
+        _executeAction = new QAction(GuiFactory::instance().executeIcon(), "Execute", conbar);
+        VERIFY(connect(_executeAction, SIGNAL(triggered()), this, SLOT(execute())));
+        conbar->addAction(_executeAction);
+        QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), "Stop", conbar);
+        VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
+        conbar->addAction(stopAction);
+        _serverName = new IconLabel(GuiFactory::instance().serverIcon(), _server->adress());
+        conbar->addWidget(_serverName);
 
         VERIFY(connect(_server.get(), SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), this, SLOT(startConnect(const EventsInfo::ConnectInfoRequest &))));
         VERIFY(connect(_server.get(), SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)), this, SLOT(finishConnect(const EventsInfo::ConnectInfoResponce &))));
@@ -39,26 +48,16 @@ namespace fastoredis
         VERIFY(connect(_server.get(), SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), this, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &))));
         VERIFY(connect(_server.get(), SIGNAL(progressChanged(const EventsInfo::ProgressResponceInfo &)), this, SLOT(progressChange(const EventsInfo::ProgressResponceInfo &))));
 
-        QToolBar *exeBar = new QToolBar;
-        exeBar->setMovable(true);
-        _executeAction = new QAction(GuiFactory::instance().executeIcon(), "Execute", exeBar);
-        VERIFY(connect(_executeAction, SIGNAL(triggered()), this, SLOT(execute())));
-        exeBar->addAction(_executeAction);
-
-        QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), "Stop", exeBar);
-        VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
-        exeBar->addAction(stopAction);
-
         syncConnectionActions();
 
         hlayout->addWidget(conbar);
-        hlayout->addWidget(exeBar);
 
         QSplitter *splitter = new QSplitter;
         splitter->setOrientation(Qt::Horizontal);
         splitter->setHandleWidth(1);
         splitter->setContentsMargins(0, 0, 0, 0);
         hlayout->addWidget(splitter);
+
         _workProgressBar = new QProgressBar;
         hlayout->addWidget(_workProgressBar);
 
@@ -127,6 +126,7 @@ namespace fastoredis
 
     void ShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce &res)
     {
+        _serverName->setText(_server->adress());
         syncConnectionActions();
     }
 
