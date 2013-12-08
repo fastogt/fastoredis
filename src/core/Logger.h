@@ -2,7 +2,6 @@
 
 #include <QObject>
 #include <QString>
-#include <string>
 
 #include "common/patterns/singleton_pattern.hpp"
 #include "common/log_levels.hpp"
@@ -27,7 +26,7 @@ namespace fastoredis
     };
 
     template<typename T>
-    inline void LOG_MSG(const T &mess, common::logging::LEVEL_LOG level, bool notify = true)
+    inline void LOG_MSG(T mess, common::logging::LEVEL_LOG level, bool notify = true)
     {
         return Logger::instance().print(mess, level, notify);
     }

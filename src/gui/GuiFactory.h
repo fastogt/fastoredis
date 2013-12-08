@@ -26,6 +26,7 @@ namespace fastoredis
         const QIcon &messageBoxInformationIcon() const;
         const QIcon &executeIcon() const;
         const QIcon &stopIcon() const;
+        const QIcon &timeIcon() const;
         QFont font() const;
         const QIcon &getIcon(fastoType type) const;
     };

@@ -16,10 +16,16 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
+        struct ServerInfo
+        {
+
+        };
+
         typedef QObject base_class;
         connectionTypes connectionType() const;
         QString name() const;
         IDriverPtr driver() const;
+        QString adress() const;
 
         //async
         void connect();

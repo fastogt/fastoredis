@@ -14,5 +14,5 @@ namespace fastoredis
         :base_class(srv)
     {
 
-    }    
+    }
 }

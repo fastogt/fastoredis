@@ -16,14 +16,16 @@ namespace fastoredis
 
         virtual bool isConnected() const;
         virtual void interrupt();
+        std::string adress() const;
 
         static QStringList allCommands();
     protected:
         void customEvent(QEvent *event);
         virtual void initImpl();
-        virtual void connectImpl(EventsInfo::ConnectInfoResponce &res);
-        virtual void executeImpl(EventsInfo::ExecuteInfoResponce &res);
-        virtual void disconnectImpl(EventsInfo::DisConnectInfoResponce &res);
+
+        virtual void connectEvent(Events::ConnectRequestEvent *ev);
+        virtual void disconnectEvent(Events::DisconnectRequestEvent *ev);
+        virtual void executeEvent(Events::ExecuteRequestEvent *ev);
 
     private:
         struct pimpl;

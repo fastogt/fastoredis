@@ -2,6 +2,7 @@
 
 #include "global/global.h"
 #include "common/qt_helper/utils_qt.h"
+#include "common/time.h"
 
 namespace fastoredis
 {
@@ -12,7 +13,9 @@ namespace fastoredis
         {
             typedef common::utils_qt::EventInfo<error::ErrorInfo> base_class;
             EventInfoBase(const error::ErrorInfo &er = error::ErrorInfo())
-                : base_class(er){}
+                : base_class(er), _time_start(common::time::mstime()) {}
+            long long elapsedTime() const { return common::time::mstime() - _time_start; }
+            long long _time_start;
         };
 
         struct ConnectInfoRequest
@@ -35,7 +38,6 @@ namespace fastoredis
             {
                 base_class::errorInfo_ = er;
             }
-            std::string _prompt;
         };
 
         struct DisonnectInfoRequest

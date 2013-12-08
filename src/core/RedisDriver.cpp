@@ -32,16 +32,6 @@ namespace
         return val.empty() ? NULL : val.c_str();
     }
 
-    long long mstime(void) {
-        struct timeval tv;
-        long long mst;
-
-        gettimeofday(&tv, NULL);
-        mst = ((long long)tv.tv_sec)*1000;
-        mst += tv.tv_usec/1000;
-        return mst;
-    }
-
     char *redisGitSHA1(void) {
         return REDIS_GIT_SHA1;
     }
@@ -148,71 +138,6 @@ namespace fastoredis
             config.mb_delim = sdsnew("\n");
         }
 
-        void connect(const RedisConnectionSettings::config &conf, EventsInfo::ConnectInfoResponce &res)
-        {
-            using namespace error;
-
-            hostAndPort h = conf.host;
-            config.hostip = const_cast<char*>(toCString(h.first));
-            config.hostport = h.second;
-            config.hostsocket = const_cast<char*>(toCString(conf.hostsocket));
-            config.auth = const_cast<char*>(toCString(conf.auth));
-            config.dbnum = conf.dbnum;
-            ErrorInfo er;
-
-            if(_interrupt){
-                res.setErrorInfo(error::ErrorInfo("Interrupted connect.", error::ErrorInfo::E_INTERRUPTED));
-                return;
-            }
-
-            if(cliConnect(0, er) == REDIS_ERR){
-                res.setErrorInfo(er);
-            }
-            cliRefreshPrompt();
-        }
-
-        void query(EventsInfo::ExecuteInfoResponce &res)
-        {
-            using namespace error;
-            const char *inputLine = toCString(res._text);
-
-            ErrorInfo er;
-            if(!inputLine)
-                return;
-
-            cliRefreshPrompt();
-
-            size_t length = strlen(inputLine);
-            int offset = 0;
-            res._out = FastoObject::createRoot(inputLine);
-            for(size_t n = 0; n < length; ++n){
-                if(_interrupt){
-                    res.setErrorInfo(error::ErrorInfo("Interrupted exec.", error::ErrorInfo::E_INTERRUPTED));
-                    return;
-                }
-
-                if(inputLine[n] == '\n' || n == length-1){
-                    char command[128] = {0};
-                    if(n == length-1){
-                        strcpy(command, inputLine + offset);
-                    }
-                    else{
-                        strncpy(command, inputLine + offset, n - offset);
-                    }
-                    offset = n + 1;
-                    FastoObjectPtr child = new FastoObject(res._out, command, ARRAY);
-                    res._out->addChildren(child);
-                    repl_impl(command, child, er);
-                }
-            }
-        }
-
-        void disconnect()
-        {
-            redisFree(context);
-            context = NULL;
-        }
-
         ~pimpl()
         {
             if(context){
@@ -222,7 +147,7 @@ namespace fastoredis
         }
         volatile bool _interrupt;
         redisContext *context;
-    private:
+
         struct config {
             char *hostip;
             int hostport;
@@ -314,6 +239,18 @@ namespace fastoredis
                     return REDIS_ERR;
             }
             return REDIS_OK;
+        }
+
+        std::string currentAdress() const
+        {
+            if(context){
+                return "notconnected";
+            }
+            else{
+                char adress[512] = {0};
+                sprintf(adress, "%s:%d", config.hostip, config.hostport);
+                return adress;
+            }
         }
 
         void cliRefreshPrompt(void) {
@@ -560,8 +497,8 @@ namespace fastoredis
                 }
                 else if (argc > 0)
                 {
-                    if (strcasecmp(argv[0],"quit") == 0 ||
-                    strcasecmp(argv[0],"exit") == 0)
+                    if (strcasecmp(argv[0], "quit") == 0 ||
+                    strcasecmp(argv[0], "exit") == 0)
                     {
                         config.shutdown = 1;
                     } else if (argc == 3 && !strcasecmp(argv[0],"connect")) {
@@ -570,46 +507,37 @@ namespace fastoredis
                         config.hostport = atoi(argv[2]);
                         cliRefreshPrompt();
                         cliConnect(1, er);
-                    } else if (argc == 1 && !strcasecmp(argv[0],"clear")) {
-                        //linenoiseClearScreen();
                     } else {
-                                long long start_time = mstime(), elapsed;
-                                int repeat, skipargs = 0;
+                        int repeat, skipargs = 0;
 
-                                repeat = atoi(argv[0]);
-                                if (argc > 1 && repeat) {
-                                    skipargs = 1;
-                                } else {
-                                    repeat = 1;
-                                }
+                        repeat = atoi(argv[0]);
+                        if (argc > 1 && repeat) {
+                            skipargs = 1;
+                        } else {
+                            repeat = 1;
+                        }
 
-                                while (1) {
-                                    config.cluster_reissue_command = 0;
-                                    if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                                    != REDIS_OK)
-                                    {
-                                        cliConnect(1, er);
+                        while (1) {
+                            config.cluster_reissue_command = 0;
+                            if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
+                            != REDIS_OK)
+                            {
+                                cliConnect(1, er);
 
-                                    /* If we still cannot send the command print error.
-                                    * We'll try to reconnect the next time. */
-                                    if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                                    != REDIS_OK)
-                                        cliPrintContextError(er);
-                                    }
-                                    /* Issue the command again if we got redirected in cluster mode */
-                                    if (config.cluster_mode && config.cluster_reissue_command) {
-                                        cliConnect(1, er);
-                                    } else {
-                                        break;
-                                    }
-                                }
-                                    elapsed = mstime()-start_time;
-                                /*if (elapsed >= 500) {
-                                    char time[128] = {0};
-                                    sprintf(time,"(%.2fs)",(double)elapsed/1000);
-                                    out->addChildren(new FastoObject(out, time, STRING));
-                                }*/
+                            /* If we still cannot send the command print error.
+                            * We'll try to reconnect the next time. */
+                            if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
+                            != REDIS_OK)
+                                cliPrintContextError(er);
                             }
+                            /* Issue the command again if we got redirected in cluster mode */
+                            if (config.cluster_mode && config.cluster_reissue_command) {
+                                cliConnect(1, er);
+                            } else {
+                                break;
+                            }
+                        }
+                    }
                 }
                 sdsfreesplitres(argv,argc);
             }
@@ -626,6 +554,11 @@ namespace fastoredis
     {
         static const QStringList allCommands = getList();
         return allCommands;
+    }
+
+    std::string RedisDriver::adress() const
+    {
+        return _impl->currentAdress();
     }
 
     bool RedisDriver::isConnected() const
@@ -649,23 +582,90 @@ namespace fastoredis
 
     }
 
-    void RedisDriver::connectImpl(EventsInfo::ConnectInfoResponce &res)
+    void RedisDriver::connectEvent(Events::ConnectRequestEvent *ev)
     {
-        RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(settings().get());
-        if(set){
-            RedisConnectionSettings::config conf = set->info();            
-            _impl->connect(conf, res);
-        }
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::ConnectResponceEvent::value_type res(ev->value());
+            RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(_settings.get());
+            if(set){
+                RedisConnectionSettings::config conf = set->info();
+
+                _impl->config.hostip = const_cast<char*>(toCString(conf.host.first));
+                _impl->config.hostport = conf.host.second;
+                _impl->config.hostsocket = const_cast<char*>(toCString(conf.hostsocket));
+                _impl->config.auth = const_cast<char*>(toCString(conf.auth));
+                _impl->config.dbnum = conf.dbnum;
+
+                error::ErrorInfo er;
+        notifyProgress(sender, 25);
+                    if(_impl->_interrupt){
+                        res.setErrorInfo(error::ErrorInfo("Interrupted connect.", error::ErrorInfo::E_INTERRUPTED));
+                    }
+                    else if(_impl->cliConnect(0, er) == REDIS_ERR){
+                        res.setErrorInfo(er);
+                    }
+        notifyProgress(sender, 75);
+                _impl->cliRefreshPrompt();
+            }
+            reply(sender, new Events::ConnectResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
-    void RedisDriver::executeImpl(EventsInfo::ExecuteInfoResponce &res)
+    void RedisDriver::executeEvent(Events::ExecuteRequestEvent *ev)
     {
-        _impl->query(res);
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::ExecuteResponceEvent::value_type res(ev->value());
+            using namespace error;
+            const char *inputLine = toCString(res._text);
+
+            ErrorInfo er;
+            if(inputLine){
+                _impl->cliRefreshPrompt();
+
+                size_t length = strlen(inputLine);
+                int offset = 0;
+                res._out = FastoObject::createRoot(inputLine);
+                double step = 100.0f/length;
+                for(size_t n = 0; n < length; ++n){
+                    if(_impl->_interrupt){
+                        res.setErrorInfo(error::ErrorInfo("Interrupted exec.", error::ErrorInfo::E_INTERRUPTED));
+                        break;
+                    }
+                    if(inputLine[n] == '\n' || n == length-1){
+        notifyProgress(sender, step*n);
+                        char command[128] = {0};
+                        if(n == length-1){
+                            strcpy(command, inputLine + offset);
+                        }
+                        else{
+                            strncpy(command, inputLine + offset, n - offset);
+                        }
+                            offset = n + 1;
+                            FastoObjectPtr child = new FastoObject(res._out, command, ARRAY);
+                            res._out->addChildren(child);
+                            _impl->repl_impl(command, child, er);
+                    }
+                }
+            }
+            else{
+                res.setErrorInfo(error::ErrorInfo("Empty command line.", error::ErrorInfo::E_ERROR));
+            }
+            reply(sender, new Events::ExecuteResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
-    void RedisDriver::disconnectImpl(EventsInfo::DisConnectInfoResponce &res)
+    void RedisDriver::disconnectEvent(Events::DisconnectRequestEvent *ev)
     {
-        _impl->disconnect();
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::DisconnectResponceEvent::value_type res(ev->value());
+            redisFree(_impl->context);
+        notifyProgress(sender, 50);
+            _impl->context = NULL;
+            reply(sender, new Events::DisconnectResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
     void RedisDriver::interrupt()

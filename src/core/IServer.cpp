@@ -47,6 +47,11 @@ namespace fastoredis
         return common::utils_qt::toQString(_drv->settings()->connectionName());
     }
 
+    QString IServer::adress() const
+    {
+        return common::utils_qt::toQString(_drv->adress());
+    }
+
     connectionTypes IServer::connectionType() const
     {
         return _drv->connectionType();
@@ -105,21 +110,18 @@ namespace fastoredis
             ConnectResponceEvent *ev = static_cast<ConnectResponceEvent*>(event);
             ConnectResponceEvent::value_type v = ev->value();
             emit finishedConnect(v);
-            emit progressChanged(100);
         }
         else if(type == static_cast<QEvent::Type>(DisconnectResponceEvent::EventType))
         {
             DisconnectResponceEvent *ev = static_cast<DisconnectResponceEvent*>(event);
             DisconnectResponceEvent::value_type v = ev->value();
             emit finishedDisconnect(v);
-            emit progressChanged(100);
         }
         else if(type == static_cast<QEvent::Type>(ExecuteResponceEvent::EventType))
         {
             ExecuteResponceEvent *ev = static_cast<ExecuteResponceEvent*>(event);
             ExecuteResponceEvent::value_type v = ev->value();
             emit finishedExecute(v);
-            emit progressChanged(100);
         }
         else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
         {

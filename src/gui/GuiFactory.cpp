@@ -73,6 +73,12 @@ namespace fastoredis
         return start;
     }
 
+    const QIcon &GuiFactory::timeIcon() const
+    {
+        static QIcon time(":"PROJECT_NAME_LOWERCASE"/icons/start.png");
+        return time;
+    }
+
     const QIcon &GuiFactory::stopIcon() const
     {
         static QIcon stop(":"PROJECT_NAME_LOWERCASE"/icons/stop.png");

@@ -4,6 +4,7 @@
 QT_BEGIN_NAMESPACE
 class QAction;
 class QProgressBar;
+class QToolButton;
 QT_END_NAMESPACE
 
 #include "core/IServer.h"
@@ -12,6 +13,7 @@ QT_END_NAMESPACE
 namespace fastoredis
 {
     class RedisShell;
+    class IconLabel;
     class ShellWidget
             : public QWidget
     {
@@ -50,6 +52,7 @@ namespace fastoredis
         QAction *_executeAction;
         QAction *_connectAction;
         QAction *_disConnectAction;
+        IconLabel *_serverName;
         RedisShell *_input;
         QProgressBar *_workProgressBar;
     };
