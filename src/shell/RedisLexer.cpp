@@ -43,31 +43,89 @@ namespace fastoredis
     {
         switch (style)
         {
+        case Default:
+             return tr("Default");
+
         case Command:
-            return tr("Default");
+            return tr("Command");
 
         case Types:
             return tr("Types");
         }
 
-        return QString();
+        return QString(style);
     }
 
     QColor RedisLexer::defaultColor(int style) const
     {
-        return base_class::defaultColor(style);
+        switch(style) {
+            case Default:
+                return Qt::black;
+            case Command:
+                return Qt::red;
+            case Types:
+                return Qt::blue;
+        }
+        return Qt::black;
     }
 
     void RedisLexer::styleText(int start, int end)
     {
+        if(!editor())
+            return;
 
+        char *data = new char[end - start + 1];
+        editor()->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, start, end, data);
+        QString source(data);
+        delete [] data;
+        if(source.isEmpty())
+            return;
+
+        paintCommands(source, start);
+        paintTypes(source, start);
     }
 
-    const char *RedisLexer::keywords(int set) const
+    void RedisLexer::paintCommands(const QString &source, int start)
     {
-        if (set == 1)
-            return RedisDriver::allCommandsLine().c_str();
+        static const QStringList &commands = RedisDriver::commandsKeywords();
+        for(QStringList::const_iterator it = commands.begin(); it != commands.end(); ++it){
+            QString word = *it;
+            if(source.contains(word, Qt::CaseInsensitive)){
+                int p = source.count(word, Qt::CaseInsensitive);
+                int index = 0;
+                while(p != 0) {
+                    int begin = source.indexOf(word, index, Qt::CaseInsensitive);
+                    index = begin+1;
 
-        return 0;
+                    startStyling(start + begin);
+                    setStyling(word.length(), Command);
+                    startStyling(start + begin);
+
+                    p--;
+                }
+            }
+        }
+    }
+
+    void RedisLexer::paintTypes(const QString &source, int start)
+    {
+        static const QStringList &commands = RedisDriver::typesKeywords();
+        for(QStringList::const_iterator it = commands.begin(); it != commands.end(); ++it){
+            QString word = *it;
+            if(source.contains(word, Qt::CaseInsensitive)){
+                int p = source.count(word, Qt::CaseInsensitive);
+                int index = 0;
+                while(p != 0) {
+                    int begin = source.indexOf(word, index, Qt::CaseInsensitive);
+                    index = begin+1;
+
+                    startStyling(start + begin);
+                    setStyling(word.length(), Types);
+                    startStyling(start + begin);
+
+                    p--;
+                }
+            }
+        }
     }
 }

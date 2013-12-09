@@ -26,15 +26,19 @@ namespace fastoredis
         Q_OBJECT
     public:
         enum {
-            Command = 0,
-            Types = 1
+            Default = 0,
+            Command = 1,
+            Types = 2
         };
         typedef QsciLexerCustom base_class;
         RedisLexer(QObject *parent = 0);
         virtual const char *language() const;
         virtual QString description(int style) const;
         virtual void styleText(int start, int end);
-        virtual const char *keywords(int set) const;
         virtual QColor defaultColor(int style) const;
+
+    private:
+        void paintCommands(const QString &source, int start);
+        void paintTypes(const QString &source, int start);
     };
 }

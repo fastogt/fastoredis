@@ -61,7 +61,9 @@ namespace
 
     helpEntry *helpEntries;
     int helpEntriesLen = sizeof(commandHelp)/sizeof(struct commandHelp) + sizeof(commandGroups)/sizeof(char*);
-    std::string g_keywordLine;
+
+    QStringList g_types;
+    QStringList g_commands;
 
     QStringList getList()
     {
@@ -73,9 +75,9 @@ namespace
         QStringList list;
         for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
             char* command = commandGroups[i];
-            g_keywordLine += command;
-            g_keywordLine += " ";
-            list.append(common::utils_qt::toQString(std::string(command)));
+            QString qcommand = common::utils_qt::toQString(std::string(command));
+            g_types.append(qcommand);
+            list.append(qcommand);
             tmp.argc = 1;
             tmp.argv = (sds*)malloc(sizeof(sds));
             tmp.argv[0] = sdscatprintf(sdsempty(),"@%s",commandGroups[i]);
@@ -87,9 +89,9 @@ namespace
         for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
             struct commandHelp command = commandHelp[i];
             std::string commandN = command.name;
-            g_keywordLine += commandN;
-            g_keywordLine += " ";
-            list.append(common::utils_qt::toQString(commandN));
+            QString qCommandN = common::utils_qt::toQString(commandN);
+            g_commands.append(qCommandN);
+            list.append(qCommandN);
 
             tmp.argv = sdssplitargs(commandHelp[i].name,&tmp.argc);
             tmp.full = sdsnew(commandHelp[i].name);
@@ -490,17 +492,21 @@ namespace fastoredis
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
         :base_class(settings), _impl(new pimpl)
     {
-        allCommands();
     }
 
-    QStringList RedisDriver::allCommands()
+    const QStringList &RedisDriver::allCommands()
     {
         return g_allCommands;
     }
 
-    const std::string &RedisDriver::allCommandsLine()
+    const QStringList &RedisDriver::typesKeywords()
     {
-        return g_keywordLine;
+        return g_types;
+    }
+
+    const QStringList &RedisDriver::commandsKeywords()
+    {
+        return g_commands;
     }
 
     std::string RedisDriver::address() const
