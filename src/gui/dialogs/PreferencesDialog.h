@@ -22,7 +22,9 @@ namespace fastoredis
         virtual void accept();
     private:
         void syncWithSettings();
+
     private:
         QComboBox *_stylesComboBox;
+        QComboBox *_defaultViewComboBox;
     };
 }

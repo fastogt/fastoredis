@@ -20,6 +20,13 @@ namespace fastoredis
         ROOT = 7
     };
 
+    enum supportedViews
+    {
+        Tree = 0,
+        Table,
+        Text
+    };
+
     namespace error
     {
         struct ErrorInfo
@@ -41,6 +48,10 @@ namespace fastoredis
     {
         std::string toStdString(fastoType t);
         fastoType toFastoType(const std::string &text);
+
+        std::string toStdString(supportedViews v);
+        supportedViews toSupportedViews(const std::string &text);
+        std::vector<std::string> allSupportedViews();
 
         template<fastoType type>
         struct FastoTraits;

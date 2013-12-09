@@ -13,6 +13,7 @@
 #endif
 #define style ('s','t','y','l','e')
 #define connections_ ('c','o','n','n','e','c','t','i','o','n','s')
+#define view_ ('v','i','e','w')
 
 namespace
 {
@@ -20,14 +21,15 @@ namespace
 
     BEGIN_DECL_TYPLE(style,unicode_string,static_path_storage)
     BEGIN_DECL_TYPLE(connections_,fastoredis::SettingsManager::ConnectionSettingsContainerType,static_path_storage)
+    BEGIN_DECL_TYPLE(view_,int,static_path_storage)
 
-    typedef common::storages::storage_container<genereted_settings::setting_style, genereted_settings::setting_connections_> static_storage_type;
+    typedef common::storages::storage_container<genereted_settings::setting_style, genereted_settings::setting_connections_, genereted_settings::setting_view_> static_storage_type;
 
     typedef common::storages::settings_container<static_storage_type> server_main_t;
 
     inline server_main_t &get_config_storage()
     {
-        static server_main_t g_m(static_storage_type(UTEXT("Native"),fastoredis::SettingsManager::ConnectionSettingsContainerType() ));
+        static server_main_t g_m(static_storage_type(UTEXT("Native"),fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree));
         return g_m;
     }
 }
@@ -70,7 +72,6 @@ public:
         std::ostringstream stream;
         for(external_type::const_iterator it = v.begin(); it != v.end(); ++it){
             std::string text = (*it)->toString();
-            const char *c = text.c_str();
             std::copy( base64_text(text.begin()), base64_text(text.end()), std::ostream_iterator<char>(stream) );
             stream << ',';
         }
@@ -104,6 +105,16 @@ namespace fastoredis
     void SettingsManager::setCurrentStyle(const std::string &st) const
     {
         GET_SETTING(genereted_settings::setting_style).set_value(st);
+    }
+
+    void SettingsManager::setDefaultView(supportedViews view)
+    {
+        GET_SETTING(genereted_settings::setting_view_).set_value(view);
+    }
+
+    supportedViews SettingsManager::defaultView() const
+    {
+        return static_cast<supportedViews>(GET_SETTING(genereted_settings::setting_view_).value());
     }
 
     void SettingsManager::addConnection(const IConnectionSettingsBasePtr &connection){

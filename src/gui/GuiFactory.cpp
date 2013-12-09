@@ -148,4 +148,22 @@ namespace fastoredis
         static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/saveas.png");
         return start;
     }
+
+    const QIcon &GuiFactory::textIcon() const
+    {
+        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/text.png");
+        return start;
+    }
+
+    const QIcon &GuiFactory::tableIcon() const
+    {
+        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/table.png");
+        return start;
+    }
+
+    const QIcon &GuiFactory::treeIcon() const
+    {
+        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/tree.png");
+        return start;
+    }
 }

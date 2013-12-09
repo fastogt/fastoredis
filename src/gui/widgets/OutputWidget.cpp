@@ -2,7 +2,7 @@
 
 #include <QHBoxLayout>
 #include <QMenu>
-#include <QToolButton>
+#include <QPushButton>
 #include <QSplitter>
 
 #include "gui/FastoEditor.h"
@@ -12,6 +12,7 @@
 #include "gui/FastoTreeItem.h"
 #include "gui/GuiFactory.h"
 #include "gui/IconLabel.h"
+#include "core/SettingsManager.h"
 //#include "gui/FastoTableModel.h"
 #include "common/qt_helper/converter_patterns.h"
 #include "common/time.h"
@@ -89,15 +90,64 @@ namespace fastoredis
         splitter->setOrientation(Qt::Horizontal);
         splitter->setHandleWidth(1);
         splitter->setContentsMargins(0, 0, 0, 0);
+
+        _treeButton = new QPushButton;
+        _tableButton = new QPushButton;
+        _textButton = new QPushButton;
+        _treeButton->setIcon(GuiFactory::instance().treeIcon());
+        VERIFY(connect(_treeButton, SIGNAL(clicked()), this, SLOT(setTreeView())));
+        _tableButton->setIcon(GuiFactory::instance().tableIcon());
+        VERIFY(connect(_tableButton, SIGNAL(clicked()), this, SLOT(setTableView())));
+        _textButton->setIcon(GuiFactory::instance().textIcon());
+        VERIFY(connect(_textButton, SIGNAL(clicked()), this, SLOT(setTextView())));
+
+        topL->addWidget(_treeButton);
+        topL->addWidget(_tableButton);
+        topL->addWidget(_textButton);
         topL->addWidget(splitter);
         topL->addWidget(_timeLabel);
 
         mainL->addLayout(topL);
         mainL->addWidget(_treeView);
         mainL->addWidget(_tableView);
-
         mainL->addWidget(_textView);
         setLayout(mainL);
+        syncWithSettings();
+    }
+
+    void OutputWidget::syncWithSettings()
+    {
+        supportedViews curV = SettingsManager::instance().defaultView();
+        if(curV == Tree){
+            setTreeView();
+        }
+        else if(curV == Table){
+            setTableView();
+        }
+        else{
+            setTextView();
+        }
+    }
+
+    void OutputWidget::setTreeView()
+    {
+        _treeView->setVisible(true);
+        _tableView->setVisible(false);
+        _textView->setVisible(false);
+    }
+
+    void OutputWidget::setTableView()
+    {
+        _treeView->setVisible(false);
+        _tableView->setVisible(true);
+        _textView->setVisible(false);
+    }
+
+    void OutputWidget::setTextView()
+    {
+        _treeView->setVisible(false);
+        _tableView->setVisible(false);
+        _textView->setVisible(true);
     }
 
     void OutputWidget::startExecute(const EventsInfo::ExecuteInfoRequest &req)

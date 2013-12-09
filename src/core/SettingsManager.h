@@ -18,6 +18,9 @@ namespace fastoredis
         typedef common::patterns::lazy_singleton<SettingsManager> base_class;
         friend class common::patterns::lazy_singleton<SettingsManager>;
 
+        void setDefaultView(supportedViews view);
+        supportedViews defaultView() const;
+
         std::string currentStyle() const;
         void setCurrentStyle(const std::string &style) const;
 

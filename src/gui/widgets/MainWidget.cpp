@@ -76,7 +76,7 @@ namespace fastoredis
     void MainWidget::reloadeCurrentTab()
     {
         int curIndex = currentIndex();
-        QueryWidget * shw = widget(curIndex);
+        QueryWidget *shw = widget(curIndex);
         if(shw){
             shw->reload();
         }

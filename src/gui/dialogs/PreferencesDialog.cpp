@@ -31,6 +31,12 @@ namespace fastoredis
         stylesLayout->addWidget(stylesLabel);
         _stylesComboBox = new QComboBox();
         _stylesComboBox->addItems(detail::getSupportedStyles());
+        _defaultViewComboBox = new QComboBox;
+        std::vector<std::string> allV = detail::allSupportedViews();
+        for(int i=0; i<allV.size(); ++i){
+            _defaultViewComboBox->addItem(common::utils_qt::toQString(allV[i]));
+        }
+        stylesLayout->addWidget(_defaultViewComboBox);
         stylesLayout->addWidget(_stylesComboBox);
         layout->addLayout(stylesLayout);   
 
@@ -48,12 +54,15 @@ namespace fastoredis
     void PreferencesDialog::syncWithSettings()
     {
         _stylesComboBox->setCurrentText(common::utils_qt::toQString(SettingsManager::instance().currentStyle()));
+        _defaultViewComboBox->setCurrentText(common::utils_qt::toQString(detail::toStdString(SettingsManager::instance().defaultView())));
     }
 
     void PreferencesDialog::accept()
     {
         detail::applyStyle(_stylesComboBox->currentText());
         SettingsManager::instance().setCurrentStyle(common::utils_qt::toStdString(_stylesComboBox->currentText()));
+
+        SettingsManager::instance().setDefaultView(detail::toSupportedViews(common::utils_qt::toStdString(_defaultViewComboBox->currentText())));
 
         return BaseClass::accept();
     }

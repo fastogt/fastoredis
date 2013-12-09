@@ -21,5 +21,8 @@
     <file>icons/load.png</file>
     <file>icons/save.png</file>
     <file>icons/saveas.png</file>
+    <file>icons/tree.png</file>
+    <file>icons/table.png</file>
+    <file>icons/text.png</file>
     </qresource>
 </RCC>
