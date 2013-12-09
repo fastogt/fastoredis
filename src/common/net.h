@@ -1,13 +1,12 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
-namespace fastoredis
+namespace common
 {
-    typedef std::pair<std::string, unsigned> hostAndPort;
-    namespace detail
+    namespace net
     {
+        typedef std::pair<std::string, int> hostAndPort;
         std::string toStdString(const hostAndPort &host);
         hostAndPort toHostAndPort(const std::string &host);
     }

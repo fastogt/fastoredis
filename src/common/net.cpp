@@ -1,11 +1,11 @@
-#include "core/HostAndPort.h"
+#include "common/net.h"
 
 #include "common/macros.h"
 #include <boost/lexical_cast.hpp>
 
-namespace fastoredis
+namespace common
 {
-    namespace detail
+    namespace net
     {
         std::string toStdString(const hostAndPort &host)
         {

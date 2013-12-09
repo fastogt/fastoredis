@@ -8,11 +8,12 @@ namespace common
     {
         enum LEVEL_LOG
         {
-            CRITICAL =0,
-            ERROR,
-            WARNING,
+            NONE,
+            DEBUG,
             INFO,
-            DEBUG
+            WARNING,
+            ERROR,
+            CRITICAL
         };
 
         template<LEVEL_LOG L>
@@ -99,7 +100,7 @@ namespace common
                 return traits_level<INFO>::text();
             case DEBUG:
                 return traits_level<DEBUG>::text();
-                default:
+            default:
                 DCHECK(false);
             }
         }

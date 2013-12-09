@@ -25,7 +25,7 @@ namespace fastoredis
         connectionTypes connectionType() const;
         QString name() const;
         IDriverPtr driver() const;
-        QString adress() const;
+        QString address() const;
 
         //async
         void connect();

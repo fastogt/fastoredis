@@ -3,22 +3,17 @@
 #include <hiredis/hiredis.h>
 #include <errno.h>
 
-#ifdef __cplusplus
 extern "C" {
-#endif
 #include <anet.h>
 #include <help.h>
 #include <sds.h>
-#include "version.h"
-#include "release.h"
-#ifdef __cplusplus
+#include <version.h>
+#include <release.h>
 }
-#endif
 
 #include "common/qt_helper/converter_patterns.h"
 
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */
-#define REDIS_DEFAULT_PIPE_TIMEOUT 30 /* seconds */
 #define CLI_HELP_COMMAND 1
 #define CLI_HELP_GROUP 2
 #define OUTPUT_STANDARD 0
@@ -65,21 +60,21 @@ namespace
     } helpEntry;
 
     helpEntry *helpEntries;
-    int helpEntriesLen;
+    int helpEntriesLen = sizeof(commandHelp)/sizeof(struct commandHelp) + sizeof(commandGroups)/sizeof(char*);
+    std::string g_keywordLine;
 
     QStringList getList()
     {
-        static int commandslen = sizeof(commandHelp)/sizeof(struct commandHelp);
-        static int groupslen = sizeof(commandGroups)/sizeof(char*);
-        int len, pos = 0;
+        int pos = 0;
 
         helpEntry tmp;
-        helpEntriesLen = len = commandslen+groupslen;
-        helpEntries = (helpEntry*)malloc(sizeof(helpEntry)*len);
+        helpEntries = (helpEntry*)malloc(sizeof(helpEntry)*helpEntriesLen);
 
         QStringList list;
-        for(int i = 0; i < groupslen; ++i){
+        for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
             char* command = commandGroups[i];
+            g_keywordLine += command;
+            g_keywordLine += " ";
             list.append(common::utils_qt::toQString(std::string(command)));
             tmp.argc = 1;
             tmp.argv = (sds*)malloc(sizeof(sds));
@@ -89,9 +84,12 @@ namespace
             tmp.org = NULL;
             helpEntries[pos++] = tmp;
         }
-        for(int i = 0; i < commandslen; ++i){
+        for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
             struct commandHelp command = commandHelp[i];
-            list.append(common::utils_qt::toQString(std::string(command.name)));
+            std::string commandN = command.name;
+            g_keywordLine += commandN;
+            g_keywordLine += " ";
+            list.append(common::utils_qt::toQString(commandN));
 
             tmp.argv = sdssplitargs(commandHelp[i].name,&tmp.argc);
             tmp.full = sdsnew(commandHelp[i].name);
@@ -101,6 +99,8 @@ namespace
         }
         return list;
     }
+
+    const QStringList g_allCommands = getList();
 }
 
 namespace fastoredis
@@ -109,33 +109,7 @@ namespace fastoredis
     {
         pimpl(): _interrupt(false), context(NULL)
         {
-            config.hostip = sdsnew("127.0.0.1");
-            config.hostport = 6379;
-            config.hostsocket = NULL;
-            config.repeat = 1;
-            config.interval = 0;
-            config.dbnum = 0;
-            config.interactive = 0;
-            config.shutdown = 0;
-            config.monitor_mode = 0;
-            config.pubsub_mode = 0;
-            config.latency_mode = 0;
-            config.latency_history = 0;
-            config.cluster_mode = 0;
-            config.slave_mode = 0;
-            config.getrdb_mode = 0;
-            config.rdb_filename = NULL;
-            config.pipe_mode = 0;
-            config.pipe_timeout = REDIS_DEFAULT_PIPE_TIMEOUT;
-            config.bigkeys = 0;
-            config.stdinarg = 0;
-            config.auth = NULL;
-            config.eval = NULL;
-            /*if (!isatty(fileno(stdout)) && (getenv("FAKETTY") == NULL))
-                config.output = OUTPUT_RAW;
-            else
-                config.output = OUTPUT_STANDARD;*/
-            config.mb_delim = sdsnew("\n");
+
         }
 
         ~pimpl()
@@ -147,42 +121,13 @@ namespace fastoredis
         }
         volatile bool _interrupt;
         redisContext *context;
-
-        struct config {
-            char *hostip;
-            int hostport;
-            char *hostsocket;
-            long repeat;
-            long interval;
-            int dbnum;
-            int interactive;
-            int shutdown;
-            int monitor_mode;
-            int pubsub_mode;
-            int latency_mode;
-            int latency_history;
-            int cluster_mode;
-            int cluster_reissue_command;
-            int slave_mode;
-            int pipe_mode;
-            int pipe_timeout;
-            int getrdb_mode;
-            int stat_mode;
-            char *rdb_filename;
-            int bigkeys;
-            int stdinarg; /* get last arg from stdin. (-x option) */
-            char *auth;
-            int output; /* output mode, see OUTPUT_* defines */
-            sds mb_delim;
-            char prompt[128];
-            char *eval;
-        } config;
+        redisConfig config;
 
         int cliAuth(error::ErrorInfo& er) {
             redisReply *reply;
-            if (config.auth == NULL) return REDIS_OK;
+            if (config.auth.empty()) return REDIS_OK;
 
-            reply = static_cast<redisReply*>(redisCommand(context,"AUTH %s",config.auth));
+            reply = static_cast<redisReply*>(redisCommand(context,"AUTH %s",config.auth.c_str()));
             if (reply != NULL) {
                 freeReplyObject(reply);
                 return REDIS_OK;
@@ -208,18 +153,18 @@ namespace fastoredis
                 if (context != NULL)
                     redisFree(context);
 
-                if (config.hostsocket == NULL) {
-                    context = redisConnect(config.hostip,config.hostport);
+                if (config.hostsocket.empty()) {
+                    context = redisConnect(config.hostip.c_str(),config.hostport);
                 } else {
-                    context = redisConnectUnix(config.hostsocket);
+                    context = redisConnectUnix(config.hostsocket.c_str());
                 }
 
                 if (context->err) {
                     char buff[512] = {0};
-                    if (config.hostsocket == NULL)
-                        sprintf(buff,"Could not connect to Redis at %s:%d: %s\n",config.hostip,config.hostport,context->errstr);
+                    if (config.hostsocket.empty())
+                        sprintf(buff,"Could not connect to Redis at %s:%d: %s\n",config.hostip.c_str(),config.hostport,context->errstr);
                     else
-                        sprintf(buff,"Could not connect to Redis at %s: %s\n",config.hostsocket,context->errstr);
+                        sprintf(buff,"Could not connect to Redis at %s: %s\n",config.hostsocket.c_str(),context->errstr);
                     er = error::ErrorInfo(buff, error::ErrorInfo::E_ERROR);
                     redisFree(context);
                     context = NULL;
@@ -241,28 +186,28 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        std::string currentAdress() const
+        std::string currentaddress() const
         {
-            if(context){
-                return "notconnected";
+            if(!context){
+                return "not connected";
             }
             else{
-                char adress[512] = {0};
-                sprintf(adress, "%s:%d", config.hostip, config.hostport);
-                return adress;
+                char address[512] = {0};
+                sprintf(address, "%s:%d", config.hostip.c_str(), config.hostport);
+                return address;
             }
         }
 
         void cliRefreshPrompt(void) {
             int len;
 
-            if (config.hostsocket != NULL)
+            if (!config.hostsocket.empty())
                 len = snprintf(config.prompt,sizeof(config.prompt),"redis %s",
-                               config.hostsocket);
+                               config.hostsocket.c_str());
             else
                 len = snprintf(config.prompt,sizeof(config.prompt),
-                               strchr(config.hostip,':') ? "[%s]:%d" : "%s:%d",
-                               config.hostip, config.hostport);
+                               strchr(config.hostip.c_str(),':') ? "[%s]:%d" : "%s:%d",
+                               config.hostip.c_str(), config.hostport);
             /* Add [dbnum] if needed */
             if (config.dbnum != 0)
                 len += snprintf(config.prompt+len,sizeof(config.prompt)-len,"[%d]",
@@ -414,12 +359,11 @@ namespace fastoredis
                 *p = '\0';
                 slot = atoi(s+1);
                 s = strchr(p+1,':');    /* MOVED 3999[P]127.0.0.1[S]6381 */
-                *s = '\0';
-                sdsfree(config.hostip);
-                config.hostip = sdsnew(p+1);
+                *s = '\0';                
+                config.hostip = std::string(p+1);
                 config.hostport = atoi(s+1);                
                 char redir[512] = {0};
-                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
+                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip.c_str(), config.hostport);
                 out->addChildren(new FastoObject(out, redir, STRING));
                 config.cluster_reissue_command = 1;
                 cliRefreshPrompt();
@@ -492,7 +436,7 @@ namespace fastoredis
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
 
-                if (argv == NULL) {
+                if (!argv) {
                     out->addChildren(new FastoObject(out, "Invalid argument(s)", STRING));
                 }
                 else if (argc > 0)
@@ -502,8 +446,7 @@ namespace fastoredis
                     {
                         config.shutdown = 1;
                     } else if (argc == 3 && !strcasecmp(argv[0],"connect")) {
-                        sdsfree(config.hostip);
-                        config.hostip = sdsnew(argv[1]);
+                        config.hostip = argv[1];
                         config.hostport = atoi(argv[2]);
                         cliRefreshPrompt();
                         cliConnect(1, er);
@@ -552,13 +495,17 @@ namespace fastoredis
 
     QStringList RedisDriver::allCommands()
     {
-        static const QStringList allCommands = getList();
-        return allCommands;
+        return g_allCommands;
     }
 
-    std::string RedisDriver::adress() const
+    const std::string &RedisDriver::allCommandsLine()
     {
-        return _impl->currentAdress();
+        return g_keywordLine;
+    }
+
+    std::string RedisDriver::address() const
+    {
+        return _impl->currentaddress();
     }
 
     bool RedisDriver::isConnected() const
@@ -589,13 +536,7 @@ namespace fastoredis
             Events::ConnectResponceEvent::value_type res(ev->value());
             RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(_settings.get());
             if(set){
-                RedisConnectionSettings::config conf = set->info();
-
-                _impl->config.hostip = const_cast<char*>(toCString(conf.host.first));
-                _impl->config.hostport = conf.host.second;
-                _impl->config.hostsocket = const_cast<char*>(toCString(conf.hostsocket));
-                _impl->config.auth = const_cast<char*>(toCString(conf.auth));
-                _impl->config.dbnum = conf.dbnum;
+                _impl->config = set->info();
 
                 error::ErrorInfo er;
         notifyProgress(sender, 25);

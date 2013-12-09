@@ -1,6 +1,8 @@
 #pragma once
+
 #include <QString>
 #include "common/macros.h"
+
 namespace common
 {
     namespace utils_qt
@@ -9,7 +11,7 @@ namespace common
         QString toQString(T value);
 
         unicode_string toStdString(const QString &value);
-        }
+    }
         template<typename T>
         struct separator_traits
         {

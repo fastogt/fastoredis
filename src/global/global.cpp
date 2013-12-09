@@ -7,7 +7,7 @@
 
 namespace
 {
-    const char *fastoTypeM[fastoredis::ROOT+1] = {"Unknown",
+    const char *fastoTypeM[] = {"Unknown",
                                                    "String",
                                                    "Array",
                                                    "Integer",
@@ -15,6 +15,8 @@ namespace
                                                    "Status",
                                                    "Error",
                                                    "Root"};
+
+    const char *supportedViewsM[] = {"Tree", "Table", "Text"};
 }
 
 namespace fastoredis
@@ -110,7 +112,7 @@ namespace fastoredis
     {
         std::string result;
         if(obj){
-            FastoObject::child_container_type childrens = obj->_childrens;
+            FastoObject::child_container_type childrens = obj->childrens();
             for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
                 result += toStdString(*it);
             }
@@ -142,6 +144,26 @@ namespace fastoredis
         fastoType toFastoType(const std::string &text)
         {
             return common::utils::enums::findTypeInArray<fastoType>(fastoTypeM,text.c_str());
+        }
+
+        std::string toStdString(supportedViews v)
+        {
+            std::string result;
+            int count = sizeof(supportedViewsM)/sizeof(*supportedViewsM);
+            if(v < count){
+                result = supportedViewsM[v];
+            }
+            return result;
+        }
+
+        supportedViews toSupportedViews(const std::string &text)
+        {
+            return common::utils::enums::findTypeInArray<supportedViews>(supportedViewsM,text.c_str());
+        }
+
+        std::vector<std::string> allSupportedViews()
+        {
+            return common::utils::enums::convertToVector(supportedViewsM);
         }
     }
 }
