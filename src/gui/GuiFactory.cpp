@@ -130,4 +130,22 @@ namespace fastoredis
             DCHECK(0);
         }
     }
+
+    const QIcon &GuiFactory::loadIcon() const
+    {
+        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/load.png");
+        return start;
+    }
+
+    const QIcon &GuiFactory::saveIcon() const
+    {
+        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/save.png");
+        return start;
+    }
+
+    const QIcon &GuiFactory::saveAsIcon() const
+    {
+        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/saveas.png");
+        return start;
+    }
 }

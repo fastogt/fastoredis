@@ -8,16 +8,75 @@
 #include <QAction>
 #include <QProgressBar>
 #include <QSplitter>
+#include <QTextStream>
+#include <QApplication>
+#include <QMessageBox>
+#include <QFileDialog>
 
 #include "common/qt_helper/converter_patterns.h"
 #include "gui/GuiFactory.h"
 #include "gui/IconLabel.h"
 #include "shell/RedisShell.h"
 
+namespace
+{
+    const QString filterForScripts = QObject::tr("JavaScript (*.js);; All Files (*.*)");
+
+    bool loadFromFileText(const QString &filePath, QString &text, QWidget* parent)
+    {
+        bool result = false;
+        QFile file(filePath);
+        if (file.open(QFile::ReadOnly | QFile::Text)) {
+            QTextStream in(&file);
+            QApplication::setOverrideCursor(Qt::WaitCursor);
+            text = in.readAll();
+            QApplication::restoreOverrideCursor();
+            result = true;
+        }
+        else {
+            QMessageBox::critical(parent, QString("Error"),
+                QObject::tr(PROJECT_NAME" can't read from %1:\n%2.")
+                    .arg(filePath)
+                    .arg(file.errorString()));
+        }
+
+        return result;
+    }
+
+    bool saveToFileText(QString filePath, const QString &text, QWidget* parent)
+    {
+        if (filePath.isEmpty())
+            return false;
+
+#ifdef Q_OS_LINUX
+        if (QFileInfo(filePath).suffix().isEmpty()) {
+            filePath += ".js";
+        }
+#endif
+        bool result = false;
+        QFile file(filePath);
+        if (file.open(QFile::WriteOnly | QFile::Text)) {
+            QTextStream out(&file);
+            QApplication::setOverrideCursor(Qt::WaitCursor);
+            out << text;
+            QApplication::restoreOverrideCursor();
+            result = true;
+        }
+        else {
+            QMessageBox::critical(parent, QString("Error"),
+                QObject::tr(PROJECT_NAME" can't save to %1:\n%2.")
+                    .arg(filePath)
+                    .arg(file.errorString()));
+        }
+
+        return result;
+    }
+}
+
 namespace fastoredis
 {
-    ShellWidget::ShellWidget(const IServerPtr &server, QWidget *parent)
-        : base_class(parent), _server(server)
+    ShellWidget::ShellWidget(const IServerPtr &server, const QString &filePath, QWidget *parent)
+        : base_class(parent), _server(server), _filePath(filePath)
     {
         QVBoxLayout *mainlayout = new QVBoxLayout;
         QHBoxLayout *hlayout = new QHBoxLayout;
@@ -50,7 +109,20 @@ namespace fastoredis
 
         syncConnectionActions();
 
-        hlayout->addWidget(conbar);
+        QToolBar *savebar = new QToolBar;
+        savebar->setMovable(true);
+        _loadAction = new QAction(GuiFactory::instance().loadIcon(), "Load", savebar);
+        VERIFY(connect(_loadAction, SIGNAL(triggered()), this, SLOT(loadFromFile())));
+        savebar->addAction(_loadAction);
+        _saveAction = new QAction(GuiFactory::instance().saveIcon(), "Save", savebar);
+        VERIFY(connect(_saveAction, SIGNAL(triggered()), this, SLOT(saveToFile())));
+        savebar->addAction(_saveAction);
+        _saveAsAction = new QAction(GuiFactory::instance().saveAsIcon(), "Save as", savebar);
+        VERIFY(connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveToFileAs())));
+        savebar->addAction(_saveAsAction);
+
+        hlayout->addWidget(savebar);
+        hlayout->addWidget(conbar);        
 
         QSplitter *splitter = new QSplitter;
         splitter->setOrientation(Qt::Horizontal);
@@ -143,5 +215,48 @@ namespace fastoredis
     void ShellWidget::progressChange(const EventsInfo::ProgressResponceInfo &res)
     {
         _workProgressBar->setValue(res._progress);
+    }
+
+    void ShellWidget::loadFromFile()
+    {
+        QString out;
+        bool res = loadFromFile(_filePath);
+        if(res){
+            setText(out);
+        }
+    }
+
+    bool ShellWidget::loadFromFile(const QString &path)
+    {
+        bool res = false;
+        QString filepath = QFileDialog::getOpenFileName(this, path, QString(), filterForScripts);
+        if (!filepath.isEmpty()) {
+            QString out;
+            if (loadFromFileText(filepath, out, this)) {
+                setText(out);
+                _filePath = filepath;
+                res = true;
+            }
+        }
+        return res;
+    }
+
+    void ShellWidget::saveToFileAs()
+    {
+        QString filepath = QFileDialog::getSaveFileName(this,
+            QObject::tr("Save As"), _filePath, filterForScripts);
+
+        if (saveToFileText(filepath,text(), this)) {
+            _filePath = filepath;
+        }
+    }
+
+    void ShellWidget::saveToFile()
+    {
+        if(_filePath.isEmpty()){
+            saveToFileAs();
+        } else {
+            saveToFileText(_filePath, text(), this);
+        }
     }
 }

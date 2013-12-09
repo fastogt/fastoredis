@@ -25,10 +25,12 @@ namespace fastoredis
         void add();
         void remove();
         void edit();
+        void connectionSelectChange();
 
     private:
         void add(const fastoredis::IConnectionSettingsBasePtr &con);
         QTreeWidget *_listWidget;
         ConnectionListItemContainerType _connectionItems;
+        QPushButton *_acButton;
     };
 }

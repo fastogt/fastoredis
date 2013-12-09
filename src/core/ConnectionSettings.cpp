@@ -32,29 +32,23 @@ namespace fastoredis
             switch(crT)
             {
             case REDIS:
+            {
                 result = new RedisConnectionSettings("");
-                break;
-            default:
-                break;
-            }
-            if(result){
                 size_t len = val.size();
-                int comma = 0;
-                int start = 0;
-                for(size_t i=0; i < len; ++i ){
+                for(size_t i = 2; i < len; ++i ){
                     char ch = val[i];
                     if(ch == ','){
-                        if(comma == 1){
-                            std::string name = val.substr(start+1,i-start-1);
-                            result->setConnectionName(name);
-                            std::string line = val.substr(i+1);
-                            result->initFromCommandLine(line);
-                            break;
-                        }
-                        comma++;
-                        start = i;
+                        std::string name = val.substr(2,i-2);
+                        result->setConnectionName(name);
+                        std::string line = val.substr(i+1);
+                        result->initFromCommandLine(line);
+                        break;
                     }
                 }
+                break;
+            }
+            default:
+                break;
             }
         }
         return result;

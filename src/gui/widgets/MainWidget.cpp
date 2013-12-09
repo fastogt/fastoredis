@@ -19,6 +19,7 @@ namespace fastoredis
         VERIFY(connect(tab, SIGNAL(duplicatedTab()), this, SLOT(duplicateCurrentTab())));
         VERIFY(connect(tab, SIGNAL(closedOtherTabs()), this, SLOT(closedOtherTabs())));
         VERIFY(connect(tab, SIGNAL(closedTab()), this, SLOT(closeCurrentTab())));
+        VERIFY(connect(tab, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int))));
         setTabBar(tab);
         setTabsClosable(true);
         setElideMode(Qt::ElideRight);

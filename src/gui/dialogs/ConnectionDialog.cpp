@@ -32,7 +32,6 @@ namespace fastoredis
         typeConnection_->setCurrentText(utils_qt::toQString(detail::toStdString(connection_->connectionType())));
         VERIFY(connect(typeConnection_, SIGNAL(currentTextChanged(const QString&)), this, SLOT(typeConnectionChange(const QString&))));
 
-
         commandLine_ = new QLineEdit;
         commandLine_->setText(utils_qt::toQString(connection_->commandLine()));
 

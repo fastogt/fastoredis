@@ -18,12 +18,13 @@ namespace fastoredis
         void addWidgetBySetting(const IConnectionSettingsBasePtr &setting);
         QueryWidget *currentWidget() const;
         QueryWidget *widget(int index) const;
-        void closeTab(int index);        
+
 
     private Q_SLOTS:
         void createNewTab();
         void reloadeCurrentTab();
         void duplicateCurrentTab();
+        void closeTab(int index);
         void closeCurrentTab();
         void closedOtherTabs();
 

@@ -9,10 +9,10 @@
 #include <QToolButton>
 #include <QMessageBox>
 
-#include "core/SettingsManager.h"
 #include "common/qt_helper/converter_patterns.h"
-#include "gui/GuiFactory.h"
+#include "core/SettingsManager.h"
 #include "core/ConnectionSettings.h"
+#include "gui/GuiFactory.h"
 #include "gui/dialogs/ConnectionDialog.h"
 
 namespace fastoredis
@@ -72,13 +72,18 @@ namespace fastoredis
         _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
         _listWidget->setMinimumHeight(300);
         _listWidget->setMinimumWidth(630);
-        VERIFY(connect(_listWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept())));;
+        VERIFY(connect(_listWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept())));
+        VERIFY(connect(_listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(connectionSelectChange())));
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
         buttonBox->button(QDialogButtonBox::Ok)->setIcon(GuiFactory::instance().serverIcon());
-        buttonBox->button(QDialogButtonBox::Ok)->setText("Open");
+        _acButton = buttonBox->button(QDialogButtonBox::Ok);
+
+        _acButton->setText("Open");
+        _acButton->setEnabled(false);
+
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
@@ -102,7 +107,7 @@ namespace fastoredis
         VERIFY(connect(editB, SIGNAL(clicked()), this, SLOT(edit())));
         toolBarLayout->addWidget(editB);
 
-        QSpacerItem *hSpacer = new QSpacerItem(300,0,QSizePolicy::Expanding);
+        QSpacerItem *hSpacer = new QSpacerItem(300, 0, QSizePolicy::Expanding);
         toolBarLayout->addSpacerItem(hSpacer);
 
         QVBoxLayout *firstColumnLayout = new QVBoxLayout;
@@ -123,6 +128,11 @@ namespace fastoredis
         // Highlight first item
         if (_listWidget->topLevelItemCount() > 0)
             _listWidget->setCurrentItem(_listWidget->topLevelItem(0));
+    }
+
+    void ConnectionsDialog::connectionSelectChange()
+    {
+        _acButton->setEnabled(selectedConnection());
     }
 
     void ConnectionsDialog::add(const IConnectionSettingsBasePtr &con)

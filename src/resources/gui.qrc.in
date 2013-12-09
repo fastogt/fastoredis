@@ -4,7 +4,6 @@
     <file>icons/add.png</file>
     <file>icons/remove.png</file>
     <file>icons/edit.png</file>
-    <file>icons/save.png</file>
     <file>icons/redis.png</file>
     <file>icons/start.png</file>
     <file>icons/stop.png</file>
@@ -19,5 +18,8 @@
     <file>icons/integer.png</file>
     <file>icons/time.png</file>
     <file>icons/server.png</file>
+    <file>icons/load.png</file>
+    <file>icons/save.png</file>
+    <file>icons/saveas.png</file>
     </qresource>
 </RCC>
