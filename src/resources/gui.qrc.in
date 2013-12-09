@@ -17,5 +17,7 @@
     <file>icons/unknown.png</file>
     <file>icons/null.png</file>
     <file>icons/integer.png</file>
+    <file>icons/time.png</file>
+    <file>icons/server.png</file>
     </qresource>
 </RCC>

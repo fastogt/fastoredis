@@ -70,6 +70,7 @@ public:
         std::ostringstream stream;
         for(external_type::const_iterator it = v.begin(); it != v.end(); ++it){
             std::string text = (*it)->toString();
+            const char *c = text.c_str();
             std::copy( base64_text(text.begin()), base64_text(text.end()), std::ostream_iterator<char>(stream) );
             stream << ',';
         }

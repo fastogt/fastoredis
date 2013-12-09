@@ -37,7 +37,7 @@ namespace fastoredis
         QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), "Stop", conbar);
         VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
         conbar->addAction(stopAction);
-        _serverName = new IconLabel(GuiFactory::instance().serverIcon(), _server->adress());
+        _serverName = new IconLabel(GuiFactory::instance().serverIcon(), _server->address());
         conbar->addWidget(_serverName);
 
         VERIFY(connect(_server.get(), SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), this, SLOT(startConnect(const EventsInfo::ConnectInfoRequest &))));
@@ -126,7 +126,7 @@ namespace fastoredis
 
     void ShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce &res)
     {
-        _serverName->setText(_server->adress());
+        _serverName->setText(_server->address());
         syncConnectionActions();
     }
 

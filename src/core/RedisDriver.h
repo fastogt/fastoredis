@@ -16,9 +16,11 @@ namespace fastoredis
 
         virtual bool isConnected() const;
         virtual void interrupt();
-        std::string adress() const;
+        std::string address() const;
 
         static QStringList allCommands();
+        static const std::string &allCommandsLine();
+
     protected:
         void customEvent(QEvent *event);
         virtual void initImpl();

@@ -16,6 +16,8 @@ namespace common
 
         std::string msTimeToString(long long ms)
         {
+            char buff[64] = {0};
+            sprintf(buff, "%.3fs",(double)ms/1000.f);
             return "0";
         }
     }

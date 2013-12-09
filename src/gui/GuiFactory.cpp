@@ -39,7 +39,7 @@ namespace fastoredis
 
     const QIcon &GuiFactory::serverIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/redis.png");
+        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/server.png");
         return main;
     }
 
@@ -75,7 +75,7 @@ namespace fastoredis
 
     const QIcon &GuiFactory::timeIcon() const
     {
-        static QIcon time(":"PROJECT_NAME_LOWERCASE"/icons/start.png");
+        static QIcon time(":"PROJECT_NAME_LOWERCASE"/icons/time.png");
         return time;
     }
 

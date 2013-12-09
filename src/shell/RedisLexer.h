@@ -1,14 +1,25 @@
 #pragma once
 
-#include <QObject>
-#include <QColor>
 #include <Qsci/qscilexercustom.h>
 #include <Qsci/qscilexerdiff.h>
+#include <Qsci/qsciabstractapis.h>
 
 #include "global/global.h"
 
 namespace fastoredis
 {
+    class RedisApi
+            : public QsciAbstractAPIs
+    {
+        Q_OBJECT
+    public:
+        typedef QsciAbstractAPIs base_class;
+        RedisApi(QsciLexer *lexer);
+        virtual void updateAutoCompletionList(const QStringList &context, QStringList &list);
+
+        virtual QStringList callTips(const QStringList &context, int commas, QsciScintilla::CallTipsStyle style, QList<int> &shifts);
+    };
+
     class RedisLexer
             : public QsciLexerCustom
     {
@@ -23,5 +34,7 @@ namespace fastoredis
         virtual const char *language() const;
         virtual QString description(int style) const;
         virtual void styleText(int start, int end);
+        virtual const char *keywords(int set) const;
+        virtual QColor defaultColor(int style) const;
     };
 }

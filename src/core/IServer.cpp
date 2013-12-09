@@ -47,9 +47,9 @@ namespace fastoredis
         return common::utils_qt::toQString(_drv->settings()->connectionName());
     }
 
-    QString IServer::adress() const
+    QString IServer::address() const
     {
-        return common::utils_qt::toQString(_drv->adress());
+        return common::utils_qt::toQString(_drv->address());
     }
 
     connectionTypes IServer::connectionType() const

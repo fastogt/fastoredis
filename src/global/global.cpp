@@ -110,7 +110,7 @@ namespace fastoredis
     {
         std::string result;
         if(obj){
-            FastoObject::child_container_type childrens = obj->_childrens;
+            FastoObject::child_container_type childrens = obj->childrens();
             for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
                 result += toStdString(*it);
             }

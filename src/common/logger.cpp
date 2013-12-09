@@ -49,7 +49,7 @@ namespace common
             : m_outStream(NULL)
         {
         #ifdef NDEBUG
-            m_outStream = new unicode_ofstream(get_logger_path());
+            m_outStream = new unicode_ofstream(get_logger_path().c_str());
             unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(m_outStream);
             if(!file||(file&&!file->is_open()))
             {
@@ -64,11 +64,9 @@ namespace common
         logger::~logger(void)
         {
             m_outStream->flush();
-            if(m_outStream&&m_outStream!=&get_cerr())
-            {
+            if(m_outStream&&m_outStream!=&get_cerr()){
                 unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(m_outStream);
-                if(file)
-                {
+                if(file){
                     file->close();
                 }
                delete m_outStream;

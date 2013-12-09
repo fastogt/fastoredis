@@ -1,6 +1,8 @@
 #pragma once
+
 #include <QWidget>
 #include "global/global.h"
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QProgressBar;
@@ -26,8 +28,8 @@ namespace fastoredis
         QString text() const;
 
     Q_SIGNALS:
-        void startedExecute(const EventsInfo::ExecuteInfoRequest &);
-        void finishedExecute(const EventsInfo::ExecuteInfoResponce &);
+        void startedExecute(const EventsInfo::ExecuteInfoRequest &req);
+        void finishedExecute(const EventsInfo::ExecuteInfoResponce &res);
 
     public Q_SLOTS:
         void setText(const QString& text);

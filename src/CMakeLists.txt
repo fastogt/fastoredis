@@ -9,16 +9,16 @@ SET(SOURCES_GLOBAL
 SET(HEADERS_GUI_TO_MOC
     gui/MainWindow.h
     gui/AppStyle.h
-    gui/LogWidget.h
-    gui/AboutDialog.h
-    gui/PreferencesDialog.h
-    gui/ConnectionsDialog.h
-    gui/ConnectionDialog.h
-    gui/MainWidget.h
+    gui/widgets/LogWidget.h
+    gui/dialogs/AboutDialog.h
+    gui/dialogs/PreferencesDialog.h
+    gui/dialogs/ConnectionsDialog.h
+    gui/dialogs/ConnectionDialog.h
+    gui/widgets/MainWidget.h
     gui/MainTabBar.h
     gui/FastoEditor.h
-    gui/QueryWidget.h
-    gui/OutputWidget.h
+    gui/widgets/QueryWidget.h
+    gui/widgets/OutputWidget.h
     gui/FastoTreeView.h
     gui/FastoTreeModel.h
     gui/FastoTableView.h
@@ -33,16 +33,16 @@ SET(SOURCES_GUI
     gui/MainWindow.cpp
     gui/AppStyle.cpp
     gui/GuiFactory.cpp
-    gui/LogWidget.cpp
-    gui/AboutDialog.cpp
-    gui/PreferencesDialog.cpp
-    gui/ConnectionsDialog.cpp
-    gui/ConnectionDialog.cpp
-    gui/MainWidget.cpp
+    gui/widgets/LogWidget.cpp
+    gui/dialogs/AboutDialog.cpp
+    gui/dialogs/PreferencesDialog.cpp
+    gui/dialogs/ConnectionsDialog.cpp
+    gui/dialogs/ConnectionDialog.cpp
+    gui/widgets/MainWidget.cpp
     gui/MainTabBar.cpp
     gui/FastoEditor.cpp
-    gui/QueryWidget.cpp
-    gui/OutputWidget.cpp
+    gui/widgets/QueryWidget.cpp
+    gui/widgets/OutputWidget.cpp
     gui/FastoTreeView.cpp
     gui/FastoTreeModel.cpp
     gui/FastoTableView.cpp
@@ -64,8 +64,8 @@ SET(HEADERS_CORE
     core/ConnectionSettings.h
     core/events/Events.hpp
     core/events/EventsInfo.hpp
-    core/HostAndPort.h
     core/ServersManager.h
+    core/RedisConfig.h
 )
 SET(SOURCES_CORE
     core/ConnectionTypes.cpp
@@ -77,12 +77,11 @@ SET(SOURCES_CORE
     core/IServer.cpp
     core/RedisServer.cpp
     core/ServersManager.cpp
-    core/HostAndPort.cpp
+    core/RedisConfig.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/ShellWidget.h
     shell/RedisShell.h
-    shell/RedisApi.h
     shell/RedisLexer.h
 )
 SET(HEADERS_SHELL
@@ -91,7 +90,6 @@ SET(SOURCES_SHELL
     shell/ShellWidget.cpp
     shell/RedisShell.cpp
     shell/RedisLexer.cpp
-    shell/RedisApi.cpp
 )
 
 IF(WIN32)

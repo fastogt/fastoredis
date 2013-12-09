@@ -1,10 +1,10 @@
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include <QObject>
 QT_BEGIN_NAMESPACE
 class QThread;
 QT_END_NAMESPACE
-#include <boost/shared_ptr.hpp>
 
 #include "core/ConnectionSettings.h"
 #include "core/events/Events.hpp"
@@ -27,7 +27,7 @@ namespace fastoredis
         //sync
         virtual void interrupt() = 0;
         virtual bool isConnected() const = 0;
-        virtual std::string adress() const = 0;
+        virtual std::string address() const = 0;
 
     private Q_SLOTS:
         void init();

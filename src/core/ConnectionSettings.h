@@ -3,18 +3,23 @@
 #include <boost/shared_ptr.hpp>
 #include "common/boost_extension.hpp"
 #include "core/ConnectionTypes.h"
-#include "core/HostAndPort.h"
+#include "core/RedisConfig.h"
 
 namespace fastoredis
 {
     class IConnectionSettingsBase
     {
     public:
+        virtual std::string commandLine() const = 0;
+        virtual void setCommandLine(const std::string &line) = 0;
 
-        virtual std::string fullAdress() const = 0;
+        virtual std::string fullAddress() const = 0;
 
-        virtual hostAndPort host() const = 0;
-        virtual void setHost(const hostAndPort &host) = 0;
+        virtual std::string host() const = 0;
+        virtual void setHost(const std::string &host) = 0;
+        virtual int port() const = 0;
+        virtual void setPort(int port) = 0;
+
 
         std::string connectionName() const;
         void setConnectionName(const std::string &name);
@@ -26,8 +31,8 @@ namespace fastoredis
         virtual IConnectionSettingsBase* clone () const = 0;
         virtual ~IConnectionSettingsBase();
     protected:
-        virtual std::string toStringImpl() const = 0;
-        virtual void initFromStringImpl(const std::string &val) = 0;
+        virtual std::string toCommandLine() const = 0;
+        virtual void initFromCommandLine(const std::string &val) = 0;
 
         IConnectionSettingsBase(const std::string &connectionName);
         std::string connectionName_;
@@ -40,29 +45,28 @@ namespace fastoredis
     {
     public:
         typedef IConnectionSettingsBase base_class;
-        struct config {
-            hostAndPort host;
-            std::string hostsocket;
-            int dbnum;
-            std::string auth;
-        };
-        RedisConnectionSettings(const std::string &connectionName, const config &info = config());
+        RedisConnectionSettings(const std::string &connectionName, const redisConfig &info = redisConfig());
 
-        virtual std::string fullAdress() const;
+        virtual std::string commandLine() const;
+        virtual void setCommandLine(const std::string &line);
 
-        virtual hostAndPort host() const;
-        virtual void setHost(const hostAndPort &host);
+        virtual std::string fullAddress() const;
+
+        virtual std::string host() const;
+        virtual void setHost(const std::string &host);
+        virtual int port() const;
+        virtual void setPort(int port);
 
         virtual connectionTypes connectionType() const;
 
-        config info() const;
-        void setInfo(const config& info);
+        redisConfig info() const;
+        void setInfo(const redisConfig& info);
 
         virtual IConnectionSettingsBase* clone () const;
     private:
-        virtual std::string toStringImpl() const;
-        virtual void initFromStringImpl(const std::string &val);
-        config info_;
+        virtual std::string toCommandLine() const;
+        virtual void initFromCommandLine(const std::string &val);
+        redisConfig info_;
     };
 
     typedef boost::shared_ptr<RedisConnectionSettings> RedisConnectionSettingsPtr;

@@ -1,8 +1,8 @@
 #include "core/ConnectionSettings.h"
 
-#include "boost/lexical_cast.hpp"
+#include <boost/lexical_cast.hpp>
 #include "common/macros.h"
-#include <stdio.h>
+#include "common/net.h"
 
 namespace
 {
@@ -47,11 +47,8 @@ namespace fastoredis
                         if(comma == 1){
                             std::string name = val.substr(start+1,i-start-1);
                             result->setConnectionName(name);
-                        }
-                        else if(comma == 2){
-                            std::string host = val.substr(start+1,i-start-1);
-                            result->setHost(detail::toHostAndPort(host));
-                            result->initFromStringImpl(val.c_str()+i);
+                            std::string line = val.substr(i+1);
+                            result->initFromCommandLine(line);
                             break;
                         }
                         comma++;
@@ -69,9 +66,8 @@ namespace fastoredis
         connectionTypes crT = connectionType();
         if(crT != detail::badConnectionType()){
             std::stringstream str;
-            str << crT << ',' << connectionName() << ',' << detail::toStdString(host()) << ',';
-            res+=str.str();
-            res+=toStringImpl();
+            str << crT << ',' << connectionName() << ',' << toCommandLine();
+            res = str.str();
         }
         return res;
     }
@@ -91,45 +87,65 @@ namespace fastoredis
         return connectionName_;
     }
 
-    RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName, const config &info)
+    RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName, const redisConfig &info)
         :base_class(connectionName), info_(info)
     {
 
     }
 
-    hostAndPort RedisConnectionSettings::host() const
+    std::string RedisConnectionSettings::host() const
     {
-        return info_.host;
+        return info_.hostip;
     }
 
-    void RedisConnectionSettings::setHost(const hostAndPort &host)
+    void RedisConnectionSettings::setHost(const std::string &host)
     {
-        info_.host = host;
+        info_.hostip = host;
     }
 
-    void RedisConnectionSettings::initFromStringImpl(const std::string &val)
+    int RedisConnectionSettings::port() const
     {
-
+        return info_.hostport;
     }
 
-    std::string RedisConnectionSettings::toStringImpl() const
+    void RedisConnectionSettings::setPort(int port)
     {
-        std::string result;
+        info_.hostport = port;
+    }
 
+    void RedisConnectionSettings::initFromCommandLine(const std::string &val)
+    {
+        info_ = rcFromStdString(val);
+    }
+
+    std::string RedisConnectionSettings::toCommandLine() const
+    {
+        std::string result = toStdString(info_);
         return result;
     }
 
-    std::string RedisConnectionSettings::fullAdress() const
+    void RedisConnectionSettings::setCommandLine(const std::string &line)
     {
-        return detail::toStdString(info_.host);
+        info_ = rcFromStdString(line);
     }
 
-    RedisConnectionSettings::config RedisConnectionSettings::info() const
+    std::string RedisConnectionSettings::commandLine() const
+    {
+        return toStdString(info_);
+    }
+
+    std::string RedisConnectionSettings::fullAddress() const
+    {
+        common::net::hostAndPort h(host(), port());
+        return common::net::toStdString(h);
+    }
+
+    redisConfig RedisConnectionSettings::info() const
     {
         return info_;
     }
 
-    void RedisConnectionSettings::setInfo(const config& info)
+    void RedisConnectionSettings::setInfo(const redisConfig &info)
     {
         info_ =  info;
     }
