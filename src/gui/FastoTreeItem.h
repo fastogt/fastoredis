@@ -25,8 +25,8 @@ namespace fastoredis
         QString key() const;
         QString value() const;
         fastoType type() const;
-    private:
 
+    private:
         QString key_;
         QString value_;
         fastoType type_;

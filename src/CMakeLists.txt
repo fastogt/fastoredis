@@ -10,7 +10,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/MainWindow.h
     gui/AppStyle.h
     gui/widgets/LogWidget.h
-    gui/explorer/ExplorerWidget.h
+    gui/explorer/ExplorerTreeView.h
     gui/explorer/ExplorerTreeModel.h
     gui/dialogs/AboutDialog.h
     gui/dialogs/PreferencesDialog.h
@@ -47,7 +47,7 @@ SET(SOURCES_GUI
     gui/FastoEditor.cpp
     gui/widgets/QueryWidget.cpp
     gui/widgets/OutputWidget.cpp
-    gui/explorer/ExplorerWidget.cpp
+    gui/explorer/ExplorerTreeView.cpp
     gui/explorer/ExplorerTreeModel.cpp
     gui/FastoTreeView.cpp
     gui/FastoTreeModel.cpp
@@ -72,8 +72,8 @@ SET(HEADERS_CORE
     core/ConnectionSettings.h
     core/events/Events.hpp
     core/events/EventsInfo.hpp
-    core/ServersManager.h
     core/RedisConfig.h
+    core/ServersManager.h
 )
 SET(SOURCES_CORE
     core/ConnectionTypes.cpp

@@ -38,6 +38,14 @@ namespace fastoredis
         return result;
     }
 
+    void ServersManager::closeServer(const IServerPtr &server)
+    {
+        ServersContainer::iterator it = std::find(_servers.begin(),_servers.end(),server);
+        if (it != _servers.end()) {
+            _servers.erase(it);
+        }
+    }
+
     IServerPtr ServersManager::findServerBySetting(const IConnectionSettingsBasePtr &settings) const
     {
         for(size_t i = 0; i < _servers.size(); ++i){

@@ -4,36 +4,12 @@
 #include "common/qt_helper/utils_qt.h"
 #include "common/qt_helper/converter_patterns.h"
 
-namespace
-{
-    using namespace fastoredis;
-
-    struct ExplorerTreeItem
-            : public TreeItem
-    {
-        typedef TreeItem base_class;
-        enum eColumn
-        {
-            eName = 0,
-            eSize,
-            eCountColumns
-        };
-        ExplorerTreeItem(ExplorerTreeItem *parent)
-            : base_class(parent)
-        {
-
-        }
-        QString _name;
-        int _size;
-    };
-}
-
 namespace fastoredis
 {
     ExplorerTreeModel::ExplorerTreeModel(QObject *parent)
         : base_class(parent)
     {
-
+        _root.reset(new ExplorerTreeItem(NULL));
     }
 
     QVariant ExplorerTreeModel::data(const QModelIndex &index, int role) const
@@ -52,10 +28,10 @@ namespace fastoredis
 
         if (role == Qt::DisplayRole) {
             if (col == ExplorerTreeItem::eName) {
-                result = node->_name;
+                result = node->server_->name();
             }
             else if (col == ExplorerTreeItem::eSize) {
-                result = node->_size;
+                result = 0;
             }
         }
 
@@ -91,6 +67,27 @@ namespace fastoredis
             result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
         }
         return result;
+    }
+
+    void ExplorerTreeModel::addServer(const IServerPtr &server)
+    {
+        ExplorerTreeItem *parent = static_cast<ExplorerTreeItem*>(_root.get());
+        int child_count = parent->childrenCount();
+        beginInsertRows(QModelIndex(),child_count,child_count);
+            ExplorerTreeItem *item = new ExplorerTreeItem(parent);
+            item->server_ = server;
+            parent->addChildren(item);
+        endInsertRows();
+    }
+
+    void ExplorerTreeModel::removeServer(const IServerPtr &server)
+    {
+        /*ExplorerTreeItem *parent = static_cast<ExplorerTreeItem*>(_root.get());
+        QModelIndex index = createIndex(0,0,parent);
+        int row = parent->indexOf(server);
+        beginRemoveRows(index, row, row);
+        parent->removeChildren(server);
+        endRemoveRows();*/
     }
 
     ExplorerTreeModel::~ExplorerTreeModel()

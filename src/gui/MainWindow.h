@@ -9,6 +9,7 @@ QT_END_NAMESPACE
 namespace fastoredis
 {
     class MainWidget;
+    class ExplorerTreeView;
 
     class MainWindow
             : public QMainWindow
@@ -33,5 +34,6 @@ namespace fastoredis
         QAction *_openAction;
         QAction *_saveAction;
         QAction *_saveAsAction;
+        ExplorerTreeView *_exp;
     };
 }

@@ -2,7 +2,7 @@
 
 #include <QTabWidget>
 
-#include "core/ConnectionSettings.h"
+#include "core/IServer.h"
 
 namespace fastoredis
 {
@@ -19,6 +19,8 @@ namespace fastoredis
         QueryWidget *currentWidget() const;
         QueryWidget *widget(int index) const;
 
+    public Q_SLOTS:
+        void openConsole(const IServerPtr &server);
 
     private Q_SLOTS:
         void createNewTab();

@@ -14,8 +14,9 @@
 #include "gui/dialogs/PreferencesDialog.h"
 #include "gui/dialogs/ConnectionsDialog.h"
 #include "gui/widgets/MainWidget.h"
-#include "gui/explorer/ExplorerWidget.h"
+#include "gui/explorer/ExplorerTreeView.h"
 
+#include "core/ServersManager.h"
 #include "core/SettingsManager.h"
 #include "core/Logger.h"
 
@@ -73,7 +74,8 @@ namespace fastoredis
         MainWidget *mainW = new MainWidget;
         setCentralWidget(mainW);
 
-        ExplorerWidget *exp = new ExplorerWidget(this);
+        _exp = new ExplorerTreeView(this);
+        VERIFY(connect(_exp, SIGNAL(openedConsole(const IServerPtr &)), mainW, SLOT(openConsole(const IServerPtr &))));
         QDockWidget *expDock = new QDockWidget(tr("Explorer tree"));
         QAction *ac = expDock->toggleViewAction();
         ac->setText(QString("&Explorer tree"));
@@ -82,7 +84,7 @@ namespace fastoredis
         viewMenu->addAction(ac);
 
         expDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-        expDock->setWidget(exp);
+        expDock->setWidget(_exp);
         expDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
         expDock->setVisible(false);
         addDockWidget(Qt::LeftDockWidgetArea, expDock);
@@ -114,10 +116,8 @@ namespace fastoredis
         ConnectionsDialog dlg(this);
         int result = dlg.exec();
         if(result == QDialog::Accepted){
-            MainWidget *wid = mainWidget();
-            if(wid){
-                wid->addWidgetBySetting(dlg.selectedConnection());
-            }
+            IServerPtr server = ServersManager::instance().createServer(dlg.selectedConnection());
+            _exp->addServer(server);
         }
     }
 

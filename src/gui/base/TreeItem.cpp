@@ -1,4 +1,5 @@
 #include "gui/base/TreeItem.h"
+#include <algorithm>
 
 namespace fastoredis
 {
@@ -11,6 +12,15 @@ namespace fastoredis
     void TreeItem::addChildren(TreeItem *child)
     {
         childrens_.push_back(child);
+    }
+
+    void TreeItem::removeChildren(TreeItem *child)
+    {
+        child_container_type::iterator it = std::find(childrens_.begin(),childrens_.end(),child);
+        if (it != childrens_.end()) {
+            childrens_.erase(it);
+            delete child;
+        }
     }
 
     int TreeItem::childrenCount() const

@@ -10,12 +10,11 @@ namespace fastoredis
             : public common::patterns::lazy_singleton<ServersManager>
     {
         friend class common::patterns::lazy_singleton<ServersManager>;
-
-    public:        
-        typedef QObject base_class;
+    public:
         typedef std::vector<IServerPtr> ServersContainer;
 
         IServerPtr createServer(const IConnectionSettingsBasePtr &settings);
+        void closeServer(const IServerPtr &server);
 
         ~ServersManager();
 

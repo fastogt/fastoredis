@@ -10,15 +10,12 @@ namespace fastoredis
     public:
         typedef std::vector<TreeItem*> child_container_type;
         TreeItem(TreeItem *parent = 0);
-
         void addChildren(TreeItem *child);
+        void removeChildren(TreeItem *child);
 
         int childrenCount() const;
-
         TreeItem *child(unsigned pos) const;
-
         int indexOf(TreeItem *item) const;
-
         TreeItem *parent() const;
 
         virtual ~TreeItem();
