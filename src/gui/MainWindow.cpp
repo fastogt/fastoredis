@@ -14,6 +14,7 @@
 #include "gui/dialogs/PreferencesDialog.h"
 #include "gui/dialogs/ConnectionsDialog.h"
 #include "gui/widgets/MainWidget.h"
+#include "gui/explorer/ExplorerWidget.h"
 
 #include "core/SettingsManager.h"
 #include "core/Logger.h"
@@ -72,6 +73,20 @@ namespace fastoredis
         MainWidget *mainW = new MainWidget;
         setCentralWidget(mainW);
 
+        ExplorerWidget *exp = new ExplorerWidget(this);
+        QDockWidget *expDock = new QDockWidget(tr("Explorer tree"));
+        QAction *ac = expDock->toggleViewAction();
+        ac->setText(QString("&Explorer tree"));
+        ac->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+        ac->setChecked(false);
+        viewMenu->addAction(ac);
+
+        expDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+        expDock->setWidget(exp);
+        expDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+        expDock->setVisible(false);
+        addDockWidget(Qt::LeftDockWidgetArea, expDock);
+
         LogWidget *log = new LogWidget(this);
         VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, common::logging::LEVEL_LOG)), log, SLOT(addMessage(const QString&, common::logging::LEVEL_LOG))));
         QDockWidget *logDock = new QDockWidget(tr("Logs"));
@@ -86,6 +101,7 @@ namespace fastoredis
         logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
         logDock->setVisible(false);
         addDockWidget(Qt::BottomDockWidgetArea, logDock);
+
         createStatusBar();
     }
 

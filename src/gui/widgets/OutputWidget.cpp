@@ -29,12 +29,7 @@ namespace
             result = new fastoredis::FastoTreeItem( common::utils_qt::toQString(item->c_str()), size, item->type(), parent);
         }
         else{
-            QString varName;
-            QString parenKey = parent->key();
-            int index = parenKey.startsWith("get", Qt::CaseInsensitive);
-            if(index != -1){
-                varName = parenKey.mid(index+2);
-            }
+            QString varName = QString("%1)").arg(parent->childrenCount()+1);
             result = new fastoredis::FastoTreeItem( varName ,common::utils_qt::toQString(item->c_str()), item->type(), parent);
         }
 
@@ -46,21 +41,20 @@ namespace
 
     void parseRedisImpl(fastoredis::FastoTreeItem *root, const fastoredis::FastoObjectPtr &item)
     {
-        fastoredis::FastoTreeItem *child = createItem(root,item);
-
+        fastoredis::FastoTreeItem *child = createItem(root, item);
         fastoredis::FastoObject::child_container_type cont = item->childrens();
-        for(fastoredis::FastoObject::child_container_type::const_iterator it = cont.begin(); it != cont.end(); ++it){
-            fastoredis::FastoObjectPtr obj = *it;
+        for(int i = 0; i < cont.size(); ++i){
+            fastoredis::FastoObjectPtr obj = cont[i];
             parseRedisImpl(child, obj);
         }
     }
 
     fastoredis::FastoTreeItem *parseOutput(const fastoredis::EventsInfo::ExecuteInfoResponce::result_type &res)
     {
-        fastoredis::FastoTreeItem *result = createItem(NULL,res);
+        fastoredis::FastoTreeItem *result = createItem(NULL, res);
         fastoredis::FastoObject::child_container_type cont = res->childrens();
-        for(fastoredis::FastoObject::child_container_type::const_iterator it = cont.begin(); it != cont.end(); ++it){
-            fastoredis::FastoObjectPtr command = *it;
+        for(int i = 0; i < cont.size(); ++i){
+            fastoredis::FastoObjectPtr command = cont[i];
             parseRedisImpl(result, command);
         }
         return result;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdio.h>
 #include <iostream>
 #include "common/common_config.h"
 #include <cassert>
