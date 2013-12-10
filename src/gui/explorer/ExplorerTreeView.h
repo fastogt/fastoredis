@@ -31,6 +31,8 @@ namespace fastoredis
         void connectToServer();
         void openConsole();
 
+        void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
+        void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
     private:        
         QModelIndex selectedIndex() const;
         QModelIndexList selectedIndexes() const;

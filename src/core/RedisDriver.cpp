@@ -562,7 +562,7 @@ namespace fastoredis
     void RedisDriver::executeEvent(Events::ExecuteRequestEvent *ev)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0);
+        notifyProgress(sender, 0);        
             Events::ExecuteResponceEvent::value_type res(ev->value());
             using namespace error;
             const char *inputLine = toCString(res._text);
@@ -598,7 +598,7 @@ namespace fastoredis
             }
             else{
                 res.setErrorInfo(error::ErrorInfo("Empty command line.", error::ErrorInfo::E_ERROR));
-            }
+            }            
             reply(sender, new Events::ExecuteResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
@@ -612,6 +612,29 @@ namespace fastoredis
         notifyProgress(sender, 50);
             _impl->context = NULL;
             reply(sender, new Events::DisconnectResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::loadDatabasesEvent(Events::LoadDatabasesInfoRequestEvent *ev)
+    {
+        static const char* loadDabasesString = "CONFIG GET databases";
+            QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
+            FastoObjectPtr root = FastoObject::createRoot(loadDabasesString);
+            error::ErrorInfo er;
+        notifyProgress(sender, 50);
+            _impl->repl_impl(loadDabasesString, root, er);
+            if(er.isError()){
+                res.setErrorInfo(er);
+            }else{
+                FastoObject::child_container_type childrens = root->childrens();
+                for(int i = 0; i < childrens.size() ;++i){
+                    res._databases.push_back(childrens[i]->c_str());
+                }
+            }
+        notifyProgress(sender, 75);
+            reply(sender, new Events::LoadDatabasesInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 

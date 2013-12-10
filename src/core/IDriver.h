@@ -42,6 +42,7 @@ namespace fastoredis
         virtual void connectEvent(Events::ConnectRequestEvent *ev) = 0;
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev) = 0;
         virtual void executeEvent(Events::ExecuteRequestEvent *ev) = 0;
+        virtual void loadDatabasesEvent(Events::LoadDatabasesInfoRequestEvent *ev) = 0;
 
     private:
         QThread *_thread;

@@ -10,6 +10,7 @@
 
 #include "gui/explorer/ExplorerTreeModel.h"
 #include "gui/explorer/ExplorerTreeModel.h"
+#include "common/qt_helper/converter_patterns.h"
 
 namespace fastoredis
 {
@@ -46,9 +47,9 @@ namespace fastoredis
     {
         QModelIndex sel = selectedIndex();
         if(sel.isValid()){
-            ExplorerTreeItem *node = common::utils_qt::item<ExplorerTreeItem*>(sel);
+            ExplorerTreeServerItem *node = common::utils_qt::item<ExplorerTreeServerItem*>(sel);
             if(node){
-                node->server_->connect();
+                node->server()->connect();
             }
         }
     }
@@ -57,9 +58,9 @@ namespace fastoredis
     {
         QModelIndex sel = selectedIndex();
         if(sel.isValid()){
-            ExplorerTreeItem *node = common::utils_qt::item<ExplorerTreeItem*>(sel);
+            ExplorerTreeServerItem *node = common::utils_qt::item<ExplorerTreeServerItem*>(sel);
             if(node){
-                emit openedConsole(node->server_);
+                emit openedConsole(node->server());
             }
         }
     }
@@ -67,6 +68,9 @@ namespace fastoredis
     void ExplorerTreeView::addServer(const IServerPtr &server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
+        VERIFY(connect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
+        VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
+
         mod->addServer(server);
     }
 
@@ -84,6 +88,28 @@ namespace fastoredis
             return QModelIndex();
 
         return indexses[0];
+    }
+
+    void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req)
+    {
+
+    }
+
+    void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res)
+    {
+        error::ErrorInfo er = res.errorInfo();
+        IServer* send = qobject_cast<IServer*>(sender());
+        ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
+        if(er.isError()){
+
+        }
+        else{
+            std::vector<std::string> databases = res._databases;
+            for (int i = 0; i < databases.size(); ++i) {
+                std::string base = databases[i];
+                mod->addDatabase(send, common::utils_qt::toQString(base) );
+            }
+        }
     }
 
     QModelIndexList ExplorerTreeView::selectedIndexes() const

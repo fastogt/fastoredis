@@ -5,7 +5,7 @@
 
 namespace fastoredis
 {
-    struct ExplorerTreeItem
+    struct ExplorerTreeServerItem
             : public TreeItem
     {
         typedef TreeItem base_class;
@@ -15,12 +15,22 @@ namespace fastoredis
             eStatus,
             eCountColumns
         };
-        ExplorerTreeItem(ExplorerTreeItem *parent)
-            : base_class(parent)
-        {
-
-        }
+        ExplorerTreeServerItem(const IServerPtr &server, ExplorerTreeServerItem *parent);
+        virtual QString name() const;
+        virtual IServerPtr server() const;
+    protected:
         IServerPtr server_;
+    };
+
+    struct ExplorerDatabaseItem
+            : public ExplorerTreeServerItem
+    {
+        typedef ExplorerTreeServerItem base_class;
+        ExplorerDatabaseItem(ExplorerTreeServerItem *par, const QString &name);
+        virtual QString name() const;
+        virtual IServerPtr server() const;
+    private:
+        QString name_;
     };
 
     class ExplorerTreeModel
@@ -37,6 +47,7 @@ namespace fastoredis
 
         void addServer(const IServerPtr &server);
         void removeServer(const IServerPtr &server);
+        void addDatabase(IServer *server, const QString &name);
 
         ~ExplorerTreeModel();
     };

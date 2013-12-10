@@ -87,6 +87,29 @@ namespace fastoredis
             result_type _out;
         };
 
+        struct LoadDatabasesInfoRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            LoadDatabasesInfoRequest(const error::ErrorInfo &er = error::ErrorInfo())
+                : base_class(er)
+            {
+
+            }
+        };
+
+        struct LoadDatabasesInfoResponce
+                : LoadDatabasesInfoRequest
+        {
+            typedef LoadDatabasesInfoRequest base_class;
+            LoadDatabasesInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
+                : base_class(request)
+            {
+                base_class::errorInfo_ = er;
+            }
+            std::vector<std::string> _databases;
+        };
+
         struct ProgressResponceInfo
         {
             ProgressResponceInfo(int pr)
