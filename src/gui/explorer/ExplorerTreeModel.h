@@ -12,7 +12,7 @@ namespace fastoredis
         enum eColumn
         {
             eName = 0,
-            eSize,
+            eStatus,
             eCountColumns
         };
         ExplorerTreeItem(ExplorerTreeItem *parent)

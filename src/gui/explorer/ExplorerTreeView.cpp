@@ -29,17 +29,17 @@ namespace fastoredis
 
     void ExplorerTreeView::showContextMenu(const QPoint &point)
     {
-            QPoint menuPoint = mapToGlobal(point);
-            menuPoint.setY(menuPoint.y() + header()->height());
+        QPoint menuPoint = mapToGlobal(point);
+        menuPoint.setY(menuPoint.y() + header()->height());
 
-            QModelIndex sel = selectedIndex();
-            if(sel.isValid()){
-                QMenu menu(this);
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            QMenu menu(this);
 
-                menu.addAction(_connectAction);
-                menu.addAction(_openConsoleAction);
-                menu.exec(menuPoint);
-            }
+            menu.addAction(_connectAction);
+            menu.addAction(_openConsoleAction);
+            menu.exec(menuPoint);
+        }
     }
 
     void ExplorerTreeView::connectToServer()

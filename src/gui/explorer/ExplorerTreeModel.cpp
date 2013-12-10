@@ -30,8 +30,8 @@ namespace fastoredis
             if (col == ExplorerTreeItem::eName) {
                 result = node->server_->name();
             }
-            else if (col == ExplorerTreeItem::eSize) {
-                result = 0;
+            else if (col == ExplorerTreeItem::eStatus) {
+                result = node->server_->isConnected() ? "Connected":"Not Connected";
             }
         }
 
@@ -48,7 +48,7 @@ namespace fastoredis
                 return "Name";
             }
             else{
-                return "Size";
+                return "Status";
             }
         }
 

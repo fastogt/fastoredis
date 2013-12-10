@@ -80,13 +80,13 @@ namespace fastoredis
         QAction *ac = expDock->toggleViewAction();
         ac->setText(QString("&Explorer tree"));
         ac->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
-        ac->setChecked(false);
+        ac->setChecked(true);
         viewMenu->addAction(ac);
 
         expDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         expDock->setWidget(_exp);
         expDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
-        expDock->setVisible(false);
+        expDock->setVisible(true);
         addDockWidget(Qt::LeftDockWidgetArea, expDock);
 
         LogWidget *log = new LogWidget(this);
