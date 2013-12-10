@@ -119,7 +119,7 @@ namespace fastoredis
             FastoTreeItem * childItem = common::utils_qt::item<FastoTreeItem*>(index);
             if(childItem){
                 FastoTreeItem * parentItem = childItem->parent();
-                if (parentItem && parentItem!=_root.get()) {
+                if (parentItem && parentItem != _root.get()) {
                     FastoTreeItem * grandParent = parentItem->parent();
                     int row = grandParent->indexOf(parentItem);
                     result= createIndex(row, 0, parentItem);

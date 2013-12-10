@@ -90,19 +90,14 @@ namespace fastoredis
         static const QStringList &commands = RedisDriver::commandsKeywords();
         for(QStringList::const_iterator it = commands.begin(); it != commands.end(); ++it){
             QString word = *it;
-            if(source.contains(word, Qt::CaseInsensitive)){
-                int p = source.count(word, Qt::CaseInsensitive);
-                int index = 0;
-                while(p != 0) {
-                    int begin = source.indexOf(word, index, Qt::CaseInsensitive);
-                    index = begin+1;
+            int index = 0;
+            int begin = 0;
+            while( (begin = source.indexOf(word, index, Qt::CaseInsensitive)) != -1){
+                index = begin+1;
 
-                    startStyling(start + begin);
-                    setStyling(word.length(), Command);
-                    startStyling(start + begin);
-
-                    p--;
-                }
+                startStyling(start + begin);
+                setStyling(word.length(), Command);
+                startStyling(start + begin);
             }
         }
     }
@@ -112,19 +107,14 @@ namespace fastoredis
         static const QStringList &commands = RedisDriver::typesKeywords();
         for(QStringList::const_iterator it = commands.begin(); it != commands.end(); ++it){
             QString word = *it;
-            if(source.contains(word, Qt::CaseInsensitive)){
-                int p = source.count(word, Qt::CaseInsensitive);
-                int index = 0;
-                while(p != 0) {
-                    int begin = source.indexOf(word, index, Qt::CaseInsensitive);
-                    index = begin+1;
+            int index = 0;
+            int begin = 0;
+            while( (begin = source.indexOf(word, index, Qt::CaseInsensitive)) != -1){
+                index = begin+1;
 
-                    startStyling(start + begin);
-                    setStyling(word.length(), Types);
-                    startStyling(start + begin);
-
-                    p--;
-                }
+                startStyling(start + begin);
+                setStyling(word.length(), Types);
+                startStyling(start + begin);
             }
         }
     }
