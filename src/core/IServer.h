@@ -16,11 +16,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        struct ServerInfo
-        {
-
-        };
-
         typedef QObject base_class;
         connectionTypes connectionType() const;
         QString name() const;
@@ -30,6 +25,7 @@ namespace fastoredis
         //async
         void connect();
         void disconnect();
+        void loadDatabases();
         void execute(const QString &script);
 
         //sync
@@ -47,6 +43,9 @@ namespace fastoredis
 
         void startedExecute(const EventsInfo::ExecuteInfoRequest &req);
         void finishedExecute(const EventsInfo::ExecuteInfoResponce &res);
+
+        void startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
+        void finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
 
         void progressChanged(const EventsInfo::ProgressResponceInfo &res);
 

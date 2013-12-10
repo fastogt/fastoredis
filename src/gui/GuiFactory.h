@@ -3,7 +3,7 @@
 #include <QIcon>
 #include <QFont>
 
-#include "global/global.h"
+#include "core/ConnectionTypes.h"
 #include "common/patterns/singleton_pattern.hpp"
 
 namespace fastoredis
@@ -28,6 +28,7 @@ namespace fastoredis
         const QIcon &stopIcon() const;
         const QIcon &timeIcon() const;
         QFont font() const;
+        const QIcon &getIcon(connectionTypes type) const;
         const QIcon &getIcon(fastoType type) const;
         const QIcon &loadIcon() const;
         const QIcon &saveIcon() const;

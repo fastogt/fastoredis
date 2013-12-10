@@ -8,7 +8,7 @@
 namespace fastoredis
 {
     FastoTreeModel::FastoTreeModel(QObject *parent)
-        : base_class(parent), _root(NULL)
+        : base_class(parent)
     {
 
     }
@@ -57,17 +57,6 @@ namespace fastoredis
         return result;
     }
 
-    int FastoTreeModel::rowCount(const QModelIndex &parent) const
-    {
-        const FastoTreeItem *parentItem=NULL;
-        if (parent.isValid())
-            parentItem = common::utils_qt::item<FastoTreeItem*>(parent);
-        else
-            parentItem = _root.get();
-
-        return parentItem ? parentItem->childrenCount() : 0;
-    }
-
     QVariant FastoTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
         if (role != Qt::DisplayRole)
@@ -91,42 +80,6 @@ namespace fastoredis
     int FastoTreeModel::columnCount(const QModelIndex &parent) const
     {
         return FastoTreeItem::eCountColumns;
-    }
-
-    QModelIndex FastoTreeModel::index(int row, int column, const QModelIndex &parent) const
-    {
-        QModelIndex index;
-        if (hasIndex(row, column, parent)) {
-            const FastoTreeItem * parentItem = NULL;
-            if (!parent.isValid()) {
-                parentItem = _root.get();
-            } else {
-                parentItem = common::utils_qt::item<FastoTreeItem*>(parent);
-            }
-
-            FastoTreeItem *childItem = parentItem->child(row);
-            if (childItem) {
-                index = createIndex(row, column, childItem);
-            }
-        }
-        return index;
-    }
-
-    QModelIndex FastoTreeModel::parent(const QModelIndex& index) const
-    {
-        QModelIndex result;
-        if (index.isValid()) {
-            FastoTreeItem * childItem = common::utils_qt::item<FastoTreeItem*>(index);
-            if(childItem){
-                FastoTreeItem * parentItem = childItem->parent();
-                if (parentItem && parentItem!=_root.get()) {
-                    FastoTreeItem * grandParent = parentItem->parent();
-                    int row = grandParent->indexOf(parentItem);
-                    result= createIndex(row, 0, parentItem);
-                }
-            }
-        }
-        return result;
     }
 
     Qt::ItemFlags FastoTreeModel::flags(const QModelIndex &index) const

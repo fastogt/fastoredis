@@ -10,6 +10,8 @@ SET(HEADERS_GUI_TO_MOC
     gui/MainWindow.h
     gui/AppStyle.h
     gui/widgets/LogWidget.h
+    gui/explorer/ExplorerTreeView.h
+    gui/explorer/ExplorerTreeModel.h
     gui/dialogs/AboutDialog.h
     gui/dialogs/PreferencesDialog.h
     gui/dialogs/ConnectionsDialog.h
@@ -24,10 +26,12 @@ SET(HEADERS_GUI_TO_MOC
     gui/FastoTableView.h
     gui/FastoTableModel.h
     gui/IconLabel.h
+    gui/base/TreeModel.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
     gui/FastoTreeItem.h
+    gui/base/TreeItem.h
 )
 SET(SOURCES_GUI
     gui/MainWindow.cpp
@@ -43,12 +47,16 @@ SET(SOURCES_GUI
     gui/FastoEditor.cpp
     gui/widgets/QueryWidget.cpp
     gui/widgets/OutputWidget.cpp
+    gui/explorer/ExplorerTreeView.cpp
+    gui/explorer/ExplorerTreeModel.cpp
     gui/FastoTreeView.cpp
     gui/FastoTreeModel.cpp
     gui/FastoTableView.cpp
     gui/FastoTreeItem.cpp
     gui/FastoTableModel.cpp
     gui/IconLabel.cpp
+    gui/base/TreeModel.cpp
+    gui/base/TreeItem.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
@@ -64,8 +72,8 @@ SET(HEADERS_CORE
     core/ConnectionSettings.h
     core/events/Events.hpp
     core/events/EventsInfo.hpp
-    core/ServersManager.h
     core/RedisConfig.h
+    core/ServersManager.h
 )
 SET(SOURCES_CORE
     core/ConnectionTypes.cpp

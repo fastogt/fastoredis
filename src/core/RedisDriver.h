@@ -18,8 +18,9 @@ namespace fastoredis
         virtual void interrupt();
         std::string address() const;
 
-        static QStringList allCommands();
-        static const std::string &allCommandsLine();
+        static const QStringList &allCommands();
+        static const QStringList &typesKeywords();
+        static const QStringList &commandsKeywords();
 
     protected:
         void customEvent(QEvent *event);
@@ -28,6 +29,7 @@ namespace fastoredis
         virtual void connectEvent(Events::ConnectRequestEvent *ev);
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev);
         virtual void executeEvent(Events::ExecuteRequestEvent *ev);
+        virtual void loadDatabasesEvent(Events::LoadDatabasesInfoRequestEvent *ev);
 
     private:
         struct pimpl;

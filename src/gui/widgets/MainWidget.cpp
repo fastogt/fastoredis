@@ -2,7 +2,6 @@
 
 #include <QTabBar>
 
-#include "core/ServersManager.h"
 #include "gui/MainTabBar.h"
 #include "gui/GuiFactory.h"
 #include "common/macros.h"
@@ -27,9 +26,8 @@ namespace fastoredis
         setDocumentMode(true);
     }
 
-    void MainWidget::addWidgetBySetting(const IConnectionSettingsBasePtr &setting)
+    void MainWidget::openConsole(const IServerPtr &server)
     {
-        IServerPtr server = ServersManager::instance().createServer(setting);
         if(server){
             QueryWidget *queryWidget = new QueryWidget(server);
             addWidgetToTab(queryWidget, server->name());

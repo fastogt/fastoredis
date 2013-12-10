@@ -98,6 +98,16 @@ namespace fastoredis
         return textFont;
     }
 
+    const QIcon &GuiFactory::getIcon(connectionTypes type) const
+    {
+        if(type == REDIS){
+            return redisConnectionIcon();
+        }
+        else{
+            return serverIcon();
+        }
+    }
+
     const QIcon &GuiFactory::getIcon(fastoType type) const
     {
         switch(type)

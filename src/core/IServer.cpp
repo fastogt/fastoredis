@@ -65,6 +65,14 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::loadDatabases()
+    {
+        EventsInfo::LoadDatabasesInfoRequest req;
+        emit startedLoadDatabases(req);
+        QEvent *ev = new Events::LoadDatabasesInfoRequestEvent(this,req);
+        notify(ev);
+    }
+
     void IServer::disconnect()
     {
         EventsInfo::DisonnectInfoRequest req;
@@ -122,6 +130,12 @@ namespace fastoredis
             ExecuteResponceEvent *ev = static_cast<ExecuteResponceEvent*>(event);
             ExecuteResponceEvent::value_type v = ev->value();
             emit finishedExecute(v);
+        }
+        else if(type == static_cast<QEvent::Type>(LoadDatabasesInfoResponceEvent::EventType))
+        {
+            LoadDatabasesInfoResponceEvent *ev = static_cast<LoadDatabasesInfoResponceEvent*>(event);
+            LoadDatabasesInfoResponceEvent::value_type v = ev->value();
+            emit finishedLoadDatabases(v);
         }
         else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
         {
