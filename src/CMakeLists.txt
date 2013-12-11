@@ -63,6 +63,7 @@ SET(HEADERS_CORE_TO_MOC
     core/Logger.h
     core/IDriver.h
     core/IServer.h
+    core/IDataBase.h
     core/RedisServer.h
     core/RedisDriver.h
 )
@@ -82,6 +83,7 @@ SET(SOURCES_CORE
     core/Logger.cpp
     core/RedisDriver.cpp
     core/IDriver.cpp
+    core/IDataBase.cpp
     core/IServer.cpp
     core/RedisServer.cpp
     core/ServersManager.cpp

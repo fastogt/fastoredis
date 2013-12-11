@@ -47,7 +47,7 @@ namespace fastoredis
     {
         QModelIndex sel = selectedIndex();
         if(sel.isValid()){
-            ExplorerTreeServerItem *node = common::utils_qt::item<ExplorerTreeServerItem*>(sel);
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
                 node->server()->connect();
             }
@@ -58,7 +58,7 @@ namespace fastoredis
     {
         QModelIndex sel = selectedIndex();
         if(sel.isValid()){
-            ExplorerTreeServerItem *node = common::utils_qt::item<ExplorerTreeServerItem*>(sel);
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
                 emit openedConsole(node->server());
             }
