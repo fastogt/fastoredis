@@ -9,6 +9,6 @@ namespace fastoredis
     {
     public:
         typedef IDatabase base_class;
-        RedisDatabase(IServer *server, const QString &name);
+        RedisDatabase(const IServerPtr &server, const QString &name);
     };
 }

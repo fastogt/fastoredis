@@ -31,12 +31,12 @@ namespace fastoredis
             : public ExplorerServerItem
     {
         typedef ExplorerServerItem base_class;
-        ExplorerDatabaseItem(ExplorerServerItem *par, const QString &name);
+        ExplorerDatabaseItem(const IDatabasePtr &db, ExplorerServerItem *parent);
         virtual QString name() const;
         virtual IServerPtr server() const;
         virtual eType type() const;
     private:
-        QString name_;
+        IDatabasePtr db_;
     };
 
     class ExplorerTreeModel
@@ -53,7 +53,7 @@ namespace fastoredis
 
         void addServer(const IServerPtr &server);
         void removeServer(const IServerPtr &server);
-        void addDatabase(IServer *server, const QString &name);
+        void addDatabase(const IDatabasePtr &database);
 
         ~ExplorerTreeModel();
     };

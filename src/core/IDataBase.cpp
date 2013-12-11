@@ -2,8 +2,23 @@
 
 namespace fastoredis
 {
-    IDatabase::IDatabase(IServer *server, const QString &name)
-        : parent_(server), name_(name)
+    IDatabase::IDatabase(const IServerPtr &server, const QString &name)
+        : server_(server), name_(name)
+    {
+
+    }
+
+    IServerPtr IDatabase::server() const
+    {
+        return server_;
+    }
+
+    QString IDatabase::name() const
+    {
+        return name_;
+    }
+
+    IDatabase::~IDatabase()
     {
 
     }
