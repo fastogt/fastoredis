@@ -47,7 +47,7 @@ namespace fastoredis
     {
         QModelIndex sel = selectedIndex();
         if(sel.isValid()){
-            ExplorerTreeServerItem *node = common::utils_qt::item<ExplorerTreeServerItem*>(sel);
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
                 node->server()->connect();
             }
@@ -58,7 +58,7 @@ namespace fastoredis
     {
         QModelIndex sel = selectedIndex();
         if(sel.isValid()){
-            ExplorerTreeServerItem *node = common::utils_qt::item<ExplorerTreeServerItem*>(sel);
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
                 emit openedConsole(node->server());
             }
@@ -97,19 +97,7 @@ namespace fastoredis
 
     void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res)
     {
-        error::ErrorInfo er = res.errorInfo();
-        IServer* send = qobject_cast<IServer*>(sender());
-        ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
-        if(er.isError()){
 
-        }
-        else{
-            std::vector<std::string> databases = res._databases;
-            for (int i = 0; i < databases.size(); ++i) {
-                std::string base = databases[i];
-                mod->addDatabase(send, common::utils_qt::toQString(base) );
-            }
-        }
     }
 
     QModelIndexList ExplorerTreeView::selectedIndexes() const

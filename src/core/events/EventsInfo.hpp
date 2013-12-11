@@ -102,12 +102,13 @@ namespace fastoredis
                 : LoadDatabasesInfoRequest
         {
             typedef LoadDatabasesInfoRequest base_class;
+            typedef std::vector<std::string> database_info_cont_type;
             LoadDatabasesInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
                 : base_class(request)
             {
                 base_class::errorInfo_ = er;
             }
-            std::vector<std::string> _databases;
+            database_info_cont_type databases_;
         };
 
         struct ProgressResponceInfo

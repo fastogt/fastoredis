@@ -85,6 +85,12 @@ namespace fastoredis
         return stop;
     }
 
+    const QIcon &GuiFactory::databaseIcon() const
+    {
+        static QIcon db(":"PROJECT_NAME_LOWERCASE"/icons/database.png");
+        return db;
+    }
+
     QFont GuiFactory::font() const
     {
 #if defined(Q_OS_MAC)

@@ -1,4 +1,4 @@
-#include "core/RedisConfig.h"
+#include "core/redis/RedisConfig.h"
 
 #include <ostream>
 #include <boost/lexical_cast.hpp>

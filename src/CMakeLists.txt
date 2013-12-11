@@ -63,16 +63,18 @@ SET(HEADERS_CORE_TO_MOC
     core/Logger.h
     core/IDriver.h
     core/IServer.h
-    core/RedisServer.h
-    core/RedisDriver.h
+    core/redis/RedisServer.h
+    core/redis/RedisDriver.h
 )
 SET(HEADERS_CORE
+    core/IDataBase.h
+    core/redis/RedisDataBase.h
     core/ConnectionTypes.h
     core/SettingsManager.h
     core/ConnectionSettings.h
     core/events/Events.hpp
     core/events/EventsInfo.hpp
-    core/RedisConfig.h
+    core/redis/RedisConfig.h
     core/ServersManager.h
 )
 SET(SOURCES_CORE
@@ -80,12 +82,14 @@ SET(SOURCES_CORE
     core/SettingsManager.cpp
     core/ConnectionSettings.cpp
     core/Logger.cpp
-    core/RedisDriver.cpp
+    core/redis/RedisDriver.cpp
     core/IDriver.cpp
+    core/IDataBase.cpp
     core/IServer.cpp
-    core/RedisServer.cpp
+    core/redis/RedisServer.cpp
     core/ServersManager.cpp
-    core/RedisConfig.cpp
+    core/redis/RedisConfig.cpp
+    core/redis/RedisDataBase.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/ShellWidget.h

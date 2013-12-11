@@ -1,6 +1,6 @@
 #include "shell/RedisLexer.h"
 
-#include "core/RedisDriver.h"
+#include "core/redis/RedisDriver.h"
 
 namespace fastoredis
 {

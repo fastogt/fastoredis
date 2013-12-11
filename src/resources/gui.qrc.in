@@ -24,5 +24,6 @@
     <file>icons/tree.png</file>
     <file>icons/table.png</file>
     <file>icons/text.png</file>
+    <file>icons/database.png</file>
     </qresource>
 </RCC>

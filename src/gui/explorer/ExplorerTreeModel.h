@@ -5,32 +5,38 @@
 
 namespace fastoredis
 {
-    struct ExplorerTreeServerItem
+    struct ExplorerServerItem
             : public TreeItem
     {
         typedef TreeItem base_class;
         enum eColumn
         {
             eName = 0,
-            eStatus,
             eCountColumns
         };
-        ExplorerTreeServerItem(const IServerPtr &server, ExplorerTreeServerItem *parent);
+        enum eType
+        {
+            Server,
+            Database
+        };
+        ExplorerServerItem(const IServerPtr &server, ExplorerServerItem *parent);
         virtual QString name() const;
         virtual IServerPtr server() const;
+        virtual eType type() const;
     protected:
         IServerPtr server_;
     };
 
     struct ExplorerDatabaseItem
-            : public ExplorerTreeServerItem
+            : public ExplorerServerItem
     {
-        typedef ExplorerTreeServerItem base_class;
-        ExplorerDatabaseItem(ExplorerTreeServerItem *par, const QString &name);
+        typedef ExplorerServerItem base_class;
+        ExplorerDatabaseItem(const IDatabasePtr &db, ExplorerServerItem *parent);
         virtual QString name() const;
         virtual IServerPtr server() const;
+        virtual eType type() const;
     private:
-        QString name_;
+        IDatabasePtr db_;
     };
 
     class ExplorerTreeModel
@@ -47,7 +53,7 @@ namespace fastoredis
 
         void addServer(const IServerPtr &server);
         void removeServer(const IServerPtr &server);
-        void addDatabase(IServer *server, const QString &name);
+        void addDatabase(const IDatabasePtr &database);
 
         ~ExplorerTreeModel();
     };

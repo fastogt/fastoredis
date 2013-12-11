@@ -3,45 +3,56 @@
 #include "gui/GuiFactory.h"
 #include "common/qt_helper/utils_qt.h"
 #include "common/qt_helper/converter_patterns.h"
+#include "core/IDataBase.h"
 
 namespace fastoredis
 {
-    ExplorerTreeServerItem::ExplorerTreeServerItem(const IServerPtr &server, ExplorerTreeServerItem *parent)
+    ExplorerServerItem::ExplorerServerItem(const IServerPtr &server, ExplorerServerItem *parent)
         : base_class(parent), server_(server)
     {
 
     }
 
-    IServerPtr ExplorerTreeServerItem::server() const
+    ExplorerServerItem::eType ExplorerServerItem::type() const
+    {
+        return Server;
+    }
+
+    IServerPtr ExplorerServerItem::server() const
     {
         return server_;
     }
 
-    QString ExplorerTreeServerItem::name() const
+    QString ExplorerServerItem::name() const
     {
         return server_->name();
     }
 
-    ExplorerDatabaseItem::ExplorerDatabaseItem(ExplorerTreeServerItem *par, const QString &name)
-        : base_class(par->server(), par), name_(name)
+    ExplorerDatabaseItem::ExplorerDatabaseItem(const IDatabasePtr &db, ExplorerServerItem *parent)
+        : base_class(db->server(), parent), db_(db)
     {
 
     }
 
     IServerPtr ExplorerDatabaseItem::server() const
     {
-        return static_cast<ExplorerTreeServerItem*>(parent_)->server();
+        return static_cast<ExplorerServerItem*>(parent_)->server();
+    }
+
+    ExplorerDatabaseItem::eType ExplorerDatabaseItem::type() const
+    {
+        return Database;
     }
 
     QString ExplorerDatabaseItem::name() const
     {
-        return name_;
+        return db_->name();
     }
 
     ExplorerTreeModel::ExplorerTreeModel(QObject *parent)
         : base_class(parent)
     {
-        _root.reset(new ExplorerTreeServerItem(IServerPtr(),NULL));
+        _root.reset(new ExplorerServerItem(IServerPtr(),NULL));
     }
 
     QVariant ExplorerTreeModel::data(const QModelIndex &index, int role) const
@@ -51,23 +62,26 @@ namespace fastoredis
         if (!index.isValid())
             return result;
 
-        ExplorerTreeServerItem *node = common::utils_qt::item<ExplorerTreeServerItem*>(index);
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(index);
 
         if (!node)
             return result;
 
         int col = index.column();
 
-        if(role == Qt::DecorationRole && col == ExplorerTreeServerItem::eName ){
-            return GuiFactory::instance().getIcon(node->server()->connectionType());
+        if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){
+            ExplorerServerItem::eType t = node->type();
+            if(t == ExplorerServerItem::Server){
+                return GuiFactory::instance().getIcon(node->server()->connectionType());
+            }
+            else{
+                return GuiFactory::instance().databaseIcon();
+            }
         }
 
         if (role == Qt::DisplayRole) {
-            if (col == ExplorerTreeServerItem::eName) {
+            if (col == ExplorerServerItem::eName) {
                 result = node->name();
-            }
-            else if (col == ExplorerTreeServerItem::eStatus) {
-                result = node->server()->isConnected() ? "Connected" : "Not Connected";
             }
         }
 
@@ -80,11 +94,8 @@ namespace fastoredis
             return QVariant();
 
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-            if (section == ExplorerTreeServerItem::eName) {
+            if (section == ExplorerServerItem::eName) {
                 return "Name";
-            }
-            else{
-                return "Status";
             }
         }
 
@@ -93,7 +104,7 @@ namespace fastoredis
 
     int ExplorerTreeModel::columnCount(const QModelIndex &parent) const
     {
-        return ExplorerTreeServerItem::eCountColumns;
+        return ExplorerServerItem::eCountColumns;
     }
 
     Qt::ItemFlags ExplorerTreeModel::flags(const QModelIndex &index) const
@@ -107,20 +118,20 @@ namespace fastoredis
 
     void ExplorerTreeModel::addServer(const IServerPtr &server)
     {
-        ExplorerTreeServerItem *parent = static_cast<ExplorerTreeServerItem*>(_root.get());
+        ExplorerServerItem *parent = static_cast<ExplorerServerItem*>(_root.get());
         int child_count = parent->childrenCount();
         beginInsertRows(QModelIndex(),child_count,child_count);
-            ExplorerTreeServerItem *item = new ExplorerTreeServerItem(server, parent);
+            ExplorerServerItem *item = new ExplorerServerItem(server, parent);
             parent->addChildren(item);
         endInsertRows();
     }
 
-    void ExplorerTreeModel::addDatabase(IServer *server, const QString &name)
+    void ExplorerTreeModel::addDatabase(const IDatabasePtr &database)
     {
-        ExplorerTreeServerItem *parent = NULL;
+        ExplorerServerItem *parent = NULL;
         for(int i = 0; i < _root->childrenCount(); ++i ){
-            ExplorerTreeServerItem *item = static_cast<ExplorerTreeServerItem*>(_root->child(i));
-            if(item->server().get() == server){
+            ExplorerServerItem *item = static_cast<ExplorerServerItem*>(_root->child(i));
+            if(item->server() == database->server()){
                 parent = item;
                 break;
             }
@@ -129,14 +140,14 @@ namespace fastoredis
         int child_count = parent->childrenCount();
         QModelIndex index = createIndex(0,0,parent);
         beginInsertRows(index,child_count,child_count);
-            ExplorerDatabaseItem *item = new ExplorerDatabaseItem(parent, name);
+            ExplorerDatabaseItem *item = new ExplorerDatabaseItem(database, parent);
             parent->addChildren(item);
         endInsertRows();
     }
 
     void ExplorerTreeModel::removeServer(const IServerPtr &server)
     {
-        /*ExplorerTreeServerItem *parent = static_cast<ExplorerTreeServerItem*>(_root.get());
+        /*ExplorerServerItem *parent = static_cast<ExplorerServerItem*>(_root.get());
         QModelIndex index = createIndex(0,0,parent);
         int row = parent->indexOf(server);
         beginRemoveRows(index, row, row);

@@ -27,6 +27,7 @@ namespace fastoredis
         const QIcon &executeIcon() const;
         const QIcon &stopIcon() const;
         const QIcon &timeIcon() const;
+        const QIcon &databaseIcon() const;
         QFont font() const;
         const QIcon &getIcon(connectionTypes type) const;
         const QIcon &getIcon(fastoType type) const;

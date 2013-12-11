@@ -10,12 +10,12 @@
 namespace fastoredis
 {
     IServer::IServer(const IDriverPtr &drv)
-        : _drv(drv)
+        : _drv(drv), _isMaster(true)
     {
     }
 
     IServer::IServer(const IServerPtr &srv)
-        : _drv(srv->driver())
+        : _drv(srv->driver()), _isMaster(false)
     {
         syncServers(srv.get(), this);
     }
@@ -73,6 +73,11 @@ namespace fastoredis
         notify(ev);
     }
 
+    IServer::databases_cont_type IServer::databases() const
+    {
+        return databases_;
+    }
+
     void IServer::disconnect()
     {
         EventsInfo::DisonnectInfoRequest req;
@@ -99,6 +104,11 @@ namespace fastoredis
         return _drv->isConnected();
     }
 
+    bool IServer::isMaster() const
+    {
+        return _isMaster;
+    }
+
     IServer::~IServer()
     {
 
@@ -116,26 +126,22 @@ namespace fastoredis
         QEvent::Type type = event->type();
         if (type == static_cast<QEvent::Type>(ConnectResponceEvent::EventType)){
             ConnectResponceEvent *ev = static_cast<ConnectResponceEvent*>(event);
-            ConnectResponceEvent::value_type v = ev->value();
-            emit finishedConnect(v);
+            connectEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(DisconnectResponceEvent::EventType))
         {
             DisconnectResponceEvent *ev = static_cast<DisconnectResponceEvent*>(event);
-            DisconnectResponceEvent::value_type v = ev->value();
-            emit finishedDisconnect(v);
+            disconnectEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(ExecuteResponceEvent::EventType))
         {
             ExecuteResponceEvent *ev = static_cast<ExecuteResponceEvent*>(event);
-            ExecuteResponceEvent::value_type v = ev->value();
-            emit finishedExecute(v);
+            executeEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(LoadDatabasesInfoResponceEvent::EventType))
         {
             LoadDatabasesInfoResponceEvent *ev = static_cast<LoadDatabasesInfoResponceEvent*>(event);
-            LoadDatabasesInfoResponceEvent::value_type v = ev->value();
-            emit finishedLoadDatabases(v);
+            loadDatabasesEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
         {
