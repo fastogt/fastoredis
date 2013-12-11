@@ -2,8 +2,8 @@
 
 namespace fastoredis
 {
-    IDatabase::IDatabase(IServer *parent)
-        : base_class(parent)
+    IDatabase::IDatabase(IServer *server, const QString &name)
+        : parent_(server), name_(name)
     {
 
     }

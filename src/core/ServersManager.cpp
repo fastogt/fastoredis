@@ -1,9 +1,8 @@
 #include "core/ServersManager.h"
 
-#include "core/RedisServer.h"
-#include "core/RedisDriver.h"
+#include "core/redis/RedisServer.h"
+#include "core/redis/RedisDriver.h"
 #include "common/macros.h"
-#include "core/events/Events.hpp"
 
 namespace fastoredis
 {

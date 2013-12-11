@@ -1,16 +1,21 @@
 #pragma once
 
-#include <QObject>
-#include <core/IServer.h>
+#include "core/IServer.h"
 
 namespace fastoredis
 {
+    class IServer;
     class IDatabase
-            : public QObject
     {
-        Q_OBJECT
     public:
         typedef QObject base_class;
-        IDatabase(IServer *parent);
+        QString name() const;
+
+    protected:
+        IDatabase(IServer *server, const QString &name);
+        virtual ~IDatabase(){}
+    private:
+        IServer *parent_;
+        QString name_;
     };
 }

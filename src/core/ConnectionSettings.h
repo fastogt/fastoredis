@@ -4,7 +4,7 @@
 
 #include "common/boost_extension.hpp"
 #include "core/ConnectionTypes.h"
-#include "core/RedisConfig.h"
+#include "core/redis/RedisConfig.h"
 
 namespace fastoredis
 {
