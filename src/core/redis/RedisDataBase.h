@@ -8,7 +8,6 @@ namespace fastoredis
             : public IDatabase
     {
     public:
-        typedef IDatabase base_class;
         RedisDatabase(const IServerPtr &server, const QString &name);
     };
 }

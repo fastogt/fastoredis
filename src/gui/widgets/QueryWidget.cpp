@@ -10,7 +10,7 @@
 namespace fastoredis
 {
     QueryWidget::QueryWidget(const IServerPtr &server, QWidget* parent)
-        : base_class(parent)
+        : QWidget(parent)
     {
         _shellWidget = new ShellWidget(server);
         _outputWidget = new OutputWidget;

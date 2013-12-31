@@ -16,8 +16,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef QObject base_class;
-
         static void reply(QObject *reciver, QEvent *ev);
 
         connectionTypes connectionType() const;

@@ -7,13 +7,13 @@
 namespace fastoredis
 {
     RedisServer::RedisServer(const IDriverPtr &drv)
-        :base_class(drv)
+        :IServer(drv)
     {
 
     }
 
     RedisServer::RedisServer(const IServerPtr &srv)
-        :base_class(srv)
+        :IServer(srv)
     {
 
     }

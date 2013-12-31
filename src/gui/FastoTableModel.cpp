@@ -21,7 +21,7 @@ namespace
 namespace fastoredis
 {
     FastoTableModel::FastoTableModel(QObject *parent)
-        :base_class(parent)
+        :QAbstractProxyModel(parent)
     {
 
     }

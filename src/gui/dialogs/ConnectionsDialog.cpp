@@ -45,7 +45,7 @@ namespace fastoredis
      * @brief Creates dialog
      */
     ConnectionsDialog::ConnectionsDialog(QWidget *parent)
-        : base_class(parent)
+        : QDialog(parent)
     {
         setWindowIcon(GuiFactory::instance().connectIcon());
         setWindowTitle("Redis Connections");

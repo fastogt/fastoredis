@@ -13,7 +13,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef QsciAbstractAPIs base_class;
         RedisApi(QsciLexer *lexer);
         virtual void updateAutoCompletionList(const QStringList &context, QStringList &list);
 
@@ -30,7 +29,6 @@ namespace fastoredis
             Command = 1,
             Types = 2
         };
-        typedef QsciLexerCustom base_class;
         RedisLexer(QObject *parent = 0);
         virtual const char *language() const;
         virtual QString description(int style) const;

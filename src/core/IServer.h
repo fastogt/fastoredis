@@ -18,7 +18,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef QObject base_class;
         typedef std::vector<IDatabasePtr> databases_cont_type;
         connectionTypes connectionType() const;
         QString name() const;

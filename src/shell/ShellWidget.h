@@ -2,15 +2,12 @@
 
 #include <QWidget>
 #include "global/global.h"
+#include "core/IServer.h"
+#include "core/events/EventsInfo.hpp"
 
-QT_BEGIN_NAMESPACE
 class QAction;
 class QProgressBar;
 class QToolButton;
-QT_END_NAMESPACE
-
-#include "core/IServer.h"
-#include "core/events/EventsInfo.hpp"
 
 namespace fastoredis
 {
@@ -21,7 +18,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef QWidget base_class;
         ShellWidget(const IServerPtr &server, const QString &filePath = QString(), QWidget* parent = 0);
 
         const IServerPtr &server() const;

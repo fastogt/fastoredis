@@ -45,7 +45,7 @@ namespace fastoredis
             ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);           
             executeEvent(ev);
         }
-        return base_class::customEvent(event);
+        return QObject::customEvent(event);
     }
 
     void IDriver::reply(QObject *reciver, QEvent *ev)

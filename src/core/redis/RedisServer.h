@@ -10,7 +10,6 @@ namespace fastoredis
         friend class ServersManager;
         Q_OBJECT
     public:
-        typedef IServer base_class;
 
     protected:
         virtual void connectEvent(Events::ConnectResponceEvent *ev);

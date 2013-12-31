@@ -12,7 +12,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef QAbstractItemModel base_class;
         TreeModel(QObject *parent = 0);
 
         int rowCount(const QModelIndex &parent=QModelIndex()) const;

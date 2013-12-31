@@ -5,7 +5,7 @@
 namespace fastoredis
 {
     TreeModel::TreeModel(QObject *parent)
-        : base_class(parent), _root(NULL)
+        : QAbstractItemModel(parent), _root(NULL)
     {
 
     }

@@ -15,7 +15,6 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        typedef QDialog base_class;
         typedef std::vector<ConnectionListWidgetItem *> ConnectionListItemContainerType;
         ConnectionsDialog(QWidget *parent = 0);
         IConnectionSettingsBasePtr selectedConnection() const;

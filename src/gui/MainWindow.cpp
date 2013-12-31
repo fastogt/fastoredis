@@ -23,7 +23,7 @@
 namespace fastoredis
 {
     MainWindow::MainWindow()
-    : base_class()
+    : QMainWindow()
     {
         using namespace common;
         unicode_string style = SettingsManager::instance().currentStyle();

@@ -76,7 +76,7 @@ namespace
 namespace fastoredis
 {
     ShellWidget::ShellWidget(const IServerPtr &server, const QString &filePath, QWidget *parent)
-        : base_class(parent), _server(server), _filePath(filePath)
+        : QWidget(parent), _server(server), _filePath(filePath)
     {
         QVBoxLayout *mainlayout = new QVBoxLayout;
         QHBoxLayout *hlayout = new QHBoxLayout;

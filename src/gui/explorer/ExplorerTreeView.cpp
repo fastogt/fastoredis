@@ -15,7 +15,7 @@
 namespace fastoredis
 {
     ExplorerTreeView::ExplorerTreeView(QWidget *parent)
-        : base_class(parent)
+        : QTreeView(parent)
     {
         setModel(new ExplorerTreeModel(this));
         setSelectionBehavior(QAbstractItemView::SelectRows);

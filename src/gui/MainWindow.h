@@ -2,9 +2,7 @@
 
 #include <QMainWindow>
 
-QT_BEGIN_NAMESPACE
 class QAction;
-QT_END_NAMESPACE
 
 namespace fastoredis
 {
@@ -16,7 +14,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef QMainWindow base_class;
         MainWindow();
 
     private Q_SLOTS:

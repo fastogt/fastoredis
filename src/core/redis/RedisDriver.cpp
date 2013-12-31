@@ -490,7 +490,7 @@ namespace fastoredis
     };
 
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
-        :base_class(settings), _impl(new pimpl)
+        :IDriver(settings), _impl(new pimpl)
     {
     }
 
@@ -521,7 +521,7 @@ namespace fastoredis
 
     void RedisDriver::customEvent(QEvent *event)
     {
-        base_class::customEvent(event);
+        IDriver::customEvent(event);
         _impl->_interrupt = false;
     }
 

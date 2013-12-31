@@ -3,7 +3,7 @@
 namespace fastoredis
 {
     FastoTreeItem::FastoTreeItem(const QString &key, const QString &value, fastoType type, FastoTreeItem *parent)
-        : base_class(parent), key_(key), value_(value), type_(type)
+        : TreeItem(parent), key_(key), value_(value), type_(type)
     {
 
     }

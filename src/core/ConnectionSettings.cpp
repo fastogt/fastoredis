@@ -82,7 +82,7 @@ namespace fastoredis
     }
 
     RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName, const redisConfig &info)
-        :base_class(connectionName), info_(info)
+        :IConnectionSettingsBase(connectionName), info_(info)
     {
 
     }

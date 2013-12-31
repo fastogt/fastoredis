@@ -45,7 +45,6 @@ namespace fastoredis
             : public IConnectionSettingsBase
     {
     public:
-        typedef IConnectionSettingsBase base_class;
         RedisConnectionSettings(const std::string &connectionName, const redisConfig &info = redisConfig());
 
         virtual std::string commandLine() const;

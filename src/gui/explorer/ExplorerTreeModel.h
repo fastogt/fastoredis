@@ -8,7 +8,6 @@ namespace fastoredis
     struct ExplorerServerItem
             : public TreeItem
     {
-        typedef TreeItem base_class;
         enum eColumn
         {
             eName = 0,

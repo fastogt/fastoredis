@@ -10,7 +10,6 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        typedef QTabBar base_class;
         explicit MainTabBar(QWidget* parent=0);
 
     Q_SIGNALS:

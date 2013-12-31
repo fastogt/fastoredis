@@ -2,12 +2,10 @@
 
 #include <QDialog>
 
-QT_BEGIN_NAMESPACE
 class QComboBox;
 class QLineEdit;
 class QDialogButtonBox;
 class QPushButton;
-QT_END_NAMESPACE
 
 #include "global/global.h"
 

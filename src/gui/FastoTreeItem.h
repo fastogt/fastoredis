@@ -18,7 +18,6 @@ namespace fastoredis
             eType = 2,
             eCountColumns = 3
         };
-        typedef TreeItem base_class;
         typedef std::vector<FastoTreeItem*> child_container_type;
         FastoTreeItem(const QString &key, const QString &value, fastoType type, FastoTreeItem *parent = 0);
 

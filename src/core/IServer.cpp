@@ -149,6 +149,6 @@ namespace fastoredis
             ProgressResponceEvent::value_type v = ev->value();
             emit progressChanged(v);
         }
-        return base_class::customEvent(event);
+        return QObject::customEvent(event);
     }
 }

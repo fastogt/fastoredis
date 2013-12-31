@@ -64,7 +64,7 @@ namespace
 namespace fastoredis
 {
     OutputWidget::OutputWidget(QWidget* parent)
-        : base_class(parent)
+        : QWidget(parent)
     {
         _treeView = new FastoTreeView(this);
         _treeModel = new FastoTreeModel(_treeView);

@@ -8,7 +8,7 @@
 namespace fastoredis
 {
     FastoTreeModel::FastoTreeModel(QObject *parent)
-        : base_class(parent)
+        : TreeModel(parent)
     {
 
     }
@@ -74,7 +74,7 @@ namespace fastoredis
             }
         }
 
-        return base_class::headerData(section,orientation,role);
+        return TreeModel::headerData(section,orientation,role);
     }
 
     int FastoTreeModel::columnCount(const QModelIndex &parent) const

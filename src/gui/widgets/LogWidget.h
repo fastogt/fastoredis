@@ -1,10 +1,9 @@
 #pragma once
 
 #include <QWidget>
-QT_BEGIN_NAMESPACE
+
 class QTextEdit;
 class QAction;
-QT_END_NAMESPACE
 
 #include "global/global.h"
 #include "common/log_levels.hpp"

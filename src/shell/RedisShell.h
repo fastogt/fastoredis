@@ -9,8 +9,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef FastoEditor base_class;
-
         RedisShell(QWidget *parent = 0);
 
         void refreshCompleteList(const QStringList &ls);
