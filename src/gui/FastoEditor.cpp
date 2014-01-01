@@ -46,7 +46,7 @@ namespace fastoredis
 
 
     FastoEditor::FastoEditor(QWidget *parent)
-        : base_class(parent), _lineNumberMarginWidth(0)
+        : QsciScintilla(parent), _lineNumberMarginWidth(0)
     {
         setAutoIndent(true);
         setIndentationsUseTabs(false);
@@ -81,7 +81,7 @@ namespace fastoredis
             return;
         }
 
-        return base_class::keyPressEvent(keyEvent);
+        return QsciScintilla::keyPressEvent(keyEvent);
     }
 
     void FastoEditor::showOrHideLinesNumbers()

@@ -9,8 +9,8 @@
 
 namespace fastoredis
 {
-    MainWidget::MainWidget(QWidget *parent) :
-        base_class(parent)
+    MainWidget::MainWidget(QWidget *parent)
+        : QTabWidget(parent)
     {
         MainTabBar *tab = new MainTabBar(this);
         VERIFY(connect(tab, SIGNAL(createdNewTab()), this, SLOT(createNewTab())));
@@ -36,12 +36,12 @@ namespace fastoredis
 
     QueryWidget *MainWidget::currentWidget() const
     {
-        return qobject_cast<QueryWidget *>(base_class::currentWidget());
+        return qobject_cast<QueryWidget *>(QTabWidget::currentWidget());
     }
 
     QueryWidget *MainWidget::widget(int index) const
     {
-        return qobject_cast<QueryWidget *>(base_class::widget(index));
+        return qobject_cast<QueryWidget *>(QTabWidget::widget(index));
     }
 
     void MainWidget::closeTab(int index)

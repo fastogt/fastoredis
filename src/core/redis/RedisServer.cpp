@@ -2,18 +2,18 @@
 
 #include "core/redis/RedisDataBase.h"
 #include "core/ConnectionSettings.h"
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 
 namespace fastoredis
 {
     RedisServer::RedisServer(const IDriverPtr &drv)
-        :base_class(drv)
+        :IServer(drv)
     {
 
     }
 
     RedisServer::RedisServer(const IServerPtr &srv)
-        :base_class(srv)
+        :IServer(srv)
     {
 
     }

@@ -6,11 +6,16 @@
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/remove_whitespace.hpp>
 #include <boost/archive/iterators/insert_linebreaks.hpp>
+
+#include "translations/translations.h"
+#include "gui/AppStyle.h"
+
 #ifdef OS_WIN
 #define INI_PATH ('~','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
 #else
 #define INI_PATH ('~','/','.','c','o','n','f','i','g','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
 #endif
+#define langauge ('l','a','n','g','u','a','g','e')
 #define style ('s','t','y','l','e')
 #define connections_ ('c','o','n','n','e','c','t','i','o','n','s')
 #define view_ ('v','i','e','w')
@@ -19,17 +24,18 @@ namespace
 {
     typedef common::storages::ini::ini_storage<GEN_STRING_TYPLE(INI_PATH)> static_path_storage;
 
+    BEGIN_DECL_TYPLE(langauge,unicode_string,static_path_storage)
     BEGIN_DECL_TYPLE(style,unicode_string,static_path_storage)
     BEGIN_DECL_TYPLE(connections_,fastoredis::SettingsManager::ConnectionSettingsContainerType,static_path_storage)
     BEGIN_DECL_TYPLE(view_,int,static_path_storage)
 
-    typedef common::storages::storage_container<genereted_settings::setting_style, genereted_settings::setting_connections_, genereted_settings::setting_view_> static_storage_type;
+    typedef common::storages::storage_container<genereted_settings::setting_langauge, genereted_settings::setting_style, genereted_settings::setting_connections_, genereted_settings::setting_view_> static_storage_type;
 
     typedef common::storages::settings_container<static_storage_type> server_main_t;
 
     inline server_main_t &get_config_storage()
     {
-        static server_main_t g_m(static_storage_type(UTEXT("Native"),fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree));
+        static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::AppStyle::defStyle,fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree));
         return g_m;
     }
 }
@@ -105,6 +111,16 @@ namespace fastoredis
     void SettingsManager::setCurrentStyle(const std::string &st) const
     {
         GET_SETTING(genereted_settings::setting_style).set_value(st);
+    }
+
+    std::string SettingsManager::currentLanguage() const
+    {
+        return GET_SETTING(genereted_settings::setting_langauge).value();
+    }
+
+    void SettingsManager::setCurrentLanguage(const std::string &lang) const
+    {
+        GET_SETTING(genereted_settings::setting_langauge).set_value(lang);
     }
 
     void SettingsManager::setDefaultView(supportedViews view)

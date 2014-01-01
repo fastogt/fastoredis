@@ -5,7 +5,7 @@
 #include "core/ConnectionSettings.h"
 #include "core/ServersManager.h"
 #include "core/events/Events.hpp"
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 
 namespace fastoredis
 {
@@ -149,6 +149,6 @@ namespace fastoredis
             ProgressResponceEvent::value_type v = ev->value();
             emit progressChanged(v);
         }
-        return base_class::customEvent(event);
+        return QObject::customEvent(event);
     }
 }

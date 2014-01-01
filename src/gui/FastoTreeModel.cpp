@@ -2,13 +2,13 @@
 
 #include "gui/FastoTreeItem.h"
 #include "gui/GuiFactory.h"
-#include "common/qt_helper/utils_qt.h"
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/utils_qt.h"
+#include "common/qt/converter_patterns.h"
 
 namespace fastoredis
 {
     FastoTreeModel::FastoTreeModel(QObject *parent)
-        : base_class(parent)
+        : TreeModel(parent)
     {
 
     }
@@ -74,7 +74,7 @@ namespace fastoredis
             }
         }
 
-        return base_class::headerData(section,orientation,role);
+        return TreeModel::headerData(section,orientation,role);
     }
 
     int FastoTreeModel::columnCount(const QModelIndex &parent) const

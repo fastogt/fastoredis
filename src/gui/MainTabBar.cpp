@@ -7,7 +7,7 @@
 namespace fastoredis
 {
     MainTabBar::MainTabBar(QWidget *parent)
-        : base_class(parent)
+        : QTabBar(parent)
     {
         _newShellAction = new QAction("&New Tab", this);
         _newShellAction->setShortcut(Qt::CTRL + Qt::Key_T);

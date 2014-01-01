@@ -11,7 +11,7 @@
 namespace fastoredis
 {
     RedisShell::RedisShell(QWidget *parent)
-        : base_class(parent)
+        : FastoEditor(parent)
     {
         setLexer(new RedisLexer(this));
         setAutoCompletionThreshold(1);
@@ -33,7 +33,7 @@ namespace fastoredis
         if((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Return) ){
             emit executed();
         }
-        return base_class::keyPressEvent(keyEvent);
+        return FastoEditor::keyPressEvent(keyEvent);
     }
 }
 

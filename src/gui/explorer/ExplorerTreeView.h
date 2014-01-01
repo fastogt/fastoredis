@@ -1,9 +1,8 @@
 #pragma once
 
 #include <QTreeView>
-QT_BEGIN_NAMESPACE
+
 class QAction;
-QT_END_NAMESPACE
 
 #include "global/global.h"
 #include "core/IServer.h"
@@ -16,7 +15,6 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        typedef QTreeView base_class;
         ExplorerTreeView(QWidget *parent);
 
     Q_SIGNALS:

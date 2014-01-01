@@ -1,10 +1,8 @@
 #pragma once
 
-#include <QFrame>
-QT_BEGIN_NAMESPACE
-class QWidget;
+#include <QWidget>
+
 class QLabel;
-QT_END_NAMESPACE
 
 namespace fastoredis
 {
@@ -13,7 +11,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef QWidget base_class;
         IconLabel(const QIcon &icon, const QString &text, QWidget* parent = 0);
 
         void setText(const QString &text);

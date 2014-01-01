@@ -14,7 +14,7 @@
 #include "gui/IconLabel.h"
 #include "core/SettingsManager.h"
 //#include "gui/FastoTableModel.h"
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 #include "common/time.h"
 
 namespace
@@ -64,7 +64,7 @@ namespace
 namespace fastoredis
 {
     OutputWidget::OutputWidget(QWidget* parent)
-        : base_class(parent)
+        : QWidget(parent)
     {
         _treeView = new FastoTreeView(this);
         _treeModel = new FastoTreeModel(_treeView);

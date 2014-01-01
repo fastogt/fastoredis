@@ -8,7 +8,7 @@
 namespace fastoredis
 {
     FastoTreeView::FastoTreeView(QWidget *parent)
-        :base_class(parent)
+        :QTreeView(parent)
     {
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSelectionBehavior(QAbstractItemView::SelectRows);

@@ -7,7 +7,7 @@
 namespace fastoredis
 {
     IconLabel::IconLabel(const QIcon &icon, const QString &text, QWidget* parent)
-        : base_class(parent)
+        : QWidget(parent)
     {
         QHBoxLayout *mainL = new QHBoxLayout;
         _icon = new QLabel;

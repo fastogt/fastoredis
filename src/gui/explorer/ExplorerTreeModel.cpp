@@ -1,14 +1,14 @@
 #include "gui/explorer/ExplorerTreeModel.h"
 
 #include "gui/GuiFactory.h"
-#include "common/qt_helper/utils_qt.h"
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/utils_qt.h"
+#include "common/qt/converter_patterns.h"
 #include "core/IDataBase.h"
 
 namespace fastoredis
 {
     ExplorerServerItem::ExplorerServerItem(const IServerPtr &server, ExplorerServerItem *parent)
-        : base_class(parent), server_(server)
+        : TreeItem(parent), server_(server)
     {
 
     }
@@ -29,7 +29,7 @@ namespace fastoredis
     }
 
     ExplorerDatabaseItem::ExplorerDatabaseItem(const IDatabasePtr &db, ExplorerServerItem *parent)
-        : base_class(db->server(), parent), db_(db)
+        : ExplorerServerItem(db->server(), parent), db_(db)
     {
 
     }
@@ -50,7 +50,7 @@ namespace fastoredis
     }
 
     ExplorerTreeModel::ExplorerTreeModel(QObject *parent)
-        : base_class(parent)
+        : TreeModel(parent)
     {
         _root.reset(new ExplorerServerItem(IServerPtr(),NULL));
     }
@@ -99,7 +99,7 @@ namespace fastoredis
             }
         }
 
-        return base_class::headerData(section,orientation,role);
+        return TreeModel::headerData(section,orientation,role);
     }
 
     int ExplorerTreeModel::columnCount(const QModelIndex &parent) const

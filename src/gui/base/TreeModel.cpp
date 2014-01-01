@@ -1,11 +1,11 @@
 #include "gui/base/TreeModel.h"
 
-#include "common/qt_helper/utils_qt.h"
+#include "common/qt/utils_qt.h"
 
 namespace fastoredis
 {
     TreeModel::TreeModel(QObject *parent)
-        : base_class(parent), _root(NULL)
+        : QAbstractItemModel(parent), _root(NULL)
     {
 
     }

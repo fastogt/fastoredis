@@ -54,10 +54,10 @@ ENDIF(SETTINGS_SUPPORT AND BOOST_ENABLED)
 
 IF(QT_ENABLED)
 SET(QT_UTILS_SOURCES
-        qt_helper/utils_qt.h
-        qt_helper/utils_qt.cpp
-        qt_helper/converter_patterns.cpp
-        qt_helper/converter_patterns.h)
+        qt/utils_qt.h
+        qt/utils_qt.cpp
+        qt/converter_patterns.cpp
+        qt/converter_patterns.h)
 ENDIF()
 SET(PATTERNS_SOURCES
         patterns/command_pattern.hpp

@@ -9,7 +9,7 @@
 #include <QToolButton>
 #include <QMessageBox>
 
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 #include "core/SettingsManager.h"
 #include "core/ConnectionSettings.h"
 #include "gui/GuiFactory.h"
@@ -45,7 +45,7 @@ namespace fastoredis
      * @brief Creates dialog
      */
     ConnectionsDialog::ConnectionsDialog(QWidget *parent)
-        : base_class(parent)
+        : QDialog(parent)
     {
         setWindowIcon(GuiFactory::instance().connectIcon());
         setWindowTitle("Redis Connections");

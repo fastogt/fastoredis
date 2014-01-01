@@ -11,7 +11,6 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        typedef QAbstractProxyModel base_class;
         typedef std::vector<QString> ColumnsValuesType;
 
         explicit FastoTableModel(QObject *parent = 0);

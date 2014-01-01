@@ -13,7 +13,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 #include "gui/GuiFactory.h"
 #include "gui/IconLabel.h"
 #include "shell/RedisShell.h"
@@ -76,7 +76,7 @@ namespace
 namespace fastoredis
 {
     ShellWidget::ShellWidget(const IServerPtr &server, const QString &filePath, QWidget *parent)
-        : base_class(parent), _server(server), _filePath(filePath)
+        : QWidget(parent), _server(server), _filePath(filePath)
     {
         QVBoxLayout *mainlayout = new QVBoxLayout;
         QHBoxLayout *hlayout = new QHBoxLayout;

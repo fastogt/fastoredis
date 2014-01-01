@@ -11,7 +11,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef QsciScintilla base_class;
         enum { rowNumberWidth = 6, indentationWidth = 4 };
         static const QColor marginsBackgroundColor;
         static const QColor caretForegroundColor;

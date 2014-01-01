@@ -11,7 +11,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef IDriver base_class;
         RedisDriver(const IConnectionSettingsBasePtr &settings);
         virtual ~RedisDriver();
 

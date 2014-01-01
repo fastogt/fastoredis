@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/qt_helper/utils_qt.h"
+#include "common/qt/utils_qt.h"
 #include "core/events/EventsInfo.hpp"
 
 namespace fastoredis

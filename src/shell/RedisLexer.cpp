@@ -5,7 +5,7 @@
 namespace fastoredis
 {
     RedisApi::RedisApi(QsciLexer *lexer)
-        : base_class(lexer)
+        : QsciAbstractAPIs(lexer)
     {
     }
 
@@ -29,7 +29,7 @@ namespace fastoredis
     }
 
     RedisLexer::RedisLexer(QObject *parent)
-        : base_class(parent)
+        : QsciLexerCustom(parent)
     {
         setAPIs(new RedisApi(this));
     }

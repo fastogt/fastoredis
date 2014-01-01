@@ -3,16 +3,17 @@
 #include <QApplication>
 #include <QStyleFactory>
 
+#include "common/qt/converter_patterns.h"
 
 namespace fastoredis
 {
-    const QString AppStyle::StyleName = "Native";
+    const std::string AppStyle::defStyle = "Native";
 
     namespace detail
     {
         void applyStyle(const QString &styleName)
         {
-            if (styleName == "Native") {
+            if (styleName == common::utils_qt::toQString(AppStyle::defStyle)) {
                 QApplication::setStyle(new AppStyle);
             }
             else {
@@ -22,7 +23,7 @@ namespace fastoredis
 
         QStringList getSupportedStyles()
         {
-            static QStringList result = QStringList() << AppStyle::StyleName << QStyleFactory::keys();
+            static QStringList result = QStringList() << common::utils_qt::toQString(AppStyle::defStyle) << QStyleFactory::keys();
             return result;
         }
     }

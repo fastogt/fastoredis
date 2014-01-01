@@ -6,7 +6,7 @@
 #include <QStatusBar>
 #include <QDockWidget>
 
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 #include "gui/GuiFactory.h"
 #include "gui/AppStyle.h"
 #include "gui/widgets/LogWidget.h"
@@ -20,12 +20,17 @@
 #include "core/SettingsManager.h"
 #include "core/Logger.h"
 
+#include "translations/translations.h"
+
 namespace fastoredis
 {
     MainWindow::MainWindow()
-    : base_class()
+    : QMainWindow()
     {
         using namespace common;
+        unicode_string lang = SettingsManager::instance().currentLanguage();
+        fastoredis::translations::detail::applyLanguage(utils_qt::toQString(lang));
+
         unicode_string style = SettingsManager::instance().currentStyle();
         fastoredis::detail::applyStyle(utils_qt::toQString(style));
 
@@ -119,6 +124,14 @@ namespace fastoredis
             IServerPtr server = ServersManager::instance().createServer(dlg.selectedConnection());
             _exp->addServer(server);
         }
+    }
+
+    void MainWindow::changeEvent(QEvent *e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            _saveAction->setText(tr("Save"));
+        }
+        QMainWindow::changeEvent(e);
     }
 
     void MainWindow::save()

@@ -1,9 +1,8 @@
 #pragma  once
 
 #include <QDialog>
-QT_BEGIN_NAMESPACE
+
 class QComboBox;
-QT_END_NAMESPACE
 
 #include "global/global.h"
 
@@ -25,6 +24,7 @@ namespace fastoredis
 
     private:
         QComboBox *_stylesComboBox;
+        QComboBox *_languagesComboBox;
         QComboBox *_defaultViewComboBox;
     };
 }

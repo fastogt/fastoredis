@@ -11,7 +11,7 @@ extern "C" {
 #include <release.h>
 }
 
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */
 #define CLI_HELP_COMMAND 1
@@ -490,7 +490,7 @@ namespace fastoredis
     };
 
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
-        :base_class(settings), _impl(new pimpl)
+        :IDriver(settings), _impl(new pimpl)
     {
     }
 
@@ -521,7 +521,7 @@ namespace fastoredis
 
     void RedisDriver::customEvent(QEvent *event)
     {
-        base_class::customEvent(event);
+        IDriver::customEvent(event);
         _impl->_interrupt = false;
     }
 
