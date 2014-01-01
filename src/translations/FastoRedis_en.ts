@@ -22,27 +22,62 @@
 <context>
     <name>fastoredis::MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="35"/>
+        <location filename="../gui/MainWindow.cpp" line="143"/>
         <source>&amp;Open...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="39"/>
+        <location filename="../gui/MainWindow.cpp" line="144"/>
         <source>Save</source>
-        <translation type="unfinished">Saveы</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="43"/>
+        <location filename="../gui/MainWindow.cpp" line="145"/>
         <source>Save &amp;As...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="79"/>
+        <location filename="../gui/MainWindow.cpp" line="146"/>
+        <source>&amp;Exit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="147"/>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="148"/>
+        <source>Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="149"/>
+        <source>View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="150"/>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="151"/>
+        <source>&amp;About %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="152"/>
+        <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="153"/>
         <source>Explorer tree</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="94"/>
+        <location filename="../gui/MainWindow.cpp" line="154"/>
         <source>Logs</source>
         <translation type="unfinished"></translation>
     </message>
