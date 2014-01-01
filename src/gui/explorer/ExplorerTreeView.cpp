@@ -10,7 +10,7 @@
 
 #include "gui/explorer/ExplorerTreeModel.h"
 #include "gui/explorer/ExplorerTreeModel.h"
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 
 namespace fastoredis
 {

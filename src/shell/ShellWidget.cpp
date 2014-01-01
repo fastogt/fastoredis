@@ -13,7 +13,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 #include "gui/GuiFactory.h"
 #include "gui/IconLabel.h"
 #include "shell/RedisShell.h"

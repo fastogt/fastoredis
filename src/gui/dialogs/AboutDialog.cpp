@@ -33,7 +33,7 @@ namespace fastoredis
     {
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
 
-        setWindowTitle("About "PROJECT_NAME_TITLE);
+        setWindowTitle(PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         QGridLayout *layout = new QGridLayout(this);
         layout->setSizeConstraint(QLayout::SetFixedSize);
@@ -50,7 +50,6 @@ namespace fastoredis
 
         QIcon icon = GuiFactory::instance().mainWindowIcon();
         QPixmap iconPixmap = icon.pixmap(48, 48);
-
 
         QLabel *logoLabel = new QLabel;
         logoLabel->setPixmap(iconPixmap);

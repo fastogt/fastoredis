@@ -9,7 +9,7 @@
 #include <QToolButton>
 #include <QMessageBox>
 
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 #include "core/SettingsManager.h"
 #include "core/ConnectionSettings.h"
 #include "gui/GuiFactory.h"

@@ -5,8 +5,8 @@
 
 #include "gui/FastoTreeItem.h"
 #include "gui/GuiFactory.h"
-#include "common/qt_helper/converter_patterns.h"
-#include "common/qt_helper/utils_qt.h"
+#include "common/qt/converter_patterns.h"
+#include "common/qt/utils_qt.h"
 
 namespace
 {

@@ -24,6 +24,9 @@ namespace fastoredis
         std::string currentStyle() const;
         void setCurrentStyle(const std::string &style) const;
 
+        std::string currentLanguage() const;
+        void setCurrentLanguage(const std::string &lang) const;
+
         void addConnection(const IConnectionSettingsBasePtr &connection);
         void removeConnection(const IConnectionSettingsBasePtr &connection);
 

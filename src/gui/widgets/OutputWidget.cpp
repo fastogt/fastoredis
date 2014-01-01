@@ -14,7 +14,7 @@
 #include "gui/IconLabel.h"
 #include "core/SettingsManager.h"
 //#include "gui/FastoTableModel.h"
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 #include "common/time.h"
 
 namespace

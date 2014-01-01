@@ -1,8 +1,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
-
-#include <gui/MainWindow.h>
-
+#include <QTranslator>
+#include "gui/MainWindow.h"
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);

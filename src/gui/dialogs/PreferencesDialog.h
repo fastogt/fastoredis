@@ -24,6 +24,7 @@ namespace fastoredis
 
     private:
         QComboBox *_stylesComboBox;
+        QComboBox *_languagesComboBox;
         QComboBox *_defaultViewComboBox;
     };
 }

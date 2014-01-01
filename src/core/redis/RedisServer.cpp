@@ -2,7 +2,7 @@
 
 #include "core/redis/RedisDataBase.h"
 #include "core/ConnectionSettings.h"
-#include "common/qt_helper/converter_patterns.h"
+#include "common/qt/converter_patterns.h"
 
 namespace fastoredis
 {

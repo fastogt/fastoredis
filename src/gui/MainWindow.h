@@ -16,6 +16,9 @@ namespace fastoredis
     public:
         MainWindow();
 
+    protected:
+        virtual void changeEvent(QEvent *);
+
     private Q_SLOTS:
         void open();
         void save();
