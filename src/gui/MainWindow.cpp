@@ -29,7 +29,8 @@ namespace fastoredis
     {
         using namespace common;
         unicode_string lang = SettingsManager::instance().currentLanguage();
-        fastoredis::translations::detail::applyLanguage(utils_qt::toQString(lang));
+        QString newLang = fastoredis::translations::detail::applyLanguage(utils_qt::toQString(lang));
+        SettingsManager::instance().setCurrentLanguage(common::utils_qt::toStdString(newLang));
 
         unicode_string style = SettingsManager::instance().currentStyle();
         fastoredis::detail::applyStyle(utils_qt::toQString(style));
