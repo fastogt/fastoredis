@@ -1,4 +1,4 @@
-#include "gui/widgets/LogWidget.h"
+#include "gui/widgets/CommandsWidget.h"
 
 #include <QHBoxLayout>
 #include <QScrollBar>
@@ -10,8 +10,8 @@
 
 namespace fastoredis
 {
-    LogWidget::LogWidget(QWidget* parent) 
-        : BaseClass(parent), _logTextEdit(new QTextEdit(this))
+    CommandsWidget::CommandsWidget(QWidget* parent)
+        : QWidget(parent), _logTextEdit(new QTextEdit(this))
     {
         _logTextEdit->setReadOnly(true);
         _logTextEdit->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -24,7 +24,7 @@ namespace fastoredis
         setLayout(hlayout);      
     }
 
-    void LogWidget::showContextMenu(const QPoint &pt)
+    void CommandsWidget::showContextMenu(const QPoint &pt)
     {
         QMenu *menu = _logTextEdit->createStandardContextMenu();
         menu->addAction(_clear);
@@ -34,11 +34,10 @@ namespace fastoredis
         delete menu;
     }
 
-    void LogWidget::addLogMessage(const QString &message, common::logging::LEVEL_LOG level)
+    void CommandsWidget::addCommand(const QString &command)
     {
         QTime time = QTime::currentTime();
-        _logTextEdit->setTextColor(level == common::logging::CRITICAL ? QColor(Qt::red):QColor(Qt::black));
-        _logTextEdit->append(time.toString("h:mm:ss AP: ") + message);
+        _logTextEdit->append(time.toString("h:mm:ss AP: ") + command);
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
     }

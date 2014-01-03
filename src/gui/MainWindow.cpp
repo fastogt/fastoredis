@@ -9,7 +9,7 @@
 #include "common/qt/converter_patterns.h"
 #include "gui/GuiFactory.h"
 #include "gui/AppStyle.h"
-#include "gui/widgets/LogWidget.h"
+#include "gui/widgets/LogTabWidget.h"
 #include "gui/dialogs/AboutDialog.h"
 #include "gui/dialogs/PreferencesDialog.h"
 #include "gui/dialogs/ConnectionsDialog.h"
@@ -29,7 +29,7 @@ namespace fastoredis
     {
         using namespace common;
         unicode_string lang = SettingsManager::instance().currentLanguage();
-        QString newLang = fastoredis::translations::detail::applyLanguage(utils_qt::toQString(lang));
+        QString newLang = fastoredis::translations::applyLanguage(utils_qt::toQString(lang));
         SettingsManager::instance().setCurrentLanguage(common::utils_qt::toStdString(newLang));
 
         unicode_string style = SettingsManager::instance().currentStyle();
@@ -87,7 +87,7 @@ namespace fastoredis
 
         _exp = new ExplorerTreeView(this);
         VERIFY(connect(_exp, SIGNAL(openedConsole(const IServerPtr &)), mainW, SLOT(openConsole(const IServerPtr &))));
-        _expDock = new QDockWidget;
+        _expDock = new QDockWidget(this);
         _explorerAction = _expDock->toggleViewAction();
         _explorerAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
         _explorerAction->setChecked(true);
@@ -99,9 +99,9 @@ namespace fastoredis
         _expDock->setVisible(true);
         addDockWidget(Qt::LeftDockWidgetArea, _expDock);
 
-        LogWidget *log = new LogWidget(this);
-        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, common::logging::LEVEL_LOG)), log, SLOT(addMessage(const QString&, common::logging::LEVEL_LOG))));
-        _logDock = new QDockWidget;
+        LogTabWidget *log = new LogTabWidget(this);
+        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, common::logging::LEVEL_LOG)), log, SLOT(addLogMessage(const QString&, common::logging::LEVEL_LOG))));
+        _logDock = new QDockWidget(this);
         _logsAction = _logDock->toggleViewAction();
         _logsAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
         _logsAction->setChecked(false);

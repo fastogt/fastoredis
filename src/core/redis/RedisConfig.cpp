@@ -1,6 +1,5 @@
 #include "core/redis/RedisConfig.h"
 
-#include <ostream>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
