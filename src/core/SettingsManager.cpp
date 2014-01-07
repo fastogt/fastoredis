@@ -7,7 +7,7 @@
 #include <boost/archive/iterators/remove_whitespace.hpp>
 #include <boost/archive/iterators/insert_linebreaks.hpp>
 
-#include "translations/translations.h"
+#include "translations/Translations.h"
 #include "gui/AppStyle.h"
 
 #ifdef OS_WIN

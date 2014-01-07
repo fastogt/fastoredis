@@ -20,7 +20,7 @@
 #include "core/SettingsManager.h"
 #include "core/Logger.h"
 
-#include "translations/translations.h"
+#include "translations/Translations.h"
 
 namespace fastoredis
 {

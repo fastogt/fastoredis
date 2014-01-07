@@ -10,7 +10,7 @@
 
 #include "gui/AppStyle.h"
 #include "gui/GuiFactory.h"
-#include "translations/translations.h"
+#include "translations/Translations.h"
 #include "core/SettingsManager.h"
 #include "common/qt/converter_patterns.h"
 
