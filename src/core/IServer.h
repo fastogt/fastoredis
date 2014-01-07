@@ -34,7 +34,6 @@ namespace fastoredis
         void stopCurrentEvent();
         bool isConnected() const;
         bool isMaster() const;
-        databases_cont_type databases() const;
 
         virtual ~IServer();
 

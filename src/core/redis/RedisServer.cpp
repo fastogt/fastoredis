@@ -46,7 +46,8 @@ namespace fastoredis
         EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type cont = v.databases_;
         databases_.clear();
         for(int i = 0; i < cont.size(); ++i){
-            databases_.push_back(IDatabasePtr(new RedisDatabase(IServerPtr(this), common::utils_qt::toQString(cont[i]))));
+            IDatabasePtr db(new RedisDatabase(this, cont[i]));
+            databases_.push_back(db);
         }
         emit finishedLoadDatabases(v);
     }

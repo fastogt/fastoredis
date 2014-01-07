@@ -31,7 +31,7 @@ namespace fastoredis
         QLabel *langLabel = new QLabel("Language:");
         langLayout->addWidget(langLabel);
         _languagesComboBox  = new QComboBox();
-        _languagesComboBox->addItems(translations::detail::getSupportedLanguages());
+        _languagesComboBox->addItems(translations::getSupportedLanguages());
         langLayout->addWidget(_languagesComboBox);
 
         QHBoxLayout *stylesLayout = new QHBoxLayout;
@@ -70,10 +70,8 @@ namespace fastoredis
 
     void PreferencesDialog::accept()
     {
-        bool res = translations::detail::applyLanguage(_languagesComboBox->currentText());
-        if(res){
-            SettingsManager::instance().setCurrentLanguage(common::utils_qt::toStdString(_languagesComboBox->currentText()));
-        }
+        QString newLang = translations::applyLanguage(_languagesComboBox->currentText());
+        SettingsManager::instance().setCurrentLanguage(common::utils_qt::toStdString(newLang));
 
         detail::applyStyle(_stylesComboBox->currentText());
         SettingsManager::instance().setCurrentStyle(common::utils_qt::toStdString(_stylesComboBox->currentText()));

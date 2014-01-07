@@ -10,16 +10,15 @@ class QAction;
 
 namespace fastoredis
 {
-    class LogWidget : public QWidget
+    class CommandsWidget : public QWidget
     {
         Q_OBJECT
 
     public:
-        typedef QWidget BaseClass;
-        LogWidget(QWidget* parent = 0);        
+        CommandsWidget(QWidget* parent = 0);
 
     public Q_SLOTS:
-        void addLogMessage(const QString &message, common::logging::LEVEL_LOG level);
+        void addCommand(const QString &command);
 
     private Q_SLOTS:
         void showContextMenu(const QPoint &pt);

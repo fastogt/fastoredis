@@ -28,13 +28,21 @@ namespace fastoredis
         void showContextMenu(const QPoint &point);
         void connectToServer();
         void openConsole();
+        void loadDatabases();
 
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
         void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
-    private:        
+
+    protected:
+        virtual void changeEvent(QEvent *);
+
+    private:
+        void retranslateUi();
         QModelIndex selectedIndex() const;
         QModelIndexList selectedIndexes() const;
+
         QAction *_connectAction;
         QAction *_openConsoleAction;
+        QAction *_loadDatabaseAction;
     };
 }

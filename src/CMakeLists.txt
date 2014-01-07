@@ -9,7 +9,9 @@ SET(SOURCES_GLOBAL
 SET(HEADERS_GUI_TO_MOC
     gui/MainWindow.h
     gui/AppStyle.h
+    gui/widgets/LogTabWidget.h
     gui/widgets/LogWidget.h
+    gui/widgets/CommandsWidget.h
     gui/explorer/ExplorerTreeView.h
     gui/explorer/ExplorerTreeModel.h
     gui/dialogs/AboutDialog.h
@@ -37,7 +39,9 @@ SET(SOURCES_GUI
     gui/MainWindow.cpp
     gui/AppStyle.cpp
     gui/GuiFactory.cpp
+    gui/widgets/LogTabWidget.cpp
     gui/widgets/LogWidget.cpp
+    gui/widgets/CommandsWidget.cpp
     gui/dialogs/AboutDialog.cpp
     gui/dialogs/PreferencesDialog.cpp
     gui/dialogs/ConnectionsDialog.cpp
@@ -67,6 +71,7 @@ SET(HEADERS_CORE_TO_MOC
     core/redis/RedisDriver.h
 )
 SET(HEADERS_CORE
+    core/Infos.h
     core/IDataBase.h
     core/redis/RedisDataBase.h
     core/ConnectionTypes.h
@@ -78,6 +83,7 @@ SET(HEADERS_CORE
     core/ServersManager.h
 )
 SET(SOURCES_CORE
+    core/Infos.cpp
     core/ConnectionTypes.cpp
     core/SettingsManager.cpp
     core/ConnectionSettings.cpp
@@ -132,7 +138,8 @@ add_subdirectory(third-party/qscintilla/Qt4Qt5)
 
 IF(BOOST_ENABLED)
     INTEGRATE_BOOST(system)
-SET(ALL_LIBS ${ALL_LIBS} ${Boost_LIBRARIES})
+    SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+    SET(ALL_LIBS ${ALL_LIBS} ${Boost_LIBRARIES})
 ENDIF()
 
 IF(OPENSSL_ENABLED)
@@ -147,7 +154,7 @@ QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 CONFIGURE_FILE("resources/gui.qrc.in" "${CMAKE_CURRENT_LIST_DIR}/resources/gui.qrc" @ONLY IMMEDIATE)
 SET(RESOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/gui.qrc)
 QTX_ADD_RESOURCES(RES_SRC ${RESOURCES})
-SET(INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR} third-party/redis/redis/src third-party/redis/redis/deps third-party/qscintilla/Qt4Qt5)
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_LIST_DIR} third-party/redis/redis/src third-party/redis/redis/deps third-party/qscintilla/Qt4Qt5)
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 SOURCE_GROUP("Header Files" FILES ${HEADERS} ${HEADERS_TOMOC})
 SOURCE_GROUP("Source Files" FILES ${SOURCES})
@@ -155,34 +162,28 @@ SOURCE_GROUP("Generated" FILES ${MOC_FILES})
 SOURCE_GROUP("Platform Files" FILES ${PLATFORM_HDRS} ${PLATFORM_SRCS})
 SOURCE_GROUP("Resources" FILES ${RES_SRC} ${RESOURCE_OS})
 
-IF(TRANSLATIONS_ENABLE)
-    SET(TRANSLATIONS
-        translations/${PROJECT_NAME}_en.ts
-        translations/${PROJECT_NAME}_ru.ts
-    )
-    FIND_PACKAGE(Qt5LinguistTools)
-    #QTX_CREATE_TRANSLATION(QM_FILES ${SOURCES} ${TRANSLATIONS} OPTIONS -no-obsolete)
+SET(TRANSLATIONS
+    translations/${PROJECT_NAME}_ru.ts
+)
+FIND_PACKAGE(Qt5LinguistTools)
+IF(GENERATE_TRANSLATIONS)
+    QTX_CREATE_TRANSLATION(QM_FILES ${SOURCES} ${TRANSLATIONS} OPTIONS -no-obsolete)
+ELSE()
     QTX_ADD_TRANSLATION(QM_FILES ${TRANSLATIONS})
+ENDIF(GENERATE_TRANSLATIONS)
 
-    ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
-        IF NOT EXIST \"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/translations\" mkdir \"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/translations\"
-        COMMENT "Create translations directory")
+INSTALL(FILES ${QM_FILES} DESTINATION translations COMPONENT TRANSLATIONS)
 
-    FOREACH(FILENAME ${QM_FILES})
-        ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND copy \"${FILENAME}\" \"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/translations\" COMMENT "Copy ${FILENAME} to translation directory")
-    ENDFOREACH(FILENAME)
-
-    SET(HEADERS_TRANSLATIONS
-        translations/Translations.h
-    )
-    SET(SOURCES_TRANSLATIONS
-        translations/Translations.cpp
-    )
-    SET(ALL_SOURCES ${ALL_SOURCES} ${HEADERS_TRANSLATIONS} ${SOURCES_TRANSLATIONS})
-ENDIF(TRANSLATIONS_ENABLE)
+SET(HEADERS_TRANSLATIONS
+    translations/Translations.h
+)
+SET(SOURCES_TRANSLATIONS
+    translations/Translations.cpp
+)
+SET(ALL_SOURCES ${ALL_SOURCES} ${HEADERS_TRANSLATIONS} ${SOURCES_TRANSLATIONS})
 
 SET(ALL_SOURCES ${ALL_SOURCES} ${HEADERS} ${HEADERS_TOMOC} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_SRCS} ${RES_SRC} ${ICON_FILE} ${RESOURCE_OS} ${BOOST_SOURCES} ${QM_FILES})
-SET(ALL_LIBS ${ALL_LIBS} qscintilla2 ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY} ${Qt5Core_QTMAIN_LIBRARIES} ${PLATFORM_LIBRARIES} common redis-cli)
+SET(ALL_LIBS ${ALL_LIBS} qscintilla2 ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} common redis-cli)
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")

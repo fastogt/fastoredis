@@ -5,7 +5,7 @@
 
 namespace fastoredis
 {
-    struct ExplorerServerItem
+    struct IExplorerTreeItem
             : public TreeItem
     {
         enum eColumn
@@ -18,24 +18,33 @@ namespace fastoredis
             Server,
             Database
         };
-        ExplorerServerItem(const IServerPtr &server, ExplorerServerItem *parent);
-        virtual QString name() const;
-        virtual IServerPtr server() const;
-        virtual eType type() const;
-    protected:
-        IServerPtr server_;
+        IExplorerTreeItem(TreeItem *parent);
+        virtual QString name() const = 0;
+        virtual IServerPtr server() const = 0;
+        virtual eType type() const = 0;
     };
 
-    struct ExplorerDatabaseItem
-            : public ExplorerServerItem
+    struct ExplorerServerItem
+            : public IExplorerTreeItem
     {
-        typedef ExplorerServerItem base_class;
-        ExplorerDatabaseItem(const IDatabasePtr &db, ExplorerServerItem *parent);
+        ExplorerServerItem(const IServerPtr &server, TreeItem *parent);
         virtual QString name() const;
         virtual IServerPtr server() const;
         virtual eType type() const;
     private:
-        IDatabasePtr db_;
+        IServerPtr server_;
+    };
+
+    struct ExplorerDatabaseItem
+            : public IExplorerTreeItem
+    {
+        ExplorerDatabaseItem(const DataBaseInfo &db, ExplorerServerItem *parent);
+        ExplorerServerItem *parent() const;
+        virtual QString name() const;
+        virtual IServerPtr server() const;
+        virtual eType type() const;
+    private:
+        DataBaseInfo db_;
     };
 
     class ExplorerTreeModel
@@ -43,7 +52,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef TreeModel base_class;
         ExplorerTreeModel(QObject *parent = 0);
         virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
         virtual Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -52,9 +60,13 @@ namespace fastoredis
 
         void addServer(const IServerPtr &server);
         void removeServer(const IServerPtr &server);
-        void addDatabase(const IDatabasePtr &database);
+
+        void addDatabase(IServer *server, const DataBaseInfo &database);
 
         ~ExplorerTreeModel();
+
+    private:
+        ExplorerServerItem *findServerItem(IServer *server) const;
     };
 }
 

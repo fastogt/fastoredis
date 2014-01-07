@@ -630,7 +630,8 @@ namespace fastoredis
             }else{
                 FastoObject::child_container_type childrens = root->childrens();
                 for(int i = 0; i < childrens.size() ;++i){
-                    res.databases_.push_back(childrens[i]->c_str());
+                    DataBaseInfo dbInf(childrens[i]->c_str(), 0);
+                    res.databases_.push_back(dbInf);
                 }
             }
         notifyProgress(sender, 75);

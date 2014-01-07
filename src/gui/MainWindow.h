@@ -3,6 +3,7 @@
 #include <QMainWindow>
 
 class QAction;
+class QDockWidget;
 
 namespace fastoredis
 {
@@ -29,11 +30,23 @@ namespace fastoredis
 
     private:
         void createStatusBar();
+        void retranslateUi();
         MainWidget *const mainWidget() const;
 
         QAction *_openAction;
         QAction *_saveAction;
         QAction *_saveAsAction;
+        QAction *_exitAction;
+        QAction *_preferencesAction;
+        QAction *_aboutAction;
+        QAction *_fileAction;
+        QAction *_optionsAction;
+        QAction *_viewAction;
+        QAction *_helpAction;
+        QAction *_explorerAction;
+        QAction *_logsAction;
         ExplorerTreeView *_exp;
+        QDockWidget *_expDock;
+        QDockWidget *_logDock;
     };
 }

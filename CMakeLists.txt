@@ -37,8 +37,6 @@ OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
 IF(WIN32)
     OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
 ENDIF(WIN32)
-# translations enable
-OPTION(TRANSLATIONS_ENABLE "Enable translations" ON)
 OPTION(BOOST_ENABLED "Enable boost system support" ON)
 OPTION(SETTINGS_SUPPORT "Enable setting support" ON)
 OPTION(OPENSSL_ENABLED "Enable openssl support" ON)

@@ -8,14 +8,15 @@
 
 namespace
 {
-    QDir trPath()
+    QString trPath()
     {
-        return QDir(QApplication::applicationDirPath() + "/translations");
+        return QApplication::applicationDirPath() + "/translations";
     }
 
     QStringList qmLanguages()
     {
-        return trPath().entryList(QStringList(PROJECT_NAME"_*.qm"));
+        static QDir trd(trPath());
+        return trd.entryList(QStringList(PROJECT_NAME"_*.qm"));
     }
 
     QPair<QString,QLocale> convertToLocale(const QString &fileName)
@@ -38,51 +39,47 @@ namespace
         }
         return QString();
     }
-    QTranslator *prev_tr = NULL;
+    const QString builtInLanguage = "English"; /* "English" is built-in */
 }
 
 namespace fastoredis
 {
     namespace translations
     {
-        const std::string defLanguage = "English";
-        namespace detail
+        const std::string defLanguage = "System";
+        QString applyLanguage(QString lang)
         {
-            bool applyLanguage(const QString &lang)
-            {
-                QString qmPath = pathToQm(lang);
-                if(!qmPath.isEmpty()){
-                    QTranslator *tr = new QTranslator;
-                    if(prev_tr){
-                        qApp->removeTranslator(prev_tr);
-                        delete prev_tr;
-                    }
-                    prev_tr = tr;
-
-                    if(tr->load(qmPath,trPath().path())){
-                        qApp->installTranslator(tr);
-                        return true;
-                    }
-                }
-                return false;
+            static QTranslator tr;
+            if(tr.isEmpty()){
+                qApp->installTranslator(&tr);
             }
 
-            QStringList getSupportedLanguages()
-            {
-                static const QString defL = common::utils_qt::toQString(defLanguage);
-                const QStringList languages = qmLanguages();
-                QStringList result;
-
-                result << defL;
-                for(int i = 0; i < languages.size(); ++i){
-                    QPair<QString,QLocale> p = convertToLocale(languages[i]);
-                    QString lang = QLocale::languageToString(p.second.language());
-                    if( defL != lang){
-                        result.append(lang);
-                    }
-                }
-                return result;
+            if(lang == common::utils_qt::toQString(defLanguage)){
+                lang =  QLocale::languageToString(QLocale::system().language());
             }
+
+            QString qmPath = pathToQm(lang);
+            bool isLoad = tr.load(qmPath,trPath());
+
+            if(!isLoad && lang != builtInLanguage){
+                return builtInLanguage;
+            }
+
+            return lang;
+        }
+
+        QStringList getSupportedLanguages()
+        {
+            const QStringList languages = qmLanguages();
+
+            QStringList result;
+            result << common::utils_qt::toQString(defLanguage) << builtInLanguage;
+            for(int i = 0; i < languages.size(); ++i){
+                QPair<QString,QLocale> p = convertToLocale(languages[i]);
+                QString lang = QLocale::languageToString(p.second.language());
+                result.append(lang);
+            }
+            return result;
         }
     }
 }

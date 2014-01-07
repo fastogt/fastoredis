@@ -8,6 +8,6 @@ namespace fastoredis
             : public IDatabase
     {
     public:
-        RedisDatabase(const IServerPtr &server, const QString &name);
+        RedisDatabase(IServer *server, const DataBaseInfo &info);
     };
 }

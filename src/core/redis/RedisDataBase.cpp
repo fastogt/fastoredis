@@ -2,8 +2,8 @@
 
 namespace fastoredis
 {
-    RedisDatabase::RedisDatabase(const IServerPtr &server, const QString &name)
-        : IDatabase(server, name)
+    RedisDatabase::RedisDatabase(IServer *server, const DataBaseInfo &info)
+        : IDatabase(server, info)
     {
 
     }

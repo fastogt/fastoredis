@@ -1,6 +1,6 @@
 #pragma once
 
-#include "global/global.h"
+#include "core/Infos.h"
 #include "common/qt/utils_qt.h"
 #include "common/time.h"
 
@@ -102,7 +102,7 @@ namespace fastoredis
                 : LoadDatabasesInfoRequest
         {
             typedef LoadDatabasesInfoRequest base_class;
-            typedef std::vector<std::string> database_info_cont_type;
+            typedef std::vector<DataBaseInfo> database_info_cont_type;
             LoadDatabasesInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
                 : base_class(request)
             {

@@ -7,8 +7,14 @@
 
 namespace fastoredis
 {
-    ExplorerServerItem::ExplorerServerItem(const IServerPtr &server, ExplorerServerItem *parent)
-        : TreeItem(parent), server_(server)
+    IExplorerTreeItem::IExplorerTreeItem(TreeItem *parent)
+        : TreeItem(parent)
+    {
+
+    }
+
+    ExplorerServerItem::ExplorerServerItem(const IServerPtr &server, TreeItem *parent)
+        : IExplorerTreeItem(parent), server_(server)
     {
 
     }
@@ -28,15 +34,15 @@ namespace fastoredis
         return server_->name();
     }
 
-    ExplorerDatabaseItem::ExplorerDatabaseItem(const IDatabasePtr &db, ExplorerServerItem *parent)
-        : ExplorerServerItem(db->server(), parent), db_(db)
+    ExplorerDatabaseItem::ExplorerDatabaseItem(const DataBaseInfo &db, ExplorerServerItem *parent)
+        : IExplorerTreeItem(parent), db_(db)
     {
 
     }
 
     IServerPtr ExplorerDatabaseItem::server() const
     {
-        return static_cast<ExplorerServerItem*>(parent_)->server();
+        return dynamic_cast<ExplorerServerItem*>(parent_)->server();
     }
 
     ExplorerDatabaseItem::eType ExplorerDatabaseItem::type() const
@@ -46,13 +52,18 @@ namespace fastoredis
 
     QString ExplorerDatabaseItem::name() const
     {
-        return db_->name();
+        return common::utils_qt::toQString(db_.name_);
+    }
+
+    ExplorerServerItem *ExplorerDatabaseItem::parent() const
+    {
+        return dynamic_cast<ExplorerServerItem*>(IExplorerTreeItem::parent());
     }
 
     ExplorerTreeModel::ExplorerTreeModel(QObject *parent)
         : TreeModel(parent)
     {
-        _root.reset(new ExplorerServerItem(IServerPtr(),NULL));
+        _root.reset(new TreeItem(NULL));
     }
 
     QVariant ExplorerTreeModel::data(const QModelIndex &index, int role) const
@@ -62,7 +73,7 @@ namespace fastoredis
         if (!index.isValid())
             return result;
 
-        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(index);
+        IExplorerTreeItem *node = common::utils_qt::item<IExplorerTreeItem*>(index);
 
         if (!node)
             return result;
@@ -70,8 +81,8 @@ namespace fastoredis
         int col = index.column();
 
         if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){
-            ExplorerServerItem::eType t = node->type();
-            if(t == ExplorerServerItem::Server){
+            IExplorerTreeItem::eType t = node->type();
+            if(t == IExplorerTreeItem::Server){
                 return GuiFactory::instance().getIcon(node->server()->connectionType());
             }
             else{
@@ -80,7 +91,7 @@ namespace fastoredis
         }
 
         if (role == Qt::DisplayRole) {
-            if (col == ExplorerServerItem::eName) {
+            if (col == IExplorerTreeItem::eName) {
                 result = node->name();
             }
         }
@@ -118,7 +129,8 @@ namespace fastoredis
 
     void ExplorerTreeModel::addServer(const IServerPtr &server)
     {
-        ExplorerServerItem *parent = static_cast<ExplorerServerItem*>(_root.get());
+        ExplorerServerItem *parent = dynamic_cast<ExplorerServerItem*>(_root.get());
+        Q_ASSERT(parent);
         int child_count = parent->childrenCount();
         beginInsertRows(QModelIndex(),child_count,child_count);
             ExplorerServerItem *item = new ExplorerServerItem(server, parent);
@@ -126,17 +138,21 @@ namespace fastoredis
         endInsertRows();
     }
 
-    void ExplorerTreeModel::addDatabase(const IDatabasePtr &database)
+    void ExplorerTreeModel::removeServer(const IServerPtr &server)
     {
-        ExplorerServerItem *parent = NULL;
-        for(int i = 0; i < _root->childrenCount(); ++i ){
-            ExplorerServerItem *item = static_cast<ExplorerServerItem*>(_root->child(i));
-            if(item->server() == database->server()){
-                parent = item;
-                break;
-            }
-        }
+        ExplorerServerItem *parent = dynamic_cast<ExplorerServerItem*>(_root.get());
+        DCHECK(parent);
+        QModelIndex index = createIndex(0,0,parent);
+        ExplorerServerItem *serverItem = findServerItem(server.get());
+        int row = parent->indexOf(serverItem);
+        beginRemoveRows(index, row, row);
+            parent->removeChildren(serverItem);
+        endRemoveRows();
+    }
 
+    void ExplorerTreeModel::addDatabase(IServer *server, const DataBaseInfo &database)
+    {
+        ExplorerServerItem *parent = findServerItem(server);
         int child_count = parent->childrenCount();
         QModelIndex index = createIndex(0,0,parent);
         beginInsertRows(index,child_count,child_count);
@@ -145,14 +161,21 @@ namespace fastoredis
         endInsertRows();
     }
 
-    void ExplorerTreeModel::removeServer(const IServerPtr &server)
+    ExplorerServerItem *ExplorerTreeModel::findServerItem(IServer *server) const
     {
-        /*ExplorerServerItem *parent = static_cast<ExplorerServerItem*>(_root.get());
-        QModelIndex index = createIndex(0,0,parent);
-        int row = parent->indexOf(server);
-        beginRemoveRows(index, row, row);
-        parent->removeChildren(server);
-        endRemoveRows();*/
+        ExplorerServerItem *parent = dynamic_cast<ExplorerServerItem*>(_root.get());
+        DCHECK(parent);
+        ExplorerServerItem *result = NULL;
+        for(int i = 0; i < parent->childrenCount() ; ++i){
+            ExplorerServerItem *item = dynamic_cast<ExplorerServerItem*>(_root->child(i));
+            DCHECK(item);
+            if(item->server().get() == server){
+                parent = item;
+                break;
+            }
+        }
+        DCHECK(result);
+        return result;
     }
 
     ExplorerTreeModel::~ExplorerTreeModel()
