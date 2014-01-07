@@ -4,7 +4,7 @@
 #include <QString>
 
 #include "common/patterns/singleton_pattern.hpp"
-#include "common/log_levels.hpp"
+#include "global/global.h"
 
 namespace fastoredis
 {
@@ -29,5 +29,10 @@ namespace fastoredis
     inline void LOG_MSG(T mess, common::logging::LEVEL_LOG level, bool notify = true)
     {
         return Logger::instance().print(mess, level, notify);
+    }
+
+    inline void LOG_ERROR(const error::ErrorInfo &er, bool notify = true)
+    {
+        return Logger::instance().print(er._description, er._level, notify);
     }
 }

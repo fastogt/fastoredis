@@ -10,6 +10,7 @@
 
 #include "gui/explorer/ExplorerTreeModel.h"
 #include "gui/explorer/ExplorerTreeModel.h"
+#include "core/Logger.h"
 #include "common/qt/converter_patterns.h"
 
 namespace fastoredis
@@ -22,10 +23,13 @@ namespace fastoredis
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
-        _connectAction = new QAction("Connect", this);
+        _connectAction = new QAction(this);
         VERIFY(connect(_connectAction, SIGNAL(triggered()), SLOT(connectToServer())));
-        _openConsoleAction = new QAction("Open console", this);
+        _openConsoleAction = new QAction(this);
         VERIFY(connect(_openConsoleAction, SIGNAL(triggered()), SLOT(openConsole())));
+        _loadDatabaseAction = new QAction(this);
+        VERIFY(connect(_loadDatabaseAction, SIGNAL(triggered()), SLOT(loadDatabases())));
+        retranslateUi();
     }
 
     void ExplorerTreeView::showContextMenu(const QPoint &point)
@@ -39,6 +43,7 @@ namespace fastoredis
 
             menu.addAction(_connectAction);
             menu.addAction(_openConsoleAction);
+            menu.addAction(_loadDatabaseAction);
             menu.exec(menuPoint);
         }
     }
@@ -65,6 +70,17 @@ namespace fastoredis
         }
     }
 
+    void ExplorerTreeView::loadDatabases()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+            if(node){
+                node->server()->loadDatabases();
+            }
+        }
+    }
+
     void ExplorerTreeView::addServer(const IServerPtr &server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
@@ -77,6 +93,9 @@ namespace fastoredis
     void ExplorerTreeView::removeServer(const IServerPtr &server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
+        VERIFY(disconnect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
+        VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
+
         mod->removeServer(server);
     }
 
@@ -90,6 +109,21 @@ namespace fastoredis
         return indexses[0];
     }
 
+    void ExplorerTreeView::changeEvent(QEvent *e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QTreeView::changeEvent(e);
+    }
+
+    void ExplorerTreeView::retranslateUi()
+    {
+        _connectAction->setText(tr("Connect"));
+        _openConsoleAction->setText(tr("Open console"));
+        _loadDatabaseAction->setText(tr("Load databases"));
+    }
+
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req)
     {
 
@@ -97,7 +131,21 @@ namespace fastoredis
 
     void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res)
     {
-
+        const error::ErrorInfo &er = res.errorInfo();
+        if(er.isError()){
+            LOG_ERROR(er);
+        }
+        else{
+            IServer *serv = qobject_cast<IServer *>(sender());
+            DCHECK(serv);
+            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
+            ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel *>(model());
+            DCHECK(mod);
+            for(int i = 0; i < dbs.size(); ++i){
+                DataBaseInfo db = dbs[i];
+                mod->addDatabase(serv, db);
+            }
+        }
     }
 
     QModelIndexList ExplorerTreeView::selectedIndexes() const

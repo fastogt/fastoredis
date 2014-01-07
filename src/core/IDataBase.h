@@ -1,21 +1,23 @@
 #pragma once
 
-#include "core/IServer.h"
+#include "core/Infos.h"
 
 namespace fastoredis
 {
+    class IServer;
+
     class IDatabase
     {
     public:
-        QString name() const;
-        IServerPtr server() const;
+        DataBaseInfo info() const;
+        IServer *const server() const;
 
     protected:
-        IDatabase(const IServerPtr &server, const QString &name);
+        IDatabase(IServer *server, const DataBaseInfo &info);
         virtual ~IDatabase();
 
     private:
-        IServerPtr server_;
-        QString name_;
+        IServer *const server_;
+        DataBaseInfo info_;
     };
 }
