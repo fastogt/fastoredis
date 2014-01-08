@@ -138,12 +138,12 @@ namespace fastoredis
         else{
             IServer *serv = qobject_cast<IServer *>(sender());
             DCHECK(serv);
-            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
+            IServer::databases_cont_type dbs = serv->databases();
             ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel *>(model());
             DCHECK(mod);
             for(int i = 0; i < dbs.size(); ++i){
-                DataBaseInfo db = dbs[i];
-                mod->addDatabase(serv, db);
+                IDatabasePtr db = dbs[i];
+                mod->addDatabase(db);
             }
         }
     }

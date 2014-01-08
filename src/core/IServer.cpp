@@ -73,6 +73,11 @@ namespace fastoredis
         notify(ev);
     }
 
+    IServer::databases_cont_type IServer::databases() const
+    {
+        return databases_;
+    }
+
     void IServer::disconnect()
     {
         EventsInfo::DisonnectInfoRequest req;

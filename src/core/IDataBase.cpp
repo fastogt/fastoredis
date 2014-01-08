@@ -13,9 +13,9 @@ namespace fastoredis
         return server_;
     }
 
-    DataBaseInfo IDatabase::info() const
+    std::string IDatabase::name() const
     {
-        return info_;
+        return info_.name_;
     }
 
     IDatabase::~IDatabase()

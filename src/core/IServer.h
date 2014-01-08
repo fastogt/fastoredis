@@ -5,13 +5,12 @@
 #include "core/ConnectionSettings.h"
 #include "core/events/EventsInfo.hpp"
 #include "core/IDriver.h"
+#include "core/IDataBase.h"
 
 namespace fastoredis
 {
     class IServer;
     typedef boost::shared_ptr<IServer> IServerPtr;
-    class IDatabase;
-    typedef boost::shared_ptr<IDatabase> IDatabasePtr;
 
     class IServer
             : public QObject
@@ -34,6 +33,7 @@ namespace fastoredis
         void stopCurrentEvent();
         bool isConnected() const;
         bool isMaster() const;
+        databases_cont_type databases() const;
 
         virtual ~IServer();
 

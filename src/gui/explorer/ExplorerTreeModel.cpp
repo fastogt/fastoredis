@@ -34,7 +34,7 @@ namespace fastoredis
         return server_->name();
     }
 
-    ExplorerDatabaseItem::ExplorerDatabaseItem(const DataBaseInfo &db, ExplorerServerItem *parent)
+    ExplorerDatabaseItem::ExplorerDatabaseItem(const IDatabasePtr &db, ExplorerServerItem *parent)
         : IExplorerTreeItem(parent), db_(db)
     {
 
@@ -52,7 +52,7 @@ namespace fastoredis
 
     QString ExplorerDatabaseItem::name() const
     {
-        return common::utils_qt::toQString(db_.name_);
+        return common::utils_qt::toQString(db_);
     }
 
     ExplorerServerItem *ExplorerDatabaseItem::parent() const
@@ -150,13 +150,13 @@ namespace fastoredis
         endRemoveRows();
     }
 
-    void ExplorerTreeModel::addDatabase(IServer *server, const DataBaseInfo &database)
+    void ExplorerTreeModel::addDatabase(const IDatabasePtr &db)
     {
-        ExplorerServerItem *parent = findServerItem(server);
+        ExplorerServerItem *parent = findServerItem(db->server());
         int child_count = parent->childrenCount();
         QModelIndex index = createIndex(0,0,parent);
         beginInsertRows(index,child_count,child_count);
-            ExplorerDatabaseItem *item = new ExplorerDatabaseItem(database, parent);
+            ExplorerDatabaseItem *item = new ExplorerDatabaseItem(db, parent);
             parent->addChildren(item);
         endInsertRows();
     }

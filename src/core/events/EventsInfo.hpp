@@ -36,7 +36,7 @@ namespace fastoredis
             ConnectInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
                 : base_class(request)
             {
-                base_class::errorInfo_ = er;
+                errorInfo_ = er;
             }
         };
 
@@ -82,7 +82,7 @@ namespace fastoredis
             ExecuteInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
                 : base_class(request), _out()
             {
-                base_class::errorInfo_ = er;
+                errorInfo_ = er;
             }
             result_type _out;
         };
@@ -106,7 +106,7 @@ namespace fastoredis
             LoadDatabasesInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
                 : base_class(request)
             {
-                base_class::errorInfo_ = er;
+                errorInfo_ = er;
             }
             database_info_cont_type databases_;
         };

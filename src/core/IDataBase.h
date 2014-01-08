@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/shared_ptr.hpp>
+
 #include "core/Infos.h"
 
 namespace fastoredis
@@ -9,7 +11,7 @@ namespace fastoredis
     class IDatabase
     {
     public:
-        DataBaseInfo info() const;
+        std::string name() const;
         IServer *const server() const;
 
     protected:
@@ -20,4 +22,6 @@ namespace fastoredis
         IServer *const server_;
         DataBaseInfo info_;
     };
+
+    typedef boost::shared_ptr<IDatabase> IDatabasePtr;
 }

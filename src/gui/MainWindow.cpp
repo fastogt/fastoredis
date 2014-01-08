@@ -167,10 +167,6 @@ namespace fastoredis
     {
     }
 
-    void MainWindow::exit()
-    {
-    }
-
     void MainWindow::about()
     {
         AboutDialog dlg(this);
