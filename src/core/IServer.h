@@ -5,7 +5,6 @@
 #include "core/ConnectionSettings.h"
 #include "core/events/EventsInfo.hpp"
 #include "core/IDriver.h"
-#include "core/IDataBase.h"
 
 namespace fastoredis
 {
@@ -17,7 +16,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        typedef std::vector<IDatabasePtr> databases_cont_type;
         connectionTypes connectionType() const;
         QString name() const;
         IDriverPtr driver() const;
@@ -27,13 +25,13 @@ namespace fastoredis
         void connect();
         void disconnect();
         void loadDatabases();
+        void loadDatabaseContent(const DataBaseInfo &inf);
         void execute(const QString &script);
 
         //sync
         void stopCurrentEvent();
         bool isConnected() const;
         bool isMaster() const;
-        databases_cont_type databases() const;
 
         virtual ~IServer();
 
@@ -50,6 +48,9 @@ namespace fastoredis
         void startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
         void finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
 
+        void startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &req);
+        void finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce &res);
+
         void progressChanged(const EventsInfo::ProgressResponceInfo &res);
 
     protected:
@@ -60,12 +61,12 @@ namespace fastoredis
         virtual void connectEvent(Events::ConnectResponceEvent *ev) = 0;
         virtual void disconnectEvent(Events::DisconnectResponceEvent *ev) = 0;
         virtual void executeEvent(Events::ExecuteResponceEvent *ev) = 0;
-        virtual void loadDatabasesEvent(Events::LoadDatabasesInfoResponceEvent *ev) = 0;
+        virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoResponceEvent *ev) = 0;
+        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent *ev) = 0;
 
         IServer(const IDriverPtr &drv);
         IServer(const IServerPtr &drv);
 
-        databases_cont_type databases_;
         const bool _isMaster;
         const IDriverPtr _drv;
     };

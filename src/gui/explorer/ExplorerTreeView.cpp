@@ -29,6 +29,9 @@ namespace fastoredis
         VERIFY(connect(_openConsoleAction, SIGNAL(triggered()), SLOT(openConsole())));
         _loadDatabaseAction = new QAction(this);
         VERIFY(connect(_loadDatabaseAction, SIGNAL(triggered()), SLOT(loadDatabases())));
+
+        _loadContent = new QAction(this);
+        VERIFY(connect(_loadContent, SIGNAL(triggered()), SLOT(loadContentDb())));
         retranslateUi();
     }
 
@@ -38,13 +41,20 @@ namespace fastoredis
         menuPoint.setY(menuPoint.y() + header()->height());
 
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            QMenu menu(this);
-
-            menu.addAction(_connectAction);
-            menu.addAction(_openConsoleAction);
-            menu.addAction(_loadDatabaseAction);
-            menu.exec(menuPoint);
+        if(sel.isValid()){            
+            IExplorerTreeItem *node = common::utils_qt::item<IExplorerTreeItem*>(sel);
+            if(node->type() == IExplorerTreeItem::Server){
+                QMenu menu(this);
+                menu.addAction(_connectAction);
+                menu.addAction(_openConsoleAction);
+                menu.addAction(_loadDatabaseAction);
+                menu.exec(menuPoint);
+            }
+            else if(node->type() == IExplorerTreeItem::Database){
+                QMenu menu(this);
+                menu.addAction(_loadContent);
+                menu.exec(menuPoint);
+            }
         }
     }
 
@@ -77,6 +87,17 @@ namespace fastoredis
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
                 node->server()->loadDatabases();
+            }
+        }
+    }
+
+    void ExplorerTreeView::loadContentDb()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+            if(node){
+                node->loadContent();
             }
         }
     }
@@ -122,6 +143,7 @@ namespace fastoredis
         _connectAction->setText(tr("Connect"));
         _openConsoleAction->setText(tr("Open console"));
         _loadDatabaseAction->setText(tr("Load databases"));
+        _loadContent->setText(tr("Load content of database"));
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req)
@@ -138,12 +160,12 @@ namespace fastoredis
         else{
             IServer *serv = qobject_cast<IServer *>(sender());
             DCHECK(serv);
-            IServer::databases_cont_type dbs = serv->databases();
+            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
             ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel *>(model());
             DCHECK(mod);
             for(int i = 0; i < dbs.size(); ++i){
-                IDatabasePtr db = dbs[i];
-                mod->addDatabase(db);
+                DataBaseInfo db = dbs[i];
+                mod->addDatabase(serv, db);
             }
         }
     }

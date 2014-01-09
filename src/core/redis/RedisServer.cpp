@@ -1,6 +1,5 @@
 #include "core/redis/RedisServer.h"
 
-#include "core/redis/RedisDataBase.h"
 #include "core/ConnectionSettings.h"
 #include "common/qt/converter_patterns.h"
 
@@ -39,16 +38,17 @@ namespace fastoredis
         emit finishedExecute(v);
     }
 
-    void RedisServer::loadDatabasesEvent(Events::LoadDatabasesInfoResponceEvent *ev)
+    void RedisServer::loadDatabasesInfoEvent(Events::LoadDatabasesInfoResponceEvent *ev)
     {
         using namespace Events;
         LoadDatabasesInfoResponceEvent::value_type v = ev->value();
-        EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type cont = v.databases_;
-        databases_.clear();
-        for(int i = 0; i < cont.size(); ++i){
-            IDatabasePtr db(new RedisDatabase(this, cont[i]));
-            databases_.push_back(db);
-        }
         emit finishedLoadDatabases(v);
+    }
+
+    void RedisServer::loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent *ev)
+    {
+        using namespace Events;
+        LoadDatabaseContentResponceEvent::value_type v = ev->value();
+        emit finishedLoadDataBaseContent(v);
     }
 }

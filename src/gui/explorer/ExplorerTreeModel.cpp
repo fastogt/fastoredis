@@ -3,7 +3,6 @@
 #include "gui/GuiFactory.h"
 #include "common/qt/utils_qt.h"
 #include "common/qt/converter_patterns.h"
-#include "core/IDataBase.h"
 
 namespace fastoredis
 {
@@ -34,10 +33,15 @@ namespace fastoredis
         return server_->name();
     }
 
-    ExplorerDatabaseItem::ExplorerDatabaseItem(const IDatabasePtr &db, ExplorerServerItem *parent)
+    ExplorerDatabaseItem::ExplorerDatabaseItem(const DataBaseInfo &db, ExplorerServerItem *parent)
         : IExplorerTreeItem(parent), db_(db)
     {
 
+    }
+
+    void ExplorerDatabaseItem::loadContent()
+    {
+        server()->loadDatabaseContent(db_);
     }
 
     IServerPtr ExplorerDatabaseItem::server() const
@@ -52,7 +56,7 @@ namespace fastoredis
 
     QString ExplorerDatabaseItem::name() const
     {
-        return common::utils_qt::toQString(db_);
+        return common::utils_qt::toQString(db_.name_);
     }
 
     ExplorerServerItem *ExplorerDatabaseItem::parent() const
@@ -150,9 +154,9 @@ namespace fastoredis
         endRemoveRows();
     }
 
-    void ExplorerTreeModel::addDatabase(const IDatabasePtr &db)
+    void ExplorerTreeModel::addDatabase(IServer * server, const DataBaseInfo &db)
     {
-        ExplorerServerItem *parent = findServerItem(db->server());
+        ExplorerServerItem *parent = findServerItem(server);
         int child_count = parent->childrenCount();
         QModelIndex index = createIndex(0,0,parent);
         beginInsertRows(index,child_count,child_count);

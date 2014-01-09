@@ -38,13 +38,14 @@ namespace fastoredis
     struct ExplorerDatabaseItem
             : public IExplorerTreeItem
     {
-        ExplorerDatabaseItem(const IDatabasePtr &db, ExplorerServerItem *parent);
+        ExplorerDatabaseItem(const DataBaseInfo &db, ExplorerServerItem *parent);
         ExplorerServerItem *parent() const;
         virtual QString name() const;
         virtual IServerPtr server() const;
         virtual eType type() const;
+        void loadContent();
     private:
-        IDatabasePtr db_;
+        DataBaseInfo db_;
     };
 
     class ExplorerTreeModel
@@ -61,10 +62,9 @@ namespace fastoredis
         void addServer(const IServerPtr &server);
         void removeServer(const IServerPtr &server);
 
-        void addDatabase(const IDatabasePtr &db);
+        void addDatabase(IServer *server, const DataBaseInfo &db);
 
         ~ExplorerTreeModel();
-
     private:
         ExplorerServerItem *findServerItem(IServer *server) const;
     };

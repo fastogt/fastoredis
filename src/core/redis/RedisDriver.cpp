@@ -615,7 +615,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadDatabasesEvent(Events::LoadDatabasesInfoRequestEvent *ev)
+    void RedisDriver::loadDatabasesInfoEvent(Events::LoadDatabasesInfoRequestEvent *ev)
     {
         static const char* loadDabasesString = "CONFIG GET databases";
             QObject *sender = ev->sender();
@@ -637,6 +637,11 @@ namespace fastoredis
         notifyProgress(sender, 75);
             reply(sender, new Events::LoadDatabasesInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev)
+    {
+
     }
 
     void RedisDriver::interrupt()
