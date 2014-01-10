@@ -2,7 +2,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "common/boost_extension.hpp"
 #include "core/ConnectionTypes.h"
 #include "core/redis/RedisConfig.h"
 

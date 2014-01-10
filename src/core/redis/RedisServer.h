@@ -7,7 +7,7 @@ namespace fastoredis
     class RedisServer
             : public IServer
     {
-        friend class ServersManager;
+    friend class ServersManager;
         Q_OBJECT
     public:
 

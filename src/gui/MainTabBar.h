@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QTabBar>
-#include "global/global.h"
 
 namespace fastoredis
 {

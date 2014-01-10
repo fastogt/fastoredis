@@ -8,7 +8,7 @@ namespace
     using namespace common;
     const unicode_string &get_logger_path()
     {
-        static unicode_string result = file_system::prepare_path(UTEXT("~/log.txt"));
+        static unicode_string result = file_system::prepare_path(UTEXT("~/"PROJECT_NAME_LOWERCASE".log"));
         return result;
     }
 }

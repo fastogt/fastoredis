@@ -1,6 +1,7 @@
 #pragma once
 
-#include "global/global.h"
+#include <vector>
+#include <string>
 
 namespace fastoredis
 {

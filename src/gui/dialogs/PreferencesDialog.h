@@ -4,8 +4,6 @@
 
 class QComboBox;
 
-#include "global/global.h"
-
 namespace fastoredis
 {
     class PreferencesDialog 

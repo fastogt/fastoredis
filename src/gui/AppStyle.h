@@ -1,7 +1,5 @@
 #pragma once
 
-#include "global/global.h"
-
 #include <QStyle>
 #ifdef OS_WIN
     #include <QProxyStyle>

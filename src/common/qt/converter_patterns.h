@@ -5,13 +5,13 @@
 
 namespace common
 {
-    namespace utils_qt
-    {
-        template<typename T>
-        QString toQString(T value);
+        namespace utils_qt
+        {
+            template<typename T>
+            QString toQString(T value);
 
-        unicode_string toStdString(const QString &value);
-    }
+            unicode_string toStdString(const QString &value);
+        }
         template<typename T>
         struct separator_traits
         {

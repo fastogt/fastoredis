@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QWidget>
-#include "global/global.h"
 #include "core/IServer.h"
 #include "core/events/EventsInfo.hpp"
 

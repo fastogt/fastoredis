@@ -4,7 +4,6 @@
 
 class QAction;
 
-#include "global/global.h"
 #include "core/IServer.h"
 
 namespace fastoredis

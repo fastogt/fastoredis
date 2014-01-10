@@ -1,5 +1,6 @@
 #pragma once
 
+#include "global/global.h"
 #include "core/Infos.h"
 #include "common/qt/utils_qt.h"
 #include "common/time.h"

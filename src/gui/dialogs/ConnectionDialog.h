@@ -7,8 +7,6 @@ class QLineEdit;
 class QDialogButtonBox;
 class QPushButton;
 
-#include "global/global.h"
-
 #include "core/ConnectionSettings.h"
 
 namespace fastoredis

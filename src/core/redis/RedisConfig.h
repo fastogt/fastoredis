@@ -1,6 +1,8 @@
 #pragma once
 
-#include "global/global.h"
+#include <vector>
+#include <string>
+
 #define REDIS_DEFAULT_PIPE_TIMEOUT 30 /* seconds */
 
 namespace fastoredis

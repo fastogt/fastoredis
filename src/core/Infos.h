@@ -1,6 +1,6 @@
 #pragma once
 
-#include "global/global.h"
+#include <string>
 
 namespace fastoredis
 {

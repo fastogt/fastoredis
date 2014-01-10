@@ -2,8 +2,6 @@
 
 #include <Qsci/qsciscintilla.h>
 
-#include "global/global.h"
-
 namespace fastoredis
 {
     class FastoEditor

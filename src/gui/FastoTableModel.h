@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QAbstractProxyModel>
-#include "global/global.h"
 
 namespace fastoredis
 {

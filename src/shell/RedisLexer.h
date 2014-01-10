@@ -4,8 +4,6 @@
 #include <Qsci/qscilexerdiff.h>
 #include <Qsci/qsciabstractapis.h>
 
-#include "global/global.h"
-
 namespace fastoredis
 {
     class RedisApi
