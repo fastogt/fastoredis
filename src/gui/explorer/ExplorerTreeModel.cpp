@@ -140,8 +140,8 @@ namespace fastoredis
     {
         ExplorerServerItem *serv = findServerItem(server.get());
         if(!serv){
-            ExplorerServerItem *parent = dynamic_cast<ExplorerServerItem*>(_root.get());
-            Q_ASSERT(parent);
+            TreeItem *parent = dynamic_cast<TreeItem*>(_root.get());
+            DCHECK(parent);
             int child_count = parent->childrenCount();
             beginInsertRows(QModelIndex(),child_count,child_count);
                 ExplorerServerItem *item = new ExplorerServerItem(server, parent);
@@ -152,7 +152,7 @@ namespace fastoredis
 
     void ExplorerTreeModel::removeServer(const IServerPtr &server)
     {
-        ExplorerServerItem *parent = dynamic_cast<ExplorerServerItem*>(_root.get());
+        TreeItem *parent = dynamic_cast<TreeItem*>(_root.get());
         DCHECK(parent);
         QModelIndex index = createIndex(0,0,parent);
         ExplorerServerItem *serverItem = findServerItem(server.get());
@@ -179,7 +179,7 @@ namespace fastoredis
 
     ExplorerServerItem *ExplorerTreeModel::findServerItem(IServer *server) const
     {
-        ExplorerServerItem *parent = dynamic_cast<ExplorerServerItem*>(_root.get());
+        TreeItem *parent = dynamic_cast<TreeItem*>(_root.get());
         DCHECK(parent);
         ExplorerServerItem *result = NULL;
         for(int i = 0; i < parent->childrenCount() ; ++i){
@@ -190,7 +190,6 @@ namespace fastoredis
                 break;
             }
         }
-        DCHECK(result);
         return result;
     }
 

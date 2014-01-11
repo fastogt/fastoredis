@@ -2,6 +2,7 @@
 
 #include "core/ConnectionSettings.h"
 #include "common/qt/converter_patterns.h"
+#include "core/Logger.h"
 
 namespace fastoredis
 {
@@ -25,6 +26,10 @@ namespace fastoredis
     {
         using namespace Events;
         ConnectResponceEvent::value_type v = ev->value();
+        const error::ErrorInfo &er = v.errorInfo();
+        if(er.isError()){
+            LOG_ERROR(er, true);
+        }
         emit finishedConnect(v);
     }
 
@@ -32,6 +37,10 @@ namespace fastoredis
     {
         using namespace Events;
         DisconnectResponceEvent::value_type v = ev->value();
+        const error::ErrorInfo &er = v.errorInfo();
+        if(er.isError()){
+            LOG_ERROR(er, true);
+        }
         emit finishedDisconnect(v);
     }
 
@@ -39,6 +48,10 @@ namespace fastoredis
     {
         using namespace Events;
         ExecuteResponceEvent::value_type v = ev->value();
+        const error::ErrorInfo &er = v.errorInfo();
+        if(er.isError()){
+            LOG_ERROR(er, true);
+        }
         emit finishedExecute(v);
     }
 
@@ -46,6 +59,10 @@ namespace fastoredis
     {
         using namespace Events;
         LoadDatabasesInfoResponceEvent::value_type v = ev->value();
+        const error::ErrorInfo &er = v.errorInfo();
+        if(er.isError()){
+            LOG_ERROR(er, true);
+        }
         emit finishedLoadDatabases(v);
     }
 
@@ -53,6 +70,10 @@ namespace fastoredis
     {
         using namespace Events;
         LoadDatabaseContentResponceEvent::value_type v = ev->value();
+        const error::ErrorInfo &er = v.errorInfo();
+        if(er.isError()){
+            LOG_ERROR(er, true);
+        }
         emit finishedLoadDataBaseContent(v);
     }
 }
