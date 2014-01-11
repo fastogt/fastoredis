@@ -9,23 +9,20 @@ namespace fastoredis
 {
     const std::string AppStyle::defStyle = "Native";
 
-    namespace detail
+    void applyStyle(const QString &styleName)
     {
-        void applyStyle(const QString &styleName)
-        {
-            if (styleName == common::utils_qt::toQString(AppStyle::defStyle)) {
-                QApplication::setStyle(new AppStyle);
-            }
-            else {
-                QApplication::setStyle(QStyleFactory::create(styleName));
-            }
+        if (styleName == common::utils_qt::toQString(AppStyle::defStyle)) {
+            QApplication::setStyle(new AppStyle);
         }
+        else {
+            QApplication::setStyle(QStyleFactory::create(styleName));
+        }
+    }
 
-        QStringList getSupportedStyles()
-        {
-            static QStringList result = QStringList() << common::utils_qt::toQString(AppStyle::defStyle) << QStyleFactory::keys();
-            return result;
-        }
+    QStringList getSupportedStyles()
+    {
+        static QStringList result = QStringList() << common::utils_qt::toQString(AppStyle::defStyle) << QStyleFactory::keys();
+        return result;
     }
 
     void AppStyle::drawControl(ControlElement element,	const QStyleOption * option,	QPainter * painter,	const QWidget * widget) const

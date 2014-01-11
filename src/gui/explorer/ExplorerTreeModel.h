@@ -44,6 +44,7 @@ namespace fastoredis
         virtual IServerPtr server() const;
         virtual eType type() const;
         void loadContent();
+        DataBaseInfo db() const;
     private:
         DataBaseInfo db_;
     };
@@ -67,6 +68,7 @@ namespace fastoredis
         ~ExplorerTreeModel();
     private:
         ExplorerServerItem *findServerItem(IServer *server) const;
+        ExplorerDatabaseItem *findDatabaseItem(ExplorerServerItem *server, const DataBaseInfo &db) const;
     };
 }
 

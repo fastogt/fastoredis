@@ -7,9 +7,11 @@ namespace fastoredis
     class RedisServer
             : public IServer
     {
-    friend class ServersManager;
+        friend class ServersManager;
         Q_OBJECT
     public:
+        virtual void syncWithServer(IServer *src);
+        virtual void unSyncFromServer(IServer *src);
 
     protected:
         virtual void connectEvent(Events::ConnectResponceEvent *ev);
@@ -19,7 +21,6 @@ namespace fastoredis
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent *ev);
 
     private:
-        RedisServer(const IDriverPtr &drv);
-        RedisServer(const IServerPtr &srv);
+        RedisServer(const IDriverPtr &drv, bool isMaster);
     };
 }

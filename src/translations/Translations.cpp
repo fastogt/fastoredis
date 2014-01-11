@@ -39,6 +39,7 @@ namespace
         }
         return QString();
     }
+
     const QString builtInLanguage = "English"; /* "English" is built-in */
 }
 

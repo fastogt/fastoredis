@@ -19,11 +19,8 @@
 
 namespace fastoredis
 {
-    namespace detail
-    {
-        void applyStyle(const QString &styleName);
-        QStringList getSupportedStyles();
-    }
+    void applyStyle(const QString &styleName);
+    QStringList getSupportedStyles();
 
     class AppStyle 
         :public OsStyle

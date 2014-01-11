@@ -31,7 +31,12 @@ namespace fastoredis
         //sync
         void stopCurrentEvent();
         bool isConnected() const;
+
         bool isMaster() const;
+        void setIsMaster(bool isMaster);
+
+        virtual void syncWithServer(IServer *src) = 0;
+        virtual void unSyncFromServer(IServer *src) = 0;
 
         virtual ~IServer();
 
@@ -55,6 +60,7 @@ namespace fastoredis
 
     protected:
         static void syncServers(IServer *src, IServer *dsc);
+        static void unSyncServers(IServer *src, IServer *dsc);
         void notify(QEvent *ev);
         virtual void customEvent(QEvent *event);
 
@@ -64,10 +70,11 @@ namespace fastoredis
         virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoResponceEvent *ev) = 0;
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent *ev) = 0;
 
-        IServer(const IDriverPtr &drv);
-        IServer(const IServerPtr &drv);
+        IServer(const IDriverPtr &drv, bool isMaster);
 
-        const bool _isMaster;
         const IDriverPtr _drv;
+
+    private:
+        bool _isMaster;
     };
 }

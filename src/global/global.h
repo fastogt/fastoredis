@@ -44,15 +44,12 @@ namespace fastoredis
         };
     }
 
-    namespace detail
-    {
-        std::string toStdString(fastoType t);
-        fastoType toFastoType(const std::string &text);
+    std::string toStdString(fastoType t);
+    fastoType toFastoType(const std::string &text);
 
-        std::string toStdString(supportedViews v);
-        supportedViews toSupportedViews(const std::string &text);
-        std::vector<std::string> allSupportedViews();
-    }
+    std::string toStdString(supportedViews v);
+    supportedViews toSupportedViews(const std::string &text);
+    std::vector<std::string> allSupportedViews();
 
     class FastoObject;
 

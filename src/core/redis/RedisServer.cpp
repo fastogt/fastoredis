@@ -5,16 +5,20 @@
 
 namespace fastoredis
 {
-    RedisServer::RedisServer(const IDriverPtr &drv)
-        :IServer(drv)
+    RedisServer::RedisServer(const IDriverPtr &drv, bool isMaster)
+        : IServer(drv,isMaster)
     {
 
     }
 
-    RedisServer::RedisServer(const IServerPtr &srv)
-        :IServer(srv)
+    void RedisServer::syncWithServer(IServer *src)
     {
+        IServer::syncServers(src, this);
+    }
 
+    void RedisServer::unSyncFromServer(IServer *src)
+    {
+        IServer::unSyncServers(src, this);
     }
 
     void RedisServer::connectEvent(Events::ConnectResponceEvent *ev)

@@ -3,6 +3,7 @@
 #include <QDialog>
 
 class QComboBox;
+class QCheckBox;
 
 namespace fastoredis
 {
@@ -24,5 +25,6 @@ namespace fastoredis
         QComboBox *_stylesComboBox;
         QComboBox *_languagesComboBox;
         QComboBox *_defaultViewComboBox;
+        QCheckBox *_syncTabs;
     };
 }
