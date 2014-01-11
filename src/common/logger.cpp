@@ -1,4 +1,5 @@
 #include "common/logger.h"
+
 #include "common/file_system.h"
 #include <unistd.h>
 #include <fstream>
@@ -25,6 +26,7 @@ namespace common
            return std::cout;
         #endif
         }
+
         unicode_istream& logger::get_cin()
         {
         #ifdef UNICODE
@@ -33,6 +35,7 @@ namespace common
            return std::cin;
         #endif
         }
+
         unicode_ostream &logger::get_cerr()
         {
         #ifdef UNICODE
@@ -41,10 +44,12 @@ namespace common
            return std::cerr;
         #endif
         }
+
         unicode_char logger::get_endl()
         {
            return UTEXT('\n');
         }
+
         logger::logger()
             : m_outStream(NULL)
         {
@@ -61,6 +66,7 @@ namespace common
             m_outStream = &get_cerr();
         #endif
         }
+
         logger::~logger(void)
         {
             m_outStream->flush();
