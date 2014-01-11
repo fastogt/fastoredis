@@ -1,7 +1,5 @@
 #pragma once
 
-#include "global/global.h"
-
 #include <QStyle>
 #ifdef OS_WIN
     #include <QProxyStyle>
@@ -21,11 +19,8 @@
 
 namespace fastoredis
 {
-    namespace detail
-    {
-        void applyStyle(const QString &styleName);
-        QStringList getSupportedStyles();
-    }
+    void applyStyle(const QString &styleName);
+    QStringList getSupportedStyles();
 
     class AppStyle 
         :public OsStyle

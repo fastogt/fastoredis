@@ -3,6 +3,7 @@
 #include <QIcon>
 #include <QFont>
 
+#include "global/global.h"
 #include "core/ConnectionTypes.h"
 #include "common/patterns/singleton_pattern.hpp"
 

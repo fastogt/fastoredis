@@ -43,6 +43,8 @@ namespace fastoredis
         virtual QString name() const;
         virtual IServerPtr server() const;
         virtual eType type() const;
+        void loadContent();
+        DataBaseInfo db() const;
     private:
         DataBaseInfo db_;
     };
@@ -61,12 +63,12 @@ namespace fastoredis
         void addServer(const IServerPtr &server);
         void removeServer(const IServerPtr &server);
 
-        void addDatabase(IServer *server, const DataBaseInfo &database);
+        void addDatabase(IServer *server, const DataBaseInfo &db);
 
         ~ExplorerTreeModel();
-
     private:
         ExplorerServerItem *findServerItem(IServer *server) const;
+        ExplorerDatabaseItem *findDatabaseItem(ExplorerServerItem *server, const DataBaseInfo &db) const;
     };
 }
 

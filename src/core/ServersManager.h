@@ -15,14 +15,17 @@ namespace fastoredis
 
         IServerPtr createServer(const IConnectionSettingsBasePtr &settings);
         void closeServer(const IServerPtr &server);
+        void setSyncServers(bool isSync);
 
         ~ServersManager();
 
     private:
         ServersManager();
+        void refreshSyncServers();
         IServerPtr findServerBySetting(const IConnectionSettingsBasePtr &settings) const;
         std::vector<QObject*> findAllListeners(const IDriverPtr &drv);
 
         ServersContainer _servers;
+        bool syncServers_;
     };
 }

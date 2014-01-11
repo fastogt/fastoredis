@@ -20,7 +20,7 @@
 #include "core/SettingsManager.h"
 #include "core/Logger.h"
 
-#include "translations/translations.h"
+#include "translations/Translations.h"
 
 namespace fastoredis
 {
@@ -33,7 +33,7 @@ namespace fastoredis
         SettingsManager::instance().setCurrentLanguage(common::utils_qt::toStdString(newLang));
 
         unicode_string style = SettingsManager::instance().currentStyle();
-        fastoredis::detail::applyStyle(utils_qt::toQString(style));
+        fastoredis::applyStyle(utils_qt::toQString(style));
 
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
@@ -164,10 +164,6 @@ namespace fastoredis
     }
 
     void MainWindow::saveAs()
-    {
-    }
-
-    void MainWindow::exit()
     {
     }
 

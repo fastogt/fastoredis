@@ -1,5 +1,6 @@
 #pragma once
 
+#include "global/global.h"
 #include "core/Infos.h"
 #include "common/qt/utils_qt.h"
 #include "common/time.h"
@@ -36,7 +37,7 @@ namespace fastoredis
             ConnectInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
                 : base_class(request)
             {
-                base_class::errorInfo_ = er;
+                errorInfo_ = er;
             }
         };
 
@@ -82,7 +83,7 @@ namespace fastoredis
             ExecuteInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
                 : base_class(request), _out()
             {
-                base_class::errorInfo_ = er;
+                errorInfo_ = er;
             }
             result_type _out;
         };
@@ -106,9 +107,32 @@ namespace fastoredis
             LoadDatabasesInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
                 : base_class(request)
             {
-                base_class::errorInfo_ = er;
+                errorInfo_ = er;
             }
             database_info_cont_type databases_;
+        };
+
+        struct LoadDatabasesContentRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            LoadDatabasesContentRequest(const DataBaseInfo &inf, const error::ErrorInfo &er = error::ErrorInfo())
+                : base_class(er), inf_(inf)
+            {
+
+            }
+            DataBaseInfo inf_;
+        };
+
+        struct LoadDatabasesContentResponce
+                : LoadDatabasesContentRequest
+        {
+            typedef LoadDatabasesContentRequest base_class;
+            LoadDatabasesContentResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
+                : base_class(request)
+            {
+                errorInfo_ = er;
+            }
         };
 
         struct ProgressResponceInfo

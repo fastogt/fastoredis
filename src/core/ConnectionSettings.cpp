@@ -1,7 +1,7 @@
 #include "core/ConnectionSettings.h"
 
-#include <boost/lexical_cast.hpp>
 #include "common/macros.h"
+#include <boost/lexical_cast.hpp>
 #include "common/net.h"
 
 namespace

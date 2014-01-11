@@ -44,54 +44,12 @@ namespace fastoredis
         };
     }
 
-    namespace detail
-    {
-        std::string toStdString(fastoType t);
-        fastoType toFastoType(const std::string &text);
+    std::string toStdString(fastoType t);
+    fastoType toFastoType(const std::string &text);
 
-        std::string toStdString(supportedViews v);
-        supportedViews toSupportedViews(const std::string &text);
-        std::vector<std::string> allSupportedViews();
-
-        template<fastoType type>
-        struct FastoTraits;
-
-        template<>
-        struct FastoTraits<UNKNOWN>
-        {
-            typedef void* type_t;
-        };
-        template<>
-        struct FastoTraits<STRING>
-        {
-            typedef std::string type_t;
-        };
-        template<>
-        struct FastoTraits<ARRAY>
-        {
-            typedef std::vector<std::string> type_t;
-        };
-        template<>
-        struct FastoTraits<INTEGER>
-        {
-            typedef int type_t;
-        };
-        template<>
-        struct FastoTraits<NIL>
-        {
-            typedef void* type_t;
-        };
-        template<>
-        struct FastoTraits<STATUS>
-        {
-            typedef void* type_t;
-        };
-        template<>
-        struct FastoTraits<ERROR>
-        {
-            typedef error::ErrorInfo type_t;
-        };
-    }
+    std::string toStdString(supportedViews v);
+    supportedViews toSupportedViews(const std::string &text);
+    std::vector<std::string> allSupportedViews();
 
     class FastoObject;
 

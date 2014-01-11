@@ -27,7 +27,7 @@ IF(APPLE AND CMAKE_OSX_SYSROOT)
         MESSAGE("Setting MACOSX_DEPLOYMENT_TARGET to '${MACOSX_DEPLOYMENT_TARGET}'.")
     ENDIF()
 ELSEIF(UNIX AND NOT APPLE)
-    SET(PROJECT_NAME ${PROJECT_NAME_LOWERCASE})
+    #SET(PROJECT_NAME ${PROJECT_NAME_LOWERCASE})
 ENDIF()
 #############################################################
 # Configure project

@@ -10,15 +10,12 @@ namespace fastoredis
 {
     class IServer;
     typedef boost::shared_ptr<IServer> IServerPtr;
-    class IDatabase;
-    typedef boost::shared_ptr<IDatabase> IDatabasePtr;
 
     class IServer
             : public QObject
     {
         Q_OBJECT
     public:
-        typedef std::vector<IDatabasePtr> databases_cont_type;
         connectionTypes connectionType() const;
         QString name() const;
         IDriverPtr driver() const;
@@ -28,12 +25,18 @@ namespace fastoredis
         void connect();
         void disconnect();
         void loadDatabases();
+        void loadDatabaseContent(const DataBaseInfo &inf);
         void execute(const QString &script);
 
         //sync
         void stopCurrentEvent();
         bool isConnected() const;
+
         bool isMaster() const;
+        void setIsMaster(bool isMaster);
+
+        virtual void syncWithServer(IServer *src) = 0;
+        virtual void unSyncFromServer(IServer *src) = 0;
 
         virtual ~IServer();
 
@@ -50,23 +53,28 @@ namespace fastoredis
         void startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
         void finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
 
+        void startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &req);
+        void finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce &res);
+
         void progressChanged(const EventsInfo::ProgressResponceInfo &res);
 
     protected:
         static void syncServers(IServer *src, IServer *dsc);
+        static void unSyncServers(IServer *src, IServer *dsc);
         void notify(QEvent *ev);
         virtual void customEvent(QEvent *event);
 
         virtual void connectEvent(Events::ConnectResponceEvent *ev) = 0;
         virtual void disconnectEvent(Events::DisconnectResponceEvent *ev) = 0;
         virtual void executeEvent(Events::ExecuteResponceEvent *ev) = 0;
-        virtual void loadDatabasesEvent(Events::LoadDatabasesInfoResponceEvent *ev) = 0;
+        virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoResponceEvent *ev) = 0;
+        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent *ev) = 0;
 
-        IServer(const IDriverPtr &drv);
-        IServer(const IServerPtr &drv);
+        IServer(const IDriverPtr &drv, bool isMaster);
 
-        databases_cont_type databases_;
-        const bool _isMaster;
         const IDriverPtr _drv;
+
+    private:
+        bool _isMaster;
     };
 }

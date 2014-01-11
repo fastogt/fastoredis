@@ -22,7 +22,6 @@ namespace fastoredis
 
     private:
         Logger();
-        ~Logger();
     };
 
     template<typename T>

@@ -72,8 +72,6 @@ SET(HEADERS_CORE_TO_MOC
 )
 SET(HEADERS_CORE
     core/Infos.h
-    core/IDataBase.h
-    core/redis/RedisDataBase.h
     core/ConnectionTypes.h
     core/SettingsManager.h
     core/ConnectionSettings.h
@@ -90,12 +88,10 @@ SET(SOURCES_CORE
     core/Logger.cpp
     core/redis/RedisDriver.cpp
     core/IDriver.cpp
-    core/IDataBase.cpp
     core/IServer.cpp
     core/redis/RedisServer.cpp
     core/ServersManager.cpp
     core/redis/RedisConfig.cpp
-    core/redis/RedisDataBase.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/ShellWidget.h

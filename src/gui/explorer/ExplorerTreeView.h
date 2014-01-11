@@ -4,7 +4,6 @@
 
 class QAction;
 
-#include "global/global.h"
 #include "core/IServer.h"
 
 namespace fastoredis
@@ -29,6 +28,7 @@ namespace fastoredis
         void connectToServer();
         void openConsole();
         void loadDatabases();
+        void loadContentDb();
 
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
         void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
@@ -44,5 +44,6 @@ namespace fastoredis
         QAction *_connectAction;
         QAction *_openConsoleAction;
         QAction *_loadDatabaseAction;
+        QAction *_loadContent;
     };
 }

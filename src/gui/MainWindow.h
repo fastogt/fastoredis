@@ -24,7 +24,6 @@ namespace fastoredis
         void open();
         void save();
         void saveAs();
-        void exit();
         void about();
         void openPreferences();
 

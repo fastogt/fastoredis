@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QTabBar>
-#include "global/global.h"
 
 namespace fastoredis
 {
@@ -10,7 +9,7 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        explicit MainTabBar(QWidget* parent=0);
+        explicit MainTabBar(QWidget* parent = 0);
 
     Q_SIGNALS:
         void createdNewTab();
@@ -22,7 +21,11 @@ namespace fastoredis
     private Q_SLOTS:
         void showContextMenu(const QPoint &p);        
 
+    protected:
+        virtual void changeEvent(QEvent *);
+
     private:
+        void retranslateUi();
         QAction *_newShellAction;
         QAction *_reloadShellAction;
         QAction *_duplicateShellAction;

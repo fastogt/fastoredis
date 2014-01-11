@@ -30,6 +30,9 @@ namespace fastoredis
         void addConnection(const IConnectionSettingsBasePtr &connection);
         void removeConnection(const IConnectionSettingsBasePtr &connection);
 
+        bool syncTabs() const;
+        void setSyncTabs(bool sync) const;
+
         ConnectionSettingsContainerType connections() const;
     };
 }

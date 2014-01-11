@@ -45,6 +45,14 @@ namespace fastoredis
             ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);           
             executeEvent(ev);
         }
+        else if (type == static_cast<QEvent::Type>(LoadDatabasesInfoRequestEvent::EventType)){
+            LoadDatabasesInfoRequestEvent *ev = static_cast<LoadDatabasesInfoRequestEvent*>(event);
+            loadDatabasesInfoEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(LoadDatabaseContentRequestEvent::EventType)){
+            LoadDatabaseContentRequestEvent *ev = static_cast<LoadDatabaseContentRequestEvent*>(event);
+            loadDatabaseContentEvent(ev);
+        }
         return QObject::customEvent(event);
     }
 

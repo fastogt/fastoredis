@@ -129,41 +129,38 @@ namespace fastoredis
         return _childrens;
     }
 
-    namespace detail
+    std::string toStdString(fastoType t)
     {
-        std::string toStdString(fastoType t)
-        {
-            std::string result;
-            int count = sizeof(fastoTypeM)/sizeof(*fastoTypeM);
-            if(t < count){
-                result = fastoTypeM[t];
-            }
-            return result;
+        std::string result;
+        int count = sizeof(fastoTypeM)/sizeof(*fastoTypeM);
+        if(t < count){
+            result = fastoTypeM[t];
         }
+        return result;
+    }
 
-        fastoType toFastoType(const std::string &text)
-        {
-            return common::utils::enums::findTypeInArray<fastoType>(fastoTypeM,text.c_str());
-        }
+    fastoType toFastoType(const std::string &text)
+    {
+        return common::utils::enums::findTypeInArray<fastoType>(fastoTypeM,text.c_str());
+    }
 
-        std::string toStdString(supportedViews v)
-        {
-            std::string result;
-            int count = sizeof(supportedViewsM)/sizeof(*supportedViewsM);
-            if(v < count){
-                result = supportedViewsM[v];
-            }
-            return result;
+    std::string toStdString(supportedViews v)
+    {
+        std::string result;
+        int count = sizeof(supportedViewsM)/sizeof(*supportedViewsM);
+        if(v < count){
+            result = supportedViewsM[v];
         }
+        return result;
+    }
 
-        supportedViews toSupportedViews(const std::string &text)
-        {
-            return common::utils::enums::findTypeInArray<supportedViews>(supportedViewsM,text.c_str());
-        }
+    supportedViews toSupportedViews(const std::string &text)
+    {
+        return common::utils::enums::findTypeInArray<supportedViews>(supportedViewsM,text.c_str());
+    }
 
-        std::vector<std::string> allSupportedViews()
-        {
-            return common::utils::enums::convertToVector(supportedViewsM);
-        }
+    std::vector<std::string> allSupportedViews()
+    {
+        return common::utils::enums::convertToVector(supportedViewsM);
     }
 }

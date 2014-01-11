@@ -29,7 +29,8 @@ namespace fastoredis
         virtual void connectEvent(Events::ConnectRequestEvent *ev);
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev);
         virtual void executeEvent(Events::ExecuteRequestEvent *ev);
-        virtual void loadDatabasesEvent(Events::LoadDatabasesInfoRequestEvent *ev);
+        virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoRequestEvent *ev);
+        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev);
 
     private:
         struct pimpl;

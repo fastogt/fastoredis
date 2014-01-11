@@ -2,9 +2,8 @@
 
 #include <boost/shared_ptr.hpp>
 #include <QObject>
-QT_BEGIN_NAMESPACE
+
 class QThread;
-QT_END_NAMESPACE
 
 #include "core/ConnectionSettings.h"
 #include "core/events/Events.hpp"
@@ -40,7 +39,8 @@ namespace fastoredis
         virtual void connectEvent(Events::ConnectRequestEvent *ev) = 0;
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev) = 0;
         virtual void executeEvent(Events::ExecuteRequestEvent *ev) = 0;
-        virtual void loadDatabasesEvent(Events::LoadDatabasesInfoRequestEvent *ev) = 0;
+        virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoRequestEvent *ev) = 0;
+        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev) = 0;
 
     private:
         QThread *_thread;

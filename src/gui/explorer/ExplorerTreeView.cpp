@@ -29,6 +29,9 @@ namespace fastoredis
         VERIFY(connect(_openConsoleAction, SIGNAL(triggered()), SLOT(openConsole())));
         _loadDatabaseAction = new QAction(this);
         VERIFY(connect(_loadDatabaseAction, SIGNAL(triggered()), SLOT(loadDatabases())));
+
+        _loadContent = new QAction(this);
+        VERIFY(connect(_loadContent, SIGNAL(triggered()), SLOT(loadContentDb())));
         retranslateUi();
     }
 
@@ -38,13 +41,20 @@ namespace fastoredis
         menuPoint.setY(menuPoint.y() + header()->height());
 
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            QMenu menu(this);
-
-            menu.addAction(_connectAction);
-            menu.addAction(_openConsoleAction);
-            menu.addAction(_loadDatabaseAction);
-            menu.exec(menuPoint);
+        if(sel.isValid()){            
+            IExplorerTreeItem *node = common::utils_qt::item<IExplorerTreeItem*>(sel);
+            if(node->type() == IExplorerTreeItem::Server){
+                QMenu menu(this);
+                menu.addAction(_connectAction);
+                menu.addAction(_openConsoleAction);
+                menu.addAction(_loadDatabaseAction);
+                menu.exec(menuPoint);
+            }
+            else if(node->type() == IExplorerTreeItem::Database){
+                QMenu menu(this);
+                menu.addAction(_loadContent);
+                menu.exec(menuPoint);
+            }
         }
     }
 
@@ -81,11 +91,24 @@ namespace fastoredis
         }
     }
 
+    void ExplorerTreeView::loadContentDb()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+            if(node){
+                node->loadContent();
+            }
+        }
+    }
+
     void ExplorerTreeView::addServer(const IServerPtr &server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(connect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
         VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
+//        VERIFY(connect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
+//        VERIFY(connect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
 
         mod->addServer(server);
     }
@@ -95,6 +118,8 @@ namespace fastoredis
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(disconnect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
         VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
+//        VERIFY(disconnect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
+//        VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
 
         mod->removeServer(server);
     }
@@ -122,6 +147,7 @@ namespace fastoredis
         _connectAction->setText(tr("Connect"));
         _openConsoleAction->setText(tr("Open console"));
         _loadDatabaseAction->setText(tr("Load databases"));
+        _loadContent->setText(tr("Load content of database"));
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req)

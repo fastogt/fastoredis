@@ -2,8 +2,6 @@
 
 #include <QString>
 
-#include "global/global.h"
-
 namespace fastoredis
 {
     namespace translations
