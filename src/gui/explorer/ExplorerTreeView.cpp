@@ -63,7 +63,13 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                node->server()->connect();
+                IServerPtr server = node->server();
+                if(server->isConnected()){
+                    server->disconnect();
+                }
+                else{
+                    server->connect();
+                }
             }
         }
     }
@@ -143,7 +149,7 @@ namespace fastoredis
 
     void ExplorerTreeView::retranslateUi()
     {
-        _connectAction->setText(tr("Connect"));
+        _connectAction->setText(tr("Connect/Disconnect"));
         _openConsoleAction->setText(tr("Open console"));
         _loadDatabaseAction->setText(tr("Load databases"));
         _loadContent->setText(tr("Load content of database"));

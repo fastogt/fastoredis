@@ -245,8 +245,14 @@ namespace fastoredis
             }
             case REDIS_REPLY_ARRAY:
             {
-                FastoObjectPtr child = new FastoObject(out, out->c_str(), ARRAY);
-                out->addChildren(child);
+                FastoObjectPtr child;
+                if(out->isRoot()){
+                    child = out;
+                }
+                else{
+                    child = new FastoObject(out, out->c_str(), ARRAY);
+                    out->addChildren(child);
+                }
                 for (size_t i = 0; i < r->elements; i++) {
                     cliFormatReplyRaw(child, r->element[i]);
                 }
@@ -629,7 +635,7 @@ namespace fastoredis
                 res.setErrorInfo(er);
             }else{
                 FastoObject::child_container_type childrens = root->childrens();
-                for(int i = 0; i < childrens.size() ;++i){
+                for(int i = 0; i < childrens.size(); ++i){
                     DataBaseInfo dbInf(childrens[i]->c_str(), 0);
                     res.databases_.push_back(dbInf);
                 }
