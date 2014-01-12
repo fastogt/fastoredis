@@ -111,13 +111,8 @@ namespace
         qDebug() << "serverText: " << src.c_str();
         size_t pos = 0;
         size_t start = 0;
-        while(true){
-            pos = src.find("\r\n", start);
-            if(pos == std::string::npos){
-                break;
-            }
+        while((pos = src.find("\r\n", start)) != std::string::npos){
             std::string line = src.substr(start, pos-start);
-            qDebug() << "line: " << line.c_str();
             size_t delem = line.find_first_of(':');
             std::string field = line.substr(0, delem);
             std::string value = line.substr(delem + 1);

@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QToolButton>
 #include <QMessageBox>
+#include <QEvent>
 
 #include "common/qt/converter_patterns.h"
 #include "core/SettingsManager.h"
@@ -48,7 +49,6 @@ namespace fastoredis
         : QDialog(parent)
     {
         setWindowIcon(GuiFactory::instance().connectIcon());
-        setWindowTitle("Redis Connections");
 
         // Remove help button (?)
         setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);;
@@ -56,9 +56,6 @@ namespace fastoredis
         _listWidget = new QTreeWidget;
         _listWidget->setIndentation(5);
 
-        QStringList colums;
-        colums << "Name" << "Address" << "Auth. Database / User";
-        _listWidget->setHeaderLabels(colums);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
@@ -81,7 +78,6 @@ namespace fastoredis
         buttonBox->button(QDialogButtonBox::Ok)->setIcon(GuiFactory::instance().serverIcon());
         _acButton = buttonBox->button(QDialogButtonBox::Ok);
 
-        _acButton->setText("Open");
         _acButton->setEnabled(false);
 
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
@@ -128,6 +124,7 @@ namespace fastoredis
         // Highlight first item
         if (_listWidget->topLevelItemCount() > 0)
             _listWidget->setCurrentItem(_listWidget->topLevelItem(0));
+        retranslateUi();
     }
 
     void ConnectionsDialog::connectionSelectChange()
@@ -217,5 +214,22 @@ namespace fastoredis
     void ConnectionsDialog::accept()
     {
         QDialog::accept();
+    }
+
+    void ConnectionsDialog::changeEvent(QEvent *e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QDialog::changeEvent(e);
+    }
+
+    void ConnectionsDialog::retranslateUi()
+    {
+        setWindowTitle(tr("Redis Connections"));
+        _acButton->setText(tr("Open"));
+        QStringList colums;
+        colums << tr("Name") << tr("Address") << tr("Auth. Database / User");
+        _listWidget->setHeaderLabels(colums);
     }
 }

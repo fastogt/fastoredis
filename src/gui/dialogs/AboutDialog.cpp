@@ -4,6 +4,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QEvent>
 
 #include "gui/GuiFactory.h"
 #include "common/macros.h"

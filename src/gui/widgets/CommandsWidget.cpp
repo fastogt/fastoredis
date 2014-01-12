@@ -21,7 +21,8 @@ namespace fastoredis
         hlayout->addWidget(_logTextEdit);
         _clear = new QAction("Clear All", this);
         VERIFY(connect(_clear, SIGNAL(triggered()),_logTextEdit, SLOT(clear())));
-        setLayout(hlayout);      
+        setLayout(hlayout);
+        retranslateUi();
     }
 
     void CommandsWidget::showContextMenu(const QPoint &pt)
@@ -40,5 +41,18 @@ namespace fastoredis
         _logTextEdit->append(time.toString("h:mm:ss AP: ") + command);
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
+    }
+
+    void CommandsWidget::changeEvent(QEvent *e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QWidget::changeEvent(e);
+    }
+
+    void CommandsWidget::retranslateUi()
+    {
+        _clear->setText(tr("Clear All"));
     }
 }

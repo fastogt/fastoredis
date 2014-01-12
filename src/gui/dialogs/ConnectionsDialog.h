@@ -26,7 +26,11 @@ namespace fastoredis
         void edit();
         void connectionSelectChange();
 
+    protected:
+        virtual void changeEvent(QEvent *);
+
     private:
+        void retranslateUi();
         void add(const fastoredis::IConnectionSettingsBasePtr &con);
         QTreeWidget *_listWidget;
         ConnectionListItemContainerType _connectionItems;

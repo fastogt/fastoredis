@@ -5,6 +5,7 @@
 #include <QDialogButtonBox>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QEvent>
 
 #include "gui/GuiFactory.h"
 #include "common/qt/converter_patterns.h"
@@ -17,7 +18,6 @@ namespace fastoredis
         connection_(connection)
     {
         using namespace common;
-        setWindowTitle("Connection Settings");
         setWindowIcon(GuiFactory::instance().serverIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
@@ -60,6 +60,7 @@ namespace fastoredis
 
         //update controls
         typeConnectionChange(typeConnection_->currentText());
+        retranslateUi();
     }
 
     void ConnectionDialog::typeConnectionChange(const QString &value)
@@ -92,5 +93,18 @@ namespace fastoredis
            // ConnectionDiagnosticDialog diag(_connection,this);
            // diag.exec();
         }
+    }
+
+    void ConnectionDialog::changeEvent(QEvent *e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QDialog::changeEvent(e);
+    }
+
+    void ConnectionDialog::retranslateUi()
+    {
+        setWindowTitle(tr("Connection Settings"));
     }
 }
