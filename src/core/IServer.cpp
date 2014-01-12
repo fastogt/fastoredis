@@ -119,6 +119,14 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::serverInfo()
+    {
+        EventsInfo::ServerInfoRequest req;
+        emit startedServerInfo(req);
+        QEvent *ev = new Events::ServerInfoRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::stopCurrentEvent()
     {
         _drv->interrupt();
@@ -176,6 +184,10 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(LoadDatabaseContentResponceEvent::EventType)){
             LoadDatabaseContentResponceEvent *ev = static_cast<LoadDatabaseContentResponceEvent*>(event);
             loadDatabaseContentEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ServerInfoResponceEvent::EventType)){
+            ServerInfoResponceEvent *ev = static_cast<ServerInfoResponceEvent*>(event);
+            serverInfoEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
         {

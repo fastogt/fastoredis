@@ -102,6 +102,12 @@ namespace
         return list;
     }
 
+    fastoredis::ServerInfo makeServerInfo(const fastoredis::FastoObjectPtr &root)
+    {
+        fastoredis::ServerInfo result;
+        return result;
+    }
+
     const QStringList g_allCommands = getList();
 }
 
@@ -641,7 +647,32 @@ namespace fastoredis
 
     void RedisDriver::loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev)
     {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
+        notifyProgress(sender, 50);
+            reply(sender, new Events::LoadDatabaseContentResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
 
+    void RedisDriver::serverInfoEvent(Events::ServerInfoRequestEvent *ev)
+    {
+        static const char* infoString = "INFO";
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::ServerInfoResponceEvent::value_type res(ev->value());
+            FastoObjectPtr root = FastoObject::createRoot(infoString);
+            error::ErrorInfo er;
+        notifyProgress(sender, 50);
+            _impl->repl_impl(infoString, root, er);
+            if(er.isError()){
+                res.setErrorInfo(er);
+            }else{
+                res.info_ = makeServerInfo(root);
+            }
+        notifyProgress(sender, 75);
+            reply(sender, new Events::ServerInfoResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
     void RedisDriver::interrupt()

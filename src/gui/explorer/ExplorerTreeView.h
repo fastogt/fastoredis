@@ -29,6 +29,7 @@ namespace fastoredis
         void openConsole();
         void loadDatabases();
         void loadContentDb();
+        void openInfoServerDialog();
 
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
         void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
@@ -41,9 +42,10 @@ namespace fastoredis
         QModelIndex selectedIndex() const;
         QModelIndexList selectedIndexes() const;
 
-        QAction *_connectAction;
-        QAction *_openConsoleAction;
-        QAction *_loadDatabaseAction;
-        QAction *_loadContent;
+        QAction *connectAction_;
+        QAction *openConsoleAction_;
+        QAction *loadDatabaseAction_;
+        QAction *loadContent_;
+        QAction *infoServer_;
     };
 }
