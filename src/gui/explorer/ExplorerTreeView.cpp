@@ -193,8 +193,8 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                InfoServerDialog infDialog(this);
                 IServerPtr server = node->server();
+                InfoServerDialog infDialog(server->connectionType(), this);
                 VERIFY(connect(server.get(), SIGNAL(startedServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
                 VERIFY(connect(server.get(), SIGNAL(finishedServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
                 VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverInfo())));

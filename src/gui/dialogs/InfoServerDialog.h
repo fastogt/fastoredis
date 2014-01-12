@@ -1,7 +1,11 @@
 #pragma  once
 
 #include <QDialog>
+
 #include "core/events/EventsInfo.hpp"
+#include "core/ConnectionTypes.h"
+
+class QLabel;
 
 namespace fastoredis
 {
@@ -10,7 +14,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        explicit InfoServerDialog(QWidget *parent = 0);
+        explicit InfoServerDialog(connectionTypes type, QWidget *parent = 0);
 
     Q_SIGNALS:
         void showed();
@@ -21,5 +25,9 @@ namespace fastoredis
 
     protected:
         virtual void showEvent(QShowEvent *e);
+
+    private:
+        QLabel *version_;
+        const QString databaseName_;
     };
 }
