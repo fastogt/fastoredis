@@ -53,6 +53,10 @@ namespace fastoredis
             LoadDatabaseContentRequestEvent *ev = static_cast<LoadDatabaseContentRequestEvent*>(event);
             loadDatabaseContentEvent(ev);
         }
+        else if (type == static_cast<QEvent::Type>(ServerInfoRequestEvent::EventType)){
+            ServerInfoRequestEvent *ev = static_cast<ServerInfoRequestEvent*>(event);
+            serverInfoEvent(ev);
+        }
         return QObject::customEvent(event);
     }
 

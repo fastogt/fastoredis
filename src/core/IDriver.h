@@ -41,6 +41,7 @@ namespace fastoredis
         virtual void executeEvent(Events::ExecuteRequestEvent *ev) = 0;
         virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoRequestEvent *ev) = 0;
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev) = 0;
+        virtual void serverInfoEvent(Events::ServerInfoRequestEvent *ev) = 0;
 
     private:
         QThread *_thread;

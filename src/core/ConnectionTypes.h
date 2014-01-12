@@ -11,14 +11,11 @@ namespace fastoredis
         REDIS
     };
 
-    namespace detail
+    static inline connectionTypes badConnectionType()
     {
-        static inline connectionTypes badConnectionType()
-        {
-            return DBUNKNOWN;
-        }
-        std::vector<std::string> supportedConnectionTypes();
-        std::string toStdString(connectionTypes t);
-        connectionTypes toConnectionType(const std::string &text);
+        return DBUNKNOWN;
     }
+    std::vector<std::string> supportedConnectionTypes();
+    std::string toStdString(connectionTypes t);
+    connectionTypes toConnectionType(const std::string &text);
 }

@@ -135,6 +135,29 @@ namespace fastoredis
             }
         };
 
+        struct ServerInfoRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ServerInfoRequest(const error::ErrorInfo &er = error::ErrorInfo())
+                : base_class(er)
+            {
+
+            }
+        };
+
+        struct ServerInfoResponce
+                : ServerInfoRequest
+        {
+            typedef ServerInfoRequest base_class;
+            ServerInfoResponce(const base_class &request, const error::ErrorInfo &er = error::ErrorInfo())
+                : base_class(request)
+            {
+                errorInfo_ = er;
+            }
+            ServerInfo info_;
+        };
+
         struct ProgressResponceInfo
         {
             ProgressResponceInfo(int pr)

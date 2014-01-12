@@ -21,7 +21,7 @@ namespace fastoredis
 
     connectionTypes IConnectionSettingsBase::connectionType() const
     {
-        return detail::badConnectionType();
+        return badConnectionType();
     }
 
     IConnectionSettingsBase *IConnectionSettingsBase::fromStdString(const std::string &val)
@@ -58,7 +58,7 @@ namespace fastoredis
     {
         std::string res;
         connectionTypes crT = connectionType();
-        if(crT != detail::badConnectionType()){
+        if(crT != badConnectionType()){
             std::stringstream str;
             str << crT << ',' << connectionName() << ',' << toCommandLine();
             res = str.str();

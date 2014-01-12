@@ -7,4 +7,14 @@ namespace fastoredis
     {
 
     }
+
+    ServerInfo::ServerInfo()
+    {
+
+    }
+
+    ServerInfo::ServerInfo(const Server &serv) : server_(serv)
+    {
+
+    }
 }

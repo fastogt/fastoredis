@@ -15,7 +15,6 @@ namespace fastoredis
             : public QWidget
     {
         Q_OBJECT
-
     public:
         QueryWidget(const IServerPtr &server, QWidget* parent = 0);
 

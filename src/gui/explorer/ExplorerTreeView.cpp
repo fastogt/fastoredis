@@ -10,7 +10,7 @@
 
 #include "gui/explorer/ExplorerTreeModel.h"
 #include "gui/explorer/ExplorerTreeModel.h"
-#include "core/Logger.h"
+#include "gui/dialogs/InfoServerDialog.h"
 #include "common/qt/converter_patterns.h"
 
 namespace fastoredis
@@ -23,15 +23,18 @@ namespace fastoredis
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
-        _connectAction = new QAction(this);
-        VERIFY(connect(_connectAction, SIGNAL(triggered()), SLOT(connectToServer())));
-        _openConsoleAction = new QAction(this);
-        VERIFY(connect(_openConsoleAction, SIGNAL(triggered()), SLOT(openConsole())));
-        _loadDatabaseAction = new QAction(this);
-        VERIFY(connect(_loadDatabaseAction, SIGNAL(triggered()), SLOT(loadDatabases())));
+        connectAction_ = new QAction(this);
+        VERIFY(connect(connectAction_, SIGNAL(triggered()), SLOT(connectToServer())));
+        openConsoleAction_ = new QAction(this);
+        VERIFY(connect(openConsoleAction_, SIGNAL(triggered()), SLOT(openConsole())));
+        loadDatabaseAction_ = new QAction(this);
+        VERIFY(connect(loadDatabaseAction_, SIGNAL(triggered()), SLOT(loadDatabases())));
 
-        _loadContent = new QAction(this);
-        VERIFY(connect(_loadContent, SIGNAL(triggered()), SLOT(loadContentDb())));
+        loadContent_ = new QAction(this);
+        VERIFY(connect(loadContent_, SIGNAL(triggered()), SLOT(loadContentDb())));
+
+        infoServer_ = new QAction(this);
+        VERIFY(connect(infoServer_, SIGNAL(triggered()), SLOT(openInfoServerDialog())));
         retranslateUi();
     }
 
@@ -45,14 +48,15 @@ namespace fastoredis
             IExplorerTreeItem *node = common::utils_qt::item<IExplorerTreeItem*>(sel);
             if(node->type() == IExplorerTreeItem::Server){
                 QMenu menu(this);
-                menu.addAction(_connectAction);
-                menu.addAction(_openConsoleAction);
-                menu.addAction(_loadDatabaseAction);
+                menu.addAction(connectAction_);
+                menu.addAction(openConsoleAction_);
+                menu.addAction(loadDatabaseAction_);
+                menu.addAction(infoServer_);
                 menu.exec(menuPoint);
             }
             else if(node->type() == IExplorerTreeItem::Database){
                 QMenu menu(this);
-                menu.addAction(_loadContent);
+                menu.addAction(loadContent_);
                 menu.exec(menuPoint);
             }
         }
@@ -64,7 +68,13 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                node->server()->connect();
+                IServerPtr server = node->server();
+                if(server->isConnected()){
+                    server->disconnect();
+                }
+                else{
+                    server->connect();
+                }
             }
         }
     }
@@ -144,10 +154,11 @@ namespace fastoredis
 
     void ExplorerTreeView::retranslateUi()
     {
-        _connectAction->setText(tr("Connect"));
-        _openConsoleAction->setText(tr("Open console"));
-        _loadDatabaseAction->setText(tr("Load databases"));
-        _loadContent->setText(tr("Load content of database"));
+        connectAction_->setText(tr("Connect"));
+        openConsoleAction_->setText(tr("Open console"));
+        loadDatabaseAction_->setText(tr("Load databases"));
+        loadContent_->setText(tr("Load content of database"));
+        infoServer_->setText(tr("Info"));
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req)
@@ -158,10 +169,7 @@ namespace fastoredis
     void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res)
     {
         const error::ErrorInfo &er = res.errorInfo();
-        if(er.isError()){
-            LOG_ERROR(er);
-        }
-        else{
+        if(!er.isError()){
             IServer *serv = qobject_cast<IServer *>(sender());
             DCHECK(serv);
             EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
@@ -177,5 +185,21 @@ namespace fastoredis
     QModelIndexList ExplorerTreeView::selectedIndexes() const
     {
         return selectionModel()->selectedRows();
+    }
+
+    void ExplorerTreeView::openInfoServerDialog()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+            if(node){
+                IServerPtr server = node->server();
+                InfoServerDialog infDialog(server->connectionType(), this);
+                VERIFY(connect(server.get(), SIGNAL(startedServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
+                VERIFY(connect(server.get(), SIGNAL(finishedServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
+                VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverInfo())));
+                infDialog.exec();
+            }
+        }
     }
 }
