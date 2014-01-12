@@ -68,7 +68,13 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                node->server()->connect();
+                IServerPtr server = node->server();
+                if(server->isConnected()){
+                    server->disconnect();
+                }
+                else{
+                    server->connect();
+                }
             }
         }
     }
