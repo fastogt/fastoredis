@@ -26,7 +26,11 @@ namespace fastoredis
         void testConnection();
         void typeConnectionChange(const QString &value);
 
+    protected:
+        virtual void changeEvent(QEvent *);
+
     private:
+        void retranslateUi();
         bool validateAndApply();
         const IConnectionSettingsBasePtr connection_;
         QLineEdit *connectionName_;

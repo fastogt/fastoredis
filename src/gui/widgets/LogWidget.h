@@ -14,7 +14,6 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        typedef QWidget BaseClass;
         LogWidget(QWidget* parent = 0);        
 
     public Q_SLOTS:
@@ -23,7 +22,11 @@ namespace fastoredis
     private Q_SLOTS:
         void showContextMenu(const QPoint &pt);
 
-    private:        
+    protected:
+        virtual void changeEvent(QEvent *);
+
+    private:
+        void retranslateUi();
         QTextEdit *const _logTextEdit;
         QAction *_clear;
     };

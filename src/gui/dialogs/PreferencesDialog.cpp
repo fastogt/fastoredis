@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QEvent>
 
 #include "gui/AppStyle.h"
 #include "gui/GuiFactory.h"
@@ -18,43 +19,41 @@
 namespace fastoredis
 {
     PreferencesDialog::PreferencesDialog(QWidget *parent)
-        : BaseClass(parent)
+        : QDialog(parent)
     {
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
 
-        setWindowTitle("Preferences "PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         setFixedSize(height,width);
 
         QVBoxLayout *layout = new QVBoxLayout(this);
 
         QHBoxLayout *langLayout = new QHBoxLayout;
-        QLabel *langLabel = new QLabel("Language:");
-        langLayout->addWidget(langLabel);
-        _languagesComboBox  = new QComboBox();
-        _languagesComboBox->addItems(translations::getSupportedLanguages());
-        langLayout->addWidget(_languagesComboBox);
+        langLabel_ = new QLabel;
+        langLayout->addWidget(langLabel_);
+        languagesComboBox_  = new QComboBox();
+        languagesComboBox_->addItems(translations::getSupportedLanguages());
+        langLayout->addWidget(languagesComboBox_);
 
         QHBoxLayout *stylesLayout = new QHBoxLayout;
-        QLabel *stylesLabel = new QLabel("Styles:");
-        stylesLayout->addWidget(stylesLabel);
+        stylesLabel_ = new QLabel;
+        stylesLayout->addWidget(stylesLabel_);
 
-        _stylesComboBox = new QComboBox();
-        _stylesComboBox->addItems(getSupportedStyles());
-        _defaultViewComboBox = new QComboBox;
+        stylesComboBox_ = new QComboBox();
+        stylesComboBox_->addItems(getSupportedStyles());
+        defaultViewComboBox_ = new QComboBox;
         std::vector<std::string> allV = allSupportedViews();
         for(int i=0; i<allV.size(); ++i){
-            _defaultViewComboBox->addItem(common::utils_qt::toQString(allV[i]));
+            defaultViewComboBox_->addItem(common::utils_qt::toQString(allV[i]));
         }
-        stylesLayout->addWidget(_defaultViewComboBox);
-        stylesLayout->addWidget(_stylesComboBox);
+        stylesLayout->addWidget(defaultViewComboBox_);
+        stylesLayout->addWidget(stylesComboBox_);
 
-        _syncTabs = new QCheckBox;
-        _syncTabs->setText("Sync tabs");
+        syncTabs_ = new QCheckBox;
 
         layout->addLayout(langLayout);
         layout->addLayout(stylesLayout);
-        layout->addWidget(_syncTabs);
+        layout->addWidget(syncTabs_);
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
@@ -65,29 +64,46 @@ namespace fastoredis
         setLayout(layout);
 
         syncWithSettings();
+        retranslateUi();
     }
 
     void PreferencesDialog::syncWithSettings()
     {
-        _languagesComboBox->setCurrentText(common::utils_qt::toQString(SettingsManager::instance().currentLanguage()));
-        _stylesComboBox->setCurrentText(common::utils_qt::toQString(SettingsManager::instance().currentStyle()));
-        _defaultViewComboBox->setCurrentText(common::utils_qt::toQString(toStdString(SettingsManager::instance().defaultView())));
-        _syncTabs->setChecked(SettingsManager::instance().syncTabs());
+        languagesComboBox_->setCurrentText(common::utils_qt::toQString(SettingsManager::instance().currentLanguage()));
+        stylesComboBox_->setCurrentText(common::utils_qt::toQString(SettingsManager::instance().currentStyle()));
+        defaultViewComboBox_->setCurrentText(common::utils_qt::toQString(toStdString(SettingsManager::instance().defaultView())));
+        syncTabs_->setChecked(SettingsManager::instance().syncTabs());
     }
 
     void PreferencesDialog::accept()
     {
-        QString newLang = translations::applyLanguage(_languagesComboBox->currentText());
+        QString newLang = translations::applyLanguage(languagesComboBox_->currentText());
         SettingsManager::instance().setCurrentLanguage(common::utils_qt::toStdString(newLang));
 
-        applyStyle(_stylesComboBox->currentText());
-        SettingsManager::instance().setCurrentStyle(common::utils_qt::toStdString(_stylesComboBox->currentText()));
+        applyStyle(stylesComboBox_->currentText());
+        SettingsManager::instance().setCurrentStyle(common::utils_qt::toStdString(stylesComboBox_->currentText()));
 
-        SettingsManager::instance().setDefaultView(toSupportedViews(common::utils_qt::toStdString(_defaultViewComboBox->currentText())));
+        SettingsManager::instance().setDefaultView(toSupportedViews(common::utils_qt::toStdString(defaultViewComboBox_->currentText())));
 
-        ServersManager::instance().setSyncServers(_syncTabs->isChecked());
-        SettingsManager::instance().setSyncTabs(_syncTabs->isChecked());
+        ServersManager::instance().setSyncServers(syncTabs_->isChecked());
+        SettingsManager::instance().setSyncTabs(syncTabs_->isChecked());
 
-        return BaseClass::accept();
+        return QDialog::accept();
+    }
+
+    void PreferencesDialog::changeEvent(QEvent *e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QDialog::changeEvent(e);
+    }
+
+    void PreferencesDialog::retranslateUi()
+    {
+        setWindowTitle(tr("Preferences "PROJECT_NAME_TITLE));
+        langLabel_->setText(tr("Language:"));
+        stylesLabel_->setText(tr("Styles:"));
+        syncTabs_->setText("Sync tabs");
     }
 }

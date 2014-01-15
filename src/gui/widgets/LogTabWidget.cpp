@@ -1,6 +1,7 @@
 #include "gui/widgets/LogTabWidget.h"
 
 #include <QTabBar>
+#include <QEvent>
 
 #include "common/macros.h"
 #include "gui/widgets/LogWidget.h"
@@ -21,6 +22,7 @@ namespace fastoredis
         addTab(_log, "Errors");
         _commands = new CommandsWidget(this);
         addTab(_commands, "Commands");
+        retranslateUi();
     }
 
     void LogTabWidget::addLogMessage(const QString &message, common::logging::LEVEL_LOG level)
@@ -31,5 +33,19 @@ namespace fastoredis
     void LogTabWidget::addCommand(const QString &command)
     {
         _commands->addCommand(command);
+    }
+
+    void LogTabWidget::changeEvent(QEvent *e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QTabWidget::changeEvent(e);
+    }
+
+    void LogTabWidget::retranslateUi()
+    {
+        setTabText(0,tr("Errors"));
+        setTabText(1,tr("Commands"));
     }
 }

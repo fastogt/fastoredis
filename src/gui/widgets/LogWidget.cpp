@@ -11,7 +11,7 @@
 namespace fastoredis
 {
     LogWidget::LogWidget(QWidget* parent) 
-        : BaseClass(parent), _logTextEdit(new QTextEdit(this))
+        : QWidget(parent), _logTextEdit(new QTextEdit(this))
     {
         _logTextEdit->setReadOnly(true);
         _logTextEdit->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -19,9 +19,10 @@ namespace fastoredis
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0,0,0,0);
         hlayout->addWidget(_logTextEdit);
-        _clear = new QAction("Clear All", this);
+        _clear = new QAction(this);
         VERIFY(connect(_clear, SIGNAL(triggered()),_logTextEdit, SLOT(clear())));
-        setLayout(hlayout);      
+        setLayout(hlayout);
+        retranslateUi();
     }
 
     void LogWidget::showContextMenu(const QPoint &pt)
@@ -41,5 +42,18 @@ namespace fastoredis
         _logTextEdit->append(time.toString("h:mm:ss AP: ") + message);
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
+    }
+
+    void LogWidget::changeEvent(QEvent *e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QWidget::changeEvent(e);
+    }
+
+    void LogWidget::retranslateUi()
+    {
+        _clear->setText(tr("Clear All"));
     }
 }

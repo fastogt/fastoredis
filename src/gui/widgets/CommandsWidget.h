@@ -22,7 +22,11 @@ namespace fastoredis
     private Q_SLOTS:
         void showContextMenu(const QPoint &pt);
 
-    private:        
+    protected:
+        virtual void changeEvent(QEvent *);
+
+    private:
+        void retranslateUi();
         QTextEdit *const _logTextEdit;
         QAction *_clear;
     };

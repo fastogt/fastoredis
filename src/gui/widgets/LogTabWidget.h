@@ -20,7 +20,11 @@ namespace fastoredis
         void addLogMessage(const QString &message, common::logging::LEVEL_LOG level);
         void addCommand(const QString &command);
 
+    protected:
+        virtual void changeEvent(QEvent *);
+
     private:
+        void retranslateUi();
         LogWidget *_log;
         CommandsWidget *_commands;
     };

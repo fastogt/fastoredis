@@ -4,6 +4,7 @@
 
 class QComboBox;
 class QCheckBox;
+class QLabel;
 
 namespace fastoredis
 {
@@ -13,7 +14,6 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        typedef QDialog BaseClass;
         explicit PreferencesDialog(QWidget *parent);
         enum { height = 640, width = 480};
     public Q_SLOTS:
@@ -21,10 +21,16 @@ namespace fastoredis
     private:
         void syncWithSettings();
 
+    protected:
+        virtual void changeEvent(QEvent *);
+
     private:
-        QComboBox *_stylesComboBox;
-        QComboBox *_languagesComboBox;
-        QComboBox *_defaultViewComboBox;
-        QCheckBox *_syncTabs;
+        void retranslateUi();
+        QLabel *langLabel_;
+        QLabel *stylesLabel_;
+        QComboBox *stylesComboBox_;
+        QComboBox *languagesComboBox_;
+        QComboBox *defaultViewComboBox_;
+        QCheckBox *syncTabs_;
     };
 }
