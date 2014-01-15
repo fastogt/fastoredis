@@ -172,6 +172,7 @@ namespace
         int j = 0;
         std::string word;
         size_t pos = 0;
+        qDebug() << content.c_str();
         for(int i = 0; i < content.size(); ++i)
         {
             char ch = content[i];

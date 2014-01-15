@@ -56,6 +56,10 @@ namespace fastoredis
         _listWidget = new QTreeWidget;
         _listWidget->setIndentation(5);
 
+        QStringList colums;
+        colums << tr("Name") << tr("Address") << tr("Auth. Database / User");
+        _listWidget->setHeaderLabels(colums);
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
@@ -228,8 +232,5 @@ namespace fastoredis
     {
         setWindowTitle(tr("Redis Connections"));
         _acButton->setText(tr("Open"));
-        QStringList colums;
-        colums << tr("Name") << tr("Address") << tr("Auth. Database / User");
-        _listWidget->setHeaderLabels(colums);
     }
 }
