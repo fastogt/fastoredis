@@ -79,12 +79,13 @@ SET(MULTI_THREADING_SOURCES
         multi_threading/pthread_wrapper.hpp)
 IF(BOOST_ENABLED)
     SET(MULTI_THREADING_SOURCES ${MULTI_THREADING_SOURCES} multi_threading/boost_thread_pool_impl.hpp)
+    SET(EVENTS_SOURCES events/static_events_bus.hpp)
 ENDIF(BOOST_ENABLED)
 
 SET(COMMON_SOURCES runtime_bitset.h runtime_bitset.cpp log_levels.hpp logger.h logger.cpp common_config.h
 macros.h macros.cpp mpl.hpp utils.h utils.cpp file_system.h file_system.cpp
 boost_extension.hpp smart_ptr.hpp url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net.h net.cpp
-${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${FILE_PARSERS} ${DATABASE_SUPPORT_SOURCES} ${SETTINGS_SOURCES} ${MULTI_THREADING_SOURCES})
+${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${FILE_PARSERS} ${DATABASE_SUPPORT_SOURCES} ${SETTINGS_SOURCES} ${MULTI_THREADING_SOURCES} ${EVENTS_SOURCES})
 
 SET(COMMON_LIBS ${DATABASE_SUPPORT_LIBS})
 IF(UNIX)
