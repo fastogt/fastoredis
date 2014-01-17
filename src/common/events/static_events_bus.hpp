@@ -3,9 +3,10 @@
 #include <vector>
 #include <algorithm>
 
+//#include <boost/fusion/container/vector.hpp>
+//#include <boost/fusion/include/as_vector.hpp>
+//#include <boost/fusion/algorithm.hpp>
 #include <boost/mpl/vector.hpp>
-#include <boost/fusion/container/vector.hpp>
-#include <boost/fusion/include/as_vector.hpp>
 #include <boost/mpl/find.hpp>
 #include <boost/mpl/size.hpp>
 #include <boost/static_assert.hpp>
@@ -40,13 +41,12 @@ namespace common
             virtual ~IReceiver() {}
         };
 
-        template<typename fusion_vector_t> //typedef boost::fusion::vector<T1,T2>
+        template<typename mpl_vector> //typedef boost::fusion::vector<T1,T2>
         class static_event_bus
-        {
-            typedef fusion_vector_t fusion_vector;
-            typedef typename boost::fusion::result_of::as_vector<fusion_vector>::type mpl_vector;
+        {   
+            //typedef typename boost::fusion::result_of::as_vector<mpl_vector>::type fusion_vec;
         public:
-            enum {count_types = boost::mpl::size<mpl_vector>::size };
+            enum { count_types = boost::mpl::size<mpl_vector>::value} ;
             static_event_bus()
             {
 
@@ -56,7 +56,7 @@ namespace common
             void registerReciver(T t, IReceiver* receiver)
             {
                 BOOST_STATIC_ASSERT(find_in_mpl_vector<T,mpl_vector>::value);
-                typedef boost::mpl::find<mpl_vector, T>::type MplIter;
+                typedef typename boost::mpl::find<mpl_vector, T>::type MplIter;
                 receivers_[MplIter::pos::value].push_back(receiver);
             }
 
@@ -64,7 +64,7 @@ namespace common
             void unregisterReciver(T t, IReceiver* receiver)
             {
                 BOOST_STATIC_ASSERT(find_in_mpl_vector<T,mpl_vector>::value);
-                typedef boost::mpl::find<mpl_vector, T>::type MplIter;
+                typedef typename boost::mpl::find<mpl_vector, T>::type MplIter;
                 find_and_remove(MplIter::pos::value, receiver);
             }
 
@@ -79,7 +79,7 @@ namespace common
             void broadcast(T t, IEvent* event)
             {
                 BOOST_STATIC_ASSERT(find_in_mpl_vector<T,mpl_vector>::value);
-                typedef boost::mpl::find<mpl_vector, T>::type MplIter;
+                typedef typename boost::mpl::find<mpl_vector, T>::type MplIter;
                 for(int i = 0; i < receivers_[MplIter::pos::value].size(); ++i){
                     IReceiver *rec = receivers_[MplIter::pos::value][i];
                     rec->receive(t, event);
@@ -94,7 +94,7 @@ namespace common
                     receivers_[index].erase(it);
                 }
             }
-            //fusion_vector vec_callbacks_;
+            //fusion_vec vec_callbacks_;
             std::vector<IReceiver*> receivers_[count_types];
         };
     }
