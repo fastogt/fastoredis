@@ -21,13 +21,13 @@ namespace
                                                   "Tcp port: %11<br/>"
                                                   "Uptime sec: %12<br/>"
                                                   "Uptime days: %13<br/>"
-                                                  "Lru clock: %14<br/>");
+                                                  "Lru clock: %14");
 
     const QString redisTextClientsTemplate = QObject::tr("<h2>Clients:</h2><br/>"
                                                          "Connected clients_: %1<br/>"
                                                          "Client longest output list: %2<br/>"
                                                          "Client biggest input buf: %3<br/>"
-                                                         "Blocked clients: %4<br/>");
+                                                         "Blocked clients: %4");
 
     const QString redisTextMemoryTemplate = QObject::tr("<h2>Memory:</h2><br/>"
                                                   "Used memory: %1<br/>"
@@ -37,7 +37,7 @@ namespace
                                                   "Used memory peak human: %5<br/>"
                                                   "Used memory lua: %6<br/>"
                                                   "Mem fragmentation ratio: %7<br/>"
-                                                  "Mem allocator: %8<br/>");
+                                                  "Mem allocator: %8");
 
     const QString redisTextPersistenceTemplate = QObject::tr("<h2>Persistence:</h2><br/>"
                                                   "Loading: %1<br/>"
@@ -52,7 +52,7 @@ namespace
                                                   "Aof rewrite scheduled: %10<br/>"
                                                   "Aof last rewrite time sec: %11<br/>"
                                                   "Aof current rewrite time sec: %12<br/>"
-                                                  "Aof last bgrewrite status: %13<br/>");
+                                                  "Aof last bgrewrite status: %13");
 
     const QString redisTextStatsTemplate = QObject::tr("<h2>Stats:</h2><br/>"
                                                   "Total connections received: %1<br/>"
@@ -65,17 +65,17 @@ namespace
                                                   "Keyspace misses: %8<br/>"
                                                   "Pubsub channels: %9<br/>"
                                                   "Pubsub patterns: %10<br/>"
-                                                  "Latest fork usec: %11<br/>");
+                                                  "Latest fork usec: %11");
 
     const QString redisTextReplicationTemplate = QObject::tr("<h2>Replication:</h2><br/>"
                                                   "Role: %1<br/>"
-                                                  "Connected slaves: %2<br/>");
+                                                  "Connected slaves: %2");
 
     const QString redisTextCpuTemplate = QObject::tr("<h2>Cpu:</h2><br/>"
                                                          "Used cpu sys: %1<br/>"
                                                          "Used cpu user: %2<br/>"
                                                          "Used cpu sys children_: %3<br/>"
-                                                         "Used cpu user children_: %4<br/>");
+                                                         "Used cpu user children_: %4");
 }
 
 namespace fastoredis
