@@ -108,7 +108,6 @@ namespace
     {
         fastoredis::ServerInfo::Server ser;
         const std::string &src = serverText;
-        qDebug() << "serverText: " << src.c_str();
         size_t pos = 0;
         size_t start = 0;
         while((pos = src.find("\r\n", start)) != std::string::npos){
@@ -132,7 +131,7 @@ namespace
                 ser.os_ = value;
             }
             else if(field == "arch_bits"){
-                ser.arch_bits_ = boost::lexical_cast<int>(value);
+                ser.arch_bits_ = boost::lexical_cast<unsigned>(value);
             }
             else if(field == "multiplexing_api"){
                 ser.multiplexing_api_ = value;
@@ -141,26 +140,249 @@ namespace
                 ser.gcc_version_ = value;
             }
             else if(field == "process_id"){
-                ser.process_id_ = boost::lexical_cast<int>(value);
+                ser.process_id_ = boost::lexical_cast<unsigned>(value);
             }
             else if(field == "run_id"){
                 ser.run_id_ = value;
             }
             else if(field == "tcp_port"){
-                ser.tcp_port_ = boost::lexical_cast<int>(value);
+                ser.tcp_port_ = boost::lexical_cast<unsigned>(value);
             }
             else if(field == "uptime_in_seconds"){
-                ser.uptime_in_seconds_ = boost::lexical_cast<int>(value);
+                ser.uptime_in_seconds_ = boost::lexical_cast<unsigned>(value);
             }
             else if(field == "uptime_in_days"){
-                ser.uptime_in_days_ = boost::lexical_cast<int>(value);
+                ser.uptime_in_days_ = boost::lexical_cast<unsigned>(value);
             }
             else if(field == "lru_clock"){
-                ser.lru_clock_ = boost::lexical_cast<int>(value);
+                ser.lru_clock_ = boost::lexical_cast<unsigned>(value);
             }
             start = pos + 2;
         }
         return ser;
+    }
+
+    fastoredis::ServerInfo::Clients makeClients(const std::string &clientsText)
+    {
+        fastoredis::ServerInfo::Clients clients;
+        const std::string &src = clientsText;
+        size_t pos = 0;
+        size_t start = 0;
+        while((pos = src.find("\r\n", start)) != std::string::npos){
+            std::string line = src.substr(start, pos-start);
+            size_t delem = line.find_first_of(':');
+            std::string field = line.substr(0, delem);
+            std::string value = line.substr(delem + 1);
+            if(field == "connected_clients"){
+                clients.connected_clients_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "client_longest_output_list"){
+                clients.client_longest_output_list_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "client_biggest_input_buf"){
+                clients.client_biggest_input_buf_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "blocked_clients"){
+                clients.blocked_clients_ = boost::lexical_cast<unsigned>(value);
+            }
+            start = pos + 2;
+        }
+        return clients;
+    }
+
+    fastoredis::ServerInfo::Memory  makeMemory(const std::string &memoryText)
+    {
+        fastoredis::ServerInfo::Memory memory;
+        const std::string &src = memoryText;
+        size_t pos = 0;
+        size_t start = 0;
+        while((pos = src.find("\r\n", start)) != std::string::npos){
+            std::string line = src.substr(start, pos-start);
+            size_t delem = line.find_first_of(':');
+            std::string field = line.substr(0, delem);
+            std::string value = line.substr(delem + 1);
+            if(field == "used_memory"){
+                memory.used_memory_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "used_memory_human"){
+                memory.used_memory_human_ = value;
+            }
+            else if(field == "used_memory_rss"){
+                memory.used_memory_rss_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "used_memory_peak"){
+                memory.used_memory_peak_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "used_memory_peak_human"){
+                memory.used_memory_peak_human_ = value;
+            }
+            else if(field == "used_memory_lua"){
+                memory.used_memory_lua_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "mem_fragmentation_ratio"){
+                memory.mem_fragmentation_ratio_ = boost::lexical_cast<float>(value);
+            }
+            else if(field == "mem_allocator"){
+                memory.mem_allocator_ = value;
+            }
+            start = pos + 2;
+        }
+        return memory;
+    }
+
+    fastoredis::ServerInfo::Persistence makePersistence(const std::string &persistenceText)
+    {
+        fastoredis::ServerInfo::Persistence persistence;
+        const std::string &src = persistenceText;
+        size_t pos = 0;
+        size_t start = 0;
+        while((pos = src.find("\r\n", start)) != std::string::npos){
+            std::string line = src.substr(start, pos-start);
+            size_t delem = line.find_first_of(':');
+            std::string field = line.substr(0, delem);
+            std::string value = line.substr(delem + 1);
+            if(field == "loading"){
+                persistence.loading_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "rdb_changes_since_last_save"){
+                persistence.rdb_changes_since_last_save_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "rdb_bgsave_in_progress"){
+                persistence.rdb_bgsave_in_progress_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "rdb_last_save_time"){
+                persistence.rdb_last_save_time_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "rdb_last_bgsave_status"){
+                persistence.rdb_last_bgsave_status_ = value;
+            }
+            else if(field == "rdb_last_bgsave_time_sec"){
+                persistence.rdb_last_bgsave_time_sec_ = boost::lexical_cast<int>(value);
+            }
+            else if(field == "rdb_current_bgsave_time_sec"){
+                persistence.rdb_current_bgsave_time_sec_ = boost::lexical_cast<int>(value);
+            }
+            else if(field == "aof_enabled"){
+                persistence.aof_enabled_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "aof_rewrite_in_progress"){
+                persistence.aof_rewrite_in_progress_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "aof_rewrite_scheduled"){
+                persistence.aof_rewrite_scheduled_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "aof_last_rewrite_time_sec"){
+                persistence.aof_last_rewrite_time_sec_ = boost::lexical_cast<int>(value);
+            }
+            else if(field == "aof_current_rewrite_time_sec"){
+                persistence.aof_current_rewrite_time_sec_ = boost::lexical_cast<int>(value);
+            }
+            else if(field == "aof_last_bgrewrite_status"){
+                persistence.aof_last_bgrewrite_status_ = value;
+            }
+            start = pos + 2;
+        }
+        return persistence;
+    }
+
+    fastoredis::ServerInfo::Stats  makeStats(const std::string &clientsText)
+    {
+        fastoredis::ServerInfo::Stats stats;
+        const std::string &src = clientsText;
+        size_t pos = 0;
+        size_t start = 0;
+        while((pos = src.find("\r\n", start)) != std::string::npos){
+            std::string line = src.substr(start, pos-start);
+            size_t delem = line.find_first_of(':');
+            std::string field = line.substr(0, delem);
+            std::string value = line.substr(delem + 1);
+            if(field == "total_connections_received"){
+                stats.total_connections_received_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "total_commands_processed"){
+                stats.total_commands_processed_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "instantaneous_ops_per_sec"){
+                stats.instantaneous_ops_per_sec_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "rejected_connections"){
+                stats.rejected_connections_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "expired_keys"){
+                stats.expired_keys_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "evicted_keys"){
+                stats.evicted_keys_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "keyspace_hits"){
+                stats.keyspace_hits_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "keyspace_misses"){
+                stats.keyspace_misses_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "pubsub_channels"){
+                stats.pubsub_channels_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "pubsub_patterns"){
+                stats.pubsub_patterns_ = boost::lexical_cast<unsigned>(value);
+            }
+            else if(field == "latest_fork_usec"){
+                stats.latest_fork_usec_ = boost::lexical_cast<unsigned>(value);
+            }
+            start = pos + 2;
+        }
+        return stats;
+    }
+
+    fastoredis::ServerInfo::Replication  makeReplication(const std::string &replicationText)
+    {
+        fastoredis::ServerInfo::Replication repl;
+        const std::string &src = replicationText;
+        size_t pos = 0;
+        size_t start = 0;
+
+        while((pos = src.find("\r\n", start)) != std::string::npos){
+            std::string line = src.substr(start, pos-start);
+            size_t delem = line.find_first_of(':');
+            std::string field = line.substr(0, delem);
+            std::string value = line.substr(delem + 1);
+            if(field == "role"){
+                repl.role_ = value;
+            }
+            else if(field == "connected_slaves"){
+                repl.connected_slaves_ = boost::lexical_cast<unsigned>(value);
+            }
+            start = pos + 2;
+        }
+        return repl;
+    }
+
+    fastoredis::ServerInfo::Cpu  makeCpu(const std::string &cpuText)
+    {
+        fastoredis::ServerInfo::Cpu cpu;
+        const std::string &src = cpuText;
+        size_t pos = 0;
+        size_t start = 0;
+        while((pos = src.find("\r\n", start)) != std::string::npos){
+            std::string line = src.substr(start, pos-start);
+            size_t delem = line.find_first_of(':');
+            std::string field = line.substr(0, delem);
+            std::string value = line.substr(delem + 1);
+            if(field == "used_cpu_sys"){
+                cpu.used_cpu_sys_ = boost::lexical_cast<float>(value);
+            }
+            else if(field == "used_cpu_user"){
+                cpu.used_cpu_user_ = boost::lexical_cast<float>(value);
+            }
+            else if(field == "used_cpu_sys_children"){
+                cpu.used_cpu_sys_children_ = boost::lexical_cast<float>(value);
+            }
+            else if(field == "used_cpu_user_children"){
+                cpu.used_cpu_user_children_ = boost::lexical_cast<float>(value);
+            }
+            start = pos + 2;
+        }
+        return cpu;
     }
 
     fastoredis::ServerInfo makeServerInfo(const fastoredis::FastoObjectPtr &root)
@@ -191,6 +413,21 @@ namespace
                     {
                     case 0:
                         result.server_ = makeServer(part);
+                        break;
+                    case 1:
+                        result.clients_ = makeClients(part);
+                        break;
+                    case 2:
+                        result.memory_ = makeMemory(part);
+                        break;
+                    case 3:
+                        result.stats_ = makeStats(part);
+                        break;
+                    case 4:
+                        result.replication_ = makeReplication(part);
+                        break;
+                    case 5:
+                        result.cpu_ = makeCpu(part);
                         break;
                     default:
                         break;

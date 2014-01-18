@@ -27,7 +27,9 @@ namespace fastoredis
         virtual void showEvent(QShowEvent *e);
 
     private:
+        void updateText(const ServerInfo &serv);
         QLabel *serverTextInfo_;
+        QLabel *hardwareTextInfo_;
         const connectionTypes type_;
     };
 }
