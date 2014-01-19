@@ -9,6 +9,7 @@ class QLabel;
 
 namespace fastoredis
 {
+    class GlassWidget;
     class InfoServerDialog
             : public QDialog
     {
@@ -27,7 +28,10 @@ namespace fastoredis
         virtual void showEvent(QShowEvent *e);
 
     private:
+        void updateText(const ServerInfo &serv);
         QLabel *serverTextInfo_;
-        const connectionTypes type_;
+        QLabel *hardwareTextInfo_;
+        GlassWidget *glassWidget_;
+        const connectionTypes type_;       
     };
 }

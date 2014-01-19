@@ -15,7 +15,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/explorer/ExplorerTreeView.h
     gui/explorer/ExplorerTreeModel.h
     gui/dialogs/AboutDialog.h
-	gui/dialogs/InfoServerDialog.h
+    gui/dialogs/InfoServerDialog.h
     gui/dialogs/PreferencesDialog.h
     gui/dialogs/ConnectionsDialog.h
     gui/dialogs/ConnectionDialog.h
@@ -29,6 +29,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/FastoTableView.h
     gui/FastoTableModel.h
     gui/IconLabel.h
+    gui/GlassWidget.h
     gui/base/TreeModel.h
 )
 SET(HEADERS_GUI
@@ -47,7 +48,7 @@ SET(SOURCES_GUI
     gui/dialogs/PreferencesDialog.cpp
     gui/dialogs/ConnectionsDialog.cpp
     gui/dialogs/ConnectionDialog.cpp
-	gui/dialogs/InfoServerDialog.cpp
+    gui/dialogs/InfoServerDialog.cpp
     gui/widgets/MainWidget.cpp
     gui/MainTabBar.cpp
     gui/FastoEditor.cpp
@@ -61,6 +62,7 @@ SET(SOURCES_GUI
     gui/FastoTreeItem.cpp
     gui/FastoTableModel.cpp
     gui/IconLabel.cpp
+    gui/GlassWidget.cpp
     gui/base/TreeModel.cpp
     gui/base/TreeItem.cpp
 )
