@@ -29,6 +29,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/FastoTableView.h
     gui/FastoTableModel.h
     gui/IconLabel.h
+    gui/GlassWidget.h
     gui/base/TreeModel.h
 )
 SET(HEADERS_GUI
@@ -61,6 +62,7 @@ SET(SOURCES_GUI
     gui/FastoTreeItem.cpp
     gui/FastoTableModel.cpp
     gui/IconLabel.cpp
+    gui/GlassWidget.cpp
     gui/base/TreeModel.cpp
     gui/base/TreeItem.cpp
 )

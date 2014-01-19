@@ -25,5 +25,6 @@
     <file>icons/table.png</file>
     <file>icons/text.png</file>
     <file>icons/database.png</file>
+	<file>icons/loading.gif</file>
     </qresource>
 </RCC>

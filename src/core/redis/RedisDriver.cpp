@@ -999,6 +999,7 @@ namespace fastoredis
         static const char* infoString = "INFO";
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
+        while(1){}
             Events::ServerInfoResponceEvent::value_type res(ev->value());
             FastoObjectPtr root = FastoObject::createRoot(infoString);
             error::ErrorInfo er;

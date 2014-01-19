@@ -4,6 +4,8 @@
 #include <QHBoxLayout>
 
 #include "common/qt/converter_patterns.h"
+#include "gui/GuiFactory.h"
+#include "gui/GlassWidget.h"
 
 namespace
 {
@@ -89,16 +91,19 @@ namespace fastoredis
         mainL->addWidget(serverTextInfo_);
         mainL->addWidget(hardwareTextInfo_);
         setLayout(mainL);
+
+        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), "Loading...", 0.5, QColor(111, 111, 100), this);
         updateText(ServerInfo());
     }
 
     void InfoServerDialog::startServerInfo(const EventsInfo::ServerInfoRequest &req)
     {
-
+        glassWidget_->start();
     }
 
     void InfoServerDialog::finishServerInfo(const EventsInfo::ServerInfoResponce &res)
-    {        
+    {
+        glassWidget_->stop();
         error::ErrorInfo er = res.errorInfo();
         if(!er.isError()){
             if(type_ == REDIS){

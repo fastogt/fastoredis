@@ -182,4 +182,10 @@ namespace fastoredis
         static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/tree.png");
         return start;
     }
+
+    const QString &GuiFactory::loadingPathFilePath() const
+    {
+        static QString path(":"PROJECT_NAME_LOWERCASE"/icons/loading.gif");
+        return path;
+    }
 }
