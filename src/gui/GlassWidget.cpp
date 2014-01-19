@@ -62,16 +62,14 @@ namespace fastoredis
 
     bool GlassWidget::eventFilter(QObject* /* object */, QEvent* event)
     {
-        if ((event->type() == QEvent::Show) || (event->type() == QEvent::Resize))
-        {
+        if ((event->type() == QEvent::Show) || (event->type() == QEvent::Resize)){
             wGlass_->resize(wGlass_->parentWidget()->size());
             wGlass_->move(0, 0);
             infoBlockPositioning();
             return true;
         }
 
-        if (event->type() ==  QEvent::Shortcut || event->type() ==  QEvent::ShortcutOverride)
-        {
+        if (event->type() ==  QEvent::Shortcut || event->type() ==  QEvent::ShortcutOverride){
 
         }
         wGlass_->setFocus();
