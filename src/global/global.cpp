@@ -7,7 +7,7 @@
 
 namespace
 {
-    const char *supportedViewsM[] = {"Tree", "Table", "Text"};
+    const char *supportedViewsM[] = { "Tree", "Table", "Text" };
 }
 
 namespace fastoredis
@@ -37,8 +37,7 @@ namespace fastoredis
 
     FastoObjectPtr FastoObject::createRoot(const std::string &text)
     {
-        FastoObjectPtr result;
-        #pragma message("implement plz")
+        FastoObjectPtr result(NULL, common::Value::CreateRoot(text));
         return result;
     }
 
@@ -57,7 +56,17 @@ namespace fastoredis
     std::string toStdString(const FastoObjectPtr &obj)
     {
         std::string result;
-#pragma message("implement plz")
+        if(obj){
+            FastoObject::child_container_type childrens = obj->childrens();
+            for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
+                result += toStdString(*it);
+            }
+            std::string str = obj->toStdString();
+            if(!str.empty()){
+                result += str;
+                result += '\n';
+            }
+        }
         return result;
     }
 

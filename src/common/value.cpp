@@ -3,9 +3,10 @@
 #include <algorithm>
 #include <memory>
 
+#include "common/utils.h"
+
 namespace common 
 {
-
     namespace
     {
         Value* CopyWithoutEmptyChildren(const Value* node)
@@ -17,11 +18,11 @@ namespace common
                 {
                     const ArrayValue* list = static_cast<const ArrayValue*>(node);
                     ArrayValue* copy = new ArrayValue;
-                    for (ArrayValue::const_iterator it = list->begin(); it != list->end();
-                    ++it) {
+                    for (ArrayValue::const_iterator it = list->begin(); it != list->end(); ++it)
+                    {
                         Value* child_copy = CopyWithoutEmptyChildren(*it);
-                    if (child_copy)
-                        copy->Append(child_copy);
+                        if (child_copy)
+                            copy->Append(child_copy);
                     }
                     if (!copy->empty())
                         return copy;
@@ -34,6 +35,17 @@ namespace common
                     return node->DeepCopy();
             }
         }
+
+        const char *stringTypes[] = { "TYPE_NULL",
+                                      "TYPE_BOOLEAN",
+                                      "TYPE_INTEGER",
+                                      "TYPE_DOUBLE",
+                                      "TYPE_STRING",
+                                      "TYPE_ARRAY",
+                                      "TYPE_STATUS",
+                                      "TYPE_ERROR",
+                                      "TYPE_ROOT"
+                                    };
     }
 
     class ValueEquals
@@ -95,11 +107,20 @@ namespace common
         return new ErrorValue(in_value, errorType, level);
     }
 
+    RootValue* Value::CreateRoot(const std::string& in_value)
+    {
+        return new RootValue(in_value);
+    }
+
     // static
     std::string Value::toStdString(Type t)
     {
-#pragma message("plz implement")
-        return "";
+        std::string result;
+        int count = sizeof(stringTypes)/sizeof(*stringTypes);
+        if(t < count){
+            result = stringTypes[t];
+        }
+        return result;
     }
 
     bool Value::GetAsBoolean(bool* out_value) const
@@ -136,6 +157,11 @@ namespace common
     {
         return false;
 	}
+
+    bool Value::GetAsRoot(RootValue* out_value) const
+    {
+        return false;
+    }
 
     Value* Value::DeepCopy() const
     {
@@ -581,5 +607,24 @@ namespace common
             (*out_value).level_ = level_;
         }
         return true;
+    }
+
+    RootValue::RootValue(const std::string& in_value)
+        : Value(TYPE_ROOT), value_(in_value)
+    {
+
+    }
+
+    bool RootValue::GetAsRoot(RootValue* out_value) const
+    {
+        if (out_value){
+            (*out_value).value_ = value_;
+        }
+        return true;
+    }
+
+    RootValue::~RootValue()
+    {
+
     }
 }

@@ -10,6 +10,7 @@ namespace common
     class ArrayValue;
     class StringValue;
     class ErrorValue;
+    class RootValue;
     class Value;
 
     typedef std::vector<Value*> ValueVector;
@@ -41,6 +42,7 @@ namespace common
         static StringValue* CreateStringValue(const std::string& in_value);
         static ArrayValue* CreateArrayValue();
         static ErrorValue* CreateErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
+        static RootValue* CreateRoot(const std::string& in_value);
         static std::string toStdString(Type t);
 
         Type GetType() const { return type_; }
@@ -54,6 +56,7 @@ namespace common
         virtual bool GetAsError(ErrorValue* out_value) const;
         virtual bool GetAsList(ArrayValue** out_value);
         virtual bool GetAsList(const ArrayValue** out_value) const;
+        virtual bool GetAsRoot(RootValue* out_value) const;
 
         virtual Value* DeepCopy() const;
 
@@ -191,6 +194,17 @@ namespace common
         std::string description_;
         ErrorsType errorType_;
         common::logging::LEVEL_LOG level_;
+    };
+
+    class RootValue : public Value
+    {
+    public:
+        explicit RootValue(const std::string& in_value);
+        virtual bool GetAsRoot(RootValue* out_value) const;
+        virtual ~RootValue();
+
+    private:
+        std::string value_;
     };
 
     std::ostream& operator<<(std::ostream& out, const Value& value);
