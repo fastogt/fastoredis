@@ -50,7 +50,7 @@ namespace fastoredis
                 result = node->value();
             }
             else if (col == FastoTreeItem::eType) {
-                result = common::utils_qt::toQString(toStdString(node->type()));
+                result = common::utils_qt::toQString(common::Value::toStdString(node->type()));
             }
         }
 

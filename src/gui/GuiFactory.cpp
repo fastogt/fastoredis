@@ -114,32 +114,32 @@ namespace fastoredis
         }
     }
 
-    const QIcon &GuiFactory::getIcon(fastoType type) const
+    const QIcon &GuiFactory::getIcon(common::Value::Type type) const
     {
         switch(type)
         {
-        case UNKNOWN:
+        case common::Value::TYPE_NULL:
             static QIcon u(":"PROJECT_NAME_LOWERCASE"/icons/unknown.png");
             return u;
-        case STRING:
+        case common::Value::TYPE_STRING:
             static QIcon s(":"PROJECT_NAME_LOWERCASE"/icons/string.png");
             return s;
-        case ARRAY:
+        case common::Value::TYPE_ARRAY:
             static QIcon a(":"PROJECT_NAME_LOWERCASE"/icons/array.png");
             return a;
-        case INTEGER:
+        case common::Value::TYPE_INTEGER:
             static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/integer.png");
             return i;
-        case NIL:
+        /*case NIL:
             static QIcon n(":"PROJECT_NAME_LOWERCASE"/icons/null.png");
-            return n;
-        case STATUS:
+            return n;*/
+        case common::Value::TYPE_STATUS:
             static QIcon st(":"PROJECT_NAME_LOWERCASE"/icons/status.png");
             return st;
-        case ERROR:
+        case common::Value::TYPE_ERROR:
             static QIcon er(":"PROJECT_NAME_LOWERCASE"/icons/error.png");
             return er;
-        case ROOT:
+        case common::Value::TYPE_ROOT:
             static QIcon r(":"PROJECT_NAME_LOWERCASE"/icons/root.png");
             return r;
         default:

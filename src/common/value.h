@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/macros.h"
+#include "common/log_levels.hpp"
 #include <boost/scoped_ptr.hpp>
 #include <vector>
 
@@ -9,6 +9,7 @@ namespace common
     class FundamentalValue;
     class ArrayValue;
     class StringValue;
+    class ErrorValue;
     class Value;
 
     typedef std::vector<Value*> ValueVector;
@@ -22,8 +23,13 @@ namespace common
             TYPE_INTEGER,
             TYPE_DOUBLE,
             TYPE_STRING,
-            TYPE_ARRAY
+            TYPE_ARRAY,
+            TYPE_STATUS,
+            TYPE_ERROR,
+            TYPE_ROOT
         };
+
+        enum ErrorsType { E_NONE, E_EXCEPTION, E_ERROR, E_INTERRUPTED };
 
         virtual ~Value();
 
@@ -33,6 +39,9 @@ namespace common
         static FundamentalValue* CreateIntegerValue(int in_value);
         static FundamentalValue* CreateDoubleValue(double in_value);
         static StringValue* CreateStringValue(const std::string& in_value);
+        static ArrayValue* CreateArrayValue();
+        static ErrorValue* CreateErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
+        static std::string toStdString(Type t);
 
         Type GetType() const { return type_; }
 
@@ -42,6 +51,7 @@ namespace common
         virtual bool GetAsInteger(int* out_value) const;
         virtual bool GetAsDouble(double* out_value) const;
         virtual bool GetAsString(std::string* out_value) const;
+        virtual bool GetAsError(ErrorValue* out_value) const;
         virtual bool GetAsList(ArrayValue** out_value);
         virtual bool GetAsList(const ArrayValue** out_value) const;
 
@@ -164,6 +174,23 @@ namespace common
 
     private:
         ValueVector list_;
+    };
+
+    class ErrorValue : public Value
+    {
+    public:
+        explicit ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::WARNING);
+        ErrorValue();
+        bool isError() const;
+        common::logging::LEVEL_LOG level() const;
+        std::string description() const;
+        virtual bool GetAsError(ErrorValue* out_value) const;
+        virtual ~ErrorValue();
+
+    private:
+        std::string description_;
+        ErrorsType errorType_;
+        common::logging::LEVEL_LOG level_;
     };
 
     std::ostream& operator<<(std::ostream& out, const Value& value);

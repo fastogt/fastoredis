@@ -84,6 +84,24 @@ namespace common
         return new StringValue(in_value);
 	}
 
+    // static
+    ArrayValue* Value::CreateArrayValue()
+    {
+        return new ArrayValue();
+    }
+
+    ErrorValue* Value::CreateErrorValue(const std::string& in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
+    {
+        return new ErrorValue(in_value, errorType, level);
+    }
+
+    // static
+    std::string Value::toStdString(Type t)
+    {
+#pragma message("plz implement")
+        return "";
+    }
+
     bool Value::GetAsBoolean(bool* out_value) const
     {
         return false;
@@ -103,6 +121,11 @@ namespace common
     {
         return false;
 	}
+
+    bool Value::GetAsError(ErrorValue* out_value) const
+    {
+        return false;
+    }
 
     bool Value::GetAsList(ArrayValue** out_value)
     {
@@ -518,4 +541,45 @@ namespace common
 
         return true;
 	}
+
+    ErrorValue::ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
+        : Value(TYPE_ERROR), description_(in_value), errorType_(errorType), level_(level)
+    {
+    }
+
+    ErrorValue::ErrorValue()
+        : Value(TYPE_ERROR), description_(), errorType_(E_NONE), level_(common::logging::NONE)
+    {
+
+    }
+
+    ErrorValue::~ErrorValue()
+    {
+
+    }
+
+    bool ErrorValue::isError() const
+    {
+        return errorType_ != E_NONE;
+    }
+
+    common::logging::LEVEL_LOG ErrorValue::level() const
+    {
+        return level_;
+    }
+
+    std::string ErrorValue::description() const
+    {
+        return description_;
+    }
+
+    bool ErrorValue::GetAsError(ErrorValue* out_value) const
+    {
+        if (out_value){
+            (*out_value).description_ = description_;
+            (*out_value).errorType_ = errorType_;
+            (*out_value).level_ = level_;
+        }
+        return true;
+    }
 }
