@@ -32,6 +32,6 @@ namespace fastoredis
 
     inline void LOG_ERROR(const error::ErrorInfo &er, bool notify = true)
     {
-        return Logger::instance().print(er._description, er._level, notify);
+        return Logger::instance().print(er.description(), er.level(), notify);
     }
 }

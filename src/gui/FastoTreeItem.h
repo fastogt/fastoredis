@@ -19,16 +19,16 @@ namespace fastoredis
             eCountColumns = 3
         };
         typedef std::vector<FastoTreeItem*> child_container_type;
-        FastoTreeItem(const QString &key, const QString &value, fastoType type, FastoTreeItem *parent = 0);
+        FastoTreeItem(const QString &key, const QString &value, common::Value::Type type, FastoTreeItem *parent = 0);
 
         QString key() const;
         QString value() const;
-        fastoType type() const;
+        common::Value::Type type() const;
 
     private:
         QString key_;
         QString value_;
-        fastoType type_;
+        common::Value::Type type_;
     };
 }
 

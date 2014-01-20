@@ -26,11 +26,11 @@ namespace
             char size[128] = {0};
             fastoredis::FastoObject::child_container_type cont = item->childrens();
             sprintf(size, "{%u}", cont.size());
-            result = new fastoredis::FastoTreeItem( common::utils_qt::toQString(item->c_str()), size, item->type(), parent);
+            result = new fastoredis::FastoTreeItem( common::utils_qt::toQString(item->toStdString()), size, item->type(), parent);
         }
         else{
             QString varName = QString("%1)").arg(parent->childrenCount()+1);
-            result = new fastoredis::FastoTreeItem( varName ,common::utils_qt::toQString(item->c_str()), item->type(), parent);
+            result = new fastoredis::FastoTreeItem( varName ,common::utils_qt::toQString(item->toStdString()), item->type(), parent);
         }
 
         if(parent){

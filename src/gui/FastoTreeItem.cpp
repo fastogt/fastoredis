@@ -2,7 +2,7 @@
 
 namespace fastoredis
 {
-    FastoTreeItem::FastoTreeItem(const QString &key, const QString &value, fastoType type, FastoTreeItem *parent)
+    FastoTreeItem::FastoTreeItem(const QString &key, const QString &value, common::Value::Type type, FastoTreeItem *parent)
         : TreeItem(parent), key_(key), value_(value), type_(type)
     {
 
@@ -18,7 +18,7 @@ namespace fastoredis
         return value_;
     }
 
-    fastoType FastoTreeItem::type() const
+    common::Value::Type FastoTreeItem::type() const
     {
         return type_;
     }

@@ -31,7 +31,7 @@ namespace fastoredis
         const QIcon &databaseIcon() const;
         QFont font() const;
         const QIcon &getIcon(connectionTypes type) const;
-        const QIcon &getIcon(fastoType type) const;
+        const QIcon &getIcon(common::Value::Type type) const;
         const QIcon &loadIcon() const;
         const QIcon &saveIcon() const;
         const QIcon &saveAsIcon() const;
