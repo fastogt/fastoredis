@@ -21,6 +21,10 @@ typedef char unicode_char;
 #define STRINGIZE_HELPER(x)				#x
 #define STRINGIZE(x)					STRINGIZE_HELPER(x)
 
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+  TypeName(const TypeName&);   \
+  void operator=(const TypeName&)
+
 typedef std::basic_string<unicode_char> unicode_string;
 typedef std::basic_ostream<unicode_char> unicode_ostream;
 typedef std::basic_istream<unicode_char> unicode_istream;
