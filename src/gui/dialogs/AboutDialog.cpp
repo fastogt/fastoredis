@@ -12,7 +12,7 @@
 namespace
 {
     const QString description = QObject::tr(
-        "<h3>"PROJECT_NAME_TITLE" "PROJECT_VERSION"</h3>"
+        "<h3>"PROJECT_NAME_TITLE" "PROJECT_VERSION"<br/>Revision:"PROJECT_GIT_VERSION"</h3>"
         "Shell-centric Redis management tool."
         "<br/>"
         "<br/>"
