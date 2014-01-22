@@ -10,7 +10,6 @@ namespace common
     class ArrayValue;
     class StringValue;
     class ErrorValue;
-    class RootValue;
     class Value;
 
     typedef std::vector<Value*> ValueVector;
@@ -26,8 +25,7 @@ namespace common
             TYPE_STRING,
             TYPE_ARRAY,
             TYPE_STATUS,
-            TYPE_ERROR,
-            TYPE_ROOT
+			TYPE_ERROR
         };
 
         enum ErrorsType { E_NONE, E_EXCEPTION, E_ERROR, E_INTERRUPTED };
@@ -42,9 +40,9 @@ namespace common
         static StringValue* CreateStringValue(const std::string& in_value);
         static ArrayValue* CreateArrayValue();
         static ErrorValue* CreateErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
-        static RootValue* CreateRoot(const std::string& in_value);
-        static std::string toStdString(Type t);
 
+        static std::string toStdString(Type t);
+		virtual std::string toStdString() const;
         Type GetType() const { return type_; }
 
         bool IsType(Type type) const { return type == type_; }
@@ -56,7 +54,6 @@ namespace common
         virtual bool GetAsError(ErrorValue* out_value) const;
         virtual bool GetAsList(ArrayValue** out_value);
         virtual bool GetAsList(const ArrayValue** out_value) const;
-        virtual bool GetAsRoot(RootValue* out_value) const;
 
         virtual Value* DeepCopy() const;
 
@@ -81,6 +78,7 @@ namespace common
         explicit FundamentalValue(double in_value);
         virtual ~FundamentalValue();
 
+		virtual std::string toStdString() const;
         virtual bool GetAsBoolean(bool* out_value) const;
         virtual bool GetAsInteger(int* out_value) const;
         virtual bool GetAsDouble(double* out_value) const;
@@ -88,6 +86,7 @@ namespace common
         virtual bool Equals(const Value* other) const;
 
     private:
+		DISALLOW_COPY_AND_ASSIGN(FundamentalValue);
         union {
         bool boolean_value_;
         int integer_value_;
@@ -99,14 +98,15 @@ namespace common
     {
         public:
             explicit StringValue(const std::string& in_value);
-
             virtual ~StringValue();
 
+			virtual std::string toStdString() const;
             virtual bool GetAsString(std::string* out_value) const;
             virtual StringValue* DeepCopy() const;
             virtual bool Equals(const Value* other) const;
 
         private:
+			DISALLOW_COPY_AND_ASSIGN(StringValue);
             std::string value_;
     };
 
@@ -119,6 +119,7 @@ namespace common
         ArrayValue();
         virtual ~ArrayValue();
 
+		virtual std::string toStdString() const;
         void Clear();
 
         size_t GetSize() const { return list_.size(); }
@@ -176,6 +177,7 @@ namespace common
         virtual bool Equals(const Value* other) const;
 
     private:
+		DISALLOW_COPY_AND_ASSIGN(ArrayValue);
         ValueVector list_;
     };
 
@@ -187,24 +189,16 @@ namespace common
         bool isError() const;
         common::logging::LEVEL_LOG level() const;
         std::string description() const;
-        virtual bool GetAsError(ErrorValue* out_value) const;
+		virtual std::string toStdString() const;
+
+		virtual bool GetAsError(ErrorValue* out_value) const;
         virtual ~ErrorValue();
 
     private:
+		//DISALLOW_COPY_AND_ASSIGN(ErrorValue);
         std::string description_;
         ErrorsType errorType_;
         common::logging::LEVEL_LOG level_;
-    };
-
-    class RootValue : public Value
-    {
-    public:
-        explicit RootValue(const std::string& in_value);
-        virtual bool GetAsRoot(RootValue* out_value) const;
-        virtual ~RootValue();
-
-    private:
-        std::string value_;
     };
 
     std::ostream& operator<<(std::ostream& out, const Value& value);

@@ -19,8 +19,7 @@ namespace fastoredis
     }
 
     FastoObject::~FastoObject()
-    {
-        delete value_;
+	{
     }
 
     common::Value::Type FastoObject::type() const
@@ -37,28 +36,28 @@ namespace fastoredis
 
     FastoObjectPtr FastoObject::createRoot(const std::string &text)
     {
-        FastoObjectPtr result(NULL, common::Value::CreateRoot(text));
-        return result;
+		FastoObjectPtr result(NULL, common::Value::CreateStringValue(text));
+		return result;
     }
 
-    void FastoObject::addChildren(const FastoObjectPtr &child)
+	void FastoObject::addChildren(const FastoObjectPtr &child)
     {
-        if(child){
-            childrens_.push_back(child);
+		if(child){
+			childrens_.push_back(child);
         }
     }
 
-    bool FastoObject::isRoot() const
-    {
-        return type() == common::Value::TYPE_ARRAY || type() == common::Value::TYPE_ROOT;
-    }
+	bool FastoObject::isRoot() const
+	{
+		return !parent_ && type() == common::Value::TYPE_ARRAY;
+	}
 
     std::string toStdString(const FastoObjectPtr &obj)
     {
         std::string result;
         if(obj){
-            FastoObject::child_container_type childrens = obj->childrens();
-            for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
+			FastoObject::child_container_type childrens = obj->childrens();
+			for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
                 result += toStdString(*it);
             }
             std::string str = obj->toStdString();
@@ -70,7 +69,7 @@ namespace fastoredis
         return result;
     }
 
-    FastoObject::child_container_type FastoObject::childrens() const
+	FastoObject::child_container_type FastoObject::childrens() const
     {
         return childrens_;
     }

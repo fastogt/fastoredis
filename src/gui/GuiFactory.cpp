@@ -139,9 +139,6 @@ namespace fastoredis
         case common::Value::TYPE_ERROR:
             static QIcon er(":"PROJECT_NAME_LOWERCASE"/icons/error.png");
             return er;
-        case common::Value::TYPE_ROOT:
-            static QIcon r(":"PROJECT_NAME_LOWERCASE"/icons/root.png");
-            return r;
         default:
             DCHECK(0);
         }

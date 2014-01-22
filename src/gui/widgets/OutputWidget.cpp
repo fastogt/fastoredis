@@ -25,7 +25,7 @@ namespace
         if(item->isRoot()){
             char size[128] = {0};
             fastoredis::FastoObject::child_container_type cont = item->childrens();
-            sprintf(size, "{%u}", cont.size());
+			sprintf(size, "{%lu}", cont.size());
             result = new fastoredis::FastoTreeItem( common::utils_qt::toQString(item->toStdString()), size, item->type(), parent);
         }
         else{

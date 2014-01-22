@@ -43,8 +43,7 @@ namespace common
                                       "TYPE_STRING",
                                       "TYPE_ARRAY",
                                       "TYPE_STATUS",
-                                      "TYPE_ERROR",
-                                      "TYPE_ROOT"
+									  "TYPE_ERROR"
                                     };
     }
 
@@ -65,6 +64,11 @@ namespace common
     {
 
     }
+
+	std::string Value::toStdString() const
+	{
+		return "";
+	}
 
 	// static
     Value* Value::CreateNullValue()
@@ -105,11 +109,6 @@ namespace common
     ErrorValue* Value::CreateErrorValue(const std::string& in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
     {
         return new ErrorValue(in_value, errorType, level);
-    }
-
-    RootValue* Value::CreateRoot(const std::string& in_value)
-    {
-        return new RootValue(in_value);
     }
 
     // static
@@ -157,11 +156,6 @@ namespace common
     {
         return false;
 	}
-
-    bool Value::GetAsRoot(RootValue* out_value) const
-    {
-        return false;
-    }
 
     Value* Value::DeepCopy() const
     {
@@ -212,6 +206,30 @@ namespace common
 
     FundamentalValue::~FundamentalValue()
     {
+	}
+
+	std::string FundamentalValue::toStdString() const
+	{
+		char tmp[32] = {0};
+		switch (GetType()) {
+		  case TYPE_BOOLEAN:
+			{
+				return boolean_value_ ? "true" : "false";
+			}
+		  case TYPE_INTEGER:
+			{
+				sprintf(tmp,"%d",integer_value_);
+				break;
+			}
+		  case TYPE_DOUBLE:
+			{
+				sprintf(tmp,"%lf",double_value_);
+				break;
+			}
+		  default:
+			break;
+		}
+		return tmp;
 	}
 
     bool FundamentalValue::GetAsBoolean(bool* out_value) const
@@ -286,6 +304,11 @@ namespace common
 
     StringValue::~StringValue()
     {
+	}
+
+	std::string StringValue::toStdString() const
+	{
+		return value_;
 	}
 
     bool StringValue::GetAsString(std::string* out_value) const
@@ -568,6 +591,16 @@ namespace common
         return true;
 	}
 
+	std::string ArrayValue::toStdString() const
+	{
+		std::string result;
+
+		for (ValueVector::const_iterator i(list_.begin()); i != list_.end(); ++i)
+			result += (*i)->toStdString();
+
+		return result;
+	}
+
     ErrorValue::ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
         : Value(TYPE_ERROR), description_(in_value), errorType_(errorType), level_(level)
     {
@@ -599,6 +632,11 @@ namespace common
         return description_;
     }
 
+	std::string ErrorValue::toStdString() const
+	{
+		return description();
+	}
+
     bool ErrorValue::GetAsError(ErrorValue* out_value) const
     {
         if (out_value){
@@ -607,24 +645,5 @@ namespace common
             (*out_value).level_ = level_;
         }
         return true;
-    }
-
-    RootValue::RootValue(const std::string& in_value)
-        : Value(TYPE_ROOT), value_(in_value)
-    {
-
-    }
-
-    bool RootValue::GetAsRoot(RootValue* out_value) const
-    {
-        if (out_value){
-            (*out_value).value_ = value_;
-        }
-        return true;
-    }
-
-    RootValue::~RootValue()
-    {
-
     }
 }
