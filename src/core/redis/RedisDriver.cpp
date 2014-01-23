@@ -949,8 +949,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                             offset = n + 1;
-                            common::ArrayValue *val =common::Value::CreateArrayValue();
-                            val->AppendString(command);
+                            common::StringValue *val =common::Value::CreateStringValue(command);
                             FastoObjectPtr child = new FastoObject(res._out, val);
                             res._out->addChildren(child);
                             _impl->repl_impl(command, child, er);

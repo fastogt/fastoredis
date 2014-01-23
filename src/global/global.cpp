@@ -36,7 +36,7 @@ namespace fastoredis
 
     FastoObjectPtr FastoObject::createRoot(const std::string &text)
     {
-		FastoObjectPtr result(NULL, common::Value::CreateStringValue(text));
+        FastoObjectPtr result(new FastoObject(NULL, common::Value::CreateStringValue(text)));
 		return result;
     }
 
