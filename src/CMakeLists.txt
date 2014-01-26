@@ -262,5 +262,20 @@ INSTALL_RUNTIME_LIBRARIES()
 TARGET_BUNDLEFIX(${PROJECT_NAME} ${LIB_INSTALL_DESTINATION})
 
 IF(DEVELOPER_ENABLE_TESTS)
+########## PREPARE GTEST LIBRARY ##########
+    IF(MSVC)
+	SET(gtest_force_shared_crt ON CACHE BOOL "Build shared gtest library")
+	ADD_DEFINITIONS(-D_VARIADIC_MAX=10)
+    ENDIF(MSVC)
+    ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/tests/gtest-1.7.0 gtest)
+    INCLUDE_DIRECTORIES(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+########## PREPARE GTEST LIBRARY ##########
+
+    ADD_EXECUTABLE(tests
+	${CMAKE_SOURCE_DIR}/tests/test_fasto_objects.cpp)
+
+    TARGET_LINK_LIBRARIES(tests gtest gtest_main)
+    ADD_TEST(NAME tests COMMAND tests)
+    SET_PROPERTY(TARGET tests PROPERTY FOLDER "Tests")
 
 ENDIF(DEVELOPER_ENABLE_TESTS)
