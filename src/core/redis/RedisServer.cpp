@@ -26,7 +26,7 @@ namespace fastoredis
     {
         using namespace Events;
         ConnectResponceEvent::value_type v = ev->value();
-        const error::ErrorInfo &er = v.errorInfo();
+        const common::ErrorValue &er = v.errorInfo();
         if(er.isError()){
             LOG_ERROR(er, true);
         }
@@ -37,7 +37,7 @@ namespace fastoredis
     {
         using namespace Events;
         DisconnectResponceEvent::value_type v = ev->value();
-        const error::ErrorInfo &er = v.errorInfo();
+        const common::ErrorValue &er = v.errorInfo();
         if(er.isError()){
             LOG_ERROR(er, true);
         }
@@ -48,7 +48,7 @@ namespace fastoredis
     {
         using namespace Events;
         ExecuteResponceEvent::value_type v = ev->value();
-        const error::ErrorInfo &er = v.errorInfo();
+        const common::ErrorValue &er = v.errorInfo();
         if(er.isError()){
             LOG_ERROR(er, true);
         }
@@ -59,7 +59,7 @@ namespace fastoredis
     {
         using namespace Events;
         LoadDatabasesInfoResponceEvent::value_type v = ev->value();
-        const error::ErrorInfo &er = v.errorInfo();
+        const common::ErrorValue &er = v.errorInfo();
         if(er.isError()){
             LOG_ERROR(er, true);
         }
@@ -70,7 +70,7 @@ namespace fastoredis
     {
         using namespace Events;
         LoadDatabaseContentResponceEvent::value_type v = ev->value();
-        const error::ErrorInfo &er = v.errorInfo();
+        const common::ErrorValue &er = v.errorInfo();
         if(er.isError()){
             LOG_ERROR(er, true);
         }
@@ -81,7 +81,7 @@ namespace fastoredis
     {
         using namespace Events;
         ServerInfoResponceEvent::value_type v = ev->value();
-        const error::ErrorInfo &er = v.errorInfo();
+        const common::ErrorValue &er = v.errorInfo();
         if(er.isError()){
             LOG_ERROR(er, true);
         }

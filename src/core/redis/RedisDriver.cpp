@@ -471,7 +471,7 @@ namespace fastoredis
         redisContext *context;
         redisConfig config;
 
-        int cliAuth(error::ErrorInfo& er) {
+        int cliAuth(common::ErrorValue& er) {
             redisReply *reply;
             if (config.auth.empty()) return REDIS_OK;
 
@@ -483,7 +483,7 @@ namespace fastoredis
             cliPrintContextError(er);
             return REDIS_ERR;
         }
-        int cliSelect(error::ErrorInfo& er) {
+        int cliSelect(common::ErrorValue& er) {
             redisReply *reply;
             if (config.dbnum == 0) return REDIS_OK;
 
@@ -495,7 +495,7 @@ namespace fastoredis
             cliPrintContextError(er);
             return REDIS_ERR;
         }
-        int cliConnect(int force, error::ErrorInfo& er)
+        int cliConnect(int force, common::ErrorValue& er)
         {
             if (context == NULL || force) {
                 if (context != NULL)
@@ -513,7 +513,7 @@ namespace fastoredis
                         sprintf(buff,"Could not connect to Redis at %s:%d: %s\n",config.hostip.c_str(),config.hostport,context->errstr);
                     else
                         sprintf(buff,"Could not connect to Redis at %s: %s\n",config.hostsocket.c_str(),context->errstr);
-                    er = error::ErrorInfo(buff, error::ErrorInfo::E_ERROR);
+                    er = common::ErrorValue(buff, common::ErrorValue::E_ERROR);
                     redisFree(context);
                     context = NULL;
                     return REDIS_ERR;
@@ -562,11 +562,11 @@ namespace fastoredis
                     config.dbnum);
             snprintf(config.prompt+len,sizeof(config.prompt)-len,"> ");
         }
-        void cliPrintContextError(error::ErrorInfo& er) {
+        void cliPrintContextError(common::ErrorValue& er) {
             if (context == NULL) return;
             char buff[512] = {0};
             sprintf(buff,"Error: %s\n",context->errstr);
-            er = error::ErrorInfo(buff, error::ErrorInfo::E_ERROR);
+            er = common::ErrorValue(buff, common::ErrorValue::E_ERROR);
         }
 
         void cliFormatReplyRaw(FastoObjectPtr &out, redisReply *r) {
@@ -687,7 +687,7 @@ namespace fastoredis
             }
         }
 
-        int cliReadReply(FastoObjectPtr &out, error::ErrorInfo& er) {
+        int cliReadReply(FastoObjectPtr &out, common::ErrorValue& er) {
             void *_reply;
             redisReply *reply;
 
@@ -736,7 +736,7 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        int cliSendCommand(FastoObjectPtr &out, error::ErrorInfo& er, int argc, char **argv, int repeat)
+        int cliSendCommand(FastoObjectPtr &out, common::ErrorValue& er, int argc, char **argv, int repeat)
         {
             char *command = argv[0];
             size_t *argvlen;
@@ -791,7 +791,7 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        void repl_impl(const char *command, FastoObjectPtr &out, error::ErrorInfo &er) {
+        void repl_impl(const char *command, FastoObjectPtr &out, common::ErrorValue &er) {
             if (command[0] != '\0') {
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
@@ -903,10 +903,10 @@ namespace fastoredis
             if(set){
                 _impl->config = set->info();
 
-                error::ErrorInfo er;
+                common::ErrorValue er;
         notifyProgress(sender, 25);
                     if(_impl->_interrupt){
-                        res.setErrorInfo(error::ErrorInfo("Interrupted connect.", error::ErrorInfo::E_INTERRUPTED));
+                        res.setErrorInfo(common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
                     }
                     else if(_impl->cliConnect(0, er) == REDIS_ERR){
                         res.setErrorInfo(er);
@@ -923,10 +923,9 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);        
             Events::ExecuteResponceEvent::value_type res(ev->value());
-            using namespace error;
             const char *inputLine = toCString(res._text);
 
-            ErrorInfo er;
+            common::ErrorValue er;
             if(inputLine){
                 _impl->cliRefreshPrompt();
 
@@ -936,7 +935,7 @@ namespace fastoredis
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(_impl->_interrupt){
-                        res.setErrorInfo(error::ErrorInfo("Interrupted exec.", error::ErrorInfo::E_INTERRUPTED));
+                        res.setErrorInfo(common::ErrorValue("Interrupted exec.", common::ErrorValue::E_INTERRUPTED));
                         break;
                     }
                     if(inputLine[n] == '\n' || n == length-1){
@@ -957,7 +956,7 @@ namespace fastoredis
                 }
             }
             else{
-                res.setErrorInfo(error::ErrorInfo("Empty command line.", error::ErrorInfo::E_ERROR));
+                res.setErrorInfo(common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
             }            
             reply(sender, new Events::ExecuteResponceEvent(this, res));
         notifyProgress(sender, 100);
@@ -982,7 +981,7 @@ namespace fastoredis
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
             FastoObjectPtr root = FastoObject::createRoot(loadDabasesString);
-            error::ErrorInfo er;
+            common::ErrorValue er;
         notifyProgress(sender, 50);
             _impl->repl_impl(loadDabasesString, root, er);
             if(er.isError()){
@@ -1016,7 +1015,7 @@ namespace fastoredis
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
             FastoObjectPtr root = FastoObject::createRoot(infoString);
-            error::ErrorInfo er;
+            common::ErrorValue er;
         notifyProgress(sender, 50);
             _impl->repl_impl(infoString, root, er);
             if(er.isError()){

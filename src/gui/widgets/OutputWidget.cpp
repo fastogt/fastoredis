@@ -23,10 +23,10 @@ namespace
     {
         fastoredis::FastoTreeItem *result = NULL;
         fastoredis::FastoObject::child_container_type cont = item->childrens();
-        uint32_t contSize = cont.size();
+        size_t contSize = cont.size();
         if(contSize){
             char size[128] = {0};            
-            sprintf(size, "{%lu}", contSize);
+            sprintf(size, "{%zu}", contSize);
             result = new fastoredis::FastoTreeItem( common::utils_qt::toQString(item->toStdString()), size, item->type(), parent);
         }
         else{

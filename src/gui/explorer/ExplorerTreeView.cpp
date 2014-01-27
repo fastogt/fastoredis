@@ -168,7 +168,7 @@ namespace fastoredis
 
     void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res)
     {
-        const error::ErrorInfo &er = res.errorInfo();
+        const common::ErrorValue &er = res.errorInfo();
         if(!er.isError()){
             IServer *serv = qobject_cast<IServer *>(sender());
             DCHECK(serv);

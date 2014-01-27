@@ -76,6 +76,7 @@ namespace common
         explicit FundamentalValue(bool in_value);
         explicit FundamentalValue(int in_value);
         explicit FundamentalValue(double in_value);
+
         virtual ~FundamentalValue();
 
 		virtual std::string toStdString() const;
