@@ -56,15 +56,14 @@ namespace fastoredis
     {
         std::string result;
         if(obj){
+            std::string str = obj->toStdString();
+            if(!str.empty()){
+                result += common::escapedText(str);
+            }
 			FastoObject::child_container_type childrens = obj->childrens();
 			for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
                 result += toStdString(*it);
-            }
-            std::string str = obj->toStdString();
-            if(!str.empty()){
-                result += str;
-                result += '\n';
-            }
+            }            
         }
         return result;
     }

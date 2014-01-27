@@ -80,6 +80,13 @@ namespace common
     {
         return sprintf(ref, format, a1, a2, a3, a4);
     }
+    inline std::string escapedText(const std::string &str)
+    {
+        if(str.empty() && str[str.length()-1] != '\n'){
+            return str + "\n";
+        }
+        return str;
+    }
     #endif
     void unicode_perror(const unicode_char* str);
     const unicode_char* unicode_chr(const unicode_char *string,const unicode_char ch);
