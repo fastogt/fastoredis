@@ -272,9 +272,10 @@ IF(DEVELOPER_ENABLE_TESTS)
 ########## PREPARE GTEST LIBRARY ##########
 
     ADD_EXECUTABLE(tests
-	${CMAKE_SOURCE_DIR}/tests/test_fasto_objects.cpp)
+        ${CMAKE_SOURCE_DIR}/tests/test_fasto_objects.cpp global/global.cpp)
 
-    TARGET_LINK_LIBRARIES(tests gtest gtest_main)
+    TARGET_LINK_LIBRARIES(tests gtest gtest_main common)
+
     ADD_TEST(NAME tests COMMAND tests)
     SET_PROPERTY(TARGET tests PROPERTY FOLDER "Tests")
 
