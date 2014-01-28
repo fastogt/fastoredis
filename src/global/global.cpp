@@ -19,7 +19,7 @@ namespace fastoredis
     }
 
     FastoObject::~FastoObject()
-	{
+    {
     }
 
     common::Value::Type FastoObject::type() const

@@ -15,11 +15,6 @@ namespace fastoredis
         Text
     };
 
-    namespace error
-    {
-        typedef common::ErrorValue ErrorInfo;
-    }
-
     std::string toStdString(supportedViews v);
     supportedViews toSupportedViews(const std::string &text);
     std::vector<std::string> allSupportedViews();
@@ -52,6 +47,6 @@ namespace fastoredis
         const FastoObjectPtr parent_;
 		child_container_type childrens_;
 
-		boost::scoped_ptr<common::Value> value_;
+        boost::scoped_ptr<common::Value> value_;
     };
 }
