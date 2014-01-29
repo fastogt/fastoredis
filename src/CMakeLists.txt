@@ -68,6 +68,7 @@ SET(SOURCES_GUI
 )
 
 SET(HEADERS_CORE_TO_MOC
+    core/CommandLogger.h
     core/Logger.h
     core/IDriver.h
     core/IServer.h
@@ -85,6 +86,7 @@ SET(HEADERS_CORE
     core/ServersManager.h
 )
 SET(SOURCES_CORE
+    core/CommandLogger.cpp
     core/Infos.cpp
     core/ConnectionTypes.cpp
     core/SettingsManager.cpp

@@ -4,7 +4,8 @@
 #include <QString>
 
 #include "common/patterns/singleton_pattern.hpp"
-#include "global/global.h"
+#include "common/log_levels.hpp"
+#include "common/value.h"
 
 namespace fastoredis
 {
