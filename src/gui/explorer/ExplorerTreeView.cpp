@@ -10,7 +10,10 @@
 
 #include "gui/explorer/ExplorerTreeModel.h"
 #include "gui/explorer/ExplorerTreeModel.h"
+
 #include "gui/dialogs/InfoServerDialog.h"
+#include "gui/dialogs/PropertyServerDialog.h"
+
 #include "common/qt/converter_patterns.h"
 
 namespace fastoredis
@@ -30,11 +33,15 @@ namespace fastoredis
         loadDatabaseAction_ = new QAction(this);
         VERIFY(connect(loadDatabaseAction_, SIGNAL(triggered()), SLOT(loadDatabases())));
 
-        loadContent_ = new QAction(this);
-        VERIFY(connect(loadContent_, SIGNAL(triggered()), SLOT(loadContentDb())));
+        loadContentAction_ = new QAction(this);
+        VERIFY(connect(loadContentAction_, SIGNAL(triggered()), SLOT(loadContentDb())));
 
-        infoServer_ = new QAction(this);
-        VERIFY(connect(infoServer_, SIGNAL(triggered()), SLOT(openInfoServerDialog())));
+        infoServerAction_ = new QAction(this);
+        VERIFY(connect(infoServerAction_, SIGNAL(triggered()), SLOT(openInfoServerDialog())));
+
+        propertyServerAction_ = new QAction(this);
+        VERIFY(connect(propertyServerAction_, SIGNAL(triggered()), SLOT(openPropertyServerDialog())));
+
         retranslateUi();
     }
 
@@ -51,12 +58,13 @@ namespace fastoredis
                 menu.addAction(connectAction_);
                 menu.addAction(openConsoleAction_);
                 menu.addAction(loadDatabaseAction_);
-                menu.addAction(infoServer_);
+                menu.addAction(infoServerAction_);
+                menu.addAction(propertyServerAction_);
                 menu.exec(menuPoint);
             }
             else if(node->type() == IExplorerTreeItem::Database){
                 QMenu menu(this);
-                menu.addAction(loadContent_);
+                menu.addAction(loadContentAction_);
                 menu.exec(menuPoint);
             }
         }
@@ -117,8 +125,8 @@ namespace fastoredis
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(connect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
         VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
-//        VERIFY(connect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
-//        VERIFY(connect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
+//      VERIFY(connect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
+//      VERIFY(connect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
 
         mod->addServer(server);
     }
@@ -128,8 +136,8 @@ namespace fastoredis
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(disconnect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
         VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
-//        VERIFY(disconnect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
-//        VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
+//      VERIFY(disconnect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
+//      VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
 
         mod->removeServer(server);
     }
@@ -157,8 +165,9 @@ namespace fastoredis
         connectAction_->setText(tr("Connect"));
         openConsoleAction_->setText(tr("Open console"));
         loadDatabaseAction_->setText(tr("Load databases"));
-        loadContent_->setText(tr("Load content of database"));
-        infoServer_->setText(tr("Info"));
+        loadContentAction_->setText(tr("Load content of database"));
+        infoServerAction_->setText(tr("Info"));
+        propertyServerAction_->setText(tr("Property"));
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req)
@@ -194,10 +203,29 @@ namespace fastoredis
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
                 IServerPtr server = node->server();
-                InfoServerDialog infDialog(server->connectionType(), this);
+                InfoServerDialog infDialog(server->name() + " info", server->connectionType(), this);
                 VERIFY(connect(server.get(), SIGNAL(startedServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
                 VERIFY(connect(server.get(), SIGNAL(finishedServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
                 VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverInfo())));
+                infDialog.exec();
+            }
+        }
+    }
+
+    void ExplorerTreeView::openPropertyServerDialog()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+            if(node){
+                IServerPtr server = node->server();
+                PropertyServerDialog infDialog(server->name() + " properties", server->connectionType(), this);
+                VERIFY(connect(server.get(), SIGNAL(startedServerProperty(const EventsInfo::ServerPropertyRequest &)), &infDialog, SLOT(startServerProperty(const EventsInfo::ServerPropertyRequest &))));
+                VERIFY(connect(server.get(), SIGNAL(finishedServerProperty(const EventsInfo::ServerPropertyResponce &)), &infDialog, SLOT(finishServerProperty(const EventsInfo::ServerPropertyResponce &))));
+                VERIFY(connect(server.get(), SIGNAL(startedServerChangeProperty(const EventsInfo::ServerPropertyChangeRequest &)), &infDialog, SLOT(startServerChangeProperty(const EventsInfo::ServerPropertyChangeRequest &))));
+                VERIFY(connect(server.get(), SIGNAL(finishedServerChangeProperty(const EventsInfo::ServerPropertyChangeResponce &)), &infDialog, SLOT(finishServerChangeProperty(const EventsInfo::ServerPropertyChangeResponce &))));
+                VERIFY(connect(&infDialog, SIGNAL(changedProperty(const PropertyType&)), server.get(), SLOT(changeProperty(const PropertyType&))));
+                VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverProperty())));
                 infDialog.exec();
             }
         }

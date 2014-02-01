@@ -19,6 +19,7 @@
 #include "core/ServersManager.h"
 #include "core/SettingsManager.h"
 #include "core/Logger.h"
+#include "core/CommandLogger.h"
 
 #include "translations/Translations.h"
 
@@ -101,6 +102,7 @@ namespace fastoredis
 
         LogTabWidget *log = new LogTabWidget(this);
         VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, common::logging::LEVEL_LOG)), log, SLOT(addLogMessage(const QString&, common::logging::LEVEL_LOG))));
+        VERIFY(connect(&CommandLogger::instance(), SIGNAL(printed(const QString&)), log, SLOT(addCommand(const QString&))));
         _logDock = new QDockWidget(this);
         _logsAction = _logDock->toggleViewAction();
         _logsAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));

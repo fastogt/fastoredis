@@ -26,7 +26,7 @@ namespace fastoredis
         void disconnect();
         void loadDatabases();
         void loadDatabaseContent(const DataBaseInfo &inf);
-        void execute(const QString &script);        
+        void execute(const QString &script);
 
         //sync
         void stopCurrentEvent();
@@ -59,11 +59,19 @@ namespace fastoredis
         void startedServerInfo(const EventsInfo::ServerInfoRequest &req);
         void finishedServerInfo(const EventsInfo::ServerInfoResponce &res);
 
+        void startedServerProperty(const EventsInfo::ServerPropertyRequest &req);
+        void finishedServerProperty(const EventsInfo::ServerPropertyResponce &res);
+
+        void startedServerChangeProperty(const EventsInfo::ServerPropertyChangeRequest &req);
+        void finishedServerChangeProperty(const EventsInfo::ServerPropertyChangeResponce &res);
+
         void progressChanged(const EventsInfo::ProgressResponceInfo &res);
 
     public Q_SLOTS:
         //async
         void serverInfo();
+        void serverProperty();
+        void changeProperty(const PropertyType& newValue);
 
     protected:
         static void syncServers(IServer *src, IServer *dsc);
@@ -77,6 +85,8 @@ namespace fastoredis
         virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoResponceEvent *ev) = 0;
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent *ev) = 0;
         virtual void serverInfoEvent(Events::ServerInfoResponceEvent *ev) = 0;
+        virtual void serverPropertyEvent(Events::ServerPropertyResponceEvent *ev) = 0;
+        virtual void serverPropertyChangeEvent(Events::ServerPropertyChangeResponceEvent *ev) = 0;
 
         IServer(const IDriverPtr &drv, bool isMaster);
 

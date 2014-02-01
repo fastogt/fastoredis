@@ -3,7 +3,6 @@
 #include <hiredis/hiredis.h>
 #include <errno.h>
 #include <boost/lexical_cast.hpp>
-#include <QDebug>
 
 extern "C" {
 #include <anet.h>
@@ -400,7 +399,6 @@ namespace
         int j = 0;
         std::string word;
         size_t pos = 0;
-        qDebug() << content.c_str();
         for(int i = 0; i < content.size(); ++i)
         {
             char ch = content[i];
@@ -447,8 +445,21 @@ namespace
         return result;
     }
 
+
+    fastoredis::ServerPropertyInfo makeServerProperty(const fastoredis::FastoObjectPtr &root)
+    {
+        fastoredis::ServerPropertyInfo inf;
+        fastoredis::FastoObject::child_container_type childrens = root->childrens();
+        for(int i = 0; i < childrens.size(); i+=2)
+        {
+            inf.propertyes_.push_back(std::make_pair(childrens[i]->toStdString(), childrens[i+1]->toStdString()));
+        }
+        return inf;
+    }
+
     const QStringList g_allCommands = getList();
 }
+
 
 namespace fastoredis
 {
@@ -1025,6 +1036,46 @@ namespace fastoredis
             }
         notifyProgress(sender, 75);
             reply(sender, new Events::ServerInfoResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::serverPropertyEvent(Events::ServerPropertyRequestEvent *ev)
+    {
+        static const char* propetyString = "CONFIG GET *";
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::ServerPropertyResponceEvent::value_type res(ev->value());
+            FastoObjectPtr root = FastoObject::createRoot(propetyString);
+            common::ErrorValue er;
+        notifyProgress(sender, 50);
+            _impl->repl_impl(propetyString, root, er);
+            if(er.isError()){
+                res.setErrorInfo(er);
+            }else{
+                res.info_ = makeServerProperty(root);
+            }
+        notifyProgress(sender, 75);
+            reply(sender, new Events::ServerPropertyResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::serverPropertyChangeEvent(Events::ServerPropertyChangeRequestEvent *ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::ServerPropertyChangeResponceEvent::value_type res(ev->value());
+            common::ErrorValue er;
+        notifyProgress(sender, 50);
+        const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
+        FastoObjectPtr root = FastoObject::createRoot(changeRequest);
+            _impl->repl_impl(changeRequest.c_str(), root, er);
+            if(er.isError()){
+                res.setErrorInfo(er);
+            }else{
+                res.isChange_ = true;
+            }
+        notifyProgress(sender, 75);
+            reply(sender, new Events::ServerPropertyChangeResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 

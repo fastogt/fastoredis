@@ -87,4 +87,26 @@ namespace fastoredis
         }
         emit finishedServerInfo(v);
     }
+
+    void RedisServer::serverPropertyEvent(Events::ServerPropertyResponceEvent *ev)
+    {
+        using namespace Events;
+        ServerPropertyResponceEvent::value_type v = ev->value();
+        const common::ErrorValue &er = v.errorInfo();
+        if(er.isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedServerProperty(v);
+    }
+
+    void RedisServer::serverPropertyChangeEvent(Events::ServerPropertyChangeResponceEvent *ev)
+    {
+        using namespace Events;
+        ServerPropertyChangeResponceEvent::value_type v = ev->value();
+        const common::ErrorValue &er = v.errorInfo();
+        if(er.isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedServerChangeProperty(v);
+    }
 }

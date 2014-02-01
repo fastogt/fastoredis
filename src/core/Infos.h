@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace fastoredis
 {
@@ -104,5 +105,13 @@ namespace fastoredis
 
         ServerInfo();
         ServerInfo(const Server &serv);
+    };
+
+    typedef std::pair<std::string, std::string> PropertyType;
+
+    struct ServerPropertyInfo
+    {
+        ServerPropertyInfo();
+        std::vector<PropertyType> propertyes_;
     };
 }

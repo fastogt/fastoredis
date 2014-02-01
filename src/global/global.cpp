@@ -49,7 +49,7 @@ namespace fastoredis
 
 	bool FastoObject::isRoot() const
 	{
-		return !parent_ && type() == common::Value::TYPE_ARRAY;
+        return !parent_ && type() == common::Value::TYPE_STRING;
 	}
 
     std::string toStdString(const FastoObjectPtr &obj)

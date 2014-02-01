@@ -158,6 +158,53 @@ namespace fastoredis
             ServerInfo info_;
         };
 
+        struct ServerPropertyRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ServerPropertyRequest(const common::ErrorValue &er = common::ErrorValue())
+                : base_class(er)
+            {
+
+            }
+        };
+
+        struct ServerPropertyResponce
+                : ServerPropertyRequest
+        {
+            typedef ServerPropertyRequest base_class;
+            ServerPropertyResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue())
+                : base_class(request)
+            {
+                errorInfo_ = er;
+            }
+            ServerPropertyInfo info_;
+        };
+
+        struct ServerPropertyChangeRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ServerPropertyChangeRequest(const common::ErrorValue &er = common::ErrorValue())
+                : base_class(er)
+            {
+
+            }
+            PropertyType newItem_;
+        };
+
+        struct ServerPropertyChangeResponce
+                : ServerPropertyChangeRequest
+        {
+            typedef ServerPropertyChangeRequest base_class;
+            ServerPropertyChangeResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue())
+                : base_class(request)
+            {
+                errorInfo_ = er;
+            }
+            bool isChange_;
+        };
+
         struct ProgressResponceInfo
         {
             ProgressResponceInfo(int pr)

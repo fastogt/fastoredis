@@ -17,4 +17,9 @@ namespace fastoredis
     {
 
     }
+
+    ServerPropertyInfo::ServerPropertyInfo()
+    {
+
+    }
 }
