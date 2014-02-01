@@ -24,6 +24,12 @@ namespace fastoredis
         typedef common::utils_qt::Event<EventsInfo::ServerInfoRequest, QEvent::User+11> ServerInfoRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::ServerInfoResponce, QEvent::User+12> ServerInfoResponceEvent;
 
+        typedef common::utils_qt::Event<EventsInfo::ServerPropertyRequest, QEvent::User+13> ServerPropertyRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerPropertyResponce, QEvent::User+14> ServerPropertyResponceEvent;
+
+        typedef common::utils_qt::Event<EventsInfo::ServerPropertyChangeRequest, QEvent::User+15> ServerPropertyChangeRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerPropertyChangeResponce, QEvent::User+16> ServerPropertyChangeResponceEvent;
+
         typedef common::utils_qt::Event<EventsInfo::ProgressResponceInfo, QEvent::User+100> ProgressResponceEvent;
     }
 }

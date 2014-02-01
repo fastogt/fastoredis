@@ -127,6 +127,23 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::serverProperty()
+    {
+        EventsInfo::ServerPropertyRequest req;
+        emit startedServerProperty(req);
+        QEvent *ev = new Events::ServerPropertyRequestEvent(this, req);
+        notify(ev);
+    }
+
+    void IServer::changeProperty(const PropertyType &newValue)
+    {
+        EventsInfo::ServerPropertyChangeRequest req;
+        req.newItem_ = newValue;
+        emit startedServerChangeProperty(req);
+        QEvent *ev = new Events::ServerPropertyChangeRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::stopCurrentEvent()
     {
         _drv->interrupt();
@@ -188,6 +205,14 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(ServerInfoResponceEvent::EventType)){
             ServerInfoResponceEvent *ev = static_cast<ServerInfoResponceEvent*>(event);
             serverInfoEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ServerPropertyResponceEvent::EventType)){
+            ServerPropertyResponceEvent *ev = static_cast<ServerPropertyResponceEvent*>(event);
+            serverPropertyEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ServerPropertyChangeResponceEvent::EventType)){
+            ServerPropertyChangeResponceEvent *ev = static_cast<ServerPropertyChangeResponceEvent*>(event);
+            serverPropertyChangeEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
         {

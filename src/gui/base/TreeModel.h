@@ -14,11 +14,11 @@ namespace fastoredis
     public:
         TreeModel(QObject *parent = 0);
 
-        int rowCount(const QModelIndex &parent=QModelIndex()) const;
+        virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
         virtual QModelIndex index(int row, int column, const QModelIndex &parent= QModelIndex()) const;
         virtual QModelIndex parent(const QModelIndex& index) const;
 
-        ~TreeModel();
+        virtual ~TreeModel();
     protected:
         boost::scoped_ptr<TreeItem> _root;
     };

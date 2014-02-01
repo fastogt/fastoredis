@@ -12,10 +12,12 @@ SET(HEADERS_GUI_TO_MOC
     gui/widgets/LogTabWidget.h
     gui/widgets/LogWidget.h
     gui/widgets/CommandsWidget.h
+    gui/PropertyTableModel.h
     gui/explorer/ExplorerTreeView.h
     gui/explorer/ExplorerTreeModel.h
     gui/dialogs/AboutDialog.h
     gui/dialogs/InfoServerDialog.h
+    gui/dialogs/PropertyServerDialog.h
     gui/dialogs/PreferencesDialog.h
     gui/dialogs/ConnectionsDialog.h
     gui/dialogs/ConnectionDialog.h
@@ -31,11 +33,13 @@ SET(HEADERS_GUI_TO_MOC
     gui/IconLabel.h
     gui/GlassWidget.h
     gui/base/TreeModel.h
+    gui/base/TableModel.h
 )
 SET(HEADERS_GUI
     gui/GuiFactory.h
     gui/FastoTreeItem.h
     gui/base/TreeItem.h
+    gui/base/TableItem.h
 )
 SET(SOURCES_GUI
     gui/MainWindow.cpp
@@ -44,11 +48,13 @@ SET(SOURCES_GUI
     gui/widgets/LogTabWidget.cpp
     gui/widgets/LogWidget.cpp
     gui/widgets/CommandsWidget.cpp
+    gui/PropertyTableModel.cpp
     gui/dialogs/AboutDialog.cpp
     gui/dialogs/PreferencesDialog.cpp
     gui/dialogs/ConnectionsDialog.cpp
     gui/dialogs/ConnectionDialog.cpp
     gui/dialogs/InfoServerDialog.cpp
+    gui/dialogs/PropertyServerDialog.cpp
     gui/widgets/MainWidget.cpp
     gui/MainTabBar.cpp
     gui/FastoEditor.cpp
@@ -65,6 +71,8 @@ SET(SOURCES_GUI
     gui/GlassWidget.cpp
     gui/base/TreeModel.cpp
     gui/base/TreeItem.cpp
+    gui/base/TableModel.cpp
+    gui/base/TableItem.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC

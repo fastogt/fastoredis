@@ -82,9 +82,10 @@ namespace
 
 namespace fastoredis
 {
-    InfoServerDialog::InfoServerDialog(connectionTypes type, QWidget *parent)
+    InfoServerDialog::InfoServerDialog(const QString &title, connectionTypes type, QWidget *parent)
         : QDialog(parent), type_(type)
     {
+        setWindowTitle(title);
         serverTextInfo_ = new QLabel;
         hardwareTextInfo_ = new QLabel;
         QHBoxLayout *mainL = new QHBoxLayout(this);

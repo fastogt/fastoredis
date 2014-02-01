@@ -32,6 +32,8 @@ namespace fastoredis
         virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoRequestEvent *ev);
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev);
         virtual void serverInfoEvent(Events::ServerInfoRequestEvent *ev);
+        virtual void serverPropertyEvent(Events::ServerPropertyRequestEvent *ev);
+        virtual void serverPropertyChangeEvent(Events::ServerPropertyChangeRequestEvent *ev);
 
     private:
         struct pimpl;

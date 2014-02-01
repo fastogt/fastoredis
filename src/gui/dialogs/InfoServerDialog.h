@@ -15,7 +15,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        explicit InfoServerDialog(connectionTypes type, QWidget *parent = 0);
+        explicit InfoServerDialog(const QString &title, connectionTypes type, QWidget *parent = 0);
 
     Q_SIGNALS:
         void showed();

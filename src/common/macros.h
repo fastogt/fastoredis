@@ -82,7 +82,7 @@ namespace common
     }
     inline std::string escapedText(const std::string &str)
     {
-        if(str.empty() && str[str.length()-1] != '\n'){
+        if(!str.empty() && str[str.length()-1] != '\n'){
             return str + "\n";
         }
         return str;

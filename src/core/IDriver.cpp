@@ -57,6 +57,14 @@ namespace fastoredis
             ServerInfoRequestEvent *ev = static_cast<ServerInfoRequestEvent*>(event);
             serverInfoEvent(ev);
         }
+        else if (type == static_cast<QEvent::Type>(ServerPropertyRequestEvent::EventType)){
+            ServerPropertyRequestEvent *ev = static_cast<ServerPropertyRequestEvent*>(event);
+            serverPropertyEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ServerPropertyChangeRequestEvent::EventType)){
+            ServerPropertyChangeRequestEvent *ev = static_cast<ServerPropertyChangeRequestEvent*>(event);
+            serverPropertyChangeEvent(ev);
+        }
         return QObject::customEvent(event);
     }
 
