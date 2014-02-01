@@ -39,6 +39,7 @@ namespace fastoredis
     void CommandsWidget::addCommand(const Command &command)
     {
         QTime time = QTime::currentTime();
+        _logTextEdit->setTextColor(command.type() == Command::InnerCommand ? QColor(Qt::gray):QColor(Qt::black));
         _logTextEdit->append(time.toString("h:mm:ss AP: ") + common::utils_qt::toQString(command.message()));
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());

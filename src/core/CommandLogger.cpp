@@ -6,7 +6,7 @@ namespace fastoredis
 {
     CommandLogger::CommandLogger()
     {
-        qRegisterMetaType<Command>("fastoredis::Command");
+        qRegisterMetaType<Command>("Command");
     }
 
     void CommandLogger::print(const Command &command)
