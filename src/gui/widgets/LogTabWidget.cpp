@@ -4,8 +4,10 @@
 #include <QEvent>
 
 #include "common/macros.h"
+
 #include "gui/widgets/LogWidget.h"
 #include "gui/widgets/CommandsWidget.h"
+#include "gui/GuiFactory.h"
 
 namespace fastoredis
 {
@@ -19,9 +21,9 @@ namespace fastoredis
         setMovable(true);
         setDocumentMode(true);
         _log = new LogWidget(this);
-        addTab(_log, "Errors");
+        addTab(_log, GuiFactory::instance().loggingIcon(), "Errors");
         _commands = new CommandsWidget(this);
-        addTab(_commands, "Commands");
+        addTab(_commands, GuiFactory::instance().commandIcon(), "Commands");
         retranslateUi();
     }
 
