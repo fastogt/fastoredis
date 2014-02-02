@@ -5,19 +5,18 @@
 class QTextEdit;
 class QAction;
 
-#include "common/log_levels.hpp"
+#include "global/types.h"
 
 namespace fastoredis
 {
     class CommandsWidget : public QWidget
     {
         Q_OBJECT
-
     public:
         CommandsWidget(QWidget* parent = 0);
 
     public Q_SLOTS:
-        void addCommand(const QString &command);
+        void addCommand(const Command &command);
 
     private Q_SLOTS:
         void showContextMenu(const QPoint &pt);

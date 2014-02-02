@@ -30,7 +30,7 @@ namespace fastoredis
         _log->addLogMessage(message, level);
     }
 
-    void LogTabWidget::addCommand(const QString &command)
+    void LogTabWidget::addCommand(const Command &command)
     {
         _commands->addCommand(command);
     }

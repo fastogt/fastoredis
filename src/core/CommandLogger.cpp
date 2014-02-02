@@ -1,25 +1,16 @@
 #include "core/CommandLogger.h"
 
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
 
 namespace fastoredis
 {
     CommandLogger::CommandLogger()
     {
+        qRegisterMetaType<Command>("fastoredis::Command");
     }
 
-    void CommandLogger::print(const char *mess)
+    void CommandLogger::print(const Command &command)
     {
-        print(std::string(mess));
-    }
-
-    void CommandLogger::print(const std::string &mess)
-    {
-        emit printed(common::utils_qt::toQString(mess));
-    }
-
-    void CommandLogger::print(const QString &mess)
-    {
-        print(common::utils_qt::toStdString(mess));
+        emit printed(command);
     }
 }

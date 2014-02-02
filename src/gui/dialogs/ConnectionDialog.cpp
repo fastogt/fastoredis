@@ -8,7 +8,7 @@
 #include <QEvent>
 
 #include "gui/GuiFactory.h"
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
 #include "common/utils.h"
 
 namespace fastoredis

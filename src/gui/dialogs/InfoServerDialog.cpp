@@ -3,7 +3,7 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
 #include "gui/GuiFactory.h"
 #include "gui/GlassWidget.h"
 

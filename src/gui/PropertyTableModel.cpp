@@ -2,7 +2,7 @@
 
 #include "gui/GuiFactory.h"
 #include "common/qt/utils_qt.h"
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
 
 namespace fastoredis
 {

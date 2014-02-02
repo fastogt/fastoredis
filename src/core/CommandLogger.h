@@ -4,6 +4,7 @@
 #include <QString>
 
 #include "common/patterns/singleton_pattern.hpp"
+#include "global/types.h"
 
 namespace fastoredis
 {
@@ -13,19 +14,16 @@ namespace fastoredis
         friend class common::patterns::lazy_singleton<CommandLogger>;
         Q_OBJECT
     public:
-        void print(const char *mess);
-        void print(const std::string &mess);
-        void print(const QString &mess);
+        void print(const Command &command);
     Q_SIGNALS:
-        void printed(const QString &mess);
+        void printed(const Command &mess);
 
     private:
         CommandLogger();
     };
 
-    template<typename T>
-    inline void LOG_COMMAND(T mess)
+    inline void LOG_COMMAND(const Command &command)
     {
-        return CommandLogger::instance().print(mess);
+        return CommandLogger::instance().print(command);
     }
 }

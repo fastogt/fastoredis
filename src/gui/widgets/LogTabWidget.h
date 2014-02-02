@@ -3,6 +3,7 @@
 #include <QTabWidget>
 
 #include "common/log_levels.hpp"
+#include "global/types.h"
 
 namespace fastoredis
 {
@@ -18,7 +19,7 @@ namespace fastoredis
 
     public Q_SLOTS:
         void addLogMessage(const QString &message, common::logging::LEVEL_LOG level);
-        void addCommand(const QString &command);
+        void addCommand(const Command &command);
 
     protected:
         virtual void changeEvent(QEvent *);

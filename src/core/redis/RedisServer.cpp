@@ -1,7 +1,7 @@
 #include "core/redis/RedisServer.h"
 
 #include "core/ConnectionSettings.h"
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
 #include "core/Logger.h"
 
 namespace fastoredis

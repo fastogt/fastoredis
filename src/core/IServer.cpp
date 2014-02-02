@@ -5,7 +5,7 @@
 #include "core/ConnectionSettings.h"
 #include "core/ServersManager.h"
 #include "core/events/Events.hpp"
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
 
 namespace
 {

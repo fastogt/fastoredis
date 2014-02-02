@@ -6,7 +6,7 @@
 #include <QStatusBar>
 #include <QDockWidget>
 
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
 #include "gui/GuiFactory.h"
 #include "gui/AppStyle.h"
 #include "gui/widgets/LogTabWidget.h"
@@ -102,7 +102,7 @@ namespace fastoredis
 
         LogTabWidget *log = new LogTabWidget(this);
         VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, common::logging::LEVEL_LOG)), log, SLOT(addLogMessage(const QString&, common::logging::LEVEL_LOG))));
-        VERIFY(connect(&CommandLogger::instance(), SIGNAL(printed(const QString&)), log, SLOT(addCommand(const QString&))));
+        VERIFY(connect(&CommandLogger::instance(), SIGNAL(printed(const Command&)), log, SLOT(addCommand(const Command&))));
         _logDock = new QDockWidget(this);
         _logsAction = _logDock->toggleViewAction();
         _logsAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));

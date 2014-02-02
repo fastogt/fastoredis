@@ -35,6 +35,7 @@ namespace fastoredis
         ~FastoObject();
         common::Value::Type type() const;
         std::string toStdString() const;
+        const char *c_str() const;
 
 		child_container_type childrens() const;
         static FastoObjectPtr createRoot(const std::string& text = std::string());

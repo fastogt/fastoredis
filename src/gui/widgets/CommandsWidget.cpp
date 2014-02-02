@@ -6,7 +6,8 @@
 #include <QTime>
 #include <QAction>
 #include <QPlainTextEdit>
-#include "common/macros.h"
+
+#include "common/qt/convert_string.h"
 
 namespace fastoredis
 {
@@ -35,10 +36,10 @@ namespace fastoredis
         delete menu;
     }
 
-    void CommandsWidget::addCommand(const QString &command)
+    void CommandsWidget::addCommand(const Command &command)
     {
         QTime time = QTime::currentTime();
-        _logTextEdit->append(time.toString("h:mm:ss AP: ") + command);
+        _logTextEdit->append(time.toString("h:mm:ss AP: ") + common::utils_qt::toQString(command.message()));
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
     }

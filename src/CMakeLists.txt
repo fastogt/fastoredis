@@ -1,9 +1,11 @@
 SET(HEADERS_GLOBAL
     global/global.h
+    global/types.h
 )
 
 SET(SOURCES_GLOBAL
     global/global.cpp
+    global/types.cpp
 )
 
 SET(HEADERS_GUI_TO_MOC
