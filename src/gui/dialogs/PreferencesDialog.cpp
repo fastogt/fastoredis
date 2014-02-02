@@ -14,7 +14,7 @@
 #include "translations/Translations.h"
 #include "core/SettingsManager.h"
 #include "core/ServersManager.h"
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
 
 namespace fastoredis
 {

@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QStyleFactory>
 
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
 
 namespace fastoredis
 {

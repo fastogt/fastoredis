@@ -12,7 +12,8 @@ extern "C" {
 #include <release.h>
 }
 
-#include "common/qt/converter_patterns.h"
+#include "common/qt/convert_string.h"
+#include "core/CommandLogger.h"
 
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */
 #define CLI_HELP_COMMAND 1
@@ -705,7 +706,7 @@ namespace fastoredis
             if (redisGetReply(context,&_reply) != REDIS_OK) {
                 if (config.shutdown)
                     return REDIS_OK;
-\
+
                 /* Filter cases where we should reconnect */
                 if (context->err == REDIS_ERR_IO && errno == ECONNRESET)
                     return REDIS_ERR;
@@ -802,7 +803,8 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        void repl_impl(const char *command, FastoObjectPtr &out, common::ErrorValue &er) {
+        void repl_impl(FastoObjectPtr &out, common::ErrorValue &er) {
+            const char *command = out->c_str();
             if (command[0] != '\0') {
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
@@ -958,11 +960,12 @@ namespace fastoredis
                         else{
                             strncpy(command, inputLine + offset, n - offset);
                         }
-                            offset = n + 1;
-                            common::StringValue *val =common::Value::CreateStringValue(command);
-                            FastoObjectPtr child = new FastoObject(res._out, val);
-                            res._out->addChildren(child);
-                            _impl->repl_impl(command, child, er);
+                        offset = n + 1;
+                        common::StringValue *val =common::Value::CreateStringValue(command);
+                        FastoObjectPtr child = new FastoObject(res._out, val);
+                        res._out->addChildren(child);
+                        LOG_COMMAND(Command(command,Command::UserCommand));
+                        _impl->repl_impl(child, er);                        
                     }
                 }
             }
@@ -994,7 +997,8 @@ namespace fastoredis
             FastoObjectPtr root = FastoObject::createRoot(loadDabasesString);
             common::ErrorValue er;
         notifyProgress(sender, 50);
-            _impl->repl_impl(loadDabasesString, root, er);
+            LOG_COMMAND(Command(loadDabasesString));
+            _impl->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
             }else{
@@ -1028,7 +1032,8 @@ namespace fastoredis
             FastoObjectPtr root = FastoObject::createRoot(infoString);
             common::ErrorValue er;
         notifyProgress(sender, 50);
-            _impl->repl_impl(infoString, root, er);
+            LOG_COMMAND(Command(infoString));
+            _impl->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
             }else{
@@ -1048,7 +1053,8 @@ namespace fastoredis
             FastoObjectPtr root = FastoObject::createRoot(propetyString);
             common::ErrorValue er;
         notifyProgress(sender, 50);
-            _impl->repl_impl(propetyString, root, er);
+            LOG_COMMAND(Command(propetyString));
+            _impl->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
             }else{
@@ -1068,7 +1074,8 @@ namespace fastoredis
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         FastoObjectPtr root = FastoObject::createRoot(changeRequest);
-            _impl->repl_impl(changeRequest.c_str(), root, er);
+            LOG_COMMAND(Command(changeRequest));
+            _impl->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
             }else{

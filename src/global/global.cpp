@@ -34,6 +34,12 @@ namespace fastoredis
         return result;
     }
 
+    const char *FastoObject::c_str() const
+    {
+        std::string str = toStdString();
+        return str.c_str();
+    }
+
     FastoObjectPtr FastoObject::createRoot(const std::string &text)
     {
         FastoObjectPtr result(new FastoObject(NULL, common::Value::CreateStringValue(text)));

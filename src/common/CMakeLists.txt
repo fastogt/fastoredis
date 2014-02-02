@@ -56,8 +56,8 @@ IF(QT_ENABLED)
 SET(QT_UTILS_SOURCES
         qt/utils_qt.h
         qt/utils_qt.cpp
-        qt/converter_patterns.cpp
-        qt/converter_patterns.h)
+        qt/convert_string.cpp
+        qt/convert_string.h)
 ENDIF()
 SET(PATTERNS_SOURCES
         patterns/command_pattern.hpp
