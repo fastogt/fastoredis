@@ -56,16 +56,16 @@ namespace fastoredis
         void startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &req);
         void finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce &res);
 
-        void startedServerInfo(const EventsInfo::ServerInfoRequest &req);
-        void finishedServerInfo(const EventsInfo::ServerInfoResponce &res);
+        void startedLoadServerInfo(const EventsInfo::ServerInfoRequest &req);
+        void finishedLoadServerInfo(const EventsInfo::ServerInfoResponce &res);
 
-        void startedServerProperty(const EventsInfo::ServerPropertyRequest &req);
-        void finishedServerProperty(const EventsInfo::ServerPropertyResponce &res);
+        void startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest &req);
+        void finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce &res);
 
-        void startedServerChangeProperty(const EventsInfo::ServerPropertyChangeRequest &req);
-        void finishedServerChangeProperty(const EventsInfo::ServerPropertyChangeResponce &res);
+        void startedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoRequest &req);
+        void finishedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoResponce &res);
 
-        void progressChanged(const EventsInfo::ProgressResponceInfo &res);
+        void progressChanged(const EventsInfo::ProgressInfoResponce &res);
 
     public Q_SLOTS:
         //async
@@ -82,11 +82,11 @@ namespace fastoredis
         virtual void connectEvent(Events::ConnectResponceEvent *ev) = 0;
         virtual void disconnectEvent(Events::DisconnectResponceEvent *ev) = 0;
         virtual void executeEvent(Events::ExecuteResponceEvent *ev) = 0;
-        virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoResponceEvent *ev) = 0;
+        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent *ev) = 0;
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent *ev) = 0;
-        virtual void serverInfoEvent(Events::ServerInfoResponceEvent *ev) = 0;
-        virtual void serverPropertyEvent(Events::ServerPropertyResponceEvent *ev) = 0;
-        virtual void serverPropertyChangeEvent(Events::ServerPropertyChangeResponceEvent *ev) = 0;
+        virtual void loadServerInfoEvent(Events::ServerInfoResponceEvent *ev) = 0;
+        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent *ev) = 0;
+        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent *ev) = 0;
 
         IServer(const IDriverPtr &drv, bool isMaster);
 

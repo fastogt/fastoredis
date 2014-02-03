@@ -44,7 +44,7 @@ namespace fastoredis
         void startDisconnect(const EventsInfo::DisonnectInfoRequest &req);
         void finishDisconnect(const EventsInfo::DisConnectInfoResponce &res);        
 
-        void progressChange(const EventsInfo::ProgressResponceInfo &res);
+        void progressChange(const EventsInfo::ProgressInfoResponce &res);
 
     private:
         void syncConnectionActions();

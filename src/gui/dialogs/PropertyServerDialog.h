@@ -23,11 +23,11 @@ namespace fastoredis
         void changedProperty(const PropertyType &);
 
     public Q_SLOTS:
-        void startServerProperty(const EventsInfo::ServerPropertyRequest &req);
-        void finishServerProperty(const EventsInfo::ServerPropertyResponce &res);
+        void startServerProperty(const EventsInfo::ServerPropertyInfoRequest &req);
+        void finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &res);
 
-        void startServerChangeProperty(const EventsInfo::ServerPropertyChangeRequest &req);
-        void finishServerChangeProperty(const EventsInfo::ServerPropertyChangeResponce &res);
+        void startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest &req);
+        void finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &res);
 
     protected:
         virtual void showEvent(QShowEvent *e);

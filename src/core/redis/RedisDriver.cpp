@@ -988,7 +988,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadDatabasesInfoEvent(Events::LoadDatabasesInfoRequestEvent *ev)
+    void RedisDriver::loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev)
     {
         static const char* loadDabasesString = "CONFIG GET databases";
             QObject *sender = ev->sender();
@@ -1023,7 +1023,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::serverInfoEvent(Events::ServerInfoRequestEvent *ev)
+    void RedisDriver::loadServerInfoEvent(Events::ServerInfoRequestEvent *ev)
     {
         static const char* infoString = "INFO";
         QObject *sender = ev->sender();
@@ -1044,12 +1044,12 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::serverPropertyEvent(Events::ServerPropertyRequestEvent *ev)
+    void RedisDriver::loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev)
     {
         static const char* propetyString = "CONFIG GET *";
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::ServerPropertyResponceEvent::value_type res(ev->value());
+        Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
             FastoObjectPtr root = FastoObject::createRoot(propetyString);
             common::ErrorValue er;
         notifyProgress(sender, 50);
@@ -1061,15 +1061,15 @@ namespace fastoredis
                 res.info_ = makeServerProperty(root);
             }
         notifyProgress(sender, 75);
-            reply(sender, new Events::ServerPropertyResponceEvent(this, res));
+            reply(sender, new Events::ServerPropertyInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::serverPropertyChangeEvent(Events::ServerPropertyChangeRequestEvent *ev)
+    void RedisDriver::serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::ServerPropertyChangeResponceEvent::value_type res(ev->value());
+        Events::ChangeServerPropertyInfoResponceEvent::value_type res(ev->value());
             common::ErrorValue er;
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
@@ -1082,7 +1082,7 @@ namespace fastoredis
                 res.isChange_ = true;
             }
         notifyProgress(sender, 75);
-            reply(sender, new Events::ServerPropertyChangeResponceEvent(this, res));
+            reply(sender, new Events::ChangeServerPropertyInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 

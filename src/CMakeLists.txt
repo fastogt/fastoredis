@@ -86,18 +86,18 @@ SET(HEADERS_CORE_TO_MOC
     core/redis/RedisDriver.h
 )
 SET(HEADERS_CORE
-    core/Infos.h
     core/ConnectionTypes.h
     core/SettingsManager.h
     core/ConnectionSettings.h
+    core/events/Infos.h
     core/events/Events.hpp
     core/events/EventsInfo.hpp
     core/redis/RedisConfig.h
     core/ServersManager.h
 )
 SET(SOURCES_CORE
+    core/events/Infos.cpp
     core/CommandLogger.cpp
-    core/Infos.cpp
     core/ConnectionTypes.cpp
     core/SettingsManager.cpp
     core/ConnectionSettings.cpp

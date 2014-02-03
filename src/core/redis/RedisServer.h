@@ -17,11 +17,11 @@ namespace fastoredis
         virtual void connectEvent(Events::ConnectResponceEvent *ev);
         virtual void disconnectEvent(Events::DisconnectResponceEvent *ev);
         virtual void executeEvent(Events::ExecuteResponceEvent *ev);
-        virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoResponceEvent *ev);
+        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent *ev);
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent *ev);
-        virtual void serverInfoEvent(Events::ServerInfoResponceEvent *ev);
-        virtual void serverPropertyEvent(Events::ServerPropertyResponceEvent *ev);
-        virtual void serverPropertyChangeEvent(Events::ServerPropertyChangeResponceEvent *ev);
+        virtual void loadServerInfoEvent(Events::ServerInfoResponceEvent *ev);
+        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent *ev);
+        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent *ev);
 
     private:
         RedisServer(const IDriverPtr &drv, bool isMaster);

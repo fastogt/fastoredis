@@ -26,12 +26,12 @@ namespace fastoredis
         glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), "Loading...", 0.5, QColor(111, 111, 100), this);
     }
 
-    void PropertyServerDialog::startServerProperty(const EventsInfo::ServerPropertyRequest &req)
+    void PropertyServerDialog::startServerProperty(const EventsInfo::ServerPropertyInfoRequest &req)
     {
         glassWidget_->start();
     }
 
-    void PropertyServerDialog::finishServerProperty(const EventsInfo::ServerPropertyResponce &res)
+    void PropertyServerDialog::finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &res)
     {
         glassWidget_->stop();
         common::ErrorValue er = res.errorInfo();
@@ -48,12 +48,12 @@ namespace fastoredis
         }
     }
 
-    void PropertyServerDialog::startServerChangeProperty(const EventsInfo::ServerPropertyChangeRequest &req)
+    void PropertyServerDialog::startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest &req)
     {
 
     }
 
-    void PropertyServerDialog::finishServerChangeProperty(const EventsInfo::ServerPropertyChangeResponce &res)
+    void PropertyServerDialog::finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &res)
     {
         common::ErrorValue er = res.errorInfo();
         if(!er.isError()){

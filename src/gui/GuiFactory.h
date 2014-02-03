@@ -39,5 +39,7 @@ namespace fastoredis
         const QIcon &tableIcon() const;
         const QIcon &treeIcon() const;
         const QString &loadingPathFilePath() const;
+        const QIcon &loggingIcon() const;
+        const QIcon &commandIcon() const;
     };
 }

@@ -185,4 +185,16 @@ namespace fastoredis
         static QString path(":"PROJECT_NAME_LOWERCASE"/icons/loading.gif");
         return path;
     }
+
+    const QIcon &GuiFactory::loggingIcon() const
+    {
+        static QIcon logg(":"PROJECT_NAME_LOWERCASE"/icons/logging.png");
+        return logg;
+    }
+
+    const QIcon &GuiFactory::commandIcon() const
+    {
+        static QIcon comm(":"PROJECT_NAME_LOWERCASE"/icons/command.png");
+        return comm;
+    }
 }
