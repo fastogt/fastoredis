@@ -55,7 +55,7 @@ namespace fastoredis
         emit finishedExecute(v);
     }
 
-    void RedisServer::loadDatabasesInfoEvent(Events::LoadDatabasesInfoResponceEvent *ev)
+    void RedisServer::loadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent *ev)
     {
         using namespace Events;
         LoadDatabasesInfoResponceEvent::value_type v = ev->value();
@@ -77,7 +77,7 @@ namespace fastoredis
         emit finishedLoadDataBaseContent(v);
     }
 
-    void RedisServer::serverInfoEvent(Events::ServerInfoResponceEvent *ev)
+    void RedisServer::loadServerInfoEvent(Events::ServerInfoResponceEvent *ev)
     {
         using namespace Events;
         ServerInfoResponceEvent::value_type v = ev->value();
@@ -85,28 +85,28 @@ namespace fastoredis
         if(er.isError()){
             LOG_ERROR(er, true);
         }
-        emit finishedServerInfo(v);
+        emit finishedLoadServerInfo(v);
     }
 
-    void RedisServer::serverPropertyEvent(Events::ServerPropertyResponceEvent *ev)
+    void RedisServer::loadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent *ev)
     {
         using namespace Events;
-        ServerPropertyResponceEvent::value_type v = ev->value();
+        ServerPropertyInfoResponceEvent::value_type v = ev->value();
         const common::ErrorValue &er = v.errorInfo();
         if(er.isError()){
             LOG_ERROR(er, true);
         }
-        emit finishedServerProperty(v);
+        emit finishedLoadServerProperty(v);
     }
 
-    void RedisServer::serverPropertyChangeEvent(Events::ServerPropertyChangeResponceEvent *ev)
+    void RedisServer::serverPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent *ev)
     {
         using namespace Events;
-        ServerPropertyChangeResponceEvent::value_type v = ev->value();
+        ChangeServerPropertyInfoResponceEvent::value_type v = ev->value();
         const common::ErrorValue &er = v.errorInfo();
         if(er.isError()){
             LOG_ERROR(er, true);
         }
-        emit finishedServerChangeProperty(v);
+        emit finishedChangeServerProperty(v);
     }
 }

@@ -105,7 +105,7 @@ namespace fastoredis
         VERIFY(connect(_server.get(), SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)), this, SLOT(finishDisconnect(const EventsInfo::DisConnectInfoResponce &))));
         VERIFY(connect(_server.get(), SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), this, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &))));
         VERIFY(connect(_server.get(), SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), this, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &))));
-        VERIFY(connect(_server.get(), SIGNAL(progressChanged(const EventsInfo::ProgressResponceInfo &)), this, SLOT(progressChange(const EventsInfo::ProgressResponceInfo &))));
+        VERIFY(connect(_server.get(), SIGNAL(progressChanged(const EventsInfo::ProgressInfoResponce &)), this, SLOT(progressChange(const EventsInfo::ProgressInfoResponce &))));
 
         syncConnectionActions();
 
@@ -212,7 +212,7 @@ namespace fastoredis
         syncConnectionActions();
     }
 
-    void ShellWidget::progressChange(const EventsInfo::ProgressResponceInfo &res)
+    void ShellWidget::progressChange(const EventsInfo::ProgressInfoResponce &res)
     {
         _workProgressBar->setValue(res._progress);
     }

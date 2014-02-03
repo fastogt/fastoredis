@@ -39,11 +39,11 @@ namespace fastoredis
         virtual void connectEvent(Events::ConnectRequestEvent *ev) = 0;
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev) = 0;
         virtual void executeEvent(Events::ExecuteRequestEvent *ev) = 0;
-        virtual void loadDatabasesInfoEvent(Events::LoadDatabasesInfoRequestEvent *ev) = 0;
+        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev) = 0;
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev) = 0;
-        virtual void serverInfoEvent(Events::ServerInfoRequestEvent *ev) = 0;
-        virtual void serverPropertyEvent(Events::ServerPropertyRequestEvent *ev) = 0;
-        virtual void serverPropertyChangeEvent(Events::ServerPropertyChangeRequestEvent *ev) = 0;
+        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent *ev) = 0;
+        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev) = 0;
+        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev) = 0;
 
     private:
         QThread *_thread;

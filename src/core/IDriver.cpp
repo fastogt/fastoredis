@@ -47,7 +47,7 @@ namespace fastoredis
         }
         else if (type == static_cast<QEvent::Type>(LoadDatabasesInfoRequestEvent::EventType)){
             LoadDatabasesInfoRequestEvent *ev = static_cast<LoadDatabasesInfoRequestEvent*>(event);
-            loadDatabasesInfoEvent(ev);
+            loadDatabaseInfosEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(LoadDatabaseContentRequestEvent::EventType)){
             LoadDatabaseContentRequestEvent *ev = static_cast<LoadDatabaseContentRequestEvent*>(event);
@@ -55,14 +55,14 @@ namespace fastoredis
         }
         else if (type == static_cast<QEvent::Type>(ServerInfoRequestEvent::EventType)){
             ServerInfoRequestEvent *ev = static_cast<ServerInfoRequestEvent*>(event);
-            serverInfoEvent(ev);
+            loadServerInfoEvent(ev);
         }
-        else if (type == static_cast<QEvent::Type>(ServerPropertyRequestEvent::EventType)){
-            ServerPropertyRequestEvent *ev = static_cast<ServerPropertyRequestEvent*>(event);
-            serverPropertyEvent(ev);
+        else if (type == static_cast<QEvent::Type>(ServerPropertyInfoRequestEvent::EventType)){
+            ServerPropertyInfoRequestEvent *ev = static_cast<ServerPropertyInfoRequestEvent*>(event);
+            loadServerPropertyEvent(ev);
         }
-        else if (type == static_cast<QEvent::Type>(ServerPropertyChangeRequestEvent::EventType)){
-            ServerPropertyChangeRequestEvent *ev = static_cast<ServerPropertyChangeRequestEvent*>(event);
+        else if (type == static_cast<QEvent::Type>(ChangeServerPropertyInfoRequestEvent::EventType)){
+            ChangeServerPropertyInfoRequestEvent *ev = static_cast<ChangeServerPropertyInfoRequestEvent*>(event);
             serverPropertyChangeEvent(ev);
         }
         return QObject::customEvent(event);

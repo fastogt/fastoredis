@@ -204,8 +204,8 @@ namespace fastoredis
             if(node){
                 IServerPtr server = node->server();
                 InfoServerDialog infDialog(server->name() + " info", server->connectionType(), this);
-                VERIFY(connect(server.get(), SIGNAL(startedServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
-                VERIFY(connect(server.get(), SIGNAL(finishedServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
+                VERIFY(connect(server.get(), SIGNAL(startedLoadServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
+                VERIFY(connect(server.get(), SIGNAL(finishedLoadServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
                 VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverInfo())));
                 infDialog.exec();
             }
@@ -220,10 +220,10 @@ namespace fastoredis
             if(node){
                 IServerPtr server = node->server();
                 PropertyServerDialog infDialog(server->name() + " properties", server->connectionType(), this);
-                VERIFY(connect(server.get(), SIGNAL(startedServerProperty(const EventsInfo::ServerPropertyRequest &)), &infDialog, SLOT(startServerProperty(const EventsInfo::ServerPropertyRequest &))));
-                VERIFY(connect(server.get(), SIGNAL(finishedServerProperty(const EventsInfo::ServerPropertyResponce &)), &infDialog, SLOT(finishServerProperty(const EventsInfo::ServerPropertyResponce &))));
-                VERIFY(connect(server.get(), SIGNAL(startedServerChangeProperty(const EventsInfo::ServerPropertyChangeRequest &)), &infDialog, SLOT(startServerChangeProperty(const EventsInfo::ServerPropertyChangeRequest &))));
-                VERIFY(connect(server.get(), SIGNAL(finishedServerChangeProperty(const EventsInfo::ServerPropertyChangeResponce &)), &infDialog, SLOT(finishServerChangeProperty(const EventsInfo::ServerPropertyChangeResponce &))));
+                VERIFY(connect(server.get(), SIGNAL(startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest &)), &infDialog, SLOT(startServerProperty(const EventsInfo::ServerPropertyInfoRequest &))));
+                VERIFY(connect(server.get(), SIGNAL(finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &))));
+                VERIFY(connect(server.get(), SIGNAL(startedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoRequest &)), &infDialog, SLOT(startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest &))));
+                VERIFY(connect(server.get(), SIGNAL(finishedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &))));
                 VERIFY(connect(&infDialog, SIGNAL(changedProperty(const PropertyType&)), server.get(), SLOT(changeProperty(const PropertyType&))));
                 VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverProperty())));
                 infDialog.exec();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "global/global.h"
-#include "core/Infos.h"
+#include "core/events/Infos.h"
 #include "common/qt/utils_qt.h"
 #include "common/time.h"
 
@@ -158,22 +158,22 @@ namespace fastoredis
             ServerInfo info_;
         };
 
-        struct ServerPropertyRequest
+        struct ServerPropertyInfoRequest
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ServerPropertyRequest(const common::ErrorValue &er = common::ErrorValue())
+            ServerPropertyInfoRequest(const common::ErrorValue &er = common::ErrorValue())
                 : base_class(er)
             {
 
             }
         };
 
-        struct ServerPropertyResponce
-                : ServerPropertyRequest
+        struct ServerPropertyInfoResponce
+                : ServerPropertyInfoRequest
         {
-            typedef ServerPropertyRequest base_class;
-            ServerPropertyResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue())
+            typedef ServerPropertyInfoRequest base_class;
+            ServerPropertyInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue())
                 : base_class(request)
             {
                 errorInfo_ = er;
@@ -181,11 +181,11 @@ namespace fastoredis
             ServerPropertyInfo info_;
         };
 
-        struct ServerPropertyChangeRequest
+        struct ChangeServerPropertyInfoRequest
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ServerPropertyChangeRequest(const common::ErrorValue &er = common::ErrorValue())
+            ChangeServerPropertyInfoRequest(const common::ErrorValue &er = common::ErrorValue())
                 : base_class(er)
             {
 
@@ -193,11 +193,11 @@ namespace fastoredis
             PropertyType newItem_;
         };
 
-        struct ServerPropertyChangeResponce
-                : ServerPropertyChangeRequest
+        struct ChangeServerPropertyInfoResponce
+                : ChangeServerPropertyInfoRequest
         {
-            typedef ServerPropertyChangeRequest base_class;
-            ServerPropertyChangeResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue())
+            typedef ChangeServerPropertyInfoRequest base_class;
+            ChangeServerPropertyInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue())
                 : base_class(request)
             {
                 errorInfo_ = er;
@@ -205,9 +205,9 @@ namespace fastoredis
             bool isChange_;
         };
 
-        struct ProgressResponceInfo
+        struct ProgressInfoResponce
         {
-            ProgressResponceInfo(int pr)
+            ProgressInfoResponce(int pr)
                 : _progress(pr){}
 
             const int _progress;
