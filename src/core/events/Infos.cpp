@@ -13,7 +13,9 @@ namespace fastoredis
 
     }
 
-    ServerInfo::ServerInfo(const Server &serv) : server_(serv)
+    ServerInfo::ServerInfo(const Server &serv, const Clients &clients, const Memory &memory,
+                           const Persistence &pers, const Stats &stats, const Replication &repl, const Cpu &cpu)
+        : server_(serv), clients_(clients), memory_(memory), persistence_(pers), stats_(stats), replication_(repl), cpu_(cpu)
     {
 
     }

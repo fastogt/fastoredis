@@ -104,7 +104,7 @@ namespace fastoredis
         } cpu_;
 
         ServerInfo();
-        ServerInfo(const Server &serv);
+        ServerInfo(const Server &serv, const Clients &clients, const Memory &memory, const Persistence &pers, const Stats &stats, const Replication &repl, const Cpu &cpu);
     };
 
     typedef std::pair<std::string, std::string> PropertyType;
