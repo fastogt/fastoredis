@@ -14,6 +14,7 @@ extern "C" {
 
 #include "common/qt/convert_string.h"
 #include "core/CommandLogger.h"
+#include "common/utils.h"
 
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */
 #define CLI_HELP_COMMAND 1
@@ -915,7 +916,8 @@ namespace fastoredis
             RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(_settings.get());
             if(set){
                 _impl->config = set->info();
-
+                std::string outmac;
+                bool ress = common::utils::net::get_mac_address_host(_impl->config.hostip, outmac);
                 common::ErrorValue er;
         notifyProgress(sender, 25);
                     if(_impl->_interrupt){

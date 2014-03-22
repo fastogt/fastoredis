@@ -373,7 +373,7 @@ namespace common
     #endif
         namespace net
         {
-            std::string get_mac_address_host(const std::string &host);
+            bool get_mac_address_host(const std::string &host, std::string &out_mac_address);
         }
     }
     namespace smart_ptr
