@@ -9,117 +9,117 @@ SET(SOURCES_GLOBAL
 )
 
 SET(HEADERS_GUI_TO_MOC
-    gui/MainWindow.h
-    gui/AppStyle.h
-    gui/widgets/LogTabWidget.h
-    gui/widgets/LogWidget.h
-    gui/widgets/CommandsWidget.h
-    gui/PropertyTableModel.h
-    gui/explorer/ExplorerTreeView.h
-    gui/explorer/ExplorerTreeModel.h
-    gui/dialogs/AboutDialog.h
-    gui/dialogs/InfoServerDialog.h
-    gui/dialogs/PropertyServerDialog.h
-    gui/dialogs/PreferencesDialog.h
-    gui/dialogs/ConnectionsDialog.h
-    gui/dialogs/ConnectionDialog.h
-    gui/widgets/MainWidget.h
-    gui/MainTabBar.h
-    gui/FastoEditor.h
-    gui/widgets/QueryWidget.h
-    gui/widgets/OutputWidget.h
-    gui/FastoTreeView.h
-    gui/FastoTreeModel.h
-    gui/FastoTableView.h
-    gui/FastoTableModel.h
-    gui/IconLabel.h
-    gui/GlassWidget.h
-    gui/base/TreeModel.h
-    gui/base/TableModel.h
+    gui/main_window.h
+    gui/app_style.h
+    gui/widgets/log_tab_widget.h
+    gui/widgets/log_widget.h
+    gui/widgets/commands_widget.h
+    gui/property_table_model.h
+    gui/explorer/explorer_tree_view.h
+    gui/explorer/explorer_tree_model.h
+    gui/dialogs/about_dialog.h
+    gui/dialogs/info_server_dialog.h
+    gui/dialogs/property_server_dialog.h
+    gui/dialogs/preferences_dialog.h
+    gui/dialogs/connections_dialog.h
+    gui/dialogs/connection_dialog.h
+    gui/widgets/main_widget.h
+    gui/main_tab_bar.h
+    gui/fasto_editor.h
+    gui/widgets/query_widget.h
+    gui/widgets/output_widget.h
+    gui/fasto_tree_view.h
+    gui/fasto_tree_model.h
+    gui/fasto_table_view.h
+    gui/fasto_table_model.h
+    gui/icon_label.h
+    gui/glass_widget.h
+    gui/base/tree_model.h
+    gui/base/table_model.h
 )
 SET(HEADERS_GUI
-    gui/GuiFactory.h
-    gui/FastoTreeItem.h
-    gui/base/TreeItem.h
-    gui/base/TableItem.h
+    gui/gui_factory.h
+    gui/fasto_tree_item.h
+    gui/base/tree_item.h
+    gui/base/table_item.h
 )
 SET(SOURCES_GUI
-    gui/MainWindow.cpp
-    gui/AppStyle.cpp
-    gui/GuiFactory.cpp
-    gui/widgets/LogTabWidget.cpp
-    gui/widgets/LogWidget.cpp
-    gui/widgets/CommandsWidget.cpp
-    gui/PropertyTableModel.cpp
-    gui/dialogs/AboutDialog.cpp
-    gui/dialogs/PreferencesDialog.cpp
-    gui/dialogs/ConnectionsDialog.cpp
-    gui/dialogs/ConnectionDialog.cpp
-    gui/dialogs/InfoServerDialog.cpp
-    gui/dialogs/PropertyServerDialog.cpp
-    gui/widgets/MainWidget.cpp
-    gui/MainTabBar.cpp
-    gui/FastoEditor.cpp
-    gui/widgets/QueryWidget.cpp
-    gui/widgets/OutputWidget.cpp
-    gui/explorer/ExplorerTreeView.cpp
-    gui/explorer/ExplorerTreeModel.cpp
-    gui/FastoTreeView.cpp
-    gui/FastoTreeModel.cpp
-    gui/FastoTableView.cpp
-    gui/FastoTreeItem.cpp
-    gui/FastoTableModel.cpp
-    gui/IconLabel.cpp
-    gui/GlassWidget.cpp
-    gui/base/TreeModel.cpp
-    gui/base/TreeItem.cpp
-    gui/base/TableModel.cpp
-    gui/base/TableItem.cpp
+    gui/main_window.cpp
+    gui/app_style.cpp
+    gui/gui_factory.cpp
+    gui/widgets/log_tab_widget.cpp
+    gui/widgets/log_widget.cpp
+    gui/widgets/commands_widget.cpp
+    gui/property_table_model.cpp
+    gui/dialogs/about_dialog.cpp
+    gui/dialogs/preferences_dialog.cpp
+    gui/dialogs/connections_dialog.cpp
+    gui/dialogs/connection_dialog.cpp
+    gui/dialogs/info_server_dialog.cpp
+    gui/dialogs/property_server_dialog.cpp
+    gui/widgets/main_widget.cpp
+    gui/main_tab_bar.cpp
+    gui/fasto_editor.cpp
+    gui/widgets/query_widget.cpp
+    gui/widgets/output_widget.cpp
+    gui/explorer/explorer_tree_view.cpp
+    gui/explorer/explorer_tree_model.cpp
+    gui/fasto_tree_view.cpp
+    gui/fasto_tree_model.cpp
+    gui/fasto_table_view.cpp
+    gui/fasto_tree_item.cpp
+    gui/fasto_table_model.cpp
+    gui/icon_label.cpp
+    gui/glass_widget.cpp
+    gui/base/tree_model.cpp
+    gui/base/tree_item.cpp
+    gui/base/table_model.cpp
+    gui/base/table_item.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
-    core/CommandLogger.h
-    core/Logger.h
-    core/IDriver.h
-    core/IServer.h
-    core/redis/RedisServer.h
-    core/redis/RedisDriver.h
+    core/command_logger.h
+    core/logger.h
+    core/idriver.h
+    core/iserver.h
+    core/redis/redis_server.h
+    core/redis/redis_driver.h
 )
 SET(HEADERS_CORE
-    core/ConnectionTypes.h
-    core/SettingsManager.h
-    core/ConnectionSettings.h
-    core/events/Infos.h
-    core/events/Events.hpp
-    core/events/EventsInfo.hpp
-    core/redis/RedisConfig.h
-    core/ServersManager.h
+    core/connection_types.h
+    core/settings_manager.h
+    core/connection_settings.h
+    core/events/infos.h
+    core/events/events.hpp
+    core/events/events_info.hpp
+    core/redis/redis_config.h
+    core/servers_manager.h
 )
 SET(SOURCES_CORE
-    core/events/Infos.cpp
-    core/CommandLogger.cpp
-    core/ConnectionTypes.cpp
-    core/SettingsManager.cpp
-    core/ConnectionSettings.cpp
-    core/Logger.cpp
-    core/redis/RedisDriver.cpp
-    core/IDriver.cpp
-    core/IServer.cpp
-    core/redis/RedisServer.cpp
-    core/ServersManager.cpp
-    core/redis/RedisConfig.cpp
+    core/events/infos.cpp
+    core/command_logger.cpp
+    core/connection_types.cpp
+    core/settings_manager.cpp
+    core/connection_settings.cpp
+    core/logger.cpp
+    core/redis/redis_driver.cpp
+    core/idriver.cpp
+    core/iserver.cpp
+    core/redis/redis_server.cpp
+    core/servers_manager.cpp
+    core/redis/redis_config.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
-    shell/ShellWidget.h
-    shell/RedisShell.h
-    shell/RedisLexer.h
+    shell/shell_widget.h
+    shell/redis_shell.h
+    shell/redis_lexer.h
 )
 SET(HEADERS_SHELL
 )
 SET(SOURCES_SHELL
-    shell/ShellWidget.cpp
-    shell/RedisShell.cpp
-    shell/RedisLexer.cpp
+    shell/shell_widget.cpp
+    shell/redis_shell.cpp
+    shell/redis_lexer.cpp
 )
 
 IF(WIN32)
@@ -135,8 +135,8 @@ IF(WIN32)
     SET(PLATFORM_SRCS)
     SET(PLATFORM_LIBRARIES)
 ELSEIF(APPLE)
-    SET(PLATFORM_HDRS gui/utils/macutils.h)
-    SET(PLATFORM_SRCS gui/utils/macutils.mm)
+    SET(PLATFORM_HDRS gui/utils/mac_utils.h)
+    SET(PLATFORM_SRCS gui/utils/mac_utils.mm)
     FIND_LIBRARY(COCOA_LIBRARY Cocoa)
     SET(PLATFORM_LIBRARIES ${COCOA_LIBRARY})
 ELSEIF(UNIX)
@@ -188,10 +188,10 @@ ENDIF(GENERATE_TRANSLATIONS)
 INSTALL(FILES ${QM_FILES} DESTINATION translations COMPONENT TRANSLATIONS)
 
 SET(HEADERS_TRANSLATIONS
-    translations/Translations.h
+    translations/translations.h
 )
 SET(SOURCES_TRANSLATIONS
-    translations/Translations.cpp
+    translations/translations.cpp
 )
 SET(ALL_SOURCES ${ALL_SOURCES} ${HEADERS_TRANSLATIONS} ${SOURCES_TRANSLATIONS})
 
