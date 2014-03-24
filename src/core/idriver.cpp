@@ -24,12 +24,12 @@ struct WinsockInit {
 namespace fastoredis
 {
     IDriver::IDriver(const IConnectionSettingsBasePtr &settings)
-        : _settings(settings)
+        : settings_(settings)
     {
-        _thread = new QThread(this);
-        moveToThread(_thread);
-        VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
-        _thread->start();
+        thread_ = new QThread(this);
+        moveToThread(thread_);
+        VERIFY(connect( thread_, SIGNAL(started()), this, SLOT(init()) ));
+        thread_->start();
     }
 
     void IDriver::customEvent(QEvent *event)
@@ -71,14 +71,19 @@ namespace fastoredis
         return QObject::customEvent(event);
     }
 
-    void IDriver::reply(QObject *reciver, QEvent *ev)
+    void IDriver::reply(QObject *reciver, QEvent *ev, bool silent)
     {
-        qApp->postEvent(reciver, ev);
+        if(silent){
+            delete ev;
+        }
+        else{
+            qApp->postEvent(reciver, ev);
+        }
     }
 
-    void IDriver::notifyProgress(QObject *reciver, int value)
+    void IDriver::notifyProgress(QObject *reciver, int value, bool silent)
     {
-         reply(reciver, new Events::ProgressResponceEvent(this, Events::ProgressResponceEvent::value_type(value)));
+        reply(reciver, new Events::ProgressResponceEvent(this, Events::ProgressResponceEvent::value_type(value)), silent);
     }
 
     void IDriver::init()
@@ -88,18 +93,18 @@ namespace fastoredis
 
     connectionTypes IDriver::connectionType() const
     {
-        return _settings->connectionType();
+        return settings_->connectionType();
     }
 
     const IConnectionSettingsBasePtr &IDriver::settings() const
     {
-        return _settings;
+        return settings_;
     }
 
     IDriver::~IDriver()
     {        
-        _thread->quit();
-        if (!_thread->wait(2000))
-            _thread->terminate();
+        thread_->quit();
+        if (!thread_->wait(2000))
+            thread_->terminate();
     }
 }

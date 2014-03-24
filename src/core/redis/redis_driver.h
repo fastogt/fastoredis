@@ -23,20 +23,21 @@ namespace fastoredis
         static const QStringList &commandsKeywords();
 
     protected:
-        void customEvent(QEvent *event);
+        virtual void customEvent(QEvent *event);
+        virtual void timerEvent(QTimerEvent * event);
         virtual void initImpl();
 
-        virtual void connectEvent(Events::ConnectRequestEvent *ev);
-        virtual void disconnectEvent(Events::DisconnectRequestEvent *ev);
-        virtual void executeEvent(Events::ExecuteRequestEvent *ev);
-        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev);
-        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev);
-        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent *ev);
-        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev);
-        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev);
+        virtual void connectEvent(Events::ConnectRequestEvent *ev, bool silent = false);
+        virtual void disconnectEvent(Events::DisconnectRequestEvent *ev, bool silent = false);
+        virtual void executeEvent(Events::ExecuteRequestEvent *ev, bool silent = false);
+        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev, bool silent = false);
+        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev, bool silent = false);
+        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent *ev, bool silent = false);
+        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev, bool silent = false);
+        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev, bool silent = false);
 
     private:
         struct pimpl;
-        boost::scoped_ptr<pimpl> _impl;
+        boost::scoped_ptr<pimpl> impl_;
     };
 }

@@ -468,7 +468,7 @@ namespace fastoredis
     struct RedisDriver::pimpl
 
     {
-        pimpl(): _interrupt(false), context(NULL)
+        pimpl(): interrupt_(false), context(NULL), timer_info_id_(-1)
         {
 
         }
@@ -480,9 +480,10 @@ namespace fastoredis
                 context = NULL;
             }
         }
-        volatile bool _interrupt;
+        volatile bool interrupt_;
         redisContext *context;
         redisConfig config;
+        int timer_info_id_;
 
         int cliAuth(common::ErrorValue& er) {
             redisReply *reply;
@@ -863,8 +864,9 @@ namespace fastoredis
     };
 
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
-        :IDriver(settings), _impl(new pimpl)
+        :IDriver(settings), impl_(new pimpl)
     {
+        impl_->timer_info_id_ = startTimer(1000);
     }
 
     const QStringList &RedisDriver::allCommands()
@@ -884,18 +886,26 @@ namespace fastoredis
 
     std::string RedisDriver::address() const
     {
-        return _impl->currentaddress();
+        return impl_->currentaddress();
     }
 
     bool RedisDriver::isConnected() const
     {
-        return _impl->context;
+        return impl_->context;
     }
 
     void RedisDriver::customEvent(QEvent *event)
     {
         IDriver::customEvent(event);
-        _impl->_interrupt = false;
+        impl_->interrupt_ = false;
+    }
+
+    void RedisDriver::timerEvent(QTimerEvent * event)
+    {
+        if(impl_->timer_info_id_ == event->timerId()){
+            Events::ServerInfoRequestEvent* ev;
+            loadServerInfoEvent(ev,true);
+        }
     }
 
     void RedisDriver::initImpl()
@@ -905,56 +915,55 @@ namespace fastoredis
 
     RedisDriver::~RedisDriver()
     {
-
+        killTimer(impl_->timer_info_id_);
+        impl_->timer_info_id_ = -1;
     }
 
-    void RedisDriver::connectEvent(Events::ConnectRequestEvent *ev)
+    void RedisDriver::connectEvent(Events::ConnectRequestEvent *ev, bool silent)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0);
+        notifyProgress(sender, 0, silent);
             Events::ConnectResponceEvent::value_type res(ev->value());
-            RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(_settings.get());
+            RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(settings_.get());
             if(set){
-                _impl->config = set->info();
-                std::string outmac;
-                bool ress = common::utils::net::get_mac_address_host(_impl->config.hostip, outmac);
+                impl_->config = set->info();
                 common::ErrorValue er;
-        notifyProgress(sender, 25);
-                    if(_impl->_interrupt){
+        notifyProgress(sender, 25, silent);
+                    if(impl_->interrupt_){
                         res.setErrorInfo(common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
                     }
-                    else if(_impl->cliConnect(0, er) == REDIS_ERR){
+                    else if(impl_->cliConnect(0, er) == REDIS_ERR){
                         res.setErrorInfo(er);
                     }
-        notifyProgress(sender, 75);
-                _impl->cliRefreshPrompt();
+        notifyProgress(sender, 75, silent);
+                impl_->cliRefreshPrompt();
             }
-            reply(sender, new Events::ConnectResponceEvent(this, res));
-        notifyProgress(sender, 100);
+            reply(sender, new Events::ConnectResponceEvent(this, res), silent);
+        notifyProgress(sender, 100, silent);
     }
 
-    void RedisDriver::executeEvent(Events::ExecuteRequestEvent *ev)
+    void RedisDriver::executeEvent(Events::ExecuteRequestEvent *ev, bool silent)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0);        
+        notifyProgress(sender, 0, silent);
             Events::ExecuteResponceEvent::value_type res(ev->value());
             const char *inputLine = toCString(res._text);
 
             common::ErrorValue er;
             if(inputLine){
-                _impl->cliRefreshPrompt();
+                impl_->cliRefreshPrompt();
 
                 size_t length = strlen(inputLine);
                 int offset = 0;
                 res._out = FastoObject::createRoot(inputLine);
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
-                    if(_impl->_interrupt){
+                    if(impl_->interrupt_){
                         res.setErrorInfo(common::ErrorValue("Interrupted exec.", common::ErrorValue::E_INTERRUPTED));
                         break;
                     }
                     if(inputLine[n] == '\n' || n == length-1){
-        notifyProgress(sender, step*n);
+        notifyProgress(sender, step*n, silent);
                         char command[128] = {0};
                         if(n == length-1){
                             strcpy(command, inputLine + offset);
@@ -967,40 +976,40 @@ namespace fastoredis
                         FastoObjectPtr child = new FastoObject(res._out, val);
                         res._out->addChildren(child);
                         LOG_COMMAND(Command(command,Command::UserCommand));
-                        _impl->repl_impl(child, er);                        
+                        impl_->repl_impl(child, er);
                     }
                 }
             }
             else{
                 res.setErrorInfo(common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
             }            
-            reply(sender, new Events::ExecuteResponceEvent(this, res));
-        notifyProgress(sender, 100);
+            reply(sender, new Events::ExecuteResponceEvent(this, res), silent);
+        notifyProgress(sender, 100, silent);
     }
 
-    void RedisDriver::disconnectEvent(Events::DisconnectRequestEvent *ev)
+    void RedisDriver::disconnectEvent(Events::DisconnectRequestEvent *ev, bool silent)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0);
+        notifyProgress(sender, 0, silent);
             Events::DisconnectResponceEvent::value_type res(ev->value());
-            redisFree(_impl->context);
-        notifyProgress(sender, 50);
-            _impl->context = NULL;
-            reply(sender, new Events::DisconnectResponceEvent(this, res));
-        notifyProgress(sender, 100);
+            redisFree(impl_->context);
+        notifyProgress(sender, 50, silent);
+            impl_->context = NULL;
+            reply(sender, new Events::DisconnectResponceEvent(this, res), silent);
+        notifyProgress(sender, 100, silent);
     }
 
-    void RedisDriver::loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev)
+    void RedisDriver::loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev, bool silent)
     {
         static const char* loadDabasesString = "CONFIG GET databases";
             QObject *sender = ev->sender();
-        notifyProgress(sender, 0);
+        notifyProgress(sender, 0, silent);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
             FastoObjectPtr root = FastoObject::createRoot(loadDabasesString);
             common::ErrorValue er;
-        notifyProgress(sender, 50);
+        notifyProgress(sender, 50, silent);
             LOG_COMMAND(Command(loadDabasesString));
-            _impl->repl_impl(root, er);
+            impl_->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
             }else{
@@ -1010,86 +1019,86 @@ namespace fastoredis
                     res.databases_.push_back(dbInf);
                 }
             }
-        notifyProgress(sender, 75);
-            reply(sender, new Events::LoadDatabasesInfoResponceEvent(this, res));
-        notifyProgress(sender, 100);
+        notifyProgress(sender, 75, silent);
+            reply(sender, new Events::LoadDatabasesInfoResponceEvent(this, res), silent);
+        notifyProgress(sender, 100, silent);
     }
 
-    void RedisDriver::loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev)
+    void RedisDriver::loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev, bool silent)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0);
+        notifyProgress(sender, 0, silent);
             Events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
-        notifyProgress(sender, 50);
-            reply(sender, new Events::LoadDatabaseContentResponceEvent(this, res));
-        notifyProgress(sender, 100);
+        notifyProgress(sender, 50, silent);
+            reply(sender, new Events::LoadDatabaseContentResponceEvent(this, res), silent);
+        notifyProgress(sender, 100, silent);
     }
 
-    void RedisDriver::loadServerInfoEvent(Events::ServerInfoRequestEvent *ev)
+    void RedisDriver::loadServerInfoEvent(Events::ServerInfoRequestEvent *ev, bool silent)
     {
         static const char* infoString = "INFO";
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0);
+        notifyProgress(sender, 0, silent);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
             FastoObjectPtr root = FastoObject::createRoot(infoString);
             common::ErrorValue er;
-        notifyProgress(sender, 50);
+        notifyProgress(sender, 50, silent);
             LOG_COMMAND(Command(infoString));
-            _impl->repl_impl(root, er);
+            impl_->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
             }else{
                 res.info_ = makeServerInfo(root);
             }
-        notifyProgress(sender, 75);
-            reply(sender, new Events::ServerInfoResponceEvent(this, res));
-        notifyProgress(sender, 100);
+        notifyProgress(sender, 75, silent);
+            reply(sender, new Events::ServerInfoResponceEvent(this, res), silent);
+        notifyProgress(sender, 100, silent);
     }
 
-    void RedisDriver::loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev)
+    void RedisDriver::loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev, bool silent)
     {
         static const char* propetyString = "CONFIG GET *";
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0);
+        notifyProgress(sender, 0, silent);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
             FastoObjectPtr root = FastoObject::createRoot(propetyString);
             common::ErrorValue er;
-        notifyProgress(sender, 50);
+        notifyProgress(sender, 50, silent);
             LOG_COMMAND(Command(propetyString));
-            _impl->repl_impl(root, er);
+            impl_->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
             }else{
                 res.info_ = makeServerProperty(root);
             }
-        notifyProgress(sender, 75);
-            reply(sender, new Events::ServerPropertyInfoResponceEvent(this, res));
-        notifyProgress(sender, 100);
+        notifyProgress(sender, 75, silent);
+            reply(sender, new Events::ServerPropertyInfoResponceEvent(this, res), silent);
+        notifyProgress(sender, 100, silent);
     }
 
-    void RedisDriver::serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev)
+    void RedisDriver::serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev, bool silent)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0);
+        notifyProgress(sender, 0, silent);
         Events::ChangeServerPropertyInfoResponceEvent::value_type res(ev->value());
             common::ErrorValue er;
-        notifyProgress(sender, 50);
+        notifyProgress(sender, 50, silent);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         FastoObjectPtr root = FastoObject::createRoot(changeRequest);
             LOG_COMMAND(Command(changeRequest));
-            _impl->repl_impl(root, er);
+            impl_->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
             }else{
                 res.isChange_ = true;
             }
-        notifyProgress(sender, 75);
-            reply(sender, new Events::ChangeServerPropertyInfoResponceEvent(this, res));
-        notifyProgress(sender, 100);
+        notifyProgress(sender, 75, silent);
+            reply(sender, new Events::ChangeServerPropertyInfoResponceEvent(this, res), silent);
+        notifyProgress(sender, 100, silent);
     }
 
     void RedisDriver::interrupt()
     {
-        _impl->_interrupt = true;
+        impl_->interrupt_ = true;
     }
 }
