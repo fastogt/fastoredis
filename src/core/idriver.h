@@ -16,7 +16,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        static void reply(QObject *reciver, QEvent *ev, bool silent);
+        static void reply(QObject *reciver, QEvent *ev);
 
         connectionTypes connectionType() const;
         const IConnectionSettingsBasePtr &settings() const;
@@ -32,19 +32,19 @@ namespace fastoredis
 
     protected:
         IDriver(const IConnectionSettingsBasePtr &settings);
-        void notifyProgress(QObject *reciver, int value, bool silent);
+        void notifyProgress(QObject *reciver, int value);
 
         virtual void customEvent(QEvent *event);
         virtual void initImpl() = 0;
 
-        virtual void connectEvent(Events::ConnectRequestEvent *ev, bool silent = false) = 0;
-        virtual void disconnectEvent(Events::DisconnectRequestEvent *ev, bool silent = false) = 0;
-        virtual void executeEvent(Events::ExecuteRequestEvent *ev, bool silent = false) = 0;
-        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev, bool silent = false) = 0;
-        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev, bool silent = false) = 0;
-        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent *ev, bool silent = false) = 0;
-        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev, bool silent = false) = 0;
-        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev, bool silent = false) = 0;
+        virtual void connectEvent(Events::ConnectRequestEvent *ev) = 0;
+        virtual void disconnectEvent(Events::DisconnectRequestEvent *ev) = 0;
+        virtual void executeEvent(Events::ExecuteRequestEvent *ev) = 0;
+        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev) = 0;
+        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev) = 0;
+        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent *ev) = 0;
+        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev) = 0;
+        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev) = 0;
 
     private:
         QThread *thread_;

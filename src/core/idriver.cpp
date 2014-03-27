@@ -71,19 +71,14 @@ namespace fastoredis
         return QObject::customEvent(event);
     }
 
-    void IDriver::reply(QObject *reciver, QEvent *ev, bool silent)
+    void IDriver::reply(QObject *reciver, QEvent *ev)
     {
-        if(silent){
-            delete ev;
-        }
-        else{
-            qApp->postEvent(reciver, ev);
-        }
+        qApp->postEvent(reciver, ev);
     }
 
-    void IDriver::notifyProgress(QObject *reciver, int value, bool silent)
+    void IDriver::notifyProgress(QObject *reciver, int value)
     {
-        reply(reciver, new Events::ProgressResponceEvent(this, Events::ProgressResponceEvent::value_type(value)), silent);
+        reply(reciver, new Events::ProgressResponceEvent(this, Events::ProgressResponceEvent::value_type(value)));
     }
 
     void IDriver::init()

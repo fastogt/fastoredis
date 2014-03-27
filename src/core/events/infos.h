@@ -21,6 +21,9 @@ namespace fastoredis
     {
         struct Server
         {
+            Server();
+            explicit Server(const std::string& server_text);
+
             std::string redis_version_;
             std::string redis_git_sha1_;
             std::string redis_git_dirty_;
@@ -39,6 +42,9 @@ namespace fastoredis
 
         struct Clients
         {
+            Clients();
+            explicit Clients(const std::string& client_text);
+
             unsigned connected_clients_;
             unsigned client_longest_output_list_;
             unsigned client_biggest_input_buf_;
@@ -47,6 +53,9 @@ namespace fastoredis
 
         struct Memory
         {
+            Memory();
+            explicit Memory(const std::string& memory_text);
+
             unsigned used_memory_;
             std::string used_memory_human_;
             unsigned used_memory_rss_;
@@ -59,6 +68,9 @@ namespace fastoredis
 
         struct Persistence
         {
+            Persistence();
+            explicit Persistence(const std::string& persistence_text);
+
             unsigned loading_;
             unsigned rdb_changes_since_last_save_;
             unsigned rdb_bgsave_in_progress_;
@@ -76,6 +88,9 @@ namespace fastoredis
 
         struct Stats
         {
+            Stats();
+            explicit Stats(const std::string& stats_text);
+
             unsigned total_connections_received_;
             unsigned total_commands_processed_;
             unsigned instantaneous_ops_per_sec_;
@@ -91,12 +106,18 @@ namespace fastoredis
 
         struct Replication
         {
+            Replication();
+            explicit Replication(const std::string& replication_text);
+
             std::string role_;
             unsigned connected_slaves_;
         } replication_;
 
         struct Cpu
         {
+            Cpu();
+            explicit Cpu(const std::string& cpu_text);
+
             float used_cpu_sys_;
             float used_cpu_user_;
             float used_cpu_sys_children_;

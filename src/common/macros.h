@@ -5,11 +5,14 @@
 #include "common/common_config.h"
 #include <cassert>
 #include <sys/types.h>
+
 #define VERIFY(x) assert(x)
 #ifdef NDEBUG
 #define DCHECK(x)
+#define DCHECK_MSG(x, text)
 #else
 #define DCHECK(x) assert(x)
+#define DCHECK_MSG(x, text) assert(x && text)
 #endif
 #ifdef UNICODE
 #define UTEXT(quote) L##quote

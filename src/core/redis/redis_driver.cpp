@@ -2,7 +2,6 @@
 
 #include <hiredis/hiredis.h>
 #include <errno.h>
-#include <boost/lexical_cast.hpp>
 
 extern "C" {
 #include <anet.h>
@@ -22,6 +21,7 @@ extern "C" {
 #define OUTPUT_STANDARD 0
 #define OUTPUT_RAW 1
 #define OUTPUT_CSV 2
+#define INFO_REQUEST "INFO"
 
 namespace
 {
@@ -111,287 +111,6 @@ namespace
         return list;
     }
 
-    fastoredis::ServerInfo::Server makeServer(const std::string &serverText)
-    {
-        fastoredis::ServerInfo::Server ser;
-        const std::string &src = serverText;
-        size_t pos = 0;
-        size_t start = 0;
-        while((pos = src.find("\r\n", start)) != std::string::npos){
-            std::string line = src.substr(start, pos-start);
-            size_t delem = line.find_first_of(':');
-            std::string field = line.substr(0, delem);
-            std::string value = line.substr(delem + 1);
-            if(field == "redis_version"){
-                ser.redis_version_ = value;
-            }
-            else if(field == "redis_git_sha1"){
-                ser.redis_git_sha1_ = value;
-            }
-            else if(field == "redis_git_dirty"){
-                ser.redis_git_dirty_ = value;
-            }
-            else if(field == "redis_mode"){
-                ser.redis_mode_ = value;
-            }
-            else if(field == "os"){
-                ser.os_ = value;
-            }
-            else if(field == "arch_bits"){
-                ser.arch_bits_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "multiplexing_api"){
-                ser.multiplexing_api_ = value;
-            }
-            else if(field == "gcc_version"){
-                ser.gcc_version_ = value;
-            }
-            else if(field == "process_id"){
-                ser.process_id_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "run_id"){
-                ser.run_id_ = value;
-            }
-            else if(field == "tcp_port"){
-                ser.tcp_port_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "uptime_in_seconds"){
-                ser.uptime_in_seconds_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "uptime_in_days"){
-                ser.uptime_in_days_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "lru_clock"){
-                ser.lru_clock_ = boost::lexical_cast<unsigned>(value);
-            }
-            start = pos + 2;
-        }
-        return ser;
-    }
-
-    fastoredis::ServerInfo::Clients makeClients(const std::string &clientsText)
-    {
-        fastoredis::ServerInfo::Clients clients;
-        const std::string &src = clientsText;
-        size_t pos = 0;
-        size_t start = 0;
-        while((pos = src.find("\r\n", start)) != std::string::npos){
-            std::string line = src.substr(start, pos-start);
-            size_t delem = line.find_first_of(':');
-            std::string field = line.substr(0, delem);
-            std::string value = line.substr(delem + 1);
-            if(field == "connected_clients"){
-                clients.connected_clients_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "client_longest_output_list"){
-                clients.client_longest_output_list_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "client_biggest_input_buf"){
-                clients.client_biggest_input_buf_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "blocked_clients"){
-                clients.blocked_clients_ = boost::lexical_cast<unsigned>(value);
-            }
-            start = pos + 2;
-        }
-        return clients;
-    }
-
-    fastoredis::ServerInfo::Memory  makeMemory(const std::string &memoryText)
-    {
-        fastoredis::ServerInfo::Memory memory;
-        const std::string &src = memoryText;
-        size_t pos = 0;
-        size_t start = 0;
-        while((pos = src.find("\r\n", start)) != std::string::npos){
-            std::string line = src.substr(start, pos-start);
-            size_t delem = line.find_first_of(':');
-            std::string field = line.substr(0, delem);
-            std::string value = line.substr(delem + 1);
-            if(field == "used_memory"){
-                memory.used_memory_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "used_memory_human"){
-                memory.used_memory_human_ = value;
-            }
-            else if(field == "used_memory_rss"){
-                memory.used_memory_rss_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "used_memory_peak"){
-                memory.used_memory_peak_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "used_memory_peak_human"){
-                memory.used_memory_peak_human_ = value;
-            }
-            else if(field == "used_memory_lua"){
-                memory.used_memory_lua_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "mem_fragmentation_ratio"){
-                memory.mem_fragmentation_ratio_ = boost::lexical_cast<float>(value);
-            }
-            else if(field == "mem_allocator"){
-                memory.mem_allocator_ = value;
-            }
-            start = pos + 2;
-        }
-        return memory;
-    }
-
-    fastoredis::ServerInfo::Persistence makePersistence(const std::string &persistenceText)
-    {
-        fastoredis::ServerInfo::Persistence persistence;
-        const std::string &src = persistenceText;
-        size_t pos = 0;
-        size_t start = 0;
-        while((pos = src.find("\r\n", start)) != std::string::npos){
-            std::string line = src.substr(start, pos-start);
-            size_t delem = line.find_first_of(':');
-            std::string field = line.substr(0, delem);
-            std::string value = line.substr(delem + 1);
-            if(field == "loading"){
-                persistence.loading_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "rdb_changes_since_last_save"){
-                persistence.rdb_changes_since_last_save_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "rdb_bgsave_in_progress"){
-                persistence.rdb_bgsave_in_progress_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "rdb_last_save_time"){
-                persistence.rdb_last_save_time_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "rdb_last_bgsave_status"){
-                persistence.rdb_last_bgsave_status_ = value;
-            }
-            else if(field == "rdb_last_bgsave_time_sec"){
-                persistence.rdb_last_bgsave_time_sec_ = boost::lexical_cast<int>(value);
-            }
-            else if(field == "rdb_current_bgsave_time_sec"){
-                persistence.rdb_current_bgsave_time_sec_ = boost::lexical_cast<int>(value);
-            }
-            else if(field == "aof_enabled"){
-                persistence.aof_enabled_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "aof_rewrite_in_progress"){
-                persistence.aof_rewrite_in_progress_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "aof_rewrite_scheduled"){
-                persistence.aof_rewrite_scheduled_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "aof_last_rewrite_time_sec"){
-                persistence.aof_last_rewrite_time_sec_ = boost::lexical_cast<int>(value);
-            }
-            else if(field == "aof_current_rewrite_time_sec"){
-                persistence.aof_current_rewrite_time_sec_ = boost::lexical_cast<int>(value);
-            }
-            else if(field == "aof_last_bgrewrite_status"){
-                persistence.aof_last_bgrewrite_status_ = value;
-            }
-            start = pos + 2;
-        }
-        return persistence;
-    }
-
-    fastoredis::ServerInfo::Stats  makeStats(const std::string &clientsText)
-    {
-        fastoredis::ServerInfo::Stats stats;
-        const std::string &src = clientsText;
-        size_t pos = 0;
-        size_t start = 0;
-        while((pos = src.find("\r\n", start)) != std::string::npos){
-            std::string line = src.substr(start, pos-start);
-            size_t delem = line.find_first_of(':');
-            std::string field = line.substr(0, delem);
-            std::string value = line.substr(delem + 1);
-            if(field == "total_connections_received"){
-                stats.total_connections_received_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "total_commands_processed"){
-                stats.total_commands_processed_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "instantaneous_ops_per_sec"){
-                stats.instantaneous_ops_per_sec_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "rejected_connections"){
-                stats.rejected_connections_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "expired_keys"){
-                stats.expired_keys_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "evicted_keys"){
-                stats.evicted_keys_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "keyspace_hits"){
-                stats.keyspace_hits_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "keyspace_misses"){
-                stats.keyspace_misses_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "pubsub_channels"){
-                stats.pubsub_channels_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "pubsub_patterns"){
-                stats.pubsub_patterns_ = boost::lexical_cast<unsigned>(value);
-            }
-            else if(field == "latest_fork_usec"){
-                stats.latest_fork_usec_ = boost::lexical_cast<unsigned>(value);
-            }
-            start = pos + 2;
-        }
-        return stats;
-    }
-
-    fastoredis::ServerInfo::Replication  makeReplication(const std::string &replicationText)
-    {
-        fastoredis::ServerInfo::Replication repl;
-        const std::string &src = replicationText;
-        size_t pos = 0;
-        size_t start = 0;
-
-        while((pos = src.find("\r\n", start)) != std::string::npos){
-            std::string line = src.substr(start, pos-start);
-            size_t delem = line.find_first_of(':');
-            std::string field = line.substr(0, delem);
-            std::string value = line.substr(delem + 1);
-            if(field == "role"){
-                repl.role_ = value;
-            }
-            else if(field == "connected_slaves"){
-                repl.connected_slaves_ = boost::lexical_cast<unsigned>(value);
-            }
-            start = pos + 2;
-        }
-        return repl;
-    }
-
-    fastoredis::ServerInfo::Cpu  makeCpu(const std::string &cpuText)
-    {
-        fastoredis::ServerInfo::Cpu cpu;
-        const std::string &src = cpuText;
-        size_t pos = 0;
-        size_t start = 0;
-        while((pos = src.find("\r\n", start)) != std::string::npos){
-            std::string line = src.substr(start, pos-start);
-            size_t delem = line.find_first_of(':');
-            std::string field = line.substr(0, delem);
-            std::string value = line.substr(delem + 1);
-            if(field == "used_cpu_sys"){
-                cpu.used_cpu_sys_ = boost::lexical_cast<float>(value);
-            }
-            else if(field == "used_cpu_user"){
-                cpu.used_cpu_user_ = boost::lexical_cast<float>(value);
-            }
-            else if(field == "used_cpu_sys_children"){
-                cpu.used_cpu_sys_children_ = boost::lexical_cast<float>(value);
-            }
-            else if(field == "used_cpu_user_children"){
-                cpu.used_cpu_user_children_ = boost::lexical_cast<float>(value);
-            }
-            start = pos + 2;
-        }
-        return cpu;
-    }
-
     fastoredis::ServerInfo makeServerInfo(const fastoredis::FastoObjectPtr &root)
     {
         static const std::string headers[8] = {"# Server", "# Clients", "# Memory", "# Persistence", "# Stats", "# Replication", "# CPU", "# Keyspace"};
@@ -418,22 +137,25 @@ namespace
                     switch(j)
                     {
                     case 0:
-                        result.server_ = makeServer(part);
+                        result.server_ = fastoredis::ServerInfo::Server(part);
                         break;
                     case 1:
-                        result.clients_ = makeClients(part);
+                        result.clients_ = fastoredis::ServerInfo::Clients(part);
                         break;
                     case 2:
-                        result.memory_ = makeMemory(part);
+                        result.memory_ = fastoredis::ServerInfo::Memory(part);
                         break;
                     case 3:
-                        result.stats_ = makeStats(part);
+                        result.persistence_ = fastoredis::ServerInfo::Persistence(part);
                         break;
                     case 4:
-                        result.replication_ = makeReplication(part);
+                        result.stats_ = fastoredis::ServerInfo::Stats(part);
                         break;
                     case 5:
-                        result.cpu_ = makeCpu(part);
+                        result.replication_ = fastoredis::ServerInfo::Replication(part);
+                        break;
+                    case 6:
+                        result.cpu_ = fastoredis::ServerInfo::Cpu(part);
                         break;
                     default:
                         break;
@@ -468,7 +190,7 @@ namespace fastoredis
     struct RedisDriver::pimpl
 
     {
-        pimpl(): interrupt_(false), context(NULL), timer_info_id_(-1)
+        pimpl(): interrupt_(false), context(NULL), timer_info_id_(0)
         {
 
         }
@@ -864,9 +586,9 @@ namespace fastoredis
     };
 
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
-        :IDriver(settings), impl_(new pimpl)
+        : IDriver(settings), impl_(new pimpl)
     {
-        impl_->timer_info_id_ = startTimer(1000);
+
     }
 
     const QStringList &RedisDriver::allCommands()
@@ -902,50 +624,59 @@ namespace fastoredis
 
     void RedisDriver::timerEvent(QTimerEvent * event)
     {
-        if(impl_->timer_info_id_ == event->timerId()){
-            Events::ServerInfoRequestEvent* ev;
-            loadServerInfoEvent(ev,true);
+        if(impl_->timer_info_id_ == event->timerId() && isConnected()){            
+            Events::ServerInfoRequestEvent::value_type req;
+            Events::ServerInfoResponceEvent::value_type res(req);
+            FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
+            common::ErrorValue er;
+            impl_->repl_impl(root, er);
+            if(er.isError()){
+                res.setErrorInfo(er);
+            }else{
+                res.info_ = makeServerInfo(root);
+            }
         }
     }
 
     void RedisDriver::initImpl()
     {
-
+        impl_->timer_info_id_ = startTimer(1000);
+        DCHECK(impl_->timer_info_id_);
     }
 
     RedisDriver::~RedisDriver()
     {
         killTimer(impl_->timer_info_id_);
-        impl_->timer_info_id_ = -1;
+        impl_->timer_info_id_ = 0;
     }
 
-    void RedisDriver::connectEvent(Events::ConnectRequestEvent *ev, bool silent)
+    void RedisDriver::connectEvent(Events::ConnectRequestEvent *ev)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0, silent);
+        notifyProgress(sender, 0);
             Events::ConnectResponceEvent::value_type res(ev->value());
             RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(settings_.get());
             if(set){
                 impl_->config = set->info();
                 common::ErrorValue er;
-        notifyProgress(sender, 25, silent);
+        notifyProgress(sender, 25);
                     if(impl_->interrupt_){
                         res.setErrorInfo(common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
                     }
                     else if(impl_->cliConnect(0, er) == REDIS_ERR){
                         res.setErrorInfo(er);
                     }
-        notifyProgress(sender, 75, silent);
+        notifyProgress(sender, 75);
                 impl_->cliRefreshPrompt();
             }
-            reply(sender, new Events::ConnectResponceEvent(this, res), silent);
-        notifyProgress(sender, 100, silent);
+            reply(sender, new Events::ConnectResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
-    void RedisDriver::executeEvent(Events::ExecuteRequestEvent *ev, bool silent)
+    void RedisDriver::executeEvent(Events::ExecuteRequestEvent *ev)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0, silent);
+        notifyProgress(sender, 0);
             Events::ExecuteResponceEvent::value_type res(ev->value());
             const char *inputLine = toCString(res._text);
 
@@ -963,7 +694,7 @@ namespace fastoredis
                         break;
                     }
                     if(inputLine[n] == '\n' || n == length-1){
-        notifyProgress(sender, step*n, silent);
+        notifyProgress(sender, step*n);
                         char command[128] = {0};
                         if(n == length-1){
                             strcpy(command, inputLine + offset);
@@ -983,31 +714,31 @@ namespace fastoredis
             else{
                 res.setErrorInfo(common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
             }            
-            reply(sender, new Events::ExecuteResponceEvent(this, res), silent);
-        notifyProgress(sender, 100, silent);
+            reply(sender, new Events::ExecuteResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
-    void RedisDriver::disconnectEvent(Events::DisconnectRequestEvent *ev, bool silent)
+    void RedisDriver::disconnectEvent(Events::DisconnectRequestEvent *ev)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0, silent);
+        notifyProgress(sender, 0);
             Events::DisconnectResponceEvent::value_type res(ev->value());
             redisFree(impl_->context);
-        notifyProgress(sender, 50, silent);
+        notifyProgress(sender, 50);
             impl_->context = NULL;
-            reply(sender, new Events::DisconnectResponceEvent(this, res), silent);
-        notifyProgress(sender, 100, silent);
+            reply(sender, new Events::DisconnectResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev, bool silent)
+    void RedisDriver::loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev)
     {
         static const char* loadDabasesString = "CONFIG GET databases";
             QObject *sender = ev->sender();
-        notifyProgress(sender, 0, silent);
+        notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
             FastoObjectPtr root = FastoObject::createRoot(loadDabasesString);
             common::ErrorValue er;
-        notifyProgress(sender, 50, silent);
+        notifyProgress(sender, 50);
             LOG_COMMAND(Command(loadDabasesString));
             impl_->repl_impl(root, er);
             if(er.isError()){
@@ -1019,51 +750,50 @@ namespace fastoredis
                     res.databases_.push_back(dbInf);
                 }
             }
-        notifyProgress(sender, 75, silent);
-            reply(sender, new Events::LoadDatabasesInfoResponceEvent(this, res), silent);
-        notifyProgress(sender, 100, silent);
+        notifyProgress(sender, 75);
+            reply(sender, new Events::LoadDatabasesInfoResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev, bool silent)
+    void RedisDriver::loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0, silent);
+        notifyProgress(sender, 0);
             Events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
-        notifyProgress(sender, 50, silent);
-            reply(sender, new Events::LoadDatabaseContentResponceEvent(this, res), silent);
-        notifyProgress(sender, 100, silent);
+        notifyProgress(sender, 50);
+            reply(sender, new Events::LoadDatabaseContentResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadServerInfoEvent(Events::ServerInfoRequestEvent *ev, bool silent)
+    void RedisDriver::loadServerInfoEvent(Events::ServerInfoRequestEvent *ev)
     {
-        static const char* infoString = "INFO";
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0, silent);
+        notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(infoString);
+            FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
             common::ErrorValue er;
-        notifyProgress(sender, 50, silent);
-            LOG_COMMAND(Command(infoString));
+        notifyProgress(sender, 50);
+            LOG_COMMAND(Command(INFO_REQUEST));
             impl_->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
             }else{
                 res.info_ = makeServerInfo(root);
             }
-        notifyProgress(sender, 75, silent);
-            reply(sender, new Events::ServerInfoResponceEvent(this, res), silent);
-        notifyProgress(sender, 100, silent);
+        notifyProgress(sender, 75);
+            reply(sender, new Events::ServerInfoResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev, bool silent)
+    void RedisDriver::loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev)
     {
         static const char* propetyString = "CONFIG GET *";
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0, silent);
+        notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
             FastoObjectPtr root = FastoObject::createRoot(propetyString);
             common::ErrorValue er;
-        notifyProgress(sender, 50, silent);
+        notifyProgress(sender, 50);
             LOG_COMMAND(Command(propetyString));
             impl_->repl_impl(root, er);
             if(er.isError()){
@@ -1071,18 +801,18 @@ namespace fastoredis
             }else{
                 res.info_ = makeServerProperty(root);
             }
-        notifyProgress(sender, 75, silent);
-            reply(sender, new Events::ServerPropertyInfoResponceEvent(this, res), silent);
-        notifyProgress(sender, 100, silent);
+        notifyProgress(sender, 75);
+            reply(sender, new Events::ServerPropertyInfoResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
-    void RedisDriver::serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev, bool silent)
+    void RedisDriver::serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev)
     {
         QObject *sender = ev->sender();
-        notifyProgress(sender, 0, silent);
+        notifyProgress(sender, 0);
         Events::ChangeServerPropertyInfoResponceEvent::value_type res(ev->value());
             common::ErrorValue er;
-        notifyProgress(sender, 50, silent);
+        notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         FastoObjectPtr root = FastoObject::createRoot(changeRequest);
             LOG_COMMAND(Command(changeRequest));
@@ -1092,9 +822,9 @@ namespace fastoredis
             }else{
                 res.isChange_ = true;
             }
-        notifyProgress(sender, 75, silent);
-            reply(sender, new Events::ChangeServerPropertyInfoResponceEvent(this, res), silent);
-        notifyProgress(sender, 100, silent);
+        notifyProgress(sender, 75);
+            reply(sender, new Events::ChangeServerPropertyInfoResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
     void RedisDriver::interrupt()
