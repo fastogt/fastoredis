@@ -1,6 +1,22 @@
 #include "common/utils.h"
-#ifdef OS_POSIX
+#ifdef OS_WIN
+#include <windows.h>
+#include <iphlpapi.h>
+#elif defined OS_POSIX
 #include <signal.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/if_ether.h>
+#include <netinet/in.h>
+#include <netinet/in_systm.h>
+#include <netinet/ip.h>
+
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <netdb.h>
+#endif
+
+#if defined OS_POSIX
 namespace common
 {
     namespace utils
@@ -47,4 +63,3 @@ namespace common
     }
 }
 #endif
-
