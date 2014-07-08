@@ -1,11 +1,13 @@
 #pragma once
 
+/**/
+
 #include <boost/shared_ptr.hpp>
 
 #include <QObject>
 
 #include "core/connection_settings.h"
-#include "core/events/events.hpp"
+#include "core/events/events.h"
 
 class QThread;
 

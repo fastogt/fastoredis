@@ -1,8 +1,11 @@
 #pragma once
 
+/**/
+
 #include <QWidget>
+
 #include "core/iserver.h"
-#include "core/events/events_info.hpp"
+#include "core/events/events_info.h"
 
 class QAction;
 class QProgressBar;
@@ -17,14 +20,14 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        ShellWidget(const IServerPtr &server, const QString &filePath = QString(), QWidget* parent = 0);
+        ShellWidget(const IServerPtr& server, const QString& filePath = QString(), QWidget* parent = 0);
 
         const IServerPtr &server() const;
         QString text() const;
 
     Q_SIGNALS:
-        void startedExecute(const EventsInfo::ExecuteInfoRequest &req);
-        void finishedExecute(const EventsInfo::ExecuteInfoResponce &res);
+        void startedExecute(const EventsInfo::ExecuteInfoRequest& req);
+        void finishedExecute(const EventsInfo::ExecuteInfoResponce& res);
 
     public Q_SLOTS:
         void setText(const QString& text);
@@ -35,16 +38,16 @@ namespace fastoredis
         void connectToServer();
         void disconnectFromServer();
         void loadFromFile();
-        bool loadFromFile(const QString &path);
+        bool loadFromFile(const QString& path);
         void saveToFileAs();
         void saveToFile();
 
-        void startConnect(const EventsInfo::ConnectInfoRequest &req);
-        void finishConnect(const EventsInfo::ConnectInfoResponce &res);
-        void startDisconnect(const EventsInfo::DisonnectInfoRequest &req);
-        void finishDisconnect(const EventsInfo::DisConnectInfoResponce &res);        
+        void startConnect(const EventsInfo::ConnectInfoRequest& req);
+        void finishConnect(const EventsInfo::ConnectInfoResponce& res);
+        void startDisconnect(const EventsInfo::DisonnectInfoRequest& req);
+        void finishDisconnect(const EventsInfo::DisConnectInfoResponce& res);
 
-        void progressChange(const EventsInfo::ProgressInfoResponce &res);
+        void progressChange(const EventsInfo::ProgressInfoResponce& res);
 
     private:
         void syncConnectionActions();

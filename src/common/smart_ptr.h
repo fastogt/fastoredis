@@ -1,14 +1,16 @@
 #pragma once
-#ifdef BOOST_SUPPORT_ENABLED
+
+#ifdef BOOST_ENABLED
 #include <boost/intrusive_ptr.hpp>
 #else
 #include <memory>
 #endif
+
 namespace common
 {
     namespace smart_ptr
     {
-#ifdef BOOST_SUPPORT_ENABLED
+#ifdef BOOST_ENABLED
         template<typename type>
         using shared_ptr = boost::intrusive_ptr<type>;
 #else

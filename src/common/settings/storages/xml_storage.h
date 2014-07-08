@@ -1,6 +1,9 @@
 #pragma once
 
-#include "mpl_string/string_template.h"
+/**/
+
+#include "common/settings/storages/mpl_string/string_template.h"
+
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/fusion/include/for_each.hpp>
 #include <istream>
@@ -33,6 +36,7 @@ namespace common
                 private:
                     const boost::property_tree::ptree& set_;
                 };
+
                 struct save_funct
                 {
                     save_funct(boost::property_tree::ptree& set):set_(set){}
@@ -84,12 +88,14 @@ namespace common
             bool xml_storage<init_vector>::load(fusion_t &fuc)
             {
                 using boost::property_tree::ptree;
+
                 std::string path = path_to_save();
                 const char *path_c = path.c_str();
                 std::ifstream input(path_c);
                 if(!input.is_open()){
                     input.open(path_c, std::ios_base::in | std::ios_base::out | std::ios_base::trunc);
                 }
+
                 if(input.is_open())
                 {
                     ptree pt;

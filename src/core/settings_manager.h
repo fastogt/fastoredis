@@ -1,7 +1,10 @@
 #pragma once
 
+/**/
+
 #include "global/global.h"
-#include "common/patterns/singleton_pattern.hpp"
+
+#include "common/patterns/singleton_pattern.h"
 
 #include "core/connection_settings.h"
 
@@ -22,10 +25,10 @@ namespace fastoredis
         supportedViews defaultView() const;
 
         std::string currentStyle() const;
-        void setCurrentStyle(const std::string &style) const;
+        void setCurrentStyle(const common::unicode_string& style) const;
 
         std::string currentLanguage() const;
-        void setCurrentLanguage(const std::string &lang) const;
+        void setCurrentLanguage(const common::unicode_string& lang) const;
 
         void addConnection(const IConnectionSettingsBasePtr &connection);
         void removeConnection(const IConnectionSettingsBasePtr &connection);

@@ -1,5 +1,7 @@
 #pragma once
 
+/**/
+
 #include <QAbstractProxyModel>
 
 namespace fastoredis

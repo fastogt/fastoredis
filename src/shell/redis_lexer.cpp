@@ -71,15 +71,18 @@ namespace fastoredis
 
     void RedisLexer::styleText(int start, int end)
     {
-        if(!editor())
+        if(!editor()){
             return;
+        }
 
         char *data = new char[end - start + 1];
         editor()->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, start, end, data);
         QString source(data);
         delete [] data;
-        if(source.isEmpty())
+
+        if(source.isEmpty()){
             return;
+        }
 
         paintCommands(source, start);
         paintTypes(source, start);

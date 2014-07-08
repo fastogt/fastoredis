@@ -1,14 +1,15 @@
 #pragma once
 
+/**/
+
 #include <QIcon>
 #include <QFont>
-#include <QMovie>
 
 #include "global/global.h"
 
 #include "core/connection_types.h"
 
-#include "common/patterns/singleton_pattern.hpp"
+#include "common/patterns/singleton_pattern.h"
 
 namespace fastoredis
 {

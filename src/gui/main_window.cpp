@@ -30,11 +30,11 @@ namespace fastoredis
     {
         using namespace common;
         unicode_string lang = SettingsManager::instance().currentLanguage();
-        QString newLang = fastoredis::translations::applyLanguage(utils_qt::toQString(lang));
-        SettingsManager::instance().setCurrentLanguage(common::utils_qt::toStdString(newLang));
+        QString newLang = fastoredis::translations::applyLanguage(convertfromString<QString>(lang));
+        SettingsManager::instance().setCurrentLanguage(convert2string(newLang));
 
         unicode_string style = SettingsManager::instance().currentStyle();
-        fastoredis::applyStyle(utils_qt::toQString(style));
+        fastoredis::applyStyle(convertfromString<QString>(style));
 
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiFactory::instance().mainWindowIcon());

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <QObject>
-#include <QString>
+/**/
 
-#include "common/patterns/singleton_pattern.hpp"
+#include <QObject>
+
+#include "common/patterns/singleton_pattern.h"
 #include "global/types.h"
 
 namespace fastoredis
@@ -15,6 +16,7 @@ namespace fastoredis
         Q_OBJECT
     public:
         void print(const Command &command);
+
     Q_SIGNALS:
         void printed(const Command &mess);
 

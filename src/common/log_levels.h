@@ -1,6 +1,8 @@
 #pragma once
 
-#include "common/macros.h"
+/**/
+
+#include "common/types.h"
 
 namespace common
 {
@@ -18,33 +20,7 @@ namespace common
 
         template<LEVEL_LOG L>
         struct traits_level;
-    #ifdef __GXX_EXPERIMENTAL_CXX0X__
-        template<>
-        struct traits_level<CRITICAL>
-        {
-            static constexpr const unicode_char *text =  UTEXT("Critical");
-        };
-        template<>
-        struct traits_level<ERROR_>
-        {
-            static constexpr const unicode_char *text = UTEXT("Error");
-        };
-        template<>
-        struct traits_level<WARNING>
-        {
-            static constexpr const unicode_char *text = UTEXT("Warning");
-        };
-        template<>
-        struct traits_level<INFO>
-        {
-            static constexpr const unicode_char *text = UTEXT("Info");
-        };
-        template<>
-        struct traits_level<DEBUG_>
-        {
-            static constexpr const unicode_char *text = UTEXT("Debug");
-        };
-    #else
+
         template<>
         struct traits_level<CRITICAL>
         {
@@ -53,6 +29,7 @@ namespace common
                 return UTEXT("Critical");
             }
         };
+
         template<>
         struct traits_level<ERROR>
         {
@@ -61,6 +38,7 @@ namespace common
                 return UTEXT("Error");
             }
         };
+
         template<>
         struct traits_level<WARNING>
         {
@@ -69,6 +47,7 @@ namespace common
                 return UTEXT("Warning");
             }
         };
+
         template<>
         struct traits_level<INFO>
         {
@@ -77,6 +56,7 @@ namespace common
                 return UTEXT("Info");
             }
         };
+
         template<>
         struct traits_level<DEBUG>
         {
@@ -85,7 +65,7 @@ namespace common
                 return UTEXT("Debug");
             }
         };
-    #endif
+
         inline const unicode_char *log_level_to_text(LEVEL_LOG lev)
         {
             switch(lev)
@@ -101,7 +81,7 @@ namespace common
             case DEBUG:
                 return traits_level<DEBUG>::text();
             default:
-                DCHECK(false);
+                NOTREACHED();
             }
         }
     }

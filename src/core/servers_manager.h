@@ -1,8 +1,9 @@
 #pragma once
 
-#include "common/patterns/singleton_pattern.hpp"
+#include "common/patterns/singleton_pattern.h"
+
 #include "core/iserver.h"
-#include "core/events/events_info.hpp"
+#include "core/events/events_info.h"
 
 namespace fastoredis
 {
@@ -15,12 +16,12 @@ namespace fastoredis
 
         IServerPtr createServer(const IConnectionSettingsBasePtr &settings);
         void closeServer(const IServerPtr &server);
-        void setSyncServers(bool isSync);
-
-        ~ServersManager();
+        void setSyncServers(bool isSync);        
 
     private:
         ServersManager();
+        ~ServersManager();
+
         void refreshSyncServers();
         IServerPtr findServerBySetting(const IConnectionSettingsBasePtr &settings) const;
         std::vector<QObject*> findAllListeners(const IDriverPtr &drv);

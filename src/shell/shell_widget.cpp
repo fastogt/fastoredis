@@ -20,12 +20,15 @@
 
 #include "shell/redis_shell.h"
 
+#include "core/logger.h"
+
 namespace
 {
     const QString filterForScripts = QObject::tr("JavaScript (*.js);; All Files (*.*)");
 
     bool loadFromFileText(const QString &filePath, QString &text, QWidget* parent)
     {
+        using namespace common;
         bool result = false;
         QFile file(filePath);
         if (file.open(QFile::ReadOnly | QFile::Text)) {
@@ -36,6 +39,11 @@ namespace
             result = true;
         }
         else {
+            unicode_char buff[256] = {0};
+            unicode_sprintf(buff, UTEXT(PROJECT_NAME" can't read from %1:\n%2."), convert2string(filePath).c_str(),
+                            convert2string(file.errorString()).c_str());
+            ErrorValue er(buff, Value::E_ERROR);
+            fastoredis::LOG_ERROR(er);
             QMessageBox::critical(parent, QString("Error"),
                 QObject::tr(PROJECT_NAME" can't read from %1:\n%2.")
                     .arg(filePath)

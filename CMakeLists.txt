@@ -10,8 +10,11 @@ SET(PROJECT_COMPANYNAME_DOMAIN "www.fasto.com" CACHE STRING "Internet domain nam
 SET(PROJECT_GITHUB_FORK "www.github.com/fasto/fastoredis" CACHE STRING "Git fork of ${PROJECT_NAME}")
 SET(PROJECT_GITHUB_ISSUES "www.github.com/fasto/fastoredis/issues" CACHE STRING "Git issue link for ${PROJECT_NAME}")
 ##########################################################
+
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERRCASE)
+SET(PROJECT_NAME_LIBRARY ${PROJECT_NAME_LOWERCASE})
+
 SET(MAJOR "0")
 SET(MINOR "1")
 SET(PATCH "0")
@@ -58,9 +61,9 @@ IF(MSVC)
         OPTION(BUILD_64X "Build 64bit project" OFF)
     ENDIF()
 ELSE()
-    IF("${OS_ARC}" STREQUAL "64")
+    IF("${OS_ARCH}" STREQUAL "64")
         OPTION(BUILD_64X "Build 64bit project" ON)
-    ELSEIF("${OS_ARC}" STREQUAL "32")
+    ELSEIF("${OS_ARCH}" STREQUAL "32")
         OPTION(BUILD_64X "Build 64bit project" OFF)
     ELSE()
         IF(CMAKE_SIZEOF_VOID_P MATCHES 8) 
@@ -70,6 +73,8 @@ ELSE()
         ENDIF(CMAKE_SIZEOF_VOID_P MATCHES 8)
     ENDIF()
 ENDIF()
+
+MESSAGE(STATUS "BUILD_64X: ${BUILD_64X}")
 
 IF(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     IF (NOT CMAKE_BUILD_TYPE)

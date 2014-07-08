@@ -4,7 +4,7 @@
 
 namespace
 {
-    const char *connnectionType[fastoredis::REDIS+1] = { "Unknown", "Redis" };
+    const common::unicode_char *connnectionType[fastoredis::REDIS+1] = { UTEXT("Unknown"), UTEXT("Redis") };
 }
 
 namespace fastoredis
@@ -13,19 +13,23 @@ namespace fastoredis
     {
         return common::utils::enums::convertToVector(connnectionType);
     }
+}
 
-    std::string toStdString(connectionTypes t)
+namespace common
+{
+
+    template<>
+    fastoredis::connectionTypes convertfromString(const unicode_string& text)
     {
-        std::string result;
-        int count = sizeof(connnectionType)/sizeof(*connnectionType);
-        if(t < count){
-            result = connnectionType[t];
-        }
-        return result;
+        return common::utils::enums::findTypeInArray<fastoredis::connectionTypes>(connnectionType, text.c_str());
     }
 
-    connectionTypes toConnectionType(const std::string &text)
+    unicode_string convert2string(fastoredis::connectionTypes t)
     {
-        return common::utils::enums::findTypeInArray<connectionTypes>(connnectionType,text.c_str());
+        int count = sizeof(connnectionType)/sizeof(*connnectionType);
+        if(t < count){
+            return connnectionType[t];
+        }
+        return unicode_string();
     }
 }

@@ -13,7 +13,7 @@ namespace
 
 namespace fastoredis
 {
-    IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName)
+    IConnectionSettingsBase::IConnectionSettingsBase(const common::unicode_string &connectionName)
         : connectionName_(connectionName)
     {
 
@@ -24,7 +24,7 @@ namespace fastoredis
         return badConnectionType();
     }
 
-    IConnectionSettingsBase *IConnectionSettingsBase::fromStdString(const std::string &val)
+    IConnectionSettingsBase *IConnectionSettingsBase::fromStdString(const common::unicode_string &val)
     {
         IConnectionSettingsBase *result = NULL;
         if(!val.empty()){
@@ -38,9 +38,9 @@ namespace fastoredis
                 for(size_t i = 2; i < len; ++i ){
                     char ch = val[i];
                     if(ch == ','){
-                        std::string name = val.substr(2,i-2);
+                        common::unicode_string name = val.substr(2,i-2);
                         result->setConnectionName(name);
-                        std::string line = val.substr(i+1);
+                        common::unicode_string line = val.substr(i+1);
                         result->initFromCommandLine(line);
                         break;
                     }
@@ -54,9 +54,9 @@ namespace fastoredis
         return result;
     }
 
-    std::string IConnectionSettingsBase::toString() const
+    common::unicode_string IConnectionSettingsBase::toString() const
     {
-        std::string res;
+        common::unicode_string res;
         connectionTypes crT = connectionType();
         if(crT != badConnectionType()){
             std::stringstream str;
@@ -71,28 +71,28 @@ namespace fastoredis
 
     }
 
-    void IConnectionSettingsBase::setConnectionName(const std::string &name)
+    void IConnectionSettingsBase::setConnectionName(const common::unicode_string &name)
     {
         connectionName_ = name;
     }
 
-    std::string IConnectionSettingsBase::connectionName() const
+    common::unicode_string IConnectionSettingsBase::connectionName() const
     {
         return connectionName_;
     }
 
-    RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName, const redisConfig &info)
+    RedisConnectionSettings::RedisConnectionSettings(const common::unicode_string &connectionName, const redisConfig &info)
         :IConnectionSettingsBase(connectionName), info_(info)
     {
 
     }
 
-    std::string RedisConnectionSettings::host() const
+    common::unicode_string RedisConnectionSettings::host() const
     {
         return info_.hostip;
     }
 
-    void RedisConnectionSettings::setHost(const std::string &host)
+    void RedisConnectionSettings::setHost(const common::unicode_string &host)
     {
         info_.hostip = host;
     }
@@ -107,31 +107,31 @@ namespace fastoredis
         info_.hostport = port;
     }
 
-    void RedisConnectionSettings::initFromCommandLine(const std::string &val)
+    void RedisConnectionSettings::initFromCommandLine(const common::unicode_string &val)
     {
-        info_ = rcFromStdString(val);
+        info_ = common::convertfromString<redisConfig>(val);
     }
 
-    std::string RedisConnectionSettings::toCommandLine() const
+    common::unicode_string RedisConnectionSettings::toCommandLine() const
     {
-        std::string result = toStdString(info_);
+        common::unicode_string result = common::convert2string(info_);
         return result;
     }
 
-    void RedisConnectionSettings::setCommandLine(const std::string &line)
+    void RedisConnectionSettings::setCommandLine(const common::unicode_string &line)
     {
-        info_ = rcFromStdString(line);
+        info_ = common::convertfromString<redisConfig>(line);
     }
 
-    std::string RedisConnectionSettings::commandLine() const
+    common::unicode_string RedisConnectionSettings::commandLine() const
     {
-        return toStdString(info_);
+        return common::convert2string(info_);
     }
 
-    std::string RedisConnectionSettings::fullAddress() const
+    common::unicode_string RedisConnectionSettings::fullAddress() const
     {
         common::net::hostAndPort h(host(), port());
-        return common::net::toStdString(h);
+        return common::convert2string(h);
     }
 
     redisConfig RedisConnectionSettings::info() const

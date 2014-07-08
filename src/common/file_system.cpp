@@ -1,104 +1,117 @@
 #include "common/file_system.h"
+
 #include <string.h>
 #include <sstream>
-#include "url.h"
+
+#include "common/url.h"
+#include "common/logger.h"
+
 #ifdef OS_POSIX
 #include <linux/limits.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
 namespace common
 {
     namespace file_system
     {
-        bool clear_file_by_descriptor(ssize_t fd_desc)
+        bool clear_file_by_descriptor(int fd_desc)
         {
             bool result = false;
-            if(fd_desc!=INVALID_DESCRIPTOR)
-            {
+            if(fd_desc != INVALID_DESCRIPTOR){
                 result = ftruncate(fd_desc,0)!=ERROR_RESULT_VALUE;
-                if(!result)
-                {
-                    unicode_perror("ftruncate");
+                if(!result){
+                    DEBUG_MSG_PERROR("ftruncate");
                 }
             }
+
             return result;
         }
-        bool get_flags_by_descriptor(ssize_t fd_desc,int &flags)
+
+        bool get_flags_by_descriptor(int fd_desc, int &flags)
+        {
+            bool result = false;
+            if(fd_desc != INVALID_DESCRIPTOR){
+                result = (flags=fcntl(fd_desc,F_GETFL)) != ERROR_RESULT_VALUE;
+                if(!result){
+                   DEBUG_MSG_PERROR("get_flags_by_descriptor");
+                }
+            }
+
+            return result;
+        }
+
+        bool set_flags_by_descriptor(int fd_desc, int flags)
+        {
+            bool result = false;
+            if(fd_desc != INVALID_DESCRIPTOR){
+                result = fcntl(fd_desc,F_SETFL,flags) != ERROR_RESULT_VALUE;
+                if(!result){
+                   DEBUG_MSG_PERROR("set_flags_by_descriptor");
+                }
+            }
+
+            return result;
+        }
+
+        bool create_node(const unicode_string &path, size_t permissions)
+        {
+            if(path.empty()){
+                return false;
+            }
+
+            bool result = mknod(path.c_str(), permissions,0) != ERROR_RESULT_VALUE;
+            if(!result){
+                DEBUG_MSG_PERROR("mknod");
+            }
+
+            return result;
+        }
+
+        bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags, mode_t mode)
+        {
+            if(path.empty()){
+                return false;
+            }
+
+            bool result = (fd_desc = open(path.c_str(), oflags, mode)) != ERROR_RESULT_VALUE;
+            if(!result){
+               DEBUG_MSG_PERROR("open_descriptor");
+            }
+
+            return result;
+        }
+
+        bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags)
+        {
+            if(path.empty()){
+                return false;
+            }
+
+            bool result = (fd_desc = open(path.c_str(), oflags)) != ERROR_RESULT_VALUE;
+            if(!result){
+               DEBUG_MSG_PERROR("open_descriptor");
+            }
+
+            return result;
+        }
+
+        bool close_descriptor(int fd_desc)
         {
             bool result = false;
             if(fd_desc!=INVALID_DESCRIPTOR)
             {
-                result = (flags=fcntl(fd_desc,F_GETFL))!=ERROR_RESULT_VALUE;
+                result = close(fd_desc) != ERROR_RESULT_VALUE;
                 if(!result)
                 {
-                   unicode_perror("get_flags_by_descriptor");
+                   DEBUG_MSG_PERROR("close");
                 }
             }
             return result;
         }
-        bool set_flags_by_descriptor(ssize_t fd_desc,int flags)
-        {
-            bool result = false;
-            if(fd_desc!=INVALID_DESCRIPTOR)
-            {
-                result = fcntl(fd_desc,F_SETFL,flags)!=ERROR_RESULT_VALUE;
-                if(!result)
-                {
-                   unicode_perror("set_flags_by_descriptor");
-                }
-            }
-            return result;
-        }
-        bool create_node(const unicode_char* path,size_t permissions)
-        {
-            bool result = mknod(path,permissions,0)!=ERROR_RESULT_VALUE;
-            if(!result)
-            {
-                unicode_perror("mknod");
-            }
-            return result;
-        }
-        bool open_descriptor(const unicode_char* path,ssize_t &fd_desc,int oflags,mode_t mode)
-        {
-            bool result = false;
-            if(path)
-            {
-                result = (fd_desc = open(path, oflags,mode)) !=ERROR_RESULT_VALUE;
-                if(!result)
-                {
-                   unicode_perror("open_descriptor");
-                }
-            }
-            return result;
-        }
-        bool open_descriptor(const unicode_char* path,ssize_t &fd_desc,int oflags)
-        {
-            bool result = false;
-            if(path)
-            {
-                result = (fd_desc = open(path, oflags)) !=ERROR_RESULT_VALUE;
-                if(!result)
-                {
-                   unicode_perror("open_descriptor");
-                }
-            }
-            return result;
-        }
-        bool close_descriptor(ssize_t fd_desc)
-        {
-            bool result = false;
-            if(fd_desc!=INVALID_DESCRIPTOR)
-            {
-                result = close(fd_desc)!=ERROR_RESULT_VALUE;
-                if(!result)
-                {
-                   unicode_perror("close");
-                }
-            }
-            return result;
-        }
-        bool set_nonblocked_descriptor(ssize_t fd_desc)
+
+        bool set_nonblocked_descriptor(int fd_desc)
         {
             bool result = false;
             if(fd_desc!=INVALID_DESCRIPTOR)
@@ -112,14 +125,15 @@ namespace common
                         result = fcntl(fd_desc,F_SETFL,flags|O_NONBLOCK)!=ERROR_RESULT_VALUE;
                         if(!result)
                         {
-                           unicode_perror("set_flags_by_descriptor");
+                           DEBUG_MSG_PERROR("set_flags_by_descriptor");
                         }
                     }
                 }
             }
             return result;
         }
-        bool write_to_descriptor(ssize_t fd_desc,const void *buf,size_t len)
+
+        bool write_to_descriptor(int fd_desc,const void *buf,size_t len)
         {
             bool result = false;
             if(fd_desc!=INVALID_DESCRIPTOR)
@@ -127,12 +141,13 @@ namespace common
                 result = write(fd_desc,buf,len)!=ERROR_RESULT_VALUE;
                 if(!result)
                 {
-                    unicode_perror("write");
+                    DEBUG_MSG_PERROR("write");
                 }
             }
             return result;
         }
-        bool read_from_descriptor(ssize_t fd_desc,void *buf,size_t len,ssize_t &readlen)
+
+        bool read_from_descriptor(int fd_desc,void *buf,size_t len,int &readlen)
         {
             bool result = false;
             if(fd_desc!=INVALID_DESCRIPTOR)
@@ -146,32 +161,39 @@ namespace common
             }
             return result;
         }
-        ssize_t descriptor_owner::descriptor() const
+
+        int descriptor_owner::descriptor() const
         {
             return descritor_;
         }
+
         off_t descriptor_owner::file_size()const
         {
             return get_file_size_by_descriptor(descritor_);
         }
+
         bool descriptor_owner::set_flags(int flags)const
         {
             return set_flags_by_descriptor(descritor_,flags);
         }
+
         bool descriptor_owner::flags(int &flags) const
         {
             return get_flags_by_descriptor(descritor_,flags);
         }
+
         descriptor_owner::~descriptor_owner()
         {
             close_descriptor(descritor_);
         }
-        descriptor_owner::descriptor_owner(ssize_t desc)
+
+        descriptor_owner::descriptor_owner(int desc)
             :descritor_(desc)
         {
 
         }
-        off_t get_file_size_by_descriptor(ssize_t fd_desc)
+
+        off_t get_file_size_by_descriptor(int fd_desc)
         {
             off_t result = 0;
             if(fd_desc!=INVALID_DESCRIPTOR)
@@ -208,15 +230,15 @@ namespace common
             result.append(file_path);
             return result;
         }
-        path make_path_from_uri(const path& p,const unicode_string &uri)
+        path make_path_from_uri(const path& p, const unicode_string &uri)
         {
             path result;
             unicode_char *dec = url::detail::url_decode(uri.c_str());
-            if(dec)
-            {
+            if(dec){
                 result = make_path(p,dec);
+                free(dec);
             }
-            free(dec);
+
             return result;
         }
         unicode_string get_dir_path(unicode_string path)
@@ -245,24 +267,28 @@ namespace common
              }
              return result;
         }
-        unicode_string prepare_path(const unicode_char *path)
-        {
-            return prepare_path(unicode_string(path));
-        }
+
         unicode_string get_file_name(unicode_string path)
         {
             size_t pos = path.find_last_of(get_separator());
-            if(pos!=unicode_string::npos)
+            if(pos != unicode_string::npos)
             {
                 path = path.substr(pos+1);
             }
             return path;
         }
-        path::path():is_dir_(INDETERMINATE){}
+
+        path::path()
+            :is_dir_(INDETERMINATE)
+        {
+
+        }
+
         path::path(const unicode_string &path)
             :is_dir_(file_system::is_directory(path)),path_(is_directory()?stable_dir_path(path):path)
         {
         }
+
         path::path(const path &other):is_dir_(other.is_dir_),path_(other.path_)
         {
 

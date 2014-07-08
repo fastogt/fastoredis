@@ -1,6 +1,8 @@
 #pragma once
 
-#include <string>
+/**/
+
+#include "common/types.h"
 
 namespace fastoredis
 {
@@ -13,11 +15,12 @@ namespace fastoredis
             InnerCommand
         };
         Command();
-        Command(const std::string &mess, c_type t = InnerCommand);
-        const std::string message() const;
+        Command(const common::unicode_string &mess, c_type t = InnerCommand);
+        const common::unicode_string message() const;
         const c_type type() const;
+
     private:
-        std::string message_;
+        const common::unicode_string message_;
         c_type type_;
     };
 }

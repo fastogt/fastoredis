@@ -1,6 +1,9 @@
 #pragma once
 
+/**/
+
 #include "common/common_config.h"
+
 #include <boost/mpl/vector.hpp>
 #include <boost/preprocessor.hpp>
 #include <boost/mpl/char.hpp>

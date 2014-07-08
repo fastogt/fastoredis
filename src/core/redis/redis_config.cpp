@@ -1,39 +1,21 @@
 #include "core/redis/redis_config.h"
 
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+
+#include "core/logger.h"
 
 namespace fastoredis
 {
     redisConfig::redisConfig()
+        : hostip(), hostport(0), hostsocket(), repeat(0), interval(0), dbnum(0),
+          interactive(0), shutdown(0), monitor_mode(0), pubsub_mode(0), latency_mode(0),
+          latency_history(0), cluster_mode(0), slave_mode(0), getrdb_mode(0), rdb_filename(),
+          pipe_mode(0), pipe_timeout(0), bigkeys(0), stdinarg(0), auth(), eval(), mb_delim()
     {
-        hostip = std::string();
-        hostport = 0;
-        hostsocket = std::string();
-        repeat = 0;
-        interval = 0;
-        dbnum = 0;
-        interactive = 0;
-        shutdown = 0;
-        monitor_mode = 0;
-        pubsub_mode = 0;
-        latency_mode = 0;
-        latency_history = 0;
-        cluster_mode = 0;
-        slave_mode = 0;
-        getrdb_mode = 0;
-        rdb_filename = std::string();
-        pipe_mode = 0;
-        pipe_timeout = 0;
-        bigkeys = 0;
-        stdinarg = 0;
-        auth = std::string();
-        eval = std::string();
         /*if (!isatty(fileno(stdout)) && (getenv("FAKETTY") == NULL))
             output = OUTPUT_RAW;
         else
             output = OUTPUT_STANDARD;*/
-        mb_delim = std::string();
     }
 
     void redisConfig::parseOptions(const std::vector<std::string> &argv) {
@@ -49,16 +31,16 @@ namespace fastoredis
             } else if (!strcmp(curArg,"-x")) {
                 stdinarg = 1;
             } else if (!strcmp(curArg,"-p") && !lastarg) {
-                hostport = boost::lexical_cast<int>(argv[++i]);
+                hostport = common::convertfromString<int>(argv[++i]);
             } else if (!strcmp(curArg,"-s") && !lastarg) {
                 hostsocket = argv[++i];
             } else if (!strcmp(curArg,"-r") && !lastarg) {
                 repeat = strtoll(argv[++i].c_str(),NULL,10);
             } else if (!strcmp(curArg,"-i") && !lastarg) {
-                double seconds = boost::lexical_cast<double>(argv[++i]);
+                double seconds = common::convertfromString<double>(argv[++i]);
                 interval = seconds*1000000;
             } else if (!strcmp(curArg,"-n") && !lastarg) {
-                dbnum = boost::lexical_cast<int>(argv[++i]);
+                dbnum = common::convertfromString<int>(argv[++i]);
             } else if (!strcmp(curArg,"-a") && !lastarg) {
                 auth = argv[++i];
             } else if (!strcmp(curArg,"--raw")) {
@@ -80,7 +62,7 @@ namespace fastoredis
             } else if (!strcmp(curArg,"--pipe")) {
                 pipe_mode = 1;
             } else if (!strcmp(curArg,"--pipe-timeout") && !lastarg) {
-                pipe_timeout = boost::lexical_cast<int>(argv[++i]);
+                pipe_timeout = common::convertfromString<int>(argv[++i]);
             } else if (!strcmp(curArg,"--bigkeys")) {
                 bigkeys = 1;
             } else if (!strcmp(curArg,"--eval") && !lastarg) {
@@ -93,9 +75,10 @@ namespace fastoredis
                 break;
             } else {
                 if (argv[i][0] == '-') {
-                    fprintf(stderr,
-                        "Unrecognized option or bad number of args for: '%s'\n",
-                        curArg);
+                    common::unicode_char buff[256] = {0};
+                    common::unicode_sprintf(buff, "Unrecognized option or bad number of args for: '%s'", curArg);
+                    common::ErrorValue er(buff, common::Value::E_ERROR);
+                    LOG_ERROR(er);
                     break;
                 } else {
                     /* Likely the command name, stop here. */
@@ -104,10 +87,13 @@ namespace fastoredis
             }
         }
     }
+}
 
-    std::string toStdString(const redisConfig &conf)
+namespace common
+{
+    unicode_string convert2string(const fastoredis::redisConfig &conf)
     {
-        std::vector<std::string> argv;
+        std::vector<unicode_string> argv;
 
         if(!conf.hostip.empty()){
             argv.push_back("-h");
@@ -115,7 +101,7 @@ namespace fastoredis
         }
         if(conf.hostport){
             argv.push_back("-p");
-            argv.push_back(boost::lexical_cast<std::string>(conf.hostport));
+            argv.push_back(convert2string(conf.hostport));
         }
         if(!conf.hostsocket.empty()){
             argv.push_back("-s");
@@ -123,15 +109,15 @@ namespace fastoredis
         }
         if(conf.repeat){
             argv.push_back("-r");
-            argv.push_back(boost::lexical_cast<std::string>(conf.repeat));
+            argv.push_back(convert2string(conf.repeat));
         }
         if(conf.interval){
             argv.push_back("-i");
-            argv.push_back(boost::lexical_cast<std::string>(conf.interval));
+            argv.push_back(convert2string(conf.interval));
         }
         if(conf.dbnum){
             argv.push_back("-n");
-            argv.push_back(boost::lexical_cast<std::string>(conf.dbnum));
+            argv.push_back(convert2string(conf.dbnum));
         }
         if(conf.latency_mode){
             if(conf.latency_history){
@@ -156,7 +142,7 @@ namespace fastoredis
         }
         if(conf.pipe_timeout){
             argv.push_back("--pipe-timeout");
-            argv.push_back(boost::lexical_cast<std::string>(conf.pipe_timeout));
+            argv.push_back(convert2string(conf.pipe_timeout));
         }
         if(conf.bigkeys){
             argv.push_back("--bigkeys");
@@ -177,7 +163,7 @@ namespace fastoredis
            argv.push_back(conf.mb_delim);
         }
 
-        std::string result;
+        unicode_string result;
         for(int i = 0; i < argv.size(); ++i){
             result+= argv[i];
             if(i != argv.size()-1){
@@ -188,11 +174,12 @@ namespace fastoredis
         return result;
     }
 
-    redisConfig rcFromStdString(const std::string &line)
+    template<>
+    fastoredis::redisConfig convertfromString(const unicode_string& line)
     {
-        std::vector<std::string> argv;
+        std::vector<unicode_string> argv;
         boost::split(argv, line, boost::is_any_of(" "));
-        redisConfig r;
+        fastoredis::redisConfig r;
         r.parseOptions(argv);
         return r;
     }

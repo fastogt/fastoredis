@@ -1,8 +1,9 @@
 SET (PROJECT_COMMON_LIB common)
 PROJECT (${PROJECT_COMMON_LIB})
+
 # use Boost
 IF(BOOST_ENABLED)
-    INTEGRATE_BOOST(program_options)
+    INTEGRATE_BOOST(system)
 ENDIF(BOOST_ENABLED)
 
 INCLUDE_DIRECTORIES(../)
@@ -38,18 +39,18 @@ ADD_DEFINITIONS(-DDATABASE_SUPPORT)
 ENDIF()
 
 IF(SETTINGS_SUPPORT)
-IF(NOT BOOST_ENABLED)
-    MESSAGE(FATAL_ERROR "Please enable boost support")
-ENDIF(NOT BOOST_ENABLED)
+    IF(NOT BOOST_ENABLED)
+        MESSAGE(FATAL_ERROR "Please enable boost support")
+    ENDIF(NOT BOOST_ENABLED)
 ENDIF(SETTINGS_SUPPORT)
 
 IF(SETTINGS_SUPPORT AND BOOST_ENABLED)
     IF(WIN32)
         SET(PLATFORM_DEPENDED_STORAGES settings/storages/registry_storage.hpp)
     ENDIF()
-    SET(STORAGES settings/storages/storages_def.h settings/storages/memory_storage.hpp settings/storages/xml_storage.hpp settings/storages/ini_storage.hpp)
+    SET(STORAGES settings/storages/storages_def.h settings/storages/memory_storage.h settings/storages/xml_storage.h settings/storages/ini_storage.h)
     SET(MPL_STRING settings/storages/mpl_string/initializer_vector.h settings/storages/mpl_string/mpl.h settings/storages/mpl_string/string_template.h)
-    SET(SETTINGS_SOURCES settings/settings.hpp ${STORAGES} ${PLATFORM_DEPENDED_STORAGES} ${MPL_STRING} ${SETTINGS_HDR})
+    SET(SETTINGS_SOURCES settings/settings.h ${STORAGES} ${PLATFORM_DEPENDED_STORAGES} ${MPL_STRING} ${SETTINGS_HDR})
 ENDIF(SETTINGS_SUPPORT AND BOOST_ENABLED)
 
 IF(QT_ENABLED)
@@ -60,43 +61,47 @@ SET(QT_UTILS_SOURCES
         qt/convert_string.h)
 ENDIF()
 SET(PATTERNS_SOURCES
-        patterns/command_pattern.hpp
-        patterns/crtp_pattern.hpp
-        patterns/factory_pattern.hpp
-        patterns/factory_method.hpp
-        patterns/observer_pattern.hpp
-        patterns/singleton_pattern.hpp)
+        patterns/command_pattern.h
+        patterns/crtp_pattern.h
+        patterns/factory_pattern.h
+        patterns/factory_method.h
+        patterns/observer_pattern.h
+        patterns/singleton_pattern.h)
 SET(FILE_PARSERS file_parsers/parser_ini.h file_parsers/parser_ini.cpp)
 SET(MULTI_THREADING_SOURCES 
         multi_threading/lockers.h
         multi_threading/lockers.cpp
-        multi_threading/thread_safe_containers.hpp
-        multi_threading/common_headers.hpp
+        multi_threading/thread_safe_containers.h
+        multi_threading/common_headers.h
         multi_threading/thread_adapter.hpp
-        multi_threading/thread_pool.hpp
+        multi_threading/thread_pool.h
         multi_threading/std_thread_pool_impl.hpp
         multi_threading/pthread_thread_pool_impl.hpp
         multi_threading/pthread_wrapper.hpp)
+
 IF(BOOST_ENABLED)
-    SET(MULTI_THREADING_SOURCES ${MULTI_THREADING_SOURCES} multi_threading/boost_thread_pool_impl.hpp)
-    SET(EVENTS_SOURCES events/static_events_bus.hpp)
+    SET(MULTI_THREADING_SOURCES ${MULTI_THREADING_SOURCES} multi_threading/boost_thread_pool_impl.h)
+    SET(EVENTS_SOURCES events/static_events_bus.h)
 ENDIF(BOOST_ENABLED)
 
-SET(COMMON_SOURCES runtime_bitset.h runtime_bitset.cpp log_levels.hpp logger.h logger.cpp common_config.h
-macros.h macros.cpp mpl.hpp utils.h utils.cpp file_system.h file_system.cpp value.h value.cpp
-boost_extension.hpp smart_ptr.hpp url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net.h net.cpp
+SET(COMMON_SOURCES runtime_bitset.h runtime_bitset.cpp log_levels.h logger.h logger.cpp common_config.h
+convert2string.h convert2string.cpp types.h types.cpp
+macros.h macros.cpp mpl.h utils.h utils.cpp file_system.h file_system.cpp value.h value.cpp
+boost_extension.h smart_ptr.h url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net.h net.cpp
 ${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${FILE_PARSERS} ${DATABASE_SUPPORT_SOURCES} ${SETTINGS_SOURCES} ${MULTI_THREADING_SOURCES} ${EVENTS_SOURCES})
 
 SET(COMMON_LIBS ${DATABASE_SUPPORT_LIBS})
+
 IF(UNIX)
     SET(COMMON_LIBS ${COMMON_LIBS} -lpthread)
 ELSE()
     SET(COMMON_LIBS ${COMMON_LIBS} -liphlpapi)
 ENDIF()
-IF(BOOST_ENABLE)
+
+IF(BOOST_ENABLED)
     SET(COMMON_LIBS ${COMMON_LIBS} ${Boost_LIBRARIES})
-ENDIF(BOOST_ENABLE)
+ENDIF(BOOST_ENABLED)
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX )
-ADD_APP_LIBRARY (${PROJECT_COMMON_LIB} "${COMMON_SOURCES}" "${COMMON_LIBS}")
+    ADD_APP_LIBRARY (${PROJECT_COMMON_LIB} "${COMMON_SOURCES}" "${COMMON_LIBS}")
 ENDIF(MINGW OR CMAKE_COMPILER_IS_GNUCXX )

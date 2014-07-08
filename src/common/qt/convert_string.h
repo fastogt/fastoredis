@@ -1,17 +1,15 @@
 #pragma once
 
+/**/
+
 #include <QString>
-#include "common/macros.h"
+
+#include "common/convert2string.h"
 
 namespace common
 {
-        namespace utils_qt
-        {
-            template<typename T>
-            QString toQString(T value);
+        unicode_string convert2string(const QString& from);
 
-            unicode_string toStdString(const QString &value);
-        }
         template<typename T>
         struct separator_traits
         {
@@ -31,6 +29,7 @@ namespace common
             }
         #endif
         };
+
         template<>
         struct separator_traits<unicode_string>
         {

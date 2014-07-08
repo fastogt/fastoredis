@@ -1,5 +1,7 @@
 #pragma  once
 
+/**/
+
 #include <QDialog>
 
 namespace fastoredis

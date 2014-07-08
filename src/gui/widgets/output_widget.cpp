@@ -24,14 +24,15 @@ namespace
         fastoredis::FastoTreeItem *result = NULL;
         fastoredis::FastoObject::child_container_type cont = item->childrens();
         size_t contSize = cont.size();
+        const common::unicode_string itemData = item->toString();
         if(contSize){
             char size[128] = {0};            
             sprintf(size, "{%zu}", contSize);
-            result = new fastoredis::FastoTreeItem( common::utils_qt::toQString(item->toStdString()), size, item->type(), parent);
+            result = new fastoredis::FastoTreeItem( common::convertfromString<QString>(itemData), size, item->type(), parent);
         }
         else{
             QString varName = QString("%1)").arg(parent->childrenCount()+1);
-            result = new fastoredis::FastoTreeItem( varName ,common::utils_qt::toQString(item->toStdString()), item->type(), parent);
+            result = new fastoredis::FastoTreeItem( varName ,common::convertfromString<QString>(itemData), item->type(), parent);
         }
 
         if(parent){
@@ -50,7 +51,7 @@ namespace
         }
     }
 
-    fastoredis::FastoTreeItem *parseOutput(const fastoredis::EventsInfo::ExecuteInfoResponce::result_type &res)
+    fastoredis::FastoTreeItem *parseOutput(const fastoredis::FastoObjectPtr &res)
     {
         fastoredis::FastoTreeItem *result = createItem(NULL, res);
         fastoredis::FastoObject::child_container_type cont = res->childrens();
@@ -77,7 +78,7 @@ namespace fastoredis
          _tableView->setModel(_treeModel);
 
         _textView = new FastoEditor(this);
-        _timeLabel = new IconLabel(GuiFactory::instance().timeIcon(),common::utils_qt::toQString(common::time::msTimeToString(0)));
+        _timeLabel = new IconLabel(GuiFactory::instance().timeIcon(),common::convertfromString<QString>(common::time::mstime2string(0)));
 
         QVBoxLayout *mainL = new QVBoxLayout;
         QHBoxLayout *topL = new QHBoxLayout;
@@ -159,9 +160,9 @@ namespace fastoredis
                 _treeModel->setRoot(root);
             }
         }
-        _timeLabel->setText(common::utils_qt::toQString(common::time::msTimeToString(res.elapsedTime())));
+        _timeLabel->setText(common::convertfromString<QString>(common::time::mstime2string(res.elapsedTime())));
         //FastoObjectPtr ptr = res._out;
         //std::string str = toStdString(ptr);
-        //_textView->setText(common::utils_qt::toQString(str));
+        //_textView->setText(common::convertfromString<QString>(str));
     }
 }

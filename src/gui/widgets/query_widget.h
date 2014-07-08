@@ -1,10 +1,12 @@
 #pragma once
 
+/**/
+
 #include <QWidget>
 
-class QAction;
-
 #include "core/iserver.h"
+
+class QAction;
 
 namespace fastoredis
 {

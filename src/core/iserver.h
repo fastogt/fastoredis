@@ -3,7 +3,7 @@
 #include <QObject>
 
 #include "core/connection_settings.h"
-#include "core/events/events_info.hpp"
+#include "core/events/events_info.h"
 #include "core/idriver.h"
 
 namespace fastoredis

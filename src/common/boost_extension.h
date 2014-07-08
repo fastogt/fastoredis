@@ -1,9 +1,11 @@
 #pragma once
+
 #include "common/common_config.h"
 
-#ifdef BOOST_SUPPORT_ENABLED
+#ifdef BOOST_ENABLED
 #include <boost/atomic.hpp>
 #include <boost/intrusive_ptr.hpp>
+
 namespace common
 {
     namespace boost_extension
@@ -17,11 +19,15 @@ namespace common
             intrusive_ptr_base(): ref_count_(0)
             {
             }
-            ~intrusive_ptr_base(){}
+            ~intrusive_ptr_base()
+            {
+            }
+
             friend void intrusive_ptr_add_ref(class_type const* s)
             {
                 ++s->ref_count_;
             }
+
             friend void intrusive_ptr_release(class_type const* s)
             {
                 if (--s->ref_count_ == 0)
@@ -31,6 +37,7 @@ namespace common
                     t = NULL;
                 }
             }
+
             refcount_type ref_count() const
             {
                 return ref_count_;

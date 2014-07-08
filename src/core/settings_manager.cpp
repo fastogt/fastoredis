@@ -1,6 +1,7 @@
 #include "core/settings_manager.h"
 
-#include "common/settings/settings.hpp"
+#include "common/settings/settings.h"
+
 #include <boost/archive/iterators/binary_from_base64.hpp>
 #include <boost/archive/iterators/base64_from_binary.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
@@ -13,8 +14,9 @@
 #ifdef OS_WIN
 #define INI_PATH ('~','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
 #else
-#define INI_PATH ('~','/','.','c','o','n','f','i','g','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
+#define INI_PATH ('~','/','.','c','o','n','f','i','g','/',PROJECT_NAME_DELEMITED,'/','c','o','n','f','i','g','.','i','n','i')
 #endif
+
 #define langauge_ ('l','a','n','g','u','a','g','e')
 #define style_ ('s','t','y','l','e')
 #define connections_ ('c','o','n','n','e','c','t','i','o','n','s')
@@ -24,6 +26,8 @@
 namespace
 {
     typedef common::storages::ini::ini_storage<GEN_STRING_TYPLE(INI_PATH)> static_path_storage;
+
+    using namespace common;
 
     BEGIN_DECL_TYPLE(langauge_,unicode_string,static_path_storage)
     BEGIN_DECL_TYPLE(style_,unicode_string,static_path_storage)
@@ -47,10 +51,9 @@ namespace
 class ConnectionTranslator
 {
 public:
-    typedef std::string  internal_type;
+    typedef std::string internal_type;
     typedef fastoredis::SettingsManager::ConnectionSettingsContainerType external_type;
 
-    ConnectionTranslator(){}
     boost::optional<external_type> get_value( internal_type const &v )
     {
         using namespace boost::archive::iterators;
@@ -110,7 +113,7 @@ namespace fastoredis
         return GET_SETTING(genereted_settings::setting_style_).value();
     }
 
-    void SettingsManager::setCurrentStyle(const std::string &st) const
+    void SettingsManager::setCurrentStyle(const common::unicode_string& st) const
     {
         GET_SETTING(genereted_settings::setting_style_).set_value(st);
     }
@@ -120,7 +123,7 @@ namespace fastoredis
         return GET_SETTING(genereted_settings::setting_langauge_).value();
     }
 
-    void SettingsManager::setCurrentLanguage(const std::string &lang) const
+    void SettingsManager::setCurrentLanguage(const common::unicode_string& lang) const
     {
         GET_SETTING(genereted_settings::setting_langauge_).set_value(lang);
     }

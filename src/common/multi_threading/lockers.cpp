@@ -1,4 +1,5 @@
 #include "common/multi_threading/lockers.h"
+
 namespace
 {
     const unsigned int YIELD_ITERATION = 30; // yeild after 30 iterations
@@ -7,61 +8,8 @@ namespace
 
 namespace common
 {
-    namespace multi_threading
-{
-    namespace lock_free
-{
-namespace atomic
-{
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
-    void spin_lock::lock()
-    {
-        std::thread::id cur_id = std::this_thread::get_id();
-        size_t iterations_ = 0;
-        while(true)
-        {
-            if(lock_.dest_ == cur_id)
-                break;
-
-            std::thread::id id(0);            
-            while(!std::atomic_compare_exchange_weak(&lock_.dest_,&id,cur_id))
-            {
-                id=std::thread::id(0);
-                if(iterations_ >= YIELD_ITERATION)
-                {
-                    if(iterations_ + YIELD_ITERATION >= MAX_SLEEP_ITERATION)
-                        std::this_thread::sleep_for(std::chrono::seconds(0));
-                    if(iterations_ < MAX_SLEEP_ITERATION)
-                        iterations_ = 0;
-                }
-                ++iterations_;
-                std::this_thread::yield();
-            }
-        }
-    }
-    void spin_lock::unlock()
-    {
-        lock_.dest_=std::thread::id(0);
-    }
-    void simple_spin_lock::lock()
-    {
-        long id(0);
-        while(!std::atomic_compare_exchange_weak(&lock_.dest_,&id,1L))
-        {
-            id=0;
-            std::this_thread::sleep_for(std::chrono::seconds(0));
-        }
-    }
-    void simple_spin_lock::unlock()
-    {
-        lock_.dest_ = 0;
-    }
-#endif
-}
-}
-}
 #ifdef OS_POSIX
-    namespace multi_threading
+namespace multi_threading
 {
 namespace lock_free //unix
 {

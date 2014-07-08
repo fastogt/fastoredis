@@ -3,11 +3,6 @@
 #include <QThread>
 #include <QApplication>
 
-#include "common/macros.h"
-
-#include "core/connection_settings.h"
-#include "core/events/events.hpp"
-
 #ifdef OS_WIN
 #include <winsock2.h>
 struct WinsockInit {
