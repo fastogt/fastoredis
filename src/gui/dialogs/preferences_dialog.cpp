@@ -44,7 +44,7 @@ namespace fastoredis
         defaultViewComboBox_ = new QComboBox;
         std::vector<std::string> allV = allSupportedViews();
         for(int i=0; i<allV.size(); ++i){
-            defaultViewComboBox_->addItem(common::utils_qt::toQString(allV[i]));
+            defaultViewComboBox_->addItem(common::convertfromString<QString>(allV[i]));
         }
         stylesLayout->addWidget(defaultViewComboBox_);
         stylesLayout->addWidget(stylesComboBox_);
@@ -69,21 +69,21 @@ namespace fastoredis
 
     void PreferencesDialog::syncWithSettings()
     {
-        languagesComboBox_->setCurrentText(common::utils_qt::toQString(SettingsManager::instance().currentLanguage()));
-        stylesComboBox_->setCurrentText(common::utils_qt::toQString(SettingsManager::instance().currentStyle()));
-        defaultViewComboBox_->setCurrentText(common::utils_qt::toQString(toStdString(SettingsManager::instance().defaultView())));
+        languagesComboBox_->setCurrentText(common::convertfromString<QString>(SettingsManager::instance().currentLanguage()));
+        stylesComboBox_->setCurrentText(common::convertfromString<QString>(SettingsManager::instance().currentStyle()));
+        defaultViewComboBox_->setCurrentText(common::convertfromString<QString>(common::convert2string(SettingsManager::instance().defaultView())));
         syncTabs_->setChecked(SettingsManager::instance().syncTabs());
     }
 
     void PreferencesDialog::accept()
     {
         QString newLang = translations::applyLanguage(languagesComboBox_->currentText());
-        SettingsManager::instance().setCurrentLanguage(common::utils_qt::toStdString(newLang));
+        SettingsManager::instance().setCurrentLanguage(common::convert2string(newLang));
 
         applyStyle(stylesComboBox_->currentText());
-        SettingsManager::instance().setCurrentStyle(common::utils_qt::toStdString(stylesComboBox_->currentText()));
+        SettingsManager::instance().setCurrentStyle(common::convert2string(stylesComboBox_->currentText()));
 
-        SettingsManager::instance().setDefaultView(toSupportedViews(common::utils_qt::toStdString(defaultViewComboBox_->currentText())));
+        SettingsManager::instance().setDefaultView(common::convertfromString<fastoredis::supportedViews>(common::convert2string(defaultViewComboBox_->currentText())));
 
         ServersManager::instance().setSyncServers(syncTabs_->isChecked());
         SettingsManager::instance().setSyncTabs(syncTabs_->isChecked());

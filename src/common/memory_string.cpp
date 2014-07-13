@@ -1,9 +1,11 @@
 #include "common/memory_string.h"
+
 #include <string.h>
 #include <stdlib.h>
+
 namespace common
 {
-    memory_string::memory_string(uint32_t size)
+    memory_string::memory_string(uint32_type size)
         :alloc_size_(size+1),size_(0),
           memory_((unicode_char*)calloc(alloc_size_,sizeof(unicode_char)))
     {
@@ -62,7 +64,7 @@ namespace common
         return append(ptr,unicode_strlen(ptr));
     }
 
-    void memory_string::append(const void *ptr,uint32_t size)
+    void memory_string::append(const void *ptr, uint32_type size)
     {
         alloc(size_ + size);
         if (memory_&&ptr)
@@ -73,7 +75,7 @@ namespace common
         DCHECK(size_<=alloc_size_);
     }
 
-    void memory_string::alloc(uint32_t strlen_result)
+    void memory_string::alloc(uint32_type strlen_result)
     {
         if(alloc_size_<strlen_result+1)
         {
@@ -89,5 +91,30 @@ namespace common
     memory_string::operator unicode_string()const
     {
         return unicode_string(memory_,size_);
+    }
+
+    uint32_type memory_string::size() const
+    {
+        return size_;
+    }
+
+    uint32_type memory_string::alloc_size() const
+    {
+        return alloc_size_;
+    }
+
+    const unicode_char * const memory_string::c_str() const
+    {
+        return memory_;
+    }
+
+    const unicode_char *memory_string::begin()const
+    {
+        return memory_;
+    }
+
+    const unicode_char *memory_string::end()const
+    {
+        return memory_+size_;
     }
 }

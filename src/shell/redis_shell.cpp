@@ -1,12 +1,9 @@
 #include "shell/redis_shell.h"
 
 #include <QKeyEvent>
-#include <QStringListModel>
 #include <QMenu>
 
 #include "common/macros.h"
-
-#include "gui/gui_factory.h"
 
 #include "shell/redis_lexer.h"
 

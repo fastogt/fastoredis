@@ -18,7 +18,7 @@ namespace common
 {
     namespace logging
     {
-        unicode_ostream& logger::get_cout()
+        unicode_ostream& logger::cout()
         {
         #ifdef UNICODE
            return std::wcout;
@@ -27,7 +27,7 @@ namespace common
         #endif
         }
 
-        unicode_istream& logger::get_cin()
+        unicode_istream& logger::cin()
         {
         #ifdef UNICODE
            return std::wcin;
@@ -36,7 +36,7 @@ namespace common
         #endif
         }
 
-        unicode_ostream &logger::get_cerr()
+        unicode_ostream &logger::cerr()
         {
         #ifdef UNICODE
            return std::wcerr;
@@ -45,38 +45,50 @@ namespace common
         #endif
         }
 
-        unicode_char logger::get_endl()
+        unicode_char logger::endl()
         {
            return UTEXT('\n');
         }
 
         logger::logger()
-            : m_outStream(NULL)
+            : outStream_(NULL)
         {
         #ifdef NDEBUG
-            m_outStream = new unicode_ofstream(get_logger_path().c_str());
+            outStream_ = new unicode_ofstream(get_logger_path().c_str());
             unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(m_outStream);
             if(!file||(file&&!file->is_open()))
             {
-                 m_outStream  = &get_cerr();
-                 *m_outStream << traits_level<WARNING>::text << UTEXT(" ") << "Output file not open!" <<  UTEXT("\n");
+                 outStream_  = &cerr();
+                 *outStream_ << traits_level<WARNING>::text << UTEXT(" ") << "Output file not open!" <<  UTEXT("\n");
             }
-            *m_outStream << UTEXT("LOG STARTED\n");
+            *outStream_ << UTEXT("LOG STARTED\n");
         #else
-            m_outStream = &get_cerr();
+            outStream_ = &cerr();
         #endif
         }
 
         logger::~logger(void)
         {
-            m_outStream->flush();
-            if(m_outStream&&m_outStream!=&get_cerr()){
-                unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(m_outStream);
+            outStream_->flush();
+            if(outStream_ && outStream_!=&cerr()){
+                unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(outStream_);
                 if(file){
                     file->close();
                 }
-               delete m_outStream;
+               delete outStream_;
             }
         }
+
+        void logger::printTradeSafe(LEVEL_LOG level, const unicode_string& data)
+        {
+            multi_threading::guard_wraper<locker_type> lock(lock_);
+            *outStream_ << log_level_to_text(level) << UTEXT(" ") <<  data;
+        }        
+    }
+
+    void DEBUG_MSG_PERROR(const unicode_char* function)
+    {
+        const char* strer = strerror(errno);
+        return DEBUG_MSG_FORMAT<256>(logging::ERROR, "function: %s, %s", function, strer);
     }
 }

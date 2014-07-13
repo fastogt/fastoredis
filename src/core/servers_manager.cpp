@@ -4,8 +4,6 @@
 #include "core/redis/redis_server.h"
 #include "core/redis/redis_driver.h"
 
-#include "common/macros.h"
-
 namespace fastoredis
 {
     ServersManager::ServersManager()

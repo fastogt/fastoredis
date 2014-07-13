@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
-#include <vector>
+/**/
 
-#include "common/boost_extension.hpp"
+#include "common/boost_extension.h"
 #include "common/value.h"
+#include "common/convert2string.h"
 
 namespace fastoredis
 {
@@ -15,15 +15,10 @@ namespace fastoredis
         Text
     };
 
-    std::string toStdString(supportedViews v);
-    supportedViews toSupportedViews(const std::string &text);
-    std::vector<std::string> allSupportedViews();
+    std::vector<common::unicode_string> allSupportedViews();
 
     class FastoObject;
-
     typedef boost::intrusive_ptr<FastoObject> FastoObjectPtr;
-
-    std::string toStdString(const FastoObjectPtr &obj);
 
     class FastoObject
             : public common::boost_extension::intrusive_ptr_base<FastoObject>
@@ -33,9 +28,9 @@ namespace fastoredis
 
         FastoObject(const FastoObjectPtr &parent, common::Value *val);
         ~FastoObject();
+
         common::Value::Type type() const;
-        std::string toStdString() const;
-        const char *c_str() const;
+        common::unicode_string toString() const;
 
 		child_container_type childrens() const;
         static FastoObjectPtr createRoot(const std::string& text = std::string());
@@ -50,4 +45,10 @@ namespace fastoredis
 
         boost::scoped_ptr<common::Value> value_;
     };
+}
+
+namespace common
+{
+    unicode_string convert2string(fastoredis::supportedViews v);
+    unicode_string convert2string(const fastoredis::FastoObjectPtr &obj);
 }

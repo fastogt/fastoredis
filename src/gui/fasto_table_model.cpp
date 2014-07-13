@@ -96,7 +96,7 @@ namespace fastoredis
         if (!index.isValid())
             return result;
 
-        FastoTreeItem *node = common::utils_qt::item<FastoTreeItem *>(index);
+        FastoTreeItem *node = common::utils_qt::item<FastoTreeItem*>(index);
 
         if (!node) {
             return result;
@@ -112,7 +112,7 @@ namespace fastoredis
                 result = node->value();
             }
             else if (col == FastoTreeItem::eType) {
-                result = common::utils_qt::toQString(common::Value::toStdString(node->type()));
+                result = common::convertfromString<QString>(common::Value::toString(node->type()));
             }
         }
         else if (role == Qt::DecorationRole) {

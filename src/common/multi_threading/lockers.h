@@ -1,59 +1,14 @@
 #pragma once
 
-#include "common/multi_threading/common_headers.hpp"
-#ifdef _WIN32
+#include "common/multi_threading/common_headers.h"
+
+#ifdef OS_WIN
 #include <windows.h>
 #endif
+
 namespace common
 {
-    namespace multi_threading
-    {
-        namespace lock_free
-        {
-            namespace atomic
-            {
-                class spin_lock//415
-                {
-                public:
-                    void lock();
-                    void unlock();
-                private:
-                    struct spin_lock_
-                    {
-        #ifdef __GXX_EXPERIMENTAL_CXX0X__
-                        volatile std::atomic<std::thread::id> dest_;
-                        spin_lock_():dest_(std::thread::id(0))
-                        {
-                        }
-        #else
-        #endif
-                    }
-                    lock_;
-                };
-                class simple_spin_lock//410
-                {
-                public:
-                    simple_spin_lock(){}
-                    void lock();
-                    void unlock();
-                private:
-                    struct spin_lock
-                    {
-        #ifdef __GXX_EXPERIMENTAL_CXX0X__
-                        volatile std::atomic<std::thread::id> dest_;
-                        spin_lock_():dest_(std::thread::id(0))
-                        {
-                        }
-        #else
-        #endif
-                    }
-                    lock_;
-                    size_t iterations_;
-                };
-            }
-        }
-    }
-#ifdef _WIN32
+#ifdef OS_WIN
     namespace multi_threading
     {
         namespace lock_free//windows
@@ -100,46 +55,48 @@ namespace common
         }
     }
 #elif defined OS_POSIX
-namespace multi_threading
-{
-    namespace lock_free //unix
+    namespace multi_threading
     {
-        namespace unix_api
+        namespace lock_free //unix
         {
+            namespace unix_api
+            {
+                namespace atomic
+                {
+                    class unix_spin_lock
+                    {
+                    public:
+                        unix_spin_lock();
+                        void lock();
+                        void unlock();
+                        ~unix_spin_lock();
+                    private:
+                        pthread_spinlock_t spinlock;
+                    };
+                }
+                namespace mutex
+                {
+                    struct wrap_mutex
+                    {
+                        wrap_mutex() throw();
+                        ~wrap_mutex();
+                        void lock() throw();
+                        void unlock() throw();
+                        pthread_mutex_t mutex_;
+                    };
+                }
+            }
+
             namespace atomic
             {
-                class unix_spin_lock
-                {
-                public:
-                    unix_spin_lock();
-                    void lock();
-                    void unlock();
-                    ~unix_spin_lock();
-                private:
-                    pthread_spinlock_t spinlock;
-                };
+                typedef unix_api::atomic::unix_spin_lock api_spin_lock;
             }
+
             namespace mutex
             {
-                struct wrap_mutex
-                {
-                    wrap_mutex() throw();
-                    ~wrap_mutex();
-                    void lock() throw();
-                    void unlock() throw();
-                    pthread_mutex_t mutex_;
-                };
+                typedef unix_api::mutex::wrap_mutex api_mutex;
             }
         }
-        namespace atomic
-        {
-            typedef unix_api::atomic::unix_spin_lock api_spin_lock;
-        }
-        namespace mutex
-        {
-            typedef unix_api::mutex::wrap_mutex api_mutex;
-        }
     }
-}
 #endif
 }

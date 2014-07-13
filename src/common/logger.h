@@ -1,16 +1,15 @@
 #pragma once
 
-#include "common/log_levels.hpp"
+/**/
+
+#include "common/log_levels.h"
+
 #include "common/multi_threading/lockers.h"
-#include "common/patterns/singleton_pattern.hpp"
+
+#include "common/patterns/singleton_pattern.h"
 
 namespace common
 {
-#ifdef OS_WIN
-    typedef multi_threading::lock_free::windows::critical_section::wrap_critical_section locker_t;
-#elif defined OS_POSIX
-    typedef multi_threading::lock_free::atomic::api_spin_lock locker_t;
-#endif
     namespace logging
     {
         class logger:
@@ -18,55 +17,82 @@ namespace common
         {
             friend class patterns::lazy_singleton<logger>;
         public:
-            static unicode_ostream& get_cout();
-            static unicode_istream& get_cin();
-            static unicode_ostream& get_cerr();
-            static unicode_char get_endl();
+            static unicode_ostream& cout();
+            static unicode_istream& cin();
+            static unicode_ostream& cerr();
+            static unicode_char endl();
 
-            template<LEVEL_LOG L,typename T>
-            void print_trade_safe(const T &t)
+            void printTradeSafe(LEVEL_LOG level, const unicode_string& data);
+
+            template<uint16_type buff_size, typename T>
+            void printTradeSafe(LEVEL_LOG level, const unicode_char* fmt, T t1)
+            {                
+                unicode_char buff[buff_size] = {0};
+                unicode_sprintf(buff, fmt, t1);
+                printTradeSafe(level, buff);
+            }            
+
+            template<uint16_type buff_size, typename T1, typename T2>
+            void printTradeSafe(LEVEL_LOG level, const unicode_char* fmt, T1 t1, T2 t2)
             {
-                //std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-                //std::time_t now_c = std::chrono::system_clock::to_time_t(now - std::chrono::hours(24));
-                guard_wraper<locker_t> lock(lock_);
-                *m_outStream << traits_level<L>::text << UTEXT(" ") /*<< std::put_time(std::localtime(&now_c), "%F %T :")*/ << t << UTEXT('\n') ;
+                unicode_char buff[buff_size] = {0};
+                unicode_sprintf(buff, fmt, t1, t2);
+                printTradeSafe(level, buff);
             }
-            template<typename T>
-            void print(const T &t,LEVEL_LOG l)
+
+            template<uint16_type buff_size, typename T1, typename T2, typename T3>
+            void printTradeSafe(LEVEL_LOG level, const unicode_char* fmt, T1 t1, T2 t2, T3 t3)
             {
-                *m_outStream << log_level_to_text(l) << UTEXT(" ") << t << UTEXT('\n') ;
+                unicode_char buff[buff_size] = {0};
+                unicode_sprintf(buff, fmt, t1, t2, t3);
+                printTradeSafe(level, buff);
             }
-        #ifdef __GXX_EXPERIMENTAL_CXX0X__
-            template<LEVEL_LOG L,unsigned size_of_buffer,typename... TArgs>
-            void print_format(const unicode_char *format,const TArgs&... args)
+
+            template<uint16_type buff_size, typename T1, typename T2, typename T3, typename T4>
+            void printTradeSafe(LEVEL_LOG level, const unicode_char* fmt, T1 t1, T2 t2, T3 t3, T4 t4)
             {
-                //std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-                //std::time_t now_c = std::chrono::system_clock::to_time_t(now - std::chrono::hours(24));
-                unicode_char message[size_of_buffer]={0};
-                unicode_sprintf(message,format,args...);
-                guard_wraper<locker_t> lock(lock_);
-                *m_outStream << traits_level<L>::text  << UTEXT(" ") /*<< std::put_time(std::localtime(&now_c), "%F %T :")*/  << message;
+                unicode_char buff[buff_size] = {0};
+                unicode_sprintf(buff, fmt, t1, t2, t3, t4);
+                printTradeSafe(level, buff);
             }
-        #endif
-        protected:
-            ~logger();
+
         private:
             logger();
-            locker_t lock_;
-            unicode_ostream * m_outStream;
-        };
+            ~logger();
 
-        template<LEVEL_LOG L,typename T>
-        inline void DEBUG_MSG(const T &t)
-        {
-            return logger::instance().print_trade_safe<L>(t);
-        }
-    #ifdef __GXX_EXPERIMENTAL_CXX0X__
-        template<LEVEL_LOG L,unsigned size_of_buffer,typename... TArgs>
-        inline void DEBUG_MSG_FORMAT(const unicode_char *format,const TArgs&... args)
-        {
-            return logger::instance().print_format<L,size_of_buffer>(format,args...);
-        }
-    #endif
+#ifdef OS_WIN
+    typedef multi_threading::lock_free::windows::critical_section::wrap_critical_section locker_type;
+#elif defined OS_POSIX
+    typedef multi_threading::lock_free::atomic::api_spin_lock locker_type;
+#endif
+            locker_type lock_;
+            unicode_ostream * outStream_;
+        };        
     }
+
+    template<uint16_type buff_size, typename T>
+    inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const unicode_char* fmt, T t)
+    {
+        return logging::logger::instance().printTradeSafe<buff_size>(level, fmt, t);
+    }
+
+    template<uint16_type buff_size, typename T1, typename T2>
+    inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const unicode_char* fmt, T1 t1, T2 t2)
+    {
+        return logging::logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2);
+    }
+
+    template<uint16_type buff_size, typename T1, typename T2, typename T3>
+    inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const unicode_char* fmt, T1 t1, T2 t2, T3 t3)
+    {
+        return logging::logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2, t3);
+    }
+
+    template<uint16_type buff_size, typename T1, typename T2, typename T3, typename T4>
+    inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const unicode_char* fmt, T1 t1, T2 t2, T3 t3, T4 t4)
+    {
+        return logging::logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2, t3, t4);
+    }
+
+    void DEBUG_MSG_PERROR(const unicode_char* function);
 }

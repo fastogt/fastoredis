@@ -2,10 +2,10 @@
 
 #include <QWidget>
 
+#include "core/events/events_info.h"
+
 class QAction;
 class QPushButton;
-
-#include "core/events/events_info.hpp"
 
 namespace fastoredis
 {

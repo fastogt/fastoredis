@@ -4,7 +4,7 @@
 
 #include "core/connection_settings.h"
 #include "core/servers_manager.h"
-#include "core/events/events.hpp"
+#include "core/events/events.h"
 #include "common/qt/convert_string.h"
 
 namespace
@@ -66,12 +66,12 @@ namespace fastoredis
 
     QString IServer::name() const
     {
-        return common::utils_qt::toQString(_drv->settings()->connectionName());
+        return common::convertfromString<QString>(_drv->settings()->connectionName());
     }
 
     QString IServer::address() const
     {
-        return common::utils_qt::toQString(_drv->address());
+        return common::convertfromString<QString>(_drv->address());
     }
 
     connectionTypes IServer::connectionType() const
@@ -113,7 +113,7 @@ namespace fastoredis
 
     void IServer::execute(const QString &script)
     {
-        EventsInfo::ExecuteInfoRequest req(common::utils_qt::toStdString(script));
+        EventsInfo::ExecuteInfoRequest req(common::convert2string(script));
         emit startedExecute(req);
         QEvent *ev = new Events::ExecuteRequestEvent(this, req);
         notify(ev);

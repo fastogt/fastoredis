@@ -84,7 +84,7 @@ namespace
         QStringList list;
         for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
             char* command = commandGroups[i];
-            QString qcommand = common::utils_qt::toQString(std::string(command));
+            QString qcommand = common::convertfromString<QString>(std::string(command));
             g_types.append(qcommand);
             list.append(qcommand);
             tmp.argc = 1;
@@ -98,7 +98,7 @@ namespace
         for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
             struct commandHelp command = commandHelp[i];
             std::string commandN = command.name;
-            QString qCommandN = common::utils_qt::toQString(commandN);
+            QString qCommandN = common::convertfromString<QString>(commandN);
             g_commands.append(qCommandN);
             list.append(qCommandN);
 
@@ -113,10 +113,12 @@ namespace
 
     fastoredis::ServerInfo makeServerInfo(const fastoredis::FastoObjectPtr &root)
     {
-        static const std::string headers[8] = {"# Server", "# Clients", "# Memory", "# Persistence", "# Stats", "# Replication", "# CPU", "# Keyspace"};
+        static const common::unicode_string headers[8] = {UTEXT("# Server"), UTEXT("# Clients"), UTEXT("# Memory"),
+                                                          UTEXT("# Persistence"), UTEXT("# Stats"),
+                                                          UTEXT("# Replication"), UTEXT("# CPU"), UTEXT("# Keyspace")};
         using namespace fastoredis;
         ServerInfo result;
-        std::string content = toStdString(root);
+        const common::unicode_string content = common::convert2string(root);
         int j = 0;
         std::string word;
         size_t pos = 0;
@@ -133,7 +135,7 @@ namespace
                 }
                 if(pos != std::string::npos)
                 {
-                    std::string part = content.substr(i+1, pos - i - 1 );
+                    common::unicode_string part = content.substr(i + 1, pos - i - 1 );
                     switch(j)
                     {
                     case 0:
@@ -176,7 +178,7 @@ namespace
         fastoredis::FastoObject::child_container_type childrens = root->childrens();
         for(int i = 0; i < childrens.size(); i+=2)
         {
-            inf.propertyes_.push_back(std::make_pair(childrens[i]->toStdString(), childrens[i+1]->toStdString()));
+            inf.propertyes_.push_back(std::make_pair(childrens[i]->toString(), childrens[i+1]->toString()));
         }
         return inf;
     }
@@ -298,6 +300,7 @@ namespace fastoredis
                     config.dbnum);
             snprintf(config.prompt+len,sizeof(config.prompt)-len,"> ");
         }
+
         void cliPrintContextError(common::ErrorValue& er) {
             if (context == NULL) return;
             char buff[512] = {0};
@@ -313,14 +316,14 @@ namespace fastoredis
             case REDIS_REPLY_STATUS:
             case REDIS_REPLY_STRING:
             {
-                common::StringValue *val =common::Value::CreateStringValue(r->str);
+                common::StringValue *val =common::Value::createStringValue(r->str);
                 FastoObject *obj = new FastoObject(out, val);
                 out->addChildren(obj);
                 break;
             }
             case REDIS_REPLY_INTEGER:
             {
-                common::FundamentalValue *val =common::Value::CreateIntegerValue(r->integer);
+                common::FundamentalValue *val =common::Value::createIntegerValue(r->integer);
                 out->addChildren(new FastoObject(out, val));
                 break;
             }
@@ -331,8 +334,8 @@ namespace fastoredis
                     child = out;
                 }
                 else{
-                    common::ArrayValue *val =common::Value::CreateArrayValue();
-                    val->AppendString(out->toStdString());
+                    common::ArrayValue *val =common::Value::createArrayValue();
+                    val->appendString(out->toString());
                     child = new FastoObject(out,val);
                     out->addChildren(child);
                 }
@@ -345,7 +348,7 @@ namespace fastoredis
                 {
                     char tmp2[128] = {0};
                     sprintf(tmp2 ,"Unknown reply type: %d", r->type);
-                    common::ErrorValue *val =common::Value::CreateErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::WARNING);
+                    common::ErrorValue *val =common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::WARNING);
                     out->addChildren(new FastoObject(out, val));
                 }
             }
@@ -354,12 +357,12 @@ namespace fastoredis
         void cliOutputCommandHelp(FastoObjectPtr &out, struct commandHelp *help, int group) {
             char buff[1024] = {0};
             sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
-            common::StringValue *val =common::Value::CreateStringValue(buff);
+            common::StringValue *val =common::Value::createStringValue(buff);
             out->addChildren(new FastoObject(out, val));
             if (group) {
                 char buff2[1024] = {0};
                 sprintf(buff2,"  group: %s", commandGroups[help->group]);
-                val =common::Value::CreateStringValue(buff2);
+                val =common::Value::createStringValue(buff2);
                 out->addChildren(new FastoObject(out, val));
             }
         }
@@ -375,7 +378,7 @@ namespace fastoredis
                 "      \"quit\" to exit",
                 version
             );
-            common::StringValue *val =common::Value::CreateStringValue(buff);
+            common::StringValue *val =common::Value::createStringValue(buff);
             out->addChildren(new FastoObject(out, val));
             sdsfree(version);
         }
@@ -459,7 +462,7 @@ namespace fastoredis
                 config.hostport = atoi(s+1);                
                 char redir[512] = {0};
                 sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip.c_str(), config.hostport);
-                common::StringValue *val =common::Value::CreateStringValue(redir);
+                common::StringValue *val =common::Value::createStringValue(redir);
                 out->addChildren(new FastoObject(out, val));
                 config.cluster_reissue_command = 1;
                 cliRefreshPrompt();
@@ -528,13 +531,13 @@ namespace fastoredis
         }
 
         void repl_impl(FastoObjectPtr &out, common::ErrorValue &er) {
-            const char *command = out->c_str();
+            const char *command = out->toString().c_str();
             if (command[0] != '\0') {
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
 
                 if (!argv) {
-                    common::StringValue *val =common::Value::CreateStringValue("Invalid argument(s)");
+                    common::StringValue *val =common::Value::createStringValue("Invalid argument(s)");
                     out->addChildren(new FastoObject(out, val));
                 }
                 else if (argc > 0)
@@ -625,15 +628,12 @@ namespace fastoredis
     void RedisDriver::timerEvent(QTimerEvent * event)
     {
         if(impl_->timer_info_id_ == event->timerId() && isConnected()){            
-            Events::ServerInfoRequestEvent::value_type req;
-            Events::ServerInfoResponceEvent::value_type res(req);
             FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
             common::ErrorValue er;
             impl_->repl_impl(root, er);
-            if(er.isError()){
-                res.setErrorInfo(er);
-            }else{
-                res.info_ = makeServerInfo(root);
+            if(!er.isError()){
+                ServerInfo inf = makeServerInfo(root);
+
             }
         }
     }
@@ -703,7 +703,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        common::StringValue *val =common::Value::CreateStringValue(command);
+                        common::StringValue *val =common::Value::createStringValue(command);
                         FastoObjectPtr child = new FastoObject(res._out, val);
                         res._out->addChildren(child);
                         LOG_COMMAND(Command(command,Command::UserCommand));
@@ -746,7 +746,7 @@ namespace fastoredis
             }else{
                 FastoObject::child_container_type childrens = root->childrens();
                 for(int i = 0; i < childrens.size(); ++i){
-                    DataBaseInfo dbInf(childrens[i]->toStdString(), 0);
+                    DataBaseInfo dbInf(childrens[i]->toString(), 0);
                     res.databases_.push_back(dbInf);
                 }
             }

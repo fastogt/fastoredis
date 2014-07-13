@@ -1,5 +1,7 @@
 #pragma once
 
+/**/
+
 #include <QModelIndex>
 #include <QEvent>
 #include <QDesktopServices>
@@ -14,6 +16,7 @@ namespace common
             {
                 return static_cast<Type>(index.internalPointer());
             }
+
             template<typename Type>
             inline Type get_item(const QModelIndex &index,Type root)
             {

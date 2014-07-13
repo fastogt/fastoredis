@@ -27,13 +27,13 @@ namespace fastoredis
 
         void refreshFields()
         {
-            setText(0, common::utils_qt::toQString(connection_->connectionName()));
+            setText(0, common::convertfromString<QString>(connection_->connectionName()));
             connectionTypes conType = connection_->connectionType();
             if(conType == REDIS){
                 RedisConnectionSettings *red = dynamic_cast<RedisConnectionSettings*>(connection_.get());
                 VERIFY(red);
 
-                setText(1, common::utils_qt::toQString(red->fullAddress()));
+                setText(1, common::convertfromString<QString>(red->fullAddress()));
                 setIcon(0, GuiFactory::instance().redisConnectionIcon());
             }
         }

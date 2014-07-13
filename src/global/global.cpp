@@ -7,7 +7,7 @@
 
 namespace
 {
-    const char *supportedViewsM[] = { "Tree", "Table", "Text" };
+    const common::unicode_char *supportedViewsM[] = { UTEXT("Tree"), UTEXT("Table"), UTEXT("Text") };
 }
 
 namespace fastoredis
@@ -24,25 +24,19 @@ namespace fastoredis
 
     common::Value::Type FastoObject::type() const
     {
-        return value_->GetType();
+        return value_->getType();
     }
 
-    std::string FastoObject::toStdString() const
+    common::unicode_string FastoObject::toString() const
     {
-        std::string result;
-        value_->GetAsString(&result);
+        common::unicode_string result;
+        value_->getAsString(&result);
         return result;
-    }
-
-    const char *FastoObject::c_str() const
-    {
-        std::string str = toStdString();
-        return str.c_str();
     }
 
     FastoObjectPtr FastoObject::createRoot(const std::string &text)
     {
-        FastoObjectPtr result(new FastoObject(NULL, common::Value::CreateStringValue(text)));
+        FastoObjectPtr result(new FastoObject(NULL, common::Value::createStringValue(text)));
 		return result;
     }
 
@@ -56,22 +50,6 @@ namespace fastoredis
 	bool FastoObject::isRoot() const
 	{
         return !parent_ && type() == common::Value::TYPE_STRING;
-	}
-
-    std::string toStdString(const FastoObjectPtr &obj)
-    {
-        std::string result;
-        if(obj){
-            std::string str = obj->toStdString();
-            if(!str.empty()){
-                result += common::escapedText(str);
-            }
-			FastoObject::child_container_type childrens = obj->childrens();
-			for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
-                result += toStdString(*it);
-            }            
-        }
-        return result;
     }
 
 	FastoObject::child_container_type FastoObject::childrens() const
@@ -79,9 +57,17 @@ namespace fastoredis
         return childrens_;
     }
 
-    std::string toStdString(supportedViews v)
+    std::vector<common::unicode_string> allSupportedViews()
     {
-        std::string result;
+        return common::utils::enums::convertToVector(supportedViewsM);
+    }
+}
+
+namespace common
+{
+    unicode_string convert2string(fastoredis::supportedViews v)
+    {
+        unicode_string result;
         int count = sizeof(supportedViewsM)/sizeof(*supportedViewsM);
         if(v < count){
             result = supportedViewsM[v];
@@ -89,13 +75,26 @@ namespace fastoredis
         return result;
     }
 
-    supportedViews toSupportedViews(const std::string &text)
+    template<>
+    fastoredis::supportedViews convertfromString(const unicode_string& from)
     {
-        return common::utils::enums::findTypeInArray<supportedViews>(supportedViewsM,text.c_str());
+        return common::utils::enums::findTypeInArray<fastoredis::supportedViews>(supportedViewsM, from.c_str());
     }
 
-    std::vector<std::string> allSupportedViews()
+    unicode_string convert2string(const fastoredis::FastoObjectPtr &obj)
     {
-        return common::utils::enums::convertToVector(supportedViewsM);
+        using namespace fastoredis;
+        unicode_string result;
+        if(obj){
+            unicode_string str = obj->toString();
+            if(!str.empty()){
+                result += common::escapedText(str);
+            }
+            FastoObject::child_container_type childrens = obj->childrens();
+            for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
+                result += convert2string(*it);
+            }
+        }
+        return result;
     }
 }

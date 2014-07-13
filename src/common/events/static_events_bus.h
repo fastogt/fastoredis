@@ -1,5 +1,7 @@
 #pragma once
 
+/**/
+
 #include <vector>
 #include <algorithm>
 
@@ -70,7 +72,7 @@ namespace common
 
             void unregisterReciver(IReceiver* receiver)
             {
-                for(int i=0; i < count_types; ++i){
+                for(int i = 0; i < count_types; ++i){
                     findAndRemove(i, receiver);
                 }
             }

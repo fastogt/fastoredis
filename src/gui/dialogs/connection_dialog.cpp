@@ -22,18 +22,18 @@ namespace fastoredis
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
         connectionName_ = new QLineEdit;
-        connectionName_->setText(utils_qt::toQString(connection_->connectionName()));
+        connectionName_->setText(convertfromString<QString>(connection_->connectionName()));
 
         typeConnection_ = new QComboBox;
         std::vector<unicode_string> supt = supportedConnectionTypes();
         for(std::vector<unicode_string>::const_iterator it = supt.begin(); it != supt.end(); ++it){
-            typeConnection_->addItem(utils_qt::toQString(*it));
+            typeConnection_->addItem(convertfromString<QString>(*it));
         }
-        typeConnection_->setCurrentText(utils_qt::toQString(toStdString(connection_->connectionType())));
+        typeConnection_->setCurrentText(convertfromString<QString>(common::convert2string(connection_->connectionType())));
         VERIFY(connect(typeConnection_, SIGNAL(currentTextChanged(const QString&)), this, SLOT(typeConnectionChange(const QString&))));
 
         commandLine_ = new QLineEdit;
-        commandLine_->setText(utils_qt::toQString(connection_->commandLine()));
+        commandLine_->setText(convertfromString<QString>(connection_->commandLine()));
 
         QVBoxLayout *inputLayout = new QVBoxLayout;
         inputLayout->addWidget(connectionName_);
@@ -65,7 +65,7 @@ namespace fastoredis
 
     void ConnectionDialog::typeConnectionChange(const QString &value)
     {
-        connectionTypes currentType = toConnectionType(common::utils_qt::toStdString(value));
+        connectionTypes currentType = common::convertfromString<connectionTypes>(common::convert2string(value));
         bool isValidType = currentType != badConnectionType();
         connectionName_->setEnabled(isValidType);
         testButton_->setEnabled(isValidType);
@@ -76,8 +76,8 @@ namespace fastoredis
     void ConnectionDialog::accept()
     {
         if(validateAndApply()){
-            connection_->setConnectionName(common::utils_qt::toStdString(connectionName_->text()));
-            connection_->setCommandLine(common::utils_qt::toStdString(commandLine_->text()));
+            connection_->setConnectionName(common::convert2string(connectionName_->text()));
+            connection_->setCommandLine(common::convert2string(commandLine_->text()));
             QDialog::accept();
         }
     }

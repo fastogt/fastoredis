@@ -10,32 +10,33 @@ namespace fastoredis
     class IConnectionSettingsBase
     {
     public:
-        virtual std::string commandLine() const = 0;
-        virtual void setCommandLine(const std::string &line) = 0;
+        virtual ~IConnectionSettingsBase();
 
-        virtual std::string fullAddress() const = 0;
+        virtual common::unicode_string commandLine() const = 0;
+        virtual void setCommandLine(const common::unicode_string &line) = 0;
 
-        virtual std::string host() const = 0;
-        virtual void setHost(const std::string &host) = 0;
+        virtual common::unicode_string fullAddress() const = 0;
+
+        virtual common::unicode_string host() const = 0;
+        virtual void setHost(const common::unicode_string &host) = 0;
         virtual int port() const = 0;
         virtual void setPort(int port) = 0;
 
-
-        std::string connectionName() const;
-        void setConnectionName(const std::string &name);
+        common::unicode_string connectionName() const;
+        void setConnectionName(const common::unicode_string &name);
 
         virtual connectionTypes connectionType() const;
-        static IConnectionSettingsBase *fromStdString(const std::string &val);
-        std::string toString() const;
+        static IConnectionSettingsBase *fromStdString(const common::unicode_string &val);
+        common::unicode_string toString() const;
 
         virtual IConnectionSettingsBase* clone () const = 0;
-        virtual ~IConnectionSettingsBase();
-    protected:
-        virtual std::string toCommandLine() const = 0;
-        virtual void initFromCommandLine(const std::string &val) = 0;
 
-        IConnectionSettingsBase(const std::string &connectionName);
-        std::string connectionName_;
+    protected:
+        virtual common::unicode_string toCommandLine() const = 0;
+        virtual void initFromCommandLine(const common::unicode_string &val) = 0;
+
+        IConnectionSettingsBase(const common::unicode_string &connectionName);
+        common::unicode_string connectionName_;
     };
 
     typedef boost::shared_ptr<IConnectionSettingsBase> IConnectionSettingsBasePtr;
@@ -44,15 +45,15 @@ namespace fastoredis
             : public IConnectionSettingsBase
     {
     public:
-        RedisConnectionSettings(const std::string &connectionName, const redisConfig &info = redisConfig());
+        RedisConnectionSettings(const common::unicode_string &connectionName, const redisConfig &info = redisConfig());
 
-        virtual std::string commandLine() const;
-        virtual void setCommandLine(const std::string &line);
+        virtual common::unicode_string commandLine() const;
+        virtual void setCommandLine(const common::unicode_string &line);
 
-        virtual std::string fullAddress() const;
+        virtual common::unicode_string fullAddress() const;
 
-        virtual std::string host() const;
-        virtual void setHost(const std::string &host);
+        virtual common::unicode_string host() const;
+        virtual void setHost(const common::unicode_string &host);
         virtual int port() const;
         virtual void setPort(int port);
 
@@ -63,8 +64,8 @@ namespace fastoredis
 
         virtual IConnectionSettingsBase* clone () const;
     private:
-        virtual std::string toCommandLine() const;
-        virtual void initFromCommandLine(const std::string &val);
+        virtual common::unicode_string toCommandLine() const;
+        virtual void initFromCommandLine(const common::unicode_string &val);
         redisConfig info_;
     };
 

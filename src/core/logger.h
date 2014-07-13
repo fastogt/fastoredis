@@ -1,10 +1,12 @@
 #pragma once
 
+/**/
+
 #include <QObject>
 #include <QString>
 
-#include "common/patterns/singleton_pattern.hpp"
-#include "common/log_levels.hpp"
+#include "common/patterns/singleton_pattern.h"
+#include "common/log_levels.h"
 #include "common/value.h"
 
 namespace fastoredis

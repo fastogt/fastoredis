@@ -1,6 +1,8 @@
 #pragma once
 
-#include "mpl_string/string_template.h"
+/**/
+
+#include "common/settings/storages/mpl_string/string_template.h"
 
 namespace common
 {

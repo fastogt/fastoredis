@@ -6,7 +6,6 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
     QRect screenGeometry = QApplication::desktop()->availableGeometry();
     QSize size(screenGeometry.width() - 450, screenGeometry.height() - 165);
 

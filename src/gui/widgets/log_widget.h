@@ -1,11 +1,13 @@
 #pragma once
 
+/**/
+
 #include <QWidget>
 
 class QTextEdit;
 class QAction;
 
-#include "common/log_levels.hpp"
+#include "common/log_levels.h"
 
 namespace fastoredis
 {

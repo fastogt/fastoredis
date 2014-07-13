@@ -46,27 +46,30 @@ namespace
 namespace fastoredis
 {
     namespace translations
-    {
-        const std::string defLanguage = "System";
-        QString applyLanguage(QString lang)
+    {        
+        const common::unicode_string defLanguage = UTEXT("System");
+
+        QString applyLanguage(const QString &lang)
         {
+            QString langres = lang;
+
             static QTranslator tr;
             if(tr.isEmpty()){
                 qApp->installTranslator(&tr);
             }
 
-            if(lang == common::utils_qt::toQString(defLanguage)){
-                lang =  QLocale::languageToString(QLocale::system().language());
+            if(langres == common::convertfromString<QString>(defLanguage)){
+                langres =  QLocale::languageToString(QLocale::system().language());
             }
 
-            QString qmPath = pathToQm(lang);
+            QString qmPath = pathToQm(langres);
             bool isLoad = tr.load(qmPath,trPath());
 
-            if(!isLoad && lang != builtInLanguage){
+            if(!isLoad && langres != builtInLanguage){
                 return builtInLanguage;
             }
 
-            return lang;
+            return langres;
         }
 
         QStringList getSupportedLanguages()
@@ -74,7 +77,7 @@ namespace fastoredis
             const QStringList languages = qmLanguages();
 
             QStringList result;
-            result << common::utils_qt::toQString(defLanguage) << builtInLanguage;
+            result << common::convertfromString<QString>(defLanguage) << builtInLanguage;
             for(int i = 0; i < languages.size(); ++i){
                 QPair<QString,QLocale> p = convertToLocale(languages[i]);
                 QString lang = QLocale::languageToString(p.second.language());

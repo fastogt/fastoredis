@@ -1,7 +1,10 @@
 #pragma once
 
+/**/
+
 #include <vector>
-#include <string>
+
+#include "common/convert2string.h"
 
 namespace fastoredis
 {
@@ -15,7 +18,11 @@ namespace fastoredis
     {
         return DBUNKNOWN;
     }
+
     std::vector<std::string> supportedConnectionTypes();
-    std::string toStdString(connectionTypes t);
-    connectionTypes toConnectionType(const std::string &text);
+}
+
+namespace common
+{
+    unicode_string convert2string(fastoredis::connectionTypes t);
 }

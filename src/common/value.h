@@ -1,8 +1,11 @@
 #pragma once
 
-#include "common/log_levels.hpp"
+/**/
+
 #include <boost/scoped_ptr.hpp>
 #include <vector>
+
+#include "common/log_levels.h"
 
 namespace common 
 {
@@ -32,34 +35,34 @@ namespace common
 
         virtual ~Value();
 
-        static Value* CreateNullValue();
+        static Value* createNullValue();
 
-        static FundamentalValue* CreateBooleanValue(bool in_value);
-        static FundamentalValue* CreateIntegerValue(int in_value);
-        static FundamentalValue* CreateDoubleValue(double in_value);
-        static StringValue* CreateStringValue(const std::string& in_value);
-        static ArrayValue* CreateArrayValue();
-        static ErrorValue* CreateErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
+        static FundamentalValue* createBooleanValue(bool in_value);
+        static FundamentalValue* createIntegerValue(int in_value);
+        static FundamentalValue* createDoubleValue(double in_value);
+        static StringValue* createStringValue(const unicode_string& in_value);
+        static ArrayValue* createArrayValue();
+        static ErrorValue* createErrorValue(const unicode_string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
-        static std::string toStdString(Type t);
-		virtual std::string toStdString() const;
-        Type GetType() const { return type_; }
+        static unicode_string toString(Type t);
+        virtual unicode_string toString() const;
+        Type getType() const { return type_; }
 
-        bool IsType(Type type) const { return type == type_; }
+        bool isType(Type type) const { return type == type_; }
 
-        virtual bool GetAsBoolean(bool* out_value) const;
-        virtual bool GetAsInteger(int* out_value) const;
-        virtual bool GetAsDouble(double* out_value) const;
-        virtual bool GetAsString(std::string* out_value) const;
-        virtual bool GetAsError(ErrorValue* out_value) const;
-        virtual bool GetAsList(ArrayValue** out_value);
-        virtual bool GetAsList(const ArrayValue** out_value) const;
+        virtual bool getAsBoolean(bool* out_value) const;
+        virtual bool getAsInteger(int* out_value) const;
+        virtual bool getAsDouble(double* out_value) const;
+        virtual bool getAsString(unicode_string* out_value) const;
+        virtual bool getAsError(ErrorValue* out_value) const;
+        virtual bool getAsList(ArrayValue** out_value);
+        virtual bool getAsList(const ArrayValue** out_value) const;
 
-        virtual Value* DeepCopy() const;
+        virtual Value* deepCopy() const;
 
-        virtual bool Equals(const Value* other) const;
+        virtual bool equals(const Value* other) const;
 
-        static bool Equals(const Value* a, const Value* b);
+        static bool equals(const Value* a, const Value* b);
 
     protected:
         explicit Value(Type type);
@@ -79,12 +82,12 @@ namespace common
 
         virtual ~FundamentalValue();
 
-		virtual std::string toStdString() const;
-        virtual bool GetAsBoolean(bool* out_value) const;
-        virtual bool GetAsInteger(int* out_value) const;
-        virtual bool GetAsDouble(double* out_value) const;
-        virtual FundamentalValue* DeepCopy() const;
-        virtual bool Equals(const Value* other) const;
+        virtual unicode_string toString() const;
+        virtual bool getAsBoolean(bool* out_value) const;
+        virtual bool getAsInteger(int* out_value) const;
+        virtual bool getAsDouble(double* out_value) const;
+        virtual FundamentalValue* deepCopy() const;
+        virtual bool equals(const Value* other) const;
 
     private:
 		DISALLOW_COPY_AND_ASSIGN(FundamentalValue);
@@ -98,17 +101,17 @@ namespace common
     class StringValue : public Value
     {
         public:
-            explicit StringValue(const std::string& in_value);
+            explicit StringValue(const unicode_string& in_value);
             virtual ~StringValue();
 
-			virtual std::string toStdString() const;
-            virtual bool GetAsString(std::string* out_value) const;
-            virtual StringValue* DeepCopy() const;
-            virtual bool Equals(const Value* other) const;
+            virtual unicode_string toString() const;
+            virtual bool getAsString(unicode_string* out_value) const;
+            virtual StringValue* deepCopy() const;
+            virtual bool equals(const Value* other) const;
 
         private:
 			DISALLOW_COPY_AND_ASSIGN(StringValue);
-            std::string value_;
+            unicode_string value_;
     };
 
     class ArrayValue : public Value
@@ -120,50 +123,50 @@ namespace common
         ArrayValue();
         virtual ~ArrayValue();
 
-		virtual std::string toStdString() const;
-        void Clear();
+        virtual std::string toString() const;
+        void clear();
 
-        size_t GetSize() const { return list_.size(); }
+        size_t getSize() const { return list_.size(); }
 
         // Returns whether the list is empty.
         bool empty() const { return list_.empty(); }
 
-        bool Set(size_t index, Value* in_value);
+        bool set(size_t index, Value* in_value);
 
-        bool Get(size_t index, const Value** out_value) const;
-        bool Get(size_t index, Value** out_value);
+        bool get(size_t index, const Value** out_value) const;
+        bool get(size_t index, Value** out_value);
 
-        bool GetBoolean(size_t index, bool* out_value) const;
-        bool GetInteger(size_t index, int* out_value) const;
-        bool GetDouble(size_t index, double* out_value) const;
-        bool GetString(size_t index, std::string* out_value) const;
-        bool GetList(size_t index, const ArrayValue** out_value) const;
-        bool GetList(size_t index, ArrayValue** out_value);
+        bool getBoolean(size_t index, bool* out_value) const;
+        bool getInteger(size_t index, int* out_value) const;
+        bool getDouble(size_t index, double* out_value) const;
+        bool getString(size_t index, unicode_string* out_value) const;
+        bool getList(size_t index, const ArrayValue** out_value) const;
+        bool getList(size_t index, ArrayValue** out_value);
 
-        virtual bool Remove(size_t index, boost::scoped_ptr<Value>* out_value);
+        virtual bool remove(size_t index, boost::scoped_ptr<Value>* out_value);
 
-        bool Remove(const Value& value, size_t* index);
+        bool remove(const Value& value, size_t* index);
 
-        iterator Erase(iterator iter, boost::scoped_ptr<Value>* out_value);
+        iterator erase(iterator iter, boost::scoped_ptr<Value>* out_value);
 
         // Appends a Value to the end of the list.
-        void Append(Value* in_value);
+        void append(Value* in_value);
 
         // Convenience forms of Append.
-        void AppendBoolean(bool in_value);
-        void AppendInteger(int in_value);
-        void AppendDouble(double in_value);
-        void AppendString(const std::string& in_value);
-        void AppendStrings(const std::vector<std::string>& in_values);
+        void appendBoolean(bool in_value);
+        void appendInteger(int in_value);
+        void appendDouble(double in_value);
+        void appendString(const unicode_string& in_value);
+        void appendStrings(const std::vector<unicode_string> &in_values);
 
-        bool AppendIfNotPresent(Value* in_value);
+        bool appendIfNotPresent(Value* in_value);
 
-        bool Insert(size_t index, Value* in_value);
+        bool insert(size_t index, Value* in_value);
 
-        const_iterator Find(const Value& value) const;
+        const_iterator find(const Value& value) const;
 
         // Swaps contents with the |other| list.
-        virtual void Swap(ArrayValue* other);
+        virtual void swap(ArrayValue* other);
 
         // Iteration.
         iterator begin() { return list_.begin(); }
@@ -172,10 +175,10 @@ namespace common
         const_iterator begin() const { return list_.begin(); }
         const_iterator end() const { return list_.end(); }
 
-        virtual bool GetAsList(ArrayValue** out_value);
-        virtual bool GetAsList(const ArrayValue** out_value) const;
-        virtual ArrayValue* DeepCopy() const;
-        virtual bool Equals(const Value* other) const;
+        virtual bool getAsList(ArrayValue** out_value);
+        virtual bool getAsList(const ArrayValue** out_value) const;
+        virtual ArrayValue* deepCopy() const;
+        virtual bool equals(const Value* other) const;
 
     private:
 		DISALLOW_COPY_AND_ASSIGN(ArrayValue);
@@ -185,19 +188,19 @@ namespace common
     class ErrorValue : public Value
     {
     public:
-        explicit ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::WARNING);
+        explicit ErrorValue(const unicode_string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::WARNING);
         ErrorValue();
         bool isError() const;
         common::logging::LEVEL_LOG level() const;
-        std::string description() const;
-		virtual std::string toStdString() const;
+        unicode_string description() const;
+        virtual unicode_string toString() const;
 
-		virtual bool GetAsError(ErrorValue* out_value) const;
+        virtual bool getAsError(ErrorValue* out_value) const;
         virtual ~ErrorValue();
 
     private:
 		//DISALLOW_COPY_AND_ASSIGN(ErrorValue);
-        std::string description_;
+        unicode_string description_;
         ErrorsType errorType_;
         common::logging::LEVEL_LOG level_;
     };

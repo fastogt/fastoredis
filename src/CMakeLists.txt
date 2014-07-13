@@ -90,12 +90,13 @@ SET(HEADERS_CORE
     core/settings_manager.h
     core/connection_settings.h
     core/events/infos.h
-    core/events/events.hpp
-    core/events/events_info.hpp
+    core/events/events.h
+    core/events/events_info.h
     core/redis/redis_config.h
     core/servers_manager.h
 )
 SET(SOURCES_CORE
+    core/events/events_info.cpp
     core/events/infos.cpp
     core/command_logger.cpp
     core/connection_types.cpp
@@ -150,17 +151,13 @@ add_subdirectory(third-party/redis)
 add_subdirectory(third-party/qscintilla/Qt4Qt5)
 
 IF(BOOST_ENABLED)
-    INTEGRATE_BOOST(system)
-    SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-    SET(ALL_LIBS ${ALL_LIBS} ${Boost_LIBRARIES})
-ENDIF()
+ENDIF(BOOST_ENABLED)
 
 IF(OPENSSL_ENABLED)
-
 ENDIF(OPENSSL_ENABLED)
 
 SET(HEADERS ${HEADERS} ${HEADERS_GLOBAL} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
-SET(SOURCES ${SOURCES} main.cpp ${SOURCES_GLOBAL} ${SOURCES_GUI} ${SOURCES_CORE} ${SOURCES_SHELL})
+SET(SOURCES ${SOURCES} ${SOURCES_GLOBAL} ${SOURCES_GUI} ${SOURCES_CORE} ${SOURCES_SHELL})
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC} ${HEADERS_SHELL_TO_MOC})
 
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
@@ -199,9 +196,11 @@ SET(ALL_SOURCES ${ALL_SOURCES} ${HEADERS} ${HEADERS_TOMOC} ${SOURCES} ${MOC_FILE
 SET(ALL_LIBS ${ALL_LIBS} qscintilla2 ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} common redis-cli)
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
-    ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
+    ADD_APP_LIBRARY(${PROJECT_NAME_LIBRARY} "${ALL_SOURCES}" "${ALL_LIBS}")
+    ADD_APP_EXECUTABLE(${PROJECT_NAME} main.cpp "${PROJECT_NAME_LIBRARY}")
 ELSEIF(MSVC)
-    ADD_APP_EXECUTABLE_MSVC(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
+    ADD_APP_LIBRARY_MSVC(${PROJECT_NAME_LIBRARY} "${ALL_SOURCES}" "${ALL_LIBS}")
+    ADD_APP_EXECUTABLE_MSVC(${PROJECT_NAME} main.cpp "${PROJECT_NAME_LIBRARY}")
 ELSE()
     MESSAGE(FATAL_ERROR "NOT SUPPORTED COMPILER!!!")
 ENDIF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
@@ -284,12 +283,12 @@ IF(DEVELOPER_ENABLE_TESTS)
     INCLUDE_DIRECTORIES(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 ########## PREPARE GTEST LIBRARY ##########
 
-    ADD_EXECUTABLE(tests
-        ${CMAKE_SOURCE_DIR}/tests/test_fasto_objects.cpp global/global.cpp)
+    ADD_EXECUTABLE(unit_tests
+        ${CMAKE_SOURCE_DIR}/tests/test_fasto_objects.cpp ${CMAKE_SOURCE_DIR}/tests/unit_test_common_net.cpp global/global.cpp)
 
-    TARGET_LINK_LIBRARIES(tests gtest gtest_main common)
+    TARGET_LINK_LIBRARIES(unit_tests gtest gtest_main common)
 
-    ADD_TEST(NAME tests COMMAND tests)
-    SET_PROPERTY(TARGET tests PROPERTY FOLDER "Tests")
+    ADD_TEST(NAME unit_tests COMMAND tests)
+    SET_PROPERTY(TARGET unit_tests PROPERTY FOLDER "Unit tests")
 
 ENDIF(DEVELOPER_ENABLE_TESTS)

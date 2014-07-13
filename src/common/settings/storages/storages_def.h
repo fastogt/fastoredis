@@ -1,16 +1,19 @@
 #pragma once
 
-#include "common/settings/storages/xml_storage.hpp"
-#include "common/settings/storages/memory_storage.hpp"
-#include "common/settings/storages/ini_storage.hpp"
+/**/
+
+#include "common/settings/storages/xml_storage.h"
+#include "common/settings/storages/memory_storage.h"
+#include "common/settings/storages/ini_storage.h"
+#ifdef OS_WIN
+    #include "common/settings/storages/registry_storage.h"
+#endif
+
 #include <boost/fusion/container/vector.hpp>
 #include <boost/fusion/include/as_vector.hpp>
 #include <boost/fusion/container/vector/convert.hpp>
 #include <boost/fusion/include/find.hpp>
 #include <boost/mpl/count_if.hpp>
-#ifdef OS_WIN
-    #include "common/settings/storages/registry_storage.hpp"
-#endif
 
 //#define TINY_member(z, n, unused) typedef BOOST_PP_CAT(T,n) BOOST_PP_CAT(t,n);=> as mpl::vector member typedef BOOST_PP_REPEAT(FUSION_MAX_VECTOR_SIZE, TINY_member,~)
 //#define TINY_params(z, n, unused) class BOOST_PP_CAT(T,n)=void BOOST_PP_ENUM(FUSION_MAX_VECTOR_SIZE, TINY_params, ~) =>BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT(FUSION_MAX_VECTOR_SIZE,class T, void)

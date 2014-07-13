@@ -1,8 +1,11 @@
 #pragma once
 
+/**/
+
 #include <QTabWidget>
 
-#include "common/log_levels.hpp"
+#include "common/log_levels.h"
+
 #include "global/types.h"
 
 namespace fastoredis

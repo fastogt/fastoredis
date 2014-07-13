@@ -1,5 +1,7 @@
 #pragma once
 
+/**/
+
 #include <Qsci/qsciscintilla.h>
 
 namespace fastoredis

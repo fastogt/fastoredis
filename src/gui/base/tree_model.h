@@ -1,6 +1,9 @@
 #pragma once
 
+/**/
+
 #include <boost/scoped_ptr.hpp>
+
 #include <QAbstractItemModel>
 
 #include "gui/base/tree_item.h"

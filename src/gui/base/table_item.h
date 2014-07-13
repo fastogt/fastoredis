@@ -1,5 +1,7 @@
 #pragma once
 
+/**/
+
 namespace fastoredis
 {
 

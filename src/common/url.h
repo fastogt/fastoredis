@@ -26,6 +26,7 @@ namespace common
                 const memory_string& query()const;
                 const unicode_string get_url()const;
                 ~url();
+
             private:
                 enum
                 {
@@ -40,6 +41,7 @@ namespace common
                 memory_string path_;
                 memory_string query_;
         };
+
         namespace detail
         {
             bool get_protocol(const unicode_char *url_s,url::supported_protocols &prot);
@@ -51,7 +53,7 @@ namespace common
             /* Returns a url-decoded version of str */
             /* IMPORTANT: be sure to free() the returned string after use */
             unicode_char *url_decode(const unicode_char *str);
-            unicode_char *url_decode(const unicode_char *str,size_t len);
+            unicode_char *url_decode(const unicode_char *str, size_t len);
         }
     }
 }

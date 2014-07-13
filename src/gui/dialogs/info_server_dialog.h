@@ -1,8 +1,10 @@
 #pragma  once
 
+/**/
+
 #include <QDialog>
 
-#include "core/events/events_info.hpp"
+#include "core/events/events_info.h"
 #include "core/connection_types.h"
 
 class QLabel;
