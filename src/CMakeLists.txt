@@ -151,6 +151,7 @@ add_subdirectory(third-party/redis)
 add_subdirectory(third-party/qscintilla/Qt4Qt5)
 
 IF(BOOST_ENABLED)
+    INTEGRATE_BOOST(system)
 ENDIF(BOOST_ENABLED)
 
 IF(OPENSSL_ENABLED)

@@ -162,7 +162,7 @@ set(SOURCES
     qsciprinter.cpp
     qscistyle.cpp
     qscistyledtext.cpp
-    MacPasteboardMime.cpp
+    #MacPasteboardMime.cpp
     InputMethod.cpp
     SciClasses.cpp
     ListBoxQt.cpp
