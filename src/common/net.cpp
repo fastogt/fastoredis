@@ -93,9 +93,9 @@ namespace common
         bool getRemoteMacAddress(const unicode_string& host, unicode_string& out_mac_address)
         {
             // Socket to send ARP packet
-            int list_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);//socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+            int udp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);//socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
 
-            if( list_sock == ERROR_RESULT_VALUE){
+            if( udp_sock == ERROR_RESULT_VALUE){
                 DEBUG_MSG_PERROR("socket");
                 return false;
             }
@@ -103,13 +103,25 @@ namespace common
             struct sockaddr_in udp_sin;
             bzero (&udp_sin, sizeof(udp_sin));
             udp_sin.sin_family = AF_INET;
-            udp_sin.sin_addr.s_addr = inet_addr(out_mac_address.c_str());
+            udp_sin.sin_addr.s_addr = inet_addr(host.c_str());
             udp_sin.sin_port = htons(5232);
 
-            int i = sendto(list_sock, "TEST", 5, 0, (struct sockaddr *)&udp_sin, sizeof(udp_sin));
+            int enabled = 1;
+            int i = setsockopt(udp_sock, SOL_SOCKET, SO_BROADCAST, &enabled, sizeof(enabled));
+            if(i == ERROR_RESULT_VALUE){
+                DEBUG_MSG_PERROR("setsockopt");
+                return false;
+            }
+
+            i = sendto(udp_sock, "TEST", 5, 0, (struct sockaddr *)&udp_sin, sizeof(udp_sin));
             if(i == ERROR_RESULT_VALUE){
                 DEBUG_MSG_PERROR("sendto");
+                return false;
             }
+
+            unicode_char buff[256] = {0};
+            recvfrom(udp_sock, buff, 256, 0, (struct sockaddr *)&udp_sin, sizeof(udp_sin));
+
             return true;
         }
     }

@@ -89,6 +89,6 @@ namespace common
     void DEBUG_MSG_PERROR(const unicode_char* function)
     {
         const char* strer = strerror(errno);
-        return DEBUG_MSG_FORMAT<256>(logging::ERROR, "function: %s, %s", function, strer);
+        return DEBUG_MSG_FORMAT<256>(logging::ERROR, "function: %s, %s\n", function, strer);
     }
 }

@@ -4,7 +4,7 @@
 
 #ifdef OS_WIN
 #include <windows.h>
-#else defined(OS_MAC)
+#elif defined(OS_MAC)
 #include <libkern/OSAtomic.h>
 #endif
 
