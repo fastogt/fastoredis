@@ -630,7 +630,7 @@ namespace fastoredis
         if(impl_->timer_info_id_ == event->timerId() && isConnected()){            
             FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
             common::ErrorValue er;
-            impl_->repl_impl(root, er);
+            //impl_->repl_impl(root, er);
             if(!er.isError()){
                 ServerInfo inf = makeServerInfo(root);
 

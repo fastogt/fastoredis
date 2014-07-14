@@ -253,7 +253,7 @@ namespace common
         else if (out_value && isType(TYPE_INTEGER))
             *out_value = integer_value_;
         return (isType(TYPE_DOUBLE) || isType(TYPE_INTEGER));
-	}
+    }
 
     FundamentalValue* FundamentalValue::deepCopy() const {
       switch (getType()) {

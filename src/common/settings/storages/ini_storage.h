@@ -2,13 +2,17 @@
 
 /**/
 
+#include <fcntl.h>
+
+#include <istream>
+#include <iostream>
+
+#include "common/file_system.h"
+
 #include "common/settings/storages/mpl_string/string_template.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
-
-#include <istream>
-#include <iostream>
 
 namespace common
 {
@@ -53,7 +57,7 @@ namespace common
                     boost::property_tree::ptree& set_;
                 };
             }
-            template<typename init_vector>
+            template<typename init_vector, bool createDir = false>
             struct ini_storage
             {
                 typedef detail::load_funct load_struct;
@@ -69,10 +73,16 @@ namespace common
                 static bool save(const fusion_t &fuc);
             };
 
-            template<typename init_vector>template<typename fusion_t>
-            bool ini_storage<init_vector>::save(const fusion_t &fuc)
+            template<typename init_vector, bool createDir>template<typename fusion_t>
+            bool ini_storage<init_vector, createDir>::save(const fusion_t &fuc)
             {
                 std::string path = path_to_save();
+                if(createDir){
+                    unicode_string rdir = file_system::get_dir_path(path);
+                    if(file_system::is_directory(rdir) != SUCCESS){
+                        file_system::create_directory(rdir, S_IRWXU|S_IRWXG|S_IRWXO);
+                    }
+                }
                 const char *path_c = path.c_str();
                 std::ofstream output(path_c);
                 if(output.is_open()){
@@ -85,10 +95,16 @@ namespace common
                 return true;
             }
 
-            template<typename init_vector>template<typename fusion_t>
-            bool ini_storage<init_vector>::load(fusion_t &fuc)
+            template<typename init_vector, bool createDir>template<typename fusion_t>
+            bool ini_storage<init_vector, createDir>::load(fusion_t &fuc)
             {
                 std::string path = path_to_save();
+                if(createDir){
+                    unicode_string rdir = file_system::get_dir_path(path);
+                    if(file_system::is_directory(rdir) != SUCCESS){
+                        file_system::create_directory(rdir, S_IRWXU|S_IRWXG|S_IRWXO);
+                    }
+                }
                 const char *path_c = path.c_str();
                 std::ifstream input(path_c);
                 if(!input.is_open()){

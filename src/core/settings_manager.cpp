@@ -25,7 +25,7 @@
 
 namespace
 {
-    typedef common::storages::ini::ini_storage<GEN_STRING_TYPLE(INI_PATH)> static_path_storage;
+    typedef common::storages::ini::ini_storage<GEN_STRING_TYPLE(INI_PATH), true> static_path_storage;
 
     using namespace common;
 

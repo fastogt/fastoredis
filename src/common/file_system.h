@@ -33,6 +33,7 @@ namespace common
             bool is_file()const;
             bool is_directory()const;
             const unicode_char * c_str() const;
+            unicode_string directory() const;
 
         private:
             tribool is_dir_;
@@ -64,6 +65,7 @@ namespace common
         bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags) WARN_UNUSED_RESULT;
         bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags, mode_t mode) WARN_UNUSED_RESULT;
         bool create_node(const unicode_string& path, size_t permissions) WARN_UNUSED_RESULT;
+        bool create_directory(const unicode_string& path, size_t permissions) WARN_UNUSED_RESULT;
         bool write_to_descriptor(int fd_desc,const void *buf, size_t len) WARN_UNUSED_RESULT;
         bool read_from_descriptor(int fd_desc,void *buf, size_t len, int &readlen) WARN_UNUSED_RESULT;
 
