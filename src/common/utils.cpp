@@ -2,7 +2,7 @@
 
 #ifdef OS_WIN
 
-#elif defined OS_POSIX
+#elif defined OS_LINUX
 #include <signal.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -14,13 +14,14 @@
 #include <arpa/inet.h>
 #include <net/if.h>
 #include <netdb.h>
+#include "common/logger.h"
 #endif
 
 namespace common
 {
     namespace utils
     {
-#ifdef OS_POSIX
+#ifdef OS_LINUX
         namespace signal
         {
             bool signal(int sig, void (*handler)(int))
@@ -32,9 +33,9 @@ namespace common
                 return result;
             }
 
-            bool sigaddset(sigset_t &signal_mask,int sig)
+            bool sigaddset(sigset_t &signal_m, int sig)
             {
-                bool result = ::sigaddset(&signal_mask,sig)!= ERROR_RESULT_VALUE;
+                bool result = ::sigaddset(&signal_m,sig)!= ERROR_RESULT_VALUE;
                 if(!result){
                     DEBUG_MSG_PERROR("sigaddset");
                 }
@@ -50,9 +51,9 @@ namespace common
                 return result;
             }
 
-            bool sigemptyset(sigset_t &signal_mask)
+            bool sigemptyset(sigset_t &signal_m)
             {
-                bool result = ::sigemptyset(&signal_mask)!= ERROR_RESULT_VALUE;
+                bool result = ::sigemptyset(&signal_m)!= ERROR_RESULT_VALUE;
                 if(!result){
                     DEBUG_MSG_PERROR("sigemptyset");
                 }
