@@ -1,8 +1,5 @@
 #include "common/time.h"
 
-#include <stdio.h>
-#include <sys/time.h>
-
 #include "common/convert2string.h"
 
 namespace common
@@ -114,9 +111,9 @@ namespace common
         {
             using namespace std;
 #ifdef OS_ANDROID
-            return ::timegm64( time_tm );
+            return ::timegm64(time_tm);
 #else
-            return ::timegm( time_tm );
+            return 1;//::timegm(time_tm);
 #endif
         }
     }

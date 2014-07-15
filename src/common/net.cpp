@@ -25,9 +25,8 @@ namespace common
     {
         namespace details
         {
-            std::string get_mac_address_host_impl(IPAddr destination, IPAddr source, std::string &out_mac_address)
+            bool get_mac_address_host_impl(IPAddr destination, IPAddr source, unicode_string &out_mac_address)
             {
-                std::string result;
                 ULONG MacAddr[2]; /* for 6-byte hardware addresses */
                 ULONG PhysAddrLen = 6; /* default to length of six bytes */
 
@@ -36,11 +35,11 @@ namespace common
                 if (dwRetVal == NO_ERROR) {
                     BYTE *bPhysAddr = (BYTE *)&MacAddr;
                     for (int i = 0; i < PhysAddrLen; i++) {
-                        char tmp[4] = {0};
+                        unicode_char tmp[4] = {0};
                         if (i == (PhysAddrLen - 1))
-                            sprintf(tmp, "%.2X", bPhysAddr[i]);
+                            unicode_sprintf(tmp, "%.2X", bPhysAddr[i]);
                         else
-                            sprintf(tmp, "%.2X-", bPhysAddr[i]);
+                            unicode_sprintf(tmp, "%.2X-", bPhysAddr[i]);
 
                         out_mac_address += tmp;
                     }
@@ -71,13 +70,13 @@ namespace common
             }
         }
 
-        bool get_mac_address_host(const std::string &host, std::string &out_mac_address)
+        bool get_mac_address_host(const unicode_string &host, unicode_string &out_mac_address)
         {
             hostent * record = gethostbyname(host.c_str());
-            if(record == NULL)
-            {
+            if(record == NULL){
                 return false;
             }
+
             in_addr * address = (in_addr * )record->h_addr;
             const char* ip_address = inet_ntoa(* address);
             IPAddr DestIp = inet_addr(ip_address);
@@ -85,7 +84,7 @@ namespace common
         }
     }
 }
-#elif defined OS_POSIX
+#elif defined(OS_POSIX)
 namespace common
 {
     namespace net

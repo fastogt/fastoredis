@@ -218,7 +218,7 @@ namespace common
                 return (first);
             }
         }
-
+#ifdef OS_POSIX
         namespace signal
         {
             bool signal(int sig, void (*handler)(int));
@@ -226,6 +226,7 @@ namespace common
             bool sigemptyset(sigset_t &signal_mask);
             bool sigprocmask(int how, const sigset_t *set,sigset_t *oset);
         }
+#endif
     }
 
     namespace smart_ptr
