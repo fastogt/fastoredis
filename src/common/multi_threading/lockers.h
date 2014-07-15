@@ -4,6 +4,8 @@
 
 #ifdef OS_WIN
 #include <windows.h>
+#elif defined(OS_MAC)
+#include <libkern/OSAtomic.h>
 #endif
 
 namespace common
@@ -71,7 +73,11 @@ namespace common
                         void unlock();
                         ~unix_spin_lock();
                     private:
+#ifdef OS_MAC
+                        OSSpinLock spinlock;
+#else
                         pthread_spinlock_t spinlock;
+#endif
                     };
                 }
                 namespace mutex

@@ -1,6 +1,7 @@
 #pragma once
 
 /**/
+#include <sys/time.h>
 
 #include "common/types.h"
 
@@ -9,7 +10,7 @@ namespace common
     namespace time
     {
         struct timespec current_timespec();
-        struct timeval current_timeval();
+        timeval current_timeval();
         long long current_mstime(void);
 
         struct timespec timeval2timespec(struct timeval* tv);

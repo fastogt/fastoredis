@@ -1,5 +1,5 @@
-SET (PROJECT_COMMON_LIB common)
-PROJECT (${PROJECT_COMMON_LIB})
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
+PROJECT(common)
 
 # use Boost
 IF(BOOST_ENABLED)
@@ -46,7 +46,7 @@ ENDIF(SETTINGS_SUPPORT)
 
 IF(SETTINGS_SUPPORT AND BOOST_ENABLED)
     IF(WIN32)
-        SET(PLATFORM_DEPENDED_STORAGES settings/storages/registry_storage.hpp)
+        SET(PLATFORM_DEPENDED_STORAGES settings/storages/registry_storage.h)
     ENDIF()
     SET(STORAGES settings/storages/storages_def.h settings/storages/memory_storage.h settings/storages/xml_storage.h settings/storages/ini_storage.h)
     SET(MPL_STRING settings/storages/mpl_string/initializer_vector.h settings/storages/mpl_string/mpl.h settings/storages/mpl_string/string_template.h)
@@ -103,5 +103,5 @@ IF(BOOST_ENABLED)
 ENDIF(BOOST_ENABLED)
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX )
-    ADD_APP_LIBRARY (${PROJECT_COMMON_LIB} "${COMMON_SOURCES}" "${COMMON_LIBS}")
+    ADD_APP_LIBRARY (${PROJECT_NAME} "${COMMON_SOURCES}" "${COMMON_LIBS}")
 ENDIF(MINGW OR CMAKE_COMPILER_IS_GNUCXX )

@@ -1,7 +1,7 @@
 #include "common/utils.h"
+
 #ifdef OS_WIN
-#include <windows.h>
-#include <iphlpapi.h>
+
 #elif defined OS_POSIX
 #include <signal.h>
 #include <sys/socket.h>
@@ -20,13 +20,14 @@ namespace common
 {
     namespace utils
     {
+#ifdef OS_POSIX
         namespace signal
         {
             bool signal(int sig, void (*handler)(int))
             {
                 bool result = ::signal(sig, handler)!= SIG_ERR;
                 if(!result){
-                    unicode_perror("signal");
+                    DEBUG_MSG_PERROR("signal");
                 }
                 return result;
             }
@@ -35,7 +36,7 @@ namespace common
             {
                 bool result = ::sigaddset(&signal_mask,sig)!= ERROR_RESULT_VALUE;
                 if(!result){
-                    unicode_perror("sigaddset");
+                    DEBUG_MSG_PERROR("sigaddset");
                 }
                 return result;
             }
@@ -44,7 +45,7 @@ namespace common
             {
                 bool result = ::sigprocmask(how,set,oset)!= ERROR_RESULT_VALUE;
                 if(!result){
-                    unicode_perror("sigprocmask");
+                    DEBUG_MSG_PERROR("sigprocmask");
                 }
                 return result;
             }
@@ -53,10 +54,11 @@ namespace common
             {
                 bool result = ::sigemptyset(&signal_mask)!= ERROR_RESULT_VALUE;
                 if(!result){
-                    unicode_perror("sigemptyset");
+                    DEBUG_MSG_PERROR("sigemptyset");
                 }
                 return result;
             }
         }
+#endif
     }
 }

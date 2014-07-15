@@ -55,7 +55,7 @@ namespace common
         {
         #ifdef NDEBUG
             outStream_ = new unicode_ofstream(get_logger_path().c_str());
-            unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(m_outStream);
+            unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(outStream_);
             if(!file||(file&&!file->is_open()))
             {
                  outStream_  = &cerr();
@@ -89,6 +89,6 @@ namespace common
     void DEBUG_MSG_PERROR(const unicode_char* function)
     {
         const char* strer = strerror(errno);
-        return DEBUG_MSG_FORMAT<256>(logging::ERROR, "function: %s, %s", function, strer);
+        return DEBUG_MSG_FORMAT<256>(logging::L_ERROR, "function: %s, %s\n", function, strer);
     }
 }

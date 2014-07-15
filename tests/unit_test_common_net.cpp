@@ -6,7 +6,7 @@
 
 TEST(common_net, getRemoteMacAddress)
 {
-    const std::string google = "google.ru";
+    const std::string google = "uniscan.by";
     std::string out_mac;
     bool res = common::net::getRemoteMacAddress(google, out_mac);
     ASSERT_TRUE(res);

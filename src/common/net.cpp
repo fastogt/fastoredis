@@ -25,9 +25,8 @@ namespace common
     {
         namespace details
         {
-            std::string get_mac_address_host_impl(IPAddr destination, IPAddr source, std::string &out_mac_address)
+            bool get_mac_address_host_impl(IPAddr destination, IPAddr source, unicode_string &out_mac_address)
             {
-                std::string result;
                 ULONG MacAddr[2]; /* for 6-byte hardware addresses */
                 ULONG PhysAddrLen = 6; /* default to length of six bytes */
 
@@ -36,11 +35,11 @@ namespace common
                 if (dwRetVal == NO_ERROR) {
                     BYTE *bPhysAddr = (BYTE *)&MacAddr;
                     for (int i = 0; i < PhysAddrLen; i++) {
-                        char tmp[4] = {0};
+                        unicode_char tmp[4] = {0};
                         if (i == (PhysAddrLen - 1))
-                            sprintf(tmp, "%.2X", bPhysAddr[i]);
+                            unicode_sprintf(tmp, "%.2X", bPhysAddr[i]);
                         else
-                            sprintf(tmp, "%.2X-", bPhysAddr[i]);
+                            unicode_sprintf(tmp, "%.2X-", bPhysAddr[i]);
 
                         out_mac_address += tmp;
                     }
@@ -71,13 +70,13 @@ namespace common
             }
         }
 
-        bool get_mac_address_host(const std::string &host, std::string &out_mac_address)
+        bool get_mac_address_host(const unicode_string &host, unicode_string &out_mac_address)
         {
             hostent * record = gethostbyname(host.c_str());
-            if(record == NULL)
-            {
+            if(record == NULL){
                 return false;
             }
+
             in_addr * address = (in_addr * )record->h_addr;
             const char* ip_address = inet_ntoa(* address);
             IPAddr DestIp = inet_addr(ip_address);
@@ -85,7 +84,7 @@ namespace common
         }
     }
 }
-#elif defined OS_POSIX
+#elif defined(OS_POSIX)
 namespace common
 {
     namespace net
@@ -93,9 +92,9 @@ namespace common
         bool getRemoteMacAddress(const unicode_string& host, unicode_string& out_mac_address)
         {
             // Socket to send ARP packet
-            int list_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);//socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+            int udp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);//socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
 
-            if( list_sock == ERROR_RESULT_VALUE){
+            if( udp_sock == ERROR_RESULT_VALUE){
                 DEBUG_MSG_PERROR("socket");
                 return false;
             }
@@ -103,13 +102,25 @@ namespace common
             struct sockaddr_in udp_sin;
             bzero (&udp_sin, sizeof(udp_sin));
             udp_sin.sin_family = AF_INET;
-            udp_sin.sin_addr.s_addr = inet_addr(out_mac_address.c_str());
+            udp_sin.sin_addr.s_addr = inet_addr(host.c_str());
             udp_sin.sin_port = htons(5232);
 
-            int i = sendto(list_sock, "TEST", 5, 0, (struct sockaddr *)&udp_sin, sizeof(udp_sin));
+            int enabled = 1;
+            int i = setsockopt(udp_sock, SOL_SOCKET, SO_BROADCAST, &enabled, sizeof(enabled));
+            if(i == ERROR_RESULT_VALUE){
+                DEBUG_MSG_PERROR("setsockopt");
+                return false;
+            }
+
+            i = sendto(udp_sock, "TEST", 5, 0, (struct sockaddr *)&udp_sin, sizeof(udp_sin));
             if(i == ERROR_RESULT_VALUE){
                 DEBUG_MSG_PERROR("sendto");
+                return false;
             }
+
+            unicode_char buff[256] = {0};
+            recvfrom(udp_sock, buff, 256, 0, (struct sockaddr *)&udp_sin, sizeof(udp_sin));
+
             return true;
         }
     }

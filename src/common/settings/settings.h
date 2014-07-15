@@ -15,7 +15,7 @@ namespace common
             typedef type_t value_type;
             typedef where storage_type;
 
-            friend class where::load_struct;
+            friend typename where::load_struct;
 
             template<typename const_t>
             setting(const const_t &def)
