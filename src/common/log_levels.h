@@ -14,7 +14,7 @@ namespace common
             DEBUG,
             INFO,
             WARNING,
-            ERROR,
+            L_ERROR,
             CRITICAL
         };
 
@@ -31,7 +31,7 @@ namespace common
         };
 
         template<>
-        struct traits_level<ERROR>
+        struct traits_level<L_ERROR>
         {
             static const unicode_char *text()
             {
@@ -72,8 +72,8 @@ namespace common
             {
             case CRITICAL:
                 return traits_level<CRITICAL>::text();
-            case ERROR:
-                return traits_level<ERROR>::text();
+            case L_ERROR:
+                return traits_level<L_ERROR>::text();
             case WARNING:
                 return traits_level<WARNING>::text();
             case INFO:

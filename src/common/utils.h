@@ -218,14 +218,15 @@ namespace common
                 return (first);
             }
         }
-
+#ifdef OS_LINUX
         namespace signal
         {
             bool signal(int sig, void (*handler)(int));
             bool sigaddset(sigset_t &signal_mask,int sig);
             bool sigemptyset(sigset_t &signal_mask);
-            bool sigprocmask(int how, const sigset_t *set,sigset_t *oset);
+            bool sigprocmask(int how, const sigset_t *set, sigset_t *oset);
         }
+#endif
     }
 
     namespace smart_ptr
