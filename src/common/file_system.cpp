@@ -7,7 +7,7 @@
 #include "common/logger.h"
 
 #ifdef OS_POSIX
-#include <linux/limits.h>
+//#include <linux/limits.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
