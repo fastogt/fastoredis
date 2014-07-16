@@ -6,11 +6,8 @@
 #include "common/url.h"
 #include "common/logger.h"
 
-#ifdef OS_POSIX
-//#include <linux/limits.h>
 #include <unistd.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include <io.h>
 
 namespace common
 {
@@ -33,10 +30,14 @@ namespace common
         {
             bool result = false;
             if(fd_desc != INVALID_DESCRIPTOR){
+#ifdef OS_POSIX
                 result = (flags=fcntl(fd_desc,F_GETFL)) != ERROR_RESULT_VALUE;
                 if(!result){
                    DEBUG_MSG_PERROR("get_flags_by_descriptor");
                 }
+#else
+                #pragma message("IMPLEMENT PLZ")
+#endif
             }
 
             return result;
@@ -46,13 +47,27 @@ namespace common
         {
             bool result = false;
             if(fd_desc != INVALID_DESCRIPTOR){
+#ifdef OS_POSIX
                 result = fcntl(fd_desc,F_SETFL,flags) != ERROR_RESULT_VALUE;
                 if(!result){
                    DEBUG_MSG_PERROR("set_flags_by_descriptor");
                 }
+#else
+                #pragma message("IMPLEMENT PLZ")
+#endif
             }
 
             return result;
+        }
+#ifdef OS_POSIX
+        bool create_node(const unicode_string &path)
+        {
+            return create_node(path, S_IRWXU|S_IRWXG|S_IRWXO);
+        }
+
+        bool create_directory(const unicode_string& path)
+        {
+            return create_directory(path, S_IRWXU|S_IRWXG|S_IRWXO);
         }
 
         bool create_node(const unicode_string &path, size_t permissions)
@@ -82,7 +97,30 @@ namespace common
 
             return result;
         }
+#else
+        bool create_node(const unicode_string &path)
+        {
+            if(path.empty()){
+                return false;
+            }
+            #pragma message("IMPLEMENT PLZ")
+            return false;
+        }
 
+        bool create_directory(const unicode_string& path)
+        {
+            if(path.empty()){
+                return false;
+            }
+
+            bool result = mkdir(path.c_str()) != ERROR_RESULT_VALUE;
+            if(!result){
+                DEBUG_MSG_PERROR("mkdir");
+            }
+
+            return result;
+        }
+#endif
         bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags, mode_t mode)
         {
             if(path.empty()){
@@ -133,6 +171,7 @@ namespace common
                 int flags=0;
                 if(get_flags_by_descriptor(fd_desc,flags))
                 {
+#ifdef OS_POSIX
                     result = (flags&O_NONBLOCK)==O_NONBLOCK;
                     if(!result)
                     {
@@ -142,6 +181,9 @@ namespace common
                            DEBUG_MSG_PERROR("set_flags_by_descriptor");
                         }
                     }
+#else
+                    #pragma message("IMPLEMENT PLZ")
+#endif
                 }
             }
             return result;
@@ -219,7 +261,7 @@ namespace common
         }
     }
 }
-#endif
+
 namespace common
 {
     namespace file_system
@@ -334,7 +376,6 @@ namespace common
             tribool result = INDETERMINATE;
             if(!path.empty()){
                 struct stat filestat;
-#ifdef OS_POSIX
                 unicode_string p_path = prepare_path(path);
                 if (::stat(p_path.c_str(), &filestat )!=ERROR_RESULT_VALUE){
                     result = S_ISDIR(filestat.st_mode) ? SUCCESS:FAIL;
@@ -342,8 +383,6 @@ namespace common
                 else{
                      DEBUG_MSG_PERROR("stat");
                 }
-#else
-#endif
             }
             return result;
         }

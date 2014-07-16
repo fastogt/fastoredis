@@ -2,6 +2,9 @@
 
 /**/
 
+#include <fcntl.h>
+#include <sys/stat.h>
+
 #include "common/types.h"
 #include "common/boost_extension.h"
 
@@ -53,7 +56,7 @@ namespace common
             return unicode_strcmp(lhs.c_str(),rhs.c_str()) == 0;
         }
     }
-#ifdef OS_POSIX
+
     namespace file_system
     {
         off_t get_file_size_by_descriptor(int fd_desc);
@@ -64,8 +67,16 @@ namespace common
         bool close_descriptor(int fd_desc) WARN_UNUSED_RESULT;
         bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags) WARN_UNUSED_RESULT;
         bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags, mode_t mode) WARN_UNUSED_RESULT;
+#ifdef OS_POSIX
+        bool create_node(const unicode_string &path) WARN_UNUSED_RESULT;
+        bool create_directory(const unicode_string& path) WARN_UNUSED_RESULT;
         bool create_node(const unicode_string& path, size_t permissions) WARN_UNUSED_RESULT;
         bool create_directory(const unicode_string& path, size_t permissions) WARN_UNUSED_RESULT;
+#else
+        bool create_node(const unicode_string &path) WARN_UNUSED_RESULT;
+        bool create_directory(const unicode_string& path) WARN_UNUSED_RESULT;
+#endif
+
         bool write_to_descriptor(int fd_desc,const void *buf, size_t len) WARN_UNUSED_RESULT;
         bool read_from_descriptor(int fd_desc,void *buf, size_t len, int &readlen) WARN_UNUSED_RESULT;
 
@@ -87,5 +98,4 @@ namespace common
             const int descritor_;
         };
     }
-#endif
 }

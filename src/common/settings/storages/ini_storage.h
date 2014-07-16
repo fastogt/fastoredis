@@ -2,8 +2,6 @@
 
 /**/
 
-#include <fcntl.h>
-
 #include <istream>
 #include <iostream>
 
@@ -80,7 +78,7 @@ namespace common
                 if(createDir){
                     unicode_string rdir = file_system::get_dir_path(path);
                     if(file_system::is_directory(rdir) != SUCCESS){
-                        file_system::create_directory(rdir, S_IRWXU|S_IRWXG|S_IRWXO);
+                        file_system::create_directory(rdir);
                     }
                 }
                 const char *path_c = path.c_str();
@@ -102,7 +100,7 @@ namespace common
                 if(createDir){
                     unicode_string rdir = file_system::get_dir_path(path);
                     if(file_system::is_directory(rdir) != SUCCESS){
-                        file_system::create_directory(rdir, S_IRWXU|S_IRWXG|S_IRWXO);
+                        file_system::create_directory(rdir);
                     }
                 }
                 const char *path_c = path.c_str();

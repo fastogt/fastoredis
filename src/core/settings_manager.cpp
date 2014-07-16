@@ -12,7 +12,7 @@
 #include "gui/app_style.h"
 
 #ifdef OS_WIN
-#define INI_PATH ('~','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
+#define INI_PATH ('~','/','.','c','o','n','f','i','g','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
 #else
 #define INI_PATH ('~','/','.','c','o','n','f','i','g','/',PROJECT_NAME_DELEMITED,'/','c','o','n','f','i','g','.','i','n','i')
 #endif
