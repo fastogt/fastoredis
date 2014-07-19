@@ -1077,10 +1077,14 @@ int redisBufferRead(redisContext *c) {
 #ifdef OS_POSIX
     nread = read(c->fd,buf,sizeof(buf));
 #else
-	nread = recv(c->fd,buf,sizeof(buf),0);
+    nread = recv(c->fd,buf,sizeof(buf),0);
 #endif
     if (nread == -1) {
+#ifdef OS_POSIX
         if (errno == EAGAIN && !(c->flags & REDIS_BLOCK)) {
+#else
+        if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || errno == 0) {
+#endif
             /* Try again later */
         } else {
             __redisSetError(c,REDIS_ERR_IO,NULL);
@@ -1118,10 +1122,14 @@ int redisBufferWrite(redisContext *c, int *done) {
 #ifdef OS_POSIX
         nwritten = write(c->fd,c->obuf,sdslen(c->obuf));
 #else
-		nwritten = send(c->fd,c->obuf,sdslen(c->obuf),0);
+        nwritten = send(c->fd,c->obuf,sdslen(c->obuf),0);
 #endif
         if (nwritten == -1) {
+#ifdef OS_POSIX
             if (errno == EAGAIN && !(c->flags & REDIS_BLOCK)) {
+#else
+            if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || errno == 0) {
+#endif
                 /* Try again later */
             } else {
                 __redisSetError(c,REDIS_ERR_IO,NULL);

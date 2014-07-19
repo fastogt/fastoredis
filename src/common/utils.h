@@ -20,6 +20,12 @@ namespace common
 {
     namespace utils
     {
+        namespace hash
+        {
+            uint64_t crc64(uint64_t crc, const byte_type *data, uint64_t lenght);
+            uint64_t crc64(uint64_t crc, const buffer_type& data);
+        }
+
         namespace traits
         {
             template<typename T>
@@ -57,6 +63,7 @@ namespace common
                 return res;
             }
         }
+
         namespace converter
         {
             template < typename cast_to_t, typename cast_from_t >
@@ -104,6 +111,7 @@ namespace common
                 boost::function<type_t()> func_;
             };
         }
+
         namespace delete_wrappers
         {
             template<typename T>

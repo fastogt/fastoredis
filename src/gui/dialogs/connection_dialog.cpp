@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QLineEdit>
 #include <QEvent>
 
@@ -32,12 +33,16 @@ namespace fastoredis
         typeConnection_->setCurrentText(convertfromString<QString>(common::convert2string(connection_->connectionType())));
         VERIFY(connect(typeConnection_, SIGNAL(currentTextChanged(const QString&)), this, SLOT(typeConnectionChange(const QString&))));
 
+        logging_ = new QCheckBox("Logging enabled");
+        logging_->setChecked(connection_->loggingEnabled());
+
         commandLine_ = new QLineEdit;
         commandLine_->setText(convertfromString<QString>(connection_->commandLine()));
 
         QVBoxLayout *inputLayout = new QVBoxLayout;
         inputLayout->addWidget(connectionName_);
         inputLayout->addWidget(typeConnection_);
+        inputLayout->addWidget(logging_);
         inputLayout->addWidget(commandLine_);
 
         testButton_ = new QPushButton("&Test");
@@ -78,6 +83,7 @@ namespace fastoredis
         if(validateAndApply()){
             connection_->setConnectionName(common::convert2string(connectionName_->text()));
             connection_->setCommandLine(common::convert2string(commandLine_->text()));
+            connection_->setLoggingEnabled(logging_->isChecked());
             QDialog::accept();
         }
     }

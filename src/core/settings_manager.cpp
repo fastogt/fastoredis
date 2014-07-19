@@ -64,7 +64,7 @@ public:
             char ch = *it;
             if(ch == ','){
                 std::string enc( binary_text(text.begin()), binary_text(text.end()));
-                fastoredis::IConnectionSettingsBasePtr item(fastoredis::IConnectionSettingsBase::fromStdString(enc));
+                fastoredis::IConnectionSettingsBasePtr item(fastoredis::IConnectionSettingsBase::fromString(enc));
                 if(item){
                     result.push_back(item);
                 }

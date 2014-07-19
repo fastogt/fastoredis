@@ -8,7 +8,7 @@ class QComboBox;
 class QLineEdit;
 class QDialogButtonBox;
 class QPushButton;
-
+class QCheckBox;
 #include "core/connection_settings.h"
 
 namespace fastoredis
@@ -35,9 +35,10 @@ namespace fastoredis
         void retranslateUi();
         bool validateAndApply();
         const IConnectionSettingsBasePtr connection_;
-        QLineEdit *connectionName_;
-        QComboBox *typeConnection_;
-        QLineEdit *commandLine_;
+        QLineEdit* connectionName_;
+        QComboBox* typeConnection_;
+        QCheckBox* logging_;
+        QLineEdit* commandLine_;
 
         QPushButton *testButton_;
         QDialogButtonBox *buttonBox_;
