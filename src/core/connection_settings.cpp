@@ -1,20 +1,25 @@
 #include "core/connection_settings.h"
 
-#include "common/macros.h"
-#include <boost/lexical_cast.hpp>
+#include "common/utils.h"
 #include "common/net.h"
+#include "common/convert2string.h"
 
 namespace
 {
-    const unsigned port = 27017;
-    const char *defaultServerHost = "localhost";
-    const char *defaultNameConnection = "New Connection";
+    const common::uint16_type port = 27017;
+    const common::unicode_string defaultServerHost = UTEXT("localhost");
+    const common::unicode_string defaultNameConnection = UTEXT("New Connection");
 }
 
 namespace fastoredis
 {
     IConnectionSettingsBase::IConnectionSettingsBase(const common::unicode_string &connectionName)
-        : connectionName_(connectionName)
+        : connectionName_(), hash_(), logging_enabled_(false)
+    {
+        setConnectionName(connectionName.empty() ? defaultNameConnection : connectionName);
+    }
+
+    IConnectionSettingsBase::~IConnectionSettingsBase()
     {
 
     }
@@ -24,31 +29,45 @@ namespace fastoredis
         return badConnectionType();
     }
 
-    IConnectionSettingsBase *IConnectionSettingsBase::fromStdString(const common::unicode_string &val)
+    IConnectionSettingsBase *IConnectionSettingsBase::fromString(const common::unicode_string &val)
     {
         IConnectionSettingsBase *result = NULL;
         if(!val.empty()){
-            int crT = boost::lexical_cast<int>(val[0]);
-            switch(crT)
-            {
-            case REDIS:
-            {
-                result = new RedisConnectionSettings("");
-                size_t len = val.size();
-                for(size_t i = 2; i < len; ++i ){
-                    char ch = val[i];
-                    if(ch == ','){
-                        common::unicode_string name = val.substr(2,i-2);
-                        result->setConnectionName(name);
-                        common::unicode_string line = val.substr(i+1);
-                        result->initFromCommandLine(line);
+            size_t len = val.size();
+
+            common::uint8_type commaCount = 0;
+            common::unicode_string elText;
+
+            for(size_t i = 0; i < len; ++i ){
+                char ch = val[i];
+                if(ch == ','){
+                    if(commaCount == 0){
+                        int crT = elText[0] - 48;
+                        switch(crT){
+                            case REDIS:{
+                                result = new RedisConnectionSettings("");
+                                break;
+                            }
+                            default:{
+                                NOTREACHED();
+                                return result;
+                            }
+                        }
+                    }
+                    else if(commaCount == 1){
+                        result->setConnectionName(elText);
+                    }
+                    else if(commaCount == 2){
+                        result->setLoggingEnabled(common::convertfromString<bool>(elText));
+                        result->initFromCommandLine(val.substr(i+1));
                         break;
                     }
+                    commaCount++;
+                    elText.clear();
                 }
-                break;
-            }
-            default:
-                break;
+                else{
+                   elText += ch;
+                }
             }
         }
         return result;
@@ -60,20 +79,32 @@ namespace fastoredis
         connectionTypes crT = connectionType();
         if(crT != badConnectionType()){
             std::stringstream str;
-            str << crT << ',' << connectionName() << ',' << toCommandLine();
+            str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',' << toCommandLine();
             res = str.str();
         }
         return res;
     }
 
-    IConnectionSettingsBase::~IConnectionSettingsBase()
+    common::unicode_string IConnectionSettingsBase::hash() const
     {
+        return hash_;
+    }
 
+    bool IConnectionSettingsBase::loggingEnabled() const
+    {
+        return logging_enabled_;
+    }
+
+    void IConnectionSettingsBase::setLoggingEnabled(bool isLogging)
+    {
+        logging_enabled_ = isLogging;
     }
 
     void IConnectionSettingsBase::setConnectionName(const common::unicode_string &name)
-    {
+    {        
         connectionName_ = name;
+        using namespace common::utils;
+        hash_ = common::convert2string(hash::crc64(0, common::convertfromString<common::buffer_type>(connectionName_)));
     }
 
     common::unicode_string IConnectionSettingsBase::connectionName() const

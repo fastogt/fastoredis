@@ -19,19 +19,31 @@ namespace lock_free //unix
         {
             unix_spin_lock::unix_spin_lock()
             {
+#ifdef OS_LINUX
                 pthread_spin_init(&spinlock,0);
+#else
+#endif
             }
             void unix_spin_lock::lock()
             {
+#ifdef OS_LINUX
                 pthread_spin_lock(&spinlock);
+#else
+#endif
             }
             void unix_spin_lock::unlock()
             {
+#ifdef OS_LINUX
                 pthread_spin_unlock(&spinlock);
+#else
+#endif
             }
             unix_spin_lock::~unix_spin_lock()
             {
+#ifdef OS_LINUX
                 pthread_spin_destroy(&spinlock);
+#else
+#endif
             }			
         }
         namespace mutex

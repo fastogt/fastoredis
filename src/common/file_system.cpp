@@ -6,11 +6,8 @@
 #include "common/url.h"
 #include "common/logger.h"
 
-#ifdef OS_POSIX
-#include <linux/limits.h>
 #include <unistd.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+//#include <io.h>
 
 namespace common
 {
@@ -33,10 +30,14 @@ namespace common
         {
             bool result = false;
             if(fd_desc != INVALID_DESCRIPTOR){
+#ifdef OS_POSIX
                 result = (flags=fcntl(fd_desc,F_GETFL)) != ERROR_RESULT_VALUE;
                 if(!result){
                    DEBUG_MSG_PERROR("get_flags_by_descriptor");
                 }
+#else
+                #pragma message("IMPLEMENT PLZ")
+#endif
             }
 
             return result;
@@ -46,13 +47,27 @@ namespace common
         {
             bool result = false;
             if(fd_desc != INVALID_DESCRIPTOR){
+#ifdef OS_POSIX
                 result = fcntl(fd_desc,F_SETFL,flags) != ERROR_RESULT_VALUE;
                 if(!result){
                    DEBUG_MSG_PERROR("set_flags_by_descriptor");
                 }
+#else
+                #pragma message("IMPLEMENT PLZ")
+#endif
             }
 
             return result;
+        }
+#ifdef OS_POSIX
+        bool create_node(const unicode_string &path)
+        {
+            return create_node(path, S_IRWXU|S_IRWXG|S_IRWXO);
+        }
+
+        bool create_directory(const unicode_string& path)
+        {
+            return create_directory(path, S_IRWXU|S_IRWXG|S_IRWXO);
         }
 
         bool create_node(const unicode_string &path, size_t permissions)
@@ -61,7 +76,7 @@ namespace common
                 return false;
             }
 
-            bool result = mknod(path.c_str(), permissions,0) != ERROR_RESULT_VALUE;
+            bool result = mknod(path.c_str(), permissions, 0) != ERROR_RESULT_VALUE;
             if(!result){
                 DEBUG_MSG_PERROR("mknod");
             }
@@ -69,6 +84,43 @@ namespace common
             return result;
         }
 
+        bool create_directory(const unicode_string& path, size_t permissions)
+        {
+            if(path.empty()){
+                return false;
+            }
+
+            bool result = mkdir(path.c_str(), permissions) != ERROR_RESULT_VALUE;
+            if(!result){
+                DEBUG_MSG_PERROR("mkdir");
+            }
+
+            return result;
+        }
+#else
+        bool create_node(const unicode_string &path)
+        {
+            if(path.empty()){
+                return false;
+            }
+            #pragma message("IMPLEMENT PLZ")
+            return false;
+        }
+
+        bool create_directory(const unicode_string& path)
+        {
+            if(path.empty()){
+                return false;
+            }
+
+            bool result = mkdir(path.c_str()) != ERROR_RESULT_VALUE;
+            if(!result){
+                DEBUG_MSG_PERROR("mkdir");
+            }
+
+            return result;
+        }
+#endif
         bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags, mode_t mode)
         {
             if(path.empty()){
@@ -119,6 +171,7 @@ namespace common
                 int flags=0;
                 if(get_flags_by_descriptor(fd_desc,flags))
                 {
+#ifdef OS_POSIX
                     result = (flags&O_NONBLOCK)==O_NONBLOCK;
                     if(!result)
                     {
@@ -128,6 +181,9 @@ namespace common
                            DEBUG_MSG_PERROR("set_flags_by_descriptor");
                         }
                     }
+#else
+                    #pragma message("IMPLEMENT PLZ")
+#endif
                 }
             }
             return result;
@@ -154,9 +210,8 @@ namespace common
             {
                 readlen = read(fd_desc,buf,len);
                 result = readlen!=ERROR_RESULT_VALUE;
-                if(!result)
-                {
-                    unicode_perror("read");
+                if(!result){
+                    DEBUG_MSG_PERROR("read");
                 }
             }
             return result;
@@ -206,20 +261,18 @@ namespace common
         }
     }
 }
-#endif
+
 namespace common
 {
     namespace file_system
     {
         unicode_string stable_dir_path(unicode_string path)
         {
-            if(!path.empty())
-            {
+            if(!path.empty()){
                 path = prepare_path(path);
                 size_t lenght = path.length();
-                if (lenght>1&&path[lenght - 1] != get_separator())
-                {
-                    path+=get_separator();
+                if (lenght > 1 && path[lenght - 1] != get_separator()){
+                    path += get_separator();
                 }
             }
             return path;
@@ -244,9 +297,8 @@ namespace common
         unicode_string get_dir_path(unicode_string path)
         {
             size_t pos = path.find_last_of(get_separator());
-            if(pos!=unicode_string::npos)
-            {
-                path = stable_dir_path(path.substr(0,pos));
+            if(pos!=unicode_string::npos){
+                path = stable_dir_path(path.substr(0, pos));
             }
             return path;
         }
@@ -293,46 +345,44 @@ namespace common
         {
 
         }
+
         unicode_string path::extension()const
         {
             unicode_string ext;
             size_t pos = path_.find_first_of(UTEXT('.'));
-            if(pos!=unicode_string::npos)
-            {
+            if(pos!=unicode_string::npos){
                 ext = path_.substr(pos+1);
             }
             return ext;
         }
+
         bool path::is_valid()const
         {
-            return is_dir_!=INDETERMINATE;
+            return is_dir_ != INDETERMINATE;
         }
+
         bool path::is_file()const
         {
-            return is_dir_==FAIL;
+            return is_dir_ == FAIL;
         }
+
         bool path::is_directory()const
         {
-            return is_dir_==SUCCESS;
+            return is_dir_ == SUCCESS;
         }
+
         tribool is_directory(const unicode_string &path)
         {
-            tribool result=INDETERMINATE;
-            if(!path.empty())
-            {
+            tribool result = INDETERMINATE;
+            if(!path.empty()){
                 struct stat filestat;
-#ifdef OS_POSIX
                 unicode_string p_path = prepare_path(path);
-                if (::stat(p_path.c_str(), &filestat )!=ERROR_RESULT_VALUE)
-                {
-                    result = S_ISDIR(filestat.st_mode)?SUCCESS:FAIL;
+                if (::stat(p_path.c_str(), &filestat )!=ERROR_RESULT_VALUE){
+                    result = S_ISDIR(filestat.st_mode) ? SUCCESS:FAIL;
                 }
-                else
-                {
-                     unicode_perror("stat");
+                else{
+                     DEBUG_MSG_PERROR("stat");
                 }
-#else
-#endif
             }
             return result;
         }
@@ -340,41 +390,42 @@ namespace common
         {
             tribool result=INDETERMINATE;
             result = is_directory(path);
-            if(result!=INDETERMINATE)
-            {
-                result = result==SUCCESS?FAIL:SUCCESS;
+            if(result != INDETERMINATE){
+                result = result == SUCCESS ? FAIL:SUCCESS;
             }
             return result;
         }
+
         const unicode_char * path::c_str() const
         {
             return path_.c_str();
         }
+
         bool path::append(const unicode_string &path)
         {
             bool is_change=false;
-            if(!path.empty())
-            {
-                if(path_.empty())
-                {
+            if(!path.empty()){
+                if(path_.empty()){
                     path_ = path;
                     is_change=true;
                 }
-                else if(is_directory())
-                {
-                    path_+=get_file_name(path);
+                else if(is_directory()){
+                    path_ += get_file_name(path);
                     is_change=true;
                 }
             }
-            if(is_change)
-            {
+            if(is_change){
                 is_dir_ = file_system::is_directory(path_);
-                if(is_directory())
-                {
+                if(is_directory()){
                     path_ = stable_dir_path(path_);
                 }
             }
             return is_change;
+        }
+
+        unicode_string path::directory() const
+        {
+            return get_dir_path(path_);
         }
     }
 }

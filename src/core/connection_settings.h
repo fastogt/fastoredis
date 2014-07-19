@@ -11,6 +11,7 @@ namespace fastoredis
     {
     public:
         virtual ~IConnectionSettingsBase();
+        common::unicode_string hash() const;
 
         virtual common::unicode_string commandLine() const = 0;
         virtual void setCommandLine(const common::unicode_string &line) = 0;
@@ -26,17 +27,23 @@ namespace fastoredis
         void setConnectionName(const common::unicode_string &name);
 
         virtual connectionTypes connectionType() const;
-        static IConnectionSettingsBase *fromStdString(const common::unicode_string &val);
+        static IConnectionSettingsBase *fromString(const common::unicode_string &val);
         common::unicode_string toString() const;
 
         virtual IConnectionSettingsBase* clone () const = 0;
 
+        bool loggingEnabled() const;
+        void setLoggingEnabled(bool isLogging);
+
     protected:
         virtual common::unicode_string toCommandLine() const = 0;
         virtual void initFromCommandLine(const common::unicode_string &val) = 0;
-
         IConnectionSettingsBase(const common::unicode_string &connectionName);
+
+    private:
         common::unicode_string connectionName_;
+        common::unicode_string hash_;
+        bool logging_enabled_;
     };
 
     typedef boost::shared_ptr<IConnectionSettingsBase> IConnectionSettingsBasePtr;
@@ -63,6 +70,7 @@ namespace fastoredis
         void setInfo(const redisConfig& info);
 
         virtual IConnectionSettingsBase* clone () const;
+
     private:
         virtual common::unicode_string toCommandLine() const;
         virtual void initFromCommandLine(const common::unicode_string &val);

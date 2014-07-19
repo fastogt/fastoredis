@@ -112,14 +112,16 @@ namespace common
                 return false;
             }
 
+            
             i = sendto(udp_sock, "TEST", 5, 0, (struct sockaddr *)&udp_sin, sizeof(udp_sin));
             if(i == ERROR_RESULT_VALUE){
                 DEBUG_MSG_PERROR("sendto");
                 return false;
             }
 
+            socklen_t slen = sizeof(udp_sin);
             unicode_char buff[256] = {0};
-            recvfrom(udp_sock, buff, 256, 0, (struct sockaddr *)&udp_sin, sizeof(udp_sin));
+            recvfrom(udp_sock, buff, 256, 0, (struct sockaddr *)&udp_sin, &slen);
 
             return true;
         }

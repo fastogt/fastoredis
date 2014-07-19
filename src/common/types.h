@@ -45,6 +45,9 @@ namespace common
     typedef ssize_t ssize_type;                 /* ssize_t */
     typedef size_t size_type;                   /* size_t */
 
+    typedef uint8_type byte_type;
+    typedef std::basic_string<byte_type> buffer_type;
+
     typedef std::basic_string<unicode_char> unicode_string;
     typedef std::basic_ostream<unicode_char> unicode_ostream;
     typedef std::basic_istream<unicode_char> unicode_istream;

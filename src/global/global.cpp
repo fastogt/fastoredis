@@ -30,7 +30,7 @@ namespace fastoredis
     common::unicode_string FastoObject::toString() const
     {
         common::unicode_string result;
-        value_->getAsString(&result);
+        result = value_->toString();//getAsString(&result);
         return result;
     }
 

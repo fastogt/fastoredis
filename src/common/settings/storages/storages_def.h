@@ -77,7 +77,7 @@ namespace storages
 #define BOOST_PP_ENUM_PARAMS_M_TYPENAME(z, n, param) BOOST_PP_COMMA_IF(n) typename const param ## &n::value_type v##n
 #define BOOST_PP_ENUM_PARAMS_M_CONSTR_COMMON(z, n, param) BOOST_PP_COMMA_IF(n) const param ## n &v##n
 
-	template< BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT(FUSION_MAX_VECTOR_SIZE,class T, void)>
+    template< BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT(FUSION_MAX_VECTOR_SIZE, class T, void)>
 	struct storage_container;
 #define GEN_CONTAINER_STORAGE(n, i, unused)                                  \
 	template< BOOST_PP_ENUM_PARAMS(i,class T)>                            \

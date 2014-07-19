@@ -7,7 +7,11 @@
 namespace common
 {
     unicode_string convert2string(const std::string& from);
+    unicode_string convert2string(const buffer_type& from);
+    unicode_string convert2string(bool from);
 
+    unicode_string convert2string(char val);
+    unicode_string convert2string(unsigned char val);
     unicode_string convert2string(short val);
     unicode_string convert2string(unsigned short val);
     unicode_string convert2string(int val);

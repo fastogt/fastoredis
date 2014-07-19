@@ -12,7 +12,7 @@
 #include "gui/app_style.h"
 
 #ifdef OS_WIN
-#define INI_PATH ('~','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
+#define INI_PATH ('~','/','.','c','o','n','f','i','g','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
 #else
 #define INI_PATH ('~','/','.','c','o','n','f','i','g','/',PROJECT_NAME_DELEMITED,'/','c','o','n','f','i','g','.','i','n','i')
 #endif
@@ -25,7 +25,7 @@
 
 namespace
 {
-    typedef common::storages::ini::ini_storage<GEN_STRING_TYPLE(INI_PATH)> static_path_storage;
+    typedef common::storages::ini::ini_storage<GEN_STRING_TYPLE(INI_PATH), true> static_path_storage;
 
     using namespace common;
 
@@ -64,7 +64,7 @@ public:
             char ch = *it;
             if(ch == ','){
                 std::string enc( binary_text(text.begin()), binary_text(text.end()));
-                fastoredis::IConnectionSettingsBasePtr item(fastoredis::IConnectionSettingsBase::fromStdString(enc));
+                fastoredis::IConnectionSettingsBasePtr item(fastoredis::IConnectionSettingsBase::fromString(enc));
                 if(item){
                     result.push_back(item);
                 }

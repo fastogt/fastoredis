@@ -50,8 +50,9 @@ namespace fastoredis
 
     QVariant FastoTableModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
-        if (role != Qt::DisplayRole)
+        if (role != Qt::DisplayRole){
                     return QVariant();
+        }
 
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
             if(section == FastoTreeItem::eKey){
@@ -66,6 +67,8 @@ namespace fastoredis
         } else {
             return QString("%1").arg(section + 1);
         }
+
+        return QVariant(); 
     }
 
     QModelIndex FastoTableModel::index( int row, int col, const QModelIndex& index ) const

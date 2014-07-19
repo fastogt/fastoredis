@@ -9,6 +9,35 @@ namespace common
         return from;
     }
 
+    unicode_string convert2string(const buffer_type& from)
+    {
+        return unicode_string((const unicode_char*)from.c_str(), from.length());
+    }
+
+    unicode_string convert2string(bool from)
+    {
+        if(from){
+            return UTEXT("true");
+        }
+        else{
+            return UTEXT("false");
+        }
+    }
+
+    unicode_string convert2string(char val)
+    {
+        unicode_char buffer[2] = {0};
+        unicode_sprintf(buffer, "%c", val);
+        return buffer;
+    }
+
+    unicode_string convert2string(unsigned char val)
+    {
+        unicode_char buffer[2] = {0};
+        unicode_sprintf(buffer, "%c", val);
+        return buffer;
+    }
+
     unicode_string convert2string(short val)
     {
         unicode_char buffer[16] = {0};
@@ -77,6 +106,48 @@ namespace common
         unicode_char buffer[32] = {0};
         unicode_sprintf(buffer, "%f", val);
         return buffer;
+    }
+
+    template<>
+    std::string convertfromString(const unicode_string& val)
+    {
+        return val;
+    }
+
+    template<>
+    buffer_type convertfromString(const unicode_string& val)
+    {
+        return buffer_type((const byte_type*)val.c_str(), val.length());
+    }
+
+    template<>
+    char convertfromString(const unicode_string& val)
+    {
+        return atoi(val.c_str());
+    }
+
+    template<>
+    unsigned char convertfromString(const unicode_string& val)
+    {
+        return atoi(val.c_str());
+    }
+
+    template<>
+    bool convertfromString(const unicode_string& val)
+    {
+        if(val == UTEXT("true")){
+            return true;
+        }
+        else if(val == UTEXT("false")){
+            return false;
+        }
+
+        uint8_type intVal = convertfromString<uint8_type>(val);
+        if(intVal == 0){
+            return false;
+        }
+
+        return true;
     }
 
     template<>

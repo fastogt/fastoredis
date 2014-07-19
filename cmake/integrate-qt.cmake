@@ -139,23 +139,26 @@ IF(DEVELOPER_QT5)
             FIND_PACKAGE(${qtComponent} QUIET)
         ENDIF()
     
-        INCLUDE_DIRECTORIES( ${${qtComponent}_INCLUDE_DIRS} )
+        # Add the include directories for the Qt 5 module to
+        # the compile lines.
+        INCLUDE_DIRECTORIES(${${qtComponent}_INCLUDE_DIRS})
+
+        # Use the compile definitions defined in the Qt 5 module
+        ADD_DEFINITIONS(${${qtComponent}_DEFINITIONS})
+
+        # Add compiler flags for building executables (-fPIE)
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${${qtComponent}_EXECUTABLE_COMPILE_FLAGS}")
+
         #STRING(REGEX REPLACE "Qt5" "" COMPONENT_SHORT_NAME ${qtComponent})		
         #set(QT_MODULES_TO_USE ${QT_MODULES_TO_USE} ${COMPONENT_SHORT_NAME})
-        IF(${${qtComponent}_FOUND} AND NOT(${qtComponent} STREQUAL "Qt5LinguistTools"))
-        STRING(REGEX REPLACE "Qt5" "" componentShortName ${qtComponent})		
-                    SET(QT_LIBRARIES ${QT_LIBRARIES} "Qt5::${componentShortName}")
+
+        IF(${${qtComponent}_FOUND})
+            IF(NOT(${qtComponent} STREQUAL "Qt5LinguistTools"))
+                STRING(REGEX REPLACE "Qt5" "" componentShortName ${qtComponent})
+                SET(QT_LIBRARIES ${QT_LIBRARIES} "Qt5::${componentShortName}")
+            ENDIF()
         ENDIF()
     ENDFOREACH(qtComponent ${QT_COMPONENTS_TO_USE})
-    
-    IF(NOT Qt5ScriptTools_FOUND)
-        ADD_DEFINITIONS(-DQT_NO_SCRIPTTOOLS)
-    ENDIF()
-
-    IF(DEVELOPER_OPENGL)
-        FIND_PACKAGE(Qt5OpenGL REQUIRED)
-        INCLUDE_DIRECTORIES( ${Qt5OpenGL_INCLUDE_DIRS})
-    ENDIF(DEVELOPER_OPENGL)
 ELSE(DEVELOPER_QT5)
     SET(QT_COMPONENTS_TO_USE ${ARGV})
     # repeat this for every debug/optional package

@@ -636,6 +636,7 @@ namespace fastoredis
 
             }
         }
+        IDriver::timerEvent(event);
     }
 
     void RedisDriver::initImpl()
