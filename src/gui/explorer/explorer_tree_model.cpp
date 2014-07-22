@@ -12,8 +12,18 @@ namespace fastoredis
 
     }
 
+    IExplorerTreeItem::~IExplorerTreeItem()
+    {
+
+    }
+
     ExplorerServerItem::ExplorerServerItem(const IServerPtr &server, TreeItem *parent)
         : IExplorerTreeItem(parent), server_(server)
+    {
+
+    }
+
+    ExplorerServerItem::~ExplorerServerItem()
     {
 
     }
@@ -35,6 +45,11 @@ namespace fastoredis
 
     ExplorerDatabaseItem::ExplorerDatabaseItem(const DataBaseInfo &db, ExplorerServerItem *parent)
         : IExplorerTreeItem(parent), db_(db)
+    {
+
+    }
+
+    ExplorerDatabaseItem::~ExplorerDatabaseItem()
     {
 
     }
@@ -79,13 +94,15 @@ namespace fastoredis
     {
         QVariant result;
 
-        if (!index.isValid())
+        if (!index.isValid()){
             return result;
+        }
 
         IExplorerTreeItem *node = common::utils_qt::item<IExplorerTreeItem*>(index);
 
-        if (!node)
+        if (!node){
             return result;
+        }
 
         int col = index.column();
 
@@ -154,10 +171,10 @@ namespace fastoredis
     {
         TreeItem *parent = dynamic_cast<TreeItem*>(_root.get());
         DCHECK(parent);
-        QModelIndex index = createIndex(0,0,parent);
+        QModelIndex ind = createIndex(0, 0, parent);
         ExplorerServerItem *serverItem = findServerItem(server.get());
         int row = parent->indexOf(serverItem);
-        beginRemoveRows(index, row, row);
+        beginRemoveRows(ind, row, row + 1);
             parent->removeChildren(serverItem);
         endRemoveRows();
     }

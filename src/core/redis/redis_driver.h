@@ -20,9 +20,9 @@ namespace fastoredis
         virtual void interrupt();
         std::string address() const;
 
-        static const QStringList &allCommands();
-        static const QStringList &typesKeywords();
-        static const QStringList &commandsKeywords();
+        static const QStringList& allCommands();
+        static const QStringList& typesKeywords();
+        static const QStringList& commandsKeywords();
 
     private:
         virtual void customEvent(QEvent *event);

@@ -1,5 +1,7 @@
 #include "common/utils.h"
 
+#include <stdint.h>
+
 #ifdef OS_WIN
 
 #elif defined OS_LINUX
@@ -167,7 +169,7 @@ namespace common
                 return crc;
             }
 
-            uint64_t crc64(uint64_t crc, const buffer_type& data)
+            uint64_type crc64(uint64_type crc, const buffer_type& data)
             {
                 return crc64(crc, data.c_str(), data.length());
             }

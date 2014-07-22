@@ -608,7 +608,7 @@ namespace common
     }
 
     ErrorValue::ErrorValue()
-        : Value(TYPE_ERROR), description_(), errorType_(E_NONE), level_(common::logging::NONE)
+        : Value(TYPE_ERROR), description_(), errorType_(E_NONE), level_(common::logging::L_NONE)
     {
 
     }

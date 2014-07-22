@@ -24,6 +24,15 @@ namespace fastoredis
         }
     }
 
+    void TreeItem::removeChildren(int index)
+    {
+        if(index < childrenCount()){
+            TreeItem *item = childrens_[index];
+            childrens_.erase(childrens_.begin()+index);
+            delete item;
+        }
+    }
+
     int TreeItem::childrenCount() const
     {
         return childrens_.size();
@@ -36,7 +45,7 @@ namespace fastoredis
 
     int TreeItem::indexOf(TreeItem *item) const
     {
-        for (unsigned i=0; i < childrens_.size(); ++i) {
+        for (unsigned i = 0; i < childrens_.size(); ++i) {
             if (item == childrens_[i]) {
                 return i;
             }
