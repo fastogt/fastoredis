@@ -31,10 +31,11 @@ namespace fastoredis
 
         common::Value::Type type() const;
         common::unicode_string toString() const;
+        FastoObjectPtr deepCopy(const FastoObjectPtr &parent) const;
 
 		child_container_type childrens() const;
         static FastoObjectPtr createRoot(const std::string& text = std::string());
-		void addChildren(const FastoObjectPtr &child);
+        void addChildren(const FastoObjectPtr &child);
         bool isRoot() const;
 
     private:
@@ -43,12 +44,12 @@ namespace fastoredis
         const FastoObjectPtr parent_;
 		child_container_type childrens_;
 
-        boost::scoped_ptr<common::Value> value_;
+        const boost::scoped_ptr<common::Value> value_;
     };
 }
 
 namespace common
 {
     unicode_string convert2string(fastoredis::supportedViews v);
-    unicode_string convert2string(const fastoredis::FastoObjectPtr &obj);
+    unicode_string convert2string(const fastoredis::FastoObjectPtr& obj);
 }

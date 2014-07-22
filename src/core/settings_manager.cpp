@@ -11,17 +11,14 @@
 #include "translations/translations.h"
 #include "gui/app_style.h"
 
-#ifdef OS_WIN
-#define INI_PATH ('~','/','.','c','o','n','f','i','g','/','f','a','s','t','o','r','e','d','i','s','.','i','n','i')
-#else
 #define INI_PATH ('~','/','.','c','o','n','f','i','g','/',PROJECT_NAME_DELEMITED,'/','c','o','n','f','i','g','.','i','n','i')
-#endif
 
 #define langauge_ ('l','a','n','g','u','a','g','e')
 #define style_ ('s','t','y','l','e')
 #define connections_ ('c','o','n','n','e','c','t','i','o','n','s')
 #define view_ ('v','i','e','w')
 #define synctabs_ ('s','y','n','c','t','a','b','s')
+#define loggingdir_ ('l','o','g','g','i','n','g','d','i','r')
 
 namespace
 {
@@ -34,14 +31,19 @@ namespace
     BEGIN_DECL_TYPLE(connections_,fastoredis::SettingsManager::ConnectionSettingsContainerType,static_path_storage)
     BEGIN_DECL_TYPLE(view_,int,static_path_storage)
     BEGIN_DECL_TYPLE(synctabs_,bool,static_path_storage)
+    BEGIN_DECL_TYPLE(loggingdir_,unicode_string,static_path_storage)
 
-    typedef common::storages::storage_container<genereted_settings::setting_langauge_, genereted_settings::setting_style_, genereted_settings::setting_connections_, genereted_settings::setting_view_, genereted_settings::setting_synctabs_> static_storage_type;
+    typedef common::storages::storage_container<genereted_settings::setting_langauge_, genereted_settings::setting_style_,
+                                                genereted_settings::setting_connections_, genereted_settings::setting_view_,
+                                                genereted_settings::setting_synctabs_, genereted_settings::setting_loggingdir_> static_storage_type;
 
     typedef common::storages::settings_container<static_storage_type> server_main_t;
 
     inline server_main_t &get_config_storage()
     {
-        static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::AppStyle::defStyle,fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree, true));
+        static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::AppStyle::defStyle,
+                                                     fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree,
+                                                     true, file_system::get_dir_path(static_path_storage::path_to_save()) ));
         return g_m;
     }
 }
@@ -113,7 +115,7 @@ namespace fastoredis
         return GET_SETTING(genereted_settings::setting_style_).value();
     }
 
-    void SettingsManager::setCurrentStyle(const common::unicode_string& st) const
+    void SettingsManager::setCurrentStyle(const common::unicode_string& st)
     {
         GET_SETTING(genereted_settings::setting_style_).set_value(st);
     }
@@ -123,7 +125,7 @@ namespace fastoredis
         return GET_SETTING(genereted_settings::setting_langauge_).value();
     }
 
-    void SettingsManager::setCurrentLanguage(const common::unicode_string& lang) const
+    void SettingsManager::setCurrentLanguage(const common::unicode_string& lang)
     {
         GET_SETTING(genereted_settings::setting_langauge_).set_value(lang);
     }
@@ -170,8 +172,18 @@ namespace fastoredis
         return GET_SETTING(genereted_settings::setting_synctabs_).value();
     }
 
-    void SettingsManager::setSyncTabs(bool sync) const
+    void SettingsManager::setSyncTabs(bool sync)
     {
         GET_SETTING(genereted_settings::setting_synctabs_).set_value(sync);
+    }
+
+    void SettingsManager::setLoggingDirectory(const common::unicode_string& dir)
+    {
+         GET_SETTING(genereted_settings::setting_loggingdir_).set_value(dir);
+    }
+
+    common::unicode_string SettingsManager::loggingDirectory() const
+    {
+        return GET_SETTING(genereted_settings::setting_loggingdir_).value();
     }
 }

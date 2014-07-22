@@ -24,10 +24,10 @@ namespace fastoredis
         static const QStringList &typesKeywords();
         static const QStringList &commandsKeywords();
 
-    protected:
+    private:
         virtual void customEvent(QEvent *event);
-        virtual void timerEvent(QTimerEvent * event);
         virtual void initImpl();
+        virtual common::ErrorValue currentLoggingInfo(FastoObjectPtr& outInfo);
 
         virtual void connectEvent(Events::ConnectRequestEvent *ev);
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev);
@@ -38,7 +38,6 @@ namespace fastoredis
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev);
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev);
 
-    private:
         struct pimpl;
         boost::scoped_ptr<pimpl> impl_;
     };

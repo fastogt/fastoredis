@@ -13,6 +13,8 @@ namespace fastoredis
         virtual ~IConnectionSettingsBase();
         common::unicode_string hash() const;
 
+        common::unicode_string loggingPath() const;
+
         virtual common::unicode_string commandLine() const = 0;
         virtual void setCommandLine(const common::unicode_string &line) = 0;
 

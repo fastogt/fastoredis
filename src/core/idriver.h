@@ -11,6 +11,14 @@
 
 class QThread;
 
+namespace common
+{
+    namespace file_system
+    {
+        class File;
+    }
+}
+
 namespace fastoredis
 {
     class IDriver
@@ -32,12 +40,17 @@ namespace fastoredis
     private Q_SLOTS:
         void init();
 
-    protected:
+    protected:        
+        virtual void timerEvent(QTimerEvent* event);
+
         IDriver(const IConnectionSettingsBasePtr &settings);
         void notifyProgress(QObject *reciver, int value);
 
         virtual void customEvent(QEvent *event);
+
+    private:
         virtual void initImpl() = 0;
+        virtual common::ErrorValue currentLoggingInfo(FastoObjectPtr& outInfo) = 0;
 
         virtual void connectEvent(Events::ConnectRequestEvent *ev) = 0;
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev) = 0;
@@ -48,8 +61,9 @@ namespace fastoredis
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev) = 0;
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev) = 0;
 
-    private:
         QThread *thread_;
+        int timer_info_id_;
+        common::file_system::File* logFile_;
 
     protected:
         const IConnectionSettingsBasePtr settings_;

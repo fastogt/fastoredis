@@ -15,7 +15,7 @@ namespace fastoredis
     FastoObject::FastoObject(const FastoObjectPtr &parent, common::Value *val)
         : parent_(parent), value_(val)
     {
-
+        DCHECK(val);
     }
 
     FastoObject::~FastoObject()
@@ -34,6 +34,17 @@ namespace fastoredis
         return result;
     }
 
+    FastoObjectPtr FastoObject::deepCopy(const FastoObjectPtr &parent) const
+    {
+        FastoObjectPtr result(new FastoObject(parent, value_->deepCopy()));
+
+        for (child_container_type::const_iterator i(childrens_.begin()); i != childrens_.end(); ++i){
+            result->addChildren((*i)->deepCopy(result));
+        }
+
+        return result;
+    }
+
     FastoObjectPtr FastoObject::createRoot(const std::string &text)
     {
         FastoObjectPtr result(new FastoObject(NULL, common::Value::createStringValue(text)));
@@ -42,7 +53,8 @@ namespace fastoredis
 
 	void FastoObject::addChildren(const FastoObjectPtr &child)
     {
-		if(child){
+        if(child){
+            DCHECK(child->parent_ == this);
 			childrens_.push_back(child);
         }
     }

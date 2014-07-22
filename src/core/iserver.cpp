@@ -166,7 +166,6 @@ namespace fastoredis
 
     IServer::~IServer()
     {
-
     }
 
     void IServer::notify(QEvent *ev)

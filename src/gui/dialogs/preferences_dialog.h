@@ -7,6 +7,7 @@
 class QComboBox;
 class QCheckBox;
 class QLabel;
+class QLineEdit;
 
 namespace fastoredis
 {
@@ -34,5 +35,7 @@ namespace fastoredis
         QComboBox *languagesComboBox_;
         QComboBox *defaultViewComboBox_;
         QCheckBox *syncTabs_;
+        QLabel *logDirLabel_;
+        QLineEdit* logDirPath_;
     };
 }

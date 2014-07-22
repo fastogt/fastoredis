@@ -60,17 +60,17 @@ namespace common
             {
                  outStream_  = &cerr();
                  *outStream_ << traits_level<WARNING>::text << UTEXT(" ") << "Output file not open!" <<  UTEXT("\n");
-            }
-            *outStream_ << UTEXT("LOG STARTED\n");
+            }            
         #else
             outStream_ = &cerr();
         #endif
+            *outStream_ << UTEXT("LOG STARTED\n");
         }
 
         logger::~logger(void)
         {
             outStream_->flush();
-            if(outStream_ && outStream_!=&cerr()){
+            if(outStream_ && outStream_ != &cerr()){
                 unicode_ofstream *file = dynamic_cast<unicode_ofstream*>(outStream_);
                 if(file){
                     file->close();
@@ -82,13 +82,13 @@ namespace common
         void logger::printTradeSafe(LEVEL_LOG level, const unicode_string& data)
         {
             multi_threading::guard_wraper<locker_type> lock(lock_);
-            *outStream_ << log_level_to_text(level) << UTEXT(" ") <<  data;
+            *outStream_ << log_level_to_text(level) << UTEXT(" ") << data;
         }        
     }
 
     void DEBUG_MSG_PERROR(const unicode_char* function)
     {
         const char* strer = strerror(errno);
-        return DEBUG_MSG_FORMAT<256>(logging::L_ERROR, "function: %s, %s\n", function, strer);
+        return DEBUG_MSG_FORMAT<256>(logging::L_ERROR, UTEXT("function: %s, %s\n"), function, strer);
     }
 }

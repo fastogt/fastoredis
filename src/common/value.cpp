@@ -565,8 +565,9 @@ namespace common
     {
         ArrayValue* result = new ArrayValue;
 
-        for (ValueVector::const_iterator i(list_.begin()); i != list_.end(); ++i)
+        for (ValueVector::const_iterator i(list_.begin()); i != list_.end(); ++i){
             result->append((*i)->deepCopy());
+        }
 
         return result;
 	}

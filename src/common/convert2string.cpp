@@ -90,7 +90,7 @@ namespace common
     unicode_string convert2string(unsigned long long val)
     {
         unicode_char buffer[32] = {0};
-        unicode_sprintf(buffer, "%ulld", val);
+        unicode_sprintf(buffer, "%lld", val);
         return buffer;
     }
 

@@ -192,7 +192,7 @@ namespace fastoredis
     struct RedisDriver::pimpl
 
     {
-        pimpl(): interrupt_(false), context(NULL), timer_info_id_(0)
+        pimpl(): interrupt_(false), context(NULL)
         {
 
         }
@@ -206,15 +206,14 @@ namespace fastoredis
         }
         volatile bool interrupt_;
         redisContext *context;
-        redisConfig config;
-        int timer_info_id_;
+        redisConfig config;        
 
         int cliAuth(common::ErrorValue& er) {
             redisReply *reply;
             if (config.auth.empty()) return REDIS_OK;
 
             reply = static_cast<redisReply*>(redisCommand(context,"AUTH %s",config.auth.c_str()));
-            if (reply != NULL) {
+            if (reply) {
                 freeReplyObject(reply);
                 return REDIS_OK;
             }            
@@ -594,6 +593,10 @@ namespace fastoredis
 
     }
 
+    RedisDriver::~RedisDriver()
+    {
+    }
+
     const QStringList &RedisDriver::allCommands()
     {
         return g_allCommands;
@@ -623,32 +626,19 @@ namespace fastoredis
     {
         IDriver::customEvent(event);
         impl_->interrupt_ = false;
-    }
-
-    void RedisDriver::timerEvent(QTimerEvent * event)
-    {
-        if(impl_->timer_info_id_ == event->timerId() && isConnected()){            
-            FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
-            common::ErrorValue er;
-            impl_->repl_impl(root, er);
-            if(!er.isError()){
-                ServerInfo inf = makeServerInfo(root);
-
-            }
-        }
-        IDriver::timerEvent(event);
-    }
+    }    
 
     void RedisDriver::initImpl()
     {
-        impl_->timer_info_id_ = startTimer(1000);
-        DCHECK(impl_->timer_info_id_);
+
     }
 
-    RedisDriver::~RedisDriver()
+    common::ErrorValue RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
     {
-        killTimer(impl_->timer_info_id_);
-        impl_->timer_info_id_ = 0;
+        outInfo = FastoObject::createRoot(INFO_REQUEST);
+        common::ErrorValue er;
+        impl_->repl_impl(outInfo, er);
+        return er;
     }
 
     void RedisDriver::connectEvent(Events::ConnectRequestEvent *ev)

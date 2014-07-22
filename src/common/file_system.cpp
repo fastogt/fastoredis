@@ -5,9 +5,23 @@
 
 #include "common/url.h"
 #include "common/logger.h"
+#include "common/convert2string.h"
 
 #include <unistd.h>
-//#include <io.h>
+
+namespace
+{
+    using namespace common;
+    bool create_directory_impl(const unicode_char* path)
+    {
+        bool result = mkdir(path) != ERROR_RESULT_VALUE;
+        if(!result){
+            DEBUG_MSG_PERROR("mkdir");
+        }
+
+        return result;
+    }
+}
 
 namespace common
 {
@@ -106,21 +120,55 @@ namespace common
             #pragma message("IMPLEMENT PLZ")
             return false;
         }
-
-        bool create_directory(const unicode_string& path)
+#endif
+        bool create_directory(const unicode_string& path, bool isRecursive)
         {
             if(path.empty()){
                 return false;
             }
 
-            bool result = mkdir(path.c_str()) != ERROR_RESULT_VALUE;
-            if(!result){
-                DEBUG_MSG_PERROR("mkdir");
+            common::unicode_string prPath = prepare_path(path);
+            if(prPath[prPath.length() - 1] == get_separator()){
+                prPath[prPath.length() - 1] = 0;
             }
 
-            return result;
-        }
+            if(isRecursive){
+                unicode_char *p = NULL;
+#ifdef OS_WIN
+                uint8_type shift = 3;
+#else
+                uint8_type shift = 1;
 #endif
+                for(p = prPath.c_str() + shift; *p; p++ ){
+                    if(*p == get_separator()){
+                        *p = 0;
+                        const unicode_char *path = prPath.c_str();
+
+                        bool needCreate = false;
+                        struct stat filestat;
+                        if (::stat(path, &filestat) == ERROR_RESULT_VALUE){
+                            needCreate = true;
+                        }
+                        else{
+                            if(!S_ISDIR(filestat.st_mode)){
+                                needCreate = true;
+                            }
+                        }
+
+                        if(needCreate){
+                            create_directory_impl(path);
+                        }
+
+                        *p = get_separator();
+                    }
+                }
+                return create_directory_impl(prPath.c_str());
+            }
+            else{
+                return create_directory_impl(prPath.c_str());
+            }
+        }
+
         bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags, mode_t mode)
         {
             if(path.empty()){
@@ -152,11 +200,9 @@ namespace common
         bool close_descriptor(int fd_desc)
         {
             bool result = false;
-            if(fd_desc!=INVALID_DESCRIPTOR)
-            {
+            if(fd_desc!=INVALID_DESCRIPTOR){
                 result = close(fd_desc) != ERROR_RESULT_VALUE;
-                if(!result)
-                {
+                if(!result){
                    DEBUG_MSG_PERROR("close");
                 }
             }
@@ -192,11 +238,9 @@ namespace common
         bool write_to_descriptor(int fd_desc,const void *buf,size_t len)
         {
             bool result = false;
-            if(fd_desc!=INVALID_DESCRIPTOR)
-            {
+            if(fd_desc!=INVALID_DESCRIPTOR){
                 result = write(fd_desc,buf,len)!=ERROR_RESULT_VALUE;
-                if(!result)
-                {
+                if(!result){
                     DEBUG_MSG_PERROR("write");
                 }
             }
@@ -206,8 +250,7 @@ namespace common
         bool read_from_descriptor(int fd_desc,void *buf,size_t len,int &readlen)
         {
             bool result = false;
-            if(fd_desc!=INVALID_DESCRIPTOR)
-            {
+            if(fd_desc!=INVALID_DESCRIPTOR){
                 readlen = read(fd_desc,buf,len);
                 result = readlen!=ERROR_RESULT_VALUE;
                 if(!result){
@@ -251,8 +294,7 @@ namespace common
         off_t get_file_size_by_descriptor(int fd_desc)
         {
             off_t result = 0;
-            if(fd_desc!=INVALID_DESCRIPTOR)
-            {
+            if(fd_desc!=INVALID_DESCRIPTOR){
                 struct stat stat_buf;
                 fstat(fd_desc, &stat_buf);
                 result = stat_buf.st_size;
@@ -277,15 +319,15 @@ namespace common
             }
             return path;
         }
-        path make_path(const path& p,const unicode_string &file_path)
+        Path make_path(const Path& p,const unicode_string &file_path)
         {
-            path result(p);
+            Path result(p);
             result.append(file_path);
             return result;
         }
-        path make_path_from_uri(const path& p, const unicode_string &uri)
+        Path make_path_from_uri(const Path& p, const unicode_string &uri)
         {
-            path result;
+            Path result;
             unicode_char *dec = url::detail::url_decode(uri.c_str());
             if(dec){
                 result = make_path(p,dec);
@@ -297,56 +339,56 @@ namespace common
         unicode_string get_dir_path(unicode_string path)
         {
             size_t pos = path.find_last_of(get_separator());
-            if(pos!=unicode_string::npos){
+            if(pos != unicode_string::npos){
                 path = stable_dir_path(path.substr(0, pos));
             }
             return path;
         }
         unicode_string prepare_path(unicode_string result)
         {
-             if(!result.empty()&&result[0]=='~')
-             {
+             if(!result.empty()&&result[0]=='~'){
              #ifdef OS_POSIX
                  char* home = getenv("HOME");
              #else
                  char* home = getenv("USERPROFILE");
              #endif
                  if(home){
-                     unicode_string tmp=result;
+                     unicode_string tmp = result;
                      result = home;
                      result += tmp.substr(1);
                  }
              }
+             std::replace(result.begin(), result.end(), '\\', get_separator());
              return result;
         }
 
         unicode_string get_file_name(unicode_string path)
         {
             size_t pos = path.find_last_of(get_separator());
-            if(pos != unicode_string::npos)
-            {
+            if(pos != unicode_string::npos){
                 path = path.substr(pos+1);
             }
             return path;
         }
 
-        path::path()
+        Path::Path()
             :is_dir_(INDETERMINATE)
         {
 
         }
 
-        path::path(const unicode_string &path)
-            :is_dir_(file_system::is_directory(path)),path_(is_directory()?stable_dir_path(path):path)
+        Path::Path(const unicode_string &path)
+            :is_dir_(file_system::is_directory(path)), path_(is_directory() ? stable_dir_path(path) : path)
         {
         }
 
-        path::path(const path &other):is_dir_(other.is_dir_),path_(other.path_)
+        Path::Path(const Path &other)
+            :is_dir_(other.is_dir_), path_(other.path_)
         {
 
         }
 
-        unicode_string path::extension()const
+        unicode_string Path::extension()const
         {
             unicode_string ext;
             size_t pos = path_.find_first_of(UTEXT('.'));
@@ -356,17 +398,17 @@ namespace common
             return ext;
         }
 
-        bool path::is_valid()const
+        bool Path::is_valid()const
         {
             return is_dir_ != INDETERMINATE;
         }
 
-        bool path::is_file()const
+        bool Path::is_file()const
         {
             return is_dir_ == FAIL;
         }
 
-        bool path::is_directory()const
+        bool Path::is_directory()const
         {
             return is_dir_ == SUCCESS;
         }
@@ -377,7 +419,7 @@ namespace common
             if(!path.empty()){
                 struct stat filestat;
                 unicode_string p_path = prepare_path(path);
-                if (::stat(p_path.c_str(), &filestat )!=ERROR_RESULT_VALUE){
+                if (::stat(p_path.c_str(), &filestat ) != ERROR_RESULT_VALUE){
                     result = S_ISDIR(filestat.st_mode) ? SUCCESS:FAIL;
                 }
                 else{
@@ -396,12 +438,17 @@ namespace common
             return result;
         }
 
-        const unicode_char * path::c_str() const
+        unicode_string Path::path() const
+        {
+            return path_;
+        }
+
+        const unicode_char* Path::c_str() const
         {
             return path_.c_str();
         }
 
-        bool path::append(const unicode_string &path)
+        bool Path::append(const unicode_string &path)
         {
             bool is_change=false;
             if(!path.empty()){
@@ -423,9 +470,99 @@ namespace common
             return is_change;
         }
 
-        unicode_string path::directory() const
+        unicode_string Path::directory() const
         {
             return get_dir_path(path_);
+        }
+
+        File::File(const Path &filePath)
+            : path_(filePath), file_(NULL)
+        {
+
+        }
+
+        File::~File()
+        {
+            close();
+        }
+
+        bool File::open(const char* mode)
+        {
+            if(!file_){
+                file_ = fopen(path_.c_str(), mode);
+                return file_;
+            }
+
+            return true;
+        }
+
+        bool File::read(buffer_type& outData, uint32_t maxSize)
+        {
+            if(!file_){
+                return false;
+            }
+
+            void* data = calloc(maxSize, sizeof(byte_type));
+            if(!data){
+                return false;
+            }
+
+            size_t res = fread(data, sizeof(byte_type), maxSize, file_);
+            if(res > 0){
+                outData = buffer_type(data, res);
+            }
+            else if(feof(file_)){
+
+            }
+            free(data);
+
+            return true;
+        }
+
+        bool File::read(std::string& outData, uint32_t maxSize)
+        {
+           buffer_type outB;
+           bool res = read(outB, maxSize);
+           if(res){
+               outData = convert2string(outB);
+           }
+           return res;
+        }
+
+        bool File::write(const buffer_type& data)
+        {
+            if(!file_){
+                return false;
+            }
+
+            if(!data.length()){
+                NOTREACHED();
+                return false;
+            }
+
+            size_t res = fwrite(data.c_str(), sizeof(byte_type), data.length(), file_);
+            if(res != data.length()){
+                DEBUG_MSG_PERROR("write");
+            }
+            return res == data.length();
+        }
+
+        bool File::write(const std::string& data)
+        {
+            return write(convertfromString<buffer_type>(data));
+        }
+
+        bool File::isOpened() const
+        {
+            return file_;
+        }
+
+        void File::close()
+        {
+            if(file_){
+                fclose(file_);
+                file_ = NULL;
+            }
         }
     }
 }

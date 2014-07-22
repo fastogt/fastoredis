@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QLineEdit>
 #include <QEvent>
 
 #include "gui/app_style.h"
@@ -50,10 +51,16 @@ namespace fastoredis
         stylesLayout->addWidget(stylesComboBox_);
 
         syncTabs_ = new QCheckBox;
+        logDirPath_ = new QLineEdit;
+        QHBoxLayout *logLayout = new QHBoxLayout;
+        logDirLabel_ = new QLabel;
+        logLayout->addWidget(logDirLabel_);
+        logLayout->addWidget(logDirPath_);
 
         layout->addLayout(langLayout);
         layout->addLayout(stylesLayout);
         layout->addWidget(syncTabs_);
+        layout->addLayout(logLayout);
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
@@ -73,6 +80,7 @@ namespace fastoredis
         stylesComboBox_->setCurrentText(common::convertfromString<QString>(SettingsManager::instance().currentStyle()));
         defaultViewComboBox_->setCurrentText(common::convertfromString<QString>(common::convert2string(SettingsManager::instance().defaultView())));
         syncTabs_->setChecked(SettingsManager::instance().syncTabs());
+        logDirPath_->setText(common::convertfromString<QString>(SettingsManager::instance().loggingDirectory()));
     }
 
     void PreferencesDialog::accept()
@@ -104,6 +112,7 @@ namespace fastoredis
         setWindowTitle(tr("Preferences "PROJECT_NAME_TITLE));
         langLabel_->setText(tr("Language:"));
         stylesLabel_->setText(tr("Styles:"));
-        syncTabs_->setText("Sync tabs");
+        syncTabs_->setText(tr("Sync tabs"));
+        logDirLabel_->setText(tr("Logging directory:"));
     }
 }
