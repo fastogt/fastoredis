@@ -347,7 +347,7 @@ namespace fastoredis
                 {
                     char tmp2[128] = {0};
                     sprintf(tmp2 ,"Unknown reply type: %d", r->type);
-                    common::ErrorValue *val =common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::WARNING);
+                    common::ErrorValue *val =common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     out->addChildren(new FastoObject(out, val));
                 }
             }

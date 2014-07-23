@@ -20,6 +20,7 @@ namespace fastoredis
 
     Q_SIGNALS:
         void openedConsole(const IServerPtr &server);
+        void removedServer(const IServerPtr &server);
 
     public Q_SLOTS:
         void addServer(const IServerPtr &server);
@@ -27,12 +28,13 @@ namespace fastoredis
 
     private Q_SLOTS:
         void showContextMenu(const QPoint &point);
-        void connectToServer();
+        void connectDisconnectToServer();
         void openConsole();
         void loadDatabases();
         void loadContentDb();
         void openInfoServerDialog();
         void openPropertyServerDialog();
+        void closeConnection();
 
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
         void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
@@ -45,11 +47,12 @@ namespace fastoredis
         QModelIndex selectedIndex() const;
         QModelIndexList selectedIndexes() const;
 
-        QAction *connectAction_;
-        QAction *openConsoleAction_;
-        QAction *loadDatabaseAction_;
-        QAction *loadContentAction_;
-        QAction *infoServerAction_;
-        QAction *propertyServerAction_;
+        QAction* connectAction_;
+        QAction* openConsoleAction_;
+        QAction* loadDatabaseAction_;
+        QAction* loadContentAction_;
+        QAction* infoServerAction_;
+        QAction* propertyServerAction_;
+        QAction* closeAction_;
     };
 }

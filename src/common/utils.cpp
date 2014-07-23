@@ -1,5 +1,7 @@
 #include "common/utils.h"
 
+#include <stdint.h>
+
 #ifdef OS_WIN
 
 #elif defined OS_LINUX

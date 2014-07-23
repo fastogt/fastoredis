@@ -50,7 +50,7 @@ namespace fastoredis
                 if (parentItem && parentItem != _root.get()) {
                     TreeItem * grandParent = parentItem->parent();
                     int row = grandParent->indexOf(parentItem);
-                    result= createIndex(row, 0, parentItem);
+                    result = createIndex(row, 0, parentItem);
                 }
             }
         }

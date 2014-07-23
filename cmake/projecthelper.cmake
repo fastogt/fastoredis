@@ -29,7 +29,7 @@ MACRO(DEFINE_DEFAULT_DEFINITIONS)
         -D_CRT_SECURE_NO_WARNINGS 
         -D_CRT_NONSTDC_NO_WARNINGS 
         -D_CRT_SECURE_NO_WARNINGS
-        #-D__STDC_CONSTANT_MACROS
+        -D__STDC_CONSTANT_MACROS
         #-DWIN32_LEAN_AND_MEAN # remove obsolete things from windows headers
         )
     ENDIF(WIN32)

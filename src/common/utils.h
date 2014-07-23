@@ -7,13 +7,6 @@
 
 #include "common/types.h"
 
-#ifdef BOOST_ENABLED
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
-#include <boost/function.hpp>
-#include <boost/lexical_cast.hpp>
-#endif
-
 #define HAS_MEMBER(CLASS_NAME,FUNC_MUST_BE) static_assert(std::is_member_function_pointer<decltype(&CLASS_NAME::FUNC_MUST_BE)>::value, "Class does not contain member " #FUNC_MUST_BE "!")
 
 namespace common
@@ -22,7 +15,7 @@ namespace common
     {
         namespace hash
         {
-            uint64_type crc64(uint64_type crc, const byte_type *data, uint64_t lenght);
+            uint64_type crc64(uint64_type crc, const byte_type *data, uint64_type lenght);
             uint64_type crc64(uint64_type crc, const buffer_type& data);
         }
 
@@ -62,54 +55,6 @@ namespace common
                 }
                 return res;
             }
-        }
-
-        namespace converter
-        {
-            template < typename cast_to_t, typename cast_from_t >
-            inline cast_to_t union_cast( cast_from_t _value )
-            {
-                union Union{ cast_from_t _from; cast_to_t _to; } unionCast;
-                unionCast._from = _value;
-                return unionCast._to;
-            }
-
-            template<typename convert_to,typename convert_from>
-            struct defualt_converter
-            {
-                convert_to operator()(const convert_from &src)const
-                {
-                    return boost::lexical_cast<convert_to>(src);
-                }
-            };
-            template<typename convert_to, typename convert_from>
-            inline convert_to make_conversion(convert_from from)
-            {
-                return defualt_converter<convert_to,convert_from>()(from);
-            }
-            namespace detail
-            {
-                template<typename type_t,typename type_u>
-                struct is_same_or_convertible
-                {
-                    static const bool value = boost::is_same<type_t,type_u>::value || boost::is_convertible<type_t,type_u>::value;
-                };
-            }
-
-            template<typename type_t>
-            struct variant_defualter
-            {
-                template<typename const_t>
-                explicit variant_defualter(const_t def,typename boost::enable_if<detail::is_same_or_convertible<const_t,type_t> >::type* v=0):value_(def){}
-                struct not_supported_type;
-                explicit variant_defualter(not_supported_type* v=0);
-                type_t operator()()const
-                {
-                    return func_?func_():value_;
-                }
-                type_t value_;
-                boost::function<type_t()> func_;
-            };
         }
 
         namespace delete_wrappers
