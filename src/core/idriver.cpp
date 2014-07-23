@@ -105,8 +105,8 @@ namespace fastoredis
                 FastoObjectPtr outInf;
                 common::ErrorValue er = currentLoggingInfo(outInf);
                 if(!er.isError()){
-                    FastoObjectPtr par;
-                    FastoObjectPtr toFile = outInf->deepCopy(par);
+                    FastoObject* par = NULL;
+                    FastoObject* toFile = outInf->deepCopy(par);
                     common::unicode_string data = common::convert2string(outInf);
                     logFile_->write(data);
                 }

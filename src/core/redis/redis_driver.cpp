@@ -307,7 +307,7 @@ namespace fastoredis
             er = common::ErrorValue(buff, common::ErrorValue::E_ERROR);
         }
 
-        void cliFormatReplyRaw(FastoObjectPtr &out, redisReply *r) {
+        void cliFormatReplyRaw(FastoObject* out, redisReply *r) {
             switch (r->type) {
             case REDIS_REPLY_NIL:
                 break;
@@ -328,7 +328,7 @@ namespace fastoredis
             }
             case REDIS_REPLY_ARRAY:
             {
-                FastoObjectPtr child;
+                FastoObject* child = NULL;
                 if(out->isRoot()){
                     child = out;
                 }
@@ -353,7 +353,7 @@ namespace fastoredis
             }
         }
 
-        void cliOutputCommandHelp(FastoObjectPtr &out, struct commandHelp *help, int group) {
+        void cliOutputCommandHelp(FastoObject* out, struct commandHelp *help, int group) {
             char buff[1024] = {0};
             sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
             common::StringValue *val =common::Value::createStringValue(buff);
@@ -366,7 +366,7 @@ namespace fastoredis
             }
         }
 
-        void cliOutputGenericHelp(FastoObjectPtr &out) {
+        void cliOutputGenericHelp(FastoObject* out) {
             sds version = cliVersion();
             char buff[512] = {0};
             sprintf(buff,
@@ -382,7 +382,7 @@ namespace fastoredis
             sdsfree(version);
         }
 
-        void cliOutputHelp(FastoObjectPtr &out, int argc, char **argv) {
+        void cliOutputHelp(FastoObject* out, int argc, char **argv) {
             int i, j, len;
             int group = -1;
             helpEntry *entry;
@@ -425,7 +425,7 @@ namespace fastoredis
             }
         }
 
-        int cliReadReply(FastoObjectPtr &out, common::ErrorValue& er) {
+        int cliReadReply(FastoObject* out, common::ErrorValue& er) {
             void *_reply;
             redisReply *reply;
 
@@ -474,7 +474,7 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        int cliSendCommand(FastoObjectPtr &out, common::ErrorValue& er, int argc, char **argv, int repeat)
+        int cliSendCommand(FastoObject* out, common::ErrorValue& er, int argc, char **argv, int repeat)
         {
             char *command = argv[0];
             size_t *argvlen;
@@ -529,7 +529,7 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        void repl_impl(FastoObjectPtr &out, common::ErrorValue &er) {
+        void repl_impl(FastoObject* out, common::ErrorValue &er) {
             const char *command = out->toString().c_str();
             if (command[0] != '\0') {
                 int argc;
@@ -635,9 +635,10 @@ namespace fastoredis
 
     common::ErrorValue RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
     {
-        outInfo = FastoObject::createRoot(INFO_REQUEST);
+        FastoObject* outRoot = FastoObject::createRoot(INFO_REQUEST);
+        outInfo = outRoot;
         common::ErrorValue er;
-        impl_->repl_impl(outInfo, er);
+        impl_->repl_impl(outRoot, er);
         return er;
     }
 
@@ -677,7 +678,8 @@ namespace fastoredis
 
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                res._out = FastoObject::createRoot(inputLine);
+                FastoObject* outRoot = FastoObject::createRoot(inputLine);
+                res._out.reset(outRoot);
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->interrupt_){
@@ -695,8 +697,8 @@ namespace fastoredis
                         }
                         offset = n + 1;
                         common::StringValue *val =common::Value::createStringValue(command);
-                        FastoObjectPtr child = new FastoObject(res._out, val);
-                        res._out->addChildren(child);
+                        FastoObject* child = new FastoObject(outRoot, val);
+                        outRoot->addChildren(child);
                         LOG_COMMAND(Command(command,Command::UserCommand));
                         impl_->repl_impl(child, er);
                     }
@@ -727,7 +729,7 @@ namespace fastoredis
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(loadDabasesString);
+            FastoObject* root = FastoObject::createRoot(loadDabasesString);
             common::ErrorValue er;
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(loadDabasesString));
@@ -761,7 +763,7 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
+            FastoObject* root = FastoObject::createRoot(INFO_REQUEST);
             common::ErrorValue er;
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(INFO_REQUEST));
@@ -782,7 +784,7 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(propetyString);
+            FastoObject* root = FastoObject::createRoot(propetyString);
             common::ErrorValue er;
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(propetyString));
@@ -805,7 +807,7 @@ namespace fastoredis
             common::ErrorValue er;
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
-        FastoObjectPtr root = FastoObject::createRoot(changeRequest);
+        FastoObject* root = FastoObject::createRoot(changeRequest);
             LOG_COMMAND(Command(changeRequest));
             impl_->repl_impl(root, er);
             if(er.isError()){

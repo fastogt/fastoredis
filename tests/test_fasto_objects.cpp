@@ -2,19 +2,32 @@
 
 #include "global/global.h"
 
+using namespace fastoredis;
+
 TEST(FastoObject, LifeTime)
 {
-    fastoredis::FastoObjectPtr obj = fastoredis::FastoObject::createRoot();
+    FastoObjectPtr obj = FastoObject::createRoot();
     obj.reset();
-    fastoredis::FastoObject *ptr = obj.get();
-    ASSERT_EQ(ptr, NULL);
+    FastoObject *ptr = obj.get();
+    ASSERT_TRUE(ptr == NULL);
+}
+
+TEST(FastoObject, LifeTimeScope)
+{
+    common::StringValue* obj = common::Value::createStringValue("Sasha");
+    {
+        FastoObject* root = FastoObject::createRoot();
+        FastoObject* ptr(new FastoObject(root, obj));
+        root->addChildren(ptr);
+    }
+    ASSERT_TRUE(obj == NULL);
 }
 
 TEST(FastoObject, StringText)
 {
     using namespace common;
     const std::string text = "Test";
-    fastoredis::FastoObjectPtr obj = fastoredis::FastoObject::createRoot();
+    fastoredis::FastoObject* obj = fastoredis::FastoObject::createRoot();
     obj->addChildren(new fastoredis::FastoObject(obj, new common::StringValue(text)));
     ASSERT_EQ(escapedText(text), common::convert2string(obj));
 

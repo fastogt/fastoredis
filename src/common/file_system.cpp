@@ -14,7 +14,11 @@ namespace
     using namespace common;
     bool create_directory_impl(const unicode_char* path)
     {
+#ifdef OS_WIN
         bool result = mkdir(path) != ERROR_RESULT_VALUE;
+#else
+        bool result = mkdir(path, S_IRWXU|S_IRWXG|S_IRWXO) != ERROR_RESULT_VALUE;
+#endif
         if(!result){
             DEBUG_MSG_PERROR("mkdir");
         }
@@ -79,11 +83,6 @@ namespace common
             return create_node(path, S_IRWXU|S_IRWXG|S_IRWXO);
         }
 
-        bool create_directory(const unicode_string& path)
-        {
-            return create_directory(path, S_IRWXU|S_IRWXG|S_IRWXO);
-        }
-
         bool create_node(const unicode_string &path, size_t permissions)
         {
             if(path.empty()){
@@ -139,7 +138,7 @@ namespace common
 #else
                 uint8_type shift = 1;
 #endif
-                for(p = prPath.c_str() + shift; *p; p++ ){
+                for(p = const_cast<unicode_char*>(prPath.c_str() + shift); *p; p++ ){
                     if(*p == get_separator()){
                         *p = 0;
                         const unicode_char *path = prPath.c_str();
@@ -502,7 +501,7 @@ namespace common
                 return false;
             }
 
-            void* data = calloc(maxSize, sizeof(byte_type));
+            byte_type* data = (byte_type*)calloc(maxSize, sizeof(byte_type));
             if(!data){
                 return false;
             }

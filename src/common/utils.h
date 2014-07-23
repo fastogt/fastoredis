@@ -22,8 +22,8 @@ namespace common
     {
         namespace hash
         {
-            uint64_t crc64(uint64_t crc, const byte_type *data, uint64_t lenght);
-            uint64_t crc64(uint64_t crc, const buffer_type& data);
+            uint64_type crc64(uint64_type crc, const byte_type *data, uint64_t lenght);
+            uint64_type crc64(uint64_type crc, const buffer_type& data);
         }
 
         namespace traits
@@ -82,7 +82,7 @@ namespace common
                     return boost::lexical_cast<convert_to>(src);
                 }
             };
-            template<typename convert_to,typename convert_from>
+            template<typename convert_to, typename convert_from>
             inline convert_to make_conversion(convert_from from)
             {
                 return defualt_converter<convert_to,convert_from>()(from);
