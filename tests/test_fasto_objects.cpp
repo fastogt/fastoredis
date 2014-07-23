@@ -16,8 +16,8 @@ TEST(FastoObject, LifeTimeScope)
 {
     common::StringValue* obj = common::Value::createStringValue("Sasha");
     {
-        FastoObject* root = FastoObject::createRoot();
-        FastoObject* ptr(new FastoObject(root, obj));
+        FastoObjectPtr root = FastoObject::createRoot();
+        FastoObject* ptr(new FastoObject(root.get(), obj));
         root->addChildren(ptr);
     }
     ASSERT_TRUE(obj == NULL);

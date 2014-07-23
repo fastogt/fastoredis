@@ -20,6 +20,11 @@ namespace fastoredis
 
     FastoObject::~FastoObject()
     {
+        for(int i = 0; i < childrens_.size(); ++i){
+            FastoObject* item = childrens_[i];
+            delete item;
+        }
+        childrens_.clear();
     }
 
     common::Value::Type FastoObject::type() const

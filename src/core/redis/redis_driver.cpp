@@ -678,8 +678,7 @@ namespace fastoredis
 
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                FastoObject* outRoot = FastoObject::createRoot(inputLine);
-                res._out.reset(outRoot);
+                FastoObjectPtr outRoot = FastoObject::createRoot(inputLine);
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->interrupt_){
@@ -697,12 +696,13 @@ namespace fastoredis
                         }
                         offset = n + 1;
                         common::StringValue *val =common::Value::createStringValue(command);
-                        FastoObject* child = new FastoObject(outRoot, val);
+                        FastoObject* child = new FastoObject(outRoot.get(), val);
                         outRoot->addChildren(child);
                         LOG_COMMAND(Command(command,Command::UserCommand));
-                        impl_->repl_impl(child, er);
+                        impl_->repl_impl(child, er);                        
                     }
                 }
+                res._out = outRoot;
             }
             else{
                 res.setErrorInfo(common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
