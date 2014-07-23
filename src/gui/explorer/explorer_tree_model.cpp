@@ -174,8 +174,9 @@ namespace fastoredis
         QModelIndex ind = createIndex(0, 0, parent);
         ExplorerServerItem *serverItem = findServerItem(server.get());
         int row = parent->indexOf(serverItem);
-        beginRemoveRows(ind, row, row + 1);
+        beginRemoveRows(ind, row, row);
             parent->removeChildren(serverItem);
+            delete serverItem;
         endRemoveRows();
     }
 
@@ -198,16 +199,14 @@ namespace fastoredis
     {
         TreeItem *parent = dynamic_cast<TreeItem*>(_root.get());
         DCHECK(parent);
-        ExplorerServerItem *result = NULL;
         for(int i = 0; i < parent->childrenCount() ; ++i){
             ExplorerServerItem *item = dynamic_cast<ExplorerServerItem*>(parent->child(i));
             DCHECK(item);
             if(item->server().get() == server){
-                result = item;
-                break;
+                return item;
             }
         }
-        return result;
+        return NULL;
     }
 
     ExplorerDatabaseItem *ExplorerTreeModel::findDatabaseItem(ExplorerServerItem *server, const DataBaseInfo &db) const
