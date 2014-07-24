@@ -87,7 +87,7 @@ namespace fastoredis
         setCentralWidget(mainW);
 
         _exp = new ExplorerTreeView(this);
-        VERIFY(connect(_exp, SIGNAL(openedConsole(const IServerPtr &)), mainW, SLOT(openConsole(const IServerPtr &))));
+        VERIFY(connect(_exp, SIGNAL(openedConsole(IServerPtr)), mainW, SLOT(openConsole(IServerPtr))));
         _expDock = new QDockWidget(this);
         _explorerAction = _expDock->toggleViewAction();
         _explorerAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));

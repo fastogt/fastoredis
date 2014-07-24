@@ -20,9 +20,9 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        ShellWidget(const IServerPtr& server, const QString& filePath = QString(), QWidget* parent = 0);
+        ShellWidget(IServerPtr server, const QString& filePath = QString(), QWidget* parent = 0);
 
-        const IServerPtr &server() const;
+        IServerPtr server() const;
         QString text() const;
 
     Q_SIGNALS:

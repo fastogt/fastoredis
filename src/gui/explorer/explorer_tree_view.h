@@ -19,12 +19,11 @@ namespace fastoredis
         ExplorerTreeView(QWidget *parent);
 
     Q_SIGNALS:
-        void openedConsole(const IServerPtr &server);
-        void removedServer(const IServerPtr &server);
+        void openedConsole(IServerPtr server);
 
     public Q_SLOTS:
-        void addServer(const IServerPtr &server);
-        void removeServer(const IServerPtr &server);
+        void addServer(IServerPtr server);
+        void removeServer(IServerPtr server);
 
     private Q_SLOTS:
         void showContextMenu(const QPoint &point);

@@ -85,7 +85,7 @@ namespace
 
 namespace fastoredis
 {
-    ShellWidget::ShellWidget(const IServerPtr &server, const QString &filePath, QWidget *parent)
+    ShellWidget::ShellWidget(IServerPtr server, const QString &filePath, QWidget *parent)
         : QWidget(parent), _server(server), _filePath(filePath)
     {
         QVBoxLayout *mainlayout = new QVBoxLayout;
@@ -184,7 +184,7 @@ namespace fastoredis
         _server->disconnect();
     }
 
-    const IServerPtr &ShellWidget::server() const
+    IServerPtr ShellWidget::server() const
     {
         return _server;
     }

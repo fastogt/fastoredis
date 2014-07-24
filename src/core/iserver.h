@@ -8,9 +8,6 @@
 
 namespace fastoredis
 {
-    class IServer;
-    typedef boost::shared_ptr<IServer> IServerPtr;
-
     class IServer
             : public QObject
     {
@@ -95,4 +92,6 @@ namespace fastoredis
     private:
         bool _isMaster;
     };
+
+    typedef boost::shared_ptr<IServer> IServerPtr;
 }

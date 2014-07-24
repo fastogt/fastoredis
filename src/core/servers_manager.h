@@ -15,7 +15,7 @@ namespace fastoredis
         typedef std::vector<IServerPtr> ServersContainer;
 
         IServerPtr createServer(const IConnectionSettingsBasePtr &settings);
-        void closeServer(const IServerPtr &server);
+        void closeServer(IServerPtr server);
         void setSyncServers(bool isSync);        
 
     private:

@@ -32,7 +32,7 @@ namespace fastoredis
     struct ExplorerServerItem
             : public IExplorerTreeItem
     {
-        ExplorerServerItem(const IServerPtr &server, TreeItem *parent);
+        ExplorerServerItem(IServerPtr server, TreeItem *parent);
         virtual ~ExplorerServerItem();
 
         virtual QString name() const;
@@ -40,7 +40,7 @@ namespace fastoredis
         virtual eType type() const;
 
     private:
-        IServerPtr server_;
+        const IServerPtr server_;
     };
 
     struct ExplorerDatabaseItem
@@ -73,8 +73,8 @@ namespace fastoredis
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
         virtual int columnCount(const QModelIndex &parent) const;
 
-        void addServer(const IServerPtr &server);
-        void removeServer(const IServerPtr &server);
+        void addServer(IServerPtr server);
+        void removeServer(IServerPtr server);
 
         void addDatabase(IServer *server, const DataBaseInfo &db);
 

@@ -67,7 +67,7 @@ namespace fastoredis
         return result;
     }
 
-    void ServersManager::closeServer(const IServerPtr &server)
+    void ServersManager::closeServer(IServerPtr server)
     {
         for(size_t i = 0; i < _servers.size(); ++i){
             IServerPtr ser = _servers[i];

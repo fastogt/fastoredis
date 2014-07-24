@@ -21,7 +21,7 @@ namespace fastoredis
         QueryWidget *widget(int index) const;
 
     public Q_SLOTS:
-        void openConsole(const IServerPtr &server);
+        void openConsole(IServerPtr server);
 
     private Q_SLOTS:
         void createNewTab();

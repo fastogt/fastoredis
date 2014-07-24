@@ -21,6 +21,7 @@ namespace fastoredis
         : QTreeView(parent)
     {
         setModel(new ExplorerTreeModel(this));
+
         setSelectionBehavior(QAbstractItemView::SelectRows);
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
@@ -123,7 +124,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeView::addServer(const IServerPtr &server)
+    void ExplorerTreeView::addServer(IServerPtr server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(connect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
@@ -134,7 +135,7 @@ namespace fastoredis
         mod->addServer(server);
     }
 
-    void ExplorerTreeView::removeServer(const IServerPtr &server)
+    void ExplorerTreeView::removeServer(IServerPtr server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(disconnect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
@@ -244,6 +245,6 @@ namespace fastoredis
                 IServerPtr server = node->server();
                 removeServer(server);
             }
-        }
+        }        
     }
 }

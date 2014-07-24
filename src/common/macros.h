@@ -22,7 +22,7 @@
 #endif
 
 #define NOTREACHED() DCHECK(false)
-
+#define NOOP() ((void)0)
 #define STRINGIZE_HELPER(x)				#x
 #define STRINGIZE(x)					STRINGIZE_HELPER(x)
 
