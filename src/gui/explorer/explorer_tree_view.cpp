@@ -9,7 +9,6 @@
 #include <QMenu>
 
 #include "gui/explorer/explorer_tree_model.h"
-#include "gui/explorer/explorer_tree_model.h"
 
 #include "gui/dialogs/info_server_dialog.h"
 #include "gui/dialogs/property_server_dialog.h"
@@ -22,12 +21,13 @@ namespace fastoredis
         : QTreeView(parent)
     {
         setModel(new ExplorerTreeModel(this));
+
         setSelectionBehavior(QAbstractItemView::SelectRows);
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
         connectAction_ = new QAction(this);
-        VERIFY(connect(connectAction_, SIGNAL(triggered()), SLOT(connectToServer())));
+        VERIFY(connect(connectAction_, SIGNAL(triggered()), SLOT(connectDisconnectToServer())));
         openConsoleAction_ = new QAction(this);
         VERIFY(connect(openConsoleAction_, SIGNAL(triggered()), SLOT(openConsole())));
         loadDatabaseAction_ = new QAction(this);
@@ -41,6 +41,9 @@ namespace fastoredis
 
         propertyServerAction_ = new QAction(this);
         VERIFY(connect(propertyServerAction_, SIGNAL(triggered()), SLOT(openPropertyServerDialog())));
+
+        closeAction_ = new QAction(this);
+        VERIFY(connect(closeAction_, SIGNAL(triggered()), SLOT(closeConnection())));
 
         retranslateUi();
     }
@@ -60,6 +63,7 @@ namespace fastoredis
                 menu.addAction(loadDatabaseAction_);
                 menu.addAction(infoServerAction_);
                 menu.addAction(propertyServerAction_);
+                menu.addAction(closeAction_);
                 menu.exec(menuPoint);
             }
             else if(node->type() == IExplorerTreeItem::Database){
@@ -70,7 +74,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeView::connectToServer()
+    void ExplorerTreeView::connectDisconnectToServer()
     {
         QModelIndex sel = selectedIndex();
         if(sel.isValid()){
@@ -120,7 +124,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeView::addServer(const IServerPtr &server)
+    void ExplorerTreeView::addServer(IServerPtr server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(connect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
@@ -131,7 +135,7 @@ namespace fastoredis
         mod->addServer(server);
     }
 
-    void ExplorerTreeView::removeServer(const IServerPtr &server)
+    void ExplorerTreeView::removeServer(IServerPtr server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(disconnect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
@@ -162,12 +166,13 @@ namespace fastoredis
 
     void ExplorerTreeView::retranslateUi()
     {
-        connectAction_->setText(tr("Connect"));
+        connectAction_->setText(tr("Connect/Disconnect"));
         openConsoleAction_->setText(tr("Open console"));
         loadDatabaseAction_->setText(tr("Load databases"));
         loadContentAction_->setText(tr("Load content of database"));
         infoServerAction_->setText(tr("Info"));
         propertyServerAction_->setText(tr("Property"));
+        closeAction_->setText(tr("Close"));
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req)
@@ -229,5 +234,17 @@ namespace fastoredis
                 infDialog.exec();
             }
         }
+    }
+
+    void ExplorerTreeView::closeConnection()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+            if(node){
+                IServerPtr server = node->server();
+                removeServer(server);
+            }
+        }        
     }
 }

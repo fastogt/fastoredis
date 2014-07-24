@@ -22,6 +22,7 @@ namespace fastoredis
         virtual QModelIndex parent(const QModelIndex& index) const;
 
         virtual ~TreeModel();
+
     protected:
         boost::scoped_ptr<TreeItem> _root;
     };

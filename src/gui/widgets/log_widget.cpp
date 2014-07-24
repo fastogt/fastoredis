@@ -25,7 +25,7 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void LogWidget::showContextMenu(const QPoint &pt)
+    void LogWidget::showContextMenu(const QPoint& pt)
     {
         QMenu *menu = _logTextEdit->createStandardContextMenu();
         menu->addAction(_clear);
@@ -35,10 +35,10 @@ namespace fastoredis
         delete menu;
     }
 
-    void LogWidget::addLogMessage(const QString &message, common::logging::LEVEL_LOG level)
+    void LogWidget::addLogMessage(const QString& message, common::logging::LEVEL_LOG level)
     {
         QTime time = QTime::currentTime();
-        _logTextEdit->setTextColor(level == common::logging::CRITICAL ? QColor(Qt::red):QColor(Qt::black));
+        _logTextEdit->setTextColor(level == common::logging::L_CRITICAL ? QColor(Qt::red):QColor(Qt::black));
         _logTextEdit->append(time.toString("h:mm:ss AP: ") + message);
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());

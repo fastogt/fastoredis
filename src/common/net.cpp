@@ -70,7 +70,7 @@ namespace common
             }
         }
 
-        bool get_mac_address_host(const unicode_string &host, unicode_string &out_mac_address)
+        bool getRemoteMacAddress(const unicode_string &host, unicode_string &out_mac_address)
         {
             hostent * record = gethostbyname(host.c_str());
             if(record == NULL){

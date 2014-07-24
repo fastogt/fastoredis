@@ -85,7 +85,7 @@ IF(BOOST_ENABLED)
 ENDIF(BOOST_ENABLED)
 
 SET(COMMON_SOURCES runtime_bitset.h runtime_bitset.cpp log_levels.h logger.h logger.cpp common_config.h
-convert2string.h convert2string.cpp types.h types.cpp
+convert2string.h convert2string.cpp types.h types.cpp lexical_cast.h lexical_cast.cpp
 macros.h macros.cpp mpl.h utils.h utils.cpp file_system.h file_system.cpp value.h value.cpp
 boost_extension.h smart_ptr.h url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net.h net.cpp
 ${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${FILE_PARSERS} ${DATABASE_SUPPORT_SOURCES} ${SETTINGS_SOURCES} ${MULTI_THREADING_SOURCES} ${EVENTS_SOURCES})

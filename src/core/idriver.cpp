@@ -3,6 +3,8 @@
 #include <QThread>
 #include <QApplication>
 
+#include "common/file_system.h"
+
 #ifdef OS_WIN
 #include <winsock2.h>
 struct WinsockInit {
@@ -19,7 +21,7 @@ struct WinsockInit {
 namespace fastoredis
 {
     IDriver::IDriver(const IConnectionSettingsBasePtr &settings)
-        : settings_(settings)
+        : settings_(settings), timer_info_id_(0), logFile_(NULL)
     {
         thread_ = new QThread(this);
         moveToThread(thread_);
@@ -78,7 +80,39 @@ namespace fastoredis
 
     void IDriver::init()
     {
+        timer_info_id_ = startTimer(60000);
+        DCHECK(timer_info_id_);
         initImpl();
+    }
+
+    void IDriver::timerEvent(QTimerEvent* event)
+    {
+        if(timer_info_id_ == event->timerId() && isConnected() && settings_->loggingEnabled()){
+            if(!logFile_){
+                common::unicode_string path = settings_->loggingPath();
+                common::unicode_string dir = common::file_system::get_dir_path(path);
+                common::file_system::create_directory(dir, true);
+                if(common::file_system::is_directory(dir) == common::SUCCESS){
+                    common::file_system::Path p(path);
+                    logFile_ = new common::file_system::File(p);
+                }
+            }
+
+            if(logFile_ && !logFile_->isOpened()){
+                logFile_->open("wb+");
+            }
+            if(logFile_ && logFile_->isOpened()){
+                FastoObjectPtr outInf;
+                common::ErrorValue er = currentLoggingInfo(outInf);
+                if(!er.isError()){
+                    FastoObject* par = NULL;
+                    FastoObject* toFile = outInf->deepCopy(par);
+                    common::unicode_string data = common::convert2string(outInf);
+                    logFile_->write(data);
+                }
+            }
+        }
+        QObject::timerEvent(event);
     }
 
     connectionTypes IDriver::connectionType() const
@@ -92,9 +126,13 @@ namespace fastoredis
     }
 
     IDriver::~IDriver()
-    {        
+    {
+        killTimer(timer_info_id_);
+        timer_info_id_ = 0;
         thread_->quit();
-        if (!thread_->wait(2000))
+        if (!thread_->wait(2000)){
             thread_->terminate();
+        }
+        delete logFile_;
     }
 }

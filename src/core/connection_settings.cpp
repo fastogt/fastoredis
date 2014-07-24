@@ -1,8 +1,14 @@
 #include "core/connection_settings.h"
 
+#include <sstream>
+
+#include "core/settings_manager.h"
+
 #include "common/utils.h"
 #include "common/net.h"
 #include "common/convert2string.h"
+
+#define LOGGING_FILE_EXTENSION UTEXT(".red")
 
 namespace
 {
@@ -27,6 +33,12 @@ namespace fastoredis
     connectionTypes IConnectionSettingsBase::connectionType() const
     {
         return badConnectionType();
+    }
+
+    common::unicode_string IConnectionSettingsBase::loggingPath() const
+    {
+        common::unicode_string logDir = SettingsManager::instance().loggingDirectory();
+        return logDir + hash() + LOGGING_FILE_EXTENSION;
     }
 
     IConnectionSettingsBase *IConnectionSettingsBase::fromString(const common::unicode_string &val)

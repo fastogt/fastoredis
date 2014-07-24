@@ -10,6 +10,14 @@ namespace fastoredis
 
     }
 
+    TreeItem::~TreeItem()
+    {
+        for(unsigned i = 0; i < childrens_.size(); ++i){
+            delete childrens_[i];
+        }
+        childrens_.clear();
+    }
+
     void TreeItem::addChildren(TreeItem *child)
     {
         childrens_.push_back(child);
@@ -17,10 +25,10 @@ namespace fastoredis
 
     void TreeItem::removeChildren(TreeItem *child)
     {
-        child_container_type::iterator it = std::find(childrens_.begin(),childrens_.end(),child);
-        if (it != childrens_.end()) {
-            childrens_.erase(it);
-            delete child;
+        for(unsigned i = 0; i < childrens_.size(); ++i){
+            if(child == childrens_[i]){
+                childrens_.erase(childrens_.begin() + i);
+            }
         }
     }
 
@@ -31,12 +39,15 @@ namespace fastoredis
 
     TreeItem *TreeItem::child(unsigned pos) const
     {
-        return childrens_[pos];
+        if(pos < childrens_.size()){
+            return childrens_[pos];
+        }
+        return NULL;
     }
 
     int TreeItem::indexOf(TreeItem *item) const
     {
-        for (unsigned i=0; i < childrens_.size(); ++i) {
+        for (unsigned i = 0; i < childrens_.size(); ++i) {
             if (item == childrens_[i]) {
                 return i;
             }
@@ -47,13 +58,6 @@ namespace fastoredis
     TreeItem *TreeItem::parent() const
     {
         return parent_;
-    }
-
-    TreeItem::~TreeItem()
-    {
-        for(unsigned i=0; i < childrens_.size(); ++i){
-            delete childrens_[i];
-        }
     }
 }
 

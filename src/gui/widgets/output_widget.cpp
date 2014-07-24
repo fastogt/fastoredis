@@ -19,7 +19,7 @@
 
 namespace
 {
-    fastoredis::FastoTreeItem *createItem(fastoredis::FastoTreeItem *parent, const fastoredis::FastoObjectPtr &item)
+    fastoredis::FastoTreeItem *createItem(fastoredis::FastoTreeItem *parent, const fastoredis::FastoObject* item)
     {
         fastoredis::FastoTreeItem *result = NULL;
         fastoredis::FastoObject::child_container_type cont = item->childrens();
@@ -41,22 +41,22 @@ namespace
         return result;
     }
 
-    void parseRedisImpl(fastoredis::FastoTreeItem *root, const fastoredis::FastoObjectPtr &item)
+    void parseRedisImpl(fastoredis::FastoTreeItem *root, const fastoredis::FastoObject* item)
     {
         fastoredis::FastoTreeItem *child = createItem(root, item);
         fastoredis::FastoObject::child_container_type cont = item->childrens();
         for(int i = 0; i < cont.size(); ++i){
-            fastoredis::FastoObjectPtr obj = cont[i];
+            fastoredis::FastoObject* obj = cont[i];
             parseRedisImpl(child, obj);
         }
     }
 
-    fastoredis::FastoTreeItem *parseOutput(const fastoredis::FastoObjectPtr &res)
+    fastoredis::FastoTreeItem *parseOutput(const fastoredis::FastoObject* res)
     {
         fastoredis::FastoTreeItem *result = createItem(NULL, res);
         fastoredis::FastoObject::child_container_type cont = res->childrens();
         for(int i = 0; i < cont.size(); ++i){
-            fastoredis::FastoObjectPtr command = cont[i];
+            fastoredis::FastoObject* command = cont[i];
             parseRedisImpl(result, command);
         }
         return result;
@@ -155,7 +155,7 @@ namespace fastoredis
     {
         _textView->clear();
         if(res._out){
-            FastoTreeItem *root = parseOutput(res._out);
+            FastoTreeItem *root = parseOutput(res._out.get());
             if(root){
                 _treeModel->setRoot(root);
             }
