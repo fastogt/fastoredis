@@ -29,6 +29,7 @@ namespace fastoredis
         common::Value::Type type() const;
         common::unicode_string toString() const;
         FastoObject *deepCopy(FastoObject *parent) const;
+        FastoObject *deepCopyChangeParent(FastoObject *parent) const;
 
 		child_container_type childrens() const;
         static FastoObject* createRoot(const std::string& text = std::string());
@@ -50,5 +51,5 @@ namespace fastoredis
 namespace common
 {
     unicode_string convert2string(fastoredis::supportedViews v);
-    unicode_string convert2string(const fastoredis::FastoObjectPtr& obj);
+    unicode_string convert2string(fastoredis::FastoObject* obj);
 }

@@ -2,8 +2,9 @@
 
 #include <QThread>
 #include <QApplication>
-
+#include <QDateTime>
 #include "common/file_system.h"
+#include "common/time.h"
 
 #ifdef OS_WIN
 #include <winsock2.h>
@@ -105,9 +106,10 @@ namespace fastoredis
                 FastoObjectPtr outInf;
                 common::ErrorValue er = currentLoggingInfo(outInf);
                 if(!er.isError()){
-                    FastoObject* par = NULL;
-                    FastoObject* toFile = outInf->deepCopy(par);
-                    common::unicode_string data = common::convert2string(outInf);
+                    long long time = common::time::current_mstime();
+                    FastoObject* par = FastoObject::createRoot(common::convert2string(time));
+                    FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
+                    common::unicode_string data = common::convert2string(toFile.get());
                     logFile_->write(data);
                 }
             }
