@@ -528,6 +528,27 @@ namespace common
            return res;
         }
 
+        bool File::readLine(buffer_type& outData)
+        {
+            if(!file_){
+                return false;
+            }
+
+            byte_type buff[1024] = {0};
+
+            char* res = fgets(buff, sizeof(buff), file_);
+            if(res){
+                outData = buff;
+            }
+
+            return true;
+        }
+
+        bool File::isEof() const
+        {
+           return feof(file_);
+        }
+
         bool File::write(const buffer_type& data)
         {
             if(!file_){

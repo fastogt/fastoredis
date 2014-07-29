@@ -2,10 +2,12 @@
 
 #include <QApplication>
 
+#include "common/qt/convert_string.h"
+
+#include "core/logger.h"
 #include "core/connection_settings.h"
 #include "core/servers_manager.h"
 #include "core/events/events.h"
-#include "common/qt/convert_string.h"
 
 namespace
 {
@@ -144,6 +146,25 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::requestHistoryInfo()
+    {
+        EventsInfo::ServerInfoHistoryRequest req;
+        emit startedLoadServerHistoryInfo(req);
+        QEvent *ev = new Events::ServerInfoHistoryRequestEvent(this, req);
+        notify(ev);
+    }
+
+    void IServer::loadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent *ev)
+    {
+        using namespace Events;
+        ServerInfoHistoryResponceEvent::value_type v = ev->value();
+        const common::ErrorValue &er = v.errorInfo();
+        if(er.isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedLoadServerHistoryInfo(v);
+    }
+
     void IServer::stopCurrentEvent()
     {
         _drv->interrupt();
@@ -204,6 +225,10 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(ServerInfoResponceEvent::EventType)){
             ServerInfoResponceEvent *ev = static_cast<ServerInfoResponceEvent*>(event);
             loadServerInfoEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ServerInfoHistoryResponceEvent::EventType)){
+            ServerInfoHistoryResponceEvent *ev = static_cast<ServerInfoHistoryResponceEvent*>(event);
+            loadServerInfoHistoryEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ServerPropertyInfoResponceEvent::EventType)){
             ServerPropertyInfoResponceEvent *ev = static_cast<ServerPropertyInfoResponceEvent*>(event);

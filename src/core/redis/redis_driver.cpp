@@ -111,14 +111,15 @@ namespace
         return list;
     }
 
-    fastoredis::ServerInfo makeServerInfo(const fastoredis::FastoObjectPtr &root)
+    fastoredis::ServerInfo makeServerInfo(const common::unicode_string &content)
     {
+        using namespace fastoredis;
+
         static const common::unicode_string headers[8] = {UTEXT("# Server"), UTEXT("# Clients"), UTEXT("# Memory"),
                                                           UTEXT("# Persistence"), UTEXT("# Stats"),
                                                           UTEXT("# Replication"), UTEXT("# CPU"), UTEXT("# Keyspace")};
-        using namespace fastoredis;
+
         ServerInfo result;
-        const common::unicode_string content = common::convert2string(root);
         int j = 0;
         std::string word;
         size_t pos = 0;
@@ -169,6 +170,12 @@ namespace
             }
         }
         return result;
+    }
+
+    fastoredis::ServerInfo makeServerInfo(const fastoredis::FastoObjectPtr &root)
+    {
+        const common::unicode_string content = common::convert2string(root);
+        return makeServerInfo(content);
     }
 
 
@@ -818,6 +825,11 @@ namespace fastoredis
         notifyProgress(sender, 75);
             reply(sender, new Events::ChangeServerPropertyInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
+    }
+
+    ServerInfo RedisDriver::makeServerInfoFromString(const common::unicode_string& val)
+    {
+        return makeServerInfo(val);
     }
 
     void RedisDriver::interrupt()

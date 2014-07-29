@@ -108,9 +108,13 @@ namespace common
             bool isOpened() const;
             bool read(buffer_type& outData, uint32_t maxSize);
             bool read(std::string& outData, uint32_t maxSize);
+            bool readLine(buffer_type &outData);
+
             bool write(const buffer_type& data);
             bool write(const std::string& data);
             void close();
+
+            bool isEof() const;
 
         private:
             Path path_;

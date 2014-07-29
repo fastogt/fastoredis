@@ -19,6 +19,31 @@ struct WinsockInit {
     } winsock_init;
 #endif
 
+namespace
+{
+    const common::unicode_char magicNumber = UTEXT(0x22);
+    common::unicode_string createStamp()
+    {
+        long long time = common::time::current_mstime();
+        return magicNumber + common::convert2string(time);
+    }
+
+    bool getStamp(const common::buffer_type& stamp, long long& timeOut)
+    {
+        if(stamp.empty()){
+            return false;
+        }
+
+        if(stamp[0] != magicNumber){
+            return false;
+        }
+
+        timeOut = common::convertfromString<long long>((const char*)(stamp.c_str() + 1));
+
+        return timeOut != 0;
+    }
+}
+
 namespace fastoredis
 {
     IDriver::IDriver(const IConnectionSettingsBasePtr &settings)
@@ -28,6 +53,17 @@ namespace fastoredis
         moveToThread(thread_);
         VERIFY(connect( thread_, SIGNAL(started()), this, SLOT(init()) ));
         thread_->start();
+    }
+
+    IDriver::~IDriver()
+    {
+        killTimer(timer_info_id_);
+        timer_info_id_ = 0;
+        thread_->quit();
+        if (!thread_->wait(2000)){
+            thread_->terminate();
+        }
+        delete logFile_;
     }
 
     void IDriver::customEvent(QEvent *event)
@@ -57,6 +93,10 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(ServerInfoRequestEvent::EventType)){
             ServerInfoRequestEvent *ev = static_cast<ServerInfoRequestEvent*>(event);
             loadServerInfoEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ServerInfoHistoryRequestEvent::EventType)){
+            ServerInfoHistoryRequestEvent *ev = static_cast<ServerInfoHistoryRequestEvent*>(event);
+            loadServerInfoHistoryEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ServerPropertyInfoRequestEvent::EventType)){
             ServerPropertyInfoRequestEvent *ev = static_cast<ServerPropertyInfoRequestEvent*>(event);
@@ -106,8 +146,7 @@ namespace fastoredis
                 FastoObjectPtr outInf;
                 common::ErrorValue er = currentLoggingInfo(outInf);
                 if(!er.isError()){
-                    long long time = common::time::current_mstime();
-                    FastoObject* par = FastoObject::createRoot(common::convert2string(time));
+                    FastoObject* par = FastoObject::createRoot(createStamp());
                     FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
                     common::unicode_string data = common::convert2string(toFile.get());
                     logFile_->write(data);
@@ -127,14 +166,53 @@ namespace fastoredis
         return settings_;
     }
 
-    IDriver::~IDriver()
+    void IDriver::loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev)
     {
-        killTimer(timer_info_id_);
-        timer_info_id_ = 0;
-        thread_->quit();
-        if (!thread_->wait(2000)){
-            thread_->terminate();
+        QObject *sender = ev->sender();
+        Events::ServerInfoHistoryResponceEvent::value_type res(ev->value());
+        Events::ServerInfoHistoryResponceEvent::value_type::infos_container_type tmpInfos;
+        common::ErrorValue er;
+
+        common::unicode_string path = settings_->loggingPath();
+        common::file_system::Path p(path);
+
+        common::file_system::File readFile(p);
+        if(readFile.open("rb")){
+            long long curStamp = 0;
+            common::buffer_type dataInfo;
+
+            while(!readFile.isEof()){
+                common::buffer_type data;
+                bool res = readFile.readLine(data);
+                if(!res){
+                    if(curStamp){
+                        tmpInfos[curStamp] = makeServerInfoFromString(common::convert2string(dataInfo));
+                    }
+                    break;
+                }
+
+                long long tmpStamp = 0;
+                bool isSt = getStamp(data, tmpStamp);
+                if(isSt){
+                    tmpInfos[curStamp] = makeServerInfoFromString(common::convert2string(dataInfo));
+                    curStamp = tmpStamp;
+                    dataInfo.clear();
+                }
+                else{
+                    dataInfo += data;
+                }
+            }
         }
-        delete logFile_;
+        else{
+           er = common::ErrorValue("Logging file not found", common::ErrorValue::E_ERROR);
+        }
+
+        if(er.isError()){
+            res.setErrorInfo(er);
+        }
+        else{
+           res.infos_ =  tmpInfos;
+        }
+        reply(sender, new Events::ServerInfoHistoryResponceEvent(this, res));
     }
 }

@@ -26,11 +26,14 @@ namespace fastoredis
         typedef common::utils_qt::Event<EventsInfo::ServerInfoRequest, QEvent::User+11> ServerInfoRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::ServerInfoResponce, QEvent::User+12> ServerInfoResponceEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::ServerPropertyInfoRequest, QEvent::User+13> ServerPropertyInfoRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::ServerPropertyInfoResponce, QEvent::User+14> ServerPropertyInfoResponceEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerInfoHistoryRequest, QEvent::User+13> ServerInfoHistoryRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerInfoHistoryResponce, QEvent::User+14> ServerInfoHistoryResponceEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::ChangeServerPropertyInfoRequest, QEvent::User+15> ChangeServerPropertyInfoRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::ChangeServerPropertyInfoResponce, QEvent::User+16> ChangeServerPropertyInfoResponceEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerPropertyInfoRequest, QEvent::User+15> ServerPropertyInfoRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerPropertyInfoResponce, QEvent::User+16> ServerPropertyInfoResponceEvent;
+
+        typedef common::utils_qt::Event<EventsInfo::ChangeServerPropertyInfoRequest, QEvent::User+17> ChangeServerPropertyInfoRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ChangeServerPropertyInfoResponce, QEvent::User+18> ChangeServerPropertyInfoResponceEvent;
 
         typedef common::utils_qt::Event<EventsInfo::ProgressInfoResponce, QEvent::User+100> ProgressResponceEvent;
     }
