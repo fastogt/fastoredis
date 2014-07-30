@@ -36,6 +36,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/glass_widget.h
     gui/base/tree_model.h
     gui/base/table_model.h
+    gui/base/graph_widget.h
 )
 SET(HEADERS_GUI
     gui/gui_factory.h
@@ -75,6 +76,7 @@ SET(SOURCES_GUI
     gui/base/tree_item.cpp
     gui/base/table_model.cpp
     gui/base/table_item.cpp
+    gui/base/graph_widget.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
