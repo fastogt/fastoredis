@@ -1,4 +1,4 @@
-#include "core/events/infos.h"
+#include "core/redis/redis_infos.h"
 
 #include <ostream>
 
@@ -451,9 +451,9 @@ namespace fastoredis
     std::ostream& operator<<(std::ostream& out, const ServerInfo& value)
     {
         //"# Server", "# Clients", "# Memory", "# Persistence", "# Stats", "# Replication", "# CPU", "# Keyspace"
-        return out << UTEXT("# Server\r\n") << value.server_ << UTEXT("# Clients\r\n") << value.clients_ << UTEXT("# Memory\r\n") << value.memory_
-                   << UTEXT("# Persistence\r\n") << value.persistence_ << UTEXT("# Stats\r\n") << value.stats_
-                   << UTEXT("# Replication\r\n") << value.replication_ << UTEXT("# CPU\r\n") << value.cpu_;
+        return out << UTEXT(REDIS_SERVER_LABEL"\r\n") << value.server_ << UTEXT(REDIS_CLIENTS_LABEL"\r\n") << value.clients_ << UTEXT(REDIS_MEMORY_LABEL"\r\n") << value.memory_
+                   << UTEXT(REDIS_PERSISTENCE_LABEL"\r\n") << value.persistence_ << UTEXT(REDIS_STATS_LABEL"\r\n") << value.stats_
+                   << UTEXT(REDIS_REPLICATION_LABEL"\r\n") << value.replication_ << UTEXT(REDIS_CPU_LABEL"\r\n") << value.cpu_;
     }
 
     ServerPropertyInfo::ServerPropertyInfo()

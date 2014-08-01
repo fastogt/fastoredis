@@ -123,13 +123,14 @@ namespace
         {
             char ch = content[i];
             word += ch;
-            if(word == RedisDriver::headers[j]){
-                if(j+1 != sizeof(RedisDriver::headers)/sizeof(*RedisDriver::headers)){
-                    pos = content.find(RedisDriver::headers[j+1], pos);
+            if(word == headers[j]){
+                if(j+1 != sizeof(headers)/sizeof(*headers)){
+                    pos = content.find(headers[j+1], pos);
                 }
                 else{
                     break;
                 }
+
                 if(pos != std::string::npos)
                 {
                     common::unicode_string part = content.substr(i + 1, pos - i - 1 );
@@ -589,10 +590,6 @@ namespace fastoredis
             }
         }
     };
-
-    const common::unicode_string RedisDriver::headers[8] = {UTEXT("# Server"), UTEXT("# Clients"), UTEXT("# Memory"),
-                                                      UTEXT("# Persistence"), UTEXT("# Stats"),
-                                                      UTEXT("# Replication"), UTEXT("# CPU"), UTEXT("# Keyspace")};
 
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
         : IDriver(settings), impl_(new pimpl)

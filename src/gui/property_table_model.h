@@ -4,7 +4,7 @@
 
 #include "gui/base/table_model.h"
 
-#include "core/events/infos.h"
+#include "core/redis/redis_infos.h"
 
 namespace fastoredis
 {

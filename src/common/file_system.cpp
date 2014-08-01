@@ -281,7 +281,8 @@ namespace common
 
         descriptor_owner::~descriptor_owner()
         {
-            close_descriptor(descritor_);
+            bool res = close_descriptor(descritor_);
+            DCHECK(res);
         }
 
         descriptor_owner::descriptor_owner(int desc)
@@ -534,11 +535,11 @@ namespace common
                 return false;
             }
 
-            byte_type buff[1024] = {0};
+            char buff[1024] = {0};
 
             char* res = fgets(buff, sizeof(buff), file_);
             if(res){
-                outData = buff;
+                outData = convertfromString<buffer_type>(buff);
             }
 
             return true;

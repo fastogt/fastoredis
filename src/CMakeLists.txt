@@ -93,7 +93,7 @@ SET(HEADERS_CORE
     core/connection_types.h
     core/settings_manager.h
     core/connection_settings.h
-    core/events/infos.h
+    core/redis/redis_infos.h
     core/events/events.h
     core/events/events_info.h
     core/redis/redis_config.h
@@ -101,7 +101,7 @@ SET(HEADERS_CORE
 )
 SET(SOURCES_CORE
     core/events/events_info.cpp
-    core/events/infos.cpp
+    core/redis/redis_infos.cpp
     core/command_logger.cpp
     core/connection_types.cpp
     core/settings_manager.cpp

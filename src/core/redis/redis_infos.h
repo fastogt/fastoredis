@@ -6,11 +6,24 @@
 
 #include "common/types.h"
 
+#define REDIS_SERVER_LABEL "# Server"
+#define REDIS_CLIENTS_LABEL "# Clients"
+#define REDIS_MEMORY_LABEL "# Memory"
+#define REDIS_PERSISTENCE_LABEL "# Persistence"
+#define REDIS_STATS_LABEL "# Stats"
+#define REDIS_REPLICATION_LABEL "# Replication"
+#define REDIS_CPU_LABEL "# CPU"
+#define REDIS_KEYSPACE_LABEL "# Keyspace"
+
 namespace fastoredis
 {
+    static const common::unicode_string headers[8] = {UTEXT(REDIS_SERVER_LABEL), UTEXT(REDIS_CLIENTS_LABEL), UTEXT(REDIS_MEMORY_LABEL),
+                                                      UTEXT(REDIS_PERSISTENCE_LABEL), UTEXT(REDIS_STATS_LABEL),
+                                                      UTEXT(REDIS_REPLICATION_LABEL), UTEXT(REDIS_CPU_LABEL), UTEXT(REDIS_KEYSPACE_LABEL)};
+
     struct DataBaseInfo
     {
-        DataBaseInfo(const common::unicode_string &name, size_t size);
+        DataBaseInfo(const common::unicode_string& name, size_t size);
         common::unicode_string name_;
         size_t size_;
     };

@@ -4,7 +4,7 @@
 
 #include "global/global.h"
 
-#include "core/events/infos.h"
+#include "core/redis/redis_infos.h"
 
 #include "common/qt/utils_qt.h"
 
