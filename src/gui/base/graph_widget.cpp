@@ -74,8 +74,14 @@ namespace fastoredis
     }
 
     GraphWidget::GraphWidget(const nodes_container_type &nodes, QWidget *parent)
-        : QWidget(parent),cur_zoom_(0),rubber_band_is_shown_(false), nodes_(nodes)
+        : QWidget(parent),cur_zoom_(0),rubber_band_is_shown_(false), nodes_()
     {
+        setNodes(nodes);
+    }
+
+    void GraphWidget::setNodes(const nodes_container_type& nodes)
+    {
+        nodes_ = nodes;
         setBackgroundRole(QPalette::Light);
         setAutoFillBackground(true);
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -113,17 +119,15 @@ namespace fastoredis
 
     void GraphWidget::zoom_out()
     {
-        if (cur_zoom_ > 0)
-        {
+        if (cur_zoom_ > 0){
             --cur_zoom_;
             refresh_pixmap();
-       }
+        }
     }
 
     void GraphWidget::zoom_in()
     {
-        if (cur_zoom_ < zoomStack.size() - 1)
-        {
+        if (cur_zoom_ < zoomStack.size() - 1){
             ++cur_zoom_;
             refresh_pixmap();
         }
@@ -132,20 +136,17 @@ namespace fastoredis
     void GraphWidget::draw_grid(QPainter *painter)
     {
         QRect rect = get_paint_rect();
-        if (rect.isValid()&&!zoomStack.empty())
-        {
+        if (rect.isValid()&&!zoomStack.empty()){
             plot_settings settings = zoomStack[cur_zoom_];
             painter->setPen(QColor(grid_color));
-            for (unsigned i = 0; i <= settings.num_x_ticks_; ++i)
-            {
+            for (unsigned i = 0; i <= settings.num_x_ticks_; ++i){
                  int x = rect.left() + (i * (rect.width() - 1) / settings.num_x_ticks_);
                  float label = settings.min_x_ + (i * settings.span_x() / settings.num_x_ticks_);
                  painter->drawLine(x, rect.top(), x, rect.bottom());
                  painter->drawLine(x, rect.bottom(), x, rect.bottom() + 5);
                  painter->drawText(x - 50, rect.bottom() + 5, 100, 20, Qt::AlignHCenter | Qt::AlignTop, QString::number(label));
             }
-            for (unsigned j = 0; j <= settings.num_y_ticks_; ++j)
-            {
+            for (unsigned j = 0; j <= settings.num_y_ticks_; ++j){
                 int y = rect.bottom() - (j * (rect.height() - 1) / settings.num_y_ticks_);
                 float label = settings.min_y_ + (j * settings.span_y() / settings.num_y_ticks_);
                 painter->drawLine(rect.left(), y, rect.right(), y);
@@ -160,10 +161,14 @@ namespace fastoredis
     {
         if(!zoomStack.empty()){
             QRect rect = get_paint_rect();
-            if (!rect.isValid())
+            if (!rect.isValid()){
                 return;
+            }
 
             painter->setClipRect(rect.adjusted(+1, +1, -1, -1));
+        }
+        else{
+            return;
         }
 
         QPolygonF polyline;
@@ -247,6 +252,10 @@ namespace fastoredis
 
     void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
     {
+        if(zoomStack.empty()){
+            return;
+        }
+
         if ((event->button() == Qt::LeftButton) && rubber_band_is_shown_){
             rubber_band_is_shown_ = false;
             update_rubber_band_region();
@@ -270,19 +279,24 @@ namespace fastoredis
 
     void GraphWidget::mouseMoveEvent(QMouseEvent *event)
     {
-        if (rubber_band_is_shown_)
-        {
+        if (rubber_band_is_shown_){
             update_rubber_band_region();
             rubber_band_rect_.setBottomRight(event->pos());
             update_rubber_band_region();
         }
     }
+
     QRect GraphWidget::get_paint_rect()const
     {
         return  QRect(margin, margin, width() - 2 * margin, height() - 2 * margin);
     }
+
     void GraphWidget::mousePressEvent(QMouseEvent *event)
     {
+        if(zoomStack.empty()){
+            return;
+        }
+
         if (event->button() == Qt::LeftButton){
             if (get_paint_rect().contains(event->pos())){
                 rubber_band_is_shown_ = true;
@@ -325,5 +339,4 @@ namespace fastoredis
     {
         return QSize(6 * margin, 4 * margin);
     }
-
 }

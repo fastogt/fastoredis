@@ -13,6 +13,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
+        static const common::unicode_string headers[8];
         RedisDriver(const IConnectionSettingsBasePtr &settings);
         virtual ~RedisDriver();
 

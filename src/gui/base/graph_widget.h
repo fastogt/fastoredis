@@ -22,6 +22,7 @@ namespace fastoredis
 
         unsigned num_x_ticks_;
         unsigned num_y_ticks_;
+
         plot_settings create_child(float dx,float dy,QRect rect)const;
         static bool is_valid_setting(const plot_settings &);
     private:
@@ -37,6 +38,8 @@ namespace fastoredis
         GraphWidget(const nodes_container_type& nodes, QWidget *parent = 0);
         QSize minimumSizeHint() const;
         QSize sizeHint() const;
+
+        void setNodes(const nodes_container_type& nodes);
 
     public Q_SLOTS:
         void zoom_in();

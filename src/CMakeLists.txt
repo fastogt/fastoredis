@@ -19,6 +19,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/explorer/explorer_tree_model.h
     gui/dialogs/about_dialog.h
     gui/dialogs/info_server_dialog.h
+    gui/dialogs/history_server_dialog.h
     gui/dialogs/property_server_dialog.h
     gui/dialogs/preferences_dialog.h
     gui/dialogs/connections_dialog.h
@@ -58,6 +59,7 @@ SET(SOURCES_GUI
     gui/dialogs/connection_dialog.cpp
     gui/dialogs/info_server_dialog.cpp
     gui/dialogs/property_server_dialog.cpp
+    gui/dialogs/history_server_dialog.cpp
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
     gui/fasto_editor.cpp

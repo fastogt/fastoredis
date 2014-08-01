@@ -24,7 +24,6 @@ namespace fastoredis
         void loadDatabases();
         void loadDatabaseContent(const DataBaseInfo &inf);
         void execute(const QString &script);
-        void requestHistoryInfo();
 
         //sync
         void stopCurrentEvent();
@@ -72,6 +71,7 @@ namespace fastoredis
         //async
         void serverInfo();
         void serverProperty();
+        void requestHistoryInfo();
         void changeProperty(const PropertyType& newValue);
 
     protected:

@@ -12,6 +12,7 @@
 
 #include "gui/dialogs/info_server_dialog.h"
 #include "gui/dialogs/property_server_dialog.h"
+#include "gui/dialogs/history_server_dialog.h"
 
 #include "common/qt/convert_string.h"
 
@@ -42,6 +43,9 @@ namespace fastoredis
         propertyServerAction_ = new QAction(this);
         VERIFY(connect(propertyServerAction_, SIGNAL(triggered()), SLOT(openPropertyServerDialog())));
 
+        historyServerAction_ = new QAction(this);
+        VERIFY(connect(historyServerAction_, SIGNAL(triggered()), SLOT(openHistoryServerDialog())));
+
         closeAction_ = new QAction(this);
         VERIFY(connect(closeAction_, SIGNAL(triggered()), SLOT(closeConnection())));
 
@@ -63,6 +67,7 @@ namespace fastoredis
                 menu.addAction(loadDatabaseAction_);
                 menu.addAction(infoServerAction_);
                 menu.addAction(propertyServerAction_);
+                menu.addAction(historyServerAction_);
                 menu.addAction(closeAction_);
                 menu.exec(menuPoint);
             }
@@ -172,6 +177,7 @@ namespace fastoredis
         loadContentAction_->setText(tr("Load content of database"));
         infoServerAction_->setText(tr("Info"));
         propertyServerAction_->setText(tr("Property"));
+        historyServerAction_->setText(tr("History"));
         closeAction_->setText(tr("Close"));
     }
 
@@ -232,6 +238,22 @@ namespace fastoredis
                 VERIFY(connect(&infDialog, SIGNAL(changedProperty(const PropertyType&)), server.get(), SLOT(changeProperty(const PropertyType&))));
                 VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverProperty())));
                 infDialog.exec();
+            }
+        }
+    }
+
+    void ExplorerTreeView::openHistoryServerDialog()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+            if(node){
+                IServerPtr server = node->server();
+                ServerHistoryDialog histDialog(server->name() + " history", server->connectionType(), this);
+                VERIFY(connect(server.get(), SIGNAL(startedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &)), &histDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
+                VERIFY(connect(server.get(), SIGNAL(finishedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &)), &histDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
+                VERIFY(connect(&histDialog, SIGNAL(showed()), server.get(), SLOT(requestHistoryInfo())));
+                histDialog.exec();
             }
         }
     }
