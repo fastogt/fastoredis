@@ -33,46 +33,46 @@ namespace fastoredis
             size_t delem = line.find_first_of(':');
             common::unicode_string field = line.substr(0, delem);
             common::unicode_string value = line.substr(delem + 1);
-            if(field == UTEXT("redis_version")){
+            if(field == UTEXT(REDIS_VERSION_LABEL)){
                 redis_version_ = value;
             }
-            else if(field == UTEXT("redis_git_sha1")){
+            else if(field == UTEXT(REDIS_GIT_SHA1_LABEL)){
                 redis_git_sha1_ = value;
             }
-            else if(field == UTEXT("redis_git_dirty")){
+            else if(field == UTEXT(REDIS_GIT_DIRTY)){
                 redis_git_dirty_ = value;
             }
-            else if(field == UTEXT("redis_mode")){
+            else if(field == UTEXT(REDIS_MODE_LABEL)){
                 redis_mode_ = value;
             }
-            else if(field == UTEXT("os")){
+            else if(field == UTEXT(REDIS_OS_LABEL)){
                 os_ = value;
             }
-            else if(field == UTEXT("arch_bits")){
+            else if(field == UTEXT(REDIS_ARCH_BITS_LABEL)){
                 arch_bits_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("multiplexing_api")){
+            else if(field == UTEXT(REDIS_MULTIPLEXING_API_LABEL)){
                 multiplexing_api_ = value;
             }
-            else if(field == UTEXT("gcc_version")){
+            else if(field == UTEXT(REDIS_GCC_VERSION_LABEL)){
                 gcc_version_ = value;
             }
-            else if(field == UTEXT("process_id")){
+            else if(field == UTEXT(REDIS_PROCESS_ID_LABEL)){
                 process_id_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("run_id")){
+            else if(field == UTEXT(REDIS_RUN_ID_LABEL)){
                 run_id_ = value;
             }
-            else if(field == UTEXT("tcp_port")){
+            else if(field == UTEXT(REDIS_TCP_PORT_LABEL)){
                 tcp_port_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("uptime_in_seconds")){
+            else if(field == UTEXT(REDIS_UPTIME_IN_SECONDS_LABEL)){
                 uptime_in_seconds_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("uptime_in_days")){
+            else if(field == UTEXT(REDIS_UPTIME_IN_DAYS)){
                 uptime_in_days_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("lru_clock")){
+            else if(field == UTEXT(REDIS_LRU_CLOCK_LABEL)){
                 lru_clock_ = common::convertfromString<common::uint32_type>(value);
             }
             start = pos + 2;
@@ -97,16 +97,16 @@ namespace fastoredis
             size_t delem = line.find_first_of(':');
             common::unicode_string field = line.substr(0, delem);
             common::unicode_string value = line.substr(delem + 1);
-            if(field == UTEXT("connected_clients")){
+            if(field == UTEXT(REDIS_CONNECTED_CLIENTS_LABEL)){
                 connected_clients_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("client_longest_output_list")){
+            else if(field == UTEXT(REDIS_CLIENT_LONGEST_OUTPUT_LIST_LABEL)){
                 client_longest_output_list_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("client_biggest_input_buf")){
+            else if(field == UTEXT(REDIS_CLIENT_BIGGEST_INPUT_BUF_LABEL)){
                 client_biggest_input_buf_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("blocked_clients")){
+            else if(field == UTEXT(REDIS_BLOCKED_CLIENTS_LABEL)){
                 blocked_clients_ = common::convertfromString<common::uint32_type>(value);
             }
             start = pos + 2;
@@ -133,28 +133,28 @@ namespace fastoredis
             size_t delem = line.find_first_of(':');
             common::unicode_string field = line.substr(0, delem);
             common::unicode_string value = line.substr(delem + 1);
-            if(field == UTEXT("used_memory")){
+            if(field == UTEXT(REDIS_USED_MEMORY_LABEL)){
                 used_memory_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("used_memory_human")){
+            else if(field == UTEXT(REDIS_USED_MEMORY_HUMAN_LABEL)){
                 used_memory_human_ = value;
             }
-            else if(field == UTEXT("used_memory_rss")){
+            else if(field == UTEXT(REDIS_USED_MEMORY_RSS_LABEL)){
                 used_memory_rss_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("used_memory_peak")){
+            else if(field == UTEXT(REDIS_USED_MEMORY_PEAK_LABEL)){
                 used_memory_peak_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("used_memory_peak_human")){
+            else if(field == UTEXT(REDIS_USED_MEMORY_PEAK_HUMAN_LABEL)){
                 used_memory_peak_human_ = value;
             }
-            else if(field == UTEXT("used_memory_lua")){
+            else if(field == UTEXT(REDIS_USED_MEMORY_LUA_LABEL)){
                 used_memory_lua_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("mem_fragmentation_ratio")){
+            else if(field == UTEXT(REDIS_MEM_FRAGMENTATION_RATIO_LABEL)){
                 mem_fragmentation_ratio_ = common::convertfromString<float>(value);
             }
-            else if(field == UTEXT("mem_allocator")){
+            else if(field == UTEXT(REDIS_MEM_ALLOCATOR_LABEL)){
                 mem_allocator_ = value;
             }
             start = pos + 2;
@@ -186,43 +186,46 @@ namespace fastoredis
             size_t delem = line.find_first_of(':');
             common::unicode_string field = line.substr(0, delem);
             common::unicode_string value = line.substr(delem + 1);
-            if(field == UTEXT("loading")){
+            if(field == UTEXT(REDIS_LOADING_LABEL)){
                 loading_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("rdb_changes_since_last_save")){
+            else if(field == UTEXT(REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL)){
                 rdb_changes_since_last_save_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("rdb_bgsave_in_progress")){
+            else if(field == UTEXT(REDIS_RDB_DGSAVE_IN_PROGRESS_LABEL)){
                 rdb_bgsave_in_progress_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("rdb_last_save_time")){
+            else if(field == UTEXT(REDIS_RDB_LAST_SAVE_TIME_LABEL)){
                 rdb_last_save_time_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("rdb_last_bgsave_status")){
+            else if(field == UTEXT(REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL)){
                 rdb_last_bgsave_status_ = value;
             }
-            else if(field == UTEXT("rdb_last_bgsave_time_sec")){
+            else if(field == UTEXT(REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL)){
                 rdb_last_bgsave_time_sec_ = common::convertfromString<int>(value);
             }
-            else if(field == UTEXT("rdb_current_bgsave_time_sec")){
+            else if(field == UTEXT(REDIS_RDB_CURRENT_DGSAVE_TIME_SEC_LABEL)){
                 rdb_current_bgsave_time_sec_ = common::convertfromString<int>(value);
             }
-            else if(field == UTEXT("aof_enabled")){
+            else if(field == UTEXT(REDIS_AOF_ENABLED_LABEL)){
                 aof_enabled_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("aof_rewrite_in_progress")){
+            else if(field == UTEXT(REDIS_AOF_REWRITE_IN_PROGRESS_LABEL)){
                 aof_rewrite_in_progress_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("aof_rewrite_scheduled")){
+            else if(field == UTEXT(REDIS_AOF_REWRITE_SHEDULED_LABEL)){
                 aof_rewrite_scheduled_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("aof_last_rewrite_time_sec")){
+            else if(field == UTEXT(REDIS_AOF_REWRITE_SHEDULED_LABEL)){
                 aof_last_rewrite_time_sec_ = common::convertfromString<int>(value);
             }
-            else if(field == UTEXT("aof_current_rewrite_time_sec")){
+            else if(field == UTEXT(REDIS_AOF_LAST_REWRITE_TIME_SEC_LABEL)){
+                aof_last_rewrite_time_sec_ = common::convertfromString<int>(value);
+            }
+            else if(field == UTEXT(REDIS_AOF_CURRENT_REWRITE_TIME_SEC_LABEL)){
                 aof_current_rewrite_time_sec_ = common::convertfromString<int>(value);
             }
-            else if(field == UTEXT("aof_last_bgrewrite_status")){
+            else if(field == UTEXT(REDIS_AOF_LAST_DGREWRITE_STATUS_LABEL)){
                 aof_last_bgrewrite_status_ = value;
             }
             start = pos + 2;
@@ -254,37 +257,37 @@ namespace fastoredis
             size_t delem = line.find_first_of(':');
             common::unicode_string field = line.substr(0, delem);
             common::unicode_string value = line.substr(delem + 1);
-            if(field == UTEXT("total_connections_received")){
+            if(field == UTEXT(REDIS_TOTAL_CONNECTIONS_RECEIVED_LABEL)){
                 total_connections_received_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("total_commands_processed")){
+            else if(field == UTEXT(REDIS_TOTAL_COMMANDS_PROCESSED_LABEL)){
                 total_commands_processed_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("instantaneous_ops_per_sec")){
+            else if(field == UTEXT(REDIS_INSTANTANEOUS_OPS_PER_SEC_LABEL)){
                 instantaneous_ops_per_sec_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("rejected_connections")){
+            else if(field == UTEXT(REDIS_REJECTED_CONNECTIONS_LABEL)){
                 rejected_connections_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("expired_keys")){
+            else if(field == UTEXT(REDIS_EXPIRED_KEYS_LABEL)){
                 expired_keys_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("evicted_keys")){
+            else if(field == UTEXT(REDIS_EVICTED_KEYS_LABEL)){
                 evicted_keys_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("keyspace_hits")){
+            else if(field == UTEXT(REDIS_KEYSPACE_HITS_LABEL)){
                 keyspace_hits_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("keyspace_misses")){
+            else if(field == UTEXT(REDIS_KEYSPACE_MISSES_LABEL)){
                 keyspace_misses_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("pubsub_channels")){
+            else if(field == UTEXT(REDIS_PUBSUB_CHANNELS_LABEL)){
                 pubsub_channels_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("pubsub_patterns")){
+            else if(field == UTEXT(REDIS_PUBSUB_PATTERNS_LABEL)){
                 pubsub_patterns_ = common::convertfromString<common::uint32_type>(value);
             }
-            else if(field == UTEXT("latest_fork_usec")){
+            else if(field == UTEXT(REDIS_LATEST_FORK_USEC_LABEL)){
                 latest_fork_usec_ = common::convertfromString<common::uint32_type>(value);
             }
             start = pos + 2;
@@ -309,10 +312,10 @@ namespace fastoredis
             size_t delem = line.find_first_of(':');
             common::unicode_string field = line.substr(0, delem);
             common::unicode_string value = line.substr(delem + 1);
-            if(field == UTEXT("role")){
+            if(field == UTEXT(REDIS_ROLE_LABEL)){
                 role_ = value;
             }
-            else if(field == UTEXT("connected_slaves")){
+            else if(field == UTEXT(REDIS_CONNECTED_SLAVES_LABEL)){
                 connected_slaves_ = common::convertfromString<common::uint32_type>(value);
             }
             start = pos + 2;
@@ -336,16 +339,16 @@ namespace fastoredis
             size_t delem = line.find_first_of(':');
             common::unicode_string field = line.substr(0, delem);
             common::unicode_string value = line.substr(delem + 1);
-            if(field == UTEXT("used_cpu_sys")){
+            if(field == UTEXT(REDIS_USED_CPU_SYS_LABEL)){
                 used_cpu_sys_ = common::convertfromString<float>(value);
             }
-            else if(field == UTEXT("used_cpu_user")){
+            else if(field == UTEXT(REDIS_USED_CPU_USER_LABEL)){
                 used_cpu_user_ = common::convertfromString<float>(value);
             }
-            else if(field == UTEXT("used_cpu_sys_children")){
+            else if(field == UTEXT(REDIS_USED_CPU_SYS_CHILDREN_LABEL)){
                 used_cpu_sys_children_ = common::convertfromString<float>(value);
             }
-            else if(field == UTEXT("used_cpu_user_children")){
+            else if(field == UTEXT(REDIS_USED_CPU_USER_CHILDREN_LABEL)){
                 used_cpu_user_children_ = common::convertfromString<float>(value);
             }
             start = pos + 2;
@@ -366,86 +369,86 @@ namespace fastoredis
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo::Server& value)
     {
-        return out << UTEXT("redis_version:") << value.redis_version_ << UTEXT("\r\n")
-                   << UTEXT("redis_git_sha1:") << value.redis_git_sha1_ << UTEXT("\r\n")
-                   << UTEXT("redis_git_dirty:") << value.redis_git_dirty_ << UTEXT("\r\n")
-                   << UTEXT("redis_mode:") << value.redis_mode_ << UTEXT("\r\n")
-                   << UTEXT("os:") << value.os_ << UTEXT("\r\n")
-                   << UTEXT("arch_bits:") << value.arch_bits_ << UTEXT("\r\n")
-                   << UTEXT("multiplexing_api:") << value.multiplexing_api_ << UTEXT("\r\n")
-                   << UTEXT("gcc_version:") << value.gcc_version_ << UTEXT("\r\n")
-                   << UTEXT("process_id:") << value.process_id_ << UTEXT("\r\n")
-                   << UTEXT("run_id:") << value.run_id_ << UTEXT("\r\n")
-                   << UTEXT("tcp_port:") << value.tcp_port_ << UTEXT("\r\n")
-                   << UTEXT("uptime_in_seconds:") << value.uptime_in_seconds_ << UTEXT("\r\n")
-                   << UTEXT("uptime_in_days:") << value.uptime_in_days_ << UTEXT("\r\n")
-                   << UTEXT("lru_clock:") << value.lru_clock_ << UTEXT("\r\n");
+        return out << UTEXT(REDIS_VERSION_LABEL":") << value.redis_version_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_GIT_SHA1_LABEL":") << value.redis_git_sha1_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_GIT_DIRTY":") << value.redis_git_dirty_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_MODE_LABEL":") << value.redis_mode_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_OS_LABEL":") << value.os_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_ARCH_BITS_LABEL":") << value.arch_bits_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_MULTIPLEXING_API_LABEL":") << value.multiplexing_api_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_GCC_VERSION_LABEL":") << value.gcc_version_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_PROCESS_ID_LABEL":") << value.process_id_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_RUN_ID_LABEL":") << value.run_id_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_TCP_PORT_LABEL":") << value.tcp_port_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_UPTIME_IN_SECONDS_LABEL":") << value.uptime_in_seconds_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_UPTIME_IN_DAYS":") << value.uptime_in_days_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_LRU_CLOCK_LABEL":") << value.lru_clock_ << UTEXT("\r\n");
     }
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo::Clients& value)
     {
-        return out << UTEXT("connected_clients:") << value.connected_clients_ << UTEXT("\r\n")
-                   << UTEXT("client_longest_output_list:") << value.client_longest_output_list_ << UTEXT("\r\n")
-                   << UTEXT("client_biggest_input_buf:") << value.client_biggest_input_buf_ << UTEXT("\r\n")
-                   << UTEXT("blocked_clients:") << value.blocked_clients_ << UTEXT("\r\n");
+        return out << UTEXT(REDIS_CONNECTED_CLIENTS_LABEL":") << value.connected_clients_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_CLIENT_LONGEST_OUTPUT_LIST_LABEL":") << value.client_longest_output_list_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_CLIENT_BIGGEST_INPUT_BUF_LABEL":") << value.client_biggest_input_buf_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_BLOCKED_CLIENTS_LABEL":") << value.blocked_clients_ << UTEXT("\r\n");
     }
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo::Memory& value)
     {
-        return out << UTEXT("used_memory:") << value.used_memory_ << UTEXT("\r\n")
-                   << UTEXT("used_memory_human:") << value.used_memory_human_ << UTEXT("\r\n")
-                   << UTEXT("used_memory_rss:") << value.used_memory_rss_ << UTEXT("\r\n")
-                   << UTEXT("used_memory_peak:") << value.used_memory_peak_ << UTEXT("\r\n")
-                   << UTEXT("used_memory_peak_human:") << value.used_memory_peak_human_ << UTEXT("\r\n")
-                   << UTEXT("used_memory_lua:") << value.used_memory_lua_ << UTEXT("\r\n")
-                   << UTEXT("mem_fragmentation_ratio:") << value.mem_fragmentation_ratio_ << UTEXT("\r\n")
-                   << UTEXT("mem_allocator:") << value.mem_allocator_ << UTEXT("\r\n");
+        return out << UTEXT(REDIS_USED_MEMORY_LABEL":") << value.used_memory_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_USED_MEMORY_HUMAN_LABEL":") << value.used_memory_human_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_USED_MEMORY_RSS_LABEL":") << value.used_memory_rss_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_USED_MEMORY_PEAK_LABEL":") << value.used_memory_peak_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_USED_MEMORY_PEAK_HUMAN_LABEL":") << value.used_memory_peak_human_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_USED_MEMORY_LUA_LABEL":") << value.used_memory_lua_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_MEM_FRAGMENTATION_RATIO_LABEL":") << value.mem_fragmentation_ratio_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_MEM_ALLOCATOR_LABEL":") << value.mem_allocator_ << UTEXT("\r\n");
     }
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo::Persistence& value)
     {
-        return out << UTEXT("loading:") << value.loading_ << UTEXT("\r\n")
-                   << UTEXT("rdb_changes_since_last_save:") << value.rdb_changes_since_last_save_ << UTEXT("\r\n")
-                   << UTEXT("rdb_bgsave_in_progress:") << value.rdb_bgsave_in_progress_ << UTEXT("\r\n")
-                   << UTEXT("rdb_last_save_time:") << value.rdb_last_save_time_ << UTEXT("\r\n")
-                   << UTEXT("rdb_last_bgsave_status:") << value.rdb_last_bgsave_status_ << UTEXT("\r\n")
-                   << UTEXT("rdb_last_bgsave_time_sec:") << value.rdb_last_bgsave_time_sec_ << UTEXT("\r\n")
-                   << UTEXT("rdb_current_bgsave_time_sec:") << value.rdb_current_bgsave_time_sec_ << UTEXT("\r\n")
-                   << UTEXT("aof_enabled:") << value.aof_enabled_ << UTEXT("\r\n")
-                   << UTEXT("aof_rewrite_in_progress:") << value.aof_rewrite_in_progress_ << UTEXT("\r\n")
-                   << UTEXT("aof_rewrite_scheduled:") << value.aof_rewrite_scheduled_ << UTEXT("\r\n")
-                   << UTEXT("aof_last_rewrite_time_sec:") << value.aof_last_rewrite_time_sec_ << UTEXT("\r\n")
-                   << UTEXT("aof_current_rewrite_time_sec:") << value.aof_current_rewrite_time_sec_ << UTEXT("\r\n")
-                   << UTEXT("aof_last_bgrewrite_status:") << value.aof_last_bgrewrite_status_ << UTEXT("\r\n");
+        return out << UTEXT(REDIS_LOADING_LABEL":") << value.loading_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL":") << value.rdb_changes_since_last_save_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_RDB_DGSAVE_IN_PROGRESS_LABEL":") << value.rdb_bgsave_in_progress_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_RDB_LAST_SAVE_TIME_LABEL":") << value.rdb_last_save_time_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_RDB_LAST_DGSAVE_STATUS_LABEL":") << value.rdb_last_bgsave_status_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL":") << value.rdb_last_bgsave_time_sec_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_RDB_CURRENT_DGSAVE_TIME_SEC_LABEL":") << value.rdb_current_bgsave_time_sec_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_AOF_ENABLED_LABEL":") << value.aof_enabled_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_AOF_REWRITE_IN_PROGRESS_LABEL":") << value.aof_rewrite_in_progress_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_AOF_REWRITE_SHEDULED_LABEL":") << value.aof_rewrite_scheduled_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_AOF_LAST_REWRITE_TIME_SEC_LABEL":") << value.aof_last_rewrite_time_sec_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_AOF_CURRENT_REWRITE_TIME_SEC_LABEL":") << value.aof_current_rewrite_time_sec_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_AOF_LAST_DGREWRITE_STATUS_LABEL":") << value.aof_last_bgrewrite_status_ << UTEXT("\r\n");
     }
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo::Stats& value)
     {
-        return out << UTEXT("total_connections_received:") << value.total_connections_received_ << UTEXT("\r\n")
-                   << UTEXT("total_commands_processed:") << value.total_commands_processed_ << UTEXT("\r\n")
-                   << UTEXT("instantaneous_ops_per_sec:") << value.instantaneous_ops_per_sec_ << UTEXT("\r\n")
-                   << UTEXT("rejected_connections:") << value.rejected_connections_ << UTEXT("\r\n")
-                   << UTEXT("expired_keys:") << value.expired_keys_ << UTEXT("\r\n")
-                   << UTEXT("evicted_keys:") << value.evicted_keys_ << UTEXT("\r\n")
-                   << UTEXT("keyspace_hits:") << value.keyspace_hits_ << UTEXT("\r\n")
-                   << UTEXT("keyspace_misses:") << value.keyspace_misses_ << UTEXT("\r\n")
-                   << UTEXT("pubsub_channels:") << value.pubsub_channels_ << UTEXT("\r\n")
-                   << UTEXT("pubsub_patterns:") << value.pubsub_patterns_ << UTEXT("\r\n")
-                   << UTEXT("latest_fork_usec:") << value.latest_fork_usec_ << UTEXT("\r\n");
+        return out << UTEXT(REDIS_TOTAL_CONNECTIONS_RECEIVED_LABEL":") << value.total_connections_received_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_TOTAL_COMMANDS_PROCESSED_LABEL":") << value.total_commands_processed_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_INSTANTANEOUS_OPS_PER_SEC_LABEL":") << value.instantaneous_ops_per_sec_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_REJECTED_CONNECTIONS_LABEL":") << value.rejected_connections_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_EXPIRED_KEYS_LABEL":") << value.expired_keys_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_EVICTED_KEYS_LABEL":") << value.evicted_keys_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_KEYSPACE_HITS_LABEL":") << value.keyspace_hits_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_KEYSPACE_MISSES_LABEL":") << value.keyspace_misses_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_PUBSUB_CHANNELS_LABEL":") << value.pubsub_channels_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_PUBSUB_PATTERNS_LABEL":") << value.pubsub_patterns_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_LATEST_FORK_USEC_LABEL":") << value.latest_fork_usec_ << UTEXT("\r\n");
     }
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo::Replication& value)
     {
-        return out << UTEXT("role:") << value.role_ << UTEXT("\r\n")
-                   << UTEXT("connected_slaves:") << value.connected_slaves_ << UTEXT("\r\n");
+        return out << UTEXT(REDIS_ROLE_LABEL":") << value.role_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_CONNECTED_SLAVES_LABEL":") << value.connected_slaves_ << UTEXT("\r\n");
     }
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo::Cpu& value)
     {
-        return out << UTEXT("used_cpu_sys:") << value.used_cpu_sys_ << UTEXT("\r\n")
-                   << UTEXT("used_cpu_user:") << value.used_cpu_user_ << UTEXT("\r\n")
-                   << UTEXT("used_cpu_sys_children:") << value.used_cpu_sys_children_ << UTEXT("\r\n")
-                   << UTEXT("used_cpu_user_children:") << value.used_cpu_user_children_ << UTEXT("\r\n");
+        return out << UTEXT(REDIS_USED_CPU_SYS_LABEL":") << value.used_cpu_sys_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_USED_CPU_USER_LABEL":") << value.used_cpu_user_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_USED_CPU_SYS_CHILDREN_LABEL":") << value.used_cpu_sys_children_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_USED_CPU_USER_CHILDREN_LABEL":") << value.used_cpu_user_children_ << UTEXT("\r\n");
     }
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo& value)
