@@ -33,6 +33,7 @@ namespace fastoredis
         void loadContentDb();
         void openInfoServerDialog();
         void openPropertyServerDialog();
+        void openHistoryServerDialog();
         void closeConnection();
 
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
@@ -52,6 +53,7 @@ namespace fastoredis
         QAction* loadContentAction_;
         QAction* infoServerAction_;
         QAction* propertyServerAction_;
+        QAction* historyServerAction_;
         QAction* closeAction_;
     };
 }

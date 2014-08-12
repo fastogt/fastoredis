@@ -27,10 +27,10 @@ namespace fastoredis
         Q_OBJECT
     public:
         static void reply(QObject *reciver, QEvent *ev);
+        virtual ~IDriver();
 
         connectionTypes connectionType() const;
         const IConnectionSettingsBasePtr &settings() const;
-        virtual ~IDriver();
 
         //sync
         virtual void interrupt() = 0;
@@ -48,7 +48,7 @@ namespace fastoredis
 
         virtual void customEvent(QEvent *event);
 
-    private:
+    protected:
         virtual void initImpl() = 0;
         virtual common::ErrorValue currentLoggingInfo(FastoObjectPtr& outInfo) = 0;
 
@@ -61,12 +61,16 @@ namespace fastoredis
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev) = 0;
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev) = 0;
 
+        const IConnectionSettingsBasePtr settings_;
+
+    private:
+        void loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev);
+
+        virtual ServerInfo makeServerInfoFromString(const common::unicode_string& val) = 0;
+
         QThread *thread_;
         int timer_info_id_;
         common::file_system::File* logFile_;
-
-    protected:
-        const IConnectionSettingsBasePtr settings_;
     };
 
     typedef boost::shared_ptr<IDriver> IDriverPtr;

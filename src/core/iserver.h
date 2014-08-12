@@ -56,6 +56,9 @@ namespace fastoredis
         void startedLoadServerInfo(const EventsInfo::ServerInfoRequest &req);
         void finishedLoadServerInfo(const EventsInfo::ServerInfoResponce &res);
 
+        void startedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &req);
+        void finishedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &res);
+
         void startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest &req);
         void finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce &res);
 
@@ -68,6 +71,7 @@ namespace fastoredis
         //async
         void serverInfo();
         void serverProperty();
+        void requestHistoryInfo();
         void changeProperty(const PropertyType& newValue);
 
     protected:
@@ -90,6 +94,7 @@ namespace fastoredis
         const IDriverPtr _drv;
 
     private:
+        void loadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent *ev);
         bool _isMaster;
     };
 

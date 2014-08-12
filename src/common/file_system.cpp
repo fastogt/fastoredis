@@ -281,7 +281,8 @@ namespace common
 
         descriptor_owner::~descriptor_owner()
         {
-            close_descriptor(descritor_);
+            bool res = close_descriptor(descritor_);
+            DCHECK(res);
         }
 
         descriptor_owner::descriptor_owner(int desc)
@@ -526,6 +527,27 @@ namespace common
                outData = convert2string(outB);
            }
            return res;
+        }
+
+        bool File::readLine(buffer_type& outData)
+        {
+            if(!file_){
+                return false;
+            }
+
+            char buff[1024] = {0};
+
+            char* res = fgets(buff, sizeof(buff), file_);
+            if(res){
+                outData = convertfromString<buffer_type>(buff);
+            }
+
+            return true;
+        }
+
+        bool File::isEof() const
+        {
+           return feof(file_);
         }
 
         bool File::write(const buffer_type& data)

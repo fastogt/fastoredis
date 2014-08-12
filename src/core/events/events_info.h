@@ -4,7 +4,7 @@
 
 #include "global/global.h"
 
-#include "core/events/infos.h"
+#include "core/redis/redis_infos.h"
 
 #include "common/qt/utils_qt.h"
 
@@ -114,6 +114,23 @@ namespace fastoredis
             ServerInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
 
             ServerInfo info_;
+        };
+
+        struct ServerInfoHistoryRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ServerInfoHistoryRequest(const common::ErrorValue &er = common::ErrorValue());
+        };
+
+        struct ServerInfoHistoryResponce
+                : ServerInfoHistoryRequest
+        {
+            typedef ServerInfoHistoryRequest base_class;
+            typedef std::map<long long, ServerInfo> infos_container_type;
+            ServerInfoHistoryResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+
+            infos_container_type infos_;
         };
 
         struct ServerPropertyInfoRequest

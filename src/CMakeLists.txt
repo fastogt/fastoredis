@@ -19,6 +19,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/explorer/explorer_tree_model.h
     gui/dialogs/about_dialog.h
     gui/dialogs/info_server_dialog.h
+    gui/dialogs/history_server_dialog.h
     gui/dialogs/property_server_dialog.h
     gui/dialogs/preferences_dialog.h
     gui/dialogs/connections_dialog.h
@@ -36,6 +37,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/glass_widget.h
     gui/base/tree_model.h
     gui/base/table_model.h
+    gui/base/graph_widget.h
 )
 SET(HEADERS_GUI
     gui/gui_factory.h
@@ -57,6 +59,7 @@ SET(SOURCES_GUI
     gui/dialogs/connection_dialog.cpp
     gui/dialogs/info_server_dialog.cpp
     gui/dialogs/property_server_dialog.cpp
+    gui/dialogs/history_server_dialog.cpp
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
     gui/fasto_editor.cpp
@@ -75,6 +78,7 @@ SET(SOURCES_GUI
     gui/base/tree_item.cpp
     gui/base/table_model.cpp
     gui/base/table_item.cpp
+    gui/base/graph_widget.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
@@ -89,7 +93,7 @@ SET(HEADERS_CORE
     core/connection_types.h
     core/settings_manager.h
     core/connection_settings.h
-    core/events/infos.h
+    core/redis/redis_infos.h
     core/events/events.h
     core/events/events_info.h
     core/redis/redis_config.h
@@ -97,7 +101,7 @@ SET(HEADERS_CORE
 )
 SET(SOURCES_CORE
     core/events/events_info.cpp
-    core/events/infos.cpp
+    core/redis/redis_infos.cpp
     core/command_logger.cpp
     core/connection_types.cpp
     core/settings_manager.cpp

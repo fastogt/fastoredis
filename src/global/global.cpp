@@ -43,11 +43,22 @@ namespace fastoredis
     {
         FastoObject* result = new FastoObject(parent, value_->deepCopy());
 
-        for (child_container_type::const_iterator i(childrens_.begin()); i != childrens_.end(); ++i){
-            result->addChildren((*i)->deepCopy(result));
+        for (child_container_type::const_iterator it = childrens_.begin(); it != childrens_.end(); ++it){
+            FastoObject* child = (*it)->deepCopy(result);
+            result->addChildren(child);
         }
 
         return result;
+    }
+
+    FastoObject *FastoObject::deepCopyChangeParent(FastoObject *parent) const
+    {
+        for (child_container_type::const_iterator it = childrens_.begin(); it != childrens_.end(); ++it){
+            FastoObject* child = (*it)->deepCopy(parent);
+            parent->addChildren(child);
+        }
+
+        return parent;
     }
 
     FastoObject *FastoObject::createRoot(const std::string &text)
@@ -97,7 +108,7 @@ namespace common
         return common::utils::enums::findTypeInArray<fastoredis::supportedViews>(supportedViewsM, from.c_str());
     }
 
-    unicode_string convert2string(const fastoredis::FastoObjectPtr &obj)
+    unicode_string convert2string(fastoredis::FastoObject* obj)
     {
         using namespace fastoredis;
         unicode_string result;

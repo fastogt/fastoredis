@@ -15,6 +15,7 @@ namespace fastoredis
 {
     class RedisShell;
     class IconLabel;
+
     class ShellWidget
             : public QWidget
     {

@@ -12,7 +12,8 @@ namespace fastoredis
             : public IDriver
     {
         Q_OBJECT
-    public:
+    public:        
+
         RedisDriver(const IConnectionSettingsBasePtr &settings);
         virtual ~RedisDriver();
 
@@ -37,6 +38,8 @@ namespace fastoredis
         virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent *ev);
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev);
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev);
+
+        ServerInfo makeServerInfoFromString(const common::unicode_string& val);
 
         struct pimpl;
         boost::scoped_ptr<pimpl> impl_;

@@ -89,6 +89,18 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
+        ServerInfoHistoryRequest::ServerInfoHistoryRequest(const common::ErrorValue& er)
+            : base_class(er)
+        {
+
+        }
+
+        ServerInfoHistoryResponce::ServerInfoHistoryResponce(const base_class &request, const common::ErrorValue &er)
+            : base_class(request)
+        {
+            base_class::errorInfo_ = er;
+        }
+
         ServerPropertyInfoRequest::ServerPropertyInfoRequest(const common::ErrorValue &er)
             : base_class(er)
         {
