@@ -69,7 +69,7 @@ namespace
     } helpEntry;
 
     helpEntry *helpEntries;
-    int helpEntriesLen = sizeof(commandHelp)/sizeof(struct commandHelp) + sizeof(commandGroups)/sizeof(char*);
+    const int helpEntriesLen = sizeof(commandHelp)/sizeof(struct commandHelp) + sizeof(commandGroups)/sizeof(char*);
 
     QStringList g_types;
     QStringList g_commands;
@@ -109,82 +109,6 @@ namespace
             helpEntries[pos++] = tmp;
         }
         return list;
-    }
-
-    fastoredis::ServerInfo makeServerInfo(const common::unicode_string &content)
-    {
-        using namespace fastoredis;
-
-        ServerInfo result;
-        int j = 0;
-        std::string word;
-        size_t pos = 0;
-        for(int i = 0; i < content.size(); ++i)
-        {
-            char ch = content[i];
-            word += ch;
-            if(word == headers[j]){
-                if(j+1 != sizeof(headers)/sizeof(*headers)){
-                    pos = content.find(headers[j+1], pos);
-                }
-                else{
-                    break;
-                }
-
-                if(pos != std::string::npos)
-                {
-                    common::unicode_string part = content.substr(i + 1, pos - i - 1 );
-                    switch(j)
-                    {
-                    case 0:
-                        result.server_ = fastoredis::ServerInfo::Server(part);
-                        break;
-                    case 1:
-                        result.clients_ = fastoredis::ServerInfo::Clients(part);
-                        break;
-                    case 2:
-                        result.memory_ = fastoredis::ServerInfo::Memory(part);
-                        break;
-                    case 3:
-                        result.persistence_ = fastoredis::ServerInfo::Persistence(part);
-                        break;
-                    case 4:
-                        result.stats_ = fastoredis::ServerInfo::Stats(part);
-                        break;
-                    case 5:
-                        result.replication_ = fastoredis::ServerInfo::Replication(part);
-                        break;
-                    case 6:
-                        result.cpu_ = fastoredis::ServerInfo::Cpu(part);
-                        break;
-                    default:
-                        break;
-                    }
-                    i = pos-1;
-                    ++j;
-                }
-                word.clear();
-            }
-        }
-        return result;
-    }
-
-    fastoredis::ServerInfo makeServerInfo(const fastoredis::FastoObjectPtr &root)
-    {
-        const common::unicode_string content = common::convert2string(root);
-        return makeServerInfo(content);
-    }
-
-
-    fastoredis::ServerPropertyInfo makeServerProperty(const fastoredis::FastoObjectPtr &root)
-    {
-        fastoredis::ServerPropertyInfo inf;
-        fastoredis::FastoObject::child_container_type childrens = root->childrens();
-        for(int i = 0; i < childrens.size(); i+=2)
-        {
-            inf.propertyes_.push_back(std::make_pair(childrens[i]->toString(), childrens[i+1]->toString()));
-        }
-        return inf;
     }
 
     const QStringList g_allCommands = getList();

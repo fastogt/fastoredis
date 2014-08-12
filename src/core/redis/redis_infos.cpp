@@ -463,4 +463,77 @@ namespace fastoredis
     {
 
     }
+
+    ServerInfo makeServerInfo(const common::unicode_string &content)
+    {
+        ServerInfo result;
+        int j = 0;
+        std::string word;
+        size_t pos = 0;
+        for(int i = 0; i < content.size(); ++i)
+        {
+            char ch = content[i];
+            word += ch;
+            if(word == headers[j]){
+                if(j+1 != sizeof(headers)/sizeof(*headers)){
+                    pos = content.find(headers[j+1], pos);
+                }
+                else{
+                    break;
+                }
+
+                if(pos != std::string::npos)
+                {
+                    common::unicode_string part = content.substr(i + 1, pos - i - 1 );
+                    switch(j)
+                    {
+                    case 0:
+                        result.server_ = ServerInfo::Server(part);
+                        break;
+                    case 1:
+                        result.clients_ = ServerInfo::Clients(part);
+                        break;
+                    case 2:
+                        result.memory_ = ServerInfo::Memory(part);
+                        break;
+                    case 3:
+                        result.persistence_ = ServerInfo::Persistence(part);
+                        break;
+                    case 4:
+                        result.stats_ = ServerInfo::Stats(part);
+                        break;
+                    case 5:
+                        result.replication_ = ServerInfo::Replication(part);
+                        break;
+                    case 6:
+                        result.cpu_ = ServerInfo::Cpu(part);
+                        break;
+                    default:
+                        break;
+                    }
+                    i = pos-1;
+                    ++j;
+                }
+                word.clear();
+            }
+        }
+        return result;
+    }
+
+    ServerInfo makeServerInfo(const FastoObjectPtr &root)
+    {
+        const common::unicode_string content = common::convert2string(root);
+        return makeServerInfo(content);
+    }
+
+    ServerPropertyInfo makeServerProperty(const FastoObjectPtr &root)
+    {
+        ServerPropertyInfo inf;
+        FastoObject::child_container_type childrens = root->childrens();
+        for(int i = 0; i < childrens.size(); i+=2)
+        {
+            inf.propertyes_.push_back(std::make_pair(childrens[i]->toString(), childrens[i+1]->toString()));
+        }
+        return inf;
+    }
 }

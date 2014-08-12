@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "common/types.h"
+#include "global/global.h"
 
 #define REDIS_SERVER_LABEL "# Server"
 #define REDIS_CLIENTS_LABEL "# Clients"
@@ -216,4 +217,8 @@ namespace fastoredis
         ServerPropertyInfo();
         std::vector<PropertyType> propertyes_;
     };
+
+    ServerInfo makeServerInfo(const common::unicode_string &content);
+    ServerInfo makeServerInfo(const FastoObjectPtr &root);
+    ServerPropertyInfo makeServerProperty(const FastoObjectPtr &root);
 }
