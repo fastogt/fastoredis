@@ -39,7 +39,7 @@ namespace fastoredis
             else if(field == UTEXT(REDIS_GIT_SHA1_LABEL)){
                 redis_git_sha1_ = value;
             }
-            else if(field == UTEXT(REDIS_GIT_DIRTY)){
+            else if(field == UTEXT(REDIS_GIT_DIRTY_LABEL)){
                 redis_git_dirty_ = value;
             }
             else if(field == UTEXT(REDIS_MODE_LABEL)){
@@ -79,6 +79,44 @@ namespace fastoredis
         }
     }
 
+    common::Value* ServerInfo::Server::valueByIndex(unsigned char index) const
+    {
+        switch (index) {
+        case 0:
+            return new common::StringValue(redis_version_);
+        case 1:
+            return new common::StringValue(redis_git_sha1_);
+        case 2:
+            return new common::StringValue(redis_git_dirty_);
+        case 3:
+            return new common::StringValue(redis_mode_);
+        case 4:
+            return new common::StringValue(os_);
+        case 5:
+            return new common::FundamentalValue(arch_bits_);
+        case 6:
+            return new common::StringValue(multiplexing_api_);
+        case 7:
+            return new common::StringValue(gcc_version_);
+        case 8:
+            return new common::FundamentalValue(process_id_);
+        case 9:
+            return new common::StringValue(run_id_);
+        case 10:
+            return new common::FundamentalValue(tcp_port_);
+        case 11:
+            return new common::FundamentalValue(uptime_in_seconds_);
+        case 12:
+            return new common::FundamentalValue(uptime_in_days_);
+        case 13:
+            return new common::FundamentalValue(lru_clock_);
+        default:
+            NOTREACHED();
+            break;
+        }
+        return NULL;
+    }
+
     ServerInfo::Clients::Clients()
         : connected_clients_(0), client_longest_output_list_(0),
         client_biggest_input_buf_(0), blocked_clients_(0)
@@ -111,6 +149,24 @@ namespace fastoredis
             }
             start = pos + 2;
         }
+    }
+
+    common::Value* ServerInfo::Clients::valueByIndex(unsigned char index) const
+    {
+        switch (index) {
+        case 0:
+            return new common::FundamentalValue(connected_clients_);
+        case 1:
+            return new common::FundamentalValue(client_longest_output_list_);
+        case 2:
+            return new common::FundamentalValue(client_biggest_input_buf_);
+        case 3:
+            return new common::FundamentalValue(blocked_clients_);
+        default:
+            NOTREACHED();
+            break;
+        }
+        return NULL;
     }
 
     ServerInfo::Memory::Memory()
@@ -159,6 +215,32 @@ namespace fastoredis
             }
             start = pos + 2;
         }
+    }
+
+    common::Value* ServerInfo::Memory::valueByIndex(unsigned char index) const
+    {
+        switch (index) {
+        case 0:
+            return new common::FundamentalValue(used_memory_);
+        case 1:
+            return new common::StringValue(used_memory_human_);
+        case 2:
+            return new common::FundamentalValue(used_memory_rss_);
+        case 3:
+            return new common::FundamentalValue(used_memory_peak_);
+        case 4:
+            return new common::StringValue(used_memory_peak_human_);
+        case 5:
+            return new common::FundamentalValue(used_memory_lua_);
+        case 6:
+            return new common::FundamentalValue(mem_fragmentation_ratio_);
+        case 7:
+            return new common::StringValue(mem_allocator_);
+        default:
+            NOTREACHED();
+            break;
+        }
+        return NULL;
     }
 
     ServerInfo::Persistence::Persistence()
@@ -232,6 +314,42 @@ namespace fastoredis
         }
     }
 
+    common::Value* ServerInfo::Persistence::valueByIndex(unsigned char index) const
+    {
+        switch (index) {
+        case 0:
+            return new common::FundamentalValue(loading_);
+        case 1:
+            return new common::FundamentalValue(rdb_changes_since_last_save_);
+        case 2:
+            return new common::FundamentalValue(rdb_bgsave_in_progress_);
+        case 3:
+            return new common::FundamentalValue(rdb_last_save_time_);
+        case 4:
+            return new common::StringValue(rdb_last_bgsave_status_);
+        case 5:
+            return new common::FundamentalValue(rdb_last_bgsave_time_sec_);
+        case 6:
+            return new common::FundamentalValue(rdb_current_bgsave_time_sec_);
+        case 7:
+            return new common::FundamentalValue(aof_enabled_);
+        case 8:
+            return new common::FundamentalValue(aof_rewrite_in_progress_);
+        case 9:
+            return new common::FundamentalValue(aof_rewrite_scheduled_);
+        case 10:
+            return new common::FundamentalValue(aof_last_rewrite_time_sec_);
+        case 11:
+            return new common::FundamentalValue(aof_current_rewrite_time_sec_);
+        case 12:
+            return new common::StringValue(aof_last_bgrewrite_status_);
+        default:
+            NOTREACHED();
+            break;
+        }
+        return NULL;
+    }
+
     ServerInfo::Stats::Stats()
         : total_connections_received_(0), total_commands_processed_(0),
           instantaneous_ops_per_sec_(0), rejected_connections_(0),
@@ -294,6 +412,38 @@ namespace fastoredis
         }
     }
 
+    common::Value* ServerInfo::Stats::valueByIndex(unsigned char index) const
+    {
+        switch (index) {
+        case 0:
+            return new common::FundamentalValue(total_connections_received_);
+        case 1:
+            return new common::FundamentalValue(total_commands_processed_);
+        case 2:
+            return new common::FundamentalValue(instantaneous_ops_per_sec_);
+        case 3:
+            return new common::FundamentalValue(rejected_connections_);
+        case 4:
+            return new common::FundamentalValue(expired_keys_);
+        case 5:
+            return new common::FundamentalValue(evicted_keys_);
+        case 6:
+            return new common::FundamentalValue(keyspace_hits_);
+        case 7:
+            return new common::FundamentalValue(keyspace_misses_);
+        case 8:
+            return new common::FundamentalValue(pubsub_channels_);
+        case 9:
+            return new common::FundamentalValue(pubsub_patterns_);
+        case 10:
+            return new common::FundamentalValue(latest_fork_usec_);
+        default:
+            NOTREACHED();
+            break;
+        }
+        return NULL;
+    }
+
     ServerInfo::Replication::Replication()
         : role_(), connected_slaves_(0)
     {
@@ -320,6 +470,20 @@ namespace fastoredis
             }
             start = pos + 2;
         }
+    }
+
+    common::Value* ServerInfo::Replication::valueByIndex(unsigned char index) const
+    {
+        switch (index) {
+        case 0:
+            return new common::StringValue(role_);
+        case 1:
+            return new common::FundamentalValue(connected_slaves_);
+        default:
+            NOTREACHED();
+            break;
+        }
+        return NULL;
     }
 
     ServerInfo::Cpu::Cpu()
@@ -355,23 +519,72 @@ namespace fastoredis
         }
     }
 
+    common::Value* ServerInfo::Cpu::valueByIndex(unsigned char index) const
+    {
+        switch (index) {
+        case 0:
+            return new common::FundamentalValue(used_cpu_sys_);
+        case 1:
+            return new common::FundamentalValue(used_cpu_user_);
+        case 2:
+            return new common::FundamentalValue(used_cpu_sys_children_);
+        case 3:
+            return new common::FundamentalValue(used_cpu_user_children_);
+        default:
+            NOTREACHED();
+            break;
+        }
+        return NULL;
+    }
+
+    common::Value* ServerInfo::Keyspace::valueByIndex(unsigned char index) const
+    {
+        return NULL;
+    }
+
     ServerInfo::ServerInfo()
     {
 
     }
 
     ServerInfo::ServerInfo(const Server &serv, const Clients &clients, const Memory &memory,
-                           const Persistence &pers, const Stats &stats, const Replication &repl, const Cpu &cpu)
-        : server_(serv), clients_(clients), memory_(memory), persistence_(pers), stats_(stats), replication_(repl), cpu_(cpu)
+                           const Persistence &pers, const Stats &stats, const Replication &repl, const Cpu &cpu, const Keyspace &key)
+        : server_(serv), clients_(clients), memory_(memory), persistence_(pers), stats_(stats), replication_(repl), cpu_(cpu), keySp_(key)
     {
 
+    }
+
+    common::Value* ServerInfo::valueByIndexes(unsigned char property, unsigned char field) const
+    {
+        switch (property) {
+        case 0:
+            return server_.valueByIndex(field);
+        case 1:
+            return clients_.valueByIndex(field);
+        case 2:
+            return memory_.valueByIndex(field);
+        case 3:
+            return persistence_.valueByIndex(field);
+        case 4:
+            return stats_.valueByIndex(field);
+        case 5:
+            return replication_.valueByIndex(field);
+        case 6:
+            return cpu_.valueByIndex(field);
+        case 7:
+            return keySp_.valueByIndex(field);
+        default:
+            NOTREACHED();
+            break;
+        }
+        return NULL;
     }
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo::Server& value)
     {
         return out << UTEXT(REDIS_VERSION_LABEL":") << value.redis_version_ << UTEXT("\r\n")
                    << UTEXT(REDIS_GIT_SHA1_LABEL":") << value.redis_git_sha1_ << UTEXT("\r\n")
-                   << UTEXT(REDIS_GIT_DIRTY":") << value.redis_git_dirty_ << UTEXT("\r\n")
+                   << UTEXT(REDIS_GIT_DIRTY_LABEL":") << value.redis_git_dirty_ << UTEXT("\r\n")
                    << UTEXT(REDIS_MODE_LABEL":") << value.redis_mode_ << UTEXT("\r\n")
                    << UTEXT(REDIS_OS_LABEL":") << value.os_ << UTEXT("\r\n")
                    << UTEXT(REDIS_ARCH_BITS_LABEL":") << value.arch_bits_ << UTEXT("\r\n")
@@ -456,7 +669,7 @@ namespace fastoredis
         //"# Server", "# Clients", "# Memory", "# Persistence", "# Stats", "# Replication", "# CPU", "# Keyspace"
         return out << UTEXT(REDIS_SERVER_LABEL"\r\n") << value.server_ << UTEXT(REDIS_CLIENTS_LABEL"\r\n") << value.clients_ << UTEXT(REDIS_MEMORY_LABEL"\r\n") << value.memory_
                    << UTEXT(REDIS_PERSISTENCE_LABEL"\r\n") << value.persistence_ << UTEXT(REDIS_STATS_LABEL"\r\n") << value.stats_
-                   << UTEXT(REDIS_REPLICATION_LABEL"\r\n") << value.replication_ << UTEXT(REDIS_CPU_LABEL"\r\n") << value.cpu_;
+                   << UTEXT(REDIS_REPLICATION_LABEL"\r\n") << value.replication_ << UTEXT(REDIS_CPU_LABEL"\r\n") << value.cpu_ << UTEXT(REDIS_KEYSPACE_LABEL"\r\n");
     }
 
     ServerPropertyInfo::ServerPropertyInfo()
@@ -474,9 +687,9 @@ namespace fastoredis
         {
             char ch = content[i];
             word += ch;
-            if(word == headers[j]){
-                if(j+1 != sizeof(headers)/sizeof(*headers)){
-                    pos = content.find(headers[j+1], pos);
+            if(word == redisHeaders[j]){
+                if(j+1 != sizeof(redisHeaders)/sizeof(*redisHeaders)){
+                    pos = content.find(redisHeaders[j+1], pos);
                 }
                 else{
                     break;
@@ -530,8 +743,7 @@ namespace fastoredis
     {
         ServerPropertyInfo inf;
         FastoObject::child_container_type childrens = root->childrens();
-        for(int i = 0; i < childrens.size(); i+=2)
-        {
+        for(int i = 0; i < childrens.size(); i+=2){
             inf.propertyes_.push_back(std::make_pair(childrens[i]->toString(), childrens[i+1]->toString()));
         }
         return inf;

@@ -24,6 +24,7 @@ namespace common
             TYPE_NULL = 0,
             TYPE_BOOLEAN,
             TYPE_INTEGER,
+            TYPE_UINTEGER,
             TYPE_DOUBLE,
             TYPE_STRING,
             TYPE_ARRAY,
@@ -50,8 +51,9 @@ namespace common
 
         bool isType(Type type) const { return type == type_; }
 
-        virtual bool getAsBoolean(bool* out_value) const;
+        virtual bool getAsBoolean(bool* out_value) const;        
         virtual bool getAsInteger(int* out_value) const;
+        virtual bool getAsUInteger(unsigned int* out_value) const;
         virtual bool getAsDouble(double* out_value) const;
         virtual bool getAsString(unicode_string* out_value) const;
         virtual bool getAsError(ErrorValue* out_value) const;
@@ -78,6 +80,7 @@ namespace common
     public:
         explicit FundamentalValue(bool in_value);
         explicit FundamentalValue(int in_value);
+        explicit FundamentalValue(unsigned int in_value);
         explicit FundamentalValue(double in_value);
 
         virtual ~FundamentalValue();
@@ -85,6 +88,7 @@ namespace common
         virtual unicode_string toString() const;
         virtual bool getAsBoolean(bool* out_value) const;
         virtual bool getAsInteger(int* out_value) const;
+        virtual bool getAsUInteger(unsigned int* out_value) const;
         virtual bool getAsDouble(double* out_value) const;
         virtual FundamentalValue* deepCopy() const;
         virtual bool equals(const Value* other) const;
@@ -94,6 +98,7 @@ namespace common
         union {
         bool boolean_value_;
         int integer_value_;
+        unsigned int uinteger_value_;
         double double_value_;
         };
     };

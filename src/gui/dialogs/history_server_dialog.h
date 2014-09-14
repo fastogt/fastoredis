@@ -4,6 +4,10 @@
 
 #include <QDialog>
 
+QT_BEGIN_NAMESPACE
+class QComboBox;
+QT_END_NAMESPACE
+
 #include "core/events/events_info.h"
 #include "core/connection_types.h"
 
@@ -26,12 +30,20 @@ namespace fastoredis
         void startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &req);
         void finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &res);
 
+    private Q_SLOTS:
+        void refreshInfoFields(int index);
+
     protected:
         virtual void showEvent(QShowEvent *e);
 
     private:
+        QWidget* settingsGraph_;
+        QComboBox* serverInfoGroupsNames_;
+        QComboBox* serverInfoFields_;
+
         GraphWidget* graphWidget_;
-        GlassWidget *glassWidget_;
+
+        GlassWidget* glassWidget_;
         EventsInfo::ServerInfoHistoryResponce::infos_container_type infos_;
         const connectionTypes type_;
     };

@@ -132,6 +132,11 @@ namespace common
         return false;
 	}
 
+    bool Value::getAsUInteger(unsigned int* out_value) const
+    {
+        return false;
+    }
+
     bool Value::getAsDouble(double* out_value) const
     {
         return false;
@@ -199,6 +204,12 @@ namespace common
     {
 	}
 
+    FundamentalValue::FundamentalValue(unsigned int in_value)
+        : Value(TYPE_UINTEGER), uinteger_value_(in_value)
+    {
+
+    }
+
 	FundamentalValue::FundamentalValue(double in_value)
         : Value(TYPE_DOUBLE), double_value_(in_value)
     {
@@ -212,39 +223,54 @@ namespace common
 	{
 		char tmp[32] = {0};
         switch (getType()) {
-		  case TYPE_BOOLEAN:
-			{
-				return boolean_value_ ? "true" : "false";
-			}
-		  case TYPE_INTEGER:
-			{
-				sprintf(tmp,"%d",integer_value_);
-				break;
-			}
-		  case TYPE_DOUBLE:
-			{
-				sprintf(tmp,"%lf",double_value_);
-				break;
-			}
-		  default:
-			break;
+            case TYPE_BOOLEAN:
+            {
+                return boolean_value_ ? "true" : "false";
+            }
+            case TYPE_INTEGER:
+            {
+                sprintf(tmp, "%d", integer_value_);
+                break;
+            }
+            case TYPE_UINTEGER:
+            {
+                sprintf(tmp, "%u", uinteger_value_);
+                break;
+            }
+            case TYPE_DOUBLE:
+            {
+                sprintf(tmp, "%lf", double_value_);
+                break;
+            }
+            default:
+                break;
 		}
 		return tmp;
 	}
 
     bool FundamentalValue::getAsBoolean(bool* out_value) const
     {
-        if (out_value && isType(TYPE_BOOLEAN))
+        if (out_value && isType(TYPE_BOOLEAN)){
             *out_value = boolean_value_;
+        }
         return (isType(TYPE_BOOLEAN));
 	}
 
     bool FundamentalValue::getAsInteger(int* out_value) const
     {
-        if (out_value && isType(TYPE_INTEGER))
+        if (out_value && isType(TYPE_INTEGER)){
             *out_value = integer_value_;
+        }
         return (isType(TYPE_INTEGER));
 	}
+
+    bool FundamentalValue::getAsUInteger(unsigned int* out_value) const
+    {
+        if (out_value && isType(TYPE_UINTEGER)){
+            *out_value = uinteger_value_;
+        }
+        return (isType(TYPE_UINTEGER));
+    }
 
     bool FundamentalValue::getAsDouble(double* out_value) const
     {
