@@ -32,6 +32,7 @@ namespace fastoredis
 
     private Q_SLOTS:
         void refreshInfoFields(int index);
+        void refreshGraph(int index);
 
     protected:
         virtual void showEvent(QShowEvent *e);

@@ -21,7 +21,7 @@ struct WinsockInit {
 
 namespace
 {
-    const common::unicode_char magicNumber = UTEXT(0x22);
+    const common::unicode_char magicNumber = UTEXT(0x1E);
     common::unicode_string createStamp()
     {
         long long time = common::time::current_mstime();
@@ -140,7 +140,7 @@ namespace fastoredis
             }
 
             if(logFile_ && !logFile_->isOpened()){
-                logFile_->open("wb+");
+                logFile_->open("ab+");
             }
             if(logFile_ && logFile_->isOpened()){
                 FastoObjectPtr outInf;
@@ -150,6 +150,7 @@ namespace fastoredis
                     FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
                     common::unicode_string data = common::convert2string(toFile.get());
                     logFile_->write(data);
+                    logFile_->flush();
                 }
             }
         }
@@ -178,6 +179,7 @@ namespace fastoredis
 
         common::file_system::File readFile(p);
         if(readFile.open("rb")){
+
             long long curStamp = 0;
             common::buffer_type dataInfo;
 
@@ -194,7 +196,9 @@ namespace fastoredis
                 long long tmpStamp = 0;
                 bool isSt = getStamp(data, tmpStamp);
                 if(isSt){
-                    tmpInfos[curStamp] = makeServerInfoFromString(common::convert2string(dataInfo));
+                    if(curStamp){
+                        tmpInfos[curStamp] = makeServerInfoFromString(common::convert2string(dataInfo));
+                    }
                     curStamp = tmpStamp;
                     dataInfo.clear();
                 }
@@ -211,8 +215,9 @@ namespace fastoredis
             res.setErrorInfo(er);
         }
         else{
-           res.infos_ =  tmpInfos;
+           res.infos_ = tmpInfos;
         }
+
         reply(sender, new Events::ServerInfoHistoryResponceEvent(this, res));
     }
 }

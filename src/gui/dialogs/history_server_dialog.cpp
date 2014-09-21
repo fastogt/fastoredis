@@ -15,11 +15,11 @@
 namespace fastoredis
 {
     ServerHistoryDialog::ServerHistoryDialog(const QString &title, connectionTypes type, QWidget *parent)
-        : QDialog(parent), type_(type)
+        : QDialog(parent, Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint ), type_(type)
     {
         setWindowTitle(title);
 
-        graphWidget_ = new GraphWidget(GraphWidget::nodes_container_type(), this);
+        graphWidget_ = new GraphWidget(this);
         settingsGraph_ = new QWidget;
         QHBoxLayout *mainL = new QHBoxLayout(this);
 
@@ -35,7 +35,7 @@ namespace fastoredis
         serverInfoFields_ = new QComboBox;
 
         VERIFY(connect(serverInfoGroupsNames_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshInfoFields(int)) ));
-
+        VERIFY(connect(serverInfoFields_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshGraph(int)) ));
         for(int i = 0; i < SIZEOFMASS(redisHeaders); ++i){
             serverInfoGroupsNames_->addItem(common::convertfromString<QString>(redisHeaders[i]));
         }
@@ -69,6 +69,10 @@ namespace fastoredis
 
     void ServerHistoryDialog::refreshInfoFields(int index)
     {
+        if(index == -1){
+            return;
+        }
+
         serverInfoFields_->clear();
         std::pair<FieldPropertyS,FieldPropertyU> field = redisFields[index];
         const int sizeMass = field.second.size_;
@@ -76,6 +80,33 @@ namespace fastoredis
             const unsigned char indexInner = field.second.mass_[i];
             serverInfoFields_->addItem(common::convertfromString<QString>(field.first.mass_[indexInner]), indexInner);
         }
+    }
+
+    void ServerHistoryDialog::refreshGraph(int index)
+    {
+        if(index == -1){
+            return;
+        }
+
+        unsigned char serverIndex = serverInfoGroupsNames_->currentIndex();
+        QVariant var = serverInfoFields_->itemData(index);
+        unsigned char indexIn = qvariant_cast<unsigned char>(var);
+        GraphWidget::nodes_container_type nodes;
+        for(EventsInfo::ServerInfoHistoryResponce::infos_container_type::iterator it = infos_.begin(); it != infos_.end(); ++it)
+        {
+            EventsInfo::ServerInfoHistoryResponce::infos_container_type::value_type val = *it;
+            ServerInfo inf = val.second;
+            common::Value* value = inf.valueByIndexes(serverIndex,indexIn); //allocate
+            if(value){
+                qreal graphY = 0.0f;
+                if(value->getAsDouble(&graphY)){
+                    nodes.push_back(std::make_pair(val.first, graphY));
+                }
+            }
+            delete value;
+        }
+
+        graphWidget_->setNodes(nodes);
     }
 
     void ServerHistoryDialog::showEvent(QShowEvent *e)
