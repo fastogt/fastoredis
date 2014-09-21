@@ -112,6 +112,7 @@ namespace common
 
             bool write(const buffer_type& data);
             bool write(const std::string& data);
+            void flush();
             void close();
 
             bool isEof() const;

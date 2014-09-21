@@ -547,7 +547,10 @@ namespace common
 
         bool File::isEof() const
         {
-           return feof(file_);
+            if(!file_){
+                return true;
+            }
+            return feof(file_);
         }
 
         bool File::write(const buffer_type& data)
@@ -571,6 +574,14 @@ namespace common
         bool File::write(const std::string& data)
         {
             return write(convertfromString<buffer_type>(data));
+        }
+
+        void File::flush()
+        {
+            if(!file_){
+                return;
+            }
+            fflush(file_);
         }
 
         bool File::isOpened() const

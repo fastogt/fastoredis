@@ -76,8 +76,8 @@ namespace
     const QString redisTextCpuTemplate = QObject::tr("<h2>Cpu:</h2><br/>"
                                                          "Used cpu sys: %1<br/>"
                                                          "Used cpu user: %2<br/>"
-                                                         "Used cpu sys children_: %3<br/>"
-                                                         "Used cpu user children_: %4");
+                                                         "Used cpu sys children: %3<br/>"
+                                                         "Used cpu user children: %4");
 }
 
 namespace fastoredis
