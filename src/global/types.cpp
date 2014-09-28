@@ -8,13 +8,13 @@ namespace fastoredis
 
     }
 
-    Command::Command(const common::unicode_string &mess, c_type t)
+    Command::Command(const unicode_string &mess, c_type t)
         : message_(mess), type_(t)
     {
 
     }
 
-    const common::unicode_string Command::message() const
+    const unicode_string Command::message() const
     {
         return message_;
     }

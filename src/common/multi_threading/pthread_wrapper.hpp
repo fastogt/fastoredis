@@ -10,15 +10,16 @@ namespace common
 {
     namespace multi_threading
     {
-        template<typename type_t,size_t stack_size,size_t... sign>
+        template<typename type_t, size_t stack_size, size_t... sign>
         class pthread_wrapper
         {
         public:
-            static_assert(PTHREAD_STACK_MIN<=stack_size,"stack_size can't be more than PTHREAD_STACK_MIN");
+            static_assert(PTHREAD_STACK_MIN <= stack_size, "stack_size can't be more than PTHREAD_STACK_MIN");
             typedef std::function<void(type_t&)> start_func_type;
             typedef std::function<void(type_t&)> stop_func_type;
+
             template<typename... args_t>
-            pthread_wrapper(start_func_type start_func,start_func_type stop_func,const args_t&... args)
+            pthread_wrapper(start_func_type start_func, start_func_type stop_func, const args_t&... args)
                 :var_(args...),start_func_(start_func),stop_func_(stop_func),thread_handle_(0)
             {
                 sigset_t signal_mask;
@@ -30,11 +31,13 @@ namespace common
                 pthread_attr_setstacksize(&attr, stack_size);
                 pthread_attr_setguardsize(&attr,0);
             }
+
             ~pthread_wrapper()
             {
                 stop();
                 pthread_attr_destroy(&attr);
             }
+
             void start()
             {
                 if(!thread_handle_){
@@ -44,6 +47,7 @@ namespace common
                     }
                 }
             }
+
             void stop()
             {
                 stop_func_(var_);

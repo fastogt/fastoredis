@@ -21,7 +21,7 @@
 
 namespace
 {
-    const common::uint64_type crc64_tab[256] = {
+    const uint64_t crc64_tab[256] = {
     UINT64_C(0x0000000000000000), UINT64_C(0x7ad870c830358979),
     UINT64_C(0xf5b0e190606b12f2), UINT64_C(0x8f689158505e9b8b),
     UINT64_C(0xc038e5739841b68f), UINT64_C(0xbae095bba8743ff6),
@@ -159,17 +159,17 @@ namespace common
     {
         namespace hash
         {
-            uint64_type crc64(uint64_type crc, const byte_type *data, uint64_type lenght) {
+            uint64_t crc64(uint64_t crc, const byte_type *data, uint64_t lenght) {
                 DCHECK(data);
                 DCHECK(lenght > 0);
-                for (uint64_type j = 0; j < lenght; j++) {
+                for (uint64_t j = 0; j < lenght; j++) {
                     byte_type byte = data[j];
                     crc = crc64_tab[(byte_type)crc ^ byte] ^ (crc >> 8);
                 }
                 return crc;
             }
 
-            uint64_type crc64(uint64_type crc, const buffer_type& data)
+            uint64_t crc64(uint64_t crc, const buffer_type& data)
             {
                 return crc64(crc, data.c_str(), data.length());
             }

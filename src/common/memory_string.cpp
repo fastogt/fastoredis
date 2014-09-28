@@ -5,7 +5,7 @@
 
 namespace common
 {
-    memory_string::memory_string(uint32_type size)
+    memory_string::memory_string(uint32_t size)
         :alloc_size_(size+1),size_(0),
           memory_((unicode_char*)calloc(alloc_size_,sizeof(unicode_char)))
     {
@@ -64,7 +64,7 @@ namespace common
         return append(ptr,unicode_strlen(ptr));
     }
 
-    void memory_string::append(const void *ptr, uint32_type size)
+    void memory_string::append(const void *ptr, uint32_t size)
     {
         alloc(size_ + size);
         if (memory_&&ptr)
@@ -75,7 +75,7 @@ namespace common
         DCHECK(size_<=alloc_size_);
     }
 
-    void memory_string::alloc(uint32_type strlen_result)
+    void memory_string::alloc(uint32_t strlen_result)
     {
         if(alloc_size_<strlen_result+1)
         {
@@ -93,12 +93,12 @@ namespace common
         return unicode_string(memory_,size_);
     }
 
-    uint32_type memory_string::size() const
+    uint32_t memory_string::size() const
     {
         return size_;
     }
 
-    uint32_type memory_string::alloc_size() const
+    uint32_t memory_string::alloc_size() const
     {
         return alloc_size_;
     }

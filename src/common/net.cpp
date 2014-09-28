@@ -145,7 +145,7 @@ namespace common
         size_t del = host.find_first_of(':');
         if(del != std::string::npos){
             res.first = host.substr(0, del);
-            res.second = convertfromString<uint16_type>(host.substr(del + 1));
+            res.second = convertfromString<uint16_t>(host.substr(del + 1));
         }
 
         return res;

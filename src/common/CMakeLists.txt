@@ -73,14 +73,12 @@ SET(MULTI_THREADING_SOURCES
         multi_threading/lockers.cpp
         multi_threading/thread_safe_containers.h
         multi_threading/common_headers.h
-        multi_threading/thread_adapter.hpp
         multi_threading/thread_pool.h
         multi_threading/std_thread_pool_impl.hpp
         multi_threading/pthread_thread_pool_impl.hpp
         multi_threading/pthread_wrapper.hpp)
 
 IF(BOOST_ENABLED)
-    SET(MULTI_THREADING_SOURCES ${MULTI_THREADING_SOURCES} multi_threading/boost_thread_pool_impl.h)
     SET(EVENTS_SOURCES events/static_events_bus.h)
 ENDIF(BOOST_ENABLED)
 

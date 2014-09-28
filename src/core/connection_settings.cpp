@@ -12,14 +12,14 @@
 
 namespace
 {
-    const common::uint16_type port = 27017;
-    const common::unicode_string defaultServerHost = UTEXT("localhost");
-    const common::unicode_string defaultNameConnection = UTEXT("New Connection");
+    const uint16_t port = 27017;
+    const unicode_string defaultServerHost = UTEXT("localhost");
+    const unicode_string defaultNameConnection = UTEXT("New Connection");
 }
 
 namespace fastoredis
 {
-    IConnectionSettingsBase::IConnectionSettingsBase(const common::unicode_string &connectionName)
+    IConnectionSettingsBase::IConnectionSettingsBase(const unicode_string &connectionName)
         : connectionName_(), hash_(), logging_enabled_(false)
     {
         setConnectionName(connectionName.empty() ? defaultNameConnection : connectionName);
@@ -35,20 +35,20 @@ namespace fastoredis
         return badConnectionType();
     }
 
-    common::unicode_string IConnectionSettingsBase::loggingPath() const
+    unicode_string IConnectionSettingsBase::loggingPath() const
     {
-        common::unicode_string logDir = SettingsManager::instance().loggingDirectory();
+        unicode_string logDir = SettingsManager::instance().loggingDirectory();
         return logDir + hash() + LOGGING_FILE_EXTENSION;
     }
 
-    IConnectionSettingsBase *IConnectionSettingsBase::fromString(const common::unicode_string &val)
+    IConnectionSettingsBase *IConnectionSettingsBase::fromString(const unicode_string &val)
     {
         IConnectionSettingsBase *result = NULL;
         if(!val.empty()){
             size_t len = val.size();
 
-            common::uint8_type commaCount = 0;
-            common::unicode_string elText;
+            uint8_t commaCount = 0;
+            unicode_string elText;
 
             for(size_t i = 0; i < len; ++i ){
                 char ch = val[i];
@@ -85,9 +85,9 @@ namespace fastoredis
         return result;
     }
 
-    common::unicode_string IConnectionSettingsBase::toString() const
+    unicode_string IConnectionSettingsBase::toString() const
     {
-        common::unicode_string res;
+        unicode_string res;
         connectionTypes crT = connectionType();
         if(crT != badConnectionType()){
             std::stringstream str;
@@ -97,7 +97,7 @@ namespace fastoredis
         return res;
     }
 
-    common::unicode_string IConnectionSettingsBase::hash() const
+    unicode_string IConnectionSettingsBase::hash() const
     {
         return hash_;
     }
@@ -112,30 +112,30 @@ namespace fastoredis
         logging_enabled_ = isLogging;
     }
 
-    void IConnectionSettingsBase::setConnectionName(const common::unicode_string &name)
+    void IConnectionSettingsBase::setConnectionName(const unicode_string &name)
     {        
         connectionName_ = name;
         using namespace common::utils;
-        hash_ = common::convert2string(hash::crc64(0, common::convertfromString<common::buffer_type>(connectionName_)));
+        hash_ = common::convert2string(hash::crc64(0, common::convertfromString<buffer_type>(connectionName_)));
     }
 
-    common::unicode_string IConnectionSettingsBase::connectionName() const
+    unicode_string IConnectionSettingsBase::connectionName() const
     {
         return connectionName_;
     }
 
-    RedisConnectionSettings::RedisConnectionSettings(const common::unicode_string &connectionName, const redisConfig &info)
+    RedisConnectionSettings::RedisConnectionSettings(const unicode_string &connectionName, const redisConfig &info)
         :IConnectionSettingsBase(connectionName), info_(info)
     {
 
     }
 
-    common::unicode_string RedisConnectionSettings::host() const
+    unicode_string RedisConnectionSettings::host() const
     {
         return info_.hostip;
     }
 
-    void RedisConnectionSettings::setHost(const common::unicode_string &host)
+    void RedisConnectionSettings::setHost(const unicode_string &host)
     {
         info_.hostip = host;
     }
@@ -150,28 +150,28 @@ namespace fastoredis
         info_.hostport = port;
     }
 
-    void RedisConnectionSettings::initFromCommandLine(const common::unicode_string &val)
+    void RedisConnectionSettings::initFromCommandLine(const unicode_string &val)
     {
         info_ = common::convertfromString<redisConfig>(val);
     }
 
-    common::unicode_string RedisConnectionSettings::toCommandLine() const
+    unicode_string RedisConnectionSettings::toCommandLine() const
     {
-        common::unicode_string result = common::convert2string(info_);
+        unicode_string result = common::convert2string(info_);
         return result;
     }
 
-    void RedisConnectionSettings::setCommandLine(const common::unicode_string &line)
+    void RedisConnectionSettings::setCommandLine(const unicode_string &line)
     {
         info_ = common::convertfromString<redisConfig>(line);
     }
 
-    common::unicode_string RedisConnectionSettings::commandLine() const
+    unicode_string RedisConnectionSettings::commandLine() const
     {
         return common::convert2string(info_);
     }
 
-    common::unicode_string RedisConnectionSettings::fullAddress() const
+    unicode_string RedisConnectionSettings::fullAddress() const
     {
         common::net::hostAndPort h(host(), port());
         return common::convert2string(h);

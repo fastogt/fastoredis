@@ -15,7 +15,7 @@ namespace fastoredis
         Text
     };
 
-    std::vector<common::unicode_string> allSupportedViews();
+    std::vector<unicode_string> allSupportedViews();
 
     class FastoObject
             : public common::boost_extension::intrusive_ptr_base<FastoObject>
@@ -27,7 +27,7 @@ namespace fastoredis
         ~FastoObject();
 
         common::Value::Type type() const;
-        common::unicode_string toString() const;
+        unicode_string toString() const;
         FastoObject *deepCopy(FastoObject *parent) const;
         FastoObject *deepCopyChangeParent(FastoObject *parent) const;
 

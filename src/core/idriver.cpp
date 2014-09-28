@@ -21,14 +21,14 @@ struct WinsockInit {
 
 namespace
 {
-    const common::unicode_char magicNumber = UTEXT(0x1E);
-    common::unicode_string createStamp()
+    const unicode_char magicNumber = UTEXT(0x1E);
+    unicode_string createStamp()
     {
         long long time = common::time::current_mstime();
         return magicNumber + common::convert2string(time);
     }
 
-    bool getStamp(const common::buffer_type& stamp, long long& timeOut)
+    bool getStamp(const buffer_type& stamp, long long& timeOut)
     {
         if(stamp.empty()){
             return false;
@@ -130,10 +130,10 @@ namespace fastoredis
     {
         if(timer_info_id_ == event->timerId() && isConnected() && settings_->loggingEnabled()){
             if(!logFile_){
-                common::unicode_string path = settings_->loggingPath();
-                common::unicode_string dir = common::file_system::get_dir_path(path);
+                unicode_string path = settings_->loggingPath();
+                unicode_string dir = common::file_system::get_dir_path(path);
                 common::file_system::create_directory(dir, true);
-                if(common::file_system::is_directory(dir) == common::SUCCESS){
+                if(common::file_system::is_directory(dir) == SUCCESS){
                     common::file_system::Path p(path);
                     logFile_ = new common::file_system::File(p);
                 }
@@ -148,7 +148,7 @@ namespace fastoredis
                 if(!er.isError()){
                     FastoObject* par = FastoObject::createRoot(createStamp());
                     FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
-                    common::unicode_string data = common::convert2string(toFile.get());
+                    unicode_string data = common::convert2string(toFile.get());
                     logFile_->write(data);
                     logFile_->flush();
                 }
@@ -174,17 +174,17 @@ namespace fastoredis
         Events::ServerInfoHistoryResponceEvent::value_type::infos_container_type tmpInfos;
         common::ErrorValue er;
 
-        common::unicode_string path = settings_->loggingPath();
+        unicode_string path = settings_->loggingPath();
         common::file_system::Path p(path);
 
         common::file_system::File readFile(p);
         if(readFile.open("rb")){
 
             long long curStamp = 0;
-            common::buffer_type dataInfo;
+            buffer_type dataInfo;
 
             while(!readFile.isEof()){
-                common::buffer_type data;
+                buffer_type data;
                 bool res = readFile.readLine(data);
                 if(!res){
                     if(curStamp){

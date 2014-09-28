@@ -2,7 +2,7 @@
 
 /**/
 
-#include <sys/types.h>
+#include <stdint.h>
 
 #include <stdio.h>
 #include <iosfwd>
@@ -16,36 +16,13 @@
     #define UTEXT(quote) quote
 #endif // !UNICODE
 
-namespace common
-{
-
 #ifdef UNICODE
     typedef wchar_t unicode_char;
 #else
     typedef char unicode_char;
 #endif // !UNICODE
 
-    typedef char int8_type;            /* 8 bit signed */
-    typedef unsigned char uint8_type;         /* 8 bit unsigned */
-
-    typedef short int16_type;          /* 16 bit signed */
-    typedef unsigned short uint16_type;       /* 16 bit unsigned */
-
-    typedef int int32_type;             /* 32 bit signed */
-    typedef unsigned int uint32_type;          /* 32 bit unsigned */
-
-#if defined(__LP64__) && !defined(OS_MACOSX) && !defined(OS_OPENBSD) //64 arch
-    typedef long int64_type;
-    typedef unsigned long uint64_type;
-#else
-    typedef long long int64_type;               /* 64 bit signed */
-    typedef unsigned long long uint64_type;     /* 64 bit unsigned */
-#endif
-
-    typedef ssize_t ssize_type;                 /* ssize_t */
-    typedef size_t size_type;                   /* size_t */
-
-    typedef uint8_type byte_type;
+    typedef uint8_t byte_type;
     typedef std::basic_string<byte_type> buffer_type;
 
     typedef std::basic_string<unicode_char> unicode_string;
@@ -61,13 +38,17 @@ namespace common
         INDETERMINATE=-1
     };
 
-    int32_type unicode_strcmp(const unicode_char* str1,const unicode_char* str2);
-    size_type unicode_strlen(const unicode_char* str);
+namespace common
+{
+    int32_t unicode_strcmp(const unicode_char* str1,const unicode_char* str2);
+    size_t unicode_strlen(const unicode_char* str);
     unicode_char* unicode_strcpy(unicode_char* destr,const unicode_char* src);
-    ssize_type unicode_find_first_of(const unicode_char *src,const unicode_char ch);
-    ssize_type unicode_find_last_of(const unicode_char *src,const unicode_char ch);
+    ssize_t unicode_find_first_of(const unicode_char *src,const unicode_char ch);
+    ssize_t unicode_find_last_of(const unicode_char *src,const unicode_char ch);
     void unicode_strcat(unicode_char *destr,const unicode_char *src);
     const unicode_char * unicode_strstr(const unicode_char *src,const unicode_char *what_search);
+    void unicode_perror(const unicode_char* str);
+    const unicode_char* unicode_chr(const unicode_char *string, const unicode_char ch);
 
     template<typename T>
     inline T normalize(T u)
@@ -81,30 +62,28 @@ namespace common
     }
 
     template<typename A1>
-    int32_type inline unicode_sprintf(unicode_char *ref,const unicode_char* format, A1 a1)
+    int32_t inline unicode_sprintf(unicode_char *ref,const unicode_char* format, A1 a1)
     {
         return sprintf(ref, format, normalize(a1));
     }
 
     template<typename A1, typename A2>
-    int32_type inline unicode_sprintf(unicode_char *ref,const unicode_char* format, A1 a1, A2 a2)
+    int32_t inline unicode_sprintf(unicode_char *ref,const unicode_char* format, A1 a1, A2 a2)
     {
         return sprintf(ref, format, normalize(a1), normalize(a2));
     }
 
     template<typename A1, typename A2, typename A3>
-    int32_type inline unicode_sprintf(unicode_char *ref,const unicode_char* format, A1 a1, A2 a2, A3 a3)
+    int32_t inline unicode_sprintf(unicode_char *ref,const unicode_char* format, A1 a1, A2 a2, A3 a3)
     {
         return sprintf(ref, format, normalize(a1), normalize(a2), normalize(a3));
     }
 
     template<typename A1, typename A2, typename A3, typename A4>
-    int32_type inline unicode_sprintf(unicode_char *ref,const unicode_char* format, A1 a1, A2 a2, A3 a3, A4 a4)
+    int32_t inline unicode_sprintf(unicode_char *ref,const unicode_char* format, A1 a1, A2 a2, A3 a3, A4 a4)
     {
         return sprintf(ref, format, normalize(a1), normalize(a2), normalize(a3), normalize(a4));
     }
 
     std::string escapedText(const std::string &str);
-    void unicode_perror(const unicode_char* str);
-    const unicode_char* unicode_chr(const unicode_char *string, const unicode_char ch);
 }

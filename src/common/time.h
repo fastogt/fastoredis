@@ -19,10 +19,10 @@ namespace common
         long long timeval2mstime(struct timeval* tv);
         long long timespec2mstime(struct timespec* ts);
 
-        struct timeval mstime2timeval(int64_type mst);
-        struct timespec mstime2timespec(int64_type mst);
+        struct timeval mstime2timeval(int64_t mst);
+        struct timespec mstime2timespec(int64_t mst);
 
-        unicode_string mstime2string(int64_type ms);
+        unicode_string mstime2string(int64_t ms);
 
         time_t timegm(struct tm * time_tm);
     }

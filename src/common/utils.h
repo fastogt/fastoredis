@@ -15,8 +15,8 @@ namespace common
     {
         namespace hash
         {
-            uint64_type crc64(uint64_type crc, const byte_type *data, uint64_type lenght);
-            uint64_type crc64(uint64_type crc, const buffer_type& data);
+            uint64_t crc64(uint64_t crc, const byte_type *data, uint64_t lenght);
+            uint64_t crc64(uint64_t crc, const buffer_type& data);
         }
 
         namespace traits

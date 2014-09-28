@@ -5,7 +5,6 @@
 #include <vector>
 #include <pthread.h>
 #include <signal.h>
-#include "common/mpl.hpp"
 
 namespace common
 {

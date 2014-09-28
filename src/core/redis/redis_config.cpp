@@ -75,7 +75,7 @@ namespace fastoredis
                 break;
             } else {
                 if (argv[i][0] == '-') {
-                    common::unicode_char buff[256] = {0};
+                    unicode_char buff[256] = {0};
                     common::unicode_sprintf(buff, "Unrecognized option or bad number of args for: '%s'", curArg);
                     common::ErrorValue er(buff, common::Value::E_ERROR);
                     LOG_ERROR(er);

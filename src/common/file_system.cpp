@@ -126,7 +126,7 @@ namespace common
                 return false;
             }
 
-            common::unicode_string prPath = prepare_path(path);
+            unicode_string prPath = prepare_path(path);
             if(prPath[prPath.length() - 1] == get_separator()){
                 prPath[prPath.length() - 1] = 0;
             }
@@ -134,9 +134,9 @@ namespace common
             if(isRecursive){
                 unicode_char *p = NULL;
 #ifdef OS_WIN
-                uint8_type shift = 3;
+                uint8_t shift = 3;
 #else
-                uint8_type shift = 1;
+                uint8_t shift = 1;
 #endif
                 for(p = const_cast<unicode_char*>(prPath.c_str() + shift); *p; p++ ){
                     if(*p == get_separator()){

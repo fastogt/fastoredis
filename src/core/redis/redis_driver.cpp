@@ -748,7 +748,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    ServerInfo RedisDriver::makeServerInfoFromString(const common::unicode_string& val)
+    ServerInfo RedisDriver::makeServerInfoFromString(const unicode_string& val)
     {
         return makeServerInfo(val);
     }

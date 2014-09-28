@@ -10,16 +10,14 @@ namespace common
     unicode_string convert2string(const buffer_type& from);
     unicode_string convert2string(bool from);
 
-    unicode_string convert2string(char val);
-    unicode_string convert2string(unsigned char val);
-    unicode_string convert2string(short val);
-    unicode_string convert2string(unsigned short val);
-    unicode_string convert2string(int val);
-    unicode_string convert2string(unsigned int val);
-    unicode_string convert2string(long val);
-    unicode_string convert2string(unsigned long val);
-    unicode_string convert2string(long long val);
-    unicode_string convert2string(unsigned long long val);
+    unicode_string convert2string(int8_t val);
+    unicode_string convert2string(uint8_t val);
+    unicode_string convert2string(int16_t val);
+    unicode_string convert2string(uint16_t val);
+    unicode_string convert2string(int32_t val);
+    unicode_string convert2string(uint32_t val);
+    unicode_string convert2string(int64_t val);
+    unicode_string convert2string(uint64_t val);
     unicode_string convert2string(float val);
     unicode_string convert2string(double val);
 

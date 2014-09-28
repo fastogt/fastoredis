@@ -4,7 +4,7 @@
 
 namespace common
 {
-    int32_type unicode_strcmp(const unicode_char* str1,const unicode_char* str2)
+    int32_t unicode_strcmp(const unicode_char* str1,const unicode_char* str2)
     {
         #ifdef UNICODE
             return wcscmp(str1,str2);
@@ -13,7 +13,7 @@ namespace common
         #endif
     }
 
-    size_type unicode_strlen(const unicode_char* str)
+    size_t unicode_strlen(const unicode_char* str)
     {
         #ifdef UNICODE
             return wstrlen(str);
@@ -31,10 +31,10 @@ namespace common
         #endif
     }
 
-    ssize_type unicode_find_first_of(const unicode_char *src,const unicode_char ch)
+    ssize_t unicode_find_first_of(const unicode_char *src,const unicode_char ch)
     {
-        size_type length = unicode_strlen(src);
-        for(size_type n=0; n<length; n++)
+        size_t length = unicode_strlen(src);
+        for(size_t n=0; n<length; n++)
         {
           if(src[n] == ch)
             return n;
@@ -42,10 +42,10 @@ namespace common
         return -1;
     }
 
-    ssize_type unicode_find_last_of(const unicode_char *src,const unicode_char ch)
+    ssize_t unicode_find_last_of(const unicode_char *src,const unicode_char ch)
     {
-        size_type length = unicode_strlen(src);
-        for(size_type n=0; n!=length; n++)
+        size_t length = unicode_strlen(src);
+        for(size_t n=0; n!=length; n++)
         {
           if(src[length-1-n] == ch)
             return length-1-n;

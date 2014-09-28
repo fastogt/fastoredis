@@ -75,7 +75,7 @@ namespace common
             return mst;
         }
 
-        struct timeval mstime2timeval(int64_type mst)
+        struct timeval mstime2timeval(int64_t mst)
         {
             if(mst < 0){
                 return timeval();
@@ -87,7 +87,7 @@ namespace common
             return tv;
         }
 
-        struct timespec mstime2timespec(int64_type mst)
+        struct timespec mstime2timespec(int64_t mst)
         {
             if(mst < 0){
                 return timespec();
@@ -99,7 +99,7 @@ namespace common
             return ts;
         }
 
-        unicode_string mstime2string(int64_type ms)
+        unicode_string mstime2string(int64_t ms)
         {
             /*
             char buff[64] = {0};

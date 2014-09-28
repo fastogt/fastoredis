@@ -115,7 +115,7 @@ namespace fastoredis
         return GET_SETTING(genereted_settings::setting_style_).value();
     }
 
-    void SettingsManager::setCurrentStyle(const common::unicode_string& st)
+    void SettingsManager::setCurrentStyle(const unicode_string& st)
     {
         GET_SETTING(genereted_settings::setting_style_).set_value(st);
     }
@@ -125,7 +125,7 @@ namespace fastoredis
         return GET_SETTING(genereted_settings::setting_langauge_).value();
     }
 
-    void SettingsManager::setCurrentLanguage(const common::unicode_string& lang)
+    void SettingsManager::setCurrentLanguage(const unicode_string& lang)
     {
         GET_SETTING(genereted_settings::setting_langauge_).set_value(lang);
     }
@@ -177,12 +177,12 @@ namespace fastoredis
         GET_SETTING(genereted_settings::setting_synctabs_).set_value(sync);
     }
 
-    void SettingsManager::setLoggingDirectory(const common::unicode_string& dir)
+    void SettingsManager::setLoggingDirectory(const unicode_string& dir)
     {
          GET_SETTING(genereted_settings::setting_loggingdir_).set_value(dir);
     }
 
-    common::unicode_string SettingsManager::loggingDirectory() const
+    unicode_string SettingsManager::loggingDirectory() const
     {
         return GET_SETTING(genereted_settings::setting_loggingdir_).value();
     }

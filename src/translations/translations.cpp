@@ -47,7 +47,7 @@ namespace fastoredis
 {
     namespace translations
     {        
-        const common::unicode_string defLanguage = UTEXT("System");
+        const unicode_string defLanguage = UTEXT("System");
 
         QString applyLanguage(const QString &lang)
         {

@@ -4,7 +4,7 @@
 
 namespace
 {
-    const common::unicode_char *connnectionType[fastoredis::REDIS+1] = { UTEXT("Unknown"), UTEXT("Redis") };
+    const unicode_char *connnectionType[fastoredis::REDIS+1] = { UTEXT("Unknown"), UTEXT("Redis") };
 }
 
 namespace fastoredis

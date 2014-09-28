@@ -81,7 +81,7 @@ namespace common
 
         void logger::printTradeSafe(LEVEL_LOG level, const unicode_string& data)
         {
-            multi_threading::guard_wraper<locker_type> lock(lock_);
+            multi_threading::unique_lock<locker_type> lock(lock_);
             *outStream_ << log_level_to_text(level) << UTEXT(" ") << data;
         }        
     }

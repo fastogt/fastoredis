@@ -7,7 +7,7 @@
 
 namespace
 {
-    const common::unicode_char *supportedViewsM[] = { UTEXT("Tree"), UTEXT("Table"), UTEXT("Text") };
+    const unicode_char *supportedViewsM[] = { UTEXT("Tree"), UTEXT("Table"), UTEXT("Text") };
 }
 
 namespace fastoredis
@@ -32,9 +32,9 @@ namespace fastoredis
         return value_->getType();
     }
 
-    common::unicode_string FastoObject::toString() const
+    unicode_string FastoObject::toString() const
     {
-        common::unicode_string result;
+        unicode_string result;
         result = value_->toString();//getAsString(&result);
         return result;
     }
@@ -84,7 +84,7 @@ namespace fastoredis
         return childrens_;
     }
 
-    std::vector<common::unicode_string> allSupportedViews()
+    std::vector<unicode_string> allSupportedViews()
     {
         return common::utils::enums::convertToVector(supportedViewsM);
     }
