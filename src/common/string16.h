@@ -39,7 +39,7 @@ int c16memcmp(const char16* s1, const char16* s2, size_t n);
 }  // namespace base
 
 #elif defined(WCHAR_T_IS_UTF32)
-#define UTEXT(text) text
+#define UTEXT(text) (common::char16*)text
 namespace common {
 
 typedef uint16_t char16;
@@ -123,7 +123,7 @@ struct string16_char_traits {
   }
 };
 
-typedef std::basic_string<char16, base::string16_char_traits> string16;
+typedef std::basic_string<char16, common::string16_char_traits> string16;
 
 extern std::ostream& operator<<(std::ostream& out,
                                             const string16& str);
@@ -173,6 +173,6 @@ extern void PrintTo(const string16& str, std::ostream* out);
 // TODO(mark): File this bug with Apple and update this note with a bug number.
 
 extern template
-class std::basic_string<base::char16, base::string16_char_traits>;
+class std::basic_string<common::char16, common::string16_char_traits>;
 
 #endif  // WCHAR_T_IS_UTF32

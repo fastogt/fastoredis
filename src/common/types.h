@@ -19,11 +19,10 @@ namespace common
 
     typedef std::basic_string<byte_type> buffer_type;
 
-    typedef std::basic_string<char16> string16;
-    typedef std::basic_ostream<char16> string16_ostream;
-    typedef std::basic_istream<char16> string16_istream;
-    typedef std::basic_ofstream<char16> string16_ofstream;
-    typedef std::basic_ifstream<char16> string16_ifstream;
+    typedef std::basic_ostream<char16, string16_char_traits> string16_ostream;
+    typedef std::basic_istream<char16, string16_char_traits> string16_istream;
+    typedef std::basic_ofstream<char16, string16_char_traits> string16_ofstream;
+    typedef std::basic_ifstream<char16, string16_char_traits> string16_ifstream;
 
     string16 escapedText(const string16 &str);
 }

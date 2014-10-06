@@ -40,3 +40,11 @@
 
 #define SIZEOFMASS(type) sizeof(type)/sizeof(*type)
 #define arraysize(type) sizeof(type)/sizeof(*type)
+
+template <bool>
+struct CompileAssert {
+};
+
+#undef COMPILE_ASSERT
+#define COMPILE_ASSERT(expr, msg) \
+  typedef CompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]
