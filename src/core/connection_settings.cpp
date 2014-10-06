@@ -57,7 +57,7 @@ namespace fastoredis
                         int crT = elText[0] - 48;
                         switch(crT){
                             case REDIS:{
-                                result = new RedisConnectionSettings("");
+                                result = new RedisConnectionSettings(UTEXT(""));
                                 break;
                             }
                             default:{
@@ -70,7 +70,7 @@ namespace fastoredis
                         result->setConnectionName(elText);
                     }
                     else if(commaCount == 2){
-                        result->setLoggingEnabled(common::convertFromcommon::string16<bool>(elText));
+                        result->setLoggingEnabled(common::convertFromString16<bool>(elText));
                         result->initFromCommandLine(val.substr(i+1));
                         break;
                     }
@@ -92,7 +92,7 @@ namespace fastoredis
         if(crT != badConnectionType()){
             std::stringstream str;
             str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',' << toCommandLine();
-            res = str.str();
+            res = common::convertToString16(str.str());
         }
         return res;
     }
@@ -157,7 +157,7 @@ namespace fastoredis
 
     common::string16 RedisConnectionSettings::toCommandLine() const
     {
-        common::string16 result = common::convertTocommon::string16(info_);
+        common::string16 result = common::convertToString16(info_);
         return result;
     }
 
@@ -168,7 +168,7 @@ namespace fastoredis
 
     common::string16 RedisConnectionSettings::commandLine() const
     {
-        return common::convertTocommon::string16(info_);
+        return common::convertToString16(info_);
     }
 
     common::string16 RedisConnectionSettings::fullAddress() const

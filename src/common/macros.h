@@ -6,11 +6,14 @@
 
 #include "common/common_config.h"
 
-#if defined(COMPILER_GCC) || defined(__clang__)
+#if defined(COMPILER_GCC) || defined(COMPILER_CLANG)
 #define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+#define PRINTF_FORMAT(format_param, dots_param) \
+    __attribute__((format(printf, format_param, dots_param)))
 #else
 #define WARN_UNUSED_RESULT
 #define PRINTF_FORMAT(x, y) __attribute__((PRINTF_FORMAT))
+#define PRINTF_FORMAT(format_param, dots_param)
 #endif
 
 #define VERIFY(x) assert(x)

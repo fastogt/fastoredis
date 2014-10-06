@@ -34,8 +34,8 @@ namespace fastoredis
         bool syncTabs() const;
         void setSyncTabs(bool sync);
 
-        void setLoggingDirectory(const std::string& dir);
-        std::string loggingDirectory() const;
+        void setLoggingDirectory(const common::string16 &dir);
+        common::string16 loggingDirectory() const;
 
         ConnectionSettingsContainerType connections() const;
 

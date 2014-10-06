@@ -391,7 +391,7 @@ namespace common
         std::string Path::extension()const
         {
             std::string ext;
-            size_t pos = path_.find_first_of(UTEXT('.'));
+            size_t pos = path_.find_first_of('.');
             if(pos!=std::string::npos){
                 ext = path_.substr(pos+1);
             }

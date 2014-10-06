@@ -14,10 +14,6 @@ namespace common
 {
     namespace logging
     {
-        extern string16_ostream cout;
-        extern string16_istream cin;
-        extern string16_ostream cerr;
-
         class logger:
                 public patterns::lazy_singleton<logger>
         {
@@ -29,7 +25,7 @@ namespace common
             void printTradeSafe(LEVEL_LOG level, const char* fmt, T t1)
             {                
                 char buff[buff_size] = {0};
-                strings::SafeSNPrintf(buff, fmt, t1);
+                strings::SafeSNPrintf(buff, buff_size, fmt, t1);
                 printTradeSafe(level, buff);
             }            
 
@@ -67,7 +63,7 @@ namespace common
     typedef multi_threading::pthread_mutex locker_type;
 #endif
             locker_type lock_;
-            string16_ostream * outStream_;
+            std::ostream * outStream_;
         };        
     }
 

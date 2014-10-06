@@ -97,6 +97,6 @@ void PrintTo(const string16& str, std::ostream* out) {
 
 }  // namespace base
 
-template class std::basic_string<base::char16, base::string16_char_traits>;
+template class std::basic_string<common::char16, common::string16_char_traits>;
 
 #endif  // WCHAR_T_IS_UTF32

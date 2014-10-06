@@ -194,7 +194,8 @@ namespace common
     class ErrorValue : public Value
     {
     public:
-        explicit ErrorValue(const string16& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
+        ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
+        ErrorValue(const string16& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
         ErrorValue();
         bool isError() const;
         common::logging::LEVEL_LOG level() const;

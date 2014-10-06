@@ -20,9 +20,9 @@ namespace fastoredis
     void Logger::print(const std::string &mess, common::logging::LEVEL_LOG level, bool notify)
     {
         using namespace common;
-        DEBUG_MSG_FORMAT<1024>(level, "%s", mess);
+        DEBUG_MSG_FORMAT<1024>(level, "%s", mess.c_str());
         if (notify){
-            emit printed(convertFromString16<QString>(mess), level);
+            emit printed(convertFromString<QString>(mess), level);
         }
     }
 

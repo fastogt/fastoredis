@@ -29,12 +29,8 @@ namespace common
 
     string16 convertToString16(const QString &value)
     {
-#ifndef UNICODE
         QByteArray sUtf8 = value.toUtf8();
-        return string16(sUtf8.constData(), sUtf8.length());
-#else
-        return std::wstring((wchar_t*)value.unicode(), value.length());
-#endif
+        return string16((const char16*)sUtf8.constData(), sUtf8.length());
     }
 
     std::string convertToString(const QString& from)

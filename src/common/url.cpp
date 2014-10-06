@@ -156,13 +156,13 @@ namespace common
             memory_string *cur_member = &host_;
             for(size_t i=start;i<len;++i)
             {
-                if(url_s[i]==UTEXT('/')||url_s[i]==UTEXT('?'))
+                if(url_s[i]=='/'||url_s[i]=='?')
                 {
-                    if(url_s[i]==UTEXT('/')&&cur_member==&host_)
+                    if(url_s[i]=='/'&&cur_member==&host_)
                     {
                         cur_member = &path_;
                     }
-                    else if(url_s[i]==UTEXT('?')&&cur_member==&path_)
+                    else if(url_s[i]=='?'&&cur_member==&path_)
                     {
                         cur_member = &query_;
                     }

@@ -84,7 +84,7 @@ namespace
         QStringList list;
         for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
             char* command = commandGroups[i];
-            QString qcommand = common::convertFromString16<QString>(std::string(command));
+            QString qcommand = common::convertFromString<QString>(std::string(command));
             g_types.append(qcommand);
             list.append(qcommand);
             tmp.argc = 1;
@@ -98,7 +98,7 @@ namespace
         for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
             struct commandHelp command = commandHelp[i];
             std::string commandN = command.name;
-            QString qCommandN = common::convertFromString16<QString>(commandN);
+            QString qCommandN = common::convertFromString<QString>(commandN);
             g_commands.append(qCommandN);
             list.append(qCommandN);
 
@@ -748,7 +748,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    ServerInfo RedisDriver::makeServerInfoFromString(const string16& val)
+    ServerInfo RedisDriver::makeServerInfoFromString(const common::string16& val)
     {
         return makeServerInfo(val);
     }

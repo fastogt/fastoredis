@@ -31,7 +31,7 @@ namespace
     BEGIN_DECL_TYPLE(connections_,fastoredis::SettingsManager::ConnectionSettingsContainerType,static_path_storage)
     BEGIN_DECL_TYPLE(view_,int,static_path_storage)
     BEGIN_DECL_TYPLE(synctabs_,bool,static_path_storage)
-    BEGIN_DECL_TYPLE(loggingdir_,std::string,static_path_storage)
+    BEGIN_DECL_TYPLE(loggingdir_,common::string16,static_path_storage)
 
     typedef common::storages::storage_container<genereted_settings::setting_langauge_, genereted_settings::setting_style_,
                                                 genereted_settings::setting_connections_, genereted_settings::setting_view_,
@@ -43,7 +43,7 @@ namespace
     {
         static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::AppStyle::defStyle,
                                                      fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree,
-                                                     true, file_system::get_dir_path(static_path_storage::path_to_save()) ));
+                                                     true, common::convertToString16(file_system::get_dir_path(static_path_storage::path_to_save())) ));
         return g_m;
     }
 }
@@ -177,12 +177,12 @@ namespace fastoredis
         GET_SETTING(genereted_settings::setting_synctabs_).set_value(sync);
     }
 
-    void SettingsManager::setLoggingDirectory(const std::string &dir)
+    void SettingsManager::setLoggingDirectory(const common::string16 &dir)
     {
          GET_SETTING(genereted_settings::setting_loggingdir_).set_value(dir);
     }
 
-    std::string SettingsManager::loggingDirectory() const
+    string16 SettingsManager::loggingDirectory() const
     {
         return GET_SETTING(genereted_settings::setting_loggingdir_).value();
     }

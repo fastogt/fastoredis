@@ -23,7 +23,7 @@ namespace common
                 return UTEXT("//");
             }
         #elif defined OS_POSIX
-            static const char_type separator = UTEXT('/');
+            static const char_type separator = '/';
             static const char_type* separators()
             {
                 return UTEXT("//");
@@ -43,7 +43,7 @@ namespace common
                 return UTEXT("\\");
             }
         #else
-            static const char_type separator = UTEXT('/');
+            static const char_type separator = '/';
             static const char_type* separators()
             {
                 return UTEXT("//");

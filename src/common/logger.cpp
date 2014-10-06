@@ -12,23 +12,18 @@ namespace
         static std::string result = file_system::prepare_path("~/"PROJECT_NAME_LOWERCASE".log");
         return result;
     }
-
-    typedef std::basic_streambuf<char16> string16_streambuf;
 }
 
 namespace common
 {
     namespace logging
     {
-        string16_ostream g_cout(string16_streambuf());
-        string16_istream g_cin(string16_streambuf());
-        string16_ostream g_cerr(string16_streambuf());
 
         logger::logger()
             : outStream_(NULL)
         {
         #ifdef NDEBUG
-            outStream_ = new string16_ofstream(get_logger_path().c_str());
+            outStream_ = new std::ofstream(get_logger_path().c_str());
             string16_ofstream *file = dynamic_cast<string16_ofstream*>(outStream_);
             if(!file||(file&&!file->is_open()))
             {
@@ -36,7 +31,7 @@ namespace common
                  *outStream_ << traits_level<WARNING>::text << UTEXT(" ") << "Output file not open!" <<  UTEXT("\n");
             }            
         #else
-            outStream_ = &cerr;
+            outStream_ = &std::cerr;
         #endif
             *outStream_ << UTEXT("LOG STARTED\n");
         }
@@ -44,8 +39,8 @@ namespace common
         logger::~logger(void)
         {
             outStream_->flush();
-            if(outStream_ && outStream_ != &cerr){
-                string16_ofstream *file = dynamic_cast<string16_ofstream*>(outStream_);
+            if(outStream_ && outStream_ != &std::cerr){
+                std::ofstream *file = dynamic_cast<std::ofstream*>(outStream_);
                 if(file){
                     file->close();
                 }
@@ -56,7 +51,7 @@ namespace common
         void logger::printTradeSafe(LEVEL_LOG level, const std::string &data)
         {
             multi_threading::unique_lock<locker_type> lock(lock_);
-            //*outStream_ << log_level_to_text(level) << UTEXT(" ") << data;
+            *outStream_ << log_level_to_text(level) << UTEXT(" ") << data;
         }
     }
 

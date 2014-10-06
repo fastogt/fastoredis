@@ -80,7 +80,7 @@ namespace fastoredis
         stylesComboBox_->setCurrentText(common::convertFromString16<QString>(SettingsManager::instance().currentStyle()));
         defaultViewComboBox_->setCurrentText(common::convertFromString16<QString>(common::convertToString16(SettingsManager::instance().defaultView())));
         syncTabs_->setChecked(SettingsManager::instance().syncTabs());
-        logDirPath_->setText(common::convertFromString<QString>(SettingsManager::instance().loggingDirectory()));
+        logDirPath_->setText(common::convertFromString16<QString>(SettingsManager::instance().loggingDirectory()));
     }
 
     void PreferencesDialog::accept()
