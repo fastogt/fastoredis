@@ -26,12 +26,12 @@ namespace
 
     using namespace common;
 
-    BEGIN_DECL_TYPLE(langauge_,common::string16,static_path_storage)
-    BEGIN_DECL_TYPLE(style_,common::string16,static_path_storage)
-    BEGIN_DECL_TYPLE(connections_,fastoredis::SettingsManager::ConnectionSettingsContainerType,static_path_storage)
-    BEGIN_DECL_TYPLE(view_,int,static_path_storage)
-    BEGIN_DECL_TYPLE(synctabs_,bool,static_path_storage)
-    BEGIN_DECL_TYPLE(loggingdir_,common::string16,static_path_storage)
+    BEGIN_DECL_TYPLE(langauge_, std::string, static_path_storage)
+    BEGIN_DECL_TYPLE(style_, std::string, static_path_storage)
+    BEGIN_DECL_TYPLE(connections_, fastoredis::SettingsManager::ConnectionSettingsContainerType, static_path_storage)
+    BEGIN_DECL_TYPLE(view_, int, static_path_storage)
+    BEGIN_DECL_TYPLE(synctabs_, bool, static_path_storage)
+    BEGIN_DECL_TYPLE(loggingdir_, std::string, static_path_storage)
 
     typedef common::storages::storage_container<genereted_settings::setting_langauge_, genereted_settings::setting_style_,
                                                 genereted_settings::setting_connections_, genereted_settings::setting_view_,
@@ -43,7 +43,7 @@ namespace
     {
         static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::AppStyle::defStyle,
                                                      fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree,
-                                                     true, common::convertToString16(file_system::get_dir_path(static_path_storage::path_to_save())) ));
+                                                     true, file_system::get_dir_path(static_path_storage::path_to_save()) ));
         return g_m;
     }
 }
@@ -65,7 +65,7 @@ public:
         for(internal_type::const_iterator it = v.begin(); it != v.end(); ++it){
             char ch = *it;
             if(ch == ','){
-                common::string16 enc( binary_text(text.begin()), binary_text(text.end()));
+                std::string enc( binary_text(text.begin()), binary_text(text.end()));
                 fastoredis::IConnectionSettingsBasePtr item(fastoredis::IConnectionSettingsBase::fromString(enc));
                 if(item){
                     result.push_back(item);
@@ -84,7 +84,7 @@ public:
         typedef insert_linebreaks<base64_from_binary<transform_width<std::string::const_iterator,6,8> >, 72 > base64_text;
         std::ostringstream stream;
         for(external_type::const_iterator it = v.begin(); it != v.end(); ++it){
-            std::string text = common::convertToString((*it)->toString());
+            std::string text = (*it)->toString();
             std::copy( base64_text(text.begin()), base64_text(text.end()), std::ostream_iterator<char>(stream) );
             stream << ',';
         }
@@ -110,22 +110,22 @@ namespace fastoredis
     {
     }
 
-    string16 SettingsManager::currentStyle() const
+    std::string SettingsManager::currentStyle() const
     {
         return GET_SETTING(genereted_settings::setting_style_).value();
     }
 
-    void SettingsManager::setCurrentStyle(const common::string16& st)
+    void SettingsManager::setCurrentStyle(const std::string &st)
     {
         GET_SETTING(genereted_settings::setting_style_).set_value(st);
     }
 
-    common::string16 SettingsManager::currentLanguage() const
+    std::string SettingsManager::currentLanguage() const
     {
         return GET_SETTING(genereted_settings::setting_langauge_).value();
     }
 
-    void SettingsManager::setCurrentLanguage(const common::string16& lang)
+    void SettingsManager::setCurrentLanguage(const std::string &lang)
     {
         GET_SETTING(genereted_settings::setting_langauge_).set_value(lang);
     }
@@ -177,12 +177,12 @@ namespace fastoredis
         GET_SETTING(genereted_settings::setting_synctabs_).set_value(sync);
     }
 
-    void SettingsManager::setLoggingDirectory(const common::string16 &dir)
+    void SettingsManager::setLoggingDirectory(const std::string &dir)
     {
          GET_SETTING(genereted_settings::setting_loggingdir_).set_value(dir);
     }
 
-    string16 SettingsManager::loggingDirectory() const
+    std::string SettingsManager::loggingDirectory() const
     {
         return GET_SETTING(genereted_settings::setting_loggingdir_).value();
     }

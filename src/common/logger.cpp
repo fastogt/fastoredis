@@ -51,7 +51,7 @@ namespace common
         void logger::printTradeSafe(LEVEL_LOG level, const std::string &data)
         {
             multi_threading::unique_lock<locker_type> lock(lock_);
-            *outStream_ << log_level_to_text(level) << UTEXT(" ") << data;
+            //*outStream_ << log_level_to_text(level) << UTEXT(" ") << data;
         }
     }
 

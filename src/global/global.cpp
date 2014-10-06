@@ -32,11 +32,16 @@ namespace fastoredis
         return value_->getType();
     }
 
-    common::string16 FastoObject::toString() const
+    common::string16 FastoObject::toString16() const
     {
         common::string16 result;
         result = value_->toString();//getAsString(&result);
         return result;
+    }
+
+    std::string FastoObject::toString() const
+    {
+        return common::convertToString(toString16());
     }
 
     FastoObject* FastoObject::deepCopy(FastoObject* parent) const
@@ -113,7 +118,7 @@ namespace common
         using namespace fastoredis;
         string16 result;
         if(obj){
-            string16 str = obj->toString();
+            string16 str = obj->toString16();
             if(!str.empty()){
                 result += common::escapedText(str);
             }

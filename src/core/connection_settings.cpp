@@ -8,7 +8,7 @@
 #include "common/net.h"
 #include "common/convert2string.h"
 
-#define LOGGING_FILE_EXTENSION UTEXT(".red")
+#define LOGGING_FILE_EXTENSION ".red"
 
 namespace
 {
@@ -35,13 +35,13 @@ namespace fastoredis
         return badConnectionType();
     }
 
-    common::string16 IConnectionSettingsBase::loggingPath() const
+    std::string IConnectionSettingsBase::loggingPath() const
     {
-        common::string16 logDir = SettingsManager::instance().loggingDirectory();
+        std::string logDir = SettingsManager::instance().loggingDirectory();
         return logDir + hash() + LOGGING_FILE_EXTENSION;
     }
 
-    IConnectionSettingsBase *IConnectionSettingsBase::fromString(const common::string16 &val)
+    IConnectionSettingsBase *IConnectionSettingsBase::fromString(const std::string &val)
     {
         IConnectionSettingsBase *result = NULL;
         if(!val.empty()){
@@ -85,19 +85,19 @@ namespace fastoredis
         return result;
     }
 
-    common::string16 IConnectionSettingsBase::toString() const
+    std::string IConnectionSettingsBase::toString() const
     {
-        common::string16 res;
+        std::string res;
         connectionTypes crT = connectionType();
         if(crT != badConnectionType()){
             std::stringstream str;
-            str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',' << toCommandLine();
-            res = common::convertToString16(str.str());
+            str << crT << ',' << common::convertToString(connectionName()) << ',' << logging_enabled_ << ',' << toCommandLine();
+            res = str.str();
         }
         return res;
     }
 
-    common::string16 IConnectionSettingsBase::hash() const
+    std::string IConnectionSettingsBase::hash() const
     {
         return hash_;
     }
@@ -116,7 +116,7 @@ namespace fastoredis
     {        
         connectionName_ = name;
         using namespace common::utils;
-        hash_ = common::convertToString16(hash::crc64(0, common::convertFromString16<common::buffer_type>(connectionName_)));
+        hash_ = hash::crc64(0, common::convertFromString16<common::buffer_type>(connectionName_));
     }
 
     common::string16 IConnectionSettingsBase::connectionName() const
@@ -130,12 +130,12 @@ namespace fastoredis
 
     }
 
-    common::string16 RedisConnectionSettings::host() const
+    std::string RedisConnectionSettings::host() const
     {
         return info_.hostip;
     }
 
-    void RedisConnectionSettings::setHost(const common::string16 &host)
+    void RedisConnectionSettings::setHost(const std::string &host)
     {
         info_.hostip = host;
     }
@@ -150,31 +150,31 @@ namespace fastoredis
         info_.hostport = port;
     }
 
-    void RedisConnectionSettings::initFromCommandLine(const common::string16 &val)
+    void RedisConnectionSettings::initFromCommandLine(const std::string &val)
     {
-        info_ = common::convertFromString16<redisConfig>(val);
+        info_ = common::convertFromString<redisConfig>(val);
     }
 
-    common::string16 RedisConnectionSettings::toCommandLine() const
+    std::string RedisConnectionSettings::toCommandLine() const
     {
-        common::string16 result = common::convertToString16(info_);
+        std::string result = common::convertToString(info_);
         return result;
     }
 
-    void RedisConnectionSettings::setCommandLine(const common::string16 &line)
+    void RedisConnectionSettings::setCommandLine(const std::string &line)
     {
-        info_ = common::convertFromString16<redisConfig>(line);
+        info_ = common::convertFromString<redisConfig>(line);
     }
 
-    common::string16 RedisConnectionSettings::commandLine() const
+    std::string RedisConnectionSettings::commandLine() const
     {
-        return common::convertToString16(info_);
+        return common::convertToString(info_);
     }
 
-    common::string16 RedisConnectionSettings::fullAddress() const
+    std::string RedisConnectionSettings::fullAddress() const
     {
         common::net::hostAndPort h(host(), port());
-        return common::convertToString16(h);
+        return common::convertToString(h);
     }
 
     redisConfig RedisConnectionSettings::info() const

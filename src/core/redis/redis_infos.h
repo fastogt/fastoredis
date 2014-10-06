@@ -387,7 +387,7 @@ namespace fastoredis
         std::vector<PropertyType> propertyes_;
     };
 
-    ServerInfo makeServerInfo(const std::string& content);
+    ServerInfo makeServerInfo(const std::string &content);
     ServerInfo makeServerInfo(const FastoObjectPtr& root);
     ServerPropertyInfo makeServerProperty(const FastoObjectPtr& root);
 }

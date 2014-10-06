@@ -33,7 +33,7 @@ namespace fastoredis
                 RedisConnectionSettings *red = dynamic_cast<RedisConnectionSettings*>(connection_.get());
                 VERIFY(red);
 
-                setText(1, common::convertFromString16<QString>(red->fullAddress()));
+                setText(1, common::convertFromString<QString>(red->fullAddress()));
                 setIcon(0, GuiFactory::instance().redisConnectionIcon());
             }
         }

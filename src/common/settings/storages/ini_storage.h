@@ -33,7 +33,7 @@ namespace common
                         if( it != set_.not_found() ){
                             ptree::value_type const& v = (*it);
                             boost::property_tree::ptree node = v.second;
-                            //result = node.get<value_type>("");
+                            result = node.get<value_type>("");
                         }
                         item.load_value(result);
                     }

@@ -606,7 +606,13 @@ namespace common
 
     std::string convertToString(unsigned int value)
     {
-        return IntToStringT<std::string, unsigned int, unsigned int, false>::
+        return IntToStringT<std::string, int, unsigned int, false>::
+              IntToString(value);
+    }
+
+    std::string convertToString(long long value)
+    {
+        return IntToStringT<std::string, long long, unsigned long long, false>::
               IntToString(value);
     }
 

@@ -37,7 +37,7 @@ namespace fastoredis
         logging_->setChecked(connection_->loggingEnabled());
 
         commandLine_ = new QLineEdit;
-        commandLine_->setText(convertFromString16<QString>(connection_->commandLine()));
+        commandLine_->setText(convertFromString<QString>(connection_->commandLine()));
 
         QVBoxLayout *inputLayout = new QVBoxLayout;
         inputLayout->addWidget(connectionName_);
@@ -82,7 +82,7 @@ namespace fastoredis
     {
         if(validateAndApply()){
             connection_->setConnectionName(common::convertToString16(connectionName_->text()));
-            connection_->setCommandLine(common::convertToString16(commandLine_->text()));
+            connection_->setCommandLine(common::convertToString(commandLine_->text()));
             connection_->setLoggingEnabled(logging_->isChecked());
             QDialog::accept();
         }

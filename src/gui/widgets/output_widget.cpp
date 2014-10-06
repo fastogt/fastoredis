@@ -24,7 +24,7 @@ namespace
         fastoredis::FastoTreeItem *result = NULL;
         fastoredis::FastoObject::child_container_type cont = item->childrens();
         size_t contSize = cont.size();
-        const common::string16 itemData = item->toString();
+        const common::string16 itemData = item->toString16();
         if(contSize){
             char size[128] = {0};            
             sprintf(size, "{%zu}", contSize);

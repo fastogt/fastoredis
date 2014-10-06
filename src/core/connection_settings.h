@@ -11,17 +11,17 @@ namespace fastoredis
     {
     public:
         virtual ~IConnectionSettingsBase();
-        common::string16 hash() const;
+        std::string hash() const;
 
-        common::string16 loggingPath() const;
+        std::string loggingPath() const;
 
-        virtual common::string16 commandLine() const = 0;
-        virtual void setCommandLine(const common::string16 &line) = 0;
+        virtual std::string commandLine() const = 0;
+        virtual void setCommandLine(const std::string &line) = 0;
 
-        virtual common::string16 fullAddress() const = 0;
+        virtual std::string fullAddress() const = 0;
 
-        virtual common::string16 host() const = 0;
-        virtual void setHost(const common::string16 &host) = 0;
+        virtual std::string host() const = 0;
+        virtual void setHost(const std::string &host) = 0;
         virtual int port() const = 0;
         virtual void setPort(int port) = 0;
 
@@ -29,8 +29,8 @@ namespace fastoredis
         void setConnectionName(const common::string16 &name);
 
         virtual connectionTypes connectionType() const;
-        static IConnectionSettingsBase *fromString(const common::string16 &val);
-        common::string16 toString() const;
+        static IConnectionSettingsBase *fromString(const std::string &val);
+        std::string toString() const;
 
         virtual IConnectionSettingsBase* clone () const = 0;
 
@@ -38,13 +38,13 @@ namespace fastoredis
         void setLoggingEnabled(bool isLogging);
 
     protected:
-        virtual common::string16 toCommandLine() const = 0;
-        virtual void initFromCommandLine(const common::string16 &val) = 0;
+        virtual std::string toCommandLine() const = 0;
+        virtual void initFromCommandLine(const std::string &val) = 0;
         IConnectionSettingsBase(const common::string16 &connectionName);
 
     private:
         common::string16 connectionName_;
-        common::string16 hash_;
+        std::string hash_;
         bool logging_enabled_;
     };
 
@@ -56,13 +56,13 @@ namespace fastoredis
     public:
         RedisConnectionSettings(const common::string16 &connectionName, const redisConfig &info = redisConfig());
 
-        virtual common::string16 commandLine() const;
-        virtual void setCommandLine(const common::string16 &line);
+        virtual std::string commandLine() const;
+        virtual void setCommandLine(const std::string &line);
 
-        virtual common::string16 fullAddress() const;
+        virtual std::string fullAddress() const;
 
-        virtual common::string16 host() const;
-        virtual void setHost(const common::string16 &host);
+        virtual std::string host() const;
+        virtual void setHost(const std::string &host);
         virtual int port() const;
         virtual void setPort(int port);
 
@@ -74,8 +74,8 @@ namespace fastoredis
         virtual IConnectionSettingsBase* clone () const;
 
     private:
-        virtual common::string16 toCommandLine() const;
-        virtual void initFromCommandLine(const common::string16 &val);
+        virtual std::string toCommandLine() const;
+        virtual void initFromCommandLine(const std::string &val);
         redisConfig info_;
     };
 

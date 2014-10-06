@@ -576,6 +576,11 @@ namespace common
             return write(convertFromString<buffer_type>(data));
         }
 
+        bool File::write(const string16& data)
+        {
+            return write(convertFromString16<buffer_type>(data));
+        }
+
         void File::flush()
         {
             if(!file_){

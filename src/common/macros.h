@@ -12,7 +12,6 @@
     __attribute__((format(printf, format_param, dots_param)))
 #else
 #define WARN_UNUSED_RESULT
-#define PRINTF_FORMAT(x, y) __attribute__((PRINTF_FORMAT))
 #define PRINTF_FORMAT(format_param, dots_param)
 #endif
 

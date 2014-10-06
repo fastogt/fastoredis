@@ -27,6 +27,7 @@ namespace common
     std::string convertToString(const string16& from);
     std::string convertToString(int value);
     std::string convertToString(unsigned int value);
+    std::string convertToString(long long value);
 
     template<typename T>
     T convertFromString16(const string16& from);

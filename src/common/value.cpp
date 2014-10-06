@@ -102,6 +102,11 @@ namespace common
         return new StringValue(in_value);
 	}
 
+    StringValue* Value::createStringValue(const std::string& in_value)
+    {
+        return new StringValue(convertToString16(in_value));
+    }
+
     // static
     ArrayValue* Value::createArrayValue()
     {
@@ -111,6 +116,11 @@ namespace common
     ErrorValue* Value::createErrorValue(const string16 &in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
     {
         return new ErrorValue(in_value, errorType, level);
+    }
+
+    ErrorValue* Value::createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
+    {
+        return createErrorValue(convertToString16(in_value), errorType, level);
     }
 
     // static

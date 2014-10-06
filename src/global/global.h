@@ -27,7 +27,8 @@ namespace fastoredis
         ~FastoObject();
 
         common::Value::Type type() const;
-        common::string16 toString() const;
+        common::string16 toString16() const;
+        std::string toString() const;
         FastoObject *deepCopy(FastoObject *parent) const;
         FastoObject *deepCopyChangeParent(FastoObject *parent) const;
 

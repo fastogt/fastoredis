@@ -42,8 +42,10 @@ namespace common
         static FundamentalValue* createIntegerValue(int in_value);
         static FundamentalValue* createDoubleValue(double in_value);
         static StringValue* createStringValue(const string16& in_value);
+        static StringValue* createStringValue(const std::string& in_value);
         static ArrayValue* createArrayValue();
         static ErrorValue* createErrorValue(const string16& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
+        static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
         static string16 toString(Type t);
         virtual string16 toString() const;

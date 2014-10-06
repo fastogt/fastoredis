@@ -21,14 +21,14 @@ struct WinsockInit {
 
 namespace
 {
-    const char16 magicNumber = UTEXT(0x1E);
-    string16 createStamp()
+    const common::char16 magicNumber = 0x1E;
+    common::string16 createStamp()
     {
         long long time = common::time::current_mstime();
         return magicNumber + common::convertToString16(time);
     }
 
-    bool getStamp(const buffer_type& stamp, long long& timeOut)
+    bool getStamp(const common::buffer_type& stamp, long long& timeOut)
     {
         if(stamp.empty()){
             return false;
@@ -38,7 +38,7 @@ namespace
             return false;
         }
 
-        timeOut = common::convertFromString16<long long>((const char*)(stamp.c_str() + 1));
+        timeOut = common::convertFromString<long long>((const char*)(stamp.c_str() + 1));
 
         return timeOut != 0;
     }
@@ -130,8 +130,8 @@ namespace fastoredis
     {
         if(timer_info_id_ == event->timerId() && isConnected() && settings_->loggingEnabled()){
             if(!logFile_){
-                string16 path = settings_->loggingPath();
-                string16 dir = common::file_system::get_dir_path(path);
+                std::string path = settings_->loggingPath();
+                std::string dir = common::file_system::get_dir_path(path);
                 common::file_system::create_directory(dir, true);
                 if(common::file_system::is_directory(dir) == SUCCESS){
                     common::file_system::Path p(path);
@@ -148,7 +148,7 @@ namespace fastoredis
                 if(!er.isError()){
                     FastoObject* par = FastoObject::createRoot(createStamp());
                     FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
-                    string16 data = common::convertToString16(toFile.get());
+                    common::string16 data = common::convertToString16(toFile.get());
                     logFile_->write(data);
                     logFile_->flush();
                 }
@@ -174,21 +174,21 @@ namespace fastoredis
         Events::ServerInfoHistoryResponceEvent::value_type::infos_container_type tmpInfos;
         common::ErrorValue er;
 
-        string16 path = settings_->loggingPath();
+        std::string path = settings_->loggingPath();
         common::file_system::Path p(path);
 
         common::file_system::File readFile(p);
         if(readFile.open("rb")){
 
             long long curStamp = 0;
-            buffer_type dataInfo;
+            common::buffer_type dataInfo;
 
             while(!readFile.isEof()){
-                buffer_type data;
+                common::buffer_type data;
                 bool res = readFile.readLine(data);
                 if(!res){
                     if(curStamp){
-                        tmpInfos[curStamp] = makeServerInfoFromString(common::convertToString16(dataInfo));
+                        tmpInfos[curStamp] = makeServerInfoFromString(common::convertToString(dataInfo));
                     }
                     break;
                 }
@@ -197,7 +197,7 @@ namespace fastoredis
                 bool isSt = getStamp(data, tmpStamp);
                 if(isSt){
                     if(curStamp){
-                        tmpInfos[curStamp] = makeServerInfoFromString(common::convertToString16(dataInfo));
+                        tmpInfos[curStamp] = makeServerInfoFromString(common::convertToString(dataInfo));
                     }
                     curStamp = tmpStamp;
                     dataInfo.clear();

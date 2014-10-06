@@ -31,7 +31,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        static const common::string16 defStyle;
+        static const std::string defStyle;
         virtual void drawControl(ControlElement element, const QStyleOption * option,   QPainter * painter,	const QWidget * widget) const;
         virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const;
         virtual QRect subElementRect( SubElement element, const QStyleOption * option, const QWidget * widget=0 ) const;

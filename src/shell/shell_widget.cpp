@@ -14,6 +14,7 @@
 #include <QFileDialog>
 
 #include "common/qt/convert_string.h"
+#include "common/safe_sprintf.h"
 
 #include "gui/gui_factory.h"
 #include "gui/icon_label.h"
@@ -39,9 +40,10 @@ namespace
             result = true;
         }
         else {
-            char16 buff[256] = {0};
-            string16_sprintf(buff, UTEXT(PROJECT_NAME" can't read from %1:\n%2."), convertToString16(filePath).c_str(),
-                            convertToString16(file.errorString()).c_str());
+            static const uint16_t size_buff = 256;
+            char buff[size_buff] = {0};
+            common::strings::SafeSNPrintf(buff, size_buff, PROJECT_NAME" can't read from %1:\n%2.", convertToString(filePath).c_str(),
+                            convertToString(file.errorString()).c_str());
             ErrorValue er(buff, Value::E_ERROR);
             fastoredis::LOG_ERROR(er);
             QMessageBox::critical(parent, QString("Error"),

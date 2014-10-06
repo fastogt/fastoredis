@@ -73,7 +73,7 @@ namespace fastoredis
 
     QString IServer::address() const
     {
-        return common::convertFromString16<QString>(_drv->address());
+        return common::convertFromString<QString>(_drv->address());
     }
 
     connectionTypes IServer::connectionType() const
@@ -115,7 +115,7 @@ namespace fastoredis
 
     void IServer::execute(const QString &script)
     {
-        EventsInfo::ExecuteInfoRequest req(common::convertToString16(script));
+        EventsInfo::ExecuteInfoRequest req(common::convertToString(script));
         emit startedExecute(req);
         QEvent *ev = new Events::ExecuteRequestEvent(this, req);
         notify(ev);

@@ -13,9 +13,9 @@ namespace fastoredis
     struct redisConfig {
         redisConfig();
         void parseOptions(const std::vector<std::string> &argv);
-        common::string16 hostip;
+        std::string hostip;
         int hostport;
-        common::string16 hostsocket;
+        std::string hostsocket;
         int repeat;
         int interval;
         int dbnum;
@@ -32,19 +32,19 @@ namespace fastoredis
         int pipe_timeout;
         int getrdb_mode;
         int stat_mode;
-        common::string16 rdb_filename;
+        std::string rdb_filename;
         int bigkeys;
         int stdinarg; /* get last arg from stdin. (-x option) */
-        common::string16 auth;
+        std::string auth;
         int output; /* output mode, see OUTPUT_* defines */
-        common::string16 mb_delim;
-        common::char16 prompt[128];
-        common::string16 eval;
+        std::string mb_delim;
+        char prompt[128];
+        std::string eval;
     };
 }
 
 
 namespace common
 {
-    string16 convertToString16(const fastoredis::redisConfig &conf);
+    std::string convertToString(const fastoredis::redisConfig &conf);
 }

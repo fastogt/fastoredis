@@ -24,12 +24,13 @@ namespace common
                     void operator()(type_t& item) const
                     {
                         using boost::property_tree::ptree;
+                        typedef typename type_t::value_type value_type;
                         boost::property_tree::ptree::const_assoc_iterator result = item.value();
                         boost::property_tree::ptree::const_assoc_iterator it = set_.find( item.key() );
                         if( it != set_.not_found() )
                         {
                             ptree::value_type const& v = (*it);
-                            result = v.second.get<typename type_t::value_type>("");
+                            result = v.second.get<value_type>("");
                         }
                         item.load_value(result);
                     }

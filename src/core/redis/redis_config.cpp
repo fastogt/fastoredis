@@ -3,6 +3,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include "core/logger.h"
+#include "common/safe_sprintf.h"
 
 namespace fastoredis
 {
@@ -31,16 +32,16 @@ namespace fastoredis
             } else if (!strcmp(curArg,"-x")) {
                 stdinarg = 1;
             } else if (!strcmp(curArg,"-p") && !lastarg) {
-                hostport = common::convertFromString16<int>(argv[++i]);
+                hostport = common::convertFromString<int>(argv[++i]);
             } else if (!strcmp(curArg,"-s") && !lastarg) {
                 hostsocket = argv[++i];
             } else if (!strcmp(curArg,"-r") && !lastarg) {
                 repeat = strtoll(argv[++i].c_str(),NULL,10);
             } else if (!strcmp(curArg,"-i") && !lastarg) {
-                double seconds = common::convertFromString16<double>(argv[++i]);
+                double seconds = common::convertFromString<double>(argv[++i]);
                 interval = seconds*1000000;
             } else if (!strcmp(curArg,"-n") && !lastarg) {
-                dbnum = common::convertFromString16<int>(argv[++i]);
+                dbnum = common::convertFromString<int>(argv[++i]);
             } else if (!strcmp(curArg,"-a") && !lastarg) {
                 auth = argv[++i];
             } else if (!strcmp(curArg,"--raw")) {
@@ -62,7 +63,7 @@ namespace fastoredis
             } else if (!strcmp(curArg,"--pipe")) {
                 pipe_mode = 1;
             } else if (!strcmp(curArg,"--pipe-timeout") && !lastarg) {
-                pipe_timeout = common::convertFromString16<int>(argv[++i]);
+                pipe_timeout = common::convertFromString<int>(argv[++i]);
             } else if (!strcmp(curArg,"--bigkeys")) {
                 bigkeys = 1;
             } else if (!strcmp(curArg,"--eval") && !lastarg) {
@@ -75,8 +76,9 @@ namespace fastoredis
                 break;
             } else {
                 if (argv[i][0] == '-') {
-                    char16 buff[256] = {0};
-                    common::string16_sprintf(buff, "Unrecognized option or bad number of args for: '%s'", curArg);
+                    const uint16_t size_buff = 256;
+                    char buff[size_buff] = {0};
+                    common::strings::SafeSNPrintf(buff, size_buff, "Unrecognized option or bad number of args for: '%s'", curArg);
                     common::ErrorValue er(buff, common::Value::E_ERROR);
                     LOG_ERROR(er);
                     break;
@@ -91,9 +93,9 @@ namespace fastoredis
 
 namespace common
 {
-    string16 convertToString16(const fastoredis::redisConfig &conf)
+    std::string convertToString(const fastoredis::redisConfig &conf)
     {
-        std::vector<string16> argv;
+        std::vector<std::string> argv;
 
         if(!conf.hostip.empty()){
             argv.push_back("-h");
@@ -101,7 +103,7 @@ namespace common
         }
         if(conf.hostport){
             argv.push_back("-p");
-            argv.push_back(convertToString16(conf.hostport));
+            argv.push_back(conf.hostport);
         }
         if(!conf.hostsocket.empty()){
             argv.push_back("-s");
@@ -109,15 +111,15 @@ namespace common
         }
         if(conf.repeat){
             argv.push_back("-r");
-            argv.push_back(convertToString16(conf.repeat));
+            argv.push_back(conf.repeat);
         }
         if(conf.interval){
             argv.push_back("-i");
-            argv.push_back(convertToString16(conf.interval));
+            argv.push_back(conf.interval);
         }
         if(conf.dbnum){
             argv.push_back("-n");
-            argv.push_back(convertToString16(conf.dbnum));
+            argv.push_back(conf.dbnum);
         }
         if(conf.latency_mode){
             if(conf.latency_history){
@@ -142,7 +144,7 @@ namespace common
         }
         if(conf.pipe_timeout){
             argv.push_back("--pipe-timeout");
-            argv.push_back(convertToString16(conf.pipe_timeout));
+            argv.push_back(conf.pipe_timeout);
         }
         if(conf.bigkeys){
             argv.push_back("--bigkeys");
@@ -163,7 +165,7 @@ namespace common
            argv.push_back(conf.mb_delim);
         }
 
-        string16 result;
+        std::string result;
         for(int i = 0; i < argv.size(); ++i){
             result+= argv[i];
             if(i != argv.size()-1){
@@ -175,9 +177,9 @@ namespace common
     }
 
     template<>
-    fastoredis::redisConfig convertFromString16(const string16& line)
+    fastoredis::redisConfig convertFromString(const std::string& line)
     {
-        std::vector<string16> argv;
+        std::vector<std::string> argv;
         boost::split(argv, line, boost::is_any_of(" "));
         fastoredis::redisConfig r;
         r.parseOptions(argv);

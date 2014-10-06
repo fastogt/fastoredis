@@ -22,11 +22,11 @@ namespace fastoredis
         void setDefaultView(supportedViews view);
         supportedViews defaultView() const;
 
-        common::string16 currentStyle() const;
-        void setCurrentStyle(const common::string16& style);
+        std::string currentStyle() const;
+        void setCurrentStyle(const std::string& style);
 
-        common::string16 currentLanguage() const;
-        void setCurrentLanguage(const common::string16& lang);
+        std::string currentLanguage() const;
+        void setCurrentLanguage(const std::string& lang);
 
         void addConnection(const IConnectionSettingsBasePtr &connection);
         void removeConnection(const IConnectionSettingsBasePtr &connection);
@@ -34,8 +34,8 @@ namespace fastoredis
         bool syncTabs() const;
         void setSyncTabs(bool sync);
 
-        void setLoggingDirectory(const common::string16 &dir);
-        common::string16 loggingDirectory() const;
+        void setLoggingDirectory(const std::string &dir);
+        std::string loggingDirectory() const;
 
         ConnectionSettingsContainerType connections() const;
 
