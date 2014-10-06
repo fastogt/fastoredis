@@ -11,26 +11,26 @@ namespace fastoredis
     {
     public:
         virtual ~IConnectionSettingsBase();
-        unicode_string hash() const;
+        common::string16 hash() const;
 
-        unicode_string loggingPath() const;
+        common::string16 loggingPath() const;
 
-        virtual unicode_string commandLine() const = 0;
-        virtual void setCommandLine(const unicode_string &line) = 0;
+        virtual common::string16 commandLine() const = 0;
+        virtual void setCommandLine(const common::string16 &line) = 0;
 
-        virtual unicode_string fullAddress() const = 0;
+        virtual common::string16 fullAddress() const = 0;
 
-        virtual unicode_string host() const = 0;
-        virtual void setHost(const unicode_string &host) = 0;
+        virtual common::string16 host() const = 0;
+        virtual void setHost(const common::string16 &host) = 0;
         virtual int port() const = 0;
         virtual void setPort(int port) = 0;
 
-        unicode_string connectionName() const;
-        void setConnectionName(const unicode_string &name);
+        common::string16 connectionName() const;
+        void setConnectionName(const common::string16 &name);
 
         virtual connectionTypes connectionType() const;
-        static IConnectionSettingsBase *fromString(const unicode_string &val);
-        unicode_string toString() const;
+        static IConnectionSettingsBase *fromString(const common::string16 &val);
+        common::string16 toString() const;
 
         virtual IConnectionSettingsBase* clone () const = 0;
 
@@ -38,13 +38,13 @@ namespace fastoredis
         void setLoggingEnabled(bool isLogging);
 
     protected:
-        virtual unicode_string toCommandLine() const = 0;
-        virtual void initFromCommandLine(const unicode_string &val) = 0;
-        IConnectionSettingsBase(const unicode_string &connectionName);
+        virtual common::string16 toCommandLine() const = 0;
+        virtual void initFromCommandLine(const common::string16 &val) = 0;
+        IConnectionSettingsBase(const common::string16 &connectionName);
 
     private:
-        unicode_string connectionName_;
-        unicode_string hash_;
+        common::string16 connectionName_;
+        common::string16 hash_;
         bool logging_enabled_;
     };
 
@@ -54,15 +54,15 @@ namespace fastoredis
             : public IConnectionSettingsBase
     {
     public:
-        RedisConnectionSettings(const unicode_string &connectionName, const redisConfig &info = redisConfig());
+        RedisConnectionSettings(const common::string16 &connectionName, const redisConfig &info = redisConfig());
 
-        virtual unicode_string commandLine() const;
-        virtual void setCommandLine(const unicode_string &line);
+        virtual common::string16 commandLine() const;
+        virtual void setCommandLine(const common::string16 &line);
 
-        virtual unicode_string fullAddress() const;
+        virtual common::string16 fullAddress() const;
 
-        virtual unicode_string host() const;
-        virtual void setHost(const unicode_string &host);
+        virtual common::string16 host() const;
+        virtual void setHost(const common::string16 &host);
         virtual int port() const;
         virtual void setPort(int port);
 
@@ -74,8 +74,8 @@ namespace fastoredis
         virtual IConnectionSettingsBase* clone () const;
 
     private:
-        virtual unicode_string toCommandLine() const;
-        virtual void initFromCommandLine(const unicode_string &val);
+        virtual common::string16 toCommandLine() const;
+        virtual void initFromCommandLine(const common::string16 &val);
         redisConfig info_;
     };
 

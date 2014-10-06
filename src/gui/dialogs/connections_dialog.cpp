@@ -27,13 +27,13 @@ namespace fastoredis
 
         void refreshFields()
         {
-            setText(0, common::convertfromString<QString>(connection_->connectionName()));
+            setText(0, common::convertFromString16<QString>(connection_->connectionName()));
             connectionTypes conType = connection_->connectionType();
             if(conType == REDIS){
                 RedisConnectionSettings *red = dynamic_cast<RedisConnectionSettings*>(connection_.get());
                 VERIFY(red);
 
-                setText(1, common::convertfromString<QString>(red->fullAddress()));
+                setText(1, common::convertFromString16<QString>(red->fullAddress()));
                 setIcon(0, GuiFactory::instance().redisConnectionIcon());
             }
         }
@@ -145,7 +145,7 @@ namespace fastoredis
 
     void ConnectionsDialog::add()
     {
-        IConnectionSettingsBasePtr p(new RedisConnectionSettings("New Connection"));
+        IConnectionSettingsBasePtr p(new RedisConnectionSettings(UTEXT("New Connection")));
         ConnectionDialog dlg(p,this);
         int result = dlg.exec();
         if(result == QDialog::Accepted){

@@ -25,7 +25,7 @@ namespace common
     {
         namespace details
         {
-            bool get_mac_address_host_impl(IPAddr destination, IPAddr source, unicode_string &out_mac_address)
+            bool get_mac_address_host_impl(IPAddr destination, IPAddr source, std::string &out_mac_address)
             {
                 ULONG MacAddr[2]; /* for 6-byte hardware addresses */
                 ULONG PhysAddrLen = 6; /* default to length of six bytes */
@@ -35,11 +35,12 @@ namespace common
                 if (dwRetVal == NO_ERROR) {
                     BYTE *bPhysAddr = (BYTE *)&MacAddr;
                     for (int i = 0; i < PhysAddrLen; i++) {
-                        unicode_char tmp[4] = {0};
+                        static const uint8_t size_buff = 4;
+                        char tmp[size_buff] = {0};
                         if (i == (PhysAddrLen - 1))
-                            unicode_sprintf(tmp, "%.2X", bPhysAddr[i]);
+                            strings::SafeSNPrintf(tmp, size_buff, "%.2X", bPhysAddr[i]);
                         else
-                            unicode_sprintf(tmp, "%.2X-", bPhysAddr[i]);
+                            strings::SafeSNPrintf(tmp, size_buff, "%.2X-", bPhysAddr[i]);
 
                         out_mac_address += tmp;
                     }
@@ -70,7 +71,7 @@ namespace common
             }
         }
 
-        bool getRemoteMacAddress(const unicode_string &host, unicode_string &out_mac_address)
+        bool getRemoteMacAddress(const std::string &host, std::string &out_mac_address)
         {
             hostent * record = gethostbyname(host.c_str());
             if(record == NULL){
@@ -89,7 +90,7 @@ namespace common
 {
     namespace net
     {
-        bool getRemoteMacAddress(const unicode_string& host, unicode_string& out_mac_address)
+        bool getRemoteMacAddress(const string16& host, string16& out_mac_address)
         {
             // Socket to send ARP packet
             int udp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);//socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
@@ -120,7 +121,7 @@ namespace common
             }
 
             socklen_t slen = sizeof(udp_sin);
-            unicode_char buff[256] = {0};
+            char16 buff[256] = {0};
             recvfrom(udp_sock, buff, 256, 0, (struct sockaddr *)&udp_sin, &slen);
 
             return true;
@@ -131,21 +132,22 @@ namespace common
 
 namespace common
 {
-    unicode_string convert2string(const net::hostAndPort& host)
+    std::string convertToString(const net::hostAndPort& host)
     {
-        unicode_char buff[512] = {0};
-        unicode_sprintf(buff, UTEXT("%s:%u"), host.first, host.second);
+        static const uint16_t size_buff = 512;
+        char buff[size_buff] = {0};
+        strings::SafeSNPrintf(buff, size_buff, "%s:%u", host.first.c_str(), host.second);
         return buff;
     }
 
     template<>
-    net::hostAndPort convertfromString(const unicode_string& host)
+    net::hostAndPort convertFromString(const std::string& host)
     {
         net::hostAndPort res;
         size_t del = host.find_first_of(':');
         if(del != std::string::npos){
             res.first = host.substr(0, del);
-            res.second = convertfromString<uint16_t>(host.substr(del + 1));
+            res.second = convertFromString<uint16_t>(host.substr(del + 1));
         }
 
         return res;

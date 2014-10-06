@@ -7,14 +7,14 @@ namespace common
 {
     memory_string::memory_string(uint32_t size)
         :alloc_size_(size+1),size_(0),
-          memory_((unicode_char*)calloc(alloc_size_,sizeof(unicode_char)))
+          memory_((char16*)calloc(alloc_size_,sizeof(char16)))
     {
         DCHECK(memory_);
     }
 
-    memory_string::memory_string(const unicode_char* memory)
-        :alloc_size_(unicode_strlen(memory)+1),size_(alloc_size_-1),
-          memory_((unicode_char*)calloc(alloc_size_,sizeof(unicode_char)))
+    memory_string::memory_string(const char16* memory)
+        :alloc_size_(c16len(memory)+1),size_(alloc_size_-1),
+          memory_((char16*)calloc(alloc_size_,sizeof(char16)))
     {
         DCHECK(memory_);
         memcpy(memory_,memory,size_);
@@ -22,7 +22,7 @@ namespace common
 
     memory_string::memory_string(const memory_string &other)
         :alloc_size_(other.alloc_size_),size_(other.size_),
-          memory_((unicode_char*)calloc(alloc_size_,sizeof(unicode_char)))
+          memory_((char16*)calloc(alloc_size_,sizeof(char16)))
     {
         DCHECK(memory_);
         memcpy(memory_,other.memory_,size_);
@@ -33,7 +33,7 @@ namespace common
         alloc_size_ = other.size_;
         size_ = other.size_;
         free(memory_);
-        memory_ = (unicode_char*)calloc(alloc_size_,sizeof(unicode_char));
+        memory_ = (char16*)calloc(alloc_size_,sizeof(char16));
         memcpy(memory_,other.memory_,size_);
         DCHECK(size_<=alloc_size_);
         return *this;
@@ -44,7 +44,7 @@ namespace common
         free(memory_);
     }
 
-    void memory_string::append(unicode_char c)
+    void memory_string::append(char16 c)
     {
         alloc(size_ + 1);
         if(memory_)
@@ -59,9 +59,9 @@ namespace common
         return append(src.memory_,src.size_);
     }
 
-    void memory_string::append(const unicode_char *ptr)
+    void memory_string::append(const char16 *ptr)
     {
-        return append(ptr,unicode_strlen(ptr));
+        return append(ptr, c16len(ptr));
     }
 
     void memory_string::append(const void *ptr, uint32_t size)
@@ -80,7 +80,7 @@ namespace common
         if(alloc_size_<strlen_result+1)
         {
             alloc_size_=strlen_result*2+1;
-            memory_ = (unicode_char*)realloc(memory_, alloc_size_);
+            memory_ = (char16*)realloc(memory_, alloc_size_);
             if(memory_)
             {
                memset(memory_+size_,0,alloc_size_-size_);
@@ -88,9 +88,9 @@ namespace common
         }
     }
 
-    memory_string::operator unicode_string()const
+    memory_string::operator string16()const
     {
-        return unicode_string(memory_,size_);
+        return string16(memory_,size_);
     }
 
     uint32_t memory_string::size() const
@@ -103,17 +103,17 @@ namespace common
         return alloc_size_;
     }
 
-    const unicode_char * const memory_string::c_str() const
+    const char16 * const memory_string::c_str() const
     {
         return memory_;
     }
 
-    const unicode_char *memory_string::begin()const
+    const char16 *memory_string::begin()const
     {
         return memory_;
     }
 
-    const unicode_char *memory_string::end()const
+    const char16 *memory_string::end()const
     {
         return memory_+size_;
     }

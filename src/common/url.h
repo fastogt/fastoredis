@@ -16,7 +16,7 @@ namespace common
                   file=2
                 };
                 url();
-                explicit url(const unicode_char *url_s);
+                explicit url(const char *url_s);
                 url(const url &other);
                 url& operator=(const url &other);
                 bool is_valid()const;
@@ -24,7 +24,7 @@ namespace common
                 const memory_string& host()const;
                 const memory_string& path()const;
                 const memory_string& query()const;
-                const unicode_string get_url()const;
+                const std::string get_url()const;
                 ~url();
 
             private:
@@ -35,7 +35,7 @@ namespace common
                     query_size = 512
                 };
                 void init(const url &other);
-                void parse(const unicode_char *url_s);
+                void parse(const char *url_s);
                 supported_protocols protocol_;
                 memory_string host_;
                 memory_string path_;
@@ -44,16 +44,16 @@ namespace common
 
         namespace detail
         {
-            bool get_protocol(const unicode_char *url_s,url::supported_protocols &prot);
-            bool get_protocol(const unicode_char *url_s,size_t len,url::supported_protocols &prot);
+            bool get_protocol(const char *url_s,url::supported_protocols &prot);
+            bool get_protocol(const char *url_s,size_t len,url::supported_protocols &prot);
             /* Returns a url-encoded version of str */
             /* IMPORTANT: be sure to free() the returned string after use */
-            unicode_char *url_encode(const unicode_char *str);
-            unicode_char *url_encode(const unicode_char *str,size_t len);
+            char *url_encode(const char *str);
+            char *url_encode(const char *str,size_t len);
             /* Returns a url-decoded version of str */
             /* IMPORTANT: be sure to free() the returned string after use */
-            unicode_char *url_decode(const unicode_char *str);
-            unicode_char *url_decode(const unicode_char *str, size_t len);
+            char *url_decode(const char *str);
+            char *url_decode(const char *str, size_t len);
         }
     }
 }

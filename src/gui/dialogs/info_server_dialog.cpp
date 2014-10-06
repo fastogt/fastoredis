@@ -117,16 +117,16 @@ namespace fastoredis
     {
         using namespace common;
         ServerInfo::Server ser = serv.server_;
-        QString textServ = redisTextServerTemplate.arg(convertfromString<QString>(ser.redis_version_))
-                .arg(convertfromString<QString>(ser.redis_git_sha1_))
-                .arg(convertfromString<QString>(ser.redis_git_dirty_))
-                .arg(convertfromString<QString>(ser.redis_mode_))
-                .arg(convertfromString<QString>(ser.os_))
+        QString textServ = redisTextServerTemplate.arg(convertFromString<QString>(ser.redis_version_))
+                .arg(convertFromString<QString>(ser.redis_git_sha1_))
+                .arg(convertFromString<QString>(ser.redis_git_dirty_))
+                .arg(convertFromString<QString>(ser.redis_mode_))
+                .arg(convertFromString<QString>(ser.os_))
                 .arg(ser.arch_bits_)
-                .arg(convertfromString<QString>(ser.multiplexing_api_))
-                .arg(convertfromString<QString>(ser.gcc_version_))
+                .arg(convertFromString<QString>(ser.multiplexing_api_))
+                .arg(convertFromString<QString>(ser.gcc_version_))
                 .arg(ser.process_id_)
-                .arg(convertfromString<QString>(ser.run_id_))
+                .arg(convertFromString<QString>(ser.run_id_))
                 .arg(ser.tcp_port_)
                 .arg(ser.uptime_in_seconds_)
                 .arg(ser.uptime_in_days_)
@@ -140,20 +140,20 @@ namespace fastoredis
 
         ServerInfo::Memory mem = serv.memory_;
         QString textMem = redisTextMemoryTemplate.arg(mem.used_memory_)
-                .arg(convertfromString<QString>(mem.used_memory_human_))
+                .arg(convertFromString<QString>(mem.used_memory_human_))
                 .arg(mem.used_memory_rss_)
                 .arg(mem.used_memory_peak_)
-                .arg(convertfromString<QString>(mem.used_memory_peak_human_))
+                .arg(convertFromString<QString>(mem.used_memory_peak_human_))
                 .arg(mem.used_memory_lua_)
                 .arg(mem.mem_fragmentation_ratio_)
-                .arg(convertfromString<QString>(mem.mem_allocator_));
+                .arg(convertFromString<QString>(mem.mem_allocator_));
 
         ServerInfo::Persistence per = serv.persistence_;
         QString textPer = redisTextPersistenceTemplate.arg(per.loading_)
                 .arg(per.rdb_changes_since_last_save_)
                 .arg(per.rdb_bgsave_in_progress_)
                 .arg(per.rdb_last_save_time_)
-                .arg(convertfromString<QString>(per.rdb_last_bgsave_status_))
+                .arg(convertFromString<QString>(per.rdb_last_bgsave_status_))
                 .arg(per.rdb_last_bgsave_time_sec_)
                 .arg(per.rdb_current_bgsave_time_sec_)
                 .arg(per.aof_enabled_)
@@ -161,7 +161,7 @@ namespace fastoredis
                 .arg(per.aof_rewrite_scheduled_)
                 .arg(per.aof_last_rewrite_time_sec_)
                 .arg(per.aof_current_rewrite_time_sec_)
-                .arg(convertfromString<QString>(per.aof_last_bgrewrite_status_));
+                .arg(convertFromString<QString>(per.aof_last_bgrewrite_status_));
 
         ServerInfo::Stats stat = serv.stats_;
         QString textStat = redisTextStatsTemplate.arg(stat.total_connections_received_)
@@ -177,7 +177,7 @@ namespace fastoredis
                 .arg(stat.latest_fork_usec_);
 
         ServerInfo::Replication repl = serv.replication_;
-        QString textRepl = redisTextReplicationTemplate.arg(convertfromString<QString>(repl.role_))
+        QString textRepl = redisTextReplicationTemplate.arg(convertFromString<QString>(repl.role_))
                 .arg(repl.connected_slaves_);
 
         ServerInfo::Cpu cpu = serv.cpu_;

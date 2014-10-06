@@ -51,15 +51,15 @@ namespace common
     }
 
     template<typename To, typename From>
-    inline typename boost::enable_if< detail::is_same_or_convertible<To,unicode_string> >::type lexical_cast(From val)
+    inline typename boost::enable_if< detail::is_same_or_convertible<To,string16> >::type lexical_cast(From val)
     {
-        return convert2string(val);
+        return convertToString16(val);
     }
 
     template<typename To, typename From>
-    inline typename boost::enable_if< detail::is_same_or_convertible<unicode_string,From> >::type lexical_cast(From val)
+    inline typename boost::enable_if< detail::is_same_or_convertible<string16,From> >::type lexical_cast(From val)
     {
-        return convertfromString<To>(val);
+        return convertFromString16<To>(val);
     }
 
     template<typename convert_to,typename convert_from>

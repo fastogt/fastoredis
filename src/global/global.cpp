@@ -7,7 +7,7 @@
 
 namespace
 {
-    const unicode_char *supportedViewsM[] = { UTEXT("Tree"), UTEXT("Table"), UTEXT("Text") };
+    const common::char16 *supportedViewsM[] = { UTEXT("Tree"), UTEXT("Table"), UTEXT("Text") };
 }
 
 namespace fastoredis
@@ -32,9 +32,9 @@ namespace fastoredis
         return value_->getType();
     }
 
-    unicode_string FastoObject::toString() const
+    common::string16 FastoObject::toString() const
     {
-        unicode_string result;
+        common::string16 result;
         result = value_->toString();//getAsString(&result);
         return result;
     }
@@ -61,7 +61,7 @@ namespace fastoredis
         return parent;
     }
 
-    FastoObject *FastoObject::createRoot(const std::string &text)
+    FastoObject *FastoObject::createRoot(const common::string16 &text)
     {
         return new FastoObject(NULL, common::Value::createStringValue(text));
     }
@@ -84,7 +84,7 @@ namespace fastoredis
         return childrens_;
     }
 
-    std::vector<unicode_string> allSupportedViews()
+    std::vector<common::string16> allSupportedViews()
     {
         return common::utils::enums::convertToVector(supportedViewsM);
     }
@@ -92,9 +92,9 @@ namespace fastoredis
 
 namespace common
 {
-    unicode_string convert2string(fastoredis::supportedViews v)
+    string16 convertToString16(fastoredis::supportedViews v)
     {
-        unicode_string result;
+        string16 result;
         int count = sizeof(supportedViewsM)/sizeof(*supportedViewsM);
         if(v < count){
             result = supportedViewsM[v];
@@ -103,23 +103,23 @@ namespace common
     }
 
     template<>
-    fastoredis::supportedViews convertfromString(const unicode_string& from)
+    fastoredis::supportedViews convertFromString16(const string16& from)
     {
         return common::utils::enums::findTypeInArray<fastoredis::supportedViews>(supportedViewsM, from.c_str());
     }
 
-    unicode_string convert2string(fastoredis::FastoObject* obj)
+    string16 convertToString16(fastoredis::FastoObject* obj)
     {
         using namespace fastoredis;
-        unicode_string result;
+        string16 result;
         if(obj){
-            unicode_string str = obj->toString();
+            string16 str = obj->toString();
             if(!str.empty()){
                 result += common::escapedText(str);
             }
             FastoObject::child_container_type childrens = obj->childrens();
             for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
-                result += convert2string(*it);
+                result += convertToString16(*it);
             }
         }
         return result;

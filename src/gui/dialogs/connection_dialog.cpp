@@ -23,21 +23,21 @@ namespace fastoredis
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
         connectionName_ = new QLineEdit;
-        connectionName_->setText(convertfromString<QString>(connection_->connectionName()));
+        connectionName_->setText(convertFromString16<QString>(connection_->connectionName()));
 
         typeConnection_ = new QComboBox;
-        std::vector<unicode_string> supt = supportedConnectionTypes();
-        for(std::vector<unicode_string>::const_iterator it = supt.begin(); it != supt.end(); ++it){
-            typeConnection_->addItem(convertfromString<QString>(*it));
+        std::vector<string16> supt = supportedConnectionTypes();
+        for(std::vector<string16>::const_iterator it = supt.begin(); it != supt.end(); ++it){
+            typeConnection_->addItem(convertFromString16<QString>(*it));
         }
-        typeConnection_->setCurrentText(convertfromString<QString>(common::convert2string(connection_->connectionType())));
+        typeConnection_->setCurrentText(convertFromString16<QString>(common::convertToString16(connection_->connectionType())));
         VERIFY(connect(typeConnection_, SIGNAL(currentTextChanged(const QString&)), this, SLOT(typeConnectionChange(const QString&))));
 
         logging_ = new QCheckBox("Logging enabled");
         logging_->setChecked(connection_->loggingEnabled());
 
         commandLine_ = new QLineEdit;
-        commandLine_->setText(convertfromString<QString>(connection_->commandLine()));
+        commandLine_->setText(convertFromString16<QString>(connection_->commandLine()));
 
         QVBoxLayout *inputLayout = new QVBoxLayout;
         inputLayout->addWidget(connectionName_);
@@ -70,7 +70,7 @@ namespace fastoredis
 
     void ConnectionDialog::typeConnectionChange(const QString &value)
     {
-        connectionTypes currentType = common::convertfromString<connectionTypes>(common::convert2string(value));
+        connectionTypes currentType = common::convertFromString16<connectionTypes>(common::convertToString16(value));
         bool isValidType = currentType != badConnectionType();
         connectionName_->setEnabled(isValidType);
         testButton_->setEnabled(isValidType);
@@ -81,8 +81,8 @@ namespace fastoredis
     void ConnectionDialog::accept()
     {
         if(validateAndApply()){
-            connection_->setConnectionName(common::convert2string(connectionName_->text()));
-            connection_->setCommandLine(common::convert2string(commandLine_->text()));
+            connection_->setConnectionName(common::convertToString16(connectionName_->text()));
+            connection_->setCommandLine(common::convertToString16(commandLine_->text()));
             connection_->setLoggingEnabled(logging_->isChecked());
             QDialog::accept();
         }

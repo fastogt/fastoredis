@@ -76,7 +76,7 @@ namespace common
             {
                 std::string path = path_to_save();
                 if(createDir){
-                    unicode_string rdir = file_system::get_dir_path(path);
+                    std::string rdir = file_system::get_dir_path(path);
                     if(file_system::is_directory(rdir) != SUCCESS){
                         file_system::create_directory(rdir, true);
                     }
@@ -98,7 +98,7 @@ namespace common
             {
                 std::string path = path_to_save();
                 if(createDir){
-                    unicode_string rdir = file_system::get_dir_path(path);
+                    std::string rdir = file_system::get_dir_path(path);
                     if(file_system::is_directory(rdir) != SUCCESS){
                         file_system::create_directory(rdir, true);
                     }

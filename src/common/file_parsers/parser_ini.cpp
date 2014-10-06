@@ -14,16 +14,15 @@ namespace common
     {
         namespace ini
         {
-            bool parse_ini(const unicode_char* path, std::map<unicode_string,unicode_string> &ref)
+            bool parse_ini(const std::string& path, std::map<std::string, std::string> &ref)
             {
                  bool result = false;
-                 std::ifstream config(path);
-                 if(config)
-                 {
-                     std::set<unicode_string> options;
+                 std::ifstream config(path.c_str());
+                 if(config){
+                     std::set<std::string> options;
 #ifdef BOOST_ENABLED
-                     options.insert(UTEXT("*"));
-                     for (boost::program_options::detail::basic_config_file_iterator<unicode_char>  i(config, options), e ; i != e; ++i)
+                     options.insert("*");
+                     for (boost::program_options::detail::basic_config_file_iterator<char>  i(config, options), e ; i != e; ++i)
                      {
                           ref[i->string_key] = i->value[0];
                      }

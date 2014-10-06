@@ -12,7 +12,7 @@
 namespace
 {
     using namespace common;
-    bool create_directory_impl(const unicode_char* path)
+    bool create_directory_impl(const char* path)
     {
 #ifdef OS_WIN
         bool result = mkdir(path) != ERROR_RESULT_VALUE;
@@ -78,12 +78,12 @@ namespace common
             return result;
         }
 #ifdef OS_POSIX
-        bool create_node(const unicode_string &path)
+        bool create_node(const std::string &path)
         {
             return create_node(path, S_IRWXU|S_IRWXG|S_IRWXO);
         }
 
-        bool create_node(const unicode_string &path, size_t permissions)
+        bool create_node(const std::string &path, size_t permissions)
         {
             if(path.empty()){
                 return false;
@@ -97,7 +97,7 @@ namespace common
             return result;
         }
 
-        bool create_directory(const unicode_string& path, size_t permissions)
+        bool create_directory(const std::string& path, size_t permissions)
         {
             if(path.empty()){
                 return false;
@@ -111,7 +111,7 @@ namespace common
             return result;
         }
 #else
-        bool create_node(const unicode_string &path)
+        bool create_node(const std::string &path)
         {
             if(path.empty()){
                 return false;
@@ -120,28 +120,28 @@ namespace common
             return false;
         }
 #endif
-        bool create_directory(const unicode_string& path, bool isRecursive)
+        bool create_directory(const std::string& path, bool isRecursive)
         {
             if(path.empty()){
                 return false;
             }
 
-            unicode_string prPath = prepare_path(path);
+            std::string prPath = prepare_path(path);
             if(prPath[prPath.length() - 1] == get_separator()){
                 prPath[prPath.length() - 1] = 0;
             }
 
             if(isRecursive){
-                unicode_char *p = NULL;
+                char *p = NULL;
 #ifdef OS_WIN
                 uint8_t shift = 3;
 #else
                 uint8_t shift = 1;
 #endif
-                for(p = const_cast<unicode_char*>(prPath.c_str() + shift); *p; p++ ){
+                for(p = const_cast<char*>(prPath.c_str() + shift); *p; p++ ){
                     if(*p == get_separator()){
                         *p = 0;
-                        const unicode_char *path = prPath.c_str();
+                        const char *path = prPath.c_str();
 
                         bool needCreate = false;
                         struct stat filestat;
@@ -168,7 +168,7 @@ namespace common
             }
         }
 
-        bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags, mode_t mode)
+        bool open_descriptor(const std::string& path, int &fd_desc, int oflags, mode_t mode)
         {
             if(path.empty()){
                 return false;
@@ -182,7 +182,7 @@ namespace common
             return result;
         }
 
-        bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags)
+        bool open_descriptor(const std::string& path, int &fd_desc, int oflags)
         {
             if(path.empty()){
                 return false;
@@ -308,7 +308,7 @@ namespace common
 {
     namespace file_system
     {
-        unicode_string stable_dir_path(unicode_string path)
+        std::string stable_dir_path(std::string path)
         {
             if(!path.empty()){
                 path = prepare_path(path);
@@ -319,16 +319,16 @@ namespace common
             }
             return path;
         }
-        Path make_path(const Path& p,const unicode_string &file_path)
+        Path make_path(const Path& p,const std::string &file_path)
         {
             Path result(p);
             result.append(file_path);
             return result;
         }
-        Path make_path_from_uri(const Path& p, const unicode_string &uri)
+        Path make_path_from_uri(const Path& p, const std::string &uri)
         {
             Path result;
-            unicode_char *dec = url::detail::url_decode(uri.c_str());
+            char *dec = url::detail::url_decode(uri.c_str());
             if(dec){
                 result = make_path(p,dec);
                 free(dec);
@@ -336,15 +336,15 @@ namespace common
 
             return result;
         }
-        unicode_string get_dir_path(unicode_string path)
+        std::string get_dir_path(std::string path)
         {
             size_t pos = path.find_last_of(get_separator());
-            if(pos != unicode_string::npos){
+            if(pos != std::string::npos){
                 path = stable_dir_path(path.substr(0, pos));
             }
             return path;
         }
-        unicode_string prepare_path(unicode_string result)
+        std::string prepare_path(std::string result)
         {
              if(!result.empty()&&result[0]=='~'){
              #ifdef OS_POSIX
@@ -353,7 +353,7 @@ namespace common
                  char* home = getenv("USERPROFILE");
              #endif
                  if(home){
-                     unicode_string tmp = result;
+                     std::string tmp = result;
                      result = home;
                      result += tmp.substr(1);
                  }
@@ -362,10 +362,10 @@ namespace common
              return result;
         }
 
-        unicode_string get_file_name(unicode_string path)
+        std::string get_file_name(std::string path)
         {
             size_t pos = path.find_last_of(get_separator());
-            if(pos != unicode_string::npos){
+            if(pos != std::string::npos){
                 path = path.substr(pos+1);
             }
             return path;
@@ -377,7 +377,7 @@ namespace common
 
         }
 
-        Path::Path(const unicode_string &path)
+        Path::Path(const std::string &path)
             :is_dir_(file_system::is_directory(path)), path_(is_directory() ? stable_dir_path(path) : path)
         {
         }
@@ -388,11 +388,11 @@ namespace common
 
         }
 
-        unicode_string Path::extension()const
+        std::string Path::extension()const
         {
-            unicode_string ext;
+            std::string ext;
             size_t pos = path_.find_first_of(UTEXT('.'));
-            if(pos!=unicode_string::npos){
+            if(pos!=std::string::npos){
                 ext = path_.substr(pos+1);
             }
             return ext;
@@ -413,12 +413,12 @@ namespace common
             return is_dir_ == SUCCESS;
         }
 
-        tribool is_directory(const unicode_string &path)
+        tribool is_directory(const std::string &path)
         {
             tribool result = INDETERMINATE;
             if(!path.empty()){
                 struct stat filestat;
-                unicode_string p_path = prepare_path(path);
+                std::string p_path = prepare_path(path);
                 if (::stat(p_path.c_str(), &filestat ) != ERROR_RESULT_VALUE){
                     result = S_ISDIR(filestat.st_mode) ? SUCCESS:FAIL;
                 }
@@ -428,7 +428,7 @@ namespace common
             }
             return result;
         }
-        tribool is_file(const unicode_string &path)
+        tribool is_file(const std::string &path)
         {
             tribool result=INDETERMINATE;
             result = is_directory(path);
@@ -438,17 +438,17 @@ namespace common
             return result;
         }
 
-        unicode_string Path::path() const
+        std::string Path::path() const
         {
             return path_;
         }
 
-        const unicode_char* Path::c_str() const
+        const char* Path::c_str() const
         {
             return path_.c_str();
         }
 
-        bool Path::append(const unicode_string &path)
+        bool Path::append(const std::string &path)
         {
             bool is_change=false;
             if(!path.empty()){
@@ -470,7 +470,7 @@ namespace common
             return is_change;
         }
 
-        unicode_string Path::directory() const
+        std::string Path::directory() const
         {
             return get_dir_path(path_);
         }
@@ -524,7 +524,7 @@ namespace common
            buffer_type outB;
            bool res = read(outB, maxSize);
            if(res){
-               outData = convert2string(outB);
+               outData = convertToString(outB);
            }
            return res;
         }
@@ -539,7 +539,7 @@ namespace common
 
             char* res = fgets(buff, sizeof(buff), file_);
             if(res){
-                outData = convertfromString<buffer_type>(buff);
+                outData = convertFromString<buffer_type>(buff);
             }
 
             return true;
@@ -573,7 +573,7 @@ namespace common
 
         bool File::write(const std::string& data)
         {
-            return write(convertfromString<buffer_type>(data));
+            return write(convertFromString<buffer_type>(data));
         }
 
         void File::flush()

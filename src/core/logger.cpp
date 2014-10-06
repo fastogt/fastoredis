@@ -22,12 +22,17 @@ namespace fastoredis
         using namespace common;
         DEBUG_MSG_FORMAT<1024>(level, "%s", mess);
         if (notify){
-            emit printed(convertfromString<QString>(mess), level);
+            emit printed(convertFromString16<QString>(mess), level);
         }
+    }
+
+    void Logger::print(const common::string16 &mess, common::logging::LEVEL_LOG level, bool notify)
+    {
+        print(common::convertToString(mess), level, notify);
     }
 
     void Logger::print(const QString &mess, common::logging::LEVEL_LOG level, bool notify)
     {
-        print(common::convert2string(mess), level, notify);
+        print(common::convertToString16(mess), level, notify);
     }
 }

@@ -27,7 +27,7 @@ namespace common
                 enum {value = sizeof(T) };
             };
             template<size_t N>
-            struct size_trait_info<const unicode_char[N] >
+            struct size_trait_info<const char16[N] >
             {
                 enum {value = N };
             };
@@ -36,10 +36,10 @@ namespace common
         namespace enums
         {
             template<typename type, int size>
-            inline type findTypeInArray(const unicode_char *(&arr)[size], const char *text)
+            inline type findTypeInArray(const char16 *(&arr)[size], const char16 *text)
             {
                 for (int i=0; i < size; ++i){
-                    if (unicode_strcmp(text,arr[i])==0){
+                    if (c16memcmp(text, arr[i], c16len(text)) == 0){
                         return static_cast<type>(i);
                     }
                 }
@@ -47,9 +47,9 @@ namespace common
             }
 
             template<int size>
-            inline std::vector<unicode_string> convertToVector(const char *(&arr)[size])
+            inline std::vector<string16> convertToVector(const char16 *(&arr)[size])
             {
-                std::vector<unicode_string> res;
+                std::vector<string16> res;
                 for (int i=0; i < size;++i ){
                     res.push_back(arr[i]);
                 }

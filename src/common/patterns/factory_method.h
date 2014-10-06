@@ -17,7 +17,7 @@ namespace common
         {
             typedef smart_ptr::shared_ptr<typename type_t::base_class> smart_shared_ptr_type;
             typedef type_t element_type;
-            static const unicode_char* object_name;
+            static const char16* object_name;
             template<typename predicate_t>
             smart_shared_ptr_type get_item_by_predicate(predicate_t p) const
             {

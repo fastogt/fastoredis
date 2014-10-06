@@ -39,9 +39,9 @@ namespace
             result = true;
         }
         else {
-            unicode_char buff[256] = {0};
-            unicode_sprintf(buff, UTEXT(PROJECT_NAME" can't read from %1:\n%2."), convert2string(filePath).c_str(),
-                            convert2string(file.errorString()).c_str());
+            char16 buff[256] = {0};
+            string16_sprintf(buff, UTEXT(PROJECT_NAME" can't read from %1:\n%2."), convertToString16(filePath).c_str(),
+                            convertToString16(file.errorString()).c_str());
             ErrorValue er(buff, Value::E_ERROR);
             fastoredis::LOG_ERROR(er);
             QMessageBox::critical(parent, QString("Error"),

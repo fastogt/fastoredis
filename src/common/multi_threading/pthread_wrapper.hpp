@@ -43,7 +43,7 @@ namespace common
                 if(!thread_handle_){
                     int res = pthread_create(&thread_handle_,&attr,start_routine,this);
                     if(res != 0){
-                        unicode_perror("pthread_create error");
+                        string16_perror("pthread_create error");
                     }
                 }
             }

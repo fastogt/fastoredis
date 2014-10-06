@@ -81,109 +81,109 @@
 
 namespace fastoredis
 {
-    static const unicode_string redisHeaders[] = {UTEXT(REDIS_SERVER_LABEL), UTEXT(REDIS_CLIENTS_LABEL), UTEXT(REDIS_MEMORY_LABEL),
-                                                      UTEXT(REDIS_PERSISTENCE_LABEL), UTEXT(REDIS_STATS_LABEL),
-                                                      UTEXT(REDIS_REPLICATION_LABEL), UTEXT(REDIS_CPU_LABEL), UTEXT(REDIS_KEYSPACE_LABEL)};
+    static const std::string redisHeaders[] = {(REDIS_SERVER_LABEL), (REDIS_CLIENTS_LABEL), (REDIS_MEMORY_LABEL),
+                                                      (REDIS_PERSISTENCE_LABEL), (REDIS_STATS_LABEL),
+                                                      (REDIS_REPLICATION_LABEL), (REDIS_CPU_LABEL), (REDIS_KEYSPACE_LABEL)};
 
-    static const unicode_string redisServerFields[] =
+    static const std::string redisServerFields[] =
     {
-        UTEXT(REDIS_VERSION_LABEL),
-        UTEXT(REDIS_GIT_SHA1_LABEL),
-        UTEXT(REDIS_GIT_DIRTY_LABEL),
-        UTEXT(REDIS_MODE_LABEL),
-        UTEXT(REDIS_OS_LABEL),
-        UTEXT(REDIS_ARCH_BITS_LABEL),//
-        UTEXT(REDIS_MULTIPLEXING_API_LABEL),
-        UTEXT(REDIS_GCC_VERSION_LABEL),
-        UTEXT(REDIS_PROCESS_ID_LABEL),//
-        UTEXT(REDIS_RUN_ID_LABEL),
-        UTEXT(REDIS_TCP_PORT_LABEL),//
-        UTEXT(REDIS_UPTIME_IN_SECONDS_LABEL),//
-        UTEXT(REDIS_UPTIME_IN_DAYS),//
-        UTEXT(REDIS_LRU_CLOCK_LABEL)//
+        (REDIS_VERSION_LABEL),
+        (REDIS_GIT_SHA1_LABEL),
+        (REDIS_GIT_DIRTY_LABEL),
+        (REDIS_MODE_LABEL),
+        (REDIS_OS_LABEL),
+        (REDIS_ARCH_BITS_LABEL),//
+        (REDIS_MULTIPLEXING_API_LABEL),
+        (REDIS_GCC_VERSION_LABEL),
+        (REDIS_PROCESS_ID_LABEL),//
+        (REDIS_RUN_ID_LABEL),
+        (REDIS_TCP_PORT_LABEL),//
+        (REDIS_UPTIME_IN_SECONDS_LABEL),//
+        (REDIS_UPTIME_IN_DAYS),//
+        (REDIS_LRU_CLOCK_LABEL)//
     };
 
     static const unsigned char redisServerFieldsIntIndexes[] = { 5,8,10,11,12,13 };
 
-    static const unicode_string redisClientFields[] =
+    static const std::string redisClientFields[] =
     {
-        UTEXT(REDIS_CONNECTED_CLIENTS_LABEL),//
-        UTEXT(REDIS_CLIENT_LONGEST_OUTPUT_LIST_LABEL),//
-        UTEXT(REDIS_CLIENT_BIGGEST_INPUT_BUF_LABEL),//
-        UTEXT(REDIS_BLOCKED_CLIENTS_LABEL)//
+        (REDIS_CONNECTED_CLIENTS_LABEL),//
+        (REDIS_CLIENT_LONGEST_OUTPUT_LIST_LABEL),//
+        (REDIS_CLIENT_BIGGEST_INPUT_BUF_LABEL),//
+        (REDIS_BLOCKED_CLIENTS_LABEL)//
     };
 
     static const unsigned char redisClientFieldsIntIndexes[] = { 0,1,2,3 };
 
-    static const unicode_string redisMemoryFields[] =
+    static const std::string redisMemoryFields[] =
     {
-        UTEXT(REDIS_USED_MEMORY_LABEL),//
-        UTEXT(REDIS_USED_MEMORY_HUMAN_LABEL),
-        UTEXT(REDIS_USED_MEMORY_RSS_LABEL),//
-        UTEXT(REDIS_USED_MEMORY_PEAK_LABEL),//
-        UTEXT(REDIS_USED_MEMORY_PEAK_HUMAN_LABEL),
-        UTEXT(REDIS_USED_MEMORY_LUA_LABEL),//
-        UTEXT(REDIS_MEM_FRAGMENTATION_RATIO_LABEL),//
-        UTEXT(REDIS_MEM_ALLOCATOR_LABEL)
+        (REDIS_USED_MEMORY_LABEL),//
+        (REDIS_USED_MEMORY_HUMAN_LABEL),
+        (REDIS_USED_MEMORY_RSS_LABEL),//
+        (REDIS_USED_MEMORY_PEAK_LABEL),//
+        (REDIS_USED_MEMORY_PEAK_HUMAN_LABEL),
+        (REDIS_USED_MEMORY_LUA_LABEL),//
+        (REDIS_MEM_FRAGMENTATION_RATIO_LABEL),//
+        (REDIS_MEM_ALLOCATOR_LABEL)
     };
 
     static const unsigned char redisMemoryFieldsIntIndexes[] = { 0,2,3,5,6 };
 
-    static const unicode_string redisPersistenceFields[] =
+    static const std::string redisPersistenceFields[] =
     {
-        UTEXT(REDIS_LOADING_LABEL),//
-        UTEXT(REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL),//
-        UTEXT(REDIS_RDB_DGSAVE_IN_PROGRESS_LABEL),//
-        UTEXT(REDIS_RDB_LAST_SAVE_TIME_LABEL),//
-        UTEXT(REDIS_RDB_LAST_DGSAVE_STATUS_LABEL),//
-        UTEXT(REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL),//
-        UTEXT(REDIS_RDB_CURRENT_DGSAVE_TIME_SEC_LABEL),
-        UTEXT(REDIS_AOF_ENABLED_LABEL),//
-        UTEXT(REDIS_AOF_REWRITE_IN_PROGRESS_LABEL),//
-        UTEXT(REDIS_AOF_REWRITE_SHEDULED_LABEL),//
-        UTEXT(REDIS_AOF_LAST_REWRITE_TIME_SEC_LABEL),//
-        UTEXT(REDIS_AOF_CURRENT_REWRITE_TIME_SEC_LABEL),//
-        UTEXT(REDIS_AOF_LAST_DGREWRITE_STATUS_LABEL)
+        (REDIS_LOADING_LABEL),//
+        (REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL),//
+        (REDIS_RDB_DGSAVE_IN_PROGRESS_LABEL),//
+        (REDIS_RDB_LAST_SAVE_TIME_LABEL),//
+        (REDIS_RDB_LAST_DGSAVE_STATUS_LABEL),//
+        (REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL),//
+        (REDIS_RDB_CURRENT_DGSAVE_TIME_SEC_LABEL),
+        (REDIS_AOF_ENABLED_LABEL),//
+        (REDIS_AOF_REWRITE_IN_PROGRESS_LABEL),//
+        (REDIS_AOF_REWRITE_SHEDULED_LABEL),//
+        (REDIS_AOF_LAST_REWRITE_TIME_SEC_LABEL),//
+        (REDIS_AOF_CURRENT_REWRITE_TIME_SEC_LABEL),//
+        (REDIS_AOF_LAST_DGREWRITE_STATUS_LABEL)
     };
 
     static const unsigned char redisPersistenceFieldsIntIndexes[] = { 0,1,2,3,5,6,7,8,9,10,11,12 };
 
-    static const unicode_string redisStatsFields[] =
+    static const std::string redisStatsFields[] =
     {
-        UTEXT(REDIS_TOTAL_CONNECTIONS_RECEIVED_LABEL),//
-        UTEXT(REDIS_TOTAL_COMMANDS_PROCESSED_LABEL),//
-        UTEXT(REDIS_INSTANTANEOUS_OPS_PER_SEC_LABEL),//
-        UTEXT(REDIS_REJECTED_CONNECTIONS_LABEL),//
-        UTEXT(REDIS_EXPIRED_KEYS_LABEL),//
-        UTEXT(REDIS_EVICTED_KEYS_LABEL),//
-        UTEXT(REDIS_KEYSPACE_HITS_LABEL),//
-        UTEXT(REDIS_KEYSPACE_MISSES_LABEL),//
-        UTEXT(REDIS_PUBSUB_CHANNELS_LABEL),//
-        UTEXT(REDIS_PUBSUB_PATTERNS_LABEL),//
-        UTEXT(REDIS_LATEST_FORK_USEC_LABEL)//
+        (REDIS_TOTAL_CONNECTIONS_RECEIVED_LABEL),//
+        (REDIS_TOTAL_COMMANDS_PROCESSED_LABEL),//
+        (REDIS_INSTANTANEOUS_OPS_PER_SEC_LABEL),//
+        (REDIS_REJECTED_CONNECTIONS_LABEL),//
+        (REDIS_EXPIRED_KEYS_LABEL),//
+        (REDIS_EVICTED_KEYS_LABEL),//
+        (REDIS_KEYSPACE_HITS_LABEL),//
+        (REDIS_KEYSPACE_MISSES_LABEL),//
+        (REDIS_PUBSUB_CHANNELS_LABEL),//
+        (REDIS_PUBSUB_PATTERNS_LABEL),//
+        (REDIS_LATEST_FORK_USEC_LABEL)//
     };
 
     static const unsigned char redisStatsFieldsIntIndexes[] = { 0,1,2,3,5,6,7,8,9,10 };
 
-    static const unicode_string redisReplicationFields[] =
+    static const std::string redisReplicationFields[] =
     {
-        UTEXT(REDIS_ROLE_LABEL),
-        UTEXT(REDIS_CONNECTED_SLAVES_LABEL)//
+        (REDIS_ROLE_LABEL),
+        (REDIS_CONNECTED_SLAVES_LABEL)//
     };
 
     static const unsigned char redisReplicationFieldsIntIndexes[] = { 1 };
 
-    static const unicode_string redisCpuFields[] =
+    static const std::string redisCpuFields[] =
     {
-        UTEXT(REDIS_USED_CPU_SYS_LABEL),//
-        UTEXT(REDIS_USED_CPU_USER_LABEL),//
-        UTEXT(REDIS_USED_CPU_SYS_CHILDREN_LABEL),//
-        UTEXT(REDIS_USED_CPU_USER_CHILDREN_LABEL)//
+        (REDIS_USED_CPU_SYS_LABEL),//
+        (REDIS_USED_CPU_USER_LABEL),//
+        (REDIS_USED_CPU_SYS_CHILDREN_LABEL),//
+        (REDIS_USED_CPU_USER_CHILDREN_LABEL)//
     };
 
     static const unsigned char redisCpuFieldsIntIndexes[] = { 0,1,2,3 };
 
-    static const unicode_string redisKeySpaceFields[] =
+    static const std::string redisKeySpaceFields[] =
     {
 
     };
@@ -202,7 +202,7 @@ namespace fastoredis
         const unsigned char size_;
     };
 
-    typedef FieldProperty<const unicode_string*> FieldPropertyS;
+    typedef FieldProperty<const std::string*> FieldPropertyS;
     typedef FieldProperty<const unsigned char*> FieldPropertyU;
 
     static const std::pair<FieldPropertyS,FieldPropertyU> redisFields[] =
@@ -227,8 +227,8 @@ namespace fastoredis
 
     struct DataBaseInfo
     {
-        DataBaseInfo(const unicode_string& name, size_t size);
-        unicode_string name_;
+        DataBaseInfo(const std::string& name, size_t size);
+        std::string name_;
         size_t size_;
     };
 
@@ -249,19 +249,19 @@ namespace fastoredis
                 : FiledByIdex<Server>
         {
             Server();
-            explicit Server(const unicode_string& server_text);
+            explicit Server(const std::string& server_text);
             common::Value* valueByIndex(unsigned char index) const;
 
-            unicode_string redis_version_;
-            unicode_string redis_git_sha1_;
-            unicode_string redis_git_dirty_;
-            unicode_string redis_mode_;
-            unicode_string os_;
+            std::string redis_version_;
+            std::string redis_git_sha1_;
+            std::string redis_git_dirty_;
+            std::string redis_mode_;
+            std::string os_;
             uint32_t arch_bits_;
-            unicode_string multiplexing_api_;
-            unicode_string gcc_version_;
+            std::string multiplexing_api_;
+            std::string gcc_version_;
             uint32_t process_id_;
-            unicode_string run_id_;
+            std::string run_id_;
             uint32_t tcp_port_;
             uint32_t uptime_in_seconds_;
             uint32_t uptime_in_days_;
@@ -272,7 +272,7 @@ namespace fastoredis
                 : FiledByIdex<Clients>
         {
             Clients();
-            explicit Clients(const unicode_string& client_text);
+            explicit Clients(const std::string& client_text);
             common::Value* valueByIndex(unsigned char index) const;
 
             uint32_t connected_clients_;
@@ -285,31 +285,31 @@ namespace fastoredis
                 : FiledByIdex<Server>
         {
             Memory();
-            explicit Memory(const unicode_string& memory_text);
+            explicit Memory(const std::string& memory_text);
             common::Value* valueByIndex(unsigned char index) const;
 
             uint32_t used_memory_;
-            unicode_string used_memory_human_;
+            std::string used_memory_human_;
             uint32_t used_memory_rss_;
             uint32_t used_memory_peak_;
-            unicode_string used_memory_peak_human_;
+            std::string used_memory_peak_human_;
             uint32_t used_memory_lua_;
             float mem_fragmentation_ratio_;
-            unicode_string mem_allocator_;
+            std::string mem_allocator_;
         } memory_;
 
         struct Persistence
                 : FiledByIdex<Server>
         {
             Persistence();
-            explicit Persistence(const unicode_string& persistence_text);
+            explicit Persistence(const std::string& persistence_text);
             common::Value* valueByIndex(unsigned char index) const;
 
             uint32_t loading_;
             uint32_t rdb_changes_since_last_save_;
             uint32_t rdb_bgsave_in_progress_;
             uint32_t rdb_last_save_time_;
-            unicode_string rdb_last_bgsave_status_;
+            std::string rdb_last_bgsave_status_;
             int rdb_last_bgsave_time_sec_;
             int rdb_current_bgsave_time_sec_;
             uint32_t aof_enabled_;
@@ -317,14 +317,14 @@ namespace fastoredis
             uint32_t aof_rewrite_scheduled_;
             int aof_last_rewrite_time_sec_;
             int aof_current_rewrite_time_sec_;
-            unicode_string aof_last_bgrewrite_status_;
+            std::string aof_last_bgrewrite_status_;
         } persistence_;
 
         struct Stats
                 : FiledByIdex<Stats>
         {
             Stats();
-            explicit Stats(const unicode_string& stats_text);
+            explicit Stats(const std::string& stats_text);
             common::Value* valueByIndex(unsigned char index) const;
 
             uint32_t total_connections_received_;
@@ -344,10 +344,10 @@ namespace fastoredis
                 : FiledByIdex<Server>
         {
             Replication();
-            explicit Replication(const unicode_string& replication_text);
+            explicit Replication(const std::string& replication_text);
             common::Value* valueByIndex(unsigned char index) const;
 
-            unicode_string role_;
+            std::string role_;
             uint32_t connected_slaves_;
         } replication_;
 
@@ -355,7 +355,7 @@ namespace fastoredis
                 : FiledByIdex<Cpu>
         {
             Cpu();
-            explicit Cpu(const unicode_string& cpu_text);
+            explicit Cpu(const std::string& cpu_text);
             common::Value* valueByIndex(unsigned char index) const;
 
             float used_cpu_sys_;
@@ -379,7 +379,7 @@ namespace fastoredis
 
     std::ostream& operator<<(std::ostream& out, const ServerInfo& value);
 
-    typedef std::pair<unicode_string, unicode_string> PropertyType;
+    typedef std::pair<std::string, std::string> PropertyType;
 
     struct ServerPropertyInfo
     {
@@ -387,7 +387,7 @@ namespace fastoredis
         std::vector<PropertyType> propertyes_;
     };
 
-    ServerInfo makeServerInfo(const unicode_string& content);
+    ServerInfo makeServerInfo(const std::string& content);
     ServerInfo makeServerInfo(const FastoObjectPtr& root);
     ServerPropertyInfo makeServerProperty(const FastoObjectPtr& root);
 }
