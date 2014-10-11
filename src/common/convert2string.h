@@ -23,11 +23,24 @@ namespace common
     string16 convertToString16(float value);
     string16 convertToString16(double value);
 
+// std::string
+
     std::string convertToString(const buffer_type& from);
     std::string convertToString(const string16& from);
+    std::string convertToString(bool from);
+
+    std::string convertToString(char value);
+    std::string convertToString(unsigned char value);
+    std::string convertToString(short value);
+    std::string convertToString(unsigned short value);
     std::string convertToString(int value);
     std::string convertToString(unsigned int value);
+    std::string convertToString(long value);
+    std::string convertToString(unsigned long value);
     std::string convertToString(long long value);
+    std::string convertToString(unsigned long long value);
+    std::string convertToString(float value);
+    std::string convertToString(double value);
 
     template<typename T>
     T convertFromString16(const string16& from);

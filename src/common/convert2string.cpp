@@ -1,13 +1,7 @@
 #include "common/convert2string.h"
 
 #include <stdlib.h>
-/*#include <ctype.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <wctype.h>*/
-
 #include <limits>
-
 #include <vector>
 
 #include "common/string_piece.h"
@@ -455,7 +449,7 @@ namespace common
         int val = value;
         return convertToString16(val);
     }
-
+//
     template<>
     std::string convertFromString16(const string16& input)
     {
@@ -588,6 +582,8 @@ namespace common
         return convertFromString16<int>(val);
     }
 
+// std string
+
     std::string convertToString(const buffer_type& from)
     {
         return std::string((const char*)from.c_str(), from.length());
@@ -596,6 +592,40 @@ namespace common
     std::string convertToString(const string16& from)
     {
         return convertFromString16<std::string>(from);
+    }
+
+    std::string convertToString(bool from)
+    {
+        if(from){
+            return "true";
+        }
+        else{
+            return "false";
+        }
+    }
+
+    std::string convertToString(char value)
+    {
+        return IntToStringT<std::string, char, unsigned char, true>::
+              IntToString(value);
+    }
+
+    std::string convertToString(unsigned char value)
+    {
+        return IntToStringT<std::string, char, unsigned char, false>::
+              IntToString(value);
+    }
+
+    std::string convertToString(short value)
+    {
+        return IntToStringT<std::string, short, unsigned short, true>::
+              IntToString(value);
+    }
+
+    std::string convertToString(unsigned short value)
+    {
+        return IntToStringT<std::string, short, unsigned short, false>::
+              IntToString(value);
     }
 
     std::string convertToString(int value)
@@ -610,15 +640,171 @@ namespace common
               IntToString(value);
     }
 
+    std::string convertToString(long value)
+    {
+        return IntToStringT<std::string, long, unsigned long, true>::
+              IntToString(value);
+    }
+
+    std::string convertToString(unsigned long value)
+    {
+        return IntToStringT<std::string, long, unsigned long, false>::
+              IntToString(value);
+    }
+
     std::string convertToString(long long value)
     {
         return IntToStringT<std::string, long long, unsigned long long, false>::
               IntToString(value);
     }
 
+    std::string convertToString(unsigned long long value)
+    {
+        return IntToStringT<std::string, long long, unsigned long long, false>::
+              IntToString(value);
+    }
+
+    std::string convertToString(float value)
+    {
+        int val = value;
+        return convertToString(val);
+    }
+
+    std::string convertToString(double value)
+    {
+        int val = value;
+        return convertToString(val);
+    }
+//
     template<>
     buffer_type convertFromString(const std::string& val)
     {
         return buffer_type((const byte_type*)val.c_str(), val.length());
+    }
+
+    template<>
+    string16 convertFromString(const std::string& input)
+    {
+        return convertToString16(input);
+    }
+
+    template<>
+    char convertFromString(const std::string& input)
+    {
+        char output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    unsigned char convertFromString(const std::string& input)
+    {
+        unsigned char output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    bool convertFromString(const std::string& val)
+    {
+        if(val == "true"){
+            return true;
+        }
+        else if(val == "false"){
+            return false;
+        }
+
+        uint8_t intVal = convertFromString<uint8_t>(val);
+        if(intVal == 0){
+            return false;
+        }
+
+        return true;
+    }
+
+    template<>
+    short convertFromString(const std::string& input)
+    {
+        short output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    unsigned short convertFromString(const std::string& input)
+    {
+        unsigned short output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    int convertFromString(const std::string& input)
+    {
+        int output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    unsigned int convertFromString(const std::string& input)
+    {
+        unsigned int output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    long convertFromString(const std::string& input)
+    {
+        long output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    unsigned long convertFromString(const std::string& input)
+    {
+        unsigned long output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    long long convertFromString(const std::string& input)
+    {
+        long long output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    unsigned long long convertFromString(const std::string& input)
+    {
+        unsigned long long output = 0;
+        bool res = StringToIntImpl(input, &output);
+        DCHECK(res);
+        return output;
+    }
+
+    template<>
+    float convertFromString(const std::string& val)
+    {
+        return convertFromString<int>(val);
+    }
+
+    template<>
+    double convertFromString(const std::string& val)
+    {
+        return convertFromString<int>(val);
     }
 }
