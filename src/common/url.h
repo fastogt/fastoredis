@@ -24,7 +24,7 @@ namespace common
                 const memory_string& host()const;
                 const memory_string& path()const;
                 const memory_string& query()const;
-                const std::string get_url()const;
+                std::string get_url()const;
                 ~url();
 
             private:
