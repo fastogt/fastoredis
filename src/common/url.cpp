@@ -19,22 +19,22 @@ namespace common
     {
         namespace detail
         {
-            unicode_char from_hex(unicode_char ch)
+            char from_hex(char ch)
             {
                 return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
             }
 
-            unicode_char to_hex(unicode_char code)
+            char to_hex(char code)
             {
-                static unicode_char hex[] = "0123456789abcdef";
+                static char hex[] = "0123456789abcdef";
                 return hex[code & 15];
             }
 
-            unicode_char *url_encode(const unicode_char *str, size_t len)
+            char *url_encode(const char *str, size_t len)
             {
-                const unicode_char *pstr = str;
-                unicode_char *buf = (unicode_char *)malloc(len * 3 + 1);
-                unicode_char *pbuf = buf;
+                const char *pstr = str;
+                char *buf = (char *)malloc(len * 3 + 1);
+                char *pbuf = buf;
 
                 while (*pstr)
                 {
@@ -54,16 +54,16 @@ namespace common
                 return buf;
             }
 
-            unicode_char *url_encode(const unicode_char *str)
+            char *url_encode(const char *str)
             {
-                return url_encode(str,unicode_strlen(str));
+                return url_encode(str, strlen(str));
             }
 
-            unicode_char *url_decode(const unicode_char *str, size_t len)
+            char *url_decode(const char *str, size_t len)
             {
-                const unicode_char *pstr = str;
-                unicode_char *buf = (unicode_char*)malloc(len + 1);
-                unicode_char *pbuf = buf;
+                const char *pstr = str;
+                char *buf = (char*)malloc(len + 1);
+                char *pbuf = buf;
 
                 while (*pstr)
                 {
@@ -84,12 +84,12 @@ namespace common
                 return buf;
             }
 
-            unicode_char *url_decode(const unicode_char *str)
+            char *url_decode(const char *str)
             {
-                return url_decode(str,unicode_strlen(str));
+                return url_decode(str, strlen(str));
             }
 
-            bool get_protocol(const unicode_char *url_s, size_t len, url::supported_protocols &prot)
+            bool get_protocol(const char *url_s, size_t len, url::supported_protocols &prot)
             {
                 bool result=false;
                 if(url_s&&5<len)
@@ -120,9 +120,9 @@ namespace common
                 return result;
             }
 
-            bool get_protocol(const unicode_char *url_s,url::supported_protocols &prot)
+            bool get_protocol(const char *url_s, url::supported_protocols &prot)
             {
-                return get_protocol(url_s,unicode_strlen(url_s),prot);
+                return get_protocol(url_s, strlen(url_s),prot);
             }
         }
 
@@ -131,16 +131,16 @@ namespace common
 
         }
 
-        url::url(const unicode_char* url_s)
+        url::url(const char* url_s)
             :protocol_(http),host_(host_size),path_(path_size),query_(query_size)
         {
             parse(url_s);
         }
 
-        void url::parse(const unicode_char* url_s)
+        void url::parse(const char* url_s)
         {
             //ftp,http,file
-            size_t len = unicode_strlen(url_s);
+            size_t len = strlen(url_s);
             size_t start=0;
             if(detail::get_protocol(url_s,len,protocol_))
             {
@@ -156,13 +156,13 @@ namespace common
             memory_string *cur_member = &host_;
             for(size_t i=start;i<len;++i)
             {
-                if(url_s[i]==UTEXT('/')||url_s[i]==UTEXT('?'))
+                if(url_s[i]=='/'||url_s[i]=='?')
                 {
-                    if(url_s[i]==UTEXT('/')&&cur_member==&host_)
+                    if(url_s[i]=='/'&&cur_member==&host_)
                     {
                         cur_member = &path_;
                     }
-                    else if(url_s[i]==UTEXT('?')&&cur_member==&path_)
+                    else if(url_s[i]=='?'&&cur_member==&path_)
                     {
                         cur_member = &query_;
                     }
@@ -196,10 +196,10 @@ namespace common
             return query_;
         }
 
-        const unicode_string url::get_url()const
+        const std::string url::get_url()const
         {
-            unicode_char buf[host_size + path_size + query_size + 7] = {0};
-            unicode_sprintf(buf, "%s://%s%s%s", protocol().c_str(), host_.c_str(), path_.c_str(), query_.c_str());
+            char buf[host_size + path_size + query_size + 7] = {0};
+            sprintf(buf, "%s://%s%s%s", protocol().c_str(), host_.c_str(), path_.c_str(), query_.c_str());
             return buf;
         }
 

@@ -21,7 +21,7 @@ extern "C" {
 #define OUTPUT_STANDARD 0
 #define OUTPUT_RAW 1
 #define OUTPUT_CSV 2
-#define INFO_REQUEST "INFO"
+#define INFO_REQUEST UTEXT("INFO")
 
 namespace
 {
@@ -84,7 +84,7 @@ namespace
         QStringList list;
         for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
             char* command = commandGroups[i];
-            QString qcommand = common::convertfromString<QString>(std::string(command));
+            QString qcommand = common::convertFromString<QString>(std::string(command));
             g_types.append(qcommand);
             list.append(qcommand);
             tmp.argc = 1;
@@ -98,7 +98,7 @@ namespace
         for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
             struct commandHelp command = commandHelp[i];
             std::string commandN = command.name;
-            QString qCommandN = common::convertfromString<QString>(commandN);
+            QString qCommandN = common::convertFromString<QString>(commandN);
             g_commands.append(qCommandN);
             list.append(qCommandN);
 
@@ -243,7 +243,7 @@ namespace fastoredis
             case REDIS_REPLY_STATUS:
             case REDIS_REPLY_STRING:
             {
-                common::StringValue *val =common::Value::createStringValue(r->str);
+                common::StringValue *val = common::Value::createStringValue(r->str);
                 FastoObject *obj = new FastoObject(out, val);
                 out->addChildren(obj);
                 break;
@@ -262,7 +262,7 @@ namespace fastoredis
                 }
                 else{
                     common::ArrayValue *val =common::Value::createArrayValue();
-                    val->appendString(out->toString());
+                    val->appendString(out->toString16());
                     child = new FastoObject(out,val);
                     out->addChildren(child);
                 }
@@ -606,7 +606,7 @@ namespace fastoredis
 
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                FastoObjectPtr outRoot = FastoObject::createRoot(inputLine);
+                FastoObjectPtr outRoot = FastoObject::createRoot(common::convertToString16(inputLine));
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->interrupt_){
@@ -626,7 +626,7 @@ namespace fastoredis
                         common::StringValue *val =common::Value::createStringValue(command);
                         FastoObject* child = new FastoObject(outRoot.get(), val);
                         outRoot->addChildren(child);
-                        LOG_COMMAND(Command(command,Command::UserCommand));
+                        LOG_COMMAND(Command(common::convertToString16(command),Command::UserCommand));
                         impl_->repl_impl(child, er);                        
                     }
                 }
@@ -657,10 +657,10 @@ namespace fastoredis
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(loadDabasesString);
+            FastoObject* root = FastoObject::createRoot(common::convertToString16(loadDabasesString));
             common::ErrorValue er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(loadDabasesString));
+            LOG_COMMAND(Command(common::convertToString16(loadDabasesString)));
             impl_->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
@@ -712,10 +712,10 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(propetyString);
+            FastoObject* root = FastoObject::createRoot(common::convertToString16(propetyString));
             common::ErrorValue er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(propetyString));
+            LOG_COMMAND(Command(common::convertToString16(propetyString)));
             impl_->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
@@ -735,8 +735,8 @@ namespace fastoredis
             common::ErrorValue er;
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
-        FastoObject* root = FastoObject::createRoot(changeRequest);
-            LOG_COMMAND(Command(changeRequest));
+        FastoObject* root = FastoObject::createRoot(common::convertToString16(changeRequest));
+            LOG_COMMAND(Command(common::convertToString16(changeRequest)));
             impl_->repl_impl(root, er);
             if(er.isError()){
                 res.setErrorInfo(er);
@@ -748,7 +748,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    ServerInfo RedisDriver::makeServerInfoFromString(const common::unicode_string& val)
+    ServerInfo RedisDriver::makeServerInfoFromString(const std::string& val)
     {
         return makeServerInfo(val);
     }

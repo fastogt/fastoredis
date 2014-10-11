@@ -15,7 +15,7 @@ namespace fastoredis
         Text
     };
 
-    std::vector<common::unicode_string> allSupportedViews();
+    std::vector<common::string16> allSupportedViews();
 
     class FastoObject
             : public common::boost_extension::intrusive_ptr_base<FastoObject>
@@ -27,12 +27,13 @@ namespace fastoredis
         ~FastoObject();
 
         common::Value::Type type() const;
-        common::unicode_string toString() const;
+        common::string16 toString16() const;
+        std::string toString() const;
         FastoObject *deepCopy(FastoObject *parent) const;
         FastoObject *deepCopyChangeParent(FastoObject *parent) const;
 
 		child_container_type childrens() const;
-        static FastoObject* createRoot(const std::string& text = std::string());
+        static FastoObject* createRoot(const common::string16 &text = common::string16());
         void addChildren(FastoObject *child);
         bool isRoot() const;
 
@@ -50,6 +51,6 @@ namespace fastoredis
 
 namespace common
 {
-    unicode_string convert2string(fastoredis::supportedViews v);
-    unicode_string convert2string(fastoredis::FastoObject* obj);
+    string16 convertToString16(fastoredis::supportedViews v);
+    string16 convertToString16(fastoredis::FastoObject* obj);
 }

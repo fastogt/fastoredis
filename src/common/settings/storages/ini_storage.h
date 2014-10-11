@@ -33,7 +33,6 @@ namespace common
                         if( it != set_.not_found() ){
                             ptree::value_type const& v = (*it);
                             boost::property_tree::ptree node = v.second;
-                            std::string str = node.get<std::string>("");
                             result = node.get<value_type>("");
                         }
                         item.load_value(result);
@@ -76,7 +75,7 @@ namespace common
             {
                 std::string path = path_to_save();
                 if(createDir){
-                    unicode_string rdir = file_system::get_dir_path(path);
+                    std::string rdir = file_system::get_dir_path(path);
                     if(file_system::is_directory(rdir) != SUCCESS){
                         file_system::create_directory(rdir, true);
                     }
@@ -98,7 +97,7 @@ namespace common
             {
                 std::string path = path_to_save();
                 if(createDir){
-                    unicode_string rdir = file_system::get_dir_path(path);
+                    std::string rdir = file_system::get_dir_path(path);
                     if(file_system::is_directory(rdir) != SUCCESS){
                         file_system::create_directory(rdir, true);
                     }

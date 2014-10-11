@@ -5,14 +5,10 @@
 #include <vector>
 #include <algorithm>
 
-//#include <boost/fusion/container/vector.hpp>
-//#include <boost/fusion/include/as_vector.hpp>
-//#include <boost/fusion/algorithm.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/find.hpp>
 #include <boost/mpl/size.hpp>
 #include <boost/static_assert.hpp>
-//http://shaderop.com/2010/09/a-simple-intra-process-event-bus-in-c-part-i/
 
 
 namespace common
@@ -35,8 +31,7 @@ namespace common
         class IReceiver
         {
         public:
-            template<typename T>
-            void receive(T t, IEvent* e)
+            void handleEvent(IEvent* e)
             {
 
             }
@@ -78,13 +73,13 @@ namespace common
             }
 
             template<typename T>
-            void broadcast(T t, IEvent* event)
+            void broadcast(T* event)
             {
                 BOOST_STATIC_ASSERT(find_in_mpl_vector<T,mpl_vector>::value);
                 typedef typename boost::mpl::find<mpl_vector, T>::type MplIter;
                 for(int i = 0; i < receivers_[MplIter::pos::value].size(); ++i){
                     IReceiver *rec = receivers_[MplIter::pos::value][i];
-                    rec->receive(t, event);
+                    rec->receive(event);
                 }
             }
 

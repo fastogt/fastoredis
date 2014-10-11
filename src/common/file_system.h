@@ -12,40 +12,40 @@ namespace common
 {
     namespace file_system
     {
-        unicode_string get_file_name(unicode_string path);
-        unicode_string get_dir_path(unicode_string path);
-        tribool is_directory(const unicode_string& path);
-        tribool is_file(const unicode_string& path);
-        unicode_string stable_dir_path(unicode_string dir);
-        unicode_string prepare_path(unicode_string path);
+        std::string get_file_name(std::string path);
+        std::string get_dir_path(std::string path);
+        tribool is_directory(const std::string& path);
+        tribool is_file(const std::string& path);
+        std::string stable_dir_path(std::string dir);
+        std::string prepare_path(std::string path);
 
-        inline unicode_char get_separator()
+        inline char get_separator()
         {
-            return UTEXT('/');
+            return '/';
         }
 
         class Path
         {
         public:
             Path();
-            explicit Path(const unicode_string &path);
+            explicit Path(const std::string &path);
             Path(const Path &other);
-            bool append(const unicode_string &path);
-            unicode_string extension()const;
+            bool append(const std::string &path);
+            std::string extension()const;
             bool is_valid()const;
             bool is_file()const;
             bool is_directory()const;
-            const unicode_char* c_str() const;
-            unicode_string directory() const;
-            unicode_string path() const;
+            const char* c_str() const;
+            std::string directory() const;
+            std::string path() const;
 
         private:
             tribool is_dir_;
-            unicode_string path_;
+            std::string path_;
         };
 
-        Path make_path(const Path& p,const unicode_string &file_path);
-        Path make_path_from_uri(const Path& p,const unicode_string &uri);
+        Path make_path(const Path& p,const std::string &file_path);
+        Path make_path_from_uri(const Path& p,const std::string &uri);
 
         inline bool operator <(const Path &lhs,const Path &rhs)
         {
@@ -66,20 +66,20 @@ namespace common
         bool set_flags_by_descriptor(int fd_desc, int flags) WARN_UNUSED_RESULT;
         bool set_nonblocked_descriptor(int fd_desc);
         bool close_descriptor(int fd_desc) WARN_UNUSED_RESULT;
-        bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags) WARN_UNUSED_RESULT;
-        bool open_descriptor(const unicode_string& path, int &fd_desc, int oflags, mode_t mode) WARN_UNUSED_RESULT;
+        bool open_descriptor(const std::string& path, int &fd_desc, int oflags) WARN_UNUSED_RESULT;
+        bool open_descriptor(const std::string& path, int &fd_desc, int oflags, mode_t mode) WARN_UNUSED_RESULT;
 #ifdef OS_POSIX
-        bool create_node(const unicode_string &path) WARN_UNUSED_RESULT;
-        bool create_node(const unicode_string& path, size_t permissions) WARN_UNUSED_RESULT;
+        bool create_node(const std::string &path) WARN_UNUSED_RESULT;
+        bool create_node(const std::string& path, size_t permissions) WARN_UNUSED_RESULT;
 
-        bool create_directory(const unicode_string& path, size_t permissions) WARN_UNUSED_RESULT;
+        bool create_directory(const std::string& path, size_t permissions) WARN_UNUSED_RESULT;
 #else
-        bool create_node(const unicode_string &path) WARN_UNUSED_RESULT;        
+        bool create_node(const std::string &path) WARN_UNUSED_RESULT;
 #endif
-        bool create_directory(const unicode_string& path, bool isRecursive) WARN_UNUSED_RESULT;
+        bool create_directory(const std::string &path, bool isRecursive) WARN_UNUSED_RESULT;
 
-        bool write_to_descriptor(int fd_desc,const void *buf, size_t len) WARN_UNUSED_RESULT;
-        bool read_from_descriptor(int fd_desc,void *buf, size_t len, int &readlen) WARN_UNUSED_RESULT;
+        bool write_to_descriptor(int fd_desc, const void *buf, size_t len) WARN_UNUSED_RESULT;
+        bool read_from_descriptor(int fd_desc, void *buf, size_t len, int &readlen) WARN_UNUSED_RESULT;
 
         class descriptor_owner
 #ifdef BOOST_ENABLED
@@ -112,6 +112,7 @@ namespace common
 
             bool write(const buffer_type& data);
             bool write(const std::string& data);
+            bool write(const string16& data);
             void flush();
             void close();
 

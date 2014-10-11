@@ -11,135 +11,113 @@ namespace common
 #ifdef OS_POSIX
 namespace multi_threading
 {
-namespace lock_free //unix
-{
-    namespace unix_api
-    {
-        namespace atomic
-        {
-            unix_spin_lock::unix_spin_lock()
+            spin_lock::spin_lock()
             {
 #ifdef OS_LINUX
                 pthread_spin_init(&spinlock,0);
 #else
 #endif
             }
-            void unix_spin_lock::lock()
+            void spin_lock::lock()
             {
 #ifdef OS_LINUX
                 pthread_spin_lock(&spinlock);
 #else
 #endif
             }
-            void unix_spin_lock::unlock()
+            void spin_lock::unlock()
             {
 #ifdef OS_LINUX
                 pthread_spin_unlock(&spinlock);
 #else
 #endif
             }
-            unix_spin_lock::~unix_spin_lock()
+            spin_lock::~spin_lock()
             {
 #ifdef OS_LINUX
                 pthread_spin_destroy(&spinlock);
 #else
 #endif
             }			
-        }
-        namespace mutex
-        {
-            wrap_mutex::wrap_mutex()throw()
+
+            pthread_mutex::pthread_mutex()
             {
                 pthread_mutex_init(&mutex_, NULL);
             }
-            void wrap_mutex::lock() throw()
+            void pthread_mutex::lock()
             {
                  pthread_mutex_lock (&mutex_);
             }
-            void wrap_mutex::unlock() throw()
+            void pthread_mutex::unlock()
             {
                 pthread_mutex_unlock (&mutex_);
             }
-            wrap_mutex::~wrap_mutex()
+            pthread_mutex::~pthread_mutex()
             {
                 pthread_mutex_destroy(&mutex_);
             }
-        }
-    }
 }
-}
-#elif defined _WIN32
+#elif defined OS_WIN
 #include <windows.h>
-namespace multi_threading
-{
-namespace lock_free//windows
-{
-    namespace windows
+    namespace multi_threading
     {
-        namespace critical_section
+        critical_section::critical_section()
         {
-                wrap_critical_section::wrap_critical_section()
-                {
-                    memset(&m_sec, 0, sizeof(CRITICAL_SECTION));
-                    InitializeCriticalSection(&m_sec);
-                }
-                wrap_critical_section::~wrap_critical_section()
-                {
-                    DeleteCriticalSection(&m_sec);
-                }
-                void wrap_critical_section::lock()
-                {
-                    EnterCriticalSection(&m_sec);
-                }
-                void wrap_critical_section::unlock()
-                {
-                    LeaveCriticalSection(&m_sec);
-                }
+            memset(&m_sec, 0, sizeof(CRITICAL_SECTION));
+            InitializeCriticalSection(&m_sec);
         }
-        namespace atomic
+        critical_section::~critical_section()
         {
-                void win_spin_lock::lock()
+            DeleteCriticalSection(&m_sec);
+        }
+        void critical_section::lock()
+        {
+            EnterCriticalSection(&m_sec);
+        }
+        void critical_section::unlock()
+        {
+            LeaveCriticalSection(&m_sec);
+        }
+
+        void spin_lock::lock()
+        {
+            m_iterations = 0;
+            long cur_th = GetCurrentThreadId();
+            while(true)
+            {
+                if(lock_.dest_ == cur_th)
+                    break;
+
+                if(InterlockedCompareExchange(&lock_.dest_, cur_th, 0) == 0)
                 {
-                    m_iterations = 0;
-                    long cur_th = GetCurrentThreadId();
-                    while(true)
+                    break;
+                }
+                while(lock_.dest_)
+                {
+                    if(m_iterations >= YIELD_ITERATION)
                     {
-                        if(lock_.dest_ == cur_th)
-                            break;
+                        if(m_iterations + YIELD_ITERATION >= MAX_SLEEP_ITERATION)
+                            Sleep(0);
 
-                        if(InterlockedCompareExchange(&lock_.dest_, cur_th, 0) == 0)
+                        if(m_iterations >= YIELD_ITERATION && m_iterations < MAX_SLEEP_ITERATION)
                         {
-                            break;
-                        }
-                        while(lock_.dest_)
-                        {
-                            if(m_iterations >= YIELD_ITERATION)
-                            {
-                                if(m_iterations + YIELD_ITERATION >= MAX_SLEEP_ITERATION)
-                                    Sleep(0);
-
-                                if(m_iterations >= YIELD_ITERATION && m_iterations < MAX_SLEEP_ITERATION)
-                                {
-                                    m_iterations = 0;
-                                    SwitchToThread();
-                                }
-                            }
-                            m_iterations++;
-                            //please test behavior
-                           /* if(thread_t::hardware_concurrency() > 1) { YieldProcessor(); }
-                            else { SwitchToThread(); }*/
+                            m_iterations = 0;
+                            SwitchToThread();
                         }
                     }
+                    m_iterations++;
+                    //please test behavior
+                   /* if(thread_t::hardware_concurrency() > 1) { YieldProcessor(); }
+                    else { SwitchToThread(); }*/
                 }
+            }
+        }
 
-                void win_spin_lock::unlock()
-                {
-                    lock_.dest_=0;
-                    //InterlockedCompareExchange(&lock_.dest_, 0, GetCurrentThreadId());
-                }
+        void spin_lock::unlock()
+        {
+            lock_.dest_=0;
+            //InterlockedCompareExchange(&lock_.dest_, 0, GetCurrentThreadId());
         }
     }
-}
-}
 #endif
 }

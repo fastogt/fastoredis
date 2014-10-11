@@ -12,7 +12,7 @@ namespace common
     {
         namespace ini
         {
-            bool parse_ini(const unicode_char* path, std::map<unicode_string, unicode_string> &ref);
+            bool parse_ini(const std::string& path, std::map<std::string, std::string> &ref);
         }
     }
 }

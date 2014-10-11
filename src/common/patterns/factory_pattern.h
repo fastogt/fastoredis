@@ -51,9 +51,9 @@ namespace common
         {
             typedef typename mpl::get_variadic_type<i,types...>::curent_type curent_type;
             template<typename... targs_t>
-            static void* create(const unicode_char *str,targs_t ...args)
+            static void* create(const char16 *str,targs_t ...args)
             {
-                if(unicode_strcmp(curent_type::name,str)==0)
+                if(string16_strcmp(curent_type::name,str)==0)
                 {
                     return new typename curent_type::type(args...);
                 }
@@ -68,9 +68,9 @@ namespace common
         {
             typedef typename mpl::get_variadic_type<0,types...>::curent_type curent_type;
             template<typename... targs_t>
-            static void* create(const unicode_char *str,targs_t ...args)
+            static void* create(const char16 *str,targs_t ...args)
             {
-                if(unicode_strcmp(curent_type::name,str)==0)
+                if(string16_strcmp(curent_type::name,str)==0)
                 {
                     return new typename curent_type::type(args...);
                 }
@@ -96,7 +96,7 @@ namespace common
         struct static_factory
         {
             template<typename... targs_t>
-            void* find_and_create(const unicode_char * val, targs_t ...args)
+            void* find_and_create(const char16 * val, targs_t ...args)
             {
                 return create_item<types...>::create(val, args...);
             }

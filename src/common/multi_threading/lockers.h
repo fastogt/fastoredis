@@ -13,65 +13,45 @@ namespace common
 #ifdef OS_WIN
     namespace multi_threading
     {
-        namespace lock_free//windows
+        class critical_section//398
         {
-            namespace windows
+        public:
+            critical_section();
+            ~critical_section();
+            void lock();
+            void unlock();
+        private:
+            CRITICAL_SECTION m_sec;
+        };
+
+        class spin_lock//410
+        {
+        public:
+            spin_lock():m_iterations(0){}
+            void lock();
+            void unlock();
+        private:
+            struct spin_lock_p
             {
-                namespace critical_section
-                {
-                        class wrap_critical_section//398
-                        {
-                        public:
-                            wrap_critical_section();
-                            ~wrap_critical_section();
-                            void lock();
-                            void unlock();
-                        private:
-                            CRITICAL_SECTION m_sec;
-                        };
-                }
-                namespace atomic
-                {
-                        class win_spin_lock//410
-                        {
-                        public:
-                            win_spin_lock():m_iterations(0){}
-                            void lock();
-                            void unlock();
-                        private:
-                            struct spin_lock
-                            {
-                                volatile long dest_;
-                                long exchange_;
-                                spin_lock():dest_(0),exchange_(SeedVal){}
-                            } lock_;
-                            unsigned int m_iterations;
-                            static const int SeedVal = 100;
-                        };
-                }
-            }
-            namespace atomic
-            {
-                    typedef windows::atomic::win_spin_lock api_spin_lock;
-            }
-        }
+                volatile long dest_;
+                long exchange_;
+                spin_lock_p():dest_(0),exchange_(SeedVal){}
+            } lock_;
+            unsigned int m_iterations;
+            static const int SeedVal = 100;
+        };
     }
+
 #elif defined OS_POSIX
     namespace multi_threading
     {
-        namespace lock_free //unix
-        {
-            namespace unix_api
-            {
-                namespace atomic
-                {
-                    class unix_spin_lock
+                    class spin_lock
                     {
                     public:
-                        unix_spin_lock();
+                        spin_lock();
                         void lock();
                         void unlock();
-                        ~unix_spin_lock();
+                        ~spin_lock();
                     private:
 #ifdef OS_MAC
                         OSSpinLock spinlock;
@@ -79,30 +59,15 @@ namespace common
                         pthread_spinlock_t spinlock;
 #endif
                     };
-                }
-                namespace mutex
-                {
-                    struct wrap_mutex
+
+                    struct pthread_mutex
                     {
-                        wrap_mutex() throw();
-                        ~wrap_mutex();
-                        void lock() throw();
-                        void unlock() throw();
+                        pthread_mutex();
+                        ~pthread_mutex();
+                        void lock();
+                        void unlock();
                         pthread_mutex_t mutex_;
                     };
-                }
-            }
-
-            namespace atomic
-            {
-                typedef unix_api::atomic::unix_spin_lock api_spin_lock;
-            }
-
-            namespace mutex
-            {
-                typedef unix_api::mutex::wrap_mutex api_mutex;
-            }
-        }
     }
 #endif
 }

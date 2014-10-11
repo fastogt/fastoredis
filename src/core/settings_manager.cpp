@@ -26,12 +26,12 @@ namespace
 
     using namespace common;
 
-    BEGIN_DECL_TYPLE(langauge_,unicode_string,static_path_storage)
-    BEGIN_DECL_TYPLE(style_,unicode_string,static_path_storage)
-    BEGIN_DECL_TYPLE(connections_,fastoredis::SettingsManager::ConnectionSettingsContainerType,static_path_storage)
-    BEGIN_DECL_TYPLE(view_,int,static_path_storage)
-    BEGIN_DECL_TYPLE(synctabs_,bool,static_path_storage)
-    BEGIN_DECL_TYPLE(loggingdir_,unicode_string,static_path_storage)
+    BEGIN_DECL_TYPLE(langauge_, std::string, static_path_storage)
+    BEGIN_DECL_TYPLE(style_, std::string, static_path_storage)
+    BEGIN_DECL_TYPLE(connections_, fastoredis::SettingsManager::ConnectionSettingsContainerType, static_path_storage)
+    BEGIN_DECL_TYPLE(view_, int, static_path_storage)
+    BEGIN_DECL_TYPLE(synctabs_, bool, static_path_storage)
+    BEGIN_DECL_TYPLE(loggingdir_, std::string, static_path_storage)
 
     typedef common::storages::storage_container<genereted_settings::setting_langauge_, genereted_settings::setting_style_,
                                                 genereted_settings::setting_connections_, genereted_settings::setting_view_,
@@ -115,7 +115,7 @@ namespace fastoredis
         return GET_SETTING(genereted_settings::setting_style_).value();
     }
 
-    void SettingsManager::setCurrentStyle(const common::unicode_string& st)
+    void SettingsManager::setCurrentStyle(const std::string &st)
     {
         GET_SETTING(genereted_settings::setting_style_).set_value(st);
     }
@@ -125,7 +125,7 @@ namespace fastoredis
         return GET_SETTING(genereted_settings::setting_langauge_).value();
     }
 
-    void SettingsManager::setCurrentLanguage(const common::unicode_string& lang)
+    void SettingsManager::setCurrentLanguage(const std::string &lang)
     {
         GET_SETTING(genereted_settings::setting_langauge_).set_value(lang);
     }
@@ -177,12 +177,12 @@ namespace fastoredis
         GET_SETTING(genereted_settings::setting_synctabs_).set_value(sync);
     }
 
-    void SettingsManager::setLoggingDirectory(const common::unicode_string& dir)
+    void SettingsManager::setLoggingDirectory(const std::string &dir)
     {
          GET_SETTING(genereted_settings::setting_loggingdir_).set_value(dir);
     }
 
-    common::unicode_string SettingsManager::loggingDirectory() const
+    std::string SettingsManager::loggingDirectory() const
     {
         return GET_SETTING(genereted_settings::setting_loggingdir_).value();
     }

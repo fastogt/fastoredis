@@ -42,7 +42,7 @@ namespace fastoredis
                 for(int i = 0; i < inf.propertyes_.size(); ++i)
                 {
                     PropertyType it = inf.propertyes_[i];
-                    model->addItem(new PropertyTableItem(common::convertfromString<QString>(it.first), common::convertfromString<QString>(it.second)));
+                    model->addItem(new PropertyTableItem(common::convertFromString<QString>(it.first), common::convertFromString<QString>(it.second)));
                 }
             }
         }

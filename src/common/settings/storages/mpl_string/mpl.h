@@ -38,16 +38,19 @@ namespace common
         {
             typedef typename detail::string_to_vector_impl<typename boost::mpl::begin<mpl_string>::type, boost::mpl::size<mpl_string>::value>::type type;
         };
+
         template <typename mpl_vector_char>
         struct vector_to_string
         {
             typedef typename boost::mpl::copy< mpl_vector_char , boost::mpl::inserter<boost::mpl::string<>, boost::mpl::push_back<boost::mpl::_1, boost::mpl::_2> > >::type type;
         };
+
         template<typename mpl_vector_char,char old_value,char new_value>
         struct replace_char
         {
             typedef typename boost::mpl::replace<mpl_vector_char,boost::mpl::char_<old_value>,boost::mpl::char_<new_value> >::type type;
         };
+
         template<typename mpl_vector_char,char old_value>
         struct remove_char
         {

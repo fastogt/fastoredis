@@ -23,10 +23,10 @@ namespace fastoredis
         supportedViews defaultView() const;
 
         std::string currentStyle() const;
-        void setCurrentStyle(const common::unicode_string& style);
+        void setCurrentStyle(const std::string& style);
 
         std::string currentLanguage() const;
-        void setCurrentLanguage(const common::unicode_string& lang);
+        void setCurrentLanguage(const std::string& lang);
 
         void addConnection(const IConnectionSettingsBasePtr &connection);
         void removeConnection(const IConnectionSettingsBasePtr &connection);
@@ -34,8 +34,8 @@ namespace fastoredis
         bool syncTabs() const;
         void setSyncTabs(bool sync);
 
-        void setLoggingDirectory(const common::unicode_string& dir);
-        common::unicode_string loggingDirectory() const;
+        void setLoggingDirectory(const std::string &dir);
+        std::string loggingDirectory() const;
 
         ConnectionSettingsContainerType connections() const;
 

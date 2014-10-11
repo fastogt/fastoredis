@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "common/utils.h"
+#include "common/convert2string.h"
 
 namespace common 
 {
@@ -36,14 +37,15 @@ namespace common
             }
         }
 
-        const char *stringTypes[] = { "TYPE_NULL",
-                                      "TYPE_BOOLEAN",
-                                      "TYPE_INTEGER",
-                                      "TYPE_DOUBLE",
-                                      "TYPE_STRING",
-                                      "TYPE_ARRAY",
-                                      "TYPE_STATUS",
-									  "TYPE_ERROR"
+        const char16 *stringTypes[] = { UTEXT("TYPE_NULL"),
+                                      UTEXT("TYPE_BOOLEAN"),
+                                      UTEXT("TYPE_INTEGER"),
+                                      UTEXT("TYPE_UINTEGER"),
+                                      UTEXT("TYPE_DOUBLE"),
+                                      UTEXT("TYPE_STRING"),
+                                      UTEXT("TYPE_ARRAY"),
+                                      UTEXT("TYPE_STATUS"),
+                                      UTEXT("TYPE_ERROR")
                                     };
     }
 
@@ -65,9 +67,9 @@ namespace common
 
     }
 
-    unicode_string Value::toString() const
+    string16 Value::toString() const
 	{
-		return "";
+        return UTEXT("");
 	}
 
 	// static
@@ -95,10 +97,15 @@ namespace common
 	}
 
 	// static
-    StringValue* Value::createStringValue(const unicode_string &in_value)
+    StringValue* Value::createStringValue(const string16 &in_value)
     {
         return new StringValue(in_value);
 	}
+
+    StringValue* Value::createStringValue(const std::string& in_value)
+    {
+        return new StringValue(convertToString16(in_value));
+    }
 
     // static
     ArrayValue* Value::createArrayValue()
@@ -106,16 +113,21 @@ namespace common
         return new ArrayValue();
     }
 
-    ErrorValue* Value::createErrorValue(const unicode_string &in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
+    ErrorValue* Value::createErrorValue(const string16 &in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
     {
         return new ErrorValue(in_value, errorType, level);
     }
 
-    // static
-    unicode_string Value::toString(Type t)
+    ErrorValue* Value::createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
     {
-        std::string result;
-        int count = sizeof(stringTypes)/sizeof(*stringTypes);
+        return createErrorValue(convertToString16(in_value), errorType, level);
+    }
+
+    // static
+    string16 Value::toString(Type t)
+    {
+        string16 result;
+        static const int count = SIZEOFMASS(stringTypes);
         if(t < count){
             result = stringTypes[t];
         }
@@ -142,7 +154,7 @@ namespace common
         return false;
 	}
 
-    bool Value::getAsString(unicode_string *out_value) const
+    bool Value::getAsString(string16 *out_value) const
     {
         return false;
 	}
@@ -219,33 +231,28 @@ namespace common
     {
 	}
 
-    unicode_string FundamentalValue::toString() const
-	{
-		char tmp[32] = {0};
+    string16 FundamentalValue::toString() const
+    {
         switch (getType()) {
             case TYPE_BOOLEAN:
             {
-                return boolean_value_ ? "true" : "false";
+                return boolean_value_ ? UTEXT("true") : UTEXT("false");
             }
             case TYPE_INTEGER:
             {
-                sprintf(tmp, "%d", integer_value_);
-                break;
+                return common::convertToString16(integer_value_);
             }
             case TYPE_UINTEGER:
             {
-                sprintf(tmp, "%u", uinteger_value_);
-                break;
+                return common::convertToString16(uinteger_value_);
             }
             case TYPE_DOUBLE:
             {
-                sprintf(tmp, "%lf", double_value_);
-                break;
+                return common::convertToString16(double_value_);
             }
             default:
-                break;
-		}
-		return tmp;
+                return UTEXT("");
+        }
 	}
 
     bool FundamentalValue::getAsBoolean(bool* out_value) const
@@ -325,7 +332,14 @@ namespace common
 
 	///////////////////// StringValue ////////////////////
 
-    StringValue::StringValue(const unicode_string &in_value)
+    StringValue::StringValue(const std::string& in_value)
+        : Value(TYPE_STRING),
+          value_(convertToString16(in_value))
+    {
+
+    }
+
+    StringValue::StringValue(const string16 &in_value)
 		: Value(TYPE_STRING),
           value_(in_value)
     {
@@ -335,12 +349,12 @@ namespace common
     {
 	}
 
-    unicode_string StringValue::toString() const
+    string16 StringValue::toString() const
 	{
 		return value_;
 	}
 
-    bool StringValue::getAsString(unicode_string *out_value) const
+    bool StringValue::getAsString(string16 *out_value) const
     {
 	  if (out_value)
 		*out_value = value_;
@@ -356,7 +370,7 @@ namespace common
     {
         if (other->getType() != getType())
             return false;
-        std::string lhs, rhs;
+        string16 lhs, rhs;
         return getAsString(&lhs) && other->getAsString(&rhs) && lhs == rhs;
     }
 
@@ -439,7 +453,7 @@ namespace common
         return value->getAsDouble(out_value);
 	}
 
-    bool ArrayValue::getString(size_t index, unicode_string *out_value) const
+    bool ArrayValue::getString(size_t index, string16 *out_value) const
     {
         const Value* value;
         if (!get(index, &value))
@@ -530,14 +544,14 @@ namespace common
         append(createDoubleValue(in_value));
 	}
 
-    void ArrayValue::appendString(const unicode_string &in_value)
+    void ArrayValue::appendString(const string16 &in_value)
     {
         append(createStringValue(in_value));
     }
 
-    void ArrayValue::appendStrings(const std::vector<unicode_string>& in_values)
+    void ArrayValue::appendStrings(const std::vector<string16>& in_values)
     {
-        for (std::vector<std::string>::const_iterator it = in_values.begin();
+        for (std::vector<string16>::const_iterator it = in_values.begin();
         it != in_values.end(); ++it) {
             appendString(*it);
         }
@@ -621,9 +635,9 @@ namespace common
         return true;
 	}
 
-	std::string ArrayValue::toString() const
+    string16 ArrayValue::toString() const
 	{
-		std::string result;
+        string16 result;
 
 		for (ValueVector::const_iterator i(list_.begin()); i != list_.end(); ++i)
 			result += (*i)->toString();
@@ -631,7 +645,13 @@ namespace common
 		return result;
 	}
 
-    ErrorValue::ErrorValue(const unicode_string &in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
+    ErrorValue::ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
+        : Value(TYPE_ERROR), description_(convertToString16(in_value)), errorType_(errorType), level_(level)
+    {
+
+    }
+
+    ErrorValue::ErrorValue(const string16 &in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
         : Value(TYPE_ERROR), description_(in_value), errorType_(errorType), level_(level)
     {
     }
@@ -657,12 +677,12 @@ namespace common
         return level_;
     }
 
-    unicode_string ErrorValue::description() const
+    string16 ErrorValue::description() const
     {
         return description_;
     }
 
-    unicode_string ErrorValue::toString() const
+    string16 ErrorValue::toString() const
 	{
 		return description();
 	}

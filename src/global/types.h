@@ -15,12 +15,12 @@ namespace fastoredis
             InnerCommand
         };
         Command();
-        Command(const common::unicode_string &mess, c_type t = InnerCommand);
-        const common::unicode_string message() const;
+        Command(const common::string16 &mess, c_type t = InnerCommand);
+        const common::string16& message() const;
         const c_type type() const;
 
     private:
-        const common::unicode_string message_;
+        const common::string16 message_;
         c_type type_;
     };
 }

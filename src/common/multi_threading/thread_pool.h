@@ -12,7 +12,8 @@ namespace common
         public:
             typedef typename impl_t::task_type task_type;
 
-            thread_pool():pimpl_()
+            thread_pool()
+                : pimpl_()
             {
 
             }

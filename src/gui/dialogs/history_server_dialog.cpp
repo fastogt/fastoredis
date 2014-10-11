@@ -37,7 +37,7 @@ namespace fastoredis
         VERIFY(connect(serverInfoGroupsNames_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshInfoFields(int)) ));
         VERIFY(connect(serverInfoFields_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshGraph(int)) ));
         for(int i = 0; i < SIZEOFMASS(redisHeaders); ++i){
-            serverInfoGroupsNames_->addItem(common::convertfromString<QString>(redisHeaders[i]));
+            serverInfoGroupsNames_->addItem(common::convertFromString<QString>(redisHeaders[i]));
         }
 
         QVBoxLayout *setingsLayout = new QVBoxLayout(this);
@@ -78,7 +78,7 @@ namespace fastoredis
         const int sizeMass = field.second.size_;
         for(int i = 0; i < sizeMass; ++i){
             const unsigned char indexInner = field.second.mass_[i];
-            serverInfoFields_->addItem(common::convertfromString<QString>(field.first.mass_[indexInner]), indexInner);
+            serverInfoFields_->addItem(common::convertFromString<QString>(field.first.mass_[indexInner]), indexInner);
         }
     }
 

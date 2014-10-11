@@ -61,8 +61,8 @@ namespace fastoredis
                 const QString &newValue = value.toString();
                 if(newValue != node->value_){
                     PropertyType pr;
-                    pr.first = common::convert2string(node->key_);
-                    pr.second = common::convert2string(newValue);
+                    pr.first = common::convertToString(node->key_);
+                    pr.second = common::convertToString(newValue);
                     emit changedProperty(pr);
                 }
             }
@@ -73,12 +73,12 @@ namespace fastoredis
 
     void PropertyTableModel::changeProperty(const PropertyType &pr)
     {
-        const QString &key = common::convertfromString<QString>(pr.first);
+        const QString &key = common::convertFromString<QString>(pr.first);
         for(int i = 0; i < data_.size(); ++i)
         {
             PropertyTableItem *it = dynamic_cast<PropertyTableItem*>(data_[i]);
             if(it->key_ == key){
-                it->value_ = common::convertfromString<QString>(pr.second);
+                it->value_ = common::convertFromString<QString>(pr.second);
                 emit dataChanged(index(i,0),index(i,1));
                 break;
             }

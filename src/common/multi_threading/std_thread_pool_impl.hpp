@@ -29,7 +29,7 @@ namespace common
             void post(task_type task)
             {
                 {
-                    guard_wraper<mutex_type> lock(queue_mutex);
+                    unique_lock<mutex_t> lock(queue_mutex);
                     tasks.push_back(task);
                 }
                 condition.notify_one();
@@ -60,7 +60,7 @@ namespace common
                 workers.clear();
                 tasks.clear();
                 for(size_t i = 0;i<threads;++i){
-                    workers.push_back(thread_type(std::bind(&std_thread_pool_impl::run_work,this)));
+                    workers.push_back(thread_t(std::bind(&std_thread_pool_impl::run_work, this)));
                 }
             }
 
@@ -76,7 +76,7 @@ namespace common
                   task_type task;
                   while(true){
                       {
-                          guard_wraper<mutex_type> lock(queue_mutex);
+                          unique_lock<mutex_t> lock(queue_mutex);
                           while(!stop_ && tasks.empty()){
                               condition.wait(lock);
                           }
@@ -90,10 +90,10 @@ namespace common
                   }
             }
 
-            std::vector<thread_type> workers;
+            std::vector<thread_t> workers;
             std::vector<task_type> tasks;
-            mutex_type queue_mutex;
-            condition_variable_type condition;
+            mutex_t queue_mutex;
+            condition_variable_t condition;
             volatile bool stop_;
         };
     }

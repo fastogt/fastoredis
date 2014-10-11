@@ -73,18 +73,19 @@ SET(MULTI_THREADING_SOURCES
         multi_threading/lockers.cpp
         multi_threading/thread_safe_containers.h
         multi_threading/common_headers.h
-        multi_threading/thread_adapter.hpp
         multi_threading/thread_pool.h
         multi_threading/std_thread_pool_impl.hpp
         multi_threading/pthread_thread_pool_impl.hpp
         multi_threading/pthread_wrapper.hpp)
 
 IF(BOOST_ENABLED)
-    SET(MULTI_THREADING_SOURCES ${MULTI_THREADING_SOURCES} multi_threading/boost_thread_pool_impl.h)
     SET(EVENTS_SOURCES events/static_events_bus.h)
 ENDIF(BOOST_ENABLED)
 
 SET(COMMON_SOURCES runtime_bitset.h runtime_bitset.cpp log_levels.h logger.h logger.cpp common_config.h
+basictypes.h
+safe_sprintf.h safe_sprintf.cpp utf_string_conversions.h utf_string_conversions.cpp utf_string_conversion_utils.h utf_string_conversion_utils.cpp
+string_util.h string_util.cpp icu_utf.h string_piece.h string_piece.cpp string16.h string16.cpp
 convert2string.h convert2string.cpp types.h types.cpp lexical_cast.h lexical_cast.cpp
 macros.h macros.cpp mpl.h utils.h utils.cpp file_system.h file_system.cpp value.h value.cpp
 boost_extension.h smart_ptr.h url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net.h net.cpp

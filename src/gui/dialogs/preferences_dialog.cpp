@@ -43,9 +43,9 @@ namespace fastoredis
         stylesComboBox_ = new QComboBox();
         stylesComboBox_->addItems(getSupportedStyles());
         defaultViewComboBox_ = new QComboBox;
-        std::vector<std::string> allV = allSupportedViews();
+        std::vector<common::string16> allV = allSupportedViews();
         for(int i=0; i<allV.size(); ++i){
-            defaultViewComboBox_->addItem(common::convertfromString<QString>(allV[i]));
+            defaultViewComboBox_->addItem(common::convertFromString16<QString>(allV[i]));
         }
         stylesLayout->addWidget(defaultViewComboBox_);
         stylesLayout->addWidget(stylesComboBox_);
@@ -76,22 +76,22 @@ namespace fastoredis
 
     void PreferencesDialog::syncWithSettings()
     {
-        languagesComboBox_->setCurrentText(common::convertfromString<QString>(SettingsManager::instance().currentLanguage()));
-        stylesComboBox_->setCurrentText(common::convertfromString<QString>(SettingsManager::instance().currentStyle()));
-        defaultViewComboBox_->setCurrentText(common::convertfromString<QString>(common::convert2string(SettingsManager::instance().defaultView())));
+        languagesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentLanguage()));
+        stylesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentStyle()));
+        defaultViewComboBox_->setCurrentText(common::convertFromString16<QString>(common::convertToString16(SettingsManager::instance().defaultView())));
         syncTabs_->setChecked(SettingsManager::instance().syncTabs());
-        logDirPath_->setText(common::convertfromString<QString>(SettingsManager::instance().loggingDirectory()));
+        logDirPath_->setText(common::convertFromString<QString>(SettingsManager::instance().loggingDirectory()));
     }
 
     void PreferencesDialog::accept()
     {
         QString newLang = translations::applyLanguage(languagesComboBox_->currentText());
-        SettingsManager::instance().setCurrentLanguage(common::convert2string(newLang));
+        SettingsManager::instance().setCurrentLanguage(common::convertToString(newLang));
 
         applyStyle(stylesComboBox_->currentText());
-        SettingsManager::instance().setCurrentStyle(common::convert2string(stylesComboBox_->currentText()));
+        SettingsManager::instance().setCurrentStyle(common::convertToString(stylesComboBox_->currentText()));
 
-        SettingsManager::instance().setDefaultView(common::convertfromString<fastoredis::supportedViews>(common::convert2string(defaultViewComboBox_->currentText())));
+        SettingsManager::instance().setDefaultView(common::convertFromString16<fastoredis::supportedViews>(common::convertToString16(defaultViewComboBox_->currentText())));
 
         ServersManager::instance().setSyncServers(syncTabs_->isChecked());
         SettingsManager::instance().setSyncTabs(syncTabs_->isChecked());

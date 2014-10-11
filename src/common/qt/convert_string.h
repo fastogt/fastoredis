@@ -8,13 +8,14 @@
 
 namespace common
 {
-        unicode_string convert2string(const QString& from);
+        string16 convertToString16(const QString& from);
+        std::string convertToString(const QString& from);
 
         template<typename T>
         struct separator_traits
         {
             typedef QString type;
-            typedef unicode_char char_type;
+            typedef char16 char_type;
         #ifdef OS_WIN
             static const char_type separator = UTEXT('/');
             static const char_type* separators()
@@ -22,7 +23,7 @@ namespace common
                 return UTEXT("//");
             }
         #elif defined OS_POSIX
-            static const char_type separator = UTEXT('/');
+            static const char_type separator = '/';
             static const char_type* separators()
             {
                 return UTEXT("//");
@@ -31,9 +32,9 @@ namespace common
         };
 
         template<>
-        struct separator_traits<unicode_string>
+        struct separator_traits<string16>
         {
-            typedef unicode_string type;
+            typedef string16 type;
             typedef type::value_type char_type;
         #ifdef OS_WIN
             static const char_type separator = UTEXT('\\');
@@ -42,7 +43,7 @@ namespace common
                 return UTEXT("\\");
             }
         #else
-            static const char_type separator = UTEXT('/');
+            static const char_type separator = '/';
             static const char_type* separators()
             {
                 return UTEXT("//");

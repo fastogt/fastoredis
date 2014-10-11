@@ -8,9 +8,9 @@ namespace common
 {
     namespace net
     {
-        typedef std::pair<unicode_string, uint16_type> hostAndPort;
-        bool getRemoteMacAddress(const unicode_string &host, unicode_string &out_mac_address);
+        typedef std::pair<std::string, uint16_t> hostAndPort;
+        bool getRemoteMacAddress(const std::string &host, std::string &out_mac_address);
     }
 
-    unicode_string convert2string(const net::hostAndPort& from);
+    std::string convertToString(const net::hostAndPort& from);
 }

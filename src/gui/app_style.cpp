@@ -11,7 +11,7 @@ namespace fastoredis
 
     void applyStyle(const QString &styleName)
     {
-        if (styleName == common::convertfromString<QString>(AppStyle::defStyle)) {
+        if (styleName == common::convertFromString<QString>(AppStyle::defStyle)) {
             QApplication::setStyle(new AppStyle);
         }
         else {
@@ -21,7 +21,7 @@ namespace fastoredis
 
     QStringList getSupportedStyles()
     {
-        static QStringList result = QStringList() << common::convertfromString<QString>(AppStyle::defStyle) << QStyleFactory::keys();
+        static QStringList result = QStringList() << common::convertFromString<QString>(AppStyle::defStyle) << QStyleFactory::keys();
         return result;
     }
 

@@ -18,7 +18,7 @@ namespace common
             L_CRITICAL
         };
 
-        inline const unicode_char *log_level_to_text(LEVEL_LOG lev)
+        inline string16 log_level_to_text(LEVEL_LOG lev)
         {
             switch(lev)
             {

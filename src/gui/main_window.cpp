@@ -29,12 +29,12 @@ namespace fastoredis
         : QMainWindow()
     {
         using namespace common;
-        unicode_string lang = SettingsManager::instance().currentLanguage();
-        QString newLang = fastoredis::translations::applyLanguage(convertfromString<QString>(lang));
-        SettingsManager::instance().setCurrentLanguage(convert2string(newLang));
+        std::string lang = SettingsManager::instance().currentLanguage();
+        QString newLang = fastoredis::translations::applyLanguage(convertFromString<QString>(lang));
+        SettingsManager::instance().setCurrentLanguage(convertToString(newLang));
 
-        unicode_string style = SettingsManager::instance().currentStyle();
-        fastoredis::applyStyle(convertfromString<QString>(style));
+        std::string style = SettingsManager::instance().currentStyle();
+        fastoredis::applyStyle(convertFromString<QString>(style));
 
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
