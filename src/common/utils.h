@@ -2,6 +2,8 @@
 
 /**/
 
+#include <signal.h>
+
 #include <typeinfo>
 #include <vector>
 

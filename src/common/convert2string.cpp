@@ -1,6 +1,9 @@
 #include "common/convert2string.h"
 
 #include <stdlib.h>
+#include <ctype.h>
+#include <wctype.h>
+
 #include <limits>
 #include <vector>
 
