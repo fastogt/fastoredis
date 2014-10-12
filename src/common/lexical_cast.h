@@ -17,7 +17,7 @@ namespace common
         template<typename type_t,typename type_u>
         struct is_same_or_convertible
         {
-            static const bool value = boost::is_same<type_t,type_u>::value || boost::is_convertible<type_t,type_u>::value;
+            static const bool value = boost::is_same<type_t, type_u>::value || boost::is_convertible<type_t, type_u>::value;
         };
     }
 
@@ -33,12 +33,17 @@ namespace common
     struct variant_defualter
     {
         template<typename const_t>
-        explicit variant_defualter(const_t def,typename boost::enable_if<detail::is_same_or_convertible<const_t,type_t> >::type* v=0):value_(def){}
+        explicit variant_defualter(const_t def, typename boost::enable_if<detail::is_same_or_convertible<const_t, type_t> >::type* v=0) :
+            value_(def)
+        {
+
+        }
+
         struct not_supported_type;
         explicit variant_defualter(not_supported_type* v=0);
         type_t operator()()const
         {
-            return func_?func_():value_;
+            return func_ ? func_():value_;
         }
         type_t value_;
         boost::function<type_t()> func_;

@@ -39,7 +39,8 @@ namespace common
             inline type findTypeInArray(const char16 *(&arr)[size], const char16 *text)
             {
                 for (int i=0; i < size; ++i){
-                    if (c16memcmp(text, arr[i], c16len(text)) == 0){
+                    const size_t len = c16len(text);
+                    if (c16memcmp(text, arr[i], len) == 0){
                         return static_cast<type>(i);
                     }
                 }

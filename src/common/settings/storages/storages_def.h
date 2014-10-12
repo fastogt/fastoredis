@@ -2,9 +2,8 @@
 
 /**/
 
-#include "common/settings/storages/xml_storage.h"
+#include "common/settings/storages/ini_xml_storage.h"
 #include "common/settings/storages/memory_storage.h"
-#include "common/settings/storages/ini_storage.h"
 #ifdef OS_WIN
     #include "common/settings/storages/registry_storage.h"
 #endif
