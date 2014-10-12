@@ -56,16 +56,16 @@ public:
     typedef std::string internal_type;
     typedef fastoredis::SettingsManager::ConnectionSettingsContainerType external_type;
 
-    boost::optional<external_type> get_value( internal_type const &v )
+    boost::optional<external_type> get_value(internal_type const &v)
     {
         using namespace boost::archive::iterators;
-        typedef transform_width< binary_from_base64<remove_whitespace<std::string::const_iterator> >, 8, 6 > binary_text;
+        typedef transform_width< binary_from_base64<remove_whitespace<internal_type::const_iterator> >, 8, 6 > binary_text;
         external_type result;
         internal_type text;
         for(internal_type::const_iterator it = v.begin(); it != v.end(); ++it){
-            char ch = *it;
+            internal_type::value_type ch = *it;
             if(ch == ','){
-                std::string enc( binary_text(text.begin()), binary_text(text.end()));
+                internal_type enc( binary_text(text.begin()), binary_text(text.end()));
                 fastoredis::IConnectionSettingsBasePtr item(fastoredis::IConnectionSettingsBase::fromString(enc));
                 if(item){
                     result.push_back(item);
@@ -78,14 +78,14 @@ public:
         }
         return result;
     }
-    boost::optional<internal_type> put_value( external_type const& v )
+    boost::optional<internal_type> put_value(external_type const& v)
     {
         using namespace boost::archive::iterators;
-        typedef insert_linebreaks<base64_from_binary<transform_width<std::string::const_iterator,6,8> >, 72 > base64_text;
-        std::ostringstream stream;
+        typedef insert_linebreaks<base64_from_binary<transform_width<internal_type::const_iterator,6,8> >, 72 > base64_text;
+        std::basic_ostringstream<internal_type::value_type> stream;
         for(external_type::const_iterator it = v.begin(); it != v.end(); ++it){
-            std::string text = (*it)->toString();
-            std::copy( base64_text(text.begin()), base64_text(text.end()), std::ostream_iterator<char>(stream) );
+            internal_type text = (*it)->toString();
+            std::copy( base64_text(text.begin()), base64_text(text.end()), std::ostream_iterator<internal_type::value_type>(stream) );
             stream << ',';
         }
         return stream.str();
