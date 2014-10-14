@@ -127,7 +127,7 @@ namespace common
             }
 
             std::string prPath = prepare_path(path);
-            if(prPath[prPath.length() - 1] == get_separator()){
+            if(prPath[prPath.length() - 1] == get_separator<char>()){
                 prPath[prPath.length() - 1] = 0;
             }
 
@@ -139,7 +139,7 @@ namespace common
                 uint8_t shift = 1;
 #endif
                 for(p = const_cast<char*>(prPath.c_str() + shift); *p; p++ ){
-                    if(*p == get_separator()){
+                    if(*p == get_separator<char>()){
                         *p = 0;
                         const char *path = prPath.c_str();
 
@@ -158,7 +158,7 @@ namespace common
                             create_directory_impl(path);
                         }
 
-                        *p = get_separator();
+                        *p = get_separator<char>();
                     }
                 }
                 return create_directory_impl(prPath.c_str());
@@ -308,17 +308,6 @@ namespace common
 {
     namespace file_system
     {
-        std::string stable_dir_path(std::string path)
-        {
-            if(!path.empty()){
-                path = prepare_path(path);
-                size_t lenght = path.length();
-                if (lenght > 1 && path[lenght - 1] != get_separator()){
-                    path += get_separator();
-                }
-            }
-            return path;
-        }
         Path make_path(const Path& p,const std::string &file_path)
         {
             Path result(p);
@@ -336,17 +325,10 @@ namespace common
 
             return result;
         }
-        std::string get_dir_path(std::string path)
-        {
-            size_t pos = path.find_last_of(get_separator());
-            if(pos != std::string::npos){
-                path = stable_dir_path(path.substr(0, pos));
-            }
-            return path;
-        }
+
         std::string prepare_path(std::string result)
         {
-             if(!result.empty()&&result[0]=='~'){
+             if(!result.empty()&&result[0] == '~'){
              #ifdef OS_POSIX
                  char* home = getenv("HOME");
              #else
@@ -358,32 +340,24 @@ namespace common
                      result += tmp.substr(1);
                  }
              }
-             std::replace(result.begin(), result.end(), '\\', get_separator());
+             std::replace(result.begin(), result.end(), '\\', get_separator<char>());
              return result;
         }
 
-        std::string get_file_name(std::string path)
-        {
-            size_t pos = path.find_last_of(get_separator());
-            if(pos != std::string::npos){
-                path = path.substr(pos+1);
-            }
-            return path;
-        }
 
         Path::Path()
-            :is_dir_(INDETERMINATE)
+            : is_dir_(INDETERMINATE)
         {
 
         }
 
         Path::Path(const std::string &path)
-            :is_dir_(file_system::is_directory(path)), path_(is_directory() ? stable_dir_path(path) : path)
+            : is_dir_(file_system::is_directory(path)), path_(is_directory() ? stable_dir_path(path) : path)
         {
         }
 
         Path::Path(const Path &other)
-            :is_dir_(other.is_dir_), path_(other.path_)
+            : is_dir_(other.is_dir_), path_(other.path_)
         {
 
         }
@@ -392,7 +366,7 @@ namespace common
         {
             std::string ext;
             size_t pos = path_.find_first_of('.');
-            if(pos!=std::string::npos){
+            if(pos != std::string::npos){
                 ext = path_.substr(pos+1);
             }
             return ext;
@@ -425,15 +399,6 @@ namespace common
                 else{
                      DEBUG_MSG_PERROR("stat");
                 }
-            }
-            return result;
-        }
-        tribool is_file(const std::string &path)
-        {
-            tribool result=INDETERMINATE;
-            result = is_directory(path);
-            if(result != INDETERMINATE){
-                result = result == SUCCESS ? FAIL:SUCCESS;
             }
             return result;
         }

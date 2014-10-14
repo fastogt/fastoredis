@@ -12,16 +12,58 @@ namespace common
 {
     namespace file_system
     {
-        std::string get_file_name(std::string path);
-        std::string get_dir_path(std::string path);
-        tribool is_directory(const std::string& path);
-        tribool is_file(const std::string& path);
-        std::string stable_dir_path(std::string dir);
         std::string prepare_path(std::string path);
 
-        inline char get_separator()
+        template<typename CharT>
+        inline CharT get_separator()
         {
             return '/';
+        }
+
+        template<typename CharT>
+        inline std::basic_string<CharT> get_file_name(std::basic_string<CharT> path)
+        {
+            size_t pos = path.find_last_of(get_separator<CharT>());
+            if(pos != std::basic_string<CharT>::npos){
+                path = path.substr(pos+1);
+            }
+            return path;
+        }
+
+        template<typename CharT>
+        inline std::basic_string<CharT> stable_dir_path(std::basic_string<CharT> path)
+        {
+            if(!path.empty()){
+                path = prepare_path(path);
+                size_t lenght = path.length();
+                if (lenght > 1 && path[lenght - 1] != get_separator<CharT>()){
+                    path += get_separator<CharT>();
+                }
+            }
+            return path;
+        }
+
+        template<typename CharT>
+        inline std::basic_string<CharT> get_dir_path(std::basic_string<CharT> path)
+        {
+            size_t pos = path.find_last_of(get_separator<CharT>());
+            if(pos != std::basic_string<CharT>::npos){
+                path = stable_dir_path(path.substr(0, pos));
+            }
+            return path;
+        }
+
+        tribool is_directory(const std::string& path);
+
+        template<typename CharT>
+        tribool is_file(const std::basic_string<CharT>& path)
+        {
+            tribool result = INDETERMINATE;
+            result = is_directory(path);
+            if(result != INDETERMINATE){
+                result = result == SUCCESS ? FAIL : SUCCESS;
+            }
+            return result;
         }
 
         class Path
@@ -44,8 +86,8 @@ namespace common
             std::string path_;
         };
 
-        Path make_path(const Path& p,const std::string &file_path);
-        Path make_path_from_uri(const Path& p,const std::string &uri);
+        Path make_path(const Path& p, const std::string &file_path);
+        Path make_path_from_uri(const Path& p, const std::string &uri);
 
         inline bool operator <(const Path &lhs,const Path &rhs)
         {
