@@ -1,6 +1,5 @@
 #include "core/redis/redis_driver.h"
 
-#include <hiredis/hiredis.h>
 #include <errno.h>
 
 extern "C" {
@@ -9,6 +8,7 @@ extern "C" {
 #include <sds.h>
 #include <version.h>
 #include <release.h>
+#include <hiredis/hiredis.h>
 }
 
 #include "common/qt/convert_string.h"
