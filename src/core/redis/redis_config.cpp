@@ -79,7 +79,7 @@ namespace fastoredis
                     const uint16_t size_buff = 256;
                     char buff[size_buff] = {0};
                     common::strings::SafeSNPrintf(buff, size_buff, "Unrecognized option or bad number of args for: '%s'", curArg);
-                    common::ErrorValue er(buff, common::Value::E_ERROR);
+                    common::ErrorValueSPtr er(new common::ErrorValue(buff, common::Value::E_ERROR));
                     LOG_ERROR(er);
                     break;
                 } else {

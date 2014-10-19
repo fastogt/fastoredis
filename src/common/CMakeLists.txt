@@ -88,7 +88,7 @@ safe_sprintf.h safe_sprintf.cpp utf_string_conversions.h utf_string_conversions.
 string_util.h string_util.cpp icu_utf.h string_piece.h string_piece.cpp string16.h string16.cpp
 convert2string.h convert2string.cpp types.h types.cpp lexical_cast.h lexical_cast.cpp
 macros.h macros.cpp mpl.h utils.h utils.cpp file_system.h file_system.cpp value.h value.cpp
-boost_extension.h smart_ptr.h url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net.h net.cpp
+boost_extension.h url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net.h net.cpp
 ${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${FILE_PARSERS} ${DATABASE_SUPPORT_SOURCES} ${SETTINGS_SOURCES} ${MULTI_THREADING_SOURCES} ${EVENTS_SOURCES})
 
 SET(COMMON_LIBS ${DATABASE_SUPPORT_LIBS})

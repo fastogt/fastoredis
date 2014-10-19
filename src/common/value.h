@@ -2,10 +2,12 @@
 
 /**/
 
-#include <boost/scoped_ptr.hpp>
 #include <vector>
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "common/log_levels.h"
+#include "common/types.h"
 
 namespace common 
 {
@@ -77,7 +79,8 @@ namespace common
         Type type_;
     };
 
-    class FundamentalValue : public Value
+    class FundamentalValue
+            : public Value
     {
     public:
         explicit FundamentalValue(bool in_value);
@@ -105,7 +108,8 @@ namespace common
         };
     };
 
-    class StringValue : public Value
+    class StringValue
+            : public Value
     {
         public:
             explicit StringValue(const std::string& in_value);
@@ -122,7 +126,8 @@ namespace common
             string16 value_;
     };
 
-    class ArrayValue : public Value
+    class ArrayValue
+            : public Value
     {
     public:
         typedef ValueVector::iterator iterator;
@@ -193,7 +198,8 @@ namespace common
         ValueVector list_;
     };
 
-    class ErrorValue : public Value
+    class ErrorValue
+            : public Value
     {
     public:
         ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
@@ -208,11 +214,13 @@ namespace common
         virtual ~ErrorValue();
 
     private:
-		//DISALLOW_COPY_AND_ASSIGN(ErrorValue);
+        DISALLOW_COPY_AND_ASSIGN(ErrorValue);
         string16 description_;
         ErrorsType errorType_;
         common::logging::LEVEL_LOG level_;
     };
+
+    typedef boost::shared_ptr<ErrorValue> ErrorValueSPtr;
 
     std::ostream& operator<<(std::ostream& out, const Value& value);
 

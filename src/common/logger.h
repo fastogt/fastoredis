@@ -14,10 +14,10 @@ namespace common
 {
     namespace logging
     {
-        class logger:
-                public patterns::lazy_singleton<logger>
+        class Logger:
+                public patterns::lazy_singleton<Logger>
         {
-            friend class patterns::lazy_singleton<logger>;
+            friend class patterns::lazy_singleton<Logger>;
         public:
             void printTradeSafe(LEVEL_LOG level, const std::string& data);
 
@@ -54,8 +54,8 @@ namespace common
             }
 
         private:
-            logger();
-            ~logger();
+            Logger();
+            ~Logger();
 
 #ifdef OS_WIN
     typedef multi_threading::critical_section locker_type;
@@ -70,25 +70,25 @@ namespace common
     template<uint16_t buff_size, typename T>
     inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const char* fmt, T t)
     {
-        return logging::logger::instance().printTradeSafe<buff_size>(level, fmt, t);
+        return logging::Logger::instance().printTradeSafe<buff_size>(level, fmt, t);
     }
 
     template<uint16_t buff_size, typename T1, typename T2>
     inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const char* fmt, T1 t1, T2 t2)
     {
-        return logging::logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2);
+        return logging::Logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2);
     }
 
     template<uint16_t buff_size, typename T1, typename T2, typename T3>
     inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const char* fmt, T1 t1, T2 t2, T3 t3)
     {
-        return logging::logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2, t3);
+        return logging::Logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2, t3);
     }
 
     template<uint16_t buff_size, typename T1, typename T2, typename T3, typename T4>
     inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const char* fmt, T1 t1, T2 t2, T3 t3, T4 t4)
     {
-        return logging::logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2, t3, t4);
+        return logging::Logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2, t3, t4);
     }
 
     void DEBUG_MSG_PERROR(const char* function);

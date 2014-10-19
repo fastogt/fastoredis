@@ -34,8 +34,8 @@ namespace fastoredis
     void PropertyServerDialog::finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &res)
     {
         glassWidget_->stop();
-        common::ErrorValue er = res.errorInfo();
-        if(!er.isError()){
+        boost::shared_ptr<common::ErrorValue> er = res.errorInfo();
+        if(!er->isError()){
             if(type_ == REDIS){
                 ServerPropertyInfo inf = res.info_;
                 PropertyTableModel *model = qobject_cast<PropertyTableModel*>(propertyes_table_->model());
@@ -55,8 +55,8 @@ namespace fastoredis
 
     void PropertyServerDialog::finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &res)
     {
-        common::ErrorValue er = res.errorInfo();
-        if(!er.isError()){
+        boost::shared_ptr<common::ErrorValue> er = res.errorInfo();
+        if(!er->isError()){
             if(type_ == REDIS){
                 PropertyType pr = res.newItem_;
                 if(res.isChange_){

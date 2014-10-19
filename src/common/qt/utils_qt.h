@@ -71,7 +71,7 @@ namespace common
                     return errorInfo_;
                 }
 
-                void setErrorInfo(const error_type &er)
+                void setErrorInfo(error_type er)
                 {
                     errorInfo_ = er;
                 }

@@ -188,8 +188,8 @@ namespace fastoredis
 
     void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res)
     {
-        const common::ErrorValue &er = res.errorInfo();
-        if(!er.isError()){
+        boost::shared_ptr<common::ErrorValue> er = res.errorInfo();
+        if(!er->isError()){
             IServer *serv = qobject_cast<IServer *>(sender());
             DCHECK(serv);
             EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;

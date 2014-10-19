@@ -105,8 +105,8 @@ namespace fastoredis
     void InfoServerDialog::finishServerInfo(const EventsInfo::ServerInfoResponce &res)
     {
         glassWidget_->stop();
-        common::ErrorValue er = res.errorInfo();
-        if(!er.isError()){
+        boost::shared_ptr<common::ErrorValue> er = res.errorInfo();
+        if(!er->isError()){
             if(type_ == REDIS){
                 updateText(res.info_);
             }

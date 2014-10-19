@@ -2,8 +2,6 @@
 
 /**/
 
-#include <boost/shared_ptr.hpp>
-
 #include <QObject>
 
 #include "core/connection_settings.h"
@@ -50,7 +48,7 @@ namespace fastoredis
 
     protected:
         virtual void initImpl() = 0;
-        virtual common::ErrorValue currentLoggingInfo(FastoObjectPtr& outInfo) = 0;
+        virtual common::ErrorValueSPtr currentLoggingInfo(FastoObjectPtr& outInfo) = 0;
 
         virtual void connectEvent(Events::ConnectRequestEvent *ev) = 0;
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev) = 0;

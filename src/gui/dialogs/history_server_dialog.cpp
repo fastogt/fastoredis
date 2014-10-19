@@ -59,8 +59,8 @@ namespace fastoredis
     void ServerHistoryDialog::finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &res)
     {
         glassWidget_->stop();
-        common::ErrorValue er = res.errorInfo();
-        if(!er.isError()){
+        boost::shared_ptr<common::ErrorValue> er = res.errorInfo();
+        if(!er->isError()){
             if(type_ == REDIS){
                 infos_ = res.infos_;
             }

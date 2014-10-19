@@ -118,7 +118,6 @@ namespace
 namespace fastoredis
 {
     struct RedisDriver::pimpl
-
     {
         pimpl(): interrupt_(false), context(NULL)
         {
@@ -136,7 +135,7 @@ namespace fastoredis
         redisContext *context;
         redisConfig config;        
 
-        int cliAuth(common::ErrorValue& er) {
+        int cliAuth(common::ErrorValueSPtr& er) {
             redisReply *reply;
             if (config.auth.empty()) return REDIS_OK;
 
@@ -148,7 +147,7 @@ namespace fastoredis
             cliPrintContextError(er);
             return REDIS_ERR;
         }
-        int cliSelect(common::ErrorValue& er) {
+        int cliSelect(common::ErrorValueSPtr& er) {
             redisReply *reply;
             if (config.dbnum == 0) return REDIS_OK;
 
@@ -160,7 +159,7 @@ namespace fastoredis
             cliPrintContextError(er);
             return REDIS_ERR;
         }
-        int cliConnect(int force, common::ErrorValue& er)
+        int cliConnect(int force, common::ErrorValueSPtr& er)
         {
             if (context == NULL || force) {
                 if (context != NULL)
@@ -178,7 +177,7 @@ namespace fastoredis
                         sprintf(buff,"Could not connect to Redis at %s:%d: %s\n",config.hostip.c_str(),config.hostport,context->errstr);
                     else
                         sprintf(buff,"Could not connect to Redis at %s: %s\n",config.hostsocket.c_str(),context->errstr);
-                    er = common::ErrorValue(buff, common::ErrorValue::E_ERROR);
+                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
                     redisFree(context);
                     context = NULL;
                     return REDIS_ERR;
@@ -228,11 +227,11 @@ namespace fastoredis
             snprintf(config.prompt+len,sizeof(config.prompt)-len,"> ");
         }
 
-        void cliPrintContextError(common::ErrorValue& er) {
+        void cliPrintContextError(common::ErrorValueSPtr& er) {
             if (context == NULL) return;
             char buff[512] = {0};
             sprintf(buff,"Error: %s\n",context->errstr);
-            er = common::ErrorValue(buff, common::ErrorValue::E_ERROR);
+            er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
         }
 
         void cliFormatReplyRaw(FastoObject* out, redisReply *r) {
@@ -353,7 +352,7 @@ namespace fastoredis
             }
         }
 
-        int cliReadReply(FastoObject* out, common::ErrorValue& er) {
+        int cliReadReply(FastoObject* out, common::ErrorValueSPtr& er) {
             void *_reply;
             redisReply *reply;
 
@@ -402,7 +401,7 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        int cliSendCommand(FastoObject* out, common::ErrorValue& er, int argc, char **argv, int repeat)
+        int cliSendCommand(FastoObject* out, common::ErrorValueSPtr& er, int argc, char **argv, int repeat)
         {
             char *command = argv[0];
             size_t *argvlen;
@@ -457,14 +456,14 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        void repl_impl(FastoObject* out, common::ErrorValue &er) {
+        void repl_impl(FastoObject* out, common::ErrorValueSPtr &er) {
             const char *command = out->toString().c_str();
             if (command[0] != '\0') {
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
 
                 if (!argv) {
-                    common::StringValue *val =common::Value::createStringValue("Invalid argument(s)");
+                    common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
                     out->addChildren(new FastoObject(out, val));
                 }
                 else if (argc > 0)
@@ -561,11 +560,11 @@ namespace fastoredis
 
     }
 
-    common::ErrorValue RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
+    common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
     {
         FastoObject* outRoot = FastoObject::createRoot(INFO_REQUEST);
         outInfo = outRoot;
-        common::ErrorValue er;
+        common::ErrorValueSPtr er;
         impl_->repl_impl(outRoot, er);
         return er;
     }
@@ -578,10 +577,11 @@ namespace fastoredis
             RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(settings_.get());
             if(set){
                 impl_->config = set->info();
-                common::ErrorValue er;
+                common::ErrorValueSPtr er;
         notifyProgress(sender, 25);
                     if(impl_->interrupt_){
-                        res.setErrorInfo(common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
+                        common::ErrorValueSPtr er(new common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
+                        res.setErrorInfo(er);
                     }
                     else if(impl_->cliConnect(0, er) == REDIS_ERR){
                         res.setErrorInfo(er);
@@ -600,7 +600,7 @@ namespace fastoredis
             Events::ExecuteResponceEvent::value_type res(ev->value());
             const char *inputLine = toCString(res._text);
 
-            common::ErrorValue er;
+            common::ErrorValueSPtr er;
             if(inputLine){
                 impl_->cliRefreshPrompt();
 
@@ -610,7 +610,8 @@ namespace fastoredis
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->interrupt_){
-                        res.setErrorInfo(common::ErrorValue("Interrupted exec.", common::ErrorValue::E_INTERRUPTED));
+                        common::ErrorValueSPtr er(new common::ErrorValue("Interrupted exec.", common::ErrorValue::E_INTERRUPTED));
+                        res.setErrorInfo(er);
                         break;
                     }
                     if(inputLine[n] == '\n' || n == length-1){
@@ -633,7 +634,8 @@ namespace fastoredis
                 res._out = outRoot;
             }
             else{
-                res.setErrorInfo(common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
+                common::ErrorValueSPtr er(new common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
+                res.setErrorInfo(er);
             }            
             reply(sender, new Events::ExecuteResponceEvent(this, res));
         notifyProgress(sender, 100);
@@ -658,11 +660,11 @@ namespace fastoredis
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
             FastoObject* root = FastoObject::createRoot(common::convertToString16(loadDabasesString));
-            common::ErrorValue er;
+            common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(common::convertToString16(loadDabasesString)));
             impl_->repl_impl(root, er);
-            if(er.isError()){
+            if(er->isError()){
                 res.setErrorInfo(er);
             }else{
                 FastoObject::child_container_type childrens = root->childrens();
@@ -692,11 +694,11 @@ namespace fastoredis
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
             FastoObject* root = FastoObject::createRoot(INFO_REQUEST);
-            common::ErrorValue er;
+            common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(INFO_REQUEST));
             impl_->repl_impl(root, er);
-            if(er.isError()){
+            if(er->isError()){
                 res.setErrorInfo(er);
             }else{
                 res.info_ = makeServerInfo(root);
@@ -713,11 +715,11 @@ namespace fastoredis
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
             FastoObject* root = FastoObject::createRoot(common::convertToString16(propetyString));
-            common::ErrorValue er;
+            common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(common::convertToString16(propetyString)));
             impl_->repl_impl(root, er);
-            if(er.isError()){
+            if(er->isError()){
                 res.setErrorInfo(er);
             }else{
                 res.info_ = makeServerProperty(root);
@@ -732,13 +734,13 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ChangeServerPropertyInfoResponceEvent::value_type res(ev->value());
-            common::ErrorValue er;
+        common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         FastoObject* root = FastoObject::createRoot(common::convertToString16(changeRequest));
             LOG_COMMAND(Command(common::convertToString16(changeRequest)));
             impl_->repl_impl(root, er);
-            if(er.isError()){
+            if(er->isError()){
                 res.setErrorInfo(er);
             }else{
                 res.isChange_ = true;
