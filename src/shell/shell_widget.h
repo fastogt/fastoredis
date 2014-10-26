@@ -58,8 +58,8 @@ namespace fastoredis
         QAction *_connectAction;
         QAction *_disConnectAction;
         QAction *_loadAction;
-        QAction *_saveAction;
-        QAction *_saveAsAction;
+        QAction *saveAction_;
+        QAction *saveAsAction_;
 
 
         IconLabel *_serverName;

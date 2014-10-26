@@ -76,6 +76,7 @@ namespace fastoredis
         testButton_->setEnabled(isValidType);
         commandLine_->setEnabled(isValidType);
         buttonBox_->button(QDialogButtonBox::Save)->setEnabled(isValidType);
+        commandLine_->setToolTip(useHelpText(currentType));
     }
 
     void ConnectionDialog::accept()

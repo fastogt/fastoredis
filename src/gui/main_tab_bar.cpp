@@ -10,23 +10,23 @@ namespace fastoredis
     MainTabBar::MainTabBar(QWidget *parent)
         : QTabBar(parent)
     {
-        _newShellAction = new QAction(this);
-        _newShellAction->setShortcut(Qt::CTRL + Qt::Key_T);
-        VERIFY(connect(_newShellAction, SIGNAL(triggered()), this , SIGNAL(createdNewTab())));
+        newShellAction_ = new QAction(this);
+        newShellAction_->setShortcut(Qt::CTRL + Qt::Key_T);
+        VERIFY(connect(newShellAction_, SIGNAL(triggered()), this , SIGNAL(createdNewTab())));
 
-        _reloadShellAction = new QAction(this);
-        _reloadShellAction->setShortcut(Qt::CTRL + Qt::Key_R);
-        VERIFY(connect(_reloadShellAction, SIGNAL(triggered()), this , SIGNAL(reloadedTab())));
+        reloadShellAction_ = new QAction(this);
+        reloadShellAction_->setShortcut(Qt::CTRL + Qt::Key_R);
+        VERIFY(connect(reloadShellAction_, SIGNAL(triggered()), this , SIGNAL(reloadedTab())));
 
-        _duplicateShellAction = new QAction(this);
-        VERIFY(connect(_duplicateShellAction, SIGNAL(triggered()), this , SIGNAL(duplicatedTab())));
+        duplicateShellAction_ = new QAction(this);
+        VERIFY(connect(duplicateShellAction_, SIGNAL(triggered()), this , SIGNAL(duplicatedTab())));
 
-        _closeShellAction = new QAction(this);
-        _closeShellAction->setShortcut(Qt::CTRL + Qt::Key_W);
-        VERIFY(connect(_closeShellAction, SIGNAL(triggered()), this , SIGNAL(closedTab())));
+        closeShellAction_ = new QAction(this);
+        closeShellAction_->setShortcut(Qt::CTRL + Qt::Key_W);
+        VERIFY(connect(closeShellAction_, SIGNAL(triggered()), this , SIGNAL(closedTab())));
 
-        _closeOtherShellsAction = new QAction(this);
-        VERIFY(connect(_closeOtherShellsAction, SIGNAL(triggered()), this , SIGNAL(closedOtherTabs())));
+        closeOtherShellsAction_ = new QAction(this);
+        VERIFY(connect(closeOtherShellsAction_, SIGNAL(triggered()), this , SIGNAL(closedOtherTabs())));
 
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
@@ -37,13 +37,13 @@ namespace fastoredis
     void MainTabBar::showContextMenu(const QPoint &p)
     {
         QMenu menu(this);
-        menu.addAction(_newShellAction);
+        menu.addAction(newShellAction_);
         menu.addSeparator();
-        menu.addAction(_reloadShellAction);
-        menu.addAction(_duplicateShellAction);
+        menu.addAction(reloadShellAction_);
+        menu.addAction(duplicateShellAction_);
         menu.addSeparator();
-        menu.addAction(_closeShellAction);
-        menu.addAction(_closeOtherShellsAction);
+        menu.addAction(closeShellAction_);
+        menu.addAction(closeOtherShellsAction_);
         menu.exec(mapToGlobal(p));
     }
 
@@ -57,10 +57,10 @@ namespace fastoredis
 
     void MainTabBar::retranslateUi()
     {
-        _newShellAction->setText(tr("&New Tab"));
-        _reloadShellAction->setText(tr("&Reload"));
-        _duplicateShellAction->setText(tr("&Duplicate"));
-        _closeShellAction->setText(tr("&Close Tab"));
-        _closeOtherShellsAction->setText(tr("Close &Other Tab"));
+        newShellAction_->setText(tr("&New Tab"));
+        reloadShellAction_->setText(tr("&Reload"));
+        duplicateShellAction_->setText(tr("&Duplicate"));
+        closeShellAction_->setText(tr("&Close Tab"));
+        closeOtherShellsAction_->setText(tr("Close &Other Tab"));
     }
 }

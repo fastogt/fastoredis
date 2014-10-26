@@ -1,5 +1,7 @@
 #include "core/connection_settings.h"
 
+#include <QObject>
+
 #include <sstream>
 
 #include "core/settings_manager.h"
@@ -57,7 +59,7 @@ namespace fastoredis
                         int crT = elText[0] - 48;
                         switch(crT){
                             case REDIS:{
-                                result = new RedisConnectionSettings(UTEXT(""));
+                                result = new RedisConnectionSettings(UTEXT(""), redisConfig());
                                 break;
                             }
                             default:{
@@ -122,6 +124,16 @@ namespace fastoredis
     common::string16 IConnectionSettingsBase::connectionName() const
     {
         return connectionName_;
+    }
+
+    QString useHelpText(connectionTypes type)
+    {
+        if(type == DBUNKNOWN){
+            return QString();
+        }
+        else if(type == REDIS){
+            return QObject::tr("-h host -p port");
+        }
     }
 
     RedisConnectionSettings::RedisConnectionSettings(const common::string16 &connectionName, const redisConfig &info)

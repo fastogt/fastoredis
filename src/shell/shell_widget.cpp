@@ -126,12 +126,12 @@ namespace fastoredis
         _loadAction = new QAction(GuiFactory::instance().loadIcon(), "Load", savebar);
         VERIFY(connect(_loadAction, SIGNAL(triggered()), this, SLOT(loadFromFile())));
         savebar->addAction(_loadAction);
-        _saveAction = new QAction(GuiFactory::instance().saveIcon(), "Save", savebar);
-        VERIFY(connect(_saveAction, SIGNAL(triggered()), this, SLOT(saveToFile())));
-        savebar->addAction(_saveAction);
-        _saveAsAction = new QAction(GuiFactory::instance().saveAsIcon(), "Save as", savebar);
-        VERIFY(connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveToFileAs())));
-        savebar->addAction(_saveAsAction);
+        saveAction_ = new QAction(GuiFactory::instance().saveIcon(), "Save", savebar);
+        VERIFY(connect(saveAction_, SIGNAL(triggered()), this, SLOT(saveToFile())));
+        savebar->addAction(saveAction_);
+        saveAsAction_ = new QAction(GuiFactory::instance().saveAsIcon(), "Save as", savebar);
+        VERIFY(connect(saveAsAction_, SIGNAL(triggered()), this, SLOT(saveToFileAs())));
+        savebar->addAction(saveAsAction_);
 
         hlayout->addWidget(savebar);
         hlayout->addWidget(conbar);        

@@ -7,6 +7,7 @@
 #include <QDockWidget>
 
 #include "common/qt/convert_string.h"
+
 #include "gui/gui_factory.h"
 #include "gui/app_style.h"
 #include "gui/widgets/log_tab_widget.h"
@@ -39,81 +40,81 @@ namespace fastoredis
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
 
-        _openAction = new QAction(this);
-        _openAction->setIcon(GuiFactory::instance().openIcon());
-        _openAction->setShortcut(QKeySequence::Open);
-        VERIFY(connect(_openAction, SIGNAL(triggered()), this, SLOT(open())));
+        openAction_ = new QAction(this);
+        openAction_->setIcon(GuiFactory::instance().openIcon());
+        openAction_->setShortcut(QKeySequence::Open);
+        VERIFY(connect(openAction_, SIGNAL(triggered()), this, SLOT(open())));
 
-        _saveAction = new QAction(this);
-        _saveAction->setShortcuts(QKeySequence::Save);
-        VERIFY(connect(_saveAction, SIGNAL(triggered()), this, SLOT(save())));
+        saveAction_ = new QAction(this);
+        saveAction_->setShortcuts(QKeySequence::Save);
+        VERIFY(connect(saveAction_, SIGNAL(triggered()), this, SLOT(save())));
 
-        _saveAsAction = new QAction(this);
-        _saveAsAction->setShortcuts(QKeySequence::SaveAs);
-        VERIFY(connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs())));
+        saveAsAction_ = new QAction(this);
+        saveAsAction_->setShortcuts(QKeySequence::SaveAs);
+        VERIFY(connect(saveAsAction_, SIGNAL(triggered()), this, SLOT(saveAs())));
 
         // Exit action
-        _exitAction = new QAction(this);
-        _exitAction->setShortcut(QKeySequence::Quit);
-        VERIFY(connect(_exitAction, SIGNAL(triggered()), this, SLOT(close())));
+        exitAction_ = new QAction(this);
+        exitAction_->setShortcut(QKeySequence::Quit);
+        VERIFY(connect(exitAction_, SIGNAL(triggered()), this, SLOT(close())));
 
         // File menu
         QMenu *fileMenu = new QMenu(this);
-        _fileAction = menuBar()->addMenu(fileMenu);
-        fileMenu->addAction(_openAction);
-        fileMenu->addAction(_saveAction);
-        fileMenu->addAction(_saveAsAction);
+        fileAction_ = menuBar()->addMenu(fileMenu);
+        fileMenu->addAction(openAction_);
+        fileMenu->addAction(saveAction_);
+        fileMenu->addAction(saveAsAction_);
         fileMenu->addSeparator();
-        fileMenu->addAction(_exitAction);
+        fileMenu->addAction(exitAction_);
 
-        _preferencesAction = new QAction(this);
-        VERIFY(connect(_preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
+        preferencesAction_ = new QAction(this);
+        VERIFY(connect(preferencesAction_, SIGNAL(triggered()), this, SLOT(openPreferences())));
 
         QMenu *viewMenu = new QMenu(this);
-        _viewAction = menuBar()->addMenu(viewMenu);
+        viewAction_ = menuBar()->addMenu(viewMenu);
 
         QMenu *optionsMenu = new QMenu(this);
-        _optionsAction = menuBar()->addMenu(optionsMenu);
-        optionsMenu->addAction(_preferencesAction);
+        optionsAction_ = menuBar()->addMenu(optionsMenu);
+        optionsMenu->addAction(preferencesAction_);
 
-        _aboutAction = new QAction(this);
-        VERIFY(connect(_aboutAction, SIGNAL(triggered()), this, SLOT(about())));
+        aboutAction_ = new QAction(this);
+        VERIFY(connect(aboutAction_, SIGNAL(triggered()), this, SLOT(about())));
 
         QMenu *helpMenu = new QMenu(this);
-        _helpAction = menuBar()->addMenu(helpMenu);
-        helpMenu->addAction(_aboutAction);
+        helpAction_ = menuBar()->addMenu(helpMenu);
+        helpMenu->addAction(aboutAction_);
 
         MainWidget *mainW = new MainWidget;
         setCentralWidget(mainW);
 
-        _exp = new ExplorerTreeView(this);
-        VERIFY(connect(_exp, SIGNAL(openedConsole(IServerPtr)), mainW, SLOT(openConsole(IServerPtr))));
-        _expDock = new QDockWidget(this);
-        _explorerAction = _expDock->toggleViewAction();
-        _explorerAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
-        _explorerAction->setChecked(true);
-        viewMenu->addAction(_explorerAction);
+        exp_ = new ExplorerTreeView(this);
+        VERIFY(connect(exp_, SIGNAL(openedConsole(IServerPtr)), mainW, SLOT(openConsole(IServerPtr))));
+        expDock_ = new QDockWidget(this);
+        explorerAction_ = expDock_->toggleViewAction();
+        explorerAction_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+        explorerAction_->setChecked(true);
+        viewMenu->addAction(explorerAction_);
 
-        _expDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-        _expDock->setWidget(_exp);
-        _expDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
-        _expDock->setVisible(true);
-        addDockWidget(Qt::LeftDockWidgetArea, _expDock);
+        expDock_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+        expDock_->setWidget(exp_);
+        expDock_->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+        expDock_->setVisible(true);
+        addDockWidget(Qt::LeftDockWidgetArea, expDock_);
 
         LogTabWidget *log = new LogTabWidget(this);
         VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, common::logging::LEVEL_LOG)), log, SLOT(addLogMessage(const QString&, common::logging::LEVEL_LOG))));
         VERIFY(connect(&CommandLogger::instance(), SIGNAL(printed(const Command&)), log, SLOT(addCommand(const Command&))));
-        _logDock = new QDockWidget(this);
-        _logsAction = _logDock->toggleViewAction();
-        _logsAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
-        _logsAction->setChecked(false);
-        viewMenu->addAction(_logsAction);
+        logDock_ = new QDockWidget(this);
+        logsAction_ = logDock_->toggleViewAction();
+        logsAction_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
+        logsAction_->setChecked(false);
+        viewMenu->addAction(logsAction_);
 
-        _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-        _logDock->setWidget(log);
-        _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
-        _logDock->setVisible(false);
-        addDockWidget(Qt::BottomDockWidgetArea, _logDock);
+        logDock_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+        logDock_->setWidget(log);
+        logDock_->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+        logDock_->setVisible(false);
+        addDockWidget(Qt::BottomDockWidgetArea, logDock_);
 
         createStatusBar();
         retranslateUi();
@@ -129,7 +130,7 @@ namespace fastoredis
         int result = dlg.exec();
         if(result == QDialog::Accepted){
             IServerPtr server = ServersManager::instance().createServer(dlg.selectedConnection());
-            _exp->addServer(server);
+            exp_->addServer(server);
         }
     }
 
@@ -143,22 +144,22 @@ namespace fastoredis
 
     void MainWindow::retranslateUi()
     {
-        _openAction->setText(tr("&Open..."));
-        _saveAction->setText(tr("Save"));
-        _saveAsAction->setText(tr("Save &As..."));
-        _exitAction->setText(tr("&Exit"));
-        _fileAction->setText(tr("File"));
-        _preferencesAction->setText(tr("Preferences"));
-        _viewAction->setText(tr("View"));
-        _optionsAction->setText(tr("Options"));
-        _aboutAction->setText(tr("&About %1...").arg(PROJECT_NAME));
-        _helpAction->setText(tr("Help"));
+        openAction_->setText(tr("&Open..."));
+        saveAction_->setText(tr("Save"));
+        saveAsAction_->setText(tr("Save &As..."));
+        exitAction_->setText(tr("&Exit"));
+        fileAction_->setText(tr("File"));
+        preferencesAction_->setText(tr("Preferences"));
+        viewAction_->setText(tr("View"));
+        optionsAction_->setText(tr("Options"));
+        aboutAction_->setText(tr("&About %1...").arg(PROJECT_NAME));
+        helpAction_->setText(tr("Help"));
         const QString &exp = tr("Explorer tree");
         const QString &log = tr("Logs");
-        _explorerAction->setText(exp);
-        _logsAction->setText(log);
-        _expDock->setWindowTitle(exp);
-        _logDock->setWindowTitle(log);
+        explorerAction_->setText(exp);
+        logsAction_->setText(log);
+        expDock_->setWindowTitle(exp);
+        logDock_->setWindowTitle(log);
     }
 
     void MainWindow::save()

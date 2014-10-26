@@ -80,10 +80,6 @@ namespace common
                 error_type errorInfo_;
             };
 
-    #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
             QString get_folder_path_by_type(QStandardPaths::StandardLocation loc);
-    #else
-            QString get_folder_path_by_type(QDesktopServices::StandardLocation loc);
-    #endif
     }
 }
