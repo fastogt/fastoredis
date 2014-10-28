@@ -4,7 +4,7 @@
 
 #ifdef OS_WIN
 #include <windows.h>
-#elif defined(OS_MAC)
+#elif defined(OS_MACOSX)
 #include <libkern/OSAtomic.h>
 #endif
 
@@ -53,7 +53,7 @@ namespace common
                         void unlock();
                         ~spin_lock();
                     private:
-#ifdef OS_MAC
+#ifdef OS_MACOSX
                         OSSpinLock spinlock;
 #else
                         pthread_spinlock_t spinlock;

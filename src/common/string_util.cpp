@@ -219,7 +219,7 @@ void TruncateUTF8ToByteSize(const std::string& input,
   // truncate the string to the end of that character.
   while (char_index >= 0) {
     int32_t prev = char_index;
-    UChar32 code_point = 0;
+    base_icu::UChar32 code_point = 0;
     CBU8_NEXT(data, char_index, truncation_length, code_point);
     if (!IsValidCharacter(code_point) ||
         !IsValidCodepoint(code_point)) {
@@ -701,7 +701,7 @@ string16 ReplaceStringPlaceholders(const string16& format_string,
   return result;
 }
 
-static bool IsWildcard(common::UChar32 character) {
+static bool IsWildcard(base_icu::UChar32 character) {
   return character == '*' || character == '?';
 }
 
@@ -728,7 +728,7 @@ static void EatSameChars(const CHAR** pattern, const CHAR* pattern_end,
     // Check if the chars match, if so, increment the ptrs.
     const CHAR* pattern_next = *pattern;
     const CHAR* string_next = *string;
-    common::UChar32 pattern_char = next(&pattern_next, pattern_end);
+    base_icu::UChar32 pattern_char = next(&pattern_next, pattern_end);
     if (pattern_char == next(&string_next, string_end) &&
         pattern_char != CBU_SENTINEL) {
       *pattern = pattern_next;
@@ -824,8 +824,8 @@ static bool MatchPatternT(const CHAR* eval, const CHAR* eval_end,
 }
 
 struct NextCharUTF8 {
-  common::UChar32 operator()(const char** p, const char* end) {
-    common::UChar32 c;
+  base_icu::UChar32 operator()(const char** p, const char* end) {
+    base_icu::UChar32 c;
     int offset = 0;
     CBU8_NEXT(*p, offset, end - *p, c);
     *p += offset;
@@ -834,8 +834,8 @@ struct NextCharUTF8 {
 };
 
 struct NextCharUTF16 {
-  common::UChar32 operator()(const char16** p, const char16* end) {
-    common::UChar32 c;
+  base_icu::UChar32 operator()(const char16** p, const char16* end) {
+    base_icu::UChar32 c;
     int offset = 0;
     CBU16_NEXT(*p, offset, end - *p, c);
     *p += offset;
