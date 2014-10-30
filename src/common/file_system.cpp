@@ -11,7 +11,7 @@
 
 namespace
 {
-    bool create_directory_impl(const char* path) WARN_UNUSED_RESULT
+    bool create_directory_impl(const char* path)
     {
 #ifdef OS_WIN
         bool result = mkdir(path) != ERROR_RESULT_VALUE;
