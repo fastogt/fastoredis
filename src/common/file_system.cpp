@@ -83,44 +83,6 @@ namespace common
             return result;
         }
 
-        bool get_flags_by_descriptor(int fd_desc, int &flags)
-        {
-            if(fd_desc == INVALID_DESCRIPTOR){
-                return false;
-            }
-
-#ifdef OS_POSIX
-            bool result = (flags=fcntl(fd_desc,F_GETFL)) != ERROR_RESULT_VALUE;
-            if(!result){
-               DEBUG_MSG_PERROR("get_flags_by_descriptor");
-            }
-
-            return result;
-#else
-            #pragma message("IMPLEMENT PLZ")
-            return false;
-#endif
-        }
-
-        bool set_flags_by_descriptor(int fd_desc, int flags)
-        {
-            if(fd_desc == INVALID_DESCRIPTOR){
-                return false;
-            }
-
-#ifdef OS_POSIX
-            bool result = fcntl(fd_desc, F_SETFL, flags) != ERROR_RESULT_VALUE;
-            if(!result){
-               DEBUG_MSG_PERROR("set_flags_by_descriptor");
-            }
-
-            return result;
-#else
-            #pragma message("IMPLEMENT PLZ")
-            return false;
-#endif
-
-        }
 #ifdef OS_POSIX
         bool create_node(const std::string &path)
         {
@@ -239,42 +201,13 @@ namespace common
             return result;
         }
 
-        bool set_nonblocked_descriptor(int fd_desc)
-        {
-            if(fd_desc == INVALID_DESCRIPTOR){
-                return false;
-            }
-
-            int flags = 0;
-            if(!get_flags_by_descriptor(fd_desc, flags)){
-                return false;
-            }
-
-#ifdef OS_POSIX
-            bool hasNonBlock = (flags & O_NONBLOCK) == O_NONBLOCK;
-            if(!hasNonBlock){
-                bool result = fcntl(fd_desc, F_SETFL, flags|O_NONBLOCK) != ERROR_RESULT_VALUE;
-                if(!result){
-                   DEBUG_MSG_PERROR("set_flags_by_descriptor");
-                }
-                return result;
-            }
-
-            return true;
-#else
-            #pragma message("IMPLEMENT PLZ")
-#endif
-
-            return false;
-        }
-
         bool write_to_descriptor(int fd_desc, const void *buf, unsigned int len)
         {
             if(fd_desc == INVALID_DESCRIPTOR){
                 return false;
             }
 
-            bool result = write(fd_desc,buf,len) != ERROR_RESULT_VALUE;
+            bool result = write(fd_desc, buf, len) != ERROR_RESULT_VALUE;
             if(!result){
                 DEBUG_MSG_PERROR("write");
             }

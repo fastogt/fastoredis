@@ -63,10 +63,7 @@ namespace common
         }
 
         off_t get_file_size_by_descriptor(int fd_desc);
-        bool clear_file_by_descriptor(int fd_desc) WARN_UNUSED_RESULT;
-        bool get_flags_by_descriptor(int fd_desc, int &flags) WARN_UNUSED_RESULT;
-        bool set_flags_by_descriptor(int fd_desc, int flags) WARN_UNUSED_RESULT;
-        bool set_nonblocked_descriptor(int fd_desc);
+        bool clear_file_by_descriptor(int fd_desc) WARN_UNUSED_RESULT;\
         bool close_descriptor(int fd_desc) WARN_UNUSED_RESULT;
 
         bool open_descriptor(const std::string& path, int &fd_desc, int oflags) WARN_UNUSED_RESULT;
@@ -125,6 +122,7 @@ namespace common
         public:
             File(const Path& filePath);
             ~File();
+
             bool open(const char* mode) WARN_UNUSED_RESULT;
             bool isOpened() const;
             bool read(buffer_type& outData, uint32_t maxSize);

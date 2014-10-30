@@ -15,7 +15,12 @@ namespace
 
     struct connectFunct
     {
-        explicit connectFunct(bool isConnect) : isConnect_(isConnect) {}
+        explicit connectFunct(bool isConnect)
+            : isConnect_(isConnect)
+        {
+
+        }
+
         bool operator()(const QObject *sender, const char *signal, const QObject *receiver, const char *member, Qt::ConnectionType type) const
         {
             if(isConnect_){

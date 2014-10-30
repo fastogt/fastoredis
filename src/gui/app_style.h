@@ -6,7 +6,7 @@
 #ifdef OS_WIN
     #include <QProxyStyle>
     typedef QProxyStyle OsStyle;
-#elif defined(OS_MAC)
+#elif defined(OS_MACOSX)
     #include <QProxyStyle>
     typedef QProxyStyle OsStyle;
 #elif defined OS_LINUX
