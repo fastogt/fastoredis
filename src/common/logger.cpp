@@ -1,7 +1,6 @@
 #include "common/logger.h"
 
 #include "common/file_system.h"
-#include <unistd.h>
 #include <fstream>
 
 namespace
@@ -42,7 +41,7 @@ namespace common
                 if(file){
                     file->close();
                 }
-               delete outStream_;
+                delete outStream_;
             }
         }
 

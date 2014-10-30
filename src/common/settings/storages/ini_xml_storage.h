@@ -158,7 +158,7 @@ namespace common
             if(createDir){
                 std::string rdir = file_system::get_dir_path(path);
                 if(file_system::is_directory(rdir) != SUCCESS){
-                    file_system::create_directory(rdir, true);
+                    bool res = file_system::create_directory(rdir, true);
                 }
             }
             const value_type *path_c = path.c_str();

@@ -50,7 +50,7 @@ namespace common
             }
 
             template<typename T>
-            void registerReciver(T t, IReceiver* receiver)
+            void registerReciver(IReceiver* receiver)
             {
                 BOOST_STATIC_ASSERT(find_in_mpl_vector<T,mpl_vector>::value);
                 typedef typename boost::mpl::find<mpl_vector, T>::type MplIter;
@@ -58,11 +58,11 @@ namespace common
             }
 
             template<typename T>
-            void unregisterReciver(T t, IReceiver* receiver)
+            void unregisterReciver(IReceiver* receiver)
             {
                 BOOST_STATIC_ASSERT(find_in_mpl_vector<T,mpl_vector>::value);
                 typedef typename boost::mpl::find<mpl_vector, T>::type MplIter;
-                find_and_remove(MplIter::pos::value, receiver);
+                findAndRemove(MplIter::pos::value, receiver);
             }
 
             void unregisterReciver(IReceiver* receiver)
@@ -79,14 +79,14 @@ namespace common
                 typedef typename boost::mpl::find<mpl_vector, T>::type MplIter;
                 for(int i = 0; i < receivers_[MplIter::pos::value].size(); ++i){
                     IReceiver *rec = receivers_[MplIter::pos::value][i];
-                    rec->receive(event);
+                    rec->handleEvent(event);
                 }
             }
 
         private:
             void findAndRemove(unsigned index, IReceiver* receiver)
             {
-                std::vector<IReceiver*>::iterator it = std::find_if(receivers_[index].begin(),receivers_[index].end(),receiver);
+                std::vector<IReceiver*>::iterator it = std::find_if(receivers_[index].begin(), receivers_[index].end(), receiver);
                 if(it != receivers_[index].end()){
                     receivers_[index].erase(it);
                 }

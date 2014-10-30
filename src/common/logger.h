@@ -63,7 +63,7 @@ namespace common
     typedef multi_threading::pthread_mutex locker_type;
 #endif
             locker_type lock_;
-            std::ostream * outStream_;
+            std::ostream* outStream_;
         };        
     }
 
