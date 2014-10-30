@@ -252,6 +252,7 @@ namespace common
             result.append(file_path);
             return result;
         }
+
         Path make_path_from_uri(const Path& p, const std::string &uri)
         {
             Path result;
@@ -324,6 +325,7 @@ namespace common
                     is_change=true;
                 }
             }
+
             if(is_change){
                 is_dir_ = file_system::is_directory(path_);
                 if(isDirectory()){

@@ -6,6 +6,7 @@
 #include <string>
 
 #include "common/basictypes.h"
+#include "common/hash_tables.h"
 #include "common/string16.h"
 
 namespace common {
@@ -391,7 +392,7 @@ inline bool operator>=(const StringPiece16& x, const StringPiece16& y) {
 std::ostream& operator<<(std::ostream& o,
                                      const StringPiece& piece);
 
-}  // namespace base
+}  // namespace common
 
 // Hashing ---------------------------------------------------------------------
 
@@ -412,25 +413,25 @@ namespace BASE_HASH_NAMESPACE {
 #if defined(COMPILER_GCC)
 
 template<>
-struct hash<base::StringPiece> {
-  std::size_t operator()(const base::StringPiece& sp) const {
-    HASH_STRING_PIECE(base::StringPiece, sp);
+struct hash<common::StringPiece> {
+  std::size_t operator()(const common::StringPiece& sp) const {
+    HASH_STRING_PIECE(common::StringPiece, sp);
   }
 };
 template<>
-struct hash<base::StringPiece16> {
-  std::size_t operator()(const base::StringPiece16& sp16) const {
-    HASH_STRING_PIECE(base::StringPiece16, sp16);
+struct hash<common::StringPiece16> {
+  std::size_t operator()(const common::StringPiece16& sp16) const {
+    HASH_STRING_PIECE(common::StringPiece16, sp16);
   }
 };
 
 #elif defined(COMPILER_MSVC)
 
-inline size_t hash_value(const base::StringPiece& sp) {
-  HASH_STRING_PIECE(base::StringPiece, sp);
+inline size_t hash_value(const common::StringPiece& sp) {
+  HASH_STRING_PIECE(common::StringPiece, sp);
 }
-inline size_t hash_value(const base::StringPiece16& sp16) {
-  HASH_STRING_PIECE(base::StringPiece16, sp16);
+inline size_t hash_value(const common::StringPiece16& sp16) {
+  HASH_STRING_PIECE(common::StringPiece16, sp16);
 }
 
 #endif  // COMPILER
