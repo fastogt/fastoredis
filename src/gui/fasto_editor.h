@@ -29,6 +29,6 @@ namespace fastoredis
         void showOrHideLinesNumbers();
         int textWidth(int style, const QString &text);
 
-        int _lineNumberMarginWidth;
+        int lineNumberMarginWidth_;
     };
 }

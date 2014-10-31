@@ -2,6 +2,8 @@
 
 /**/
 
+#include <boost/shared_ptr.hpp>
+
 #include "global/global.h"
 
 #include "core/redis/redis_infos.h"
@@ -13,10 +15,10 @@ namespace fastoredis
     namespace EventsInfo
     {
         struct EventInfoBase
-                : public common::utils_qt::EventInfo<common::ErrorValue>
+                : public common::utils_qt::EventInfo<common::ErrorValueSPtr>
         {
-            typedef common::utils_qt::EventInfo<common::ErrorValue> base_class;
-            EventInfoBase(const common::ErrorValue &er = common::ErrorValue());
+            typedef common::utils_qt::EventInfo<boost::shared_ptr<common::ErrorValue> > base_class;
+            EventInfoBase(const error_type &er = error_type());
 
             long long elapsedTime() const;
             long long _time_start;
@@ -26,35 +28,35 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ConnectInfoRequest(const common::ErrorValue &er = common::ErrorValue());
+            ConnectInfoRequest(const error_type &er = error_type());
         };
 
         struct ConnectInfoResponce
                 : ConnectInfoRequest
         {
             typedef ConnectInfoRequest base_class;
-            ConnectInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+            ConnectInfoResponce(const base_class &request, const error_type &er = error_type());
         };
 
         struct DisonnectInfoRequest
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            DisonnectInfoRequest(const common::ErrorValue &er = common::ErrorValue());
+            DisonnectInfoRequest(const error_type &er = error_type());
         };
 
         struct DisConnectInfoResponce
                 : DisonnectInfoRequest
         {
             typedef DisonnectInfoRequest base_class;
-            DisConnectInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+            DisConnectInfoResponce(const base_class &request, const error_type &er = error_type());
         };
 
         struct ExecuteInfoRequest
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ExecuteInfoRequest(const std::string &text, const common::ErrorValue &er = common::ErrorValue());
+            ExecuteInfoRequest(const std::string &text, const error_type &er = error_type());
             const std::string _text;
         };
 
@@ -62,7 +64,7 @@ namespace fastoredis
                 : ExecuteInfoRequest
         {
             typedef ExecuteInfoRequest base_class;
-            ExecuteInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+            ExecuteInfoResponce(const base_class &request, const error_type &er = error_type());
 
             FastoObjectPtr _out;
         };
@@ -71,7 +73,7 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            LoadDatabasesInfoRequest(const common::ErrorValue &er = common::ErrorValue());
+            LoadDatabasesInfoRequest(const error_type &er = error_type());
         };
 
         struct LoadDatabasesInfoResponce
@@ -79,7 +81,7 @@ namespace fastoredis
         {
             typedef LoadDatabasesInfoRequest base_class;
             typedef std::vector<DataBaseInfo> database_info_cont_type;
-            LoadDatabasesInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+            LoadDatabasesInfoResponce(const base_class &request, const error_type &er = error_type());
 
             database_info_cont_type databases_;
         };
@@ -88,7 +90,7 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            LoadDatabasesContentRequest(const DataBaseInfo &inf, const common::ErrorValue &er = common::ErrorValue());
+            LoadDatabasesContentRequest(const DataBaseInfo &inf, const error_type &er = error_type());
 
             DataBaseInfo inf_;
         };
@@ -97,21 +99,21 @@ namespace fastoredis
                 : LoadDatabasesContentRequest
         {
             typedef LoadDatabasesContentRequest base_class;
-            LoadDatabasesContentResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+            LoadDatabasesContentResponce(const base_class &request, const error_type &er = error_type());
         };
 
         struct ServerInfoRequest
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ServerInfoRequest(const common::ErrorValue &er = common::ErrorValue());
+            ServerInfoRequest(const error_type &er = error_type());
         };
 
         struct ServerInfoResponce
                 : ServerInfoRequest
         {
             typedef ServerInfoRequest base_class;
-            ServerInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+            ServerInfoResponce(const base_class &request, const error_type &er = error_type());
 
             ServerInfo info_;
         };
@@ -120,7 +122,7 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ServerInfoHistoryRequest(const common::ErrorValue &er = common::ErrorValue());
+            ServerInfoHistoryRequest(const error_type &er = error_type());
         };
 
         struct ServerInfoHistoryResponce
@@ -128,7 +130,7 @@ namespace fastoredis
         {
             typedef ServerInfoHistoryRequest base_class;
             typedef std::map<long long, ServerInfo> infos_container_type;
-            ServerInfoHistoryResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+            ServerInfoHistoryResponce(const base_class &request, const error_type &er = error_type());
 
             infos_container_type infos_;
         };
@@ -137,14 +139,14 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ServerPropertyInfoRequest(const common::ErrorValue &er = common::ErrorValue());
+            ServerPropertyInfoRequest(const error_type &er = error_type());
         };
 
         struct ServerPropertyInfoResponce
                 : ServerPropertyInfoRequest
         {
             typedef ServerPropertyInfoRequest base_class;
-            ServerPropertyInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+            ServerPropertyInfoResponce(const base_class &request, const error_type &er = error_type());
 
             ServerPropertyInfo info_;
         };
@@ -153,7 +155,7 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ChangeServerPropertyInfoRequest(const common::ErrorValue &er = common::ErrorValue());
+            ChangeServerPropertyInfoRequest(const error_type &er = error_type());
 
             PropertyType newItem_;
         };
@@ -162,7 +164,7 @@ namespace fastoredis
                 : ChangeServerPropertyInfoRequest
         {
             typedef ChangeServerPropertyInfoRequest base_class;
-            ChangeServerPropertyInfoResponce(const base_class &request, const common::ErrorValue &er = common::ErrorValue());
+            ChangeServerPropertyInfoResponce(const base_class &request, const error_type &er = error_type());
 
             bool isChange_;
         };

@@ -2,7 +2,9 @@
 
 /**/
 
-#include "common/types.h"
+#include <string>
+
+#include "common/macros.h"
 
 namespace common
 {
@@ -18,20 +20,20 @@ namespace common
             L_CRITICAL
         };
 
-        inline string16 log_level_to_text(LEVEL_LOG lev)
+        inline std::string log_level_to_text(LEVEL_LOG lev)
         {
             switch(lev)
             {
             case L_CRITICAL:
-                return UTEXT("Critical");
+                return "Critical";
             case L_ERROR:
-                return UTEXT("Error");
+                return "Error";
             case L_WARNING:
-                return UTEXT("Warning");
+                return "Warning";
             case L_INFO:
-                return UTEXT("Info");
+                return "Info";
             case L_DEBUG:
-                return UTEXT("Debug");
+                return "Debug";
             default:
                 NOTREACHED();
             }

@@ -2,6 +2,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <QString>
+
 #include "core/connection_types.h"
 #include "core/redis/redis_config.h"
 
@@ -48,13 +50,15 @@ namespace fastoredis
         bool logging_enabled_;
     };
 
+    QString useHelpText(connectionTypes type);
+
     typedef boost::shared_ptr<IConnectionSettingsBase> IConnectionSettingsBasePtr;
 
     class RedisConnectionSettings
             : public IConnectionSettingsBase
     {
     public:
-        RedisConnectionSettings(const common::string16 &connectionName, const redisConfig &info = redisConfig());
+        RedisConnectionSettings(const common::string16 &connectionName, const redisConfig &info);
 
         virtual std::string commandLine() const;
         virtual void setCommandLine(const std::string &line);

@@ -1,10 +1,8 @@
 #include "common/file_parsers/parser_ini.h"
 
 #include <fstream>
-#include <set>
 
 #ifdef BOOST_ENABLED
-#include <boost/config.hpp>
 #include <boost/program_options/detail/config_file.hpp>
 #endif
 

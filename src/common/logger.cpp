@@ -1,15 +1,13 @@
 #include "common/logger.h"
 
 #include "common/file_system.h"
-#include <unistd.h>
 #include <fstream>
 
 namespace
 {
-    using namespace common;
     const std::string &get_logger_path()
     {
-        static std::string result = file_system::prepare_path("~/"PROJECT_NAME_LOWERCASE".log");
+        static std::string result = common::file_system::prepare_path("~/"PROJECT_NAME_LOWERCASE".log");
         return result;
     }
 }
@@ -18,8 +16,7 @@ namespace common
 {
     namespace logging
     {
-
-        logger::logger()
+        Logger::Logger()
             : outStream_(NULL)
         {
         #ifdef NDEBUG
@@ -28,15 +25,15 @@ namespace common
             if(!file||(file&&!file->is_open()))
             {
                  outStream_  = &cerr();
-                 *outStream_ << traits_level<WARNING>::text << UTEXT(" ") << "Output file not open!" <<  UTEXT("\n");
+                 *outStream_ << traits_level<WARNING>::text << " Output file not open!\n";
             }            
         #else
             outStream_ = &std::cerr;
         #endif
-            *outStream_ << UTEXT("LOG STARTED\n");
+            *outStream_ << "LOG STARTED\n";
         }
 
-        logger::~logger(void)
+        Logger::~Logger()
         {
             outStream_->flush();
             if(outStream_ && outStream_ != &std::cerr){
@@ -44,14 +41,14 @@ namespace common
                 if(file){
                     file->close();
                 }
-               delete outStream_;
+                delete outStream_;
             }
         }
 
-        void logger::printTradeSafe(LEVEL_LOG level, const std::string &data)
+        void Logger::printTradeSafe(LEVEL_LOG level, const std::string &data)
         {
             multi_threading::unique_lock<locker_type> lock(lock_);
-            //*outStream_ << log_level_to_text(level) << UTEXT(" ") << data;
+            *outStream_ << log_level_to_text(level) << " " << data;
         }
     }
 

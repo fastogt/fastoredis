@@ -19,7 +19,7 @@ namespace common
             typedef std::function<void(type_t&)> stop_func_type;
 
             template<typename... args_t>
-            pthread_wrapper(start_func_type start_func, start_func_type stop_func, const args_t&... args)
+            pthread_wrapper(start_func_type start_func, stop_func_type stop_func, const args_t&... args)
                 :var_(args...),start_func_(start_func),stop_func_(stop_func),thread_handle_(0)
             {
                 sigset_t signal_mask;

@@ -71,7 +71,7 @@ namespace common
                     for(size_t i = workers_.size();i<num;++i)
                     {
                         pthread_t thread;
-                        pthread_create(&thread, &attr_,pthread_thread_pool_impl::thread_func, this);
+                        pthread_create(&thread, &attr_, pthread_thread_pool_impl::thread_func, this);
                         workers_.push_back(thread);
                     }
                     pthread_mutex_unlock(&workers_mutex_);
@@ -103,10 +103,10 @@ namespace common
                 workers_.resize(threads);
                 workers_.clear();
                 tasks_.clear();
-                for(size_t i = 0;i<threads;++i)
+                for(size_t i = 0; i<threads; ++i)
                 {
                     pthread_t thread;
-                    pthread_create(&thread, &attr_,pthread_thread_pool_impl::thread_func, this);
+                    pthread_create(&thread, &attr_, pthread_thread_pool_impl::thread_func, this);
                     workers_.push_back(thread);
                 }
                 pthread_mutex_unlock(&workers_mutex_);
@@ -149,6 +149,7 @@ namespace common
             pthread_attr_t attr_;
             std::vector<pthread_t> workers_;
             std::vector<task_type> tasks_;
+
             pthread_mutex_t queue_mutex_;
             pthread_cond_t condition_;
             pthread_mutex_t workers_mutex_;

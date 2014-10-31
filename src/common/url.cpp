@@ -196,7 +196,7 @@ namespace common
             return query_;
         }
 
-        const std::string url::get_url()const
+        std::string url::get_url()const
         {
             char buf[host_size + path_size + query_size + 7] = {0};
             sprintf(buf, "%s://%s%s%s", protocol().c_str(), host_.c_str(), path_.c_str(), query_.c_str());

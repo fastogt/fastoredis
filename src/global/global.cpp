@@ -99,18 +99,17 @@ namespace common
 {
     string16 convertToString16(fastoredis::supportedViews v)
     {
-        string16 result;
-        int count = sizeof(supportedViewsM)/sizeof(*supportedViewsM);
-        if(v < count){
-            result = supportedViewsM[v];
+        if(v < SIZEOFMASS(supportedViewsM)){
+            return supportedViewsM[v];
         }
-        return result;
+        return string16();
     }
 
     template<>
     fastoredis::supportedViews convertFromString16(const string16& from)
     {
-        return common::utils::enums::findTypeInArray<fastoredis::supportedViews>(supportedViewsM, from.c_str());
+        const char16* fromPtr = from.c_str();
+        return common::utils::enums::findTypeInArray<fastoredis::supportedViews>(supportedViewsM, fromPtr);
     }
 
     string16 convertToString16(fastoredis::FastoObject* obj)

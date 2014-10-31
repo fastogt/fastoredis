@@ -20,21 +20,21 @@ namespace fastoredis
         setElideMode(Qt::ElideRight);
         setMovable(true);
         setDocumentMode(true);
-        _log = new LogWidget(this);
-        addTab(_log, GuiFactory::instance().loggingIcon(), "Errors");
-        _commands = new CommandsWidget(this);
-        addTab(_commands, GuiFactory::instance().commandIcon(), "Commands");
+        log_ = new LogWidget(this);
+        addTab(log_, GuiFactory::instance().loggingIcon(), "Errors");
+        commands_ = new CommandsWidget(this);
+        addTab(commands_, GuiFactory::instance().commandIcon(), "Commands");
         retranslateUi();
     }
 
     void LogTabWidget::addLogMessage(const QString &message, common::logging::LEVEL_LOG level)
     {
-        _log->addLogMessage(message, level);
+        log_->addLogMessage(message, level);
     }
 
     void LogTabWidget::addCommand(const Command &command)
     {
-        _commands->addCommand(command);
+        commands_->addCommand(command);
     }
 
     void LogTabWidget::changeEvent(QEvent *e)

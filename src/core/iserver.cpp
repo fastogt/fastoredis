@@ -15,7 +15,12 @@ namespace
 
     struct connectFunct
     {
-        explicit connectFunct(bool isConnect) : isConnect_(isConnect) {}
+        explicit connectFunct(bool isConnect)
+            : isConnect_(isConnect)
+        {
+
+        }
+
         bool operator()(const QObject *sender, const char *signal, const QObject *receiver, const char *member, Qt::ConnectionType type) const
         {
             if(isConnect_){
@@ -158,8 +163,8 @@ namespace fastoredis
     {
         using namespace Events;
         ServerInfoHistoryResponceEvent::value_type v = ev->value();
-        const common::ErrorValue &er = v.errorInfo();
-        if(er.isError()){
+        common::ErrorValueSPtr er = v.errorInfo();
+        if(er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedLoadServerHistoryInfo(v);

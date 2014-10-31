@@ -144,8 +144,8 @@ namespace fastoredis
             }
             if(logFile_ && logFile_->isOpened()){
                 FastoObjectPtr outInf;
-                common::ErrorValue er = currentLoggingInfo(outInf);
-                if(!er.isError()){
+                common::ErrorValueSPtr er = currentLoggingInfo(outInf);
+                if(!er->isError()){
                     FastoObject* par = FastoObject::createRoot(createStamp());
                     FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
                     common::string16 data = common::convertToString16(toFile.get());
@@ -170,15 +170,14 @@ namespace fastoredis
     void IDriver::loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev)
     {
         QObject *sender = ev->sender();
-        Events::ServerInfoHistoryResponceEvent::value_type res(ev->value());
-        Events::ServerInfoHistoryResponceEvent::value_type::infos_container_type tmpInfos;
-        common::ErrorValue er;
+        Events::ServerInfoHistoryResponceEvent::value_type res(ev->value());        
 
         std::string path = settings_->loggingPath();
         common::file_system::Path p(path);
 
         common::file_system::File readFile(p);
         if(readFile.open("rb")){
+            Events::ServerInfoHistoryResponceEvent::value_type::infos_container_type tmpInfos;
 
             long long curStamp = 0;
             common::buffer_type dataInfo;
@@ -206,16 +205,11 @@ namespace fastoredis
                     dataInfo += data;
                 }
             }
+            res.infos_ = tmpInfos;
         }
         else{
-           er = common::ErrorValue("Logging file not found", common::ErrorValue::E_ERROR);
-        }
-
-        if(er.isError()){
-            res.setErrorInfo(er);
-        }
-        else{
-           res.infos_ = tmpInfos;
+           common::ErrorValueSPtr er(new common::ErrorValue("Logging file not found", common::ErrorValue::E_ERROR));
+           res.setErrorInfo(er);
         }
 
         reply(sender, new Events::ServerInfoHistoryResponceEvent(this, res));

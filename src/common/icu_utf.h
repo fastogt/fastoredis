@@ -1,8 +1,24 @@
+/*
+*******************************************************************************
+*
+*   Copyright (C) 1999-2004, International Business Machines
+*   Corporation and others.  All Rights Reserved.
+*
+*******************************************************************************
+*   file name:  utf.h
+*   encoding:   US-ASCII
+*   tab size:   8 (not used)
+*   indentation:4
+*
+*   created on: 1999sep09
+*   created by: Markus W. Scherer
+*/
+
 #pragma once
 
-#include <stdint.h>
+#include "common/basictypes.h"
 
-namespace common {
+namespace base_icu {
 
 typedef int32_t UChar32;
 typedef uint16_t UChar;
@@ -177,7 +193,7 @@ UChar32 utf8_nextCharSafeBody(const uint8_t *s, int32_t *pi, int32_t length, UCh
     (c)=(s)[(i)++]; \
     if(((uint8_t)(c))>=0x80) { \
         if(CBU8_IS_LEAD(c)) { \
-            (c)=common::utf8_nextCharSafeBody((const uint8_t *)s, &(i), (int32_t)(length), c, -1); \
+            (c)=base_icu::utf8_nextCharSafeBody((const uint8_t *)s, &(i), (int32_t)(length), c, -1); \
         } else { \
             (c)=CBU_SENTINEL; \
         } \
@@ -278,7 +294,7 @@ UChar32 utf8_nextCharSafeBody(const uint8_t *s, int32_t *pi, int32_t length, UCh
  * @stable ICU 2.4
  */
 #define CBU16_GET_SUPPLEMENTARY(lead, trail) \
-    (((common::UChar32)(lead)<<10UL)+(common::UChar32)(trail)-CBU16_SURROGATE_OFFSET)
+    (((base_icu::UChar32)(lead)<<10UL)+(base_icu::UChar32)(trail)-CBU16_SURROGATE_OFFSET)
 
 
 /**

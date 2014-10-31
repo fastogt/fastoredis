@@ -19,19 +19,19 @@ namespace
         return trd.entryList(QStringList(PROJECT_NAME"_*.qm"));
     }
 
-    QPair<QString,QLocale> convertToLocale(const QString &fileName)
+    QPair<QString, QLocale> convertToLocale(const QString &fileName)
     {
         QString langCode = fileName;
         langCode.remove(0, fileName.indexOf('_')+1);
         langCode.chop(3);
-        return QPair<QString,QLocale>(fileName, langCode);
+        return QPair<QString, QLocale>(fileName, langCode);
     }
 
     QString pathToQm(const QString &l)
     {
         const QStringList languages = qmLanguages();
         for(int i = 0; i < languages.size(); ++i){
-            QPair<QString,QLocale> p = convertToLocale(languages[i]);
+            QPair<QString, QLocale> p = convertToLocale(languages[i]);
             QString lang = QLocale::languageToString(p.second.language());
             if( l == lang){
                 return p.first;

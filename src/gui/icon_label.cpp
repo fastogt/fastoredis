@@ -10,23 +10,23 @@ namespace fastoredis
         : QWidget(parent)
     {
         QHBoxLayout *mainL = new QHBoxLayout;
-        _icon = new QLabel;
-        _text = new QLabel;
+        icon_ = new QLabel;
+        text_ = new QLabel;
         setText(text);
         setIcon(icon);
 
-        mainL->addWidget(_icon);
-        mainL->addWidget(_text);
+        mainL->addWidget(icon_);
+        mainL->addWidget(text_);
         setLayout(mainL);
     }
 
     void IconLabel::setText(const QString &text)
     {
-        _text->setText(text);
+        text_->setText(text);
     }
 
     void IconLabel::setIcon(const QIcon &icon)
     {
-        _icon->setPixmap(icon.pixmap(16, 16));
+        icon_->setPixmap(icon.pixmap(16, 16));
     }
 }

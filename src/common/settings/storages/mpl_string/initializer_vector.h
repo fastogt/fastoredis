@@ -24,12 +24,13 @@ struct initialize_vector_char<                                                  
 	BOOST_PP_ENUM(                                                    \
 	BOOST_PP_SUB(BOOST_MPL_LIMIT_VECTOR_SIZE,i), TUPLE_PRINT, 0) >    \
 {                                                                       \
-	typedef boost::mpl::vector<BOOST_PP_ENUM_PARAMS_EX(i, T) ,boost::mpl::char_<0> > type;                   \
+    typedef boost::mpl::vector<BOOST_PP_ENUM_PARAMS_EX(i, T) ,boost::mpl::char_<0> > type; \
+    typedef char value_type;   typedef std::basic_string<value_type> string_type;\
 };
 BOOST_PP_REPEAT_FROM_TO(1, BOOST_MPL_LIMIT_VECTOR_SIZE, GEN_VECTOR_CHAR, ~)
 
 #define BOOST_PP_ENUM_PARAMS_M_MPL_SEQ(z, n, param) BOOST_PP_COMMA_IF(n) BOOST_PP_SEQ_ELEM(n,param)
 #define BOOST_PP_ENUM_PARAMS_M_MPL_TYPLE(z, n, param) BOOST_PP_COMMA_IF(n) BOOST_PP_TUPLE_ELEM(BOOST_PP_TUPLE_SIZE(param),n,param)
 
-#define GEN_STRING_TYPLE(X) initialize_vector_char<BOOST_PP_REPEAT(BOOST_PP_TUPLE_SIZE(X), BOOST_PP_ENUM_PARAMS_M_MPL_TYPLE, X)>::type
-#define GEN_STRING_SEQ(X) initialize_vector_char< BOOST_PP_REPEAT(BOOST_PP_SEQ_SIZE(X), BOOST_PP_ENUM_PARAMS_M_MPL_SEQ, X)>::type
+#define GEN_STRING_TYPLE(X) initialize_vector_char<BOOST_PP_REPEAT(BOOST_PP_TUPLE_SIZE(X), BOOST_PP_ENUM_PARAMS_M_MPL_TYPLE, X)>
+#define GEN_STRING_SEQ(X) initialize_vector_char< BOOST_PP_REPEAT(BOOST_PP_SEQ_SIZE(X), BOOST_PP_ENUM_PARAMS_M_MPL_SEQ, X)>

@@ -4,7 +4,7 @@
 
 #ifdef OS_WIN
 #include <windows.h>
-#elif defined(OS_MAC)
+#elif defined(OS_MACOSX)
 #include <libkern/OSAtomic.h>
 #endif
 
@@ -45,29 +45,29 @@ namespace common
 #elif defined OS_POSIX
     namespace multi_threading
     {
-                    class spin_lock
-                    {
-                    public:
-                        spin_lock();
-                        void lock();
-                        void unlock();
-                        ~spin_lock();
-                    private:
-#ifdef OS_MAC
-                        OSSpinLock spinlock;
+        class spin_lock
+        {
+        public:
+            spin_lock();
+            void lock();
+            void unlock();
+            ~spin_lock();
+        private:
+#ifdef OS_MACOSX
+            OSSpinLock spinlock;
 #else
-                        pthread_spinlock_t spinlock;
+            pthread_spinlock_t spinlock;
 #endif
-                    };
+        };
 
-                    struct pthread_mutex
-                    {
-                        pthread_mutex();
-                        ~pthread_mutex();
-                        void lock();
-                        void unlock();
-                        pthread_mutex_t mutex_;
-                    };
+        struct pthread_mutex
+        {
+            pthread_mutex();
+            ~pthread_mutex();
+            void lock();
+            void unlock();
+            pthread_mutex_t mutex_;
+        };
     }
 #endif
 }

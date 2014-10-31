@@ -60,11 +60,10 @@ namespace fastoredis
         colums << tr("Name") << tr("Address") << tr("Auth. Database / User");
         _listWidget->setHeaderLabels(colums);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(2, QHeaderView::Stretch);
-#endif
+
         //_listWidget->setViewMode(QListView::ListMode);
         _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
         _listWidget->setIndentation(15);
@@ -145,7 +144,8 @@ namespace fastoredis
 
     void ConnectionsDialog::add()
     {
-        IConnectionSettingsBasePtr p(new RedisConnectionSettings(UTEXT("New Connection")));
+        redisConfig conf;
+        IConnectionSettingsBasePtr p(new RedisConnectionSettings(UTEXT("New Connection"), conf));
         ConnectionDialog dlg(p,this);
         int result = dlg.exec();
         if(result == QDialog::Accepted){

@@ -41,7 +41,8 @@ namespace common
             inline type findTypeInArray(const char16 *(&arr)[size], const char16 *text)
             {
                 for (int i=0; i < size; ++i){
-                    if (c16memcmp(text, arr[i], c16len(text)) == 0){
+                    const size_t len = c16len(text);
+                    if (c16memcmp(text, arr[i], len) == 0){
                         return static_cast<type>(i);
                     }
                 }
@@ -182,83 +183,5 @@ namespace common
             bool sigprocmask(int how, const sigset_t *set, sigset_t *oset);
         }
 #endif
-    }
-
-    namespace smart_ptr
-    {
-        template<typename type_t,typename deleter_t = utils::delete_wrappers::default_delete<type_t> >
-        class base_ptr
-        {
-        public:
-            typedef type_t* pointer;
-            typedef type_t element_type;
-
-            typedef deleter_t deleter_type;
-            base_ptr():val_(pointer(),deleter_type())
-            {
-
-            }
-            explicit base_ptr(pointer p): val_(p, deleter_type())
-            {
-
-            }
-            pointer operator->() const
-            {
-                return get();
-            }
-
-            pointer get() const
-            {
-                return val_.first;
-            }
-
-            void reset(pointer p = pointer())
-            {
-                if (p != get())
-                {
-                    val_.second(get());
-                    val_.first = p;
-                }
-            }
-
-            operator bool() const
-            {
-                return get() == pointer() ? false : true;
-            }
-
-            pointer release()
-            {
-                pointer p = get();
-                val_.first = NULL;
-                return p;
-            }
-
-            ~base_ptr()
-            {
-                reset();
-            }
-
-        private:
-            base_ptr(const base_ptr&);
-            template<typename type_u, typename deleter_u>
-            base_ptr(const base_ptr<type_u, deleter_u>&);
-            base_ptr& operator=(const base_ptr&);
-            template<typename type_u, typename deleter_u>
-            base_ptr& operator=(const base_ptr<type_u, deleter_u>&);
-            std::pair<pointer,deleter_type> val_;
-        };
-
-        template<typename type_u,typename deleter_u,typename type_v,typename deleter_v>
-        inline bool operator==(const base_ptr<type_u, deleter_u>& x,const base_ptr<type_v, deleter_v>& y)
-        {
-            return x.get() == y.get();
-        }
-
-        template<typename type_u,typename deleter_u,typename type_v,typename deleter_v>
-        inline bool operator!=(const base_ptr<type_u, deleter_u>& x,const base_ptr<type_v, deleter_v>& y)
-        {
-            return x.get() != y.get();
-        }
-
     }
 }

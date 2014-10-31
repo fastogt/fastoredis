@@ -9,7 +9,7 @@ namespace common
 {
     namespace settings
     {
-        template<typename type_t,typename init_vector,class where>
+        template<typename type_t, typename init_vector, class where>
         struct setting
         {
             typedef type_t value_type;
@@ -23,9 +23,10 @@ namespace common
             {
             }
 
-            const char *key() const
+            const typename init_vector::value_type *key() const
             {
-                typedef mpl_template_string::template_string<init_vector> key_t; return key_t::template_string_value();
+                typedef mpl_template_string::template_string<init_vector> key_t;
+                return key_t::template_string_value();
             }
 
             value_type defualt() const
@@ -33,7 +34,7 @@ namespace common
                 return default_value();
             }
 
-            bool set_value(const value_type value)
+            bool set_value(value_type value)
             {
                 bool result = value_ != value;
                 if(result){
@@ -59,7 +60,7 @@ namespace common
             }
 
         private:
-            bool load_value(const value_type value)
+            bool load_value(value_type value)
             {
                 is_load_ = true;
                 return set_value(value);

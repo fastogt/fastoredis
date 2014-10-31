@@ -46,7 +46,7 @@ namespace fastoredis
 
 
     FastoEditor::FastoEditor(QWidget *parent)
-        : QsciScintilla(parent), _lineNumberMarginWidth(0)
+        : QsciScintilla(parent), lineNumberMarginWidth_(0)
     {
         setAutoIndent(true);
         setIndentationsUseTabs(false);
@@ -88,7 +88,7 @@ namespace fastoredis
     {
         updateLineNumbersMarginWidth();
         if (!lineNumberMarginWidth()) {
-            setMarginWidth(0, _lineNumberMarginWidth);
+            setMarginWidth(0, lineNumberMarginWidth_);
 
         }
         else {
@@ -111,11 +111,11 @@ namespace fastoredis
     {
         int numberOfDigits = getNumberOfDigits(lines());
 
-        _lineNumberMarginWidth = numberOfDigits * textWidth(STYLE_LINENUMBER, "0") + rowNumberWidth;
+        lineNumberMarginWidth_ = numberOfDigits * textWidth(STYLE_LINENUMBER, "0") + rowNumberWidth;
 
         // If line numbers margin already displayed, update its width
         if (lineNumberMarginWidth()) {
-            setMarginWidth(0, _lineNumberMarginWidth);
+            setMarginWidth(0, lineNumberMarginWidth_);
         }
     }
 }

@@ -79,7 +79,7 @@ namespace fastoredis
                     const uint16_t size_buff = 256;
                     char buff[size_buff] = {0};
                     common::strings::SafeSNPrintf(buff, size_buff, "Unrecognized option or bad number of args for: '%s'", curArg);
-                    common::ErrorValue er(buff, common::Value::E_ERROR);
+                    common::ErrorValueSPtr er(new common::ErrorValue(buff, common::Value::E_ERROR));
                     LOG_ERROR(er);
                     break;
                 } else {
@@ -103,7 +103,7 @@ namespace common
         }
         if(conf.hostport){
             argv.push_back("-p");
-            argv.push_back(conf.hostport);
+            argv.push_back(convertToString(conf.hostport));
         }
         if(!conf.hostsocket.empty()){
             argv.push_back("-s");
@@ -111,15 +111,15 @@ namespace common
         }
         if(conf.repeat){
             argv.push_back("-r");
-            argv.push_back(conf.repeat);
+            argv.push_back(convertToString(conf.repeat));
         }
         if(conf.interval){
             argv.push_back("-i");
-            argv.push_back(conf.interval);
+            argv.push_back(convertToString(conf.interval));
         }
         if(conf.dbnum){
             argv.push_back("-n");
-            argv.push_back(conf.dbnum);
+            argv.push_back(convertToString(conf.dbnum));
         }
         if(conf.latency_mode){
             if(conf.latency_history){
@@ -144,7 +144,7 @@ namespace common
         }
         if(conf.pipe_timeout){
             argv.push_back("--pipe-timeout");
-            argv.push_back(conf.pipe_timeout);
+            argv.push_back(convertToString(conf.pipe_timeout));
         }
         if(conf.bigkeys){
             argv.push_back("--bigkeys");

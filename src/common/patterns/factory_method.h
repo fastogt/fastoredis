@@ -1,12 +1,11 @@
 #pragma once
 
 /**/
-
+#ifdef BOOST_ENABLED
 #include <vector>
 #include <algorithm>
-
-#include "common/smart_ptr.h"
-#include "common/macros.h"
+#include <boost/shared_ptr.hpp>
+#include "common/string16.h"
 
 namespace common
 {
@@ -15,7 +14,7 @@ namespace common
         template<typename type_t>
         struct factory_method
         {
-            typedef smart_ptr::shared_ptr<typename type_t::base_class> smart_shared_ptr_type;
+            typedef boost::shared_ptr<typename type_t::base_class> smart_shared_ptr_type;
             typedef type_t element_type;
             static const char16* object_name;
             template<typename predicate_t>
@@ -47,3 +46,5 @@ namespace common
         };
     }
 }
+
+#endif

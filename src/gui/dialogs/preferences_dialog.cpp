@@ -91,7 +91,9 @@ namespace fastoredis
         applyStyle(stylesComboBox_->currentText());
         SettingsManager::instance().setCurrentStyle(common::convertToString(stylesComboBox_->currentText()));
 
-        SettingsManager::instance().setDefaultView(common::convertFromString16<fastoredis::supportedViews>(common::convertToString16(defaultViewComboBox_->currentText())));
+        const common::string16 defCombo = common::convertToString16(defaultViewComboBox_->currentText());
+        const fastoredis::supportedViews v = common::convertFromString16<fastoredis::supportedViews>(defCombo);
+        SettingsManager::instance().setDefaultView(v);
 
         ServersManager::instance().setSyncServers(syncTabs_->isChecked());
         SettingsManager::instance().setSyncTabs(syncTabs_->isChecked());

@@ -8,7 +8,8 @@
 
 namespace fastoredis
 {
-    struct PropertyTableItem : public TableItem
+    struct PropertyTableItem
+            : public TableItem
     {
         enum eColumn
         {
