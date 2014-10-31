@@ -2,13 +2,13 @@ About FastoRedis
 ===============
 
 FastoRedis &mdash; is a crossplatform Redis management tool. <br />
-Visit our site: [www.fastoredisinprocess.org](http://www.fastoredisinprocess.org)
+Visit our site: [www.fastoredisinprocess.org](http://www.fastoredis.com)
 
 Download
 ========
 
 You can download compiled version (for Mac OS X, Windows and Linux) from our site:<br />
-[www.fastoredisinprocess.org](http://www.fastoredisinprocess.org)
+[www.fastoredisinprocess.org](http://www.www.fastoredis.com)
 
 <!-- https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8 -->
 
