@@ -31,7 +31,7 @@
 
 #define BASE_HASH_NAMESPACE stdext
 
-#elif defined(COMPILER_GCC)
+#elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)
 #if defined(OS_ANDROID)
 #define BASE_HASH_NAMESPACE std
 #else
@@ -242,7 +242,7 @@ inline std::size_t hash_value(const std::pair<Type1, Type2>& value) {
   return base::HashPair(value.first, value.second);
 }
 
-#elif defined(COMPILER_GCC)
+#elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)
 template<typename Type1, typename Type2>
 struct hash<std::pair<Type1, Type2> > {
   std::size_t operator()(std::pair<Type1, Type2> value) const {
