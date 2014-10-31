@@ -24,7 +24,7 @@ Build documentation: [Build FastoRedis](https://github.com/fasto/fastoredis/wiki
 License
 =======
 
-Copyright (C) 2013 Fasto, Inc (http://www.fastoinprocess.com)
+Copyright (C) 2013 Fasto, Inc (http://www.fastoredis.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 
