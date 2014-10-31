@@ -71,7 +71,7 @@ namespace common
                     for(size_t i = workers_.size();i<num;++i)
                     {
                         pthread_t thread;
-                        pthread_create(&thread, &attr_,pthread_thread_pool_impl::thread_func, this);
+                        pthread_create(&thread, &attr_, pthread_thread_pool_impl::thread_func, this);
                         workers_.push_back(thread);
                     }
                     pthread_mutex_unlock(&workers_mutex_);
