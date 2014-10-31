@@ -34,14 +34,14 @@ namespace fastoredis
 
     private:
         void syncWithSettings();
-        IconLabel *_timeLabel;
-        QPushButton *_treeButton;
-        QPushButton *_tableButton;
-        QPushButton *_textButton;
+        IconLabel *timeLabel_;
+        QPushButton *treeButton_;
+        QPushButton *tableButton_;
+        QPushButton *textButton_;
 
-        FastoTreeModel *_treeModel;
-        FastoTreeView *_treeView;
-        FastoTableView *_tableView;
-        FastoEditor *_textView;
+        FastoTreeModel *treeModel_;
+        FastoTreeView *treeView_;
+        FastoTableView *tableView_;
+        FastoEditor *textView_;
     };
 }

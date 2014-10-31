@@ -68,17 +68,17 @@ namespace fastoredis
     OutputWidget::OutputWidget(QWidget* parent)
         : QWidget(parent)
     {
-        _treeView = new FastoTreeView(this);
-        _treeModel = new FastoTreeModel(_treeView);
-        _treeView->setModel(_treeModel);
+        treeView_ = new FastoTreeView(this);
+        treeModel_ = new FastoTreeModel(treeView_);
+        treeView_->setModel(treeModel_);
 
-        _tableView = new FastoTableView(this);
+        tableView_ = new FastoTableView(this);
          //FastoTableModel* mod = new FastoTableModel(_tableView);
          //mod->setSourceModel(_treeModel);
-         _tableView->setModel(_treeModel);
+         tableView_->setModel(treeModel_);
 
-        _textView = new FastoEditor(this);
-        _timeLabel = new IconLabel(GuiFactory::instance().timeIcon(),common::convertFromString16<QString>(common::time::mstime2string(0)));
+        textView_ = new FastoEditor(this);
+        timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(),common::convertFromString16<QString>(common::time::mstime2string(0)));
 
         QVBoxLayout *mainL = new QVBoxLayout;
         QHBoxLayout *topL = new QHBoxLayout;
@@ -87,26 +87,26 @@ namespace fastoredis
         splitter->setHandleWidth(1);
         splitter->setContentsMargins(0, 0, 0, 0);
 
-        _treeButton = new QPushButton;
-        _tableButton = new QPushButton;
-        _textButton = new QPushButton;
-        _treeButton->setIcon(GuiFactory::instance().treeIcon());
-        VERIFY(connect(_treeButton, SIGNAL(clicked()), this, SLOT(setTreeView())));
-        _tableButton->setIcon(GuiFactory::instance().tableIcon());
-        VERIFY(connect(_tableButton, SIGNAL(clicked()), this, SLOT(setTableView())));
-        _textButton->setIcon(GuiFactory::instance().textIcon());
-        VERIFY(connect(_textButton, SIGNAL(clicked()), this, SLOT(setTextView())));
+        treeButton_ = new QPushButton;
+        tableButton_ = new QPushButton;
+        textButton_ = new QPushButton;
+        treeButton_->setIcon(GuiFactory::instance().treeIcon());
+        VERIFY(connect(treeButton_, SIGNAL(clicked()), this, SLOT(setTreeView())));
+        tableButton_->setIcon(GuiFactory::instance().tableIcon());
+        VERIFY(connect(tableButton_, SIGNAL(clicked()), this, SLOT(setTableView())));
+        textButton_->setIcon(GuiFactory::instance().textIcon());
+        VERIFY(connect(textButton_, SIGNAL(clicked()), this, SLOT(setTextView())));
 
-        topL->addWidget(_treeButton);
-        topL->addWidget(_tableButton);
-        topL->addWidget(_textButton);
+        topL->addWidget(treeButton_);
+        topL->addWidget(tableButton_);
+        topL->addWidget(textButton_);
         topL->addWidget(splitter);
-        topL->addWidget(_timeLabel);
+        topL->addWidget(timeLabel_);
 
         mainL->addLayout(topL);
-        mainL->addWidget(_treeView);
-        mainL->addWidget(_tableView);
-        mainL->addWidget(_textView);
+        mainL->addWidget(treeView_);
+        mainL->addWidget(tableView_);
+        mainL->addWidget(textView_);
         setLayout(mainL);
         syncWithSettings();
     }
@@ -127,23 +127,23 @@ namespace fastoredis
 
     void OutputWidget::setTreeView()
     {
-        _treeView->setVisible(true);
-        _tableView->setVisible(false);
-        _textView->setVisible(false);
+        treeView_->setVisible(true);
+        tableView_->setVisible(false);
+        textView_->setVisible(false);
     }
 
     void OutputWidget::setTableView()
     {
-        _treeView->setVisible(false);
-        _tableView->setVisible(true);
-        _textView->setVisible(false);
+        treeView_->setVisible(false);
+        tableView_->setVisible(true);
+        textView_->setVisible(false);
     }
 
     void OutputWidget::setTextView()
     {
-        _treeView->setVisible(false);
-        _tableView->setVisible(false);
-        _textView->setVisible(true);
+        treeView_->setVisible(false);
+        tableView_->setVisible(false);
+        textView_->setVisible(true);
     }
 
     void OutputWidget::startExecute(const EventsInfo::ExecuteInfoRequest &req)
@@ -153,14 +153,14 @@ namespace fastoredis
 
     void OutputWidget::finishExecute(const EventsInfo::ExecuteInfoResponce &res)
     {
-        _textView->clear();
+        textView_->clear();
         if(res._out){
             FastoTreeItem *root = parseOutput(res._out.get());
             if(root){
-                _treeModel->setRoot(root);
+                treeModel_->setRoot(root);
             }
         }
-        _timeLabel->setText(common::convertFromString16<QString>(common::time::mstime2string(res.elapsedTime())));
+        timeLabel_->setText(common::convertFromString16<QString>(common::time::mstime2string(res.elapsedTime())));
         //FastoObjectPtr ptr = res._out;
         //std::string str = toStdString(ptr);
         //_textView->setText(common::convertFromString16<QString>(str));

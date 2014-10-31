@@ -12,21 +12,21 @@ namespace fastoredis
     QueryWidget::QueryWidget(IServerPtr server, QWidget* parent)
         : QWidget(parent)
     {
-        _shellWidget = new ShellWidget(server);
-        _outputWidget = new OutputWidget;
-        VERIFY(connect(_shellWidget, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), _outputWidget, SLOT(startExecute(const EventsInfo::ExecuteInfoRequest &))));
-        VERIFY(connect(_shellWidget, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), _outputWidget, SLOT(finishExecute(const EventsInfo::ExecuteInfoResponce &))));
+        shellWidget_ = new ShellWidget(server);
+        outputWidget_ = new OutputWidget;
+        VERIFY(connect(shellWidget_, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), outputWidget_, SLOT(startExecute(const EventsInfo::ExecuteInfoRequest &))));
+        VERIFY(connect(shellWidget_, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), outputWidget_, SLOT(finishExecute(const EventsInfo::ExecuteInfoResponce &))));
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
-        mainLayout->addWidget(_shellWidget);
-        mainLayout->addWidget(_outputWidget);
+        mainLayout->addWidget(shellWidget_);
+        mainLayout->addWidget(outputWidget_);
 
         setLayout(mainLayout);
     }
 
     QString QueryWidget::inputText() const
     {
-        return _shellWidget->text();
+        return shellWidget_->text();
     }
 
     void QueryWidget::reload()
@@ -36,8 +36,8 @@ namespace fastoredis
 
     QueryWidget *QueryWidget::duplicate(QueryWidget *src, const QString &text)
     {
-        QueryWidget *result = new QueryWidget(src->_shellWidget->server(), src->parentWidget());
-        result->_shellWidget->setText(text);
+        QueryWidget *result = new QueryWidget(src->shellWidget_->server(), src->parentWidget());
+        result->shellWidget_->setText(text);
         return result;
     }
 }

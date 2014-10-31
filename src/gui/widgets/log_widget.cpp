@@ -11,36 +11,36 @@
 namespace fastoredis
 {
     LogWidget::LogWidget(QWidget* parent) 
-        : QWidget(parent), _logTextEdit(new QTextEdit(this))
+        : QWidget(parent), logTextEdit_(new QTextEdit(this))
     {
-        _logTextEdit->setReadOnly(true);
-        _logTextEdit->setContextMenuPolicy(Qt::CustomContextMenu);
-        VERIFY(connect(_logTextEdit,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(showContextMenu(const QPoint &))));
+        logTextEdit_->setReadOnly(true);
+        logTextEdit_->setContextMenuPolicy(Qt::CustomContextMenu);
+        VERIFY(connect(logTextEdit_,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(showContextMenu(const QPoint &))));
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0,0,0,0);
-        hlayout->addWidget(_logTextEdit);
-        _clear = new QAction(this);
-        VERIFY(connect(_clear, SIGNAL(triggered()),_logTextEdit, SLOT(clear())));
+        hlayout->addWidget(logTextEdit_);
+        clear_ = new QAction(this);
+        VERIFY(connect(clear_, SIGNAL(triggered()),logTextEdit_, SLOT(clear())));
         setLayout(hlayout);
         retranslateUi();
     }
 
     void LogWidget::showContextMenu(const QPoint& pt)
     {
-        QMenu *menu = _logTextEdit->createStandardContextMenu();
-        menu->addAction(_clear);
-        _clear->setEnabled(!_logTextEdit->toPlainText().isEmpty());
+        QMenu *menu = logTextEdit_->createStandardContextMenu();
+        menu->addAction(clear_);
+        clear_->setEnabled(!logTextEdit_->toPlainText().isEmpty());
 
-        menu->exec(_logTextEdit->mapToGlobal(pt));
+        menu->exec(logTextEdit_->mapToGlobal(pt));
         delete menu;
     }
 
     void LogWidget::addLogMessage(const QString& message, common::logging::LEVEL_LOG level)
     {
         QTime time = QTime::currentTime();
-        _logTextEdit->setTextColor(level == common::logging::L_CRITICAL ? QColor(Qt::red):QColor(Qt::black));
-        _logTextEdit->append(time.toString("h:mm:ss AP: ") + message);
-        QScrollBar *sb = _logTextEdit->verticalScrollBar();
+        logTextEdit_->setTextColor(level == common::logging::L_CRITICAL ? QColor(Qt::red):QColor(Qt::black));
+        logTextEdit_->append(time.toString("h:mm:ss AP: ") + message);
+        QScrollBar *sb = logTextEdit_->verticalScrollBar();
         sb->setValue(sb->maximum());
     }
 
@@ -54,6 +54,6 @@ namespace fastoredis
 
     void LogWidget::retranslateUi()
     {
-        _clear->setText(tr("Clear All"));
+        clear_->setText(tr("Clear All"));
     }
 }

@@ -29,7 +29,7 @@ namespace fastoredis
 
     private:
         void retranslateUi();
-        QTextEdit *const _logTextEdit;
-        QAction *_clear;
+        QTextEdit *const logTextEdit_;
+        QAction *clear_;
     };
 }

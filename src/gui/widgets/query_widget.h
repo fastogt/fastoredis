@@ -27,7 +27,7 @@ namespace fastoredis
     public Q_SLOTS:
 
     private:
-        ShellWidget *_shellWidget;
-        OutputWidget *_outputWidget;
+        ShellWidget *shellWidget_;
+        OutputWidget *outputWidget_;
     };
 }

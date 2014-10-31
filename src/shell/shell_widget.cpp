@@ -96,20 +96,20 @@ namespace fastoredis
 
         QToolBar *conbar = new QToolBar;
         conbar->setMovable(true);
-        _connectAction = new QAction(GuiFactory::instance().connectIcon(), "Connect", conbar);
-        VERIFY(connect(_connectAction, SIGNAL(triggered()), this, SLOT(connectToServer())));
-        conbar->addAction(_connectAction);
-        _disConnectAction = new QAction(GuiFactory::instance().disConnectIcon(), "Disconnect", conbar);
-        VERIFY(connect(_disConnectAction, SIGNAL(triggered()), this, SLOT(disconnectFromServer())));
-        conbar->addAction(_disConnectAction);
-        _executeAction = new QAction(GuiFactory::instance().executeIcon(), "Execute", conbar);
-        VERIFY(connect(_executeAction, SIGNAL(triggered()), this, SLOT(execute())));
-        conbar->addAction(_executeAction);
+        connectAction_ = new QAction(GuiFactory::instance().connectIcon(), "Connect", conbar);
+        VERIFY(connect(connectAction_, SIGNAL(triggered()), this, SLOT(connectToServer())));
+        conbar->addAction(connectAction_);
+        disConnectAction_ = new QAction(GuiFactory::instance().disConnectIcon(), "Disconnect", conbar);
+        VERIFY(connect(disConnectAction_, SIGNAL(triggered()), this, SLOT(disconnectFromServer())));
+        conbar->addAction(disConnectAction_);
+        executeAction_ = new QAction(GuiFactory::instance().executeIcon(), "Execute", conbar);
+        VERIFY(connect(executeAction_, SIGNAL(triggered()), this, SLOT(execute())));
+        conbar->addAction(executeAction_);
         QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), "Stop", conbar);
         VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
         conbar->addAction(stopAction);
-        _serverName = new IconLabel(GuiFactory::instance().serverIcon(), _server->address());
-        conbar->addWidget(_serverName);
+        serverName_ = new IconLabel(GuiFactory::instance().serverIcon(), _server->address());
+        conbar->addWidget(serverName_);
 
         VERIFY(connect(_server.get(), SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), this, SLOT(startConnect(const EventsInfo::ConnectInfoRequest &))));
         VERIFY(connect(_server.get(), SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)), this, SLOT(finishConnect(const EventsInfo::ConnectInfoResponce &))));
@@ -123,9 +123,9 @@ namespace fastoredis
 
         QToolBar *savebar = new QToolBar;
         savebar->setMovable(true);
-        _loadAction = new QAction(GuiFactory::instance().loadIcon(), "Load", savebar);
-        VERIFY(connect(_loadAction, SIGNAL(triggered()), this, SLOT(loadFromFile())));
-        savebar->addAction(_loadAction);
+        loadAction_ = new QAction(GuiFactory::instance().loadIcon(), "Load", savebar);
+        VERIFY(connect(loadAction_, SIGNAL(triggered()), this, SLOT(loadFromFile())));
+        savebar->addAction(loadAction_);
         saveAction_ = new QAction(GuiFactory::instance().saveIcon(), "Save", savebar);
         VERIFY(connect(saveAction_, SIGNAL(triggered()), this, SLOT(saveToFile())));
         savebar->addAction(saveAction_);
@@ -142,25 +142,25 @@ namespace fastoredis
         splitter->setContentsMargins(0, 0, 0, 0);
         hlayout->addWidget(splitter);
 
-        _workProgressBar = new QProgressBar;
-        hlayout->addWidget(_workProgressBar);
+        workProgressBar_ = new QProgressBar;
+        hlayout->addWidget(workProgressBar_);
 
         mainlayout->addLayout(hlayout);
 
-        _input = new RedisShell();
-        _input->setContextMenuPolicy(Qt::CustomContextMenu);
-        VERIFY(connect(_input, SIGNAL(executed()), this, SLOT(execute())));
+        input_ = new RedisShell();
+        input_->setContextMenuPolicy(Qt::CustomContextMenu);
+        VERIFY(connect(input_, SIGNAL(executed()), this, SLOT(execute())));
 
-        mainlayout->addWidget(_input);
+        mainlayout->addWidget(input_);
 
         setLayout(mainlayout);
     }
 
     void ShellWidget::execute()
     {
-        QString selected = _input->selectedText();
+        QString selected = input_->selectedText();
         if(selected.isEmpty()){
-            selected = _input->text();
+            selected = input_->text();
         }
 
         _server->execute(selected);
@@ -168,7 +168,7 @@ namespace fastoredis
 
     QString ShellWidget::text() const
     {
-        return _input->text();
+        return input_->text();
     }
 
     void ShellWidget::stop()
@@ -193,14 +193,14 @@ namespace fastoredis
 
     void ShellWidget::setText(const QString& text)
     {
-        _input->setText(text);
+        input_->setText(text);
     }
 
     void ShellWidget::syncConnectionActions()
     {
-        _connectAction->setVisible(!_server->isConnected());
-        _disConnectAction->setVisible(_server->isConnected());
-        _executeAction->setEnabled(_server->isConnected());
+        connectAction_->setVisible(!_server->isConnected());
+        disConnectAction_->setVisible(_server->isConnected());
+        executeAction_->setEnabled(_server->isConnected());
     }
 
     void ShellWidget::startConnect(const EventsInfo::ConnectInfoRequest &req)
@@ -210,7 +210,7 @@ namespace fastoredis
 
     void ShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce &res)
     {
-        _serverName->setText(_server->address());
+        serverName_->setText(_server->address());
         syncConnectionActions();
     }
 
@@ -226,7 +226,7 @@ namespace fastoredis
 
     void ShellWidget::progressChange(const EventsInfo::ProgressInfoResponce &res)
     {
-        _workProgressBar->setValue(res._progress);
+        workProgressBar_->setValue(res._progress);
     }
 
     void ShellWidget::loadFromFile()

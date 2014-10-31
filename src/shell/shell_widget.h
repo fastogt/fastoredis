@@ -54,17 +54,17 @@ namespace fastoredis
         void syncConnectionActions();
 
         const IServerPtr _server;
-        QAction *_executeAction;
-        QAction *_connectAction;
-        QAction *_disConnectAction;
-        QAction *_loadAction;
+        QAction *executeAction_;
+        QAction *connectAction_;
+        QAction *disConnectAction_;
+        QAction *loadAction_;
         QAction *saveAction_;
         QAction *saveAsAction_;
 
 
-        IconLabel *_serverName;
-        RedisShell *_input;
-        QProgressBar *_workProgressBar;
+        IconLabel *serverName_;
+        RedisShell *input_;
+        QProgressBar *workProgressBar_;
         QString _filePath;
     };
 }

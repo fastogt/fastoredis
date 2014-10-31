@@ -29,7 +29,7 @@ namespace fastoredis
 
     private:
         void retranslateUi();
-        LogWidget *_log;
-        CommandsWidget *_commands;
+        LogWidget *log_;
+        CommandsWidget *commands_;
     };
 }

@@ -19,7 +19,7 @@ namespace fastoredis
         void setIcon(const QIcon &icon);
 
     private:
-        QLabel *_icon;
-        QLabel *_text;
+        QLabel *icon_;
+        QLabel *text_;
     };
 }
