@@ -6,7 +6,7 @@ PROJECT("FastoRedis" VERSION 0.1.0.1)
 #################### Project Settings ####################
 #SET(PROJECT_NAME "FastoRedis" CACHE STRING "Project Name")
 SET(PROJECT_NAME_TITLE ${PROJECT_NAME} CACHE STRING "Title for ${PROJECT_NAME}")
-SET(PROJECT_DOMAIN "www.fastoredis.org" CACHE STRING "Internet domain name for ${PROJECT_NAME}")
+SET(PROJECT_DOMAIN "www.fastoredis.com" CACHE STRING "Internet domain name for ${PROJECT_NAME}")
 SET(PROJECT_COMPANYNAME "Fasto" CACHE STRING "Company name for ${PROJECT_NAME}")
 SET(PROJECT_COPYRIGHT "Copyright (C) 2013 ${PROJECT_COMPANYNAME} All Rights Reserved.")
 SET(PROJECT_COMPANYNAME_DOMAIN "www.fasto.com" CACHE STRING "Internet domain name for ${PROJECT_NAME}")
