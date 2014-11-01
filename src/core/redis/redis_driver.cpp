@@ -174,7 +174,7 @@ namespace fastoredis
                 if (context->err) {
                     char buff[512] = {0};
                     if (config.hostsocket.empty())
-                        sprintf(buff, "Could not connect to Redis at %s:%d: %s\n", config.hostip.c_str(), config.hostport,context->errstr);
+                        sprintf(buff, "Could not connect to Redis at %s:%d: %s\n", config.hostip.c_str(), config.hostport, context->errstr);
                     else
                         sprintf(buff, "Could not connect to Redis at %s: %s\n", config.hostsocket.c_str(), context->errstr);
 
