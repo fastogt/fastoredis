@@ -4,6 +4,8 @@
 
 #include "common/string16.h"
 
+#include <string.h>
+
 #if defined(WCHAR_T_IS_UTF16)
 namespace common {
 //#error This file should not be used on 2-byte wchar_t systems

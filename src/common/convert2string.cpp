@@ -365,12 +365,20 @@ namespace common
 
     string16 convertToString16(const std::string& from)
     {
+#if defined(WCHAR_T_IS_UTF16)
         return UTF8ToWide(from);
+#elif defined(WCHAR_T_IS_UTF32)
+        return ASCIIToUTF16(from);
+#endif
     }
 
     string16 convertToString16(const char* from)
     {
+#if defined(WCHAR_T_IS_UTF16)
         return UTF8ToWide(from);
+#elif defined(WCHAR_T_IS_UTF32)
+        return ASCIIToUTF16(from);
+#endif
     }
 
     string16 convertToString16(const buffer_type& from)
@@ -464,7 +472,11 @@ namespace common
     template<>
     std::string convertFromString16(const string16& input)
     {
+#if defined(WCHAR_T_IS_UTF16)
         return WideToUTF8(input);
+#elif defined(WCHAR_T_IS_UTF32)
+        return UTF16ToASCII(input);
+#endif
     }
 
     template<>
