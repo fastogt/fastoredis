@@ -666,7 +666,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(common::convertToString16(loadDabasesString)));
             impl_->repl_impl(root, er);
-            if(er->isError()){
+            if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
                 FastoObject::child_container_type childrens = root->childrens();
@@ -700,7 +700,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(INFO_REQUEST));
             impl_->repl_impl(root, er);
-            if(er->isError()){
+            if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
                 res.info_ = makeServerInfo(root);
@@ -721,7 +721,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(common::convertToString16(propetyString)));
             impl_->repl_impl(root, er);
-            if(er->isError()){
+            if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
                 res.info_ = makeServerProperty(root);
@@ -742,7 +742,7 @@ namespace fastoredis
         FastoObject* root = FastoObject::createRoot(common::convertToString16(changeRequest));
             LOG_COMMAND(Command(common::convertToString16(changeRequest)));
             impl_->repl_impl(root, er);
-            if(er->isError()){
+            if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
                 res.isChange_ = true;

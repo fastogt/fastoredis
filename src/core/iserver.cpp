@@ -164,7 +164,7 @@ namespace fastoredis
         using namespace Events;
         ServerInfoHistoryResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er = v.errorInfo();
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedLoadServerHistoryInfo(v);

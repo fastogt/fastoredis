@@ -17,7 +17,7 @@ namespace fastoredis
         struct EventInfoBase
                 : public common::utils_qt::EventInfo<common::ErrorValueSPtr>
         {
-            typedef common::utils_qt::EventInfo<boost::shared_ptr<common::ErrorValue> > base_class;
+            typedef common::utils_qt::EventInfo<common::ErrorValueSPtr > base_class;
             EventInfoBase(const error_type &er = error_type());
 
             long long elapsedTime() const;
