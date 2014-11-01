@@ -23,7 +23,7 @@ namespace fastoredis
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
         connectionName_ = new QLineEdit;
-        connectionName_->setText(convertFromString16<QString>(connection_->connectionName()));
+        connectionName_->setText(convertFromString<QString>(connection_->connectionName()));
 
         typeConnection_ = new QComboBox;
         std::vector<string16> supt = supportedConnectionTypes();
@@ -82,7 +82,7 @@ namespace fastoredis
     void ConnectionDialog::accept()
     {
         if(validateAndApply()){
-            connection_->setConnectionName(common::convertToString16(connectionName_->text()));
+            connection_->setConnectionName(common::convertToString(connectionName_->text()));
             connection_->setCommandLine(common::convertToString(commandLine_->text()));
             connection_->setLoggingEnabled(logging_->isChecked());
             QDialog::accept();

@@ -641,12 +641,6 @@ namespace common
 			result += (*i)->toString();
 
 		return result;
-	}
-
-    ErrorValue::ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
-        : Value(TYPE_ERROR), description_(convertToString16(in_value)), errorType_(errorType), level_(level)
-    {
-
     }
 
     ErrorValue::ErrorValue(const string16 &in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)

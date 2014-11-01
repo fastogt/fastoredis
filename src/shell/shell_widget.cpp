@@ -44,7 +44,7 @@ namespace
             char buff[size_buff] = {0};
             common::strings::SafeSNPrintf(buff, size_buff, PROJECT_NAME" can't read from %1:\n%2.", convertToString(filePath).c_str(),
                             convertToString(file.errorString()).c_str());
-            ErrorValueSPtr er(new ErrorValue(buff, Value::E_ERROR));
+            ErrorValueSPtr er(new ErrorValue(convertToString16(buff), Value::E_ERROR));
             fastoredis::LOG_ERROR(er);
             QMessageBox::critical(parent, QString("Error"),
                 QObject::tr(PROJECT_NAME" can't read from %1:\n%2.")

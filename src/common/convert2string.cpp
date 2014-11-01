@@ -9,6 +9,8 @@
 
 #include "common/string_piece.h"
 
+#include "common/utf_string_conversions.h"
+
 namespace common
 {
     namespace
@@ -363,12 +365,18 @@ namespace common
 
     string16 convertToString16(const std::string& from)
     {
-        return string16((const char16*)from.c_str(), from.length());
+        return UTF8ToWide(from);
+    }
+
+    string16 convertToString16(const char* from)
+    {
+        return UTF8ToWide(from);
     }
 
     string16 convertToString16(const buffer_type& from)
     {
-        return string16((const char16*)from.c_str(), from.length());
+        std::string str = convertToString(from);
+        return convertToString16(str);
     }
 
     string16 convertToString16(bool from)
@@ -456,13 +464,14 @@ namespace common
     template<>
     std::string convertFromString16(const string16& input)
     {
-        return std::string(input.begin(), input.end());
+        return WideToUTF8(input);
     }
 
     template<>
     buffer_type convertFromString16(const string16& val)
     {
-        return buffer_type((const byte_type*)val.c_str(), val.length());
+        std::string str = convertFromString16<std::string>(val);
+        return buffer_type((const byte_type*)str.c_str(), str.size());
     }
 
     template<>

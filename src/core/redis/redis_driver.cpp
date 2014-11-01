@@ -166,7 +166,7 @@ namespace fastoredis
                     redisFree(context);
 
                 if (config.hostsocket.empty()) {
-                    context = redisConnect(config.hostip.c_str(),config.hostport);
+                    context = redisConnect  (config.hostip.c_str(),config.hostport);
                 } else {
                     context = redisConnectUnix(config.hostsocket.c_str());
                 }
@@ -174,10 +174,12 @@ namespace fastoredis
                 if (context->err) {
                     char buff[512] = {0};
                     if (config.hostsocket.empty())
-                        sprintf(buff,"Could not connect to Redis at %s:%d: %s\n",config.hostip.c_str(),config.hostport,context->errstr);
+                        sprintf(buff, "Could not connect to Redis at %s:%d: %s\n", config.hostip.c_str(), config.hostport,context->errstr);
                     else
-                        sprintf(buff,"Could not connect to Redis at %s: %s\n",config.hostsocket.c_str(),context->errstr);
-                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
+                        sprintf(buff, "Could not connect to Redis at %s: %s\n", config.hostsocket.c_str(), context->errstr);
+
+                    common::string16 buf16 = common::convertToString16(buff);
+                    er.reset(new common::ErrorValue(buf16, common::Value::E_ERROR));
                     redisFree(context);
                     context = NULL;
                     return REDIS_ERR;
@@ -231,7 +233,7 @@ namespace fastoredis
             if (context == NULL) return;
             char buff[512] = {0};
             sprintf(buff,"Error: %s\n",context->errstr);
-            er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
+            er.reset(new common::ErrorValue(common::convertToString16(buff), common::ErrorValue::E_ERROR));
         }
 
         void cliFormatReplyRaw(FastoObject* out, redisReply *r) {
@@ -580,7 +582,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er;
         notifyProgress(sender, 25);
                     if(impl_->interrupt_){
-                        common::ErrorValueSPtr er(new common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
+                        common::ErrorValueSPtr er(new common::ErrorValue(UTEXT("Interrupted connect."), common::ErrorValue::E_INTERRUPTED));
                         res.setErrorInfo(er);
                     }
                     else if(impl_->cliConnect(0, er) == REDIS_ERR){
@@ -610,7 +612,7 @@ namespace fastoredis
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->interrupt_){
-                        common::ErrorValueSPtr er(new common::ErrorValue("Interrupted exec.", common::ErrorValue::E_INTERRUPTED));
+                        common::ErrorValueSPtr er(new common::ErrorValue(UTEXT("Interrupted exec."), common::ErrorValue::E_INTERRUPTED));
                         res.setErrorInfo(er);
                         break;
                     }
@@ -634,7 +636,7 @@ namespace fastoredis
                 res._out = outRoot;
             }
             else{
-                common::ErrorValueSPtr er(new common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
+                common::ErrorValueSPtr er(new common::ErrorValue(UTEXT("Empty command line."), common::ErrorValue::E_ERROR));
                 res.setErrorInfo(er);
             }            
             reply(sender, new Events::ExecuteResponceEvent(this, res));

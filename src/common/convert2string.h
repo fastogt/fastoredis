@@ -7,6 +7,7 @@
 namespace common
 {
     string16 convertToString16(const std::string& from);
+    string16 convertToString16(const char* from);
     string16 convertToString16(const buffer_type& from);
     string16 convertToString16(bool from);
 

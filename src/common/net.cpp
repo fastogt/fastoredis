@@ -136,7 +136,7 @@ namespace common
     {
         static const uint16_t size_buff = 512;
         char buff[size_buff] = {0};
-        strings::SafeSNPrintf(buff, size_buff, "%s:%u", host.first.c_str(), host.second);
+        strings::SafeSNPrintf(buff, size_buff, "%s:%d", host.first.c_str(), host.second);
         return buff;
     }
 
