@@ -15,7 +15,7 @@ namespace fastoredis
         Text
     };
 
-    std::vector<common::string16> allSupportedViews();
+    std::vector<std::string> allSupportedViews();
 
     class FastoObject
             : public common::boost_extension::intrusive_ptr_base<FastoObject>

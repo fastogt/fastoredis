@@ -28,7 +28,6 @@
 #include "common/basictypes.h"
 
 #if defined(WCHAR_T_IS_UTF16)
-#define UTEXT(text) L##text
 namespace common {
 
 typedef wchar_t char16;
@@ -39,7 +38,6 @@ int c16memcmp(const char16* s1, const char16* s2, size_t n);
 }  // namespace base
 
 #elif defined(WCHAR_T_IS_UTF32)
-#define UTEXT(text) (common::char16*)text
 namespace common {
 
 typedef uint16_t char16;

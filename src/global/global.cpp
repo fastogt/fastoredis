@@ -7,7 +7,7 @@
 
 namespace
 {
-    const common::char16 *supportedViewsM[] = { UTEXT("Tree"), UTEXT("Table"), UTEXT("Text") };
+    const char *supportedViewsM[] = { "Tree", "Table", "Text" };
 }
 
 namespace fastoredis
@@ -89,7 +89,7 @@ namespace fastoredis
         return childrens_;
     }
 
-    std::vector<common::string16> allSupportedViews()
+    std::vector<std::string> allSupportedViews()
     {
         return common::utils::enums::convertToVector(supportedViewsM);
     }
@@ -97,18 +97,18 @@ namespace fastoredis
 
 namespace common
 {
-    string16 convertToString16(fastoredis::supportedViews v)
+    std::string convertToString(fastoredis::supportedViews v)
     {
         if(v < SIZEOFMASS(supportedViewsM)){
             return supportedViewsM[v];
         }
-        return string16();
+        return std::string();
     }
 
     template<>
-    fastoredis::supportedViews convertFromString16(const string16& from)
+    fastoredis::supportedViews convertFromString(const std::string& from)
     {
-        const char16* fromPtr = from.c_str();
+        const char* fromPtr = from.c_str();
         return common::utils::enums::findTypeInArray<fastoredis::supportedViews>(supportedViewsM, fromPtr);
     }
 

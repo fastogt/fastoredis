@@ -19,10 +19,10 @@ namespace fastoredis
         return DBUNKNOWN;
     }
 
-    std::vector<common::string16> supportedConnectionTypes();
+    std::vector<std::string> supportedConnectionTypes();
 }
 
 namespace common
 {
-    string16 convertToString16(fastoredis::connectionTypes t);
+    std::string convertToString(fastoredis::connectionTypes t);
 }

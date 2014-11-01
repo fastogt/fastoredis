@@ -211,7 +211,7 @@ namespace fastoredis
             res.infos_ = tmpInfos;
         }
         else{
-           common::ErrorValueSPtr er(new common::ErrorValue(UTEXT("Logging file not found"), common::ErrorValue::E_ERROR));
+           common::ErrorValueSPtr er(new common::ErrorValue(common::convertToString16("Logging file not found"), common::ErrorValue::E_ERROR));
            res.setErrorInfo(er);
         }
 

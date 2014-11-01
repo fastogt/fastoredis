@@ -374,11 +374,7 @@ namespace common
 
     string16 convertToString16(const char* from)
     {
-#if defined(WCHAR_T_IS_UTF16)
-        return UTF8ToWide(from);
-#elif defined(WCHAR_T_IS_UTF32)
-        return ASCIIToUTF16(from);
-#endif
+        return convertToString16(std::string(from));
     }
 
     string16 convertToString16(const buffer_type& from)
@@ -390,10 +386,10 @@ namespace common
     string16 convertToString16(bool from)
     {
         if(from){
-            return UTEXT("true");
+            return convertToString16("true");
         }
         else{
-            return UTEXT("false");
+            return convertToString16("false");
         }
     }
 
@@ -507,10 +503,10 @@ namespace common
     template<>
     bool convertFromString16(const string16& val)
     {
-        if(val == UTEXT("true")){
+        if(val == convertToString16("true")){
             return true;
         }
-        else if(val == UTEXT("false")){
+        else if(val == convertToString16("false")){
             return false;
         }
 

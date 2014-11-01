@@ -21,7 +21,7 @@ extern "C" {
 #define OUTPUT_STANDARD 0
 #define OUTPUT_RAW 1
 #define OUTPUT_CSV 2
-#define INFO_REQUEST UTEXT("INFO")
+#define INFO_REQUEST "INFO"
 
 namespace
 {
@@ -564,7 +564,7 @@ namespace fastoredis
 
     common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
     {
-        FastoObject* outRoot = FastoObject::createRoot(INFO_REQUEST);
+        FastoObject* outRoot = FastoObject::createRoot(common::convertToString16(INFO_REQUEST));
         outInfo = outRoot;
         common::ErrorValueSPtr er;
         impl_->repl_impl(outRoot, er);
@@ -582,7 +582,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er;
         notifyProgress(sender, 25);
                     if(impl_->interrupt_){
-                        common::ErrorValueSPtr er(new common::ErrorValue(UTEXT("Interrupted connect."), common::ErrorValue::E_INTERRUPTED));
+                        common::ErrorValueSPtr er(new common::ErrorValue(common::convertToString16("Interrupted connect."), common::ErrorValue::E_INTERRUPTED));
                         res.setErrorInfo(er);
                     }
                     else if(impl_->cliConnect(0, er) == REDIS_ERR){
@@ -612,7 +612,7 @@ namespace fastoredis
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->interrupt_){
-                        common::ErrorValueSPtr er(new common::ErrorValue(UTEXT("Interrupted exec."), common::ErrorValue::E_INTERRUPTED));
+                        common::ErrorValueSPtr er(new common::ErrorValue(common::convertToString16("Interrupted exec."), common::ErrorValue::E_INTERRUPTED));
                         res.setErrorInfo(er);
                         break;
                     }
@@ -636,7 +636,7 @@ namespace fastoredis
                 res._out = outRoot;
             }
             else{
-                common::ErrorValueSPtr er(new common::ErrorValue(UTEXT("Empty command line."), common::ErrorValue::E_ERROR));
+                common::ErrorValueSPtr er(new common::ErrorValue(common::convertToString16("Empty command line."), common::ErrorValue::E_ERROR));
                 res.setErrorInfo(er);
             }            
             reply(sender, new Events::ExecuteResponceEvent(this, res));
@@ -695,10 +695,10 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(INFO_REQUEST);
+            FastoObject* root = FastoObject::createRoot(common::convertToString16(INFO_REQUEST));
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(INFO_REQUEST));
+            LOG_COMMAND(Command(common::convertToString16(INFO_REQUEST)));
             impl_->repl_impl(root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);

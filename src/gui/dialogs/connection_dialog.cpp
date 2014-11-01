@@ -26,9 +26,9 @@ namespace fastoredis
         connectionName_->setText(convertFromString<QString>(connection_->connectionName()));
 
         typeConnection_ = new QComboBox;
-        std::vector<string16> supt = supportedConnectionTypes();
-        for(std::vector<string16>::const_iterator it = supt.begin(); it != supt.end(); ++it){
-            typeConnection_->addItem(convertFromString16<QString>(*it));
+        std::vector<std::string> supt = supportedConnectionTypes();
+        for(std::vector<std::string>::const_iterator it = supt.begin(); it != supt.end(); ++it){
+            typeConnection_->addItem(convertFromString<QString>(*it));
         }
         typeConnection_->setCurrentText(convertFromString16<QString>(common::convertToString16(connection_->connectionType())));
         VERIFY(connect(typeConnection_, SIGNAL(currentTextChanged(const QString&)), this, SLOT(typeConnectionChange(const QString&))));
@@ -70,7 +70,7 @@ namespace fastoredis
 
     void ConnectionDialog::typeConnectionChange(const QString &value)
     {
-        connectionTypes currentType = common::convertFromString16<connectionTypes>(common::convertToString16(value));
+        connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(value));
         bool isValidType = currentType != badConnectionType();
         connectionName_->setEnabled(isValidType);
         testButton_->setEnabled(isValidType);
