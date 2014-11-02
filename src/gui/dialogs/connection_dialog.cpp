@@ -30,7 +30,7 @@ namespace fastoredis
         for(std::vector<std::string>::const_iterator it = supt.begin(); it != supt.end(); ++it){
             typeConnection_->addItem(convertFromString<QString>(*it));
         }
-        typeConnection_->setCurrentText(convertFromString16<QString>(common::convertToString16(connection_->connectionType())));
+        typeConnection_->setCurrentText(convertFromString<QString>(common::convertToString(connection_->connectionType())));
         VERIFY(connect(typeConnection_, SIGNAL(currentTextChanged(const QString&)), this, SLOT(typeConnectionChange(const QString&))));
 
         logging_ = new QCheckBox("Logging enabled");
