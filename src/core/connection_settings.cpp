@@ -72,7 +72,7 @@ namespace fastoredis
                         result->setConnectionName(elText);
                     }
                     else if(commaCount == 2){
-                        result->setLoggingEnabled(common::convertFromString<bool>(elText));
+                        result->setLoggingEnabled(common::convertFromString<uint8_t>(elText));
                         result->initFromCommandLine(val.substr(i+1));
                         break;
                     }

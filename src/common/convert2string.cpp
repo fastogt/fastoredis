@@ -383,16 +383,6 @@ namespace common
         return convertToString16(str);
     }
 
-    string16 convertToString16(bool from)
-    {
-        if(from){
-            return convertToString16("true");
-        }
-        else{
-            return convertToString16("false");
-        }
-    }
-
     string16 convertToString16(char value)
     {
         return IntToStringT<string16, char, unsigned char, true>::
@@ -501,24 +491,6 @@ namespace common
     }
 
     template<>
-    bool convertFromString16(const string16& val)
-    {
-        if(val == convertToString16("true")){
-            return true;
-        }
-        else if(val == convertToString16("false")){
-            return false;
-        }
-
-        uint8_t intVal = convertFromString16<uint8_t>(val);
-        if(intVal == 0){
-            return false;
-        }
-
-        return true;
-    }
-
-    template<>
     short convertFromString16(const string16& input)
     {
         short output = 0;
@@ -612,16 +584,6 @@ namespace common
     std::string convertToString(const string16& from)
     {
         return convertFromString16<std::string>(from);
-    }
-
-    std::string convertToString(bool from)
-    {
-        if(from){
-            return "true";
-        }
-        else{
-            return "false";
-        }
     }
 
     std::string convertToString(char value)
@@ -724,24 +686,6 @@ namespace common
         bool res = StringToIntImpl(input, &output);
         DCHECK(res);
         return output;
-    }
-
-    template<>
-    bool convertFromString(const std::string& val)
-    {
-        if(val == "true"){
-            return true;
-        }
-        else if(val == "false"){
-            return false;
-        }
-
-        uint8_t intVal = convertFromString<uint8_t>(val);
-        if(intVal == 0){
-            return false;
-        }
-
-        return true;
     }
 
     template<>

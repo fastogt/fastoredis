@@ -14,7 +14,7 @@ namespace common
         struct intrusive_ptr_base
         {
             typedef refcount_t refcount_type;
-            typedef intrusive_ptr_base<T,refcount_t> class_type;
+            typedef intrusive_ptr_base<T, refcount_t> class_type;
         protected:
             intrusive_ptr_base(): ref_count_(0)
             {

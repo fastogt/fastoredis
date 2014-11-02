@@ -202,6 +202,7 @@ namespace common
             : public Value
     {
     public:
+        ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
         ErrorValue(const string16& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
         ErrorValue();
         bool isError() const;

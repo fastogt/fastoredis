@@ -178,7 +178,7 @@ namespace fastoredis
                     else
                         sprintf(buff, "Could not connect to Redis at %s: %s\n", config.hostsocket.c_str(), context->errstr);
 
-                    common::string16 buf16 = common::convertToString16(buff);
+                    common::string16 buf16 = common::convertToString16(std::string(buff));
                     er.reset(new common::ErrorValue(buf16, common::Value::E_ERROR));
                     redisFree(context);
                     context = NULL;
@@ -233,7 +233,7 @@ namespace fastoredis
             if (context == NULL) return;
             char buff[512] = {0};
             sprintf(buff,"Error: %s\n",context->errstr);
-            er.reset(new common::ErrorValue(common::convertToString16(buff), common::ErrorValue::E_ERROR));
+            er.reset(new common::ErrorValue(common::convertToString16(std::string(buff)), common::ErrorValue::E_ERROR));
         }
 
         void cliFormatReplyRaw(FastoObject* out, redisReply *r) {
@@ -459,7 +459,13 @@ namespace fastoredis
         }
 
         void repl_impl(FastoObject* out, common::ErrorValueSPtr &er) {
-            const char *command = out->toString().c_str();
+            if(!out){
+                return;
+            }
+
+            const std::string scommand = common::convertToString(out->toString16());
+            const char *command = scommand.c_str();
+
             if (command[0] != '\0') {
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
@@ -564,7 +570,7 @@ namespace fastoredis
 
     common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
     {
-        FastoObject* outRoot = FastoObject::createRoot(common::convertToString16(INFO_REQUEST));
+        FastoObject* outRoot = FastoObject::createRoot(INFO_REQUEST);
         outInfo = outRoot;
         common::ErrorValueSPtr er;
         impl_->repl_impl(outRoot, er);
@@ -582,7 +588,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er;
         notifyProgress(sender, 25);
                     if(impl_->interrupt_){
-                        common::ErrorValueSPtr er(new common::ErrorValue(common::convertToString16("Interrupted connect."), common::ErrorValue::E_INTERRUPTED));
+                        common::ErrorValueSPtr er(new common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
                         res.setErrorInfo(er);
                     }
                     else if(impl_->cliConnect(0, er) == REDIS_ERR){
@@ -608,11 +614,11 @@ namespace fastoredis
 
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                FastoObjectPtr outRoot = FastoObject::createRoot(common::convertToString16(inputLine));
+                FastoObjectPtr outRoot = FastoObject::createRoot(inputLine);
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->interrupt_){
-                        common::ErrorValueSPtr er(new common::ErrorValue(common::convertToString16("Interrupted exec."), common::ErrorValue::E_INTERRUPTED));
+                        common::ErrorValueSPtr er(new common::ErrorValue("Interrupted exec.", common::ErrorValue::E_INTERRUPTED));
                         res.setErrorInfo(er);
                         break;
                     }
@@ -629,14 +635,14 @@ namespace fastoredis
                         common::StringValue *val =common::Value::createStringValue(command);
                         FastoObject* child = new FastoObject(outRoot.get(), val);
                         outRoot->addChildren(child);
-                        LOG_COMMAND(Command(common::convertToString16(command),Command::UserCommand));
+                        LOG_COMMAND(Command(command,Command::UserCommand));
                         impl_->repl_impl(child, er);                        
                     }
                 }
                 res._out = outRoot;
             }
             else{
-                common::ErrorValueSPtr er(new common::ErrorValue(common::convertToString16("Empty command line."), common::ErrorValue::E_ERROR));
+                common::ErrorValueSPtr er(new common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
                 res.setErrorInfo(er);
             }            
             reply(sender, new Events::ExecuteResponceEvent(this, res));
@@ -661,17 +667,17 @@ namespace fastoredis
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(common::convertToString16(loadDabasesString));
+            FastoObject* root = FastoObject::createRoot(loadDabasesString);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(common::convertToString16(loadDabasesString)));
+            LOG_COMMAND(Command(loadDabasesString));
             impl_->repl_impl(root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
                 FastoObject::child_container_type childrens = root->childrens();
                 for(int i = 0; i < childrens.size(); ++i){
-                    DataBaseInfo dbInf(childrens[i]->toString(), 0);
+                    DataBaseInfo dbInf(childrens[i]->toString16(), 0);
                     res.databases_.push_back(dbInf);
                 }
             }
@@ -695,10 +701,10 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(common::convertToString16(INFO_REQUEST));
+            FastoObject* root = FastoObject::createRoot(INFO_REQUEST);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(common::convertToString16(INFO_REQUEST)));
+            LOG_COMMAND(Command(INFO_REQUEST));
             impl_->repl_impl(root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);
@@ -716,10 +722,10 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(common::convertToString16(propetyString));
+            FastoObject* root = FastoObject::createRoot(propetyString);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(common::convertToString16(propetyString)));
+            LOG_COMMAND(Command(propetyString));
             impl_->repl_impl(root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);

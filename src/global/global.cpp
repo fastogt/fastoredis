@@ -39,11 +39,6 @@ namespace fastoredis
         return result;
     }
 
-    std::string FastoObject::toString() const
-    {
-        return common::convertToString(toString16());
-    }
-
     FastoObject* FastoObject::deepCopy(FastoObject* parent) const
     {
         FastoObject* result = new FastoObject(parent, value_->deepCopy());
@@ -64,6 +59,11 @@ namespace fastoredis
         }
 
         return parent;
+    }
+
+    FastoObject* FastoObject::createRoot(const std::string &text)
+    {
+        return createRoot(common::convertToString16(text));
     }
 
     FastoObject *FastoObject::createRoot(const common::string16 &text)

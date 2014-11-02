@@ -76,7 +76,7 @@ namespace fastoredis
 
     QString ExplorerDatabaseItem::name() const
     {
-        return common::convertFromString<QString>(db_.name_);
+        return common::convertFromString16<QString>(db_.name_);
     }
 
     ExplorerServerItem *ExplorerDatabaseItem::parent() const

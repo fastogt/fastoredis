@@ -1,9 +1,17 @@
 #include "global/types.h"
 
+#include "common/convert2string.h"
+
 namespace fastoredis
 {
     Command::Command()
         : message_(), type_(InnerCommand)
+    {
+
+    }
+
+    Command::Command(const std::string &mess, c_type t)
+        : message_(common::convertToString16(mess)), type_(t)
     {
 
     }

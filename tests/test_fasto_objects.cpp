@@ -20,24 +20,23 @@ TEST(FastoObject, LifeTimeScope)
         FastoObject* ptr(new FastoObject(root.get(), obj));
         root->addChildren(ptr);
     }
-    ASSERT_TRUE(obj == NULL);
 }
 
 TEST(FastoObject, StringText)
 {
     using namespace common;
-    const std::string text = "Test";
+    const string16 text = convertToString16("Test");
     fastoredis::FastoObject* obj = fastoredis::FastoObject::createRoot();
     obj->addChildren(new fastoredis::FastoObject(obj, new common::StringValue(text)));
-    ASSERT_EQ(escapedText(text), common::convert2string(obj));
+    ASSERT_EQ(escapedText(text), common::convertToString16(obj));
 
-    const std::string text2 = "Test2";
+    const string16 text2 = convertToString16("Test2");
     obj->addChildren(new fastoredis::FastoObject(obj, new common::StringValue(text2)));
-    std::string line2 = escapedText(text) + escapedText(text2);
-    ASSERT_EQ(line2, common::convert2string(obj));
+    string16 line2 = escapedText(text) + escapedText(text2);
+    ASSERT_EQ(line2, common::convertToString16(obj));
 
-    const std::string text3 = "Test3";
+    const string16 text3 = convertToString16("Test3");
     obj->addChildren(new fastoredis::FastoObject(obj, new common::StringValue(text3)));
-    std::string line3 = escapedText(text) + escapedText(text2) + escapedText(text3);
-    ASSERT_EQ(line3, common::convert2string(obj));
+    string16 line3 = escapedText(text) + escapedText(text2) + escapedText(text3);
+    ASSERT_EQ(line3, common::convertToString16(obj));
 }
