@@ -8,18 +8,23 @@ TEST(string, convertTo)
     const std::string stext = "11";
     const std::string convText = common::convertToString(val);
     ASSERT_EQ(stext, convText);
+
+    long lval = 11;
+    const std::string ltext = "11";
+    const std::string lconvText = common::convertToString(lval);
+    ASSERT_EQ(ltext, lconvText);
 }
 
 TEST(string16, convertTo)
 {
-    const wchar_t* text = L"text";
+    const common::char16* text = L"text";
     const std::string stext = "text";
     const common::string16 convText = common::convertToString16(stext);
     ASSERT_EQ(text, convText);
     const std::string fstext = common::convertFromString16<std::string>(convText);
     ASSERT_EQ(stext, fstext);
 
-    const wchar_t* text2 = L"Привет";
+    const common::char16* text2 = L"Привет";
     const std::string stext2 = "Привет";
     const common::string16 convText2 = common::convertToString16(stext2);
     ASSERT_EQ(text2, convText2);
