@@ -71,16 +71,16 @@
 #define PRINTF_FORMAT(format_param, dots_param)
 #endif
 
-#define VERIFY(x) assert(x)
-
 #ifdef NDEBUG
+#define VERIFY(x) x
 #define DCHECK(x)
 #define DCHECK_MSG(x, text)
 #define DCHECK_EQ(x, y)
 #define DCHECK_LE(x, y)
 #define DCHECK_GT(x, y)
 #else
-#define DCHECK(x) assert(x)
+#define VERIFY(x) assert(x)
+#define DCHECK(x) VERIFY(x)
 #define DCHECK_MSG(x, text) assert(x && text)
 #define DCHECK_EQ(x, y) assert(x == y)
 #define DCHECK_LE(x, y) assert(x < y)
