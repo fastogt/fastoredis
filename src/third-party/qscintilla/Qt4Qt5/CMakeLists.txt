@@ -1,4 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_POLICY(SET CMP0048 OLD)
 PROJECT(qscintilla2)
 INCLUDE(../../../../cmake/integrate-qt.cmake)
 DETECT_QT()

@@ -2,6 +2,8 @@
 
 #include <errno.h>
 
+#include <sys/types.h>
+
 extern "C" {
 #include <anet.h>
 #include <help.h>

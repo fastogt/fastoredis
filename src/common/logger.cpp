@@ -22,10 +22,10 @@ namespace common
         #ifdef NDEBUG
             outStream_ = new std::ofstream(get_logger_path().c_str());
             string16_ofstream *file = dynamic_cast<string16_ofstream*>(outStream_);
-            if(!file||(file&&!file->is_open()))
+            if(!file || (file && !file->is_open()))
             {
-                 outStream_  = &cerr();
-                 *outStream_ << traits_level<WARNING>::text << " Output file not open!\n";
+                 outStream_  = &std::cerr;
+                 *outStream_ << log_level_to_text(L_WARNING) << " Output file not open!\n";
             }            
         #else
             outStream_ = &std::cerr;
