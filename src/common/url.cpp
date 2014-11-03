@@ -8,9 +8,9 @@ namespace
     using namespace common;
     const memory_string protocols_array[]=
     {
-        memory_string(UTEXT("http")),
-        memory_string(UTEXT("ftp")),
-        memory_string(UTEXT("file"))
+        memory_string("http"),
+        memory_string("ftp"),
+        memory_string("file")
     };
 }
 namespace common
@@ -142,7 +142,7 @@ namespace common
             //ftp,http,file
             size_t len = strlen(url_s);
             size_t start=0;
-            if(detail::get_protocol(url_s,len,protocol_))
+            if(detail::get_protocol(url_s, len, protocol_))
             {
                 if(protocol_==ftp)
                 {
@@ -154,15 +154,15 @@ namespace common
                 }
             }
             memory_string *cur_member = &host_;
-            for(size_t i=start;i<len;++i)
+            for(size_t i = start; i < len; ++i)
             {
                 if(url_s[i]=='/'||url_s[i]=='?')
                 {
-                    if(url_s[i]=='/'&&cur_member==&host_)
+                    if(url_s[i]=='/' && cur_member == &host_)
                     {
                         cur_member = &path_;
                     }
-                    else if(url_s[i]=='?'&&cur_member==&path_)
+                    else if(url_s[i]=='?' && cur_member == &path_)
                     {
                         cur_member = &query_;
                     }

@@ -49,7 +49,7 @@ namespace common
         static ErrorValue* createErrorValue(const string16& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
         static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
-        static string16 toString(Type t);
+        static std::string toString(Type t);
         virtual string16 toString() const;
         Type getType() const { return type_; }
 

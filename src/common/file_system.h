@@ -67,7 +67,6 @@ namespace common
         bool close_descriptor(int fd_desc) WARN_UNUSED_RESULT;
 
         bool open_descriptor(const std::string& path, int &fd_desc, int oflags) WARN_UNUSED_RESULT;
-        bool open_descriptor(const std::string& path, int &fd_desc, int oflags, mode_t mode) WARN_UNUSED_RESULT;
 #ifdef OS_POSIX
         bool create_node(const std::string &path) WARN_UNUSED_RESULT;
         bool create_node(const std::string& path, size_t permissions) WARN_UNUSED_RESULT;

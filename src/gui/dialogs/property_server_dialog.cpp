@@ -34,16 +34,18 @@ namespace fastoredis
     void PropertyServerDialog::finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &res)
     {
         glassWidget_->stop();
-        boost::shared_ptr<common::ErrorValue> er = res.errorInfo();
-        if(!er->isError()){
-            if(type_ == REDIS){
-                ServerPropertyInfo inf = res.info_;
-                PropertyTableModel *model = qobject_cast<PropertyTableModel*>(propertyes_table_->model());
-                for(int i = 0; i < inf.propertyes_.size(); ++i)
-                {
-                    PropertyType it = inf.propertyes_[i];
-                    model->addItem(new PropertyTableItem(common::convertFromString<QString>(it.first), common::convertFromString<QString>(it.second)));
-                }
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        if(type_ == REDIS){
+            ServerPropertyInfo inf = res.info_;
+            PropertyTableModel *model = qobject_cast<PropertyTableModel*>(propertyes_table_->model());
+            for(int i = 0; i < inf.propertyes_.size(); ++i)
+            {
+                PropertyType it = inf.propertyes_[i];
+                model->addItem(new PropertyTableItem(common::convertFromString<QString>(it.first), common::convertFromString<QString>(it.second)));
             }
         }
     }
@@ -55,14 +57,16 @@ namespace fastoredis
 
     void PropertyServerDialog::finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &res)
     {
-        boost::shared_ptr<common::ErrorValue> er = res.errorInfo();
-        if(!er->isError()){
-            if(type_ == REDIS){
-                PropertyType pr = res.newItem_;
-                if(res.isChange_){
-                    PropertyTableModel *model = qobject_cast<PropertyTableModel*>(propertyes_table_->model());
-                    model->changeProperty(pr);
-                }
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        if(type_ == REDIS){
+            PropertyType pr = res.newItem_;
+            if(res.isChange_){
+                PropertyTableModel *model = qobject_cast<PropertyTableModel*>(propertyes_table_->model());
+                model->changeProperty(pr);
             }
         }
     }

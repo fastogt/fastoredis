@@ -15,13 +15,13 @@
 namespace
 {
     const uint16_t port = 27017;
-    const common::string16 defaultServerHost = UTEXT("localhost");
-    const common::string16 defaultNameConnection = UTEXT("New Connection");
+    const std::string defaultServerHost = "localhost";
+    const std::string defaultNameConnection = "New Connection";
 }
 
 namespace fastoredis
 {
-    IConnectionSettingsBase::IConnectionSettingsBase(const common::string16 &connectionName)
+    IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName)
         : connectionName_(), hash_(), logging_enabled_(false)
     {
         setConnectionName(connectionName.empty() ? defaultNameConnection : connectionName);
@@ -50,7 +50,7 @@ namespace fastoredis
             size_t len = val.size();
 
             uint8_t commaCount = 0;
-            common::string16 elText;
+            std::string elText;
 
             for(size_t i = 0; i < len; ++i ){
                 char ch = val[i];
@@ -59,7 +59,7 @@ namespace fastoredis
                         int crT = elText[0] - 48;
                         switch(crT){
                             case REDIS:{
-                                result = new RedisConnectionSettings(UTEXT(""), redisConfig());
+                                result = new RedisConnectionSettings("", redisConfig());
                                 break;
                             }
                             default:{
@@ -72,7 +72,7 @@ namespace fastoredis
                         result->setConnectionName(elText);
                     }
                     else if(commaCount == 2){
-                        result->setLoggingEnabled(common::convertFromString16<bool>(elText));
+                        result->setLoggingEnabled(common::convertFromString<uint8_t>(elText));
                         result->initFromCommandLine(val.substr(i+1));
                         break;
                     }
@@ -93,7 +93,7 @@ namespace fastoredis
         connectionTypes crT = connectionType();
         if(crT != badConnectionType()){
             std::stringstream str;
-            str << crT << ',' << common::convertToString(connectionName()) << ',' << logging_enabled_ << ',' << toCommandLine();
+            str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',' << toCommandLine();
             res = str.str();
         }
         return res;
@@ -114,14 +114,14 @@ namespace fastoredis
         logging_enabled_ = isLogging;
     }
 
-    void IConnectionSettingsBase::setConnectionName(const common::string16 &name)
+    void IConnectionSettingsBase::setConnectionName(const std::string& name)
     {        
         connectionName_ = name;
         using namespace common::utils;
-        hash_ = hash::crc64(0, common::convertFromString16<common::buffer_type>(connectionName_));
+        hash_ = hash::crc64(0, common::convertFromString<common::buffer_type>(connectionName_));
     }
 
-    common::string16 IConnectionSettingsBase::connectionName() const
+    std::string IConnectionSettingsBase::connectionName() const
     {
         return connectionName_;
     }
@@ -136,7 +136,7 @@ namespace fastoredis
         }
     }
 
-    RedisConnectionSettings::RedisConnectionSettings(const common::string16 &connectionName, const redisConfig &info)
+    RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName, const redisConfig &info)
         :IConnectionSettingsBase(connectionName), info_(info)
     {
 

@@ -73,7 +73,7 @@ namespace fastoredis
 
     QString IServer::name() const
     {
-        return common::convertFromString16<QString>(_drv->settings()->connectionName());
+        return common::convertFromString<QString>(_drv->settings()->connectionName());
     }
 
     QString IServer::address() const
@@ -164,7 +164,7 @@ namespace fastoredis
         using namespace Events;
         ServerInfoHistoryResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er = v.errorInfo();
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedLoadServerHistoryInfo(v);

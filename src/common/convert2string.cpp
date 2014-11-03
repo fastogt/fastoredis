@@ -9,6 +9,8 @@
 
 #include "common/string_piece.h"
 
+#include "common/utf_string_conversions.h"
+
 namespace common
 {
     namespace
@@ -363,22 +365,22 @@ namespace common
 
     string16 convertToString16(const std::string& from)
     {
-        return string16((const char16*)from.c_str(), from.length());
+#if defined(WCHAR_T_IS_UTF16)
+        return UTF8ToWide(from);
+#elif defined(WCHAR_T_IS_UTF32)
+        return ASCIIToUTF16(from);
+#endif
+    }
+
+    string16 convertToString16(const char* from)
+    {
+        return convertToString16(std::string(from));
     }
 
     string16 convertToString16(const buffer_type& from)
     {
-        return string16((const char16*)from.c_str(), from.length());
-    }
-
-    string16 convertToString16(bool from)
-    {
-        if(from){
-            return UTEXT("true");
-        }
-        else{
-            return UTEXT("false");
-        }
+        std::string str = convertToString(from);
+        return convertToString16(str);
     }
 
     string16 convertToString16(char value)
@@ -456,13 +458,18 @@ namespace common
     template<>
     std::string convertFromString16(const string16& input)
     {
-        return std::string(input.begin(), input.end());
+#if defined(WCHAR_T_IS_UTF16)
+        return WideToUTF8(input);
+#elif defined(WCHAR_T_IS_UTF32)
+        return UTF16ToASCII(input);
+#endif
     }
 
     template<>
     buffer_type convertFromString16(const string16& val)
     {
-        return buffer_type((const byte_type*)val.c_str(), val.length());
+        std::string str = convertFromString16<std::string>(val);
+        return buffer_type((const byte_type*)str.c_str(), str.size());
     }
 
     template<>
@@ -481,24 +488,6 @@ namespace common
         bool res = String16ToIntImpl(input, &output);
         DCHECK(res);
         return output;
-    }
-
-    template<>
-    bool convertFromString16(const string16& val)
-    {
-        if(val == UTEXT("true")){
-            return true;
-        }
-        else if(val == UTEXT("false")){
-            return false;
-        }
-
-        uint8_t intVal = convertFromString16<uint8_t>(val);
-        if(intVal == 0){
-            return false;
-        }
-
-        return true;
     }
 
     template<>
@@ -595,16 +584,6 @@ namespace common
     std::string convertToString(const string16& from)
     {
         return convertFromString16<std::string>(from);
-    }
-
-    std::string convertToString(bool from)
-    {
-        if(from){
-            return "true";
-        }
-        else{
-            return "false";
-        }
     }
 
     std::string convertToString(char value)
@@ -707,24 +686,6 @@ namespace common
         bool res = StringToIntImpl(input, &output);
         DCHECK(res);
         return output;
-    }
-
-    template<>
-    bool convertFromString(const std::string& val)
-    {
-        if(val == "true"){
-            return true;
-        }
-        else if(val == "false"){
-            return false;
-        }
-
-        uint8_t intVal = convertFromString<uint8_t>(val);
-        if(intVal == 0){
-            return false;
-        }
-
-        return true;
     }
 
     template<>

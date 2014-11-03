@@ -35,15 +35,15 @@ namespace common
             }
         }
 
-        const char16 *stringTypes[] = { UTEXT("TYPE_NULL"),
-                                      UTEXT("TYPE_BOOLEAN"),
-                                      UTEXT("TYPE_INTEGER"),
-                                      UTEXT("TYPE_UINTEGER"),
-                                      UTEXT("TYPE_DOUBLE"),
-                                      UTEXT("TYPE_STRING"),
-                                      UTEXT("TYPE_ARRAY"),
-                                      UTEXT("TYPE_STATUS"),
-                                      UTEXT("TYPE_ERROR")
+        const char *stringTypes[] = { "TYPE_NULL",
+                                      "TYPE_BOOLEAN",
+                                      "TYPE_INTEGER",
+                                      "TYPE_UINTEGER",
+                                      "TYPE_DOUBLE",
+                                      "TYPE_STRING",
+                                      "TYPE_ARRAY",
+                                      "TYPE_STATUS",
+                                      "TYPE_ERROR"
                                     };
     }
 
@@ -67,7 +67,7 @@ namespace common
 
     string16 Value::toString() const
 	{
-        return UTEXT("");
+        return string16();
 	}
 
 	// static
@@ -122,14 +122,13 @@ namespace common
     }
 
     // static
-    string16 Value::toString(Type t)
+    std::string Value::toString(Type t)
     {
-        string16 result;
         static const int count = SIZEOFMASS(stringTypes);
         if(t < count){
-            result = stringTypes[t];
+            return stringTypes[t];
         }
-        return result;
+        return std::string();
     }
 
     bool Value::getAsBoolean(bool* out_value) const
@@ -234,7 +233,7 @@ namespace common
         switch (getType()) {
             case TYPE_BOOLEAN:
             {
-                return boolean_value_ ? UTEXT("true") : UTEXT("false");
+                return common::convertToString16(boolean_value_);
             }
             case TYPE_INTEGER:
             {
@@ -249,7 +248,7 @@ namespace common
                 return common::convertToString16(double_value_);
             }
             default:
-                return UTEXT("");
+                return string16();
         }
 	}
 
@@ -641,7 +640,7 @@ namespace common
 			result += (*i)->toString();
 
 		return result;
-	}
+    }
 
     ErrorValue::ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
         : Value(TYPE_ERROR), description_(convertToString16(in_value)), errorType_(errorType), level_(level)

@@ -8,7 +8,6 @@ namespace common
 {
     string16 convertToString16(const std::string& from);
     string16 convertToString16(const buffer_type& from);
-    string16 convertToString16(bool from);
 
     string16 convertToString16(char value);
     string16 convertToString16(unsigned char value);
@@ -27,7 +26,6 @@ namespace common
 
     std::string convertToString(const buffer_type& from);
     std::string convertToString(const string16& from);
-    std::string convertToString(bool from);
 
     std::string convertToString(char value);
     std::string convertToString(unsigned char value);

@@ -145,13 +145,16 @@ namespace fastoredis
             if(logFile_ && logFile_->isOpened()){
                 FastoObjectPtr outInf;
                 common::ErrorValueSPtr er = currentLoggingInfo(outInf);
-                if(!er->isError()){
-                    FastoObject* par = FastoObject::createRoot(createStamp());
-                    FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
-                    common::string16 data = common::convertToString16(toFile.get());
-                    logFile_->write(data);
-                    logFile_->flush();
+                if(er && er->isError()){
+                    QObject::timerEvent(event);
+                    return;
                 }
+
+                FastoObject* par = FastoObject::createRoot(createStamp());
+                FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
+                common::string16 data = common::convertToString16(toFile.get());
+                logFile_->write(data);
+                logFile_->flush();
             }
         }
         QObject::timerEvent(event);
@@ -208,7 +211,7 @@ namespace fastoredis
             res.infos_ = tmpInfos;
         }
         else{
-           common::ErrorValueSPtr er(new common::ErrorValue("Logging file not found", common::ErrorValue::E_ERROR));
+           common::ErrorValueSPtr er(new common::ErrorValue(common::convertToString16("Logging file not found"), common::ErrorValue::E_ERROR));
            res.setErrorInfo(er);
         }
 

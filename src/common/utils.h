@@ -4,6 +4,8 @@
 
 #include <signal.h>
 
+#include <string.h>
+
 #include <typeinfo>
 #include <vector>
 
@@ -53,7 +55,29 @@ namespace common
             inline std::vector<string16> convertToVector(const char16 *(&arr)[size])
             {
                 std::vector<string16> res;
-                for (int i=0; i < size;++i ){
+                for (int i = 0; i < size; ++i){
+                    res.push_back(arr[i]);
+                }
+                return res;
+            }
+
+            template<typename type, int size>
+            inline type findTypeInArray(const char *(&arr)[size], const char *text)
+            {
+                for (int i=0; i < size; ++i){
+                    const size_t len = strlen(text);
+                    if (memcmp(text, arr[i], len) == 0){
+                        return static_cast<type>(i);
+                    }
+                }
+                return static_cast<type>(0);
+            }
+
+            template<int size>
+            inline std::vector<std::string> convertToVector(const char *(&arr)[size])
+            {
+                std::vector<std::string> res;
+                for (int i = 0; i < size; ++i){
                     res.push_back(arr[i]);
                 }
                 return res;

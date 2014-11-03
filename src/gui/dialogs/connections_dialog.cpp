@@ -27,7 +27,7 @@ namespace fastoredis
 
         void refreshFields()
         {
-            setText(0, common::convertFromString16<QString>(connection_->connectionName()));
+            setText(0, common::convertFromString<QString>(connection_->connectionName()));
             connectionTypes conType = connection_->connectionType();
             if(conType == REDIS){
                 RedisConnectionSettings *red = dynamic_cast<RedisConnectionSettings*>(connection_.get());
@@ -145,7 +145,7 @@ namespace fastoredis
     void ConnectionsDialog::add()
     {
         redisConfig conf;
-        IConnectionSettingsBasePtr p(new RedisConnectionSettings(UTEXT("New Connection"), conf));
+        IConnectionSettingsBasePtr p(new RedisConnectionSettings("New Connection", conf));
         ConnectionDialog dlg(p,this);
         int result = dlg.exec();
         if(result == QDialog::Accepted){

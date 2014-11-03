@@ -160,20 +160,6 @@ namespace common
             return create_directory_impl(prPathPtr);
         }
 
-        bool open_descriptor(const std::string& path, int &fd_desc, int oflags, mode_t mode)
-        {
-            if(path.empty()){
-                return false;
-            }
-
-            bool result = (fd_desc = open(path.c_str(), oflags, mode)) != ERROR_RESULT_VALUE;
-            if(!result){
-               DEBUG_MSG_PERROR("open_descriptor");
-            }
-
-            return result;
-        }
-
         bool open_descriptor(const std::string& path, int &fd_desc, int oflags)
         {
             if(path.empty()){

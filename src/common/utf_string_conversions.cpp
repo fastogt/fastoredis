@@ -23,9 +23,9 @@ bool ConvertUnicode(const SRC_CHAR* src,
   for (int32_t i = 0; i < src_len32; i++) {
     uint32_t code_point;
     if (ReadUnicodeCharacter(src, src_len32, &i, &code_point)) {
-      //WriteUnicodeCharacter(code_point, output);
+      WriteUnicodeCharacter(code_point, output);
     } else {
-      //WriteUnicodeCharacter(0xFFFD, output);
+      WriteUnicodeCharacter(0xFFFD, output);
       success = false;
     }
   }

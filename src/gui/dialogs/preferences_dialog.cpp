@@ -43,9 +43,9 @@ namespace fastoredis
         stylesComboBox_ = new QComboBox();
         stylesComboBox_->addItems(getSupportedStyles());
         defaultViewComboBox_ = new QComboBox;
-        std::vector<common::string16> allV = allSupportedViews();
+        std::vector<std::string> allV = allSupportedViews();
         for(int i=0; i<allV.size(); ++i){
-            defaultViewComboBox_->addItem(common::convertFromString16<QString>(allV[i]));
+            defaultViewComboBox_->addItem(common::convertFromString<QString>(allV[i]));
         }
         stylesLayout->addWidget(defaultViewComboBox_);
         stylesLayout->addWidget(stylesComboBox_);
@@ -78,7 +78,7 @@ namespace fastoredis
     {
         languagesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentLanguage()));
         stylesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentStyle()));
-        defaultViewComboBox_->setCurrentText(common::convertFromString16<QString>(common::convertToString16(SettingsManager::instance().defaultView())));
+        defaultViewComboBox_->setCurrentText(common::convertFromString<QString>(common::convertToString(SettingsManager::instance().defaultView())));
         syncTabs_->setChecked(SettingsManager::instance().syncTabs());
         logDirPath_->setText(common::convertFromString<QString>(SettingsManager::instance().loggingDirectory()));
     }
@@ -91,8 +91,8 @@ namespace fastoredis
         applyStyle(stylesComboBox_->currentText());
         SettingsManager::instance().setCurrentStyle(common::convertToString(stylesComboBox_->currentText()));
 
-        const common::string16 defCombo = common::convertToString16(defaultViewComboBox_->currentText());
-        const fastoredis::supportedViews v = common::convertFromString16<fastoredis::supportedViews>(defCombo);
+        const std::string defCombo = common::convertToString(defaultViewComboBox_->currentText());
+        const fastoredis::supportedViews v = common::convertFromString<fastoredis::supportedViews>(defCombo);
         SettingsManager::instance().setDefaultView(v);
 
         ServersManager::instance().setSyncServers(syncTabs_->isChecked());

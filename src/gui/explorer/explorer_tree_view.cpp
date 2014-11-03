@@ -188,17 +188,19 @@ namespace fastoredis
 
     void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res)
     {
-        boost::shared_ptr<common::ErrorValue> er = res.errorInfo();
-        if(!er->isError()){
-            IServer *serv = qobject_cast<IServer *>(sender());
-            DCHECK(serv);
-            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
-            ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel *>(model());
-            DCHECK(mod);
-            for(int i = 0; i < dbs.size(); ++i){
-                DataBaseInfo db = dbs[i];
-                mod->addDatabase(serv, db);
-            }
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        IServer *serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+        EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
+        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel *>(model());
+        DCHECK(mod);
+        for(int i = 0; i < dbs.size(); ++i){
+            DataBaseInfo db = dbs[i];
+            mod->addDatabase(serv, db);
         }
     }
 

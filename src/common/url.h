@@ -11,9 +11,9 @@ namespace common
             public:
                 enum supported_protocols
                 {
-                  http=0,//defualt value
-                  ftp=1,
-                  file=2
+                    http=0,//defualt value
+                    ftp=1,
+                    file=2
                 };
                 url();
                 explicit url(const char *url_s);
@@ -44,12 +44,12 @@ namespace common
 
         namespace detail
         {
-            bool get_protocol(const char *url_s,url::supported_protocols &prot);
-            bool get_protocol(const char *url_s,size_t len,url::supported_protocols &prot);
+            bool get_protocol(const char *url_s, url::supported_protocols &prot);
+            bool get_protocol(const char *url_s, size_t len, url::supported_protocols &prot);
             /* Returns a url-encoded version of str */
             /* IMPORTANT: be sure to free() the returned string after use */
             char *url_encode(const char *str);
-            char *url_encode(const char *str,size_t len);
+            char *url_encode(const char *str, size_t len);
             /* Returns a url-decoded version of str */
             /* IMPORTANT: be sure to free() the returned string after use */
             char *url_decode(const char *str);

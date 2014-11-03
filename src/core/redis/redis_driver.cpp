@@ -21,7 +21,7 @@ extern "C" {
 #define OUTPUT_STANDARD 0
 #define OUTPUT_RAW 1
 #define OUTPUT_CSV 2
-#define INFO_REQUEST UTEXT("INFO")
+#define INFO_REQUEST "INFO"
 
 namespace
 {
@@ -166,7 +166,7 @@ namespace fastoredis
                     redisFree(context);
 
                 if (config.hostsocket.empty()) {
-                    context = redisConnect(config.hostip.c_str(),config.hostport);
+                    context = redisConnect  (config.hostip.c_str(),config.hostport);
                 } else {
                     context = redisConnectUnix(config.hostsocket.c_str());
                 }
@@ -174,10 +174,12 @@ namespace fastoredis
                 if (context->err) {
                     char buff[512] = {0};
                     if (config.hostsocket.empty())
-                        sprintf(buff,"Could not connect to Redis at %s:%d: %s\n",config.hostip.c_str(),config.hostport,context->errstr);
+                        sprintf(buff, "Could not connect to Redis at %s:%d: %s\n", config.hostip.c_str(), config.hostport, context->errstr);
                     else
-                        sprintf(buff,"Could not connect to Redis at %s: %s\n",config.hostsocket.c_str(),context->errstr);
-                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
+                        sprintf(buff, "Could not connect to Redis at %s: %s\n", config.hostsocket.c_str(), context->errstr);
+
+                    common::string16 buf16 = common::convertToString16(std::string(buff));
+                    er.reset(new common::ErrorValue(buf16, common::Value::E_ERROR));
                     redisFree(context);
                     context = NULL;
                     return REDIS_ERR;
@@ -231,7 +233,7 @@ namespace fastoredis
             if (context == NULL) return;
             char buff[512] = {0};
             sprintf(buff,"Error: %s\n",context->errstr);
-            er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
+            er.reset(new common::ErrorValue(common::convertToString16(std::string(buff)), common::ErrorValue::E_ERROR));
         }
 
         void cliFormatReplyRaw(FastoObject* out, redisReply *r) {
@@ -457,7 +459,13 @@ namespace fastoredis
         }
 
         void repl_impl(FastoObject* out, common::ErrorValueSPtr &er) {
-            const char *command = out->toString().c_str();
+            if(!out){
+                return;
+            }
+
+            const std::string scommand = common::convertToString(out->toString16());
+            const char *command = scommand.c_str();
+
             if (command[0] != '\0') {
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
@@ -606,7 +614,7 @@ namespace fastoredis
 
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                FastoObjectPtr outRoot = FastoObject::createRoot(common::convertToString16(inputLine));
+                FastoObjectPtr outRoot = FastoObject::createRoot(inputLine);
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->interrupt_){
@@ -627,7 +635,7 @@ namespace fastoredis
                         common::StringValue *val =common::Value::createStringValue(command);
                         FastoObject* child = new FastoObject(outRoot.get(), val);
                         outRoot->addChildren(child);
-                        LOG_COMMAND(Command(common::convertToString16(command),Command::UserCommand));
+                        LOG_COMMAND(Command(command,Command::UserCommand));
                         impl_->repl_impl(child, er);                        
                     }
                 }
@@ -659,17 +667,17 @@ namespace fastoredis
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(common::convertToString16(loadDabasesString));
+            FastoObject* root = FastoObject::createRoot(loadDabasesString);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(common::convertToString16(loadDabasesString)));
+            LOG_COMMAND(Command(loadDabasesString));
             impl_->repl_impl(root, er);
-            if(er->isError()){
+            if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
                 FastoObject::child_container_type childrens = root->childrens();
                 for(int i = 0; i < childrens.size(); ++i){
-                    DataBaseInfo dbInf(childrens[i]->toString(), 0);
+                    DataBaseInfo dbInf(childrens[i]->toString16(), 0);
                     res.databases_.push_back(dbInf);
                 }
             }
@@ -698,7 +706,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(INFO_REQUEST));
             impl_->repl_impl(root, er);
-            if(er->isError()){
+            if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
                 res.info_ = makeServerInfo(root);
@@ -714,12 +722,12 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(common::convertToString16(propetyString));
+            FastoObject* root = FastoObject::createRoot(propetyString);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(common::convertToString16(propetyString)));
+            LOG_COMMAND(Command(propetyString));
             impl_->repl_impl(root, er);
-            if(er->isError()){
+            if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
                 res.info_ = makeServerProperty(root);
@@ -740,7 +748,7 @@ namespace fastoredis
         FastoObject* root = FastoObject::createRoot(common::convertToString16(changeRequest));
             LOG_COMMAND(Command(common::convertToString16(changeRequest)));
             impl_->repl_impl(root, er);
-            if(er->isError()){
+            if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
                 res.isChange_ = true;

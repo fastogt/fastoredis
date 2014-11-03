@@ -27,7 +27,7 @@ namespace fastoredis
         using namespace Events;
         ConnectResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedConnect(v);
@@ -38,7 +38,7 @@ namespace fastoredis
         using namespace Events;
         DisconnectResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedDisconnect(v);
@@ -49,7 +49,7 @@ namespace fastoredis
         using namespace Events;
         ExecuteResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedExecute(v);
@@ -60,7 +60,7 @@ namespace fastoredis
         using namespace Events;
         LoadDatabasesInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedLoadDatabases(v);
@@ -71,7 +71,7 @@ namespace fastoredis
         using namespace Events;
         LoadDatabaseContentResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedLoadDataBaseContent(v);
@@ -82,7 +82,7 @@ namespace fastoredis
         using namespace Events;
         ServerInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedLoadServerInfo(v);
@@ -93,7 +93,7 @@ namespace fastoredis
         using namespace Events;
         ServerPropertyInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedLoadServerProperty(v);
@@ -104,7 +104,7 @@ namespace fastoredis
         using namespace Events;
         ChangeServerPropertyInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
-        if(er->isError()){
+        if(er && er->isError()){
             LOG_ERROR(er, true);
         }
         emit finishedChangeServerProperty(v);
