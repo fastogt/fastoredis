@@ -1,7 +1,0 @@
-Fastoredis
----------
-To run Fastoredis, give Execute rights to "fastoredis.sh" script (located in bin folder)
-and execute it:
-$ cd bin
-$ chmod u+x fastoredis.sh
-$ ./fastoredis.sh
