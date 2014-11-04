@@ -11,4 +11,4 @@ SOURCE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 export LD_LIBRARY_PATH="$SOURCE_DIR/../lib:$LD_LIBRARY_PATH"
 export QT_PLUGIN_PATH="$SOURCE_DIR/../lib:$QT_PLUGIN_PATH"
 
-"$SOURCE_DIR/FastoRedis"
+"$SOURCE_DIR/@PROJECT_NAME@"

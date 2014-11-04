@@ -18,24 +18,26 @@ SET(HEADERS_REDIS
     #redis/deps/linenoise/linenoise.h
     redis/deps/hiredis/net.h
     #redis/src/release.h
-    redis/src/sds.h
+    #redis/src/sds.h
     redis/src/version.h
     redis/src/zmalloc.h
+	sds.h
 )
+
 IF(WIN32)
-INCLUDE_DIRECTORIES(redis/src)
-SET(SOURCES_REDIS_PLATFORM
-    net.c
-    anet.c
-    hiredis.c
-)
-ELSE()
-SET(SOURCES_REDIS_PLATFORM
-    redis/src/anet.c
-    redis/deps/hiredis/net.c
-    redis/deps/hiredis/hiredis.c
-)
-ENDIF()
+	INCLUDE_DIRECTORIES(redis/src)
+	SET(SOURCES_REDIS_PLATFORM
+		net.c
+		anet.c
+		hiredis.c
+	)
+ELSE(WIN32)
+	SET(SOURCES_REDIS_PLATFORM
+		redis/src/anet.c
+		redis/deps/hiredis/net.c
+		redis/deps/hiredis/hiredis.c
+	)
+ENDIF(WIN32)
 
 SET(SOURCES_REDIS
     #redis/src/ae.c
