@@ -16,7 +16,7 @@ namespace fastoredis
             QString val = *it;
             for(QStringList::const_iterator jt = allCommands.begin(); jt != allCommands.end(); ++jt){
                 QString jval = *jt;
-                if(jval.startsWith(val,Qt::CaseInsensitive)){
+                if(jval.startsWith(val, Qt::CaseInsensitive)){
                     list.append(jval);
                 }
             }

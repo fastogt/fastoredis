@@ -9,10 +9,15 @@
 
 namespace fastoredis
 {
+    const QColor RedisShell::paperColor = QColor(166, 190, 233);
+
     RedisShell::RedisShell(QWidget *parent)
         : FastoEditor(parent)
     {
-        setLexer(new RedisLexer(this));
+        RedisLexer* red = new RedisLexer(this);
+        setLexer(red);
+        red->setPaper(paperColor);
+
         setAutoCompletionThreshold(1);
         setAutoCompletionSource(QsciScintilla::AcsAPIs);
         setAutoCompletionCaseSensitivity(false);

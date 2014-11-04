@@ -11,6 +11,8 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
+        static const QColor paperColor;
+
         RedisShell(QWidget *parent = 0);
 
         void refreshCompleteList(const QStringList &ls);

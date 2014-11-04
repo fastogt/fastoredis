@@ -12,9 +12,6 @@ namespace fastoredis
         Q_OBJECT
     public:
         enum { rowNumberWidth = 6, indentationWidth = 4 };
-        static const QColor marginsBackgroundColor;
-        static const QColor caretForegroundColor;
-        static const QColor matchedBraceForegroundColor;
 
         FastoEditor(QWidget *parent = 0);
 

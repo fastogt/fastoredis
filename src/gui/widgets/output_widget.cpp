@@ -77,7 +77,7 @@ namespace fastoredis
          //mod->setSourceModel(_treeModel);
          tableView_->setModel(treeModel_);
 
-        textView_ = new FastoEditor(this);
+        textView_ = new FastoEditor;
         timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(),common::convertFromString16<QString>(common::time::mstime2string(0)));
 
         QVBoxLayout *mainL = new QVBoxLayout;

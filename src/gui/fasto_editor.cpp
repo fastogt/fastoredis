@@ -40,11 +40,6 @@ namespace
 
 namespace fastoredis
 {
-    const QColor FastoEditor::marginsBackgroundColor = QColor(73, 76, 78);
-    const QColor FastoEditor::caretForegroundColor = QColor("#FFFFFF");
-    const QColor FastoEditor::matchedBraceForegroundColor = QColor("#FF8861");
-
-
     FastoEditor::FastoEditor(QWidget *parent)
         : QsciScintilla(parent), lineNumberMarginWidth_(0)
     {
@@ -53,16 +48,11 @@ namespace fastoredis
         setIndentationWidth(indentationWidth);
         setUtf8(true);
         setMarginWidth(1, 0);
-        setCaretForegroundColor(caretForegroundColor);
-        setMatchedBraceForegroundColor(matchedBraceForegroundColor); //1AB0A6
-        setMatchedBraceBackgroundColor(marginsBackgroundColor);
         setContentsMargins(0, 0, 0, 0);
         setViewportMargins(3, 3, 3, 3);
         QFont ourFont = GuiFactory::instance().font();
         setMarginsFont(ourFont);
         setMarginLineNumbers(0, true);
-        setMarginsBackgroundColor(QColor(53, 56, 58));
-        setMarginsForegroundColor(QColor(173, 176, 178));
 
         SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, ourFont.family().data());
         SendScintilla(QsciScintilla::SCI_SETHSCROLLBAR, 0);

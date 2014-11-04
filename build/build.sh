@@ -23,16 +23,16 @@ unamestr=`uname`
 echo uname: $unamestr
 
 if [ "$unamestr" = 'MINGW32_NT-6.1' ]; then
-	echo Windows
+	echo Build for Windows ...
     createPackage build_nsis NSIS mingw32-make
     createPackage build_zip ZIP mingw32-make
 elif [ "$unamestr" = 'Linux' ]; then
-	echo Linux
+	echo Build for Linux ...
     createPackage build_deb DEB make
     createPackage build_rpm RPM make
     createPackage build_tar TGZ make
 elif [ "$unamestr" = 'Darwin' ]; then
-	echo Darwin
+	echo Build for Darwin ...
     createPackage build_dmg DragNDrop make
     createPackage build_zip ZIP make
 fi

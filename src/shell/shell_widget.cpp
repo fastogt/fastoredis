@@ -90,8 +90,8 @@ namespace fastoredis
     ShellWidget::ShellWidget(IServerPtr server, const QString &filePath, QWidget *parent)
         : QWidget(parent), _server(server), _filePath(filePath)
     {
-        QVBoxLayout *mainlayout = new QVBoxLayout;
-        QHBoxLayout *hlayout = new QHBoxLayout;
+        QVBoxLayout *mainlayout = new QVBoxLayout(this);
+        QHBoxLayout *hlayout = new QHBoxLayout(this);
         hlayout->setContentsMargins(0, 0, 0, 0);
 
         QToolBar *conbar = new QToolBar;
@@ -147,7 +147,7 @@ namespace fastoredis
 
         mainlayout->addLayout(hlayout);
 
-        input_ = new RedisShell();
+        input_ = new RedisShell;
         input_->setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(input_, SIGNAL(executed()), this, SLOT(execute())));
 
