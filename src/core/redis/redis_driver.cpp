@@ -7,7 +7,7 @@
 extern "C" {
 #include <anet.h>
 #include <help.h>
-#include <sds.h>
+#include "third-party/redis/sds.h"
 #include <version.h>
 #include <release.h>
 #include <hiredis/hiredis.h>

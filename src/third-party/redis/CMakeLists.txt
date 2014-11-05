@@ -6,8 +6,6 @@ ADD_CUSTOM_TARGET(redis_version
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/redis/src
             COMMENT "Build redis release.h")
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR} redis/deps/hiredis/ redis/deps/linenoise/)
-
 SET(HEADERS_REDIS
     redis/src/ae.h
     redis/src/anet.h
@@ -25,7 +23,6 @@ SET(HEADERS_REDIS
 )
 
 IF(WIN32)
-	INCLUDE_DIRECTORIES(redis/src)
 	SET(SOURCES_REDIS_PLATFORM
 		net.c
 		anet.c
@@ -54,7 +51,6 @@ SET(HEADERS ${HEADERS} ${HEADERS_REDIS})
 SET(SOURCES ${SOURCES} ${SOURCES_REDIS})
 ADD_LIBRARY(redis-cli STATIC ${HEADERS_REDIS} ${SOURCES_REDIS})
 IF(WIN32)
-    #ADD_DEFINITIONS(-DHAVE_WINSOCK)
     TARGET_LINK_LIBRARIES(redis-cli ws2_32)
 ENDIF(WIN32)
 ADD_DEPENDENCIES(redis-cli redis_version)
