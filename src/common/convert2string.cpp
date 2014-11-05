@@ -368,7 +368,7 @@ namespace common
 #if defined(WCHAR_T_IS_UTF16)
         return UTF8ToWide(from);
 #elif defined(WCHAR_T_IS_UTF32)
-        return ASCIIToUTF16(from);
+        return UTF8ToUTF16(from);
 #endif
     }
 
@@ -461,7 +461,7 @@ namespace common
 #if defined(WCHAR_T_IS_UTF16)
         return WideToUTF8(input);
 #elif defined(WCHAR_T_IS_UTF32)
-        return UTF16ToASCII(input);
+        return UTF16ToUTF8(input);
 #endif
     }
 

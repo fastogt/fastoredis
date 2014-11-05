@@ -14,7 +14,7 @@ namespace common
         const QChar* unicode = (const QChar *)value.c_str();
         return QString(unicode, value.size());
 #else
-        return QString::fromUtf8((const char*)value.c_str(),value.size());
+        return QString::fromUtf8((const char*)value.c_str(), value.size()*2);
 #endif
     }
 
@@ -27,6 +27,6 @@ namespace common
     template<>
     QString convertFromString<QString>(const std::string& value)
     {
-        return QString::fromUtf8((const char*)value.c_str(),value.size());
+        return QString::fromUtf8((const char*)value.c_str(), value.size());
     }
 }
