@@ -21,6 +21,7 @@ createPackage() {
 
 unamestr=`uname`
 echo uname: $unamestr
+#-DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/
 
 if [ "$unamestr" = 'MINGW32_NT-6.1' ]; then
 	echo Build for Windows ...
@@ -33,7 +34,7 @@ elif [ "$unamestr" = 'Linux' ]; then
     createPackage build_tar TGZ make
 elif [ "$unamestr" = 'Darwin' ]; then
 	echo Build for Darwin ...
-    createPackage build_dmg DragNDrop make
-    createPackage build_zip ZIP make
+    createPackage build_dmg DragNDrop make  
+    createPackage build_zip ZIP make  
 fi
 

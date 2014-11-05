@@ -36,6 +36,7 @@ namespace common
                 return "Debug";
             default:
                 NOTREACHED();
+                return std::string();
             }
         }
     }
