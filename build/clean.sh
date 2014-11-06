@@ -10,14 +10,14 @@ if [ -d "$dir_path" ]; then
 
 unamestr=`uname`
 
-if [ "$unamestr" == 'MINGW32_NT-6.1' ]; then
+if [ "$unamestr" = 'MINGW32_NT-6.1' ]; then
     deleteDir build_nsis
     deleteDir build_zip
-elif [ "$unamestr" == 'Linux' ]; then
+elif [ "$unamestr" = 'Linux' ]; then
     deleteDir build_deb
     deleteDir build_rpm
     deleteDir build_tar
-elif [ "$unamestr"=='Darwin' ]; then
+elif [ "$unamestr"='Darwin' ]; then
     deleteDir build_dmg
     deleteDir build_zip
 fi
