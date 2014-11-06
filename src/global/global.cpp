@@ -117,7 +117,7 @@ namespace common
         using namespace fastoredis;
         string16 result;
         if(obj){
-            string16 str = obj->toString16();
+            const string16 str = obj->toString16();
             if(!str.empty()){
                 result += common::escapedText(str);
             }

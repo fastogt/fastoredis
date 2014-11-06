@@ -25,7 +25,7 @@
 
 namespace
 {
-    const QString filterForScripts = QObject::tr("JavaScript (*.js);; All Files (*.*)");
+    const QString filterForScripts = QObject::tr("Text Files (*.txt);; All Files (*.*)");
 
     bool loadFromFileText(const QString &filePath, QString &text, QWidget* parent)
     {
@@ -60,9 +60,9 @@ namespace
         if (filePath.isEmpty())
             return false;
 
-#ifdef Q_OS_LINUX
+#ifdef OS_LINUX
         if (QFileInfo(filePath).suffix().isEmpty()) {
-            filePath += ".js";
+            filePath += ".txt";
         }
 #endif
         bool result = false;

@@ -93,12 +93,12 @@ namespace fastoredis
 
     QFont GuiFactory::font() const
     {
-#if defined(Q_OS_MAC)
+#if defined(OS_MACOSX)
         static const QFont textFont = QFont("Monaco",12);
-#elif defined(Q_OS_UNIX)
+#elif defined(OS_LINUX)
         static QFont textFont = QFont("Monospace");
         textFont.setFixedPitch(true);
-#elif defined(Q_OS_WIN)
+#elif defined(OS_WIN)
         static const QFont textFont = QFont("Courier",10);
 #endif
         return textFont;
@@ -130,9 +130,6 @@ namespace fastoredis
         case common::Value::TYPE_INTEGER:
             static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/integer.png");
             return i;
-        /*case NIL:
-            static QIcon n(":"PROJECT_NAME_LOWERCASE"/icons/null.png");
-            return n;*/
         case common::Value::TYPE_STATUS:
             static QIcon st(":"PROJECT_NAME_LOWERCASE"/icons/status.png");
             return st;
@@ -140,7 +137,9 @@ namespace fastoredis
             static QIcon er(":"PROJECT_NAME_LOWERCASE"/icons/error.png");
             return er;
         default:
-            DCHECK(0);
+            static QIcon err(":"PROJECT_NAME_LOWERCASE"/icons/error.png");
+            NOTREACHED();
+            return err;
         }
     }
 

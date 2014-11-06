@@ -565,7 +565,9 @@ namespace common
     template<>
     float convertFromString16(const string16& val)
     {
-        return convertFromString16<int>(val);
+        int output = 0;
+        bool res = String16ToIntImpl(val, &output);
+        return output;
     }
 
     template<>
@@ -763,7 +765,9 @@ namespace common
     template<>
     float convertFromString(const std::string& val)
     {
-        return convertFromString<int>(val);
+        int output = 0;
+        bool res = StringToIntImpl(val, &output);
+        return output;
     }
 
     template<>

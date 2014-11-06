@@ -711,7 +711,10 @@ namespace fastoredis
             if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
-                res.info_ = makeServerInfo(root);
+                FastoObject::child_container_type ch = root->childrens();
+                if(ch.size()){
+                    res.info_ = makeServerInfo(ch[0]);
+                }
             }
         notifyProgress(sender, 75);
             reply(sender, new Events::ServerInfoResponceEvent(this, res));
