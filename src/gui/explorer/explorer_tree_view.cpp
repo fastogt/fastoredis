@@ -61,13 +61,22 @@ namespace fastoredis
         if(sel.isValid()){            
             IExplorerTreeItem *node = common::utils_qt::item<IExplorerTreeItem*>(sel);
             if(node->type() == IExplorerTreeItem::Server){
-                QMenu menu(this);
+                QMenu menu(this);                
                 menu.addAction(connectAction_);
                 menu.addAction(openConsoleAction_);
+
+                IServerPtr server = node->server();
+                bool isCon = server->isConnected();
+
+                loadDatabaseAction_->setEnabled(isCon);
                 menu.addAction(loadDatabaseAction_);
+                infoServerAction_->setEnabled(isCon);
                 menu.addAction(infoServerAction_);
+                propertyServerAction_->setEnabled(isCon);
                 menu.addAction(propertyServerAction_);
+                historyServerAction_->setEnabled(isCon);
                 menu.addAction(historyServerAction_);
+                closeAction_->setEnabled(isCon);
                 menu.addAction(closeAction_);
                 menu.exec(menuPoint);
             }
