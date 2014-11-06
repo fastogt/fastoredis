@@ -23,6 +23,8 @@ SET(HEADERS_REDIS
 )
 
 IF(WIN32)
+	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR} redis/deps/hiredis/ redis/deps/linenoise/)
+	INCLUDE_DIRECTORIES(redis/src)
 	SET(SOURCES_REDIS_PLATFORM
 		net.c
 		anet.c
