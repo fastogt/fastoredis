@@ -3,6 +3,7 @@
 #include <QTranslator>
 #include <QApplication>
 #include <QDir>
+#include <QDebug>
 
 #include "common/qt/convert_string.h"
 
@@ -16,13 +17,14 @@ namespace
     QStringList qmLanguages()
     {
         static QDir trd(trPath());
-        return trd.entryList(QStringList(PROJECT_NAME"_*.qm"));
+        qDebug() << trd.path();
+        return trd.entryList(QStringList(PROJECT_NAME_LOWERCASE"_*.qm"));
     }
 
     QPair<QString, QLocale> convertToLocale(const QString &fileName)
     {
         QString langCode = fileName;
-        langCode.remove(0, fileName.indexOf('_')+1);
+        langCode.remove(0, fileName.indexOf('_') + 1);
         langCode.chop(3);
         return QPair<QString, QLocale>(fileName, langCode);
     }
@@ -63,7 +65,7 @@ namespace fastoredis
             }
 
             QString qmPath = pathToQm(langres);
-            bool isLoad = tr.load(qmPath,trPath());
+            bool isLoad = tr.load(qmPath, trPath());
 
             if(!isLoad && langres != builtInLanguage){
                 return builtInLanguage;

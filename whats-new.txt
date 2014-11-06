@@ -1,1 +1,8 @@
-Alpha version
+0.1.0 / November 6, 2014
+[Alexandr Topilski]
+- Fix utf conversions string problem
+- Add translation support
+- Fix server information displaying
+
+[Denis Klimenko]
+- Fix dmg build
