@@ -3,6 +3,7 @@
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QGroupBox>
 #include <QLabel>
 #include <QComboBox>
 #include <QPushButton>
@@ -23,32 +24,43 @@ namespace fastoredis
         : QDialog(parent)
     {
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
-
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-        setFixedSize(height,width);
+        setFixedSize(height, width);
 
-        QVBoxLayout *layout = new QVBoxLayout(this);
+//      ui settings
+        uiBox_ = new QGroupBox;
+
+        QHBoxLayout *styleswLayout = new QHBoxLayout;
+        stylesLabel_ = new QLabel;
+        stylesComboBox_ = new QComboBox;
+        stylesComboBox_->addItems(getSupportedStyles());
+        styleswLayout->addWidget(stylesLabel_);
+        styleswLayout->addWidget(stylesComboBox_);
 
         QHBoxLayout *langLayout = new QHBoxLayout;
         langLabel_ = new QLabel;
         langLayout->addWidget(langLabel_);
-        languagesComboBox_  = new QComboBox();
+        languagesComboBox_  = new QComboBox;
         languagesComboBox_->addItems(translations::getSupportedLanguages());
         langLayout->addWidget(languagesComboBox_);
 
-        QHBoxLayout *stylesLayout = new QHBoxLayout;
-        stylesLabel_ = new QLabel;
-        stylesLayout->addWidget(stylesLabel_);
+        QVBoxLayout *uiLayout = new QVBoxLayout;
+        uiLayout->addLayout(styleswLayout);
+        uiLayout->addLayout(langLayout);
+        uiBox_->setLayout(uiLayout);
 
-        stylesComboBox_ = new QComboBox();
-        stylesComboBox_->addItems(getSupportedStyles());
+//      servers settings
+        serverSettingsBox_ = new QGroupBox;
+
+        QHBoxLayout* defaultViewLayaut = new QHBoxLayout;
+        defaultViewLabel_ = new QLabel;
         defaultViewComboBox_ = new QComboBox;
         std::vector<std::string> allV = allSupportedViews();
-        for(int i=0; i<allV.size(); ++i){
+        for(int i = 0; i < allV.size(); ++i){
             defaultViewComboBox_->addItem(common::convertFromString<QString>(allV[i]));
         }
-        stylesLayout->addWidget(defaultViewComboBox_);
-        stylesLayout->addWidget(stylesComboBox_);
+        defaultViewLayaut->addWidget(defaultViewLabel_);
+        defaultViewLayaut->addWidget(defaultViewComboBox_);
 
         syncTabs_ = new QCheckBox;
         logDirPath_ = new QLineEdit;
@@ -57,10 +69,16 @@ namespace fastoredis
         logLayout->addWidget(logDirLabel_);
         logLayout->addWidget(logDirPath_);
 
-        layout->addLayout(langLayout);
-        layout->addLayout(stylesLayout);
-        layout->addWidget(syncTabs_);
-        layout->addLayout(logLayout);
+        QVBoxLayout *serverSettingsLayout = new QVBoxLayout;
+        serverSettingsLayout->addLayout(defaultViewLayaut);
+        serverSettingsLayout->addWidget(syncTabs_);
+        serverSettingsLayout->addLayout(logLayout);
+        serverSettingsBox_->setLayout(serverSettingsLayout);
+
+//      main layout
+        QVBoxLayout *layout = new QVBoxLayout(this);
+        layout->addWidget(uiBox_);
+        layout->addWidget(serverSettingsBox_);
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
@@ -112,8 +130,13 @@ namespace fastoredis
     void PreferencesDialog::retranslateUi()
     {
         setWindowTitle(tr("Preferences "PROJECT_NAME_TITLE));
+
+        uiBox_->setTitle(tr("User interface"));
         langLabel_->setText(tr("Language:"));
-        stylesLabel_->setText(tr("Styles:"));
+        stylesLabel_->setText(tr("Supported UI styles:"));
+
+        serverSettingsBox_->setTitle(tr("Servers global settings"));
+        defaultViewLabel_->setText(tr("Default views:"));
         syncTabs_->setText(tr("Sync tabs"));
         logDirLabel_->setText(tr("Logging directory:"));
     }

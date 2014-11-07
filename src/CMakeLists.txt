@@ -176,6 +176,7 @@ SOURCE_GROUP("Resources" FILES ${RES_SRC} ${RESOURCE_OS})
 
 SET(TRANSLATIONS
     translations/${PROJECT_NAME_LOWERCASE}_ru.ts
+    translations/${PROJECT_NAME_LOWERCASE}_fr.ts
 )
 
 FIND_PACKAGE(Qt5LinguistTools)

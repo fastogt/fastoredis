@@ -1,8 +1,7 @@
-# ****************
-#  Configuration
-# ****************
+#!/bin/sh
+set -e
 
 
 # clean and build
-./clean.sh $@
-./build.sh $@
+sh ./clean.sh
+sh ./build.sh
