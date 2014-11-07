@@ -17,8 +17,8 @@ namespace fastoredis
         : FastoEditor(parent)
     {
         RedisLexer* red = new RedisLexer(this);
-        registerImage(RedisLexer::Command, GuiFactory::instance().redisCommandIcon().pixmap(QSize(64,64)));
-        registerImage(RedisLexer::Types, GuiFactory::instance().redisTypeIcon().pixmap(QSize(64,64)));
+        registerImage(RedisLexer::Command, GuiFactory::instance().commandIcon(REDIS).pixmap(QSize(64,64)));
+        registerImage(RedisLexer::Types, GuiFactory::instance().typeIcon(REDIS).pixmap(QSize(64,64)));
 
         setLexer(red);
         red->setPaper(paperColor);

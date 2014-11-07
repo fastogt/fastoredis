@@ -197,14 +197,25 @@ namespace fastoredis
         return comm;
     }
 
-    const QIcon& GuiFactory::redisCommandIcon() const
+    const QIcon& GuiFactory::commandIcon(connectionTypes type) const
     {
-        return redisConnectionIcon();
+        if(type == REDIS){
+            return redisConnectionIcon();
+        }
+        else{
+            return serverIcon();
+        }
     }
 
-    const QIcon& GuiFactory::redisTypeIcon() const
+    const QIcon& GuiFactory::typeIcon(connectionTypes type) const
     {
-        static QIcon comm(":"PROJECT_NAME_LOWERCASE"/icons/redistype.png");
-        return comm;
+        if(type == REDIS){
+            static QIcon comm(":"PROJECT_NAME_LOWERCASE"/icons/redistype.png");
+            return comm;
+        }
+        else{
+            static QIcon comm(":"PROJECT_NAME_LOWERCASE"/icons/redistype.png");
+            return comm;
+        }
     }
 }

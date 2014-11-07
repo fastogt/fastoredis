@@ -46,7 +46,7 @@ namespace fastoredis
         const QIcon &loggingIcon() const;
         const QIcon &commandIcon() const;
 
-        const QIcon& redisCommandIcon() const;
-        const QIcon& redisTypeIcon() const;
+        const QIcon& commandIcon(connectionTypes type) const;
+        const QIcon& typeIcon(connectionTypes type) const;
     };
 }
