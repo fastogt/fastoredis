@@ -15,8 +15,6 @@ namespace fastoredis
 
         RedisShell(QWidget *parent = 0);
 
-        void refreshCompleteList(const QStringList &ls);
-
     Q_SIGNALS:
         void executed();
 

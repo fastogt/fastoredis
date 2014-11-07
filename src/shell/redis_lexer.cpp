@@ -11,14 +11,25 @@ namespace fastoredis
 
     void RedisApi::updateAutoCompletionList(const QStringList &context, QStringList &list)
     {
-        static const QStringList& allCommands = RedisDriver::allCommands();
+        static const QStringList &commands = RedisDriver::commandsKeywords();
 
         for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
             QString val = *it;
-            for(QStringList::const_iterator jt = allCommands.begin(); jt != allCommands.end(); ++jt){
+            for(QStringList::const_iterator jt = commands.begin(); jt != commands.end(); ++jt){
                 QString jval = *jt;
                 if(jval.startsWith(val, Qt::CaseInsensitive)){
-                    list.append(jval);
+                    list.append(jval+"?1");
+                }
+            }
+        }
+
+        static const QStringList &types = RedisDriver::typesKeywords();
+        for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
+            QString val = *it;
+            for(QStringList::const_iterator jt = types.begin(); jt != types.end(); ++jt){
+                QString jval = *jt;
+                if(jval.startsWith(val, Qt::CaseInsensitive)){
+                    list.append(jval+"?2");
                 }
             }
         }

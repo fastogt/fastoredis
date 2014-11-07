@@ -196,4 +196,15 @@ namespace fastoredis
         static QIcon comm(":"PROJECT_NAME_LOWERCASE"/icons/command.png");
         return comm;
     }
+
+    const QIcon& GuiFactory::redisCommandIcon() const
+    {
+        return redisConnectionIcon();
+    }
+
+    const QIcon& GuiFactory::redisTypeIcon() const
+    {
+        static QIcon comm(":"PROJECT_NAME_LOWERCASE"/icons/redistype.png");
+        return comm;
+    }
 }

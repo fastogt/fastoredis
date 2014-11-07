@@ -29,6 +29,7 @@ namespace fastoredis
             Command = 1,
             Types = 2
         };
+
         RedisLexer(QObject *parent = 0);
         virtual const char *language() const;
         virtual QString description(int style) const;

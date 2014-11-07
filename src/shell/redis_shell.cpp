@@ -7,6 +7,8 @@
 
 #include "shell/redis_lexer.h"
 
+#include "gui/gui_factory.h"
+
 namespace fastoredis
 {
     const QColor RedisShell::paperColor = QColor(166, 190, 233);
@@ -15,6 +17,9 @@ namespace fastoredis
         : FastoEditor(parent)
     {
         RedisLexer* red = new RedisLexer(this);
+        registerImage(RedisLexer::Command, GuiFactory::instance().redisCommandIcon().pixmap(QSize(64,64)));
+        registerImage(RedisLexer::Types, GuiFactory::instance().redisTypeIcon().pixmap(QSize(64,64)));
+
         setLexer(red);
         red->setPaper(paperColor);
 
@@ -37,6 +42,7 @@ namespace fastoredis
         if((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Return) ){
             emit executed();
         }
+
         return FastoEditor::keyPressEvent(keyEvent);
     }
 }
