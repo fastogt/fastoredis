@@ -11,7 +11,8 @@ namespace fastoredis
 
     void RedisApi::updateAutoCompletionList(const QStringList &context, QStringList &list)
     {
-        QStringList allCommands = RedisDriver::allCommands();
+        static const QStringList& allCommands = RedisDriver::allCommands();
+
         for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
             QString val = *it;
             for(QStringList::const_iterator jt = allCommands.begin(); jt != allCommands.end(); ++jt){
@@ -44,13 +45,11 @@ namespace fastoredis
         switch (style)
         {
         case Default:
-             return tr("Default");
-
+             return "Default";
         case Command:
-            return tr("Command");
-
+            return "Command";
         case Types:
-            return tr("Types");
+            return "Types";
         }
 
         return QString(style);
@@ -66,6 +65,7 @@ namespace fastoredis
             case Types:
                 return Qt::blue;
         }
+
         return Qt::black;
     }
 
@@ -91,6 +91,7 @@ namespace fastoredis
     void RedisLexer::paintCommands(const QString &source, int start)
     {
         static const QStringList &commands = RedisDriver::commandsKeywords();
+
         for(QStringList::const_iterator it = commands.begin(); it != commands.end(); ++it){
             QString word = *it;
             int index = 0;
@@ -107,8 +108,9 @@ namespace fastoredis
 
     void RedisLexer::paintTypes(const QString &source, int start)
     {
-        static const QStringList &commands = RedisDriver::typesKeywords();
-        for(QStringList::const_iterator it = commands.begin(); it != commands.end(); ++it){
+        static const QStringList &types = RedisDriver::typesKeywords();
+
+        for(QStringList::const_iterator it = types.begin(); it != types.end(); ++it){
             QString word = *it;
             int index = 0;
             int begin = 0;

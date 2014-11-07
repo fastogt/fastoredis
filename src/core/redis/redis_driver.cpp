@@ -51,9 +51,9 @@ namespace
         version = sdscatprintf(sdsempty(), "%s", REDIS_VERSION);
 
         /* Add git commit and working tree status when available */
-        if (strtoll(redisGitSHA1(),NULL,16)) {
+        if (strtoll(redisGitSHA1(), NULL, 16)) {
             version = sdscatprintf(version, " (git:%s", redisGitSHA1());
-            if (strtoll(redisGitDirty(),NULL,10))
+            if (strtoll(redisGitDirty(), NULL, 10))
                 version = sdscatprintf(version, "-dirty");
             version = sdscat(version, ")");
         }
@@ -97,6 +97,7 @@ namespace
             tmp.org = NULL;
             helpEntries[pos++] = tmp;
         }
+
         for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
             struct commandHelp command = commandHelp[i];
             std::string commandN = command.name;
