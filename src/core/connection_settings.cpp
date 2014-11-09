@@ -9,6 +9,7 @@
 #include "common/utils.h"
 #include "common/net.h"
 #include "common/convert2string.h"
+#include "common/logger.h"
 
 #define LOGGING_FILE_EXTENSION ".red"
 
@@ -118,7 +119,9 @@ namespace fastoredis
     {        
         connectionName_ = name;
         using namespace common::utils;
-        hash_ = hash::crc64(0, common::convertFromString<common::buffer_type>(connectionName_));
+        common::buffer_type bcon = common::convertFromString<common::buffer_type>(connectionName_);
+        uint64_t v = hash::crc64(0, bcon);
+        hash_ = common::convertToString(v);
     }
 
     std::string IConnectionSettingsBase::connectionName() const

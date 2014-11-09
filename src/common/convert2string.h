@@ -4,6 +4,8 @@
 
 #include "common/types.h"
 
+#include "common/string_piece.h"
+
 namespace common
 {
     string16 convertToString16(const std::string& from);
@@ -45,4 +47,11 @@ namespace common
 
     template<typename T>
     T convertFromString(const std::string& from);
+
+    std::string HexEncode(const void* bytes, size_t size);
+
+    bool HexStringToInt(const StringPiece& input, int* output);
+    bool HexStringToInt64(const StringPiece& input, int64_t* output);
+    bool HexStringToUInt64(const StringPiece& input, uint64_t *output);
+    bool HexStringToBytes(const std::string& input, std::vector<uint8_t>* output);
 }

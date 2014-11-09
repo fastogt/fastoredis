@@ -7,8 +7,6 @@
 #include <limits>
 #include <vector>
 
-#include "common/string_piece.h"
-
 #include "common/utf_string_conversions.h"
 
 namespace common
@@ -774,5 +772,43 @@ namespace common
     double convertFromString(const std::string& val)
     {
         return convertFromString<int>(val);
+    }
+
+    std::string HexEncode(const void* bytes, size_t size)
+    {
+      static const char kHexChars[] = "0123456789ABCDEF";
+
+      // Each input byte creates two output hex characters.
+      std::string ret(size * 2, '\0');
+
+      for (size_t i = 0; i < size; ++i) {
+        char b = reinterpret_cast<const char*>(bytes)[i];
+        ret[(i * 2)] = kHexChars[(b >> 4) & 0xf];
+        ret[(i * 2) + 1] = kHexChars[b & 0xf];
+      }
+      return ret;
+    }
+
+    bool HexStringToInt(const StringPiece& input, int* output)
+    {
+      return IteratorRangeToNumber<HexIteratorRangeToIntTraits>::Invoke(
+        input.begin(), input.end(), output);
+    }
+
+    bool HexStringToInt64(const StringPiece& input, int64_t *output)
+    {
+      return IteratorRangeToNumber<HexIteratorRangeToInt64Traits>::Invoke(
+        input.begin(), input.end(), output);
+    }
+
+    bool HexStringToUInt64(const StringPiece& input, uint64_t* output)
+    {
+      return IteratorRangeToNumber<HexIteratorRangeToUInt64Traits>::Invoke(
+          input.begin(), input.end(), output);
+    }
+
+    bool HexStringToBytes(const std::string& input, std::vector<uint8_t> *output)
+    {
+      return HexStringToBytesT(input, output);
     }
 }

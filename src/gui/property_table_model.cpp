@@ -79,7 +79,7 @@ namespace fastoredis
             PropertyTableItem *it = dynamic_cast<PropertyTableItem*>(data_[i]);
             if(it->key_ == key){
                 it->value_ = common::convertFromString<QString>(pr.second);
-                emit dataChanged(index(i,0),index(i,1));
+                emit dataChanged(index(i,0), index(i,1));
                 break;
             }
         }

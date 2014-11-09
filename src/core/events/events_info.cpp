@@ -84,9 +84,24 @@ namespace fastoredis
         }
 
         ServerInfoResponce::ServerInfoResponce(const base_class &request, const error_type &er)
-            : base_class(request)
+            : base_class(request), info_()
         {
             base_class::errorInfo_ = er;
+        }
+
+        ServerInfoSPtr ServerInfoResponce::info() const
+        {
+            return info_;
+        }
+
+        void ServerInfoResponce::setInfo(ServerInfoSPtr inf)
+        {
+            info_ = inf;
+        }
+
+        ServerInfoResponce::~ServerInfoResponce()
+        {
+
         }
 
         ServerInfoHistoryRequest::ServerInfoHistoryRequest(const error_type& er)
@@ -99,6 +114,16 @@ namespace fastoredis
             : base_class(request)
         {
             base_class::errorInfo_ = er;
+        }
+
+        ServerInfoHistoryResponce::infos_container_type ServerInfoHistoryResponce::infos() const
+        {
+            return infos_;
+        }
+
+        void ServerInfoHistoryResponce::setInfos(const infos_container_type& inf)
+        {
+            infos_ = inf;
         }
 
         ServerPropertyInfoRequest::ServerPropertyInfoRequest(const error_type &er)

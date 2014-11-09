@@ -6,6 +6,7 @@
 
 #include "common/types.h"
 #include "global/global.h"
+#include "core/types.h"
 
 #define REDIS_SERVER_LABEL "# Server"
 #define REDIS_CLIENTS_LABEL "# Clients"
@@ -225,25 +226,14 @@ namespace fastoredis
             FieldPropertyU(redisKeySpaceFieldsIntIndexes, SIZEOFMASS(redisKeySpaceFieldsIntIndexes)))
     };
 
-    struct DataBaseInfo
-    {
-        DataBaseInfo(const common::string16& name, size_t size);
-        common::string16 name_;
-        size_t size_;
-    };
-
-    inline bool operator == (const DataBaseInfo &lhs, const DataBaseInfo &rhs)
-    {
-        return lhs.name_ == rhs.name_ && lhs.size_ == rhs.size_;
-    }
-
     template<typename T>
     struct FiledByIdex
     {
         common::Value* valueByIndex(unsigned char index) const;
     };
 
-    struct ServerInfo
+    struct RedisServerInfo
+            : public ServerInfo
     {
         struct Server
                 : FiledByIdex<Server>
@@ -370,24 +360,15 @@ namespace fastoredis
             common::Value* valueByIndex(unsigned char index) const;
         } keySp_;
 
-        common::Value* valueByIndexes(unsigned char property, unsigned char field) const;
+        virtual common::Value* valueByIndexes(unsigned char property, unsigned char field) const;
 
-        ServerInfo();
-        ServerInfo(const Server &serv, const Clients &clients, const Memory &memory,
+        RedisServerInfo();
+        RedisServerInfo(const Server &serv, const Clients &clients, const Memory &memory,
                    const Persistence &pers, const Stats &stats, const Replication &repl, const Cpu &cpu, const Keyspace &key);
     };
 
-    std::ostream& operator<<(std::ostream& out, const ServerInfo& value);
+    std::ostream& operator<<(std::ostream& out, const RedisServerInfo& value);
 
-    typedef std::pair<std::string, std::string> PropertyType;
-
-    struct ServerPropertyInfo
-    {
-        ServerPropertyInfo();
-        std::vector<PropertyType> propertyes_;
-    };
-
-    ServerInfo makeServerInfo(const std::string &content);
-    ServerInfo makeServerInfo(const FastoObjectPtr& root);
-    ServerPropertyInfo makeServerProperty(const FastoObjectPtr& root);
+    ServerInfoSPtr makeRedisServerInfo(const std::string &content);
+    ServerInfoSPtr makeRedisServerInfo(const FastoObjectPtr& root);
 }

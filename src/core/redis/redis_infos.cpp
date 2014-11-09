@@ -6,13 +6,7 @@
 
 namespace fastoredis
 {
-    DataBaseInfo::DataBaseInfo(const common::string16 &name, size_t size)
-        : name_(name), size_(size)
-    {
-
-    }
-
-    ServerInfo::Server::Server::Server()
+    RedisServerInfo::Server::Server::Server()
         : redis_version_(), redis_git_sha1_(), redis_git_dirty_(), redis_mode_(), os_(),
         arch_bits_(0), multiplexing_api_(), gcc_version_() ,process_id_(0),
         run_id_(), tcp_port_(0), uptime_in_seconds_(0), uptime_in_days_(0), lru_clock_(0)
@@ -20,7 +14,7 @@ namespace fastoredis
 
     }
 
-    ServerInfo::Server::Server(const std::string& server_text)
+    RedisServerInfo::Server::Server(const std::string& server_text)
         : redis_version_(), redis_git_sha1_(), redis_git_dirty_(), redis_mode_(), os_(),
         arch_bits_(0), multiplexing_api_(), gcc_version_() ,process_id_(0),
         run_id_(), tcp_port_(0), uptime_in_seconds_(0), uptime_in_days_(0), lru_clock_(0)
@@ -79,7 +73,7 @@ namespace fastoredis
         }
     }
 
-    common::Value* ServerInfo::Server::valueByIndex(unsigned char index) const
+    common::Value* RedisServerInfo::Server::valueByIndex(unsigned char index) const
     {
         switch (index) {
         case 0:
@@ -117,13 +111,13 @@ namespace fastoredis
         return NULL;
     }
 
-    ServerInfo::Clients::Clients()
+    RedisServerInfo::Clients::Clients()
         : connected_clients_(0), client_longest_output_list_(0),
         client_biggest_input_buf_(0), blocked_clients_(0)
     {
     }
 
-    ServerInfo::Clients::Clients(const std::string& client_text)
+    RedisServerInfo::Clients::Clients(const std::string& client_text)
         : connected_clients_(0), client_longest_output_list_(0),
         client_biggest_input_buf_(0), blocked_clients_(0)
     {
@@ -151,7 +145,7 @@ namespace fastoredis
         }
     }
 
-    common::Value* ServerInfo::Clients::valueByIndex(unsigned char index) const
+    common::Value* RedisServerInfo::Clients::valueByIndex(unsigned char index) const
     {
         switch (index) {
         case 0:
@@ -169,7 +163,7 @@ namespace fastoredis
         return NULL;
     }
 
-    ServerInfo::Memory::Memory()
+    RedisServerInfo::Memory::Memory()
         : used_memory_(0), used_memory_human_(), used_memory_rss_(0), used_memory_peak_(0),
           used_memory_peak_human_(), used_memory_lua_(0),mem_fragmentation_ratio_(0), mem_allocator_()
     {
@@ -177,7 +171,7 @@ namespace fastoredis
 
     }
 
-    ServerInfo::Memory::Memory(const std::string &memory_text)
+    RedisServerInfo::Memory::Memory(const std::string &memory_text)
         : used_memory_(0), used_memory_human_(), used_memory_rss_(0), used_memory_peak_(0),
           used_memory_peak_human_(), used_memory_lua_(0),mem_fragmentation_ratio_(0), mem_allocator_()
     {
@@ -217,7 +211,7 @@ namespace fastoredis
         }
     }
 
-    common::Value* ServerInfo::Memory::valueByIndex(unsigned char index) const
+    common::Value* RedisServerInfo::Memory::valueByIndex(unsigned char index) const
     {
         switch (index) {
         case 0:
@@ -243,7 +237,7 @@ namespace fastoredis
         return NULL;
     }
 
-    ServerInfo::Persistence::Persistence()
+    RedisServerInfo::Persistence::Persistence()
         : loading_(0), rdb_changes_since_last_save_(0), rdb_bgsave_in_progress_(0),
           rdb_last_save_time_(0), rdb_last_bgsave_status_(),
           rdb_last_bgsave_time_sec_(0), rdb_current_bgsave_time_sec_(0),
@@ -253,7 +247,7 @@ namespace fastoredis
 
     }
 
-    ServerInfo::Persistence::Persistence(const std::string& persistence_text)
+    RedisServerInfo::Persistence::Persistence(const std::string& persistence_text)
         : loading_(0), rdb_changes_since_last_save_(0), rdb_bgsave_in_progress_(0),
           rdb_last_save_time_(0), rdb_last_bgsave_status_(),
           rdb_last_bgsave_time_sec_(0), rdb_current_bgsave_time_sec_(0),
@@ -314,7 +308,7 @@ namespace fastoredis
         }
     }
 
-    common::Value* ServerInfo::Persistence::valueByIndex(unsigned char index) const
+    common::Value* RedisServerInfo::Persistence::valueByIndex(unsigned char index) const
     {
         switch (index) {
         case 0:
@@ -350,7 +344,7 @@ namespace fastoredis
         return NULL;
     }
 
-    ServerInfo::Stats::Stats()
+    RedisServerInfo::Stats::Stats()
         : total_connections_received_(0), total_commands_processed_(0),
           instantaneous_ops_per_sec_(0), rejected_connections_(0),
           expired_keys_(0), evicted_keys_(0), keyspace_hits_(0),
@@ -360,7 +354,7 @@ namespace fastoredis
 
     }
 
-    ServerInfo::Stats::Stats(const std::string& stats_text)
+    RedisServerInfo::Stats::Stats(const std::string& stats_text)
         : total_connections_received_(0), total_commands_processed_(0),
           instantaneous_ops_per_sec_(0), rejected_connections_(0),
           expired_keys_(0), evicted_keys_(0), keyspace_hits_(0),
@@ -412,7 +406,7 @@ namespace fastoredis
         }
     }
 
-    common::Value* ServerInfo::Stats::valueByIndex(unsigned char index) const
+    common::Value* RedisServerInfo::Stats::valueByIndex(unsigned char index) const
     {
         switch (index) {
         case 0:
@@ -444,13 +438,13 @@ namespace fastoredis
         return NULL;
     }
 
-    ServerInfo::Replication::Replication()
+    RedisServerInfo::Replication::Replication()
         : role_(), connected_slaves_(0)
     {
 
     }
 
-    ServerInfo::Replication::Replication(const std::string &replication_text)
+    RedisServerInfo::Replication::Replication(const std::string &replication_text)
         : role_(), connected_slaves_(0)
     {
         const std::string &src = replication_text;
@@ -472,7 +466,7 @@ namespace fastoredis
         }
     }
 
-    common::Value* ServerInfo::Replication::valueByIndex(unsigned char index) const
+    common::Value* RedisServerInfo::Replication::valueByIndex(unsigned char index) const
     {
         switch (index) {
         case 0:
@@ -486,13 +480,13 @@ namespace fastoredis
         return NULL;
     }
 
-    ServerInfo::Cpu::Cpu()
+    RedisServerInfo::Cpu::Cpu()
         : used_cpu_sys_(0), used_cpu_user_(0), used_cpu_sys_children_(0), used_cpu_user_children_(0)
     {
 
     }
 
-    ServerInfo::Cpu::Cpu(const std::string &cpu_text)
+    RedisServerInfo::Cpu::Cpu(const std::string &cpu_text)
         : used_cpu_sys_(0), used_cpu_user_(0), used_cpu_sys_children_(0), used_cpu_user_children_(0)
     {
         const std::string &src = cpu_text;
@@ -519,7 +513,7 @@ namespace fastoredis
         }
     }
 
-    common::Value* ServerInfo::Cpu::valueByIndex(unsigned char index) const
+    common::Value* RedisServerInfo::Cpu::valueByIndex(unsigned char index) const
     {
         switch (index) {
         case 0:
@@ -537,24 +531,25 @@ namespace fastoredis
         return NULL;
     }
 
-    common::Value* ServerInfo::Keyspace::valueByIndex(unsigned char index) const
+    common::Value* RedisServerInfo::Keyspace::valueByIndex(unsigned char index) const
     {
         return NULL;
     }
 
-    ServerInfo::ServerInfo()
+    RedisServerInfo::RedisServerInfo()
+        : ServerInfo(REDIS)
     {
 
     }
 
-    ServerInfo::ServerInfo(const Server &serv, const Clients &clients, const Memory &memory,
+    RedisServerInfo::RedisServerInfo(const Server &serv, const Clients &clients, const Memory &memory,
                            const Persistence &pers, const Stats &stats, const Replication &repl, const Cpu &cpu, const Keyspace &key)
-        : server_(serv), clients_(clients), memory_(memory), persistence_(pers), stats_(stats), replication_(repl), cpu_(cpu), keySp_(key)
+        : ServerInfo(REDIS), server_(serv), clients_(clients), memory_(memory), persistence_(pers), stats_(stats), replication_(repl), cpu_(cpu), keySp_(key)
     {
 
     }
 
-    common::Value* ServerInfo::valueByIndexes(unsigned char property, unsigned char field) const
+    common::Value* RedisServerInfo::valueByIndexes(unsigned char property, unsigned char field) const
     {
         switch (property) {
         case 0:
@@ -580,7 +575,7 @@ namespace fastoredis
         return NULL;
     }
 
-    std::ostream& operator<<(std::ostream& out, const ServerInfo::Server& value)
+    std::ostream& operator<<(std::ostream& out, const RedisServerInfo::Server& value)
     {
         return out << (REDIS_VERSION_LABEL":") << value.redis_version_ << ("\r\n")
                    << (REDIS_GIT_SHA1_LABEL":") << value.redis_git_sha1_ << ("\r\n")
@@ -598,7 +593,7 @@ namespace fastoredis
                    << (REDIS_LRU_CLOCK_LABEL":") << value.lru_clock_ << ("\r\n");
     }
 
-    std::ostream& operator<<(std::ostream& out, const ServerInfo::Clients& value)
+    std::ostream& operator<<(std::ostream& out, const RedisServerInfo::Clients& value)
     {
         return out << (REDIS_CONNECTED_CLIENTS_LABEL":") << value.connected_clients_ << ("\r\n")
                    << (REDIS_CLIENT_LONGEST_OUTPUT_LIST_LABEL":") << value.client_longest_output_list_ << ("\r\n")
@@ -606,7 +601,7 @@ namespace fastoredis
                    << (REDIS_BLOCKED_CLIENTS_LABEL":") << value.blocked_clients_ << ("\r\n");
     }
 
-    std::ostream& operator<<(std::ostream& out, const ServerInfo::Memory& value)
+    std::ostream& operator<<(std::ostream& out, const RedisServerInfo::Memory& value)
     {
         return out << (REDIS_USED_MEMORY_LABEL":") << value.used_memory_ << ("\r\n")
                    << (REDIS_USED_MEMORY_HUMAN_LABEL":") << value.used_memory_human_ << ("\r\n")
@@ -618,7 +613,7 @@ namespace fastoredis
                    << (REDIS_MEM_ALLOCATOR_LABEL":") << value.mem_allocator_ << ("\r\n");
     }
 
-    std::ostream& operator<<(std::ostream& out, const ServerInfo::Persistence& value)
+    std::ostream& operator<<(std::ostream& out, const RedisServerInfo::Persistence& value)
     {
         return out << (REDIS_LOADING_LABEL":") << value.loading_ << ("\r\n")
                    << (REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL":") << value.rdb_changes_since_last_save_ << ("\r\n")
@@ -635,7 +630,7 @@ namespace fastoredis
                    << (REDIS_AOF_LAST_DGREWRITE_STATUS_LABEL":") << value.aof_last_bgrewrite_status_ << ("\r\n");
     }
 
-    std::ostream& operator<<(std::ostream& out, const ServerInfo::Stats& value)
+    std::ostream& operator<<(std::ostream& out, const RedisServerInfo::Stats& value)
     {
         return out << (REDIS_TOTAL_CONNECTIONS_RECEIVED_LABEL":") << value.total_connections_received_ << ("\r\n")
                    << (REDIS_TOTAL_COMMANDS_PROCESSED_LABEL":") << value.total_commands_processed_ << ("\r\n")
@@ -650,13 +645,13 @@ namespace fastoredis
                    << (REDIS_LATEST_FORK_USEC_LABEL":") << value.latest_fork_usec_ << ("\r\n");
     }
 
-    std::ostream& operator<<(std::ostream& out, const ServerInfo::Replication& value)
+    std::ostream& operator<<(std::ostream& out, const RedisServerInfo::Replication& value)
     {
         return out << (REDIS_ROLE_LABEL":") << value.role_ << ("\r\n")
                    << (REDIS_CONNECTED_SLAVES_LABEL":") << value.connected_slaves_ << ("\r\n");
     }
 
-    std::ostream& operator<<(std::ostream& out, const ServerInfo::Cpu& value)
+    std::ostream& operator<<(std::ostream& out, const RedisServerInfo::Cpu& value)
     {
         return out << (REDIS_USED_CPU_SYS_LABEL":") << value.used_cpu_sys_ << ("\r\n")
                    << (REDIS_USED_CPU_USER_LABEL":") << value.used_cpu_user_ << ("\r\n")
@@ -664,7 +659,7 @@ namespace fastoredis
                    << (REDIS_USED_CPU_USER_CHILDREN_LABEL":") << value.used_cpu_user_children_ << ("\r\n");
     }
 
-    std::ostream& operator<<(std::ostream& out, const ServerInfo& value)
+    std::ostream& operator<<(std::ostream& out, const RedisServerInfo& value)
     {
         //"# Server", "# Clients", "# Memory", "# Persistence", "# Stats", "# Replication", "# CPU", "# Keyspace"
         return out << (REDIS_SERVER_LABEL"\r\n") << value.server_ << (REDIS_CLIENTS_LABEL"\r\n") << value.clients_ << (REDIS_MEMORY_LABEL"\r\n") << value.memory_
@@ -672,14 +667,13 @@ namespace fastoredis
                    << (REDIS_REPLICATION_LABEL"\r\n") << value.replication_ << (REDIS_CPU_LABEL"\r\n") << value.cpu_ << (REDIS_KEYSPACE_LABEL"\r\n");
     }
 
-    ServerPropertyInfo::ServerPropertyInfo()
+    ServerInfoSPtr makeRedisServerInfo(const std::string &content)
     {
+        if(content.empty()){
+            return ServerInfoSPtr();
+        }
 
-    }
-
-    ServerInfo makeServerInfo(const std::string &content)
-    {
-        ServerInfo result;
+        RedisServerInfo* result = new RedisServerInfo;
         int j = 0;
         std::string word;
         size_t pos = 0;
@@ -701,25 +695,25 @@ namespace fastoredis
                     switch(j)
                     {
                     case 0:
-                        result.server_ = ServerInfo::Server(part);
+                        result->server_ = RedisServerInfo::Server(part);
                         break;
                     case 1:
-                        result.clients_ = ServerInfo::Clients(part);
+                        result->clients_ = RedisServerInfo::Clients(part);
                         break;
                     case 2:
-                        result.memory_ = ServerInfo::Memory(part);
+                        result->memory_ = RedisServerInfo::Memory(part);
                         break;
                     case 3:
-                        result.persistence_ = ServerInfo::Persistence(part);
+                        result->persistence_ = RedisServerInfo::Persistence(part);
                         break;
                     case 4:
-                        result.stats_ = ServerInfo::Stats(part);
+                        result->stats_ = RedisServerInfo::Stats(part);
                         break;
                     case 5:
-                        result.replication_ = ServerInfo::Replication(part);
+                        result->replication_ = RedisServerInfo::Replication(part);
                         break;
                     case 6:
-                        result.cpu_ = ServerInfo::Cpu(part);
+                        result->cpu_ = RedisServerInfo::Cpu(part);
                         break;
                     default:
                         break;
@@ -730,24 +724,13 @@ namespace fastoredis
                 word.clear();
             }
         }
-        return result;
+
+        return ServerInfoSPtr(result);
     }
 
-    ServerInfo makeServerInfo(const FastoObjectPtr &root)
+    ServerInfoSPtr makeRedisServerInfo(const FastoObjectPtr &root)
     {
         const common::string16 content = common::convertToString16(root.get());
-        return makeServerInfo(common::convertToString(content));
-    }
-
-    ServerPropertyInfo makeServerProperty(const FastoObjectPtr &root)
-    {
-        ServerPropertyInfo inf;
-        FastoObject::child_container_type childrens = root->childrens();
-        for(int i = 0; i < childrens.size(); i+=2){
-            const common::string16 c1 = childrens[i]->toString16();
-            const common::string16 c2 = childrens[i+1]->toString16();
-            inf.propertyes_.push_back(std::make_pair(common::convertToString(c1), common::convertToString(c2)));
-        }
-        return inf;
+        return makeRedisServerInfo(common::convertToString(content));
     }
 }

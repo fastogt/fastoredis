@@ -82,8 +82,8 @@ namespace
 
 namespace fastoredis
 {
-    InfoServerDialog::InfoServerDialog(const QString &title, connectionTypes type, QWidget *parent)
-        : QDialog(parent), type_(type)
+    InfoServerDialog::InfoServerDialog(const QString &title, QWidget *parent)
+        : QDialog(parent)
     {
         setWindowTitle(title);
         serverTextInfo_ = new QLabel;
@@ -94,7 +94,7 @@ namespace fastoredis
         setLayout(mainL);
 
         glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), "Loading...", 0.5, QColor(111, 111, 100), this);
-        updateText(ServerInfo());
+        updateText(RedisServerInfo());
     }
 
     void InfoServerDialog::startServerInfo(const EventsInfo::ServerInfoRequest &req)
@@ -110,15 +110,23 @@ namespace fastoredis
             return;
         }
 
-        if(type_ == REDIS){
-            updateText(res.info_);
+        ServerInfoSPtr inf = res.info();
+        if(!inf){
+            return;
+        }
+
+        if(inf->type() == REDIS){
+            RedisServerInfo* infr = dynamic_cast<RedisServerInfo*>(inf.get());
+            if(infr){
+                updateText(*infr);
+            }
         }
     }
 
-    void InfoServerDialog::updateText(const ServerInfo &serv)
+    void InfoServerDialog::updateText(const RedisServerInfo &serv)
     {
         using namespace common;
-        ServerInfo::Server ser = serv.server_;
+        RedisServerInfo::Server ser = serv.server_;
         QString textServ = redisTextServerTemplate.arg(convertFromString<QString>(ser.redis_version_))
                 .arg(convertFromString<QString>(ser.redis_git_sha1_))
                 .arg(convertFromString<QString>(ser.redis_git_dirty_))
@@ -134,13 +142,13 @@ namespace fastoredis
                 .arg(ser.uptime_in_days_)
                 .arg(ser.lru_clock_);
 
-        ServerInfo::Clients cl = serv.clients_;
+        RedisServerInfo::Clients cl = serv.clients_;
         QString textCl = redisTextClientsTemplate.arg(cl.connected_clients_)
                 .arg(cl.client_longest_output_list_)
                 .arg(cl.client_biggest_input_buf_)
                 .arg(cl.blocked_clients_);
 
-        ServerInfo::Memory mem = serv.memory_;
+        RedisServerInfo::Memory mem = serv.memory_;
         QString textMem = redisTextMemoryTemplate.arg(mem.used_memory_)
                 .arg(convertFromString<QString>(mem.used_memory_human_))
                 .arg(mem.used_memory_rss_)
@@ -150,7 +158,7 @@ namespace fastoredis
                 .arg(mem.mem_fragmentation_ratio_)
                 .arg(convertFromString<QString>(mem.mem_allocator_));
 
-        ServerInfo::Persistence per = serv.persistence_;
+        RedisServerInfo::Persistence per = serv.persistence_;
         QString textPer = redisTextPersistenceTemplate.arg(per.loading_)
                 .arg(per.rdb_changes_since_last_save_)
                 .arg(per.rdb_bgsave_in_progress_)
@@ -165,7 +173,7 @@ namespace fastoredis
                 .arg(per.aof_current_rewrite_time_sec_)
                 .arg(convertFromString<QString>(per.aof_last_bgrewrite_status_));
 
-        ServerInfo::Stats stat = serv.stats_;
+        RedisServerInfo::Stats stat = serv.stats_;
         QString textStat = redisTextStatsTemplate.arg(stat.total_connections_received_)
                 .arg(stat.total_commands_processed_)
                 .arg(stat.instantaneous_ops_per_sec_)
@@ -178,11 +186,11 @@ namespace fastoredis
                 .arg(stat.pubsub_patterns_)
                 .arg(stat.latest_fork_usec_);
 
-        ServerInfo::Replication repl = serv.replication_;
+        RedisServerInfo::Replication repl = serv.replication_;
         QString textRepl = redisTextReplicationTemplate.arg(convertFromString<QString>(repl.role_))
                 .arg(repl.connected_slaves_);
 
-        ServerInfo::Cpu cpu = serv.cpu_;
+        RedisServerInfo::Cpu cpu = serv.cpu_;
         QString textCpu = redisTextCpuTemplate.arg(cpu.used_cpu_sys_)
                 .arg(cpu.used_cpu_user_)
                 .arg(cpu.used_cpu_sys_children_)

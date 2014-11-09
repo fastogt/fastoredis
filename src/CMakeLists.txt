@@ -98,6 +98,7 @@ SET(HEADERS_CORE
     core/events/events_info.h
     core/redis/redis_config.h
     core/servers_manager.h
+    core/types.h
 )
 SET(SOURCES_CORE
     core/events/events_info.cpp
@@ -113,6 +114,7 @@ SET(SOURCES_CORE
     core/redis/redis_server.cpp
     core/servers_manager.cpp
     core/redis/redis_config.cpp
+    core/types.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/shell_widget.h

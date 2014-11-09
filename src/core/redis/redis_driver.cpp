@@ -17,6 +17,8 @@ extern "C" {
 #include "core/command_logger.h"
 #include "common/utils.h"
 
+#include "core/redis/redis_infos.h"
+
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */
 #define CLI_HELP_COMMAND 1
 #define CLI_HELP_GROUP 2
@@ -714,7 +716,7 @@ namespace fastoredis
             }else{
                 FastoObject::child_container_type ch = root->childrens();
                 if(ch.size()){
-                    res.info_ = makeServerInfo(ch[0]);
+                    res.setInfo(makeRedisServerInfo(ch[0]));
                 }
             }
         notifyProgress(sender, 75);
@@ -764,9 +766,9 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    ServerInfo RedisDriver::makeServerInfoFromString(const std::string& val)
+    ServerInfoSPtr RedisDriver::makeServerInfoFromString(const std::string& val)
     {
-        return makeServerInfo(val);
+        return makeRedisServerInfo(val);
     }
 
     void RedisDriver::interrupt()

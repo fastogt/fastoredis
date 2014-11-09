@@ -65,7 +65,7 @@ namespace fastoredis
         }
 
         if(type_ == REDIS){
-            infos_ = res.infos_;
+            infos_ = res.infos();
         }
     }
 
@@ -97,8 +97,7 @@ namespace fastoredis
         for(EventsInfo::ServerInfoHistoryResponce::infos_container_type::iterator it = infos_.begin(); it != infos_.end(); ++it)
         {
             EventsInfo::ServerInfoHistoryResponce::infos_container_type::value_type val = *it;
-            ServerInfo inf = val.second;
-            common::Value* value = inf.valueByIndexes(serverIndex,indexIn); //allocate
+            common::Value* value = val.second->valueByIndexes(serverIndex, indexIn); //allocate
             if(value){
                 qreal graphY = 0.0f;
                 if(value->getAsDouble(&graphY)){

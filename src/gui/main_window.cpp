@@ -10,10 +10,10 @@
 
 #include "gui/gui_factory.h"
 #include "gui/app_style.h"
-#include "gui/widgets/log_tab_widget.h"
 #include "gui/dialogs/about_dialog.h"
 #include "gui/dialogs/preferences_dialog.h"
 #include "gui/dialogs/connections_dialog.h"
+#include "gui/widgets/log_tab_widget.h"
 #include "gui/widgets/main_widget.h"
 #include "gui/explorer/explorer_tree_view.h"
 

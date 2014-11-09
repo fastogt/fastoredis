@@ -108,7 +108,7 @@ namespace common
     // static
     ArrayValue* Value::createArrayValue()
     {
-        return new ArrayValue();
+        return new ArrayValue;
     }
 
     ErrorValue* Value::createErrorValue(const string16 &in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)

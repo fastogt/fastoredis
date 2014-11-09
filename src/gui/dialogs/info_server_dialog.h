@@ -7,6 +7,8 @@
 #include "core/events/events_info.h"
 #include "core/connection_types.h"
 
+#include "core/redis/redis_infos.h"
+
 class QLabel;
 
 namespace fastoredis
@@ -17,7 +19,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        explicit InfoServerDialog(const QString &title, connectionTypes type, QWidget *parent = 0);
+        explicit InfoServerDialog(const QString &title, QWidget *parent = 0);
 
     Q_SIGNALS:
         void showed();
@@ -30,10 +32,9 @@ namespace fastoredis
         virtual void showEvent(QShowEvent *e);
 
     private:
-        void updateText(const ServerInfo &serv);
+        void updateText(const RedisServerInfo &serv);
         QLabel *serverTextInfo_;
         QLabel *hardwareTextInfo_;
         GlassWidget *glassWidget_;
-        const connectionTypes type_;       
     };
 }

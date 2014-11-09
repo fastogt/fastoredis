@@ -76,7 +76,7 @@ namespace fastoredis
                 menu.addAction(propertyServerAction_);
                 historyServerAction_->setEnabled(isCon);
                 menu.addAction(historyServerAction_);
-                closeAction_->setEnabled(isCon);
+
                 menu.addAction(closeAction_);
                 menu.exec(menuPoint);
             }
@@ -225,7 +225,7 @@ namespace fastoredis
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
                 IServerPtr server = node->server();
-                InfoServerDialog infDialog(server->name() + " info", server->connectionType(), this);
+                InfoServerDialog infDialog(server->name() + " info", this);
                 VERIFY(connect(server.get(), SIGNAL(startedLoadServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
                 VERIFY(connect(server.get(), SIGNAL(finishedLoadServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
                 VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverInfo())));

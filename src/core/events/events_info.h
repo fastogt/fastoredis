@@ -6,7 +6,7 @@
 
 #include "global/global.h"
 
-#include "core/redis/redis_infos.h"
+#include "core/types.h"
 
 #include "common/qt/utils_qt.h"
 
@@ -114,8 +114,13 @@ namespace fastoredis
         {
             typedef ServerInfoRequest base_class;
             ServerInfoResponce(const base_class &request, const error_type &er = error_type());
+            ~ServerInfoResponce();
 
-            ServerInfo info_;
+            ServerInfoSPtr info() const;
+            void setInfo(ServerInfoSPtr inf);
+
+        private:
+            ServerInfoSPtr info_;
         };
 
         struct ServerInfoHistoryRequest
@@ -129,9 +134,13 @@ namespace fastoredis
                 : ServerInfoHistoryRequest
         {
             typedef ServerInfoHistoryRequest base_class;
-            typedef std::map<long long, ServerInfo> infos_container_type;
+            typedef std::map<long long, ServerInfoSPtr > infos_container_type;
             ServerInfoHistoryResponce(const base_class &request, const error_type &er = error_type());
 
+            infos_container_type infos() const;
+            void setInfos(const infos_container_type& inf);
+
+        private:
             infos_container_type infos_;
         };
 
