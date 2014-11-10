@@ -130,6 +130,7 @@ namespace common
 
             bool write(const buffer_type& data);
             bool write(const std::string& data);
+            bool write(const common::string16& data);
 
             void flush();
             void close();

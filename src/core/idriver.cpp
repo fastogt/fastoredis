@@ -38,7 +38,13 @@ namespace
             return false;
         }
 
-        timeOut = common::convertFromString<long long>((const char*)(stamp.c_str() + 1));
+        common::buffer_type cstamp = stamp;
+
+        if(cstamp[cstamp.size()-1] == '\n'){
+            cstamp.resize(cstamp.size()-1);
+        }
+
+        timeOut = common::convertFromString<long long>((const char*)(cstamp.c_str() + 1));
 
         return timeOut != 0;
     }
@@ -153,7 +159,6 @@ namespace fastoredis
                 FastoObject* par = FastoObject::createRoot(createStamp());
                 FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
                 common::string16 data = common::convertToString16(toFile.get());
-                data.erase(data.size() - 1);
                 logFile_->write(common::convertToString(data));
                 logFile_->flush();
             }
@@ -189,7 +194,7 @@ namespace fastoredis
             while(!readFile.isEof()){
                 common::buffer_type data;
                 bool res = readFile.readLine(data);
-                if(!res){
+                if(!res || readFile.isEof()){
                     if(curStamp){
                         tmpInfos[curStamp] = makeServerInfoFromString(common::convertToString(dataInfo));
                     }

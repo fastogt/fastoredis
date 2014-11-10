@@ -405,9 +405,6 @@ namespace common
             char* res = fgets(buff, sizeof(buff), file_);
             if(res){
                 outData = buffer_type((const unsigned char*)buff);
-                if(outData[outData.size()-1] == '\n'){
-                    outData.resize(outData.size()-1);
-                }
             }
 
             return true;
@@ -457,6 +454,23 @@ namespace common
             return res == data.length();
         }
 
+        bool File::write(const common::string16& data)
+        {
+            if(!file_){
+                return false;
+            }
+
+            if(!data.length()){
+                NOTREACHED();
+                return false;
+            }
+
+            size_t res = fwrite(data.c_str(), sizeof(common::string16::value_type), data.length(), file_);
+            if(res != data.length()){
+                DEBUG_MSG_PERROR("write");
+            }
+            return res == data.length();
+        }
 
         void File::flush()
         {
