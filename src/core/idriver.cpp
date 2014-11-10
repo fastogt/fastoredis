@@ -21,11 +21,11 @@ struct WinsockInit {
 
 namespace
 {
-    const common::char16 magicNumber = 0x1E;
-    common::string16 createStamp()
+    const char magicNumber = 0x1E;
+    std::string createStamp()
     {
         long long time = common::time::current_mstime();
-        return magicNumber + common::convertToString16(time);
+        return magicNumber + common::convertToString(time);
     }
 
     bool getStamp(const common::buffer_type& stamp, long long& timeOut)
@@ -153,7 +153,8 @@ namespace fastoredis
                 FastoObject* par = FastoObject::createRoot(createStamp());
                 FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
                 common::string16 data = common::convertToString16(toFile.get());
-                logFile_->write(data);
+                data.erase(data.size() - 1);
+                logFile_->write(common::convertToString(data));
                 logFile_->flush();
             }
         }

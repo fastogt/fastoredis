@@ -74,9 +74,8 @@ namespace fastoredis
                 menu.addAction(infoServerAction_);
                 propertyServerAction_->setEnabled(isCon);
                 menu.addAction(propertyServerAction_);
-                historyServerAction_->setEnabled(isCon);
-                menu.addAction(historyServerAction_);
 
+                menu.addAction(historyServerAction_);
                 menu.addAction(closeAction_);
                 menu.exec(menuPoint);
             }

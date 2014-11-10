@@ -3,7 +3,6 @@
 #include <QTranslator>
 #include <QApplication>
 #include <QDir>
-#include <QDebug>
 
 #include "common/qt/convert_string.h"
 
@@ -17,7 +16,6 @@ namespace
     QStringList qmLanguages()
     {
         static QDir trd(trPath());
-        qDebug() << trd.path();
         return trd.entryList(QStringList(PROJECT_NAME_LOWERCASE"_*.qm"));
     }
 

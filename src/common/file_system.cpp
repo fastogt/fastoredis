@@ -340,14 +340,9 @@ namespace common
         bool File::open(const char* mode)
         {
             if(!file_){
-                if(path_.isFile()){
-                    const char* path = path_.path().c_str();
-                    file_ = fopen(path, mode);
-                    return file_;
-                }
-                else{
-                    return false;
-                }
+                const char* path = path_.path().c_str();
+                file_ = fopen(path, mode);
+                return file_;
             }
 
             return true;
@@ -378,12 +373,25 @@ namespace common
 
         bool File::read(std::string& outData, uint32_t maxSize)
         {
-           buffer_type outB;
-           bool res = read(outB, maxSize);
-           if(res){
-               outData = convertToString(outB);
-           }
-           return res;
+            if(!file_){
+                return false;
+            }
+
+            char* data = (char*)calloc(maxSize, sizeof(char));
+            if(!data){
+                return false;
+            }
+
+            size_t res = fread(data, sizeof(char), maxSize, file_);
+            if(res > 0){
+                outData = std::string(data, res);
+            }
+            else if(feof(file_)){
+
+            }
+            free(data);
+
+            return true;
         }
 
         bool File::readLine(buffer_type& outData)
@@ -396,7 +404,10 @@ namespace common
 
             char* res = fgets(buff, sizeof(buff), file_);
             if(res){
-                outData = convertFromString<buffer_type>(buff);
+                outData = buffer_type((const unsigned char*)buff);
+                if(outData[outData.size()-1] == '\n'){
+                    outData.resize(outData.size()-1);
+                }
             }
 
             return true;
@@ -430,13 +441,22 @@ namespace common
 
         bool File::write(const std::string& data)
         {
-            return write(convertFromString<buffer_type>(data));
+            if(!file_){
+                return false;
+            }
+
+            if(!data.length()){
+                NOTREACHED();
+                return false;
+            }
+
+            size_t res = fwrite(data.c_str(), sizeof(byte_type), data.length(), file_);
+            if(res != data.length()){
+                DEBUG_MSG_PERROR("write");
+            }
+            return res == data.length();
         }
 
-        bool File::write(const string16& data)
-        {
-            return write(convertFromString16<buffer_type>(data));
-        }
 
         void File::flush()
         {
