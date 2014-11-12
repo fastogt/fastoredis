@@ -1138,7 +1138,26 @@ int redisBufferRead(redisContext *c) {
     /* Return early when the context has seen an error. */
     if (c->err)
         return REDIS_ERR;
+#ifdef FASTOREDIS
+    nread = recv(c->fd,buf,sizeof(buf),0);
 
+    if (nread == -1) {
+        if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || errno == 0) {
+            /* Try again later */
+        } else {
+            __redisSetError(c,REDIS_ERR_IO,NULL);
+            return REDIS_ERR;
+        }
+    } else if (nread == 0) {
+        __redisSetError(c,REDIS_ERR_EOF,"Server closed the connection");
+        return REDIS_ERR;
+    } else {
+        if (redisReaderFeed(c->reader,buf,nread) != REDIS_OK) {
+            __redisSetError(c,c->reader->err,c->reader->errstr);
+            return REDIS_ERR;
+        }
+    }
+#else
     nread = read(c->fd,buf,sizeof(buf));
     if (nread == -1) {
         if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || (errno == EINTR)) {
@@ -1156,6 +1175,7 @@ int redisBufferRead(redisContext *c) {
             return REDIS_ERR;
         }
     }
+#endif
     return REDIS_OK;
 }
 
@@ -1176,6 +1196,25 @@ int redisBufferWrite(redisContext *c, int *done) {
         return REDIS_ERR;
 
     if (sdslen(c->obuf) > 0) {
+#ifdef FASTOREDIS
+        nwritten = send(c->fd,c->obuf,sdslen(c->obuf),0);
+
+        if (nwritten == -1) {
+            if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || errno == 0) {
+                /* Try again later */
+            } else {
+                __redisSetError(c,REDIS_ERR_IO,NULL);
+                return REDIS_ERR;
+            }
+        } else if (nwritten > 0) {
+            if (nwritten == (signed)sdslen(c->obuf)) {
+                sdsfree(c->obuf);
+                c->obuf = sdsempty();
+            } else {
+                sdsrange(c->obuf,nwritten,-1);
+            }
+        }
+#else
         nwritten = write(c->fd,c->obuf,sdslen(c->obuf));
         if (nwritten == -1) {
             if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || (errno == EINTR)) {
@@ -1192,6 +1231,7 @@ int redisBufferWrite(redisContext *c, int *done) {
                 sdsrange(c->obuf,nwritten,-1);
             }
         }
+#endif
     }
     if (done != NULL) *done = (sdslen(c->obuf) == 0);
     return REDIS_OK;

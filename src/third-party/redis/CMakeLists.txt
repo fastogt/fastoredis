@@ -18,12 +18,6 @@ SET(HEADERS_REDIS
     deps/hiredis/fmacros.h
 )
 
-IF(WIN32)
-    SET(REDIS_PLATFORM_SRCS deps/hiredis/net_win.c deps/hiredis/hiredis_win.c)
-ELSE()
-    SET(REDIS_PLATFORM_SRCS deps/hiredis/net.c deps/hiredis/hiredis.c)
-ENDIF(WIN32)
-
 SET(SOURCES_REDIS
     src/anet.c
     src/crc64.c
@@ -31,7 +25,8 @@ SET(SOURCES_REDIS
     src/zmalloc.c
 
     deps/hiredis/sds.c
-    ${REDIS_PLATFORM_SRCS}
+    deps/hiredis/net.c
+    deps/hiredis/hiredis.c
 )
 
 SET(HEADERS ${HEADERS} ${HEADERS_REDIS})
