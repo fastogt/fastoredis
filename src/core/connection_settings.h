@@ -6,6 +6,7 @@
 
 #include "core/connection_types.h"
 #include "core/redis/redis_config.h"
+#include "core/ssh_info.h"
 
 namespace fastoredis
 {
@@ -39,6 +40,9 @@ namespace fastoredis
         bool loggingEnabled() const;
         void setLoggingEnabled(bool isLogging);
 
+        SSHInfo sshInfo() const;
+        void setSshInfo(const SSHInfo& info);
+
     protected:
         virtual std::string toCommandLine() const = 0;
         virtual void initFromCommandLine(const std::string &val) = 0;
@@ -48,6 +52,7 @@ namespace fastoredis
         std::string connectionName_;
         std::string hash_;
         bool logging_enabled_;
+        SSHInfo sshInfo_;
     };
 
     QString useHelpText(connectionTypes type);

@@ -23,7 +23,7 @@ namespace
 namespace fastoredis
 {
     IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName)
-        : connectionName_(), hash_(), logging_enabled_(false)
+        : connectionName_(), hash_(), logging_enabled_(false), sshInfo_()
     {
         setConnectionName(connectionName.empty() ? defaultNameConnection : connectionName);
     }
@@ -74,7 +74,10 @@ namespace fastoredis
                     }
                     else if(commaCount == 2){
                         result->setLoggingEnabled(common::convertFromString<uint8_t>(elText));
-                        result->initFromCommandLine(val.substr(i+1));
+                    }
+                    else if(commaCount == 3){
+                        result->initFromCommandLine(elText);
+                        result->setSshInfo(SSHInfo(val.substr(i+1)));
                         break;
                     }
                     commaCount++;
@@ -94,7 +97,7 @@ namespace fastoredis
         connectionTypes crT = connectionType();
         if(crT != badConnectionType()){
             std::stringstream str;
-            str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',' << toCommandLine();
+            str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',' << toCommandLine() << ',' << sshInfo_.toString();
             res = str.str();
         }
         return res;
@@ -113,6 +116,16 @@ namespace fastoredis
     void IConnectionSettingsBase::setLoggingEnabled(bool isLogging)
     {
         logging_enabled_ = isLogging;
+    }
+
+    SSHInfo IConnectionSettingsBase::sshInfo() const
+    {
+        return sshInfo_;
+    }
+
+    void IConnectionSettingsBase::setSshInfo(const SSHInfo& info)
+    {
+        sshInfo_ = info;
     }
 
     void IConnectionSettingsBase::setConnectionName(const std::string& name)

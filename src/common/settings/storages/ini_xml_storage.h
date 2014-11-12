@@ -174,11 +174,15 @@ namespace common
                     const ptree& settings = pt.get_child("settings");
                     boost::fusion::for_each(fuc, load_struct(settings));
                 }
-                catch (const boost::property_tree::ptree_bad_data& error)
+                catch(const boost::property_tree::ptree_bad_data& error)
                 {
                     std::cout << error.what() << std::endl;
                 }
-                catch (const boost::property_tree::ptree_bad_path& error)
+                catch(const boost::property_tree::ptree_bad_path& error)
+                {
+                    std::cout << error.what() << std::endl;
+                }
+                catch(const std::exception& error)
                 {
                     std::cout << error.what() << std::endl;
                 }

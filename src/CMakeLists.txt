@@ -99,6 +99,7 @@ SET(HEADERS_CORE
     core/redis/redis_config.h
     core/servers_manager.h
     core/types.h
+    core/ssh_info.h
 )
 SET(SOURCES_CORE
     core/events/events_info.cpp
@@ -115,6 +116,7 @@ SET(SOURCES_CORE
     core/servers_manager.cpp
     core/redis/redis_config.cpp
     core/types.cpp
+    core/ssh_info.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/shell_widget.h

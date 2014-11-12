@@ -59,7 +59,7 @@ public:
     boost::optional<external_type> get_value(internal_type const &v)
     {
         using namespace boost::archive::iterators;
-        typedef transform_width< binary_from_base64<remove_whitespace<internal_type::const_iterator> >, 8, 6 > binary_text;
+        typedef transform_width< binary_from_base64<remove_whitespace<internal_type::const_iterator> >,8,6 > binary_text;
         external_type result;
         internal_type text;
         for(internal_type::const_iterator it = v.begin(); it != v.end(); ++it){
@@ -81,7 +81,7 @@ public:
     boost::optional<internal_type> put_value(external_type const& v)
     {
         using namespace boost::archive::iterators;
-        typedef insert_linebreaks<base64_from_binary<transform_width<internal_type::const_iterator,6,8> >, 72 > base64_text;
+        typedef insert_linebreaks<base64_from_binary<transform_width<internal_type::const_iterator,6,8> >, 512 > base64_text;
         std::basic_ostringstream<internal_type::value_type> stream;
         for(external_type::const_iterator it = v.begin(); it != v.end(); ++it){
             internal_type text = (*it)->toString();

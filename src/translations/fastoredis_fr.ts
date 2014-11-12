@@ -6,17 +6,17 @@
     <message>
         <location filename="../shell/shell_widget.cpp" line="28"/>
         <source>Text Files (*.txt);; All Files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte files(*.txt);; Toutes les Files (*.*)</translation>
     </message>
     <message>
         <location filename="../shell/shell_widget.cpp" line="259"/>
         <source>Save As</source>
-        <translation type="unfinished"></translation>
+        <translation>Conserver Comme</translation>
     </message>
     <message>
         <location filename="../core/connection_settings.cpp" line="135"/>
         <source>-h host -p port</source>
-        <translation type="unfinished"></translation>
+        <translation>-h ordinateur -p port</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="12"/>
@@ -80,12 +80,12 @@
     <message>
         <location filename="../gui/dialogs/connections_dialog.cpp" line="60"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connections_dialog.cpp" line="60"/>
         <source>Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresse</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connections_dialog.cpp" line="60"/>
@@ -100,7 +100,7 @@
     <message>
         <location filename="../gui/dialogs/connections_dialog.cpp" line="234"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir</translation>
     </message>
 </context>
 <context>
@@ -138,7 +138,7 @@
     <message>
         <location filename="../gui/explorer/explorer_tree_view.cpp" line="189"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Histoire</translation>
     </message>
     <message>
         <location filename="../gui/explorer/explorer_tree_view.cpp" line="190"/>
@@ -187,7 +187,7 @@
     <message>
         <location filename="../gui/main_tab_bar.cpp" line="63"/>
         <source>&amp;Close Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fermer feuille</translation>
     </message>
     <message>
         <location filename="../gui/main_tab_bar.cpp" line="64"/>
