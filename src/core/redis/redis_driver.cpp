@@ -5,12 +5,12 @@
 #include <sys/types.h>
 
 extern "C" {
-#include <anet.h>
-#include <help.h>
-#include "third-party/redis/sds.h"
-#include <version.h>
-#include <release.h>
-#include <hiredis/hiredis.h>
+#include "third-party/redis/deps/hiredis/sds.h"
+#include "third-party/redis/src/release.h"
+#include "third-party/redis/src/version.h"
+#include "third-party/redis/src/help.h"
+#include "third-party/redis/deps/hiredis/hiredis.h"
+#include "third-party/redis/src/anet.h"
 }
 
 #include "common/qt/convert_string.h"
@@ -171,7 +171,7 @@ namespace fastoredis
                     redisFree(context);
 
                 if (config.hostsocket.empty()) {
-                    context = redisConnect  (config.hostip.c_str(),config.hostport);
+                    context = redisConnect(config.hostip.c_str(),config.hostport);
                 } else {
                     context = redisConnectUnix(config.hostsocket.c_str());
                 }

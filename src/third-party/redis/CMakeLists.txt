@@ -1,52 +1,37 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
-#PROJECT (redis-cli)
+PROJECT(redis-cli)
 
 ADD_CUSTOM_TARGET(redis_version
             COMMAND ./mkreleasehdr.sh
-            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/redis/src
+            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src
             COMMENT "Build redis release.h")
 
-SET(HEADERS_REDIS
-    redis/src/ae.h
-    redis/src/anet.h
-    redis/src/crc64.h
-    redis/src/fmacros.h
-    redis/src/help.h
-    redis/deps/hiredis/hiredis.h
-    #redis/deps/linenoise/linenoise.h
-    redis/deps/hiredis/net.h
-    #redis/src/release.h
-    #redis/src/sds.h
-    redis/src/version.h
-    redis/src/zmalloc.h
-	sds.h
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/deps/hiredis ${CMAKE_CURRENT_LIST_DIR}/src)
+
+SET(HEADERS_REDIS    
+    src/anet.h
+    src/crc64.h
+    src/release.h
+    src/zmalloc.h
+    src/config.h
+
+    deps/hiredis/fmacros.h
 )
 
 IF(WIN32)
-	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR} redis/deps/hiredis/ redis/deps/linenoise/)
-	INCLUDE_DIRECTORIES(redis/src)
-	SET(SOURCES_REDIS_PLATFORM
-		net.c
-		anet.c
-		hiredis.c
-	)
-ELSE(WIN32)
-	SET(SOURCES_REDIS_PLATFORM
-		redis/src/anet.c
-		redis/deps/hiredis/net.c
-		redis/deps/hiredis/hiredis.c
-	)
+    SET(REDIS_PLATFORM_SRCS deps/hiredis/net_win.c deps/hiredis/hiredis_win.c)
+ELSE()
+    SET(REDIS_PLATFORM_SRCS deps/hiredis/net.c deps/hiredis/hiredis.c)
 ENDIF(WIN32)
 
 SET(SOURCES_REDIS
-    #redis/src/ae.c
-    redis/src/crc64.c
-    #redis/deps/linenoise/linenoise.c
-    #redis/src/redis-cli.c
-    redis/src/release.c
-    redis/src/sds.c
-    redis/src/zmalloc.c
-    ${SOURCES_REDIS_PLATFORM}
+    src/anet.c
+    src/crc64.c
+    src/release.c
+    src/zmalloc.c
+
+    deps/hiredis/sds.c
+    ${REDIS_PLATFORM_SRCS}
 )
 
 SET(HEADERS ${HEADERS} ${HEADERS_REDIS})
