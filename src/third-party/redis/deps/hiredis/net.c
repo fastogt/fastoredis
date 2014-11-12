@@ -29,20 +29,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <winsock2.h>
-#include <wspiapi.h>
-#include "fmacros.h"
-#include <sys/types.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <limits.h>
-#include "net.h"
-#include "sds.h"
+#ifdef FASTOREDIS
+    #include "fmacros.h"
+    #include <sys/types.h>
+    #include <limits.h>
+    #include <errno.h>
+    #include <stdarg.h>
+    #include <stdio.h>
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <string.h>
+    #ifdef OS_WIN
+        #include <winsock2.h>
+        #include <wspiapi.h>
+    #else
+        #include <sys/socket.h>
+        #include <sys/select.h>
+        #include <sys/un.h>
+        #include <netinet/in.h>
+        #include <netinet/tcp.h>
+        #include <arpa/inet.h>
+        #include <netdb.h>
+        #include <poll.h>
+    #endif
+    #include "net.h"
+    #include "sds.h"
+#else
+    #include "fmacros.h"
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <sys/select.h>
+    #include <sys/un.h>
+    #include <netinet/in.h>
+    #include <netinet/tcp.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <string.h>
+    #include <netdb.h>
+    #include <errno.h>
+    #include <stdarg.h>
+    #include <stdio.h>
+    #include <poll.h>
+    #include <limits.h>
 
+    #include "net.h"
+    #include "sds.h"
+#endif
 /* Defined in hiredis.c */
 void __redisSetError(redisContext *c, int type, const char *str);
 
