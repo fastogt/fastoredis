@@ -154,9 +154,10 @@ ELSEIF(UNIX)
     SET(PLATFORM_LIBRARIES)
 ENDIF()
 
-add_subdirectory(common)
-add_subdirectory(third-party/redis)
-add_subdirectory(third-party/qscintilla/Qt4Qt5)
+ADD_SUBDIRECTORY(common)
+ADD_SUBDIRECTORY(third-party/redis)
+ADD_SUBDIRECTORY(third-party/libssh2)
+ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
 
 IF(BOOST_ENABLED)
     INTEGRATE_BOOST(system)
@@ -198,9 +199,8 @@ SET(SOURCES_TRANSLATIONS
     translations/translations.cpp
 )
 SET(ALL_SOURCES ${ALL_SOURCES} ${HEADERS_TRANSLATIONS} ${SOURCES_TRANSLATIONS})
-
 SET(ALL_SOURCES ${ALL_SOURCES} ${HEADERS} ${HEADERS_TOMOC} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_SRCS})
-SET(ALL_LIBS ${ALL_LIBS} qscintilla2 common ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} redis-cli)
+SET(ALL_LIBS ${ALL_LIBS} qscintilla2 common ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} redis-cli libssh2)
 SET(EXE_SOURCES main.cpp ${RES_SRC} ${ICON_FILE} ${RESOURCE_OS} ${QM_FILES})
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
