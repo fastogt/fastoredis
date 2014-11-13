@@ -11,7 +11,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/deps/hiredis ${CMAKE_CURRENT_LIST_
 SET(HEADERS_REDIS    
     src/anet.h
     src/crc64.h
-    src/release.h
+    #src/release.h
     src/zmalloc.h
     src/config.h
 
