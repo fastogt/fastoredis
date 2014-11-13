@@ -45,6 +45,9 @@
 #ifdef OS_WIN
 #define F_EINTR 0
 #else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #define F_EINTR EINTR
 #endif
 #endif
