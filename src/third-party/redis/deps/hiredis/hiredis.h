@@ -35,6 +35,10 @@
 #include <stdarg.h> /* for va_list */
 #include <sys/time.h> /* for struct timeval */
 
+#ifdef FASTOREDIS
+#include "third-party/libssh2/include/libssh2.h"
+#endif
+
 #define HIREDIS_MAJOR 0
 #define HIREDIS_MINOR 11
 #define HIREDIS_PATCH 0
@@ -89,6 +93,12 @@
 #define REDIS_READER_MAX_BUF (1024*16)  /* Default max unused reader buffer. */
 
 #define REDIS_KEEPALIVE_INTERVAL 15 /* seconds */
+
+#ifdef FASTOREDIS
+#define SSH_UNKNOWN 0
+#define SSH_PASSWORD 1
+#define SSH_PUBLICKEY 2
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -170,9 +180,17 @@ typedef struct redisContext {
     int flags;
     char *obuf; /* Write buffer */
     redisReader *reader; /* Protocol reader */
+#ifdef FASTOREDIS
+    LIBSSH2_SESSION *session;
+    LIBSSH2_CHANNEL *channel;
+#endif
 } redisContext;
-
+#ifndef FASTOREDIS
 redisContext *redisConnect(const char *ip, int port);
+#else
+redisContext *redisConnect(const char *ip, int port, const char *ssh_address, int ssh_port, const char *username, const char *password,
+                           const char *public_key, const char *private_key, const char *passphrase, int curMethod);
+#endif
 redisContext *redisConnectWithTimeout(const char *ip, int port, const struct timeval tv);
 redisContext *redisConnectNonBlock(const char *ip, int port);
 redisContext *redisConnectBindNonBlock(const char *ip, int port, const char *source_addr);

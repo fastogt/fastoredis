@@ -136,11 +136,14 @@ namespace fastoredis
                 context = NULL;
             }
         }
+
         volatile bool interrupt_;
         redisContext *context;
         redisConfig config;        
+        SSHInfo sinfo_;
 
-        int cliAuth(common::ErrorValueSPtr& er) {
+        int cliAuth(common::ErrorValueSPtr& er)
+        {
             redisReply *reply;
             if (config.auth.empty()) return REDIS_OK;
 
@@ -152,7 +155,9 @@ namespace fastoredis
             cliPrintContextError(er);
             return REDIS_ERR;
         }
-        int cliSelect(common::ErrorValueSPtr& er) {
+
+        int cliSelect(common::ErrorValueSPtr& er)
+        {
             redisReply *reply;
             if (config.dbnum == 0) return REDIS_OK;
 
@@ -164,6 +169,7 @@ namespace fastoredis
             cliPrintContextError(er);
             return REDIS_ERR;
         }
+
         int cliConnect(int force, common::ErrorValueSPtr& er)
         {
             if (context == NULL || force) {
@@ -171,7 +177,17 @@ namespace fastoredis
                     redisFree(context);
 
                 if (config.hostsocket.empty()) {
-                    context = redisConnect(config.hostip.c_str(),config.hostport);
+                    const char *username = toCString(sinfo_.userName_);
+                    const char *password = toCString(sinfo_.password_);
+                    const char *ssh_address = toCString(sinfo_.hostName_);
+                    int ssh_port = sinfo_.port_;
+                    int curM = sinfo_.currentMethod_;
+                    const char *publicKey = toCString(sinfo_.publicKey_);
+                    const char *privateKey = toCString(sinfo_.privateKey_);
+                    const char *passphrase = toCString(sinfo_.passphrase_);
+
+                    context = redisConnect(config.hostip.c_str(), config.hostport, ssh_address, ssh_port, username, password,
+                                           publicKey, privateKey, passphrase, curM);
                 } else {
                     context = redisConnectUnix(config.hostsocket.c_str());
                 }
@@ -217,7 +233,8 @@ namespace fastoredis
             }
         }
 
-        void cliRefreshPrompt(void) {
+        void cliRefreshPrompt(void)
+        {
             int len;
 
             if (!config.hostsocket.empty())
@@ -234,14 +251,16 @@ namespace fastoredis
             snprintf(config.prompt+len,sizeof(config.prompt)-len,"> ");
         }
 
-        void cliPrintContextError(common::ErrorValueSPtr& er) {
+        void cliPrintContextError(common::ErrorValueSPtr& er)
+        {
             if (context == NULL) return;
             char buff[512] = {0};
             sprintf(buff,"Error: %s\n",context->errstr);
             er.reset(new common::ErrorValue(common::convertToString16(std::string(buff)), common::ErrorValue::E_ERROR));
         }
 
-        void cliFormatReplyRaw(FastoObject* out, redisReply *r) {
+        void cliFormatReplyRaw(FastoObject* out, redisReply *r)
+        {
             switch (r->type) {
             case REDIS_REPLY_NIL:
                 break;
@@ -287,7 +306,8 @@ namespace fastoredis
             }
         }
 
-        void cliOutputCommandHelp(FastoObject* out, struct commandHelp *help, int group) {
+        void cliOutputCommandHelp(FastoObject* out, struct commandHelp *help, int group)
+        {
             char buff[1024] = {0};
             sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
             common::StringValue *val =common::Value::createStringValue(buff);
@@ -300,7 +320,8 @@ namespace fastoredis
             }
         }
 
-        void cliOutputGenericHelp(FastoObject* out) {
+        void cliOutputGenericHelp(FastoObject* out)
+        {
             sds version = cliVersion();
             char buff[512] = {0};
             sprintf(buff,
@@ -316,7 +337,8 @@ namespace fastoredis
             sdsfree(version);
         }
 
-        void cliOutputHelp(FastoObject* out, int argc, char **argv) {
+        void cliOutputHelp(FastoObject* out, int argc, char **argv)
+        {
             int i, j, len;
             int group = -1;
             helpEntry *entry;
@@ -359,7 +381,8 @@ namespace fastoredis
             }
         }
 
-        int cliReadReply(FastoObject* out, common::ErrorValueSPtr& er) {
+        int cliReadReply(FastoObject* out, common::ErrorValueSPtr& er)
+        {
             void *_reply;
             redisReply *reply;
 
@@ -463,7 +486,8 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        void repl_impl(FastoObject* out, common::ErrorValueSPtr &er) {
+        void repl_impl(FastoObject* out, common::ErrorValueSPtr &er)
+        {
             if(!out){
                 return;
             }
@@ -590,6 +614,7 @@ namespace fastoredis
             RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(settings_.get());
             if(set){
                 impl_->config = set->info();
+                impl_->sinfo_ = set->sshInfo();
                 common::ErrorValueSPtr er;
         notifyProgress(sender, 25);
                     if(impl_->interrupt_){

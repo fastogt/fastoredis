@@ -41,6 +41,14 @@
 #include "net.h"
 #include "sds.h"
 
+#ifdef FASTOREDIS
+#ifdef OS_WIN
+#define F_EINTR 0
+#else
+#define F_EINTR EINTR
+#endif
+#endif
+
 static redisReply *createReplyObject(int type);
 static void *createStringObject(const redisReadTask *task, char *str, size_t len);
 static void *createArrayObject(const redisReadTask *task, int elements);
@@ -997,10 +1005,23 @@ static redisContext *redisContextInit(void) {
     c->errstr[0] = '\0';
     c->obuf = sdsempty();
     c->reader = redisReaderCreate();
+#ifdef FASTOREDIS
+    c->session = NULL;
+    c->channel = NULL;
+#endif
     return c;
 }
 
 void redisFree(redisContext *c) {
+#ifdef FASTOREDIS
+    if(c->channel != NULL){
+        libssh2_channel_free(c->channel);
+    }
+    if(c->session != NULL){
+        libssh2_session_disconnect(c->session, "Client disconnecting normally");
+        libssh2_session_free(c->session);
+    }
+#endif
     if (c->fd > 0)
         close(c->fd);
     if (c->obuf != NULL)
@@ -1020,6 +1041,107 @@ int redisFreeKeepFd(redisContext *c) {
 /* Connect to a Redis instance. On error the field error in the returned
  * context will be set to the return value of the error function.
  * When no set of reply functions is given, the default set will be used. */
+#ifdef FASTOREDIS
+static void kbd_callback(const char *name, int name_len,
+const char *instruction, int instruction_len,
+int num_prompts,
+const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
+LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
+void **abstract)
+{
+}
+
+redisContext *redisConnect(const char *ip, int port, const char *ssh_address, int ssh_port, const char *username, const char *password,
+                           const char *public_key, const char *private_key, const char *passphrase, int curMethod) {
+
+    LIBSSH2_SESSION *session = NULL;
+    if(ssh_address && curMethod != SSH_UNKNOWN){
+        int rc = libssh2_init(0);
+        if (rc != 0) {
+            return NULL;
+        }
+
+        struct sockaddr_in sin;
+        /* Connect to SSH server */
+        int sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+        sin.sin_family = AF_INET;
+        if (INADDR_NONE == (sin.sin_addr.s_addr = inet_addr(ssh_address))) {
+            return NULL;
+        }
+        sin.sin_port = htons(ssh_port);
+        if (connect(sock, (struct sockaddr*)(&sin),
+                    sizeof(struct sockaddr_in)) != 0) {
+            return NULL;
+        }
+
+        /* Create a session instance */
+        session = libssh2_session_init();
+        if(!session) {
+            return NULL;
+        }
+
+        /* ... start it up. This will trade welcome banners, exchange keys,
+         * and setup crypto, compression, and MAC layers
+         */
+        rc = libssh2_session_handshake(session, sock);
+        if(rc) {
+            return NULL;
+        }
+
+        int auth_pw = 0;
+        const char *fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+        char *userauthlist = libssh2_userauth_list(session, username, strlen(username));
+        if (strstr(userauthlist, "password") != NULL) {
+            auth_pw |= 1;
+        }
+        if (strstr(userauthlist, "keyboard-interactive") != NULL) {
+            auth_pw |= 2;
+        }
+        if (strstr(userauthlist, "publickey") != NULL) {
+            auth_pw |= 4;
+        }
+
+        if (auth_pw & 1 && curMethod == SSH_PASSWORD) {
+            /* We could authenticate via password */
+            if (libssh2_userauth_password(session, username, password)) {
+                //"Authentication by password failed!";
+                return NULL;
+            }
+        }
+        else if (auth_pw & 2) {
+            /* Or via keyboard-interactive */
+            if (libssh2_userauth_keyboard_interactive(session, username, &kbd_callback) )
+            {
+                //"Authentication by keyboard-interactive failed!";
+                return NULL;
+            }
+        }
+        else if (auth_pw & 4 && curMethod == SSH_PUBLICKEY) {
+            /* Or by public key */
+            if (libssh2_userauth_publickey_fromfile(session, username, public_key, private_key, passphrase)){
+                //"Authentication by public key failed!";
+                return NULL;
+            }
+        }
+        else {
+            //"No supported authentication methods found!";
+            return NULL;
+        }
+    }
+
+    redisContext *c;
+
+    c = redisContextInit();
+    if (c == NULL)
+        return NULL;
+
+    c->session = session;
+
+    c->flags |= REDIS_BLOCK;
+    redisContextConnectTcp(c,ip,port,NULL);
+    return c;
+}
+#else
 redisContext *redisConnect(const char *ip, int port) {
     redisContext *c;
 
@@ -1031,6 +1153,7 @@ redisContext *redisConnect(const char *ip, int port) {
     redisContextConnectTcp(c,ip,port,NULL);
     return c;
 }
+#endif
 
 redisContext *redisConnectWithTimeout(const char *ip, int port, const struct timeval tv) {
     redisContext *c;
@@ -1138,11 +1261,22 @@ int redisBufferRead(redisContext *c) {
     /* Return early when the context has seen an error. */
     if (c->err)
         return REDIS_ERR;
+
 #ifdef FASTOREDIS
-    nread = recv(c->fd,buf,sizeof(buf),0);
+
+    if(c->channel){
+        nread = libssh2_channel_read(c->channel, buf, sizeof(buf));
+    }
+    else{
+        #ifdef OS_WIN
+            nread = recv(c->fd,buf,sizeof(buf),0);
+        #else
+            nread = read(c->fd,buf,sizeof(buf));
+        #endif
+    }
 
     if (nread == -1) {
-        if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || errno == 0) {
+        if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || (errno == F_EINTR)) {
             /* Try again later */
         } else {
             __redisSetError(c,REDIS_ERR_IO,NULL);
@@ -1197,23 +1331,32 @@ int redisBufferWrite(redisContext *c, int *done) {
 
     if (sdslen(c->obuf) > 0) {
 #ifdef FASTOREDIS
+    if(c->channel){
+        nwritten = libssh2_channel_write(c->channel, c->obuf,sdslen(c->obuf));
+    }
+    else{
+#ifdef OS_WIN
         nwritten = send(c->fd,c->obuf,sdslen(c->obuf),0);
+#else
+        nwritten = write(c->fd,c->obuf,sdslen(c->obuf));
+#endif
+    }
 
-        if (nwritten == -1) {
-            if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || errno == 0) {
-                /* Try again later */
-            } else {
-                __redisSetError(c,REDIS_ERR_IO,NULL);
-                return REDIS_ERR;
-            }
-        } else if (nwritten > 0) {
-            if (nwritten == (signed)sdslen(c->obuf)) {
-                sdsfree(c->obuf);
-                c->obuf = sdsempty();
-            } else {
-                sdsrange(c->obuf,nwritten,-1);
-            }
+    if (nwritten == -1) {
+        if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || (errno == F_EINTR)) {
+            /* Try again later */
+        } else {
+            __redisSetError(c,REDIS_ERR_IO,NULL);
+            return REDIS_ERR;
         }
+    } else if (nwritten > 0) {
+        if (nwritten == (signed)sdslen(c->obuf)) {
+            sdsfree(c->obuf);
+            c->obuf = sdsempty();
+        } else {
+            sdsrange(c->obuf,nwritten,-1);
+        }
+    }
 #else
         nwritten = write(c->fd,c->obuf,sdslen(c->obuf));
         if (nwritten == -1) {
