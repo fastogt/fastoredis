@@ -1,13 +1,25 @@
-# - Try to find the OpenSSL encryption library
+#.rst:
+# FindOpenSSL
+# -----------
+#
+# Try to find the OpenSSL encryption library
+#
 # Once done this will define
 #
-#  OPENSSL_ROOT_DIR - Set this variable to the root installation of OpenSSL
+# ::
+#
+#   OPENSSL_ROOT_DIR - Set this variable to the root installation of OpenSSL
+#
+#
 #
 # Read-Only variables:
-#  OPENSSL_FOUND - system has the OpenSSL library
-#  OPENSSL_INCLUDE_DIR - the OpenSSL include directory
-#  OPENSSL_LIBRARIES - The libraries needed to use OpenSSL
-#  OPENSSL_VERSION - This is set to $major.$minor.$revision$path (eg. 0.9.8s)
+#
+# ::
+#
+#   OPENSSL_FOUND - system has the OpenSSL library
+#   OPENSSL_INCLUDE_DIR - the OpenSSL include directory
+#   OPENSSL_LIBRARIES - The libraries needed to use OpenSSL
+#   OPENSSL_VERSION - This is set to $major.$minor.$revision$path (eg. 0.9.8s)
 
 #=============================================================================
 # Copyright 2006-2009 Kitware, Inc.
@@ -47,10 +59,6 @@ if (WIN32)
     "C:/OpenSSL-Win64/"
     )
   unset(_programfiles)
-  set(_OPENSSL_ROOT_HINTS_AND_PATHS
-    HINTS ${_OPENSSL_ROOT_HINTS}
-    PATHS ${_OPENSSL_ROOT_PATHS}
-    )
 else ()
   set(_OPENSSL_ROOT_HINTS
     ${OPENSSL_ROOT_DIR}
@@ -58,16 +66,77 @@ else ()
     )
 endif ()
 
+set(_OPENSSL_ROOT_HINTS_AND_PATHS
+    HINTS ${_OPENSSL_ROOT_HINTS}
+    PATHS ${_OPENSSL_ROOT_PATHS}
+    )
+
 find_path(OPENSSL_INCLUDE_DIR
   NAMES
     openssl/ssl.h
+  ${_OPENSSL_ROOT_HINTS_AND_PATHS}
   HINTS
     ${_OPENSSL_INCLUDEDIR}
-  ${_OPENSSL_ROOT_HINTS_AND_PATHS}
   PATH_SUFFIXES
     include
 )
 
+if(OPENSSL_USE_STATIC)
+  MESSAGE(STATUS "OPENSSL_USE_STATIC ON")
+  find_library(OPENSSL_SSL_LIBRARY
+    NAMES
+      libssl.a
+      libssleay32.a
+      libssleay32MD.a
+    HINTS
+      ${_OPENSSL_LIBDIR}
+    ${_OPENSSL_ROOT_HINTS_AND_PATHS}
+    PATH_SUFFIXES
+      lib
+  )
+
+  find_library(OPENSSL_CRYPTO_LIBRARY
+    NAMES
+      libcrypto.a
+    HINTS
+      ${_OPENSSL_LIBDIR}
+    ${_OPENSSL_ROOT_HINTS_AND_PATHS}
+    PATH_SUFFIXES
+      lib
+  )
+  
+#zlib 
+set(STATIC_ZLIB_SEARCHES)
+
+# Normal search.
+set(STATIC_ZLIB_SEARCH_NORMAL
+  PATHS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\Zlib;InstallPath]"
+        "$ENV{PROGRAMFILES}/zlib"
+  )
+list(APPEND STATIC_ZLIB_SEARCHES STATIC_ZLIB_SEARCH_NORMAL)
+
+set(STATIC_ZLIB_NAMES libz.a libzlib.a libzdll.a libzlib1.a libzlibd.a libzlibd1.a)
+
+# Try each search configuration.
+foreach(search ${STATIC_ZLIB_SEARCHES})
+  find_library(STATIC_ZLIB_LIBRARY  NAMES ${STATIC_ZLIB_NAMES} ${${search}} PATH_SUFFIXES lib)
+endforeach()
+
+if(STATIC_ZLIB_LIBRARY)
+    set(OPENSSL_LIBRARIES ${STATIC_ZLIB_LIBRARY})
+endif(STATIC_ZLIB_LIBRARY)
+
+mark_as_advanced(OPENSSL_CRYPTO_LIBRARY OPENSSL_SSL_LIBRARY)
+
+# compat defines
+set(OPENSSL_SSL_LIBRARIES ${OPENSSL_SSL_LIBRARY})
+set(OPENSSL_CRYPTO_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY})
+
+set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
+
+endif(OPENSSL_USE_STATIC)
+
+if(NOT OPENSSL_USE_STATIC)
 if(WIN32 AND NOT CYGWIN)
   if(MSVC)
     # /MD and /MDd are the standard values - if someone wants to use
@@ -134,16 +203,18 @@ if(WIN32 AND NOT CYGWIN)
     set(SSL_EAY_LIBRARY_DEBUG "${SSL_EAY_DEBUG}")
     set(SSL_EAY_LIBRARY_RELEASE "${SSL_EAY_RELEASE}")
 
-    include(SelectLibraryConfigurations)
+    include(${CMAKE_CURRENT_LIST_DIR}/SelectLibraryConfigurations.cmake)
     select_library_configurations(LIB_EAY)
     select_library_configurations(SSL_EAY)
 
+    mark_as_advanced(LIB_EAY_LIBRARY_DEBUG LIB_EAY_LIBRARY_RELEASE
+                     SSL_EAY_LIBRARY_DEBUG SSL_EAY_LIBRARY_RELEASE)
     set( OPENSSL_LIBRARIES ${SSL_EAY_LIBRARY} ${LIB_EAY_LIBRARY} )
   elseif(MINGW)
     # same player, for MinGW
     set(LIB_EAY_NAMES libeay32)
     set(SSL_EAY_NAMES ssleay32)
-    if(CMAKE_CROSS_COMPILING)
+    if(CMAKE_CROSSCOMPILING)
       list(APPEND LIB_EAY_NAMES crypto)
       list(APPEND SSL_EAY_NAMES ssl)
     endif()
@@ -174,9 +245,9 @@ if(WIN32 AND NOT CYGWIN)
     find_library(LIB_EAY
       NAMES
         libeay32
+      ${_OPENSSL_ROOT_HINTS_AND_PATHS}
       HINTS
         ${_OPENSSL_LIBDIR}
-      ${_OPENSSL_ROOT_HINTS_AND_PATHS}
       PATH_SUFFIXES
         lib
     )
@@ -184,9 +255,9 @@ if(WIN32 AND NOT CYGWIN)
     find_library(SSL_EAY
       NAMES
         ssleay32
+      ${_OPENSSL_ROOT_HINTS_AND_PATHS}
       HINTS
         ${_OPENSSL_LIBDIR}
-      ${_OPENSSL_ROOT_HINTS_AND_PATHS}
       PATH_SUFFIXES
         lib
     )
@@ -195,59 +266,15 @@ if(WIN32 AND NOT CYGWIN)
     set( OPENSSL_LIBRARIES ${SSL_EAY} ${LIB_EAY} )
   endif()
 else()
-if(OPENSSL_USE_STATIC)
-  find_library(OPENSSL_SSL_LIBRARY
-    NAMES
-      libssl.a
-      libssleay32.a
-      libssleay32MD.a
-    HINTS
-      ${_OPENSSL_LIBDIR}
-    ${_OPENSSL_ROOT_HINTS_AND_PATHS}
-    PATH_SUFFIXES
-      lib
-  )
 
-  find_library(OPENSSL_CRYPTO_LIBRARY
-    NAMES
-      libcrypto.a
-    HINTS
-      ${_OPENSSL_LIBDIR}
-    ${_OPENSSL_ROOT_HINTS_AND_PATHS}
-    PATH_SUFFIXES
-      lib
-  )
-
-#zlib 
-set(STATIC_ZLIB_SEARCHES)
-
-# Normal search.
-set(STATIC_ZLIB_SEARCH_NORMAL
-  PATHS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\Zlib;InstallPath]"
-        "$ENV{PROGRAMFILES}/zlib"
-  )
-list(APPEND STATIC_ZLIB_SEARCHES STATIC_ZLIB_SEARCH_NORMAL)
-
-set(STATIC_ZLIB_NAMES libz.a libzlib.a libzdll.a libzlib1.a libzlibd.a libzlibd1.a)
-
-# Try each search configuration.
-foreach(search ${STATIC_ZLIB_SEARCHES})
-  find_library(STATIC_ZLIB_LIBRARY  NAMES ${STATIC_ZLIB_NAMES} ${${search}} PATH_SUFFIXES lib)
-endforeach()
-
-if(STATIC_ZLIB_LIBRARY)
-    set(OPENSSL_LIBRARIES ${STATIC_ZLIB_LIBRARY})
-endif(STATIC_ZLIB_LIBRARY)
-
-endif(OPENSSL_USE_STATIC)
   find_library(OPENSSL_SSL_LIBRARY
     NAMES
       ssl
       ssleay32
       ssleay32MD
+    ${_OPENSSL_ROOT_HINTS_AND_PATHS}
     HINTS
       ${_OPENSSL_LIBDIR}
-    ${_OPENSSL_ROOT_HINTS_AND_PATHS}
     PATH_SUFFIXES
       lib
   )
@@ -255,9 +282,9 @@ endif(OPENSSL_USE_STATIC)
   find_library(OPENSSL_CRYPTO_LIBRARY
     NAMES
       crypto
+    ${_OPENSSL_ROOT_HINTS_AND_PATHS}
     HINTS
       ${_OPENSSL_LIBDIR}
-    ${_OPENSSL_ROOT_HINTS_AND_PATHS}
     PATH_SUFFIXES
       lib
   )
@@ -268,7 +295,9 @@ endif(OPENSSL_USE_STATIC)
   set(OPENSSL_SSL_LIBRARIES ${OPENSSL_SSL_LIBRARY})
   set(OPENSSL_CRYPTO_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY})
 
-  set(OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES} ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
+  set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
+
+endif()
 endif()
 
 function(from_hex HEX DEC)
