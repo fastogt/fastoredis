@@ -1,6 +1,6 @@
 /* Copyright (c) 2004-2007, Sara Golemon <sarag@libssh2.org>
  * Copyright (c) 2005 Mikhail Gusarov <dottedmag@dottedmag.net>
- * Copyright (c) 2009-2011 by Daniel Stenberg
+ * Copyright (c) 2009-2014 by Daniel Stenberg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms,
@@ -211,7 +211,7 @@ userauth_password(LIBSSH2_SESSION *session,
                sizeof(session->userauth_pswd_packet_requirev_state));
 
         /*
-         * 40 = acket_type(1) + username_len(4) + service_len(4) +
+         * 40 = packet_type(1) + username_len(4) + service_len(4) +
          * service(14)"ssh-connection" + method_len(4) + method(8)"password" +
          * chgpwdbool(1) + password_len(4) */
         session->userauth_pswd_data_len = username_len + 40;
@@ -276,13 +276,13 @@ userauth_password(LIBSSH2_SESSION *session,
                                           0, NULL, 0,
                                           &session->
                                           userauth_pswd_packet_requirev_state);
-            if (rc == LIBSSH2_ERROR_EAGAIN) {
-                return _libssh2_error(session, LIBSSH2_ERROR_EAGAIN,
-                                      "Would block waiting");
-            } else if (rc) {
-                session->userauth_pswd_state = libssh2_NB_state_idle;
-                return _libssh2_error(session, LIBSSH2_ERROR_TIMEOUT,
-                                      "Would block waiting");
+
+            if (rc) {
+                if (rc != LIBSSH2_ERROR_EAGAIN)
+                    session->userauth_pswd_state = libssh2_NB_state_idle;
+
+                return _libssh2_error(session, rc,
+                                      "Waiting for password response");
             }
 
             if (session->userauth_pswd_data[0] == SSH_MSG_USERAUTH_SUCCESS) {
@@ -615,7 +615,7 @@ sign_fromfile(LIBSSH2_SESSION *session, unsigned char **sig, size_t *sig_len,
     if (privkeyobj->signv(session, sig, sig_len, 1, &datavec,
                           &hostkey_abstract)) {
         if (privkeyobj->dtor) {
-            privkeyobj->dtor(session, abstract);
+            privkeyobj->dtor(session, &hostkey_abstract);
         }
         return -1;
     }
@@ -645,7 +645,7 @@ userauth_hostbased_fromfile(LIBSSH2_SESSION *session,
     if (session->userauth_host_state == libssh2_NB_state_idle) {
         const LIBSSH2_HOSTKEY_METHOD *privkeyobj;
         unsigned char *pubkeydata, *sig;
-        size_t pubkeydata_len;
+        size_t pubkeydata_len = 0;
         size_t sig_len;
         void *abstract;
         unsigned char buf[5];

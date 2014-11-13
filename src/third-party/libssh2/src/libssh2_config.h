@@ -1,47 +1,3 @@
-#ifndef LIBSSH2_CONFIG_H
-#define LIBSSH2_CONFIG_H
-
-#ifdef _WIN32
-
-#ifndef WIN32
-#define WIN32
-#endif
-#ifndef _CRT_SECURE_NO_DEPRECATE
-#define _CRT_SECURE_NO_DEPRECATE 1
-#endif /* _CRT_SECURE_NO_DEPRECATE */
-#include <winsock2.h>
-#include <mswsock.h>
-#include <ws2tcpip.h>
-
-#ifdef __MINGW32__
-#define HAVE_UNISTD_H
-#define HAVE_INTTYPES_H
-#define HAVE_SYS_TIME_H
-#define HAVE_GETTIMEOFDAY
-#endif
-
-#define HAVE_WINSOCK2_H
-#define HAVE_IOCTLSOCKET
-#define HAVE_SELECT
-
-#ifdef _MSC_VER
-#define snprintf _snprintf
-#if _MSC_VER < 1500
-#define vsnprintf _vsnprintf
-#endif
-#define strdup _strdup
-#define strncasecmp _strnicmp
-#define strcasecmp _stricmp
-#else
-#define strncasecmp strnicmp
-#define strcasecmp stricmp
-#endif /* _MSC_VER */
-
-/* Enable newer diffie-hellman-group-exchange-sha1 syntax */
-#define LIBSSH2_DH_GEX_NEW 1
-
-#else
-
 /* src/libssh2_config.h.  Generated from libssh2_config.h.in by configure.  */
 /* src/libssh2_config.h.in.  Generated from configure.ac by autoheader.  */
 
@@ -96,11 +52,20 @@
 /* use Ioctlsocket() for non-blocking sockets */
 /* #undef HAVE_IOCTLSOCKET_CASE */
 
+/* Define if you have the bcrypt library. */
+/* #undef HAVE_LIBBCRYPT */
+
+/* Define if you have the crypt32 library. */
+/* #undef HAVE_LIBCRYPT32 */
+
 /* Define if you have the gcrypt library. */
 /* #undef HAVE_LIBGCRYPT */
 
 /* Define if you have the ssl library. */
 #define HAVE_LIBSSL 1
+
+/* Define if you have the z library. */
+/* #undef HAVE_LIBZ */
 
 /* Define to 1 if the compiler supports the 'long long' data type. */
 #define HAVE_LONGLONG 1
@@ -111,11 +76,17 @@
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #define HAVE_NETINET_IN_H 1
 
+/* Define to 1 if you have the <ntdef.h> header file. */
+/* #undef HAVE_NTDEF_H */
+
+/* Define to 1 if you have the <ntstatus.h> header file. */
+/* #undef HAVE_NTSTATUS_H */
+
 /* use O_NONBLOCK for non-blocking sockets */
 #define HAVE_O_NONBLOCK 1
 
 /* Define to 1 if you have the `poll' function. */
-/* #undef HAVE_POLL */
+#define HAVE_POLL 1
 
 /* Define to 1 if you have the select function. */
 #define HAVE_SELECT 1
@@ -186,6 +157,9 @@
 /* Enable newer diffie-hellman-group-exchange-sha1 syntax */
 #define LIBSSH2_DH_GEX_NEW 1
 
+/* Compile in zlib support */
+/* #undef LIBSSH2_HAVE_ZLIB */
+
 /* Use libgcrypt */
 /* #undef LIBSSH2_LIBGCRYPT */
 
@@ -194,6 +168,9 @@
 
 /* Use OpenSSL */
 #define LIBSSH2_OPENSSL 1
+
+/* Use Windows CNG */
+/* #undef LIBSSH2_WINCNG */
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
@@ -271,7 +248,3 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
-
-#endif
-#endif /* LIBSSH2_CONFIG_H */
-

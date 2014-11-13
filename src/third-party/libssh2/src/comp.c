@@ -198,15 +198,14 @@ comp_method_zlib_comp(LIBSSH2_SESSION *session,
 
     status = deflate(strm, Z_PARTIAL_FLUSH);
 
-    if (status != Z_OK) {
-        _libssh2_debug(session, LIBSSH2_TRACE_TRANS,
-                       "unhandled zlib compression error %d", status);
-        return _libssh2_error(session, LIBSSH2_ERROR_ZLIB,
-                              "compression failure");
+    if ((status == Z_OK) && (strm->avail_out > 0)) {
+        *dest_len = out_maxlen - strm->avail_out;
+        return 0;
     }
 
-    *dest_len = out_maxlen - strm->avail_out;
-    return 0;
+    _libssh2_debug(session, LIBSSH2_TRACE_TRANS,
+                   "unhandled zlib compression error %d, avail_out", status, strm->avail_out);
+    return _libssh2_error(session, LIBSSH2_ERROR_ZLIB, "compression failure");
 }
 
 /*
@@ -226,13 +225,12 @@ comp_method_zlib_decomp(LIBSSH2_SESSION * session,
     /* A short-term alloc of a full data chunk is better than a series of
        reallocs */
     char *out;
-    int out_maxlen = 8 * src_len;
-    int limiter = 0;
+    int out_maxlen = 4 * src_len;
 
     /* If strm is null, then we have not yet been initialized. */
     if (strm == NULL)
         return _libssh2_error(session, LIBSSH2_ERROR_COMPRESS,
-                              "decompression unitilized");;
+                              "decompression uninitialized");;
 
     /* In practice they never come smaller than this */
     if (out_maxlen < 25)
@@ -252,19 +250,19 @@ comp_method_zlib_decomp(LIBSSH2_SESSION * session,
 
     /* Loop until it's all inflated or hit error */
     for (;;) {
-        int status, grow_size;
+        int status;
         size_t out_ofs;
         char *newout;
 
         status = inflate(strm, Z_PARTIAL_FLUSH);
 
         if (status == Z_OK) {
-            if (! strm->avail_in) {
-                /* status is OK and input all used so we're done */
+            if (strm->avail_out > 0)
+                /* status is OK and the output buffer has not been exhausted so we're done */
                 break;
-            }
         } else if (status == Z_BUF_ERROR) {
-            /* This is OK, just drop through to grow the buffer */
+            /* the input data has been exhausted so we are done */
+            break;
         } else {
             /* error state */
             LIBSSH2_FREE(session, out);
@@ -274,22 +272,15 @@ comp_method_zlib_decomp(LIBSSH2_SESSION * session,
                                   "decompression failure");
         }
 
-        /* If we get here we need to grow the output buffer and try again */
-        out_ofs = out_maxlen - strm->avail_out;
-        if (strm->avail_in) {
-            grow_size = strm->avail_in * 8;
-        } else {
-            /* Not sure how much to grow by */
-            grow_size = 32;
-        }
-        out_maxlen += grow_size;
-
-        if ((out_maxlen > (int) payload_limit) && limiter++) {
+        if (out_maxlen >= (int) payload_limit) {
             LIBSSH2_FREE(session, out);
             return _libssh2_error(session, LIBSSH2_ERROR_ZLIB,
                                   "Excessive growth in decompression phase");
         }
 
+        /* If we get here we need to grow the output buffer and try again */
+        out_ofs = out_maxlen - strm->avail_out;
+        out_maxlen *= 2;
         newout = LIBSSH2_REALLOC(session, out, out_maxlen);
         if (!newout) {
             LIBSSH2_FREE(session, out);
@@ -298,7 +289,7 @@ comp_method_zlib_decomp(LIBSSH2_SESSION * session,
         }
         out = newout;
         strm->next_out = (unsigned char *) out + out_ofs;
-        strm->avail_out += grow_size;
+        strm->avail_out = out_maxlen - out_ofs;
     }
 
     *dest = (unsigned char *) out;

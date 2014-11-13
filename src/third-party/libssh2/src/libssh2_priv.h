@@ -108,6 +108,11 @@
 #define TRUE 1
 #endif
 
+#ifdef _MSC_VER
+/* "inline" keyword is valid only with C++ engine! */
+#define inline __inline
+#endif
+
 /* Provide iovec / writev on WIN32 platform. */
 #ifdef WIN32
 
@@ -115,8 +120,6 @@ struct iovec {
     size_t iov_len;
     void * iov_base;
 };
-
-#define inline __inline
 
 static inline int writev(int sock, struct iovec *iov, int nvecs)
 {
@@ -134,13 +137,7 @@ static inline int writev(int sock, struct iovec *iov, int nvecs)
 #ifdef HAVE_WINSOCK2_H
 
 #include <winsock2.h>
-#include <mswsock.h>
 #include <ws2tcpip.h>
-
-#ifdef _MSC_VER
-/* "inline" keyword is valid only with C++ engine! */
-#define inline __inline
-#endif
 
 #endif
 
@@ -357,6 +354,8 @@ struct _LIBSSH2_CHANNEL
     libssh2_channel_data local, remote;
     /* Amount of bytes to be refunded to receive window (but not yet sent) */
     uint32_t adjust_queue;
+    /* Data immediately available for reading */
+    uint32_t read_avail;
 
     LIBSSH2_SESSION *session;
 
@@ -575,7 +574,7 @@ struct _LIBSSH2_SESSION
 
     /* Agreed Key Exchange Method */
     const LIBSSH2_KEX_METHOD *kex;
-    int burn_optimistic_kexinit:1;
+    unsigned int burn_optimistic_kexinit:1;
 
     unsigned char *session_id;
     uint32_t session_id_len;

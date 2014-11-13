@@ -38,10 +38,16 @@
 #ifndef LIBSSH2_CRYPTO_H
 #define LIBSSH2_CRYPTO_H
 
+#ifdef LIBSSH2_OPENSSL
+#include "openssl.h"
+#endif
+
 #ifdef LIBSSH2_LIBGCRYPT
 #include "libgcrypt.h"
-#else
-#include "openssl.h"
+#endif
+
+#ifdef LIBSSH2_WINCNG
+#include "wincng.h"
 #endif
 
 int _libssh2_rsa_new(libssh2_rsa_ctx ** rsa,

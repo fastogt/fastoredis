@@ -537,16 +537,15 @@ agent_list_identities(LIBSSH2_AGENT *agent)
         struct agent_publickey *identity;
         ssize_t comment_len;
 
-        identity = LIBSSH2_ALLOC(agent->session, sizeof *identity);
-        if (!identity) {
-            rc = LIBSSH2_ERROR_ALLOC;
-            goto error;
-        }
-
         /* Read the length of the blob */
         len -= 4;
         if (len < 0) {
             rc = LIBSSH2_ERROR_AGENT_PROTOCOL;
+            goto error;
+        }
+        identity = LIBSSH2_ALLOC(agent->session, sizeof *identity);
+        if (!identity) {
+            rc = LIBSSH2_ERROR_ALLOC;
             goto error;
         }
         identity->external.blob_len = _libssh2_ntohu32(s);
@@ -556,12 +555,15 @@ agent_list_identities(LIBSSH2_AGENT *agent)
         len -= identity->external.blob_len;
         if (len < 0) {
             rc = LIBSSH2_ERROR_AGENT_PROTOCOL;
+            LIBSSH2_FREE(agent->session, identity);
             goto error;
         }
+
         identity->external.blob = LIBSSH2_ALLOC(agent->session,
                                                 identity->external.blob_len);
         if (!identity->external.blob) {
             rc = LIBSSH2_ERROR_ALLOC;
+            LIBSSH2_FREE(agent->session, identity);
             goto error;
         }
         memcpy(identity->external.blob, s, identity->external.blob_len);
@@ -571,6 +573,8 @@ agent_list_identities(LIBSSH2_AGENT *agent)
         len -= 4;
         if (len < 0) {
             rc = LIBSSH2_ERROR_AGENT_PROTOCOL;
+            LIBSSH2_FREE(agent->session, identity->external.blob);
+            LIBSSH2_FREE(agent->session, identity);
             goto error;
         }
         comment_len = _libssh2_ntohu32(s);
@@ -580,12 +584,17 @@ agent_list_identities(LIBSSH2_AGENT *agent)
         len -= comment_len;
         if (len < 0) {
             rc = LIBSSH2_ERROR_AGENT_PROTOCOL;
+            LIBSSH2_FREE(agent->session, identity->external.blob);
+            LIBSSH2_FREE(agent->session, identity);
             goto error;
         }
+
         identity->external.comment = LIBSSH2_ALLOC(agent->session,
                                                    comment_len + 1);
         if (!identity->external.comment) {
             rc = LIBSSH2_ERROR_ALLOC;
+            LIBSSH2_FREE(agent->session, identity->external.blob);
+            LIBSSH2_FREE(agent->session, identity);
             goto error;
         }
         identity->external.comment[comment_len] = '\0';
@@ -652,6 +661,7 @@ libssh2_agent_init(LIBSSH2_SESSION *session)
         return NULL;
     }
     memset(agent, 0, sizeof *agent);
+    agent->fd = LIBSSH2_INVALID_SOCKET;
     agent->session = session;
     _libssh2_list_init(&agent->head);
 
@@ -698,7 +708,7 @@ libssh2_agent_list_identities(LIBSSH2_AGENT *agent)
  * libssh2_agent_get_identity()
  *
  * Traverse the internal list of public keys. Pass NULL to 'prev' to get
- * the first one. Or pass a poiner to the previously returned one to get the
+ * the first one. Or pass a pointer to the previously returned one to get the
  * next.
  *
  * Returns:

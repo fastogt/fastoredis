@@ -686,7 +686,7 @@ session_startup(LIBSSH2_SESSION *session, libssh2_socket_t sock)
             !get_socket_nonblocking(session->socket_fd);
 
         if (session->socket_prev_blockstate) {
-            /* If in blocking state chang to non-blocking */
+            /* If in blocking state change to non-blocking */
             session_nonblock(session->socket_fd, 1);
         }
 
@@ -1015,6 +1015,14 @@ session_free(LIBSSH2_SESSION *session)
     }
     if (session->scpSend_command) {
         LIBSSH2_FREE(session, session->scpSend_command);
+    }
+    if (session->sftpInit_sftp) {
+        LIBSSH2_FREE(session, session->sftpInit_sftp);
+    }
+
+    /* Free payload buffer */
+    if (session->packet.total_num) {
+        LIBSSH2_FREE(session, session->packet.payload);
     }
 
     /* Cleanup all remaining packets */
@@ -1514,7 +1522,7 @@ libssh2_poll(LIBSSH2_POLLFD * fds, unsigned int nfds, long timeout)
     }
 #else
     /* No select() or poll()
-     * no sockets sturcture to setup
+     * no sockets structure to setup
      */
 
     timeout = 0;
