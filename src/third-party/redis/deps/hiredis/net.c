@@ -463,6 +463,7 @@ static int _redisContextConnectTcp(redisContext *c, const char *addr, int port,
             return REDIS_ERR;
         }
 
+        c->flags |= REDIS_CONNECTED;
         return REDIS_OK;
     }
 
