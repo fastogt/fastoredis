@@ -12,12 +12,14 @@
 /* Define to 1 if using `alloca.c'. */
 /* #undef C_ALLOCA */
 
+#ifdef OS_POSIX
 /* Define to 1 if you have `alloca', as a function or macro. */
 #define HAVE_ALLOCA 1
 
 /* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
    */
 #define HAVE_ALLOCA_H 1
+#endif
 
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #define HAVE_ARPA_INET_H 1
@@ -82,14 +84,20 @@
 /* Define to 1 if you have the <ntstatus.h> header file. */
 /* #undef HAVE_NTSTATUS_H */
 
+#ifdef OS_POSIX
 /* use O_NONBLOCK for non-blocking sockets */
 #define HAVE_O_NONBLOCK 1
+#else
+#define HAVE_IOCTLSOCKET 1
+#endif
 
-/* Define to 1 if you have the `poll' function. */
-#define HAVE_POLL 1
-
+#ifdef OS_WIN
 /* Define to 1 if you have the select function. */
 #define HAVE_SELECT 1
+#else
+/* Define to 1 if you have the `poll' function. */
+#define HAVE_POLL 1
+#endif
 
 /* use SO_NONBLOCK for non-blocking sockets */
 /* #undef HAVE_SO_NONBLOCK */
@@ -112,14 +120,18 @@
 /* Define to 1 if you have the `strtoll' function. */
 #define HAVE_STRTOLL 1
 
+#ifdef OS_POSIX
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #define HAVE_SYS_IOCTL_H 1
+#endif
 
 /* Define to 1 if you have the <sys/select.h> header file. */
 #define HAVE_SYS_SELECT_H 1
 
+#ifdef OS_POSIX
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #define HAVE_SYS_SOCKET_H 1
+#endif
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
@@ -130,8 +142,10 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
 
+#ifdef OS_POSIX
 /* Define to 1 if you have the <sys/uio.h> header file. */
 #define HAVE_SYS_UIO_H 1
+#endif
 
 /* Define to 1 if you have the <sys/un.h> header file. */
 #define HAVE_SYS_UN_H 1

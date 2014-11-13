@@ -358,7 +358,7 @@ get_socket_nonblocking(int sockfd)
 #if defined(WSAEWOULDBLOCK) && (GETBLOCK == 0)
     /* Windows? */
     unsigned int option_value;
-    socklen_t option_len = sizeof(option_value);
+    int option_len = sizeof(option_value);
 
     if (getsockopt
         (sockfd, SOL_SOCKET, SO_ERROR, (void *) &option_value, &option_len)) {
