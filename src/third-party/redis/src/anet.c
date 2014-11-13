@@ -29,8 +29,41 @@
  */
 
 #include "fmacros.h"
-#include <winsock2.h>
+#ifdef FASTOREDIS
+        #include <sys/types.h>
+    #ifdef OS_WIN
+        #include <winsock2.h>
+    #else
+        #include <sys/socket.h>
+        #include <sys/stat.h>
+        #include <sys/un.h>
+        #include <netinet/in.h>
+        #include <netinet/tcp.h>
+        #include <arpa/inet.h>
+        #include <unistd.h>
+        #include <fcntl.h>
+        #include <string.h>
+        #include <netdb.h>
+        #include <errno.h>
+        #include <stdarg.h>
+        #include <stdio.h>
+    #endif
+#else
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/un.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+#include <netdb.h>
+#include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
+#endif
 
 #include "anet.h"
 
@@ -44,6 +77,51 @@ static void anetSetError(char *err, const char *fmt, ...)
     va_end(ap);
 }
 
+int anetNonBlock(char *err, int fd)
+{
+#ifdef FASTOREDIS
+#ifdef OS_WIN
+    unsigned long flags = 0;
+    int res = ioctlsocket(fd, FIONBIO, &flags);
+    if (res == SOCKET_ERROR) {
+        anetSetError(err, "ioctlsocket): %s", strerror(errno));
+        return ANET_ERR;
+    }
+    return ANET_OK;
+#else
+    int flags;
+
+    /* Set the socket non-blocking.
+     * Note that fcntl(2) for F_GETFL and F_SETFL can't be
+     * interrupted by a signal. */
+    if ((flags = fcntl(fd, F_GETFL)) == -1) {
+        anetSetError(err, "fcntl(F_GETFL): %s", strerror(errno));
+        return ANET_ERR;
+    }
+    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        anetSetError(err, "fcntl(F_SETFL,O_NONBLOCK): %s", strerror(errno));
+        return ANET_ERR;
+    }
+    return ANET_OK;
+#endif
+#else
+    int flags;
+
+    /* Set the socket non-blocking.
+     * Note that fcntl(2) for F_GETFL and F_SETFL can't be
+     * interrupted by a signal. */
+    if ((flags = fcntl(fd, F_GETFL)) == -1) {
+        anetSetError(err, "fcntl(F_GETFL): %s", strerror(errno));
+        return ANET_ERR;
+    }
+    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        anetSetError(err, "fcntl(F_SETFL,O_NONBLOCK): %s", strerror(errno));
+        return ANET_ERR;
+    }
+    return ANET_OK;
+#endif
+}
+
 /* Set TCP keep alive option to detect dead peers. The interval option
  * is only used for Linux as we are using Linux-specific APIs to set
  * the probe send time, interval, and count. */
@@ -51,7 +129,7 @@ int anetKeepAlive(char *err, int fd, int interval)
 {
     int val = 1;
 
-    if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char*)&val, sizeof(val)) == -1)
+    if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof(val)) == -1)
     {
         anetSetError(err, "setsockopt SO_KEEPALIVE: %s", strerror(errno));
         return ANET_ERR;
@@ -86,6 +164,8 @@ int anetKeepAlive(char *err, int fd, int interval)
         anetSetError(err, "setsockopt TCP_KEEPCNT: %s\n", strerror(errno));
         return ANET_ERR;
     }
+#else
+    ((void) interval); /* Avoid unused var warning for non Linux systems. */
 #endif
 
     return ANET_OK;
