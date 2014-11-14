@@ -63,6 +63,7 @@ else ()
   set(_OPENSSL_ROOT_HINTS
     ${OPENSSL_ROOT_DIR}
     ENV OPENSSL_ROOT_DIR
+    /usr/local/ssl
     )
 endif ()
 
