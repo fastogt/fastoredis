@@ -3,6 +3,8 @@
 - Fix utf conversions string problem
 - Add translation support
 - Fix server information displaying
+- Add SSH tunel support
+- Fix start on windows machine
 
 [Denis Klimenko]
 - Fix dmg build
