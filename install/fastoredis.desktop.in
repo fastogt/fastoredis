@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Exec=@SHORTPRODUCTNAME@
-Name=@PROJECT_NAME@
+Exec=@PRODUCTNAME@
+Name=@SHORTPRODUCTNAME@
 GenericName=The IDE for redis working.
 GenericName[de]=Die IDE der
 Icon=@ICONNAME@

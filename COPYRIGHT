@@ -1,8 +1,8 @@
-FastoRedis, cross-platform MongoDB management tool.
+FastoRedis, cross-platform Redis management tool.
 
-Copyright 2013, Alto.
+Copyright 2014, Fasto.
 
-The AltoRedis is released under the terms of the GNU General Public
+The FltoRedis is released under the terms of the GNU General Public
 License, version 3.
 
 The FastoRedis Project includes files written by third parties

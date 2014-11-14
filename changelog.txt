@@ -1,4 +1,10 @@
-0.1.0 / October 1, 2013
+0.1.0 / November 13, 2014
+- Fix utf conversions string problem
+- Add translation support
+- Fix server information displaying
+- Add SSH tunel support
+- Fix start on windows machine
+- Fix dmg build
 
     
     
