@@ -1,15 +1,15 @@
 #!/bin/sh
 set -e
 
-if test -e /usr/bin/@PROJECT_NAME@ ; then
-    rm /usr/bin/@PROJECT_NAME@
+if test -e /usr/bin/@PROJECT_NAME_LOWERCASE@ ; then
+    rm /usr/bin/@PROJECT_NAME_LOWERCASE@
 fi
 
-if test -e /usr/share/applications/@PROJECT_NAME@.desktop ; then
-    rm /usr/share/applications/@PROJECT_NAME@.desktop
+if test -e /usr/share/applications/@PROJECT_NAME_LOWERCASE@.desktop ; then
+    rm /usr/share/applications/@PROJECT_NAME_LOWERCASE@.desktop
 fi
 
-if test -e /usr/share/icons/@PROJECT_NAME@.png ; then
-    rm /usr/share/icons/@PROJECT_NAME@.png
+if test -e /usr/share/icons/@PROJECT_NAME_LOWERCASE@.png ; then
+    rm /usr/share/icons/@PROJECT_NAME_LOWERCASE@.png
 fi
 

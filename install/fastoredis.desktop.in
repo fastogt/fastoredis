@@ -2,8 +2,8 @@
 Type=Application
 Exec=@SHORTPRODUCTNAME@
 Name=@PROJECT_NAME@
-GenericName=The IDE for mongodb working.
+GenericName=The IDE for redis working.
 GenericName[de]=Die IDE der
 Icon=@ICONNAME@
 Terminal=false
-Categories=Development;IDE;mongodb;
+Categories=Development;IDE;redis;
