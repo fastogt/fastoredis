@@ -14,6 +14,14 @@
 #include "common/qt/convert_string.h"
 #include "common/utils.h"
 
+namespace
+{
+    QString trPrivateKey = QObject::tr("Private Key");
+    QString trPassword = QObject::tr("Password");
+    QString trHide = QObject::tr("Hide");
+    QString trShow = QObject::tr("Show");
+}
+
 namespace fastoredis
 {
     ConnectionDialog::ConnectionDialog(const IConnectionSettingsBasePtr &connection, QWidget *parent)
@@ -66,20 +74,20 @@ namespace fastoredis
         sshPort_->setValidator(new QRegExpValidator(rx, this));
         sshPort_->setText(QString::number(info.port_));
 
-        passwordLabel_ = new QLabel("User Password:");
-        sshPrivateKeyLabel_ = new QLabel("Private key:");
-        sshPassphraseLabel_ = new QLabel("Passphrase:");
-        sshAddressLabel_ = new QLabel("SSH Address:");
-        sshUserNameLabel_ = new QLabel("SSH User Name:");
-        sshAuthMethodLabel_ = new QLabel("SSH Auth Method:");
+        passwordLabel_ = new QLabel;
+        sshPrivateKeyLabel_ = new QLabel;
+        sshPassphraseLabel_ = new QLabel;
+        sshAddressLabel_ = new QLabel;
+        sshUserNameLabel_ = new QLabel;
+        sshAuthMethodLabel_ = new QLabel;
 
         security_ = new QComboBox;
-        security_->addItems(QStringList() << "Password" << "Private Key");
+        security_->addItems(QStringList() << trPassword << trPrivateKey);
         if (info.authMethod() == SSHInfo::PUBLICKEY) {
-            security_->setCurrentText("Private Key");
+            security_->setCurrentText(trPrivateKey);
         }
         else {
-            security_->setCurrentText("Password");
+            security_->setCurrentText(trPassword);
         }
         VERIFY(connect(security_, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(securityChange(const QString&))));
 
@@ -210,7 +218,7 @@ namespace fastoredis
 
     SSHInfo::SupportedAuthenticationMetods ConnectionDialog::selectedAuthMethod() const
     {
-        if (security_->currentText() == "Private Key"){
+        if (security_->currentText() == trPrivateKey){
             return SSHInfo::PUBLICKEY;
         }
 
@@ -252,8 +260,8 @@ namespace fastoredis
 
     void ConnectionDialog::setPrivateFile()
     {
-        QString filepath = QFileDialog::getOpenFileName(this, "Select private key file",
-        privateKeyBox_->text(), QObject::tr("Private key files (*.*)"));
+        QString filepath = QFileDialog::getOpenFileName(this, tr("Select private key file"),
+        privateKeyBox_->text(), tr("Private key files (*.*)"));
         if (filepath.isNull())
             return;
 
@@ -264,14 +272,14 @@ namespace fastoredis
     {
         bool isPassword = passwordBox_->echoMode() == QLineEdit::Password;
         passwordBox_->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
-        passwordEchoModeButton_->setText(isPassword ? tr("Hide"): tr("Show"));
+        passwordEchoModeButton_->setText(isPassword ? trHide: trShow);
     }
 
     void ConnectionDialog::togglePassphraseEchoMode()
     {
         bool isPassword = passphraseBox_->echoMode() == QLineEdit::Password;
         passphraseBox_->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
-        passphraseEchoModeButton_->setText(isPassword ? tr("Hide"): tr("Show"));
+        passphraseEchoModeButton_->setText(isPassword ? trHide: trShow);
     }
 
     void ConnectionDialog::typeConnectionChange(const QString &value)
@@ -314,5 +322,11 @@ namespace fastoredis
         logging_->setText(tr("Logging enabled"));
         testButton_->setText(tr("&Test"));
         useSsh_->setText(tr("Use SSH tunnel"));
+        passwordLabel_->setText(tr("User Password:"));
+        sshPrivateKeyLabel_->setText(tr("Private key:"));
+        sshPassphraseLabel_->setText(tr("Passphrase:"));
+        sshAddressLabel_->setText(tr("SSH Address:"));
+        sshUserNameLabel_->setText(tr("SSH User Name:"));
+        sshAuthMethodLabel_->setText(tr("SSH Auth Method:"));
     }
 }

@@ -47,7 +47,7 @@ namespace fastoredis
 
     void LogTabWidget::retranslateUi()
     {
-        setTabText(0,tr("Errors"));
-        setTabText(1,tr("Commands"));
+        setTabText(0, tr("Errors"));
+        setTabText(1, tr("Commands"));
     }
 }

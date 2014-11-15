@@ -14,7 +14,7 @@
         <translation>Conserver Comme</translation>
     </message>
     <message>
-        <location filename="../core/connection_settings.cpp" line="135"/>
+        <location filename="../core/connection_settings.cpp" line="151"/>
         <source>-h host -p port</source>
         <translation>-h ordinateur -p port</translation>
     </message>
@@ -58,6 +58,26 @@
         <source>&lt;h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="19"/>
+        <source>Private Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="20"/>
+        <source>Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="21"/>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="22"/>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fastoredis::CommandsWidget</name>
@@ -70,8 +90,69 @@
 <context>
     <name>fastoredis::ConnectionDialog</name>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="115"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="97"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="106"/>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="263"/>
+        <source>Select private key file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="264"/>
+        <source>Private key files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="321"/>
         <source>Connection Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="322"/>
+        <source>Logging enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="323"/>
+        <source>&amp;Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="324"/>
+        <source>Use SSH tunnel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="325"/>
+        <source>User Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="326"/>
+        <source>Private key:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="327"/>
+        <source>Passphrase:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="328"/>
+        <source>SSH Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="329"/>
+        <source>SSH User Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="330"/>
+        <source>SSH Auth Method:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -106,43 +187,51 @@
 <context>
     <name>fastoredis::ExplorerTreeView</name>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="183"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="182"/>
         <source>Connect/Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="184"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="183"/>
         <source>Open console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="185"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="184"/>
         <source>Load databases</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="186"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="185"/>
         <source>Load content of database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="187"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="186"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="188"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="187"/>
         <source>Property</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="189"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="188"/>
         <source>History</source>
         <translation>Histoire</translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="190"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="189"/>
         <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>fastoredis::InfoServerDialog</name>
+    <message>
+        <location filename="../gui/dialogs/info_server_dialog.cpp" line="96"/>
+        <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -259,6 +348,14 @@
     </message>
 </context>
 <context>
+    <name>fastoredis::OutputWidget</name>
+    <message>
+        <location filename="../gui/widgets/output_widget.cpp" line="163"/>
+        <source>Execute miliseconds time: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>fastoredis::PreferencesDialog</name>
     <message>
         <location filename="../gui/dialogs/preferences_dialog.cpp" line="132"/>
@@ -298,24 +395,6 @@
     <message>
         <location filename="../gui/dialogs/preferences_dialog.cpp" line="141"/>
         <source>Logging directory:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>fastoredis::RedisLexer</name>
-    <message>
-        <location filename="../shell/redis_lexer.cpp" line="47"/>
-        <source>Default</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../shell/redis_lexer.cpp" line="50"/>
-        <source>Command</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../shell/redis_lexer.cpp" line="53"/>
-        <source>Types</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -93,7 +93,7 @@ namespace fastoredis
         mainL->addWidget(hardwareTextInfo_);
         setLayout(mainL);
 
-        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), "Loading...", 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), tr("Loading..."), 0.5, QColor(111, 111, 100), this);
         updateText(RedisServerInfo());
     }
 

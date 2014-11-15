@@ -20,7 +20,7 @@ namespace fastoredis
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0,0,0,0);
         hlayout->addWidget(logTextEdit_);
-        clear_ = new QAction("Clear All", this);
+        clear_ = new QAction(this);
         VERIFY(connect(clear_, SIGNAL(triggered()),logTextEdit_, SLOT(clear())));
         setLayout(hlayout);
         retranslateUi();
