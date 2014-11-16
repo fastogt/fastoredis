@@ -14,6 +14,7 @@ namespace fastoredis
         static const QColor paperColor;
 
         RedisShell(QWidget *parent = 0);
+        QString version() const;
 
     Q_SIGNALS:
         void executed();
@@ -23,5 +24,8 @@ namespace fastoredis
 
     protected:
         virtual void keyPressEvent(QKeyEvent *keyEvent);
+
+    private:
+        QString version_;
     };
 }

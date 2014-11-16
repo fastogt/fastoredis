@@ -9,7 +9,7 @@
         <translation>Texte files(*.txt);; Toutes les Files (*.*)</translation>
     </message>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="259"/>
+        <location filename="../shell/shell_widget.cpp" line="260"/>
         <source>Save As</source>
         <translation>Conserver Comme</translation>
     </message>
@@ -351,7 +351,7 @@
     <name>fastoredis::OutputWidget</name>
     <message>
         <location filename="../gui/widgets/output_widget.cpp" line="163"/>
-        <source>Execute miliseconds time: </source>
+        <source>Execute milliseconds time: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -395,6 +395,49 @@
     <message>
         <location filename="../gui/dialogs/preferences_dialog.cpp" line="141"/>
         <source>Logging directory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>fastoredis::ShellWidget</name>
+    <message>
+        <location filename="../shell/shell_widget.cpp" line="123"/>
+        <source>Connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shell/shell_widget.cpp" line="126"/>
+        <source>Disconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shell/shell_widget.cpp" line="129"/>
+        <source>Execute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shell/shell_widget.cpp" line="132"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shell/shell_widget.cpp" line="157"/>
+        <source>Based on redis-cli version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shell/shell_widget.cpp" line="111"/>
+        <source>Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shell/shell_widget.cpp" line="114"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shell/shell_widget.cpp" line="117"/>
+        <source>Save as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

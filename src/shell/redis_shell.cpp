@@ -17,6 +17,8 @@ namespace fastoredis
         : FastoEditor(parent)
     {
         RedisLexer* red = new RedisLexer(this);
+        version_ = common::convertFromString<QString>(red->version());
+
         registerImage(RedisLexer::Command, GuiFactory::instance().commandIcon(REDIS).pixmap(QSize(64,64)));
         registerImage(RedisLexer::Types, GuiFactory::instance().typeIcon(REDIS).pixmap(QSize(64,64)));
 
@@ -28,6 +30,11 @@ namespace fastoredis
         setAutoCompletionCaseSensitivity(false);
 
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
+    }
+
+    QString RedisShell::version() const
+    {
+        return version_;
     }
 
     void RedisShell::showContextMenu(const QPoint &pt)

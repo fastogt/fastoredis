@@ -2,6 +2,7 @@
 
 #include <QHBoxLayout>
 #include <QMenu>
+#include <QSplitter>
 
 #include "common/macros.h"
 #include "shell/shell_widget.h"
@@ -17,9 +18,15 @@ namespace fastoredis
         VERIFY(connect(shellWidget_, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), outputWidget_, SLOT(startExecute(const EventsInfo::ExecuteInfoRequest &))));
         VERIFY(connect(shellWidget_, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), outputWidget_, SLOT(finishExecute(const EventsInfo::ExecuteInfoResponce &))));
 
+        QSplitter *splitter = new QSplitter;
+        splitter->setOrientation(Qt::Vertical);
+        splitter->setHandleWidth(1);
+        splitter->setContentsMargins(0, 0, 0, 0);
+
         QVBoxLayout *mainLayout = new QVBoxLayout;
-        mainLayout->addWidget(shellWidget_);
-        mainLayout->addWidget(outputWidget_);
+        splitter->addWidget(shellWidget_);
+        splitter->addWidget(outputWidget_);
+        mainLayout->addWidget(splitter);
 
         setLayout(mainLayout);
     }

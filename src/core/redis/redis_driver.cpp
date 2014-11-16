@@ -581,6 +581,16 @@ namespace fastoredis
         return impl_->currentaddress();
     }
 
+    std::string RedisDriver::version() const
+    {
+        return versionApi();
+    }
+
+    const char* RedisDriver::versionApi()
+    {
+        return REDIS_VERSION;
+    }
+
     bool RedisDriver::isConnected() const
     {
         return impl_->context;

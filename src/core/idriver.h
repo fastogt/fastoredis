@@ -34,6 +34,7 @@ namespace fastoredis
         virtual void interrupt() = 0;
         virtual bool isConnected() const = 0;
         virtual std::string address() const = 0;
+        virtual std::string version() const = 0;
 
     private Q_SLOTS:
         void init();

@@ -160,7 +160,7 @@ namespace fastoredis
                 treeModel_->setRoot(root);
             }
         }
-        timeLabel_->setText(tr("Execute miliseconds time: ") + common::convertFromString16<QString>(common::time::mstime2string(res.elapsedTime())));
+        timeLabel_->setText(tr("Execute milliseconds time: ") + common::convertFromString16<QString>(common::time::mstime2string(res.elapsedTime())));
         //FastoObjectPtr ptr = res._out;
         //std::string str = toStdString(ptr);
         //_textView->setText(common::convertFromString16<QString>(str));
