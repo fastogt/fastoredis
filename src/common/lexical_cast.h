@@ -18,10 +18,10 @@ namespace common
     }
 
     template <typename cast_to_t, typename cast_from_t>
-    inline cast_to_t union_cast( cast_from_t _value )
+    inline cast_to_t union_cast(cast_from_t value)
     {
         union Union{ cast_from_t _from; cast_to_t _to; } unionCast;
-        unionCast._from = _value;
+        unionCast._from = value;
         return unionCast._to;
     }
 
@@ -29,7 +29,7 @@ namespace common
     struct variant_defualter
     {
         template<typename const_t>
-        explicit variant_defualter(const_t def, typename boost::enable_if<detail::is_same_or_convertible<const_t, type_t> >::type* v=0)
+        explicit variant_defualter(const_t def, typename boost::enable_if<detail::is_same_or_convertible<const_t, type_t> >::type* v = 0)
             : value_(def)
         {
 
