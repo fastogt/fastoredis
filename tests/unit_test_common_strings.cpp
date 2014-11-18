@@ -15,6 +15,7 @@ TEST(string, convertTo)
     ASSERT_EQ(ltext, lconvText);
 }
 
+#ifdef OS_WIN
 TEST(string16, convertTo)
 {
     const common::char16* text = L"text";
@@ -31,3 +32,4 @@ TEST(string16, convertTo)
     const std::string fstext2 = common::convertFromString16<std::string>(convText2);
     ASSERT_EQ(stext2, fstext2);
 }
+#endif

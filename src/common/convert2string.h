@@ -2,6 +2,8 @@
 
 /**/
 
+#include <vector>
+
 #include "common/types.h"
 
 #include "common/string_piece.h"
