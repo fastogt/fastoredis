@@ -4,57 +4,57 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="28"/>
-        <source>Text Files (*.txt);; All Files (*.*)</source>
-        <translation>Текстовые файлы</translation>
+        <location filename="../shell/shell_widget.cpp" line="25"/>
+        <source>Text Files (*.txt); All Files (*.*)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="260"/>
+        <location filename="../shell/shell_widget.cpp" line="253"/>
         <source>Save As</source>
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <location filename="../core/connection_settings.cpp" line="151"/>
+        <location filename="../core/connection_settings.cpp" line="148"/>
         <source>-h host -p port</source>
         <translation>-h хост -p порт</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/info_server_dialog.cpp" line="12"/>
+        <location filename="../gui/dialogs/info_server_dialog.cpp" line="11"/>
         <source>&lt;h2&gt;Server:&lt;/h2&gt;&lt;br/&gt;Redis version: %1&lt;br/&gt;Redis git_sha1: %2&lt;br/&gt;Redis git_dirty: %3&lt;br/&gt;Redis mode: %4&lt;br/&gt;Os: %5&lt;br/&gt;Arch: %6&lt;br/&gt;Multiplexing Api: %7&lt;br/&gt;Gcc version: %8&lt;br/&gt;Process id: %9&lt;br/&gt;Run id: %10&lt;br/&gt;Tcp port: %11&lt;br/&gt;Uptime sec: %12&lt;br/&gt;Uptime days: %13&lt;br/&gt;Lru clock: %14</source>
         <translation>&lt;h2&gt;Сервер:&lt;/h2&gt;&lt;br/&gt;Redis версия: %1&lt;br/&gt;Redis git_sha1: %2&lt;br/&gt;Redis git_dirty: %3&lt;br/&gt;Redis режим: %4&lt;br/&gt;Операционная система: %5&lt;br/&gt;Архитектура: %6&lt;br/&gt;Мультеплексинг Api: %7&lt;br/&gt;Gcc версия: %8&lt;br/&gt;Процес id: %9&lt;br/&gt;Запуск id: %10&lt;br/&gt;Tcp порт: %11&lt;br/&gt;Обновление сек: %12&lt;br/&gt;Обновление дни: %13&lt;br/&gt;Lru время: %14</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/info_server_dialog.cpp" line="28"/>
+        <location filename="../gui/dialogs/info_server_dialog.cpp" line="27"/>
         <source>&lt;h2&gt;Clients:&lt;/h2&gt;&lt;br/&gt;Connected clients_: %1&lt;br/&gt;Client longest output list: %2&lt;br/&gt;Client biggest input buf: %3&lt;br/&gt;Blocked clients: %4</source>
         <translation>&lt;h2&gt;Клиенты:&lt;/h2&gt;&lt;br/&gt;Соединенные клиенты: %1&lt;br/&gt;Клиенты с длинным выводом: %2&lt;br/&gt;Клиенты с длинным вводом: %3&lt;br/&gt;Заблокированные клиенты: %4</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/info_server_dialog.cpp" line="34"/>
+        <location filename="../gui/dialogs/info_server_dialog.cpp" line="33"/>
         <source>&lt;h2&gt;Memory:&lt;/h2&gt;&lt;br/&gt;Used memory: %1&lt;br/&gt;Used memory human: %2&lt;br/&gt;Used memory rss: %3&lt;br/&gt;Used memory peak: %4&lt;br/&gt;Used memory peak human: %5&lt;br/&gt;Used memory lua: %6&lt;br/&gt;Mem fragmentation ratio: %7&lt;br/&gt;Mem allocator: %8</source>
         <translation>&lt;h2&gt;Память:&lt;/h2&gt;&lt;br/&gt;Используемая память: %1&lt;br/&gt;Используемая память human: %2&lt;br/&gt;Используемая память rss: %3&lt;br/&gt;Используемая память peak: %4&lt;br/&gt;Используемая память peak human: %5&lt;br/&gt;Используемая память lua: %6&lt;br/&gt;Маштаб фрагментации памяти: %7&lt;br/&gt;Алакатор памяти: %8</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/info_server_dialog.cpp" line="44"/>
+        <location filename="../gui/dialogs/info_server_dialog.cpp" line="43"/>
         <source>&lt;h2&gt;Persistence:&lt;/h2&gt;&lt;br/&gt;Loading: %1&lt;br/&gt;Rdb changes since last save: %2&lt;br/&gt;Rdb bgsave in_progress: %3&lt;br/&gt;Rdb last save_time: %4&lt;br/&gt;Rdb last bgsave_status: %5&lt;br/&gt;Rdb last bgsave time sec: %6&lt;br/&gt;Rdb current bgsave time sec: %7&lt;br/&gt;Aof enabled: %8&lt;br/&gt;Aof rewrite in progress: %9&lt;br/&gt;Aof rewrite scheduled: %10&lt;br/&gt;Aof last rewrite time sec: %11&lt;br/&gt;Aof current rewrite time sec: %12&lt;br/&gt;Aof last bgrewrite status: %13</source>
         <translation>&lt;h2&gt;Persistence:&lt;/h2&gt;&lt;br/&gt;Загрузка: %1&lt;br/&gt;Rdb шанс сохранения: %2&lt;br/&gt;Rdb bgsave in_progress: %3&lt;br/&gt;Rdb последнее время сохранения: %4&lt;br/&gt;Rdb последний bgsave статус: %5&lt;br/&gt;Rdb последний bgsave время сек: %6&lt;br/&gt;Rdb тякущее bgsave время sec: %7&lt;br/&gt;Aof enabled: %8&lt;br/&gt;Aof в прогрессе: %9&lt;br/&gt;Aof rewrite установленно: %10&lt;br/&gt;Aof последнее переписанное время сек: %11&lt;br/&gt;Aof тякущее переписанное время сек: %12&lt;br/&gt;Aof последний bgrewrite статус: %13</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/info_server_dialog.cpp" line="59"/>
+        <location filename="../gui/dialogs/info_server_dialog.cpp" line="58"/>
         <source>&lt;h2&gt;Stats:&lt;/h2&gt;&lt;br/&gt;Total connections received: %1&lt;br/&gt;Total commands processed: %2&lt;br/&gt;Instantaneous ops per sec: %3&lt;br/&gt;Rejected connections: %4&lt;br/&gt;Expired keys: %5&lt;br/&gt;Evicted keys: %6&lt;br/&gt;Keyspace hits: %7&lt;br/&gt;Keyspace misses: %8&lt;br/&gt;Pubsub channels: %9&lt;br/&gt;Pubsub patterns: %10&lt;br/&gt;Latest fork usec: %11</source>
         <translation>&lt;h2&gt;Статистика:&lt;/h2&gt;&lt;br/&gt;Общее количество соединений: %1&lt;br/&gt;Общее количество запросов: %2&lt;br/&gt;Instantaneous ops per sec: %3&lt;br/&gt;Откланенные соединения: %4&lt;br/&gt;Истекшие по времени ключи: %5&lt;br/&gt;Evicted keys: %6&lt;br/&gt;Keyspace hits: %7&lt;br/&gt;Keyspace misses: %8&lt;br/&gt;Pubsub каналы: %9&lt;br/&gt;Pubsub шаблоны: %10&lt;br/&gt;Последняя нать usec: %11</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/info_server_dialog.cpp" line="72"/>
+        <location filename="../gui/dialogs/info_server_dialog.cpp" line="71"/>
         <source>&lt;h2&gt;Replication:&lt;/h2&gt;&lt;br/&gt;Role: %1&lt;br/&gt;Connected slaves: %2</source>
         <translation>&lt;h2&gt;Репликация:&lt;/h2&gt;&lt;br/&gt;Роль: %1&lt;br/&gt;Сохраненные соединения: %2</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/info_server_dialog.cpp" line="76"/>
+        <location filename="../gui/dialogs/info_server_dialog.cpp" line="75"/>
         <source>&lt;h2&gt;Cpu:&lt;/h2&gt;&lt;br/&gt;Used cpu sys: %1&lt;br/&gt;Used cpu user: %2&lt;br/&gt;Used cpu sys children: %3&lt;br/&gt;Used cpu user children: %4</source>
         <translation>&lt;h2&gt;Процессор:&lt;/h2&gt;&lt;br/&gt;Загрузка процессора: %1&lt;br/&gt;Загрузка процессора пользователем: %2&lt;br/&gt;Загрузка процессора предками: %3&lt;br/&gt;Загрузка процессора пользовательскими предками: %4</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/about_dialog.cpp" line="15"/>
+        <location filename="../gui/dialogs/about_dialog.cpp" line="12"/>
         <source>&lt;h3&gt;</source>
         <translation></translation>
     </message>
@@ -82,19 +82,13 @@
 <context>
     <name>fastoredis::CommandsWidget</name>
     <message>
-        <location filename="../gui/widgets/commands_widget.cpp" line="58"/>
+        <location filename="../gui/widgets/commands_widget.cpp" line="59"/>
         <source>Clear All</source>
         <translation>Очистить все</translation>
     </message>
 </context>
 <context>
     <name>fastoredis::ConnectionDialog</name>
-    <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="97"/>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="106"/>
-        <source>Show</source>
-        <translation>Показать</translation>
-    </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="263"/>
         <source>Select private key file</source>
@@ -159,78 +153,104 @@
 <context>
     <name>fastoredis::ConnectionsDialog</name>
     <message>
-        <location filename="../gui/dialogs/connections_dialog.cpp" line="60"/>
+        <location filename="../gui/dialogs/connections_dialog.cpp" line="62"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connections_dialog.cpp" line="60"/>
+        <location filename="../gui/dialogs/connections_dialog.cpp" line="62"/>
         <source>Address</source>
         <translation>Адрес</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connections_dialog.cpp" line="60"/>
+        <location filename="../gui/dialogs/connections_dialog.cpp" line="62"/>
         <source>Auth. Database / User</source>
         <translation>База данных/Пользователь</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connections_dialog.cpp" line="233"/>
+        <location filename="../gui/dialogs/connections_dialog.cpp" line="234"/>
         <source>Redis Connections</source>
         <translation>Redis Соединение</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connections_dialog.cpp" line="234"/>
+        <location filename="../gui/dialogs/connections_dialog.cpp" line="235"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
 </context>
 <context>
+    <name>fastoredis::ExplorerTreeModel</name>
+    <message>
+        <location filename="../gui/explorer/explorer_tree_model.cpp" line="131"/>
+        <source>Name</source>
+        <translation type="unfinished">Имя</translation>
+    </message>
+</context>
+<context>
     <name>fastoredis::ExplorerTreeView</name>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="182"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="178"/>
         <source>Connect/Disconnect</source>
         <translation>Соединиться/Отключиться</translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="183"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="179"/>
         <source>Open console</source>
         <translation>Открыть консоль</translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="184"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="180"/>
         <source>Load databases</source>
         <translation>Загрузить базы данных</translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="185"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="181"/>
         <source>Load content of database</source>
         <translation>Загрузить содержимое базы</translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="186"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="182"/>
         <source>Info</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="187"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="183"/>
         <source>Property</source>
         <translation>Свойства</translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="188"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="184"/>
         <source>History</source>
         <translation>История</translation>
     </message>
     <message>
-        <location filename="../gui/explorer/explorer_tree_view.cpp" line="189"/>
+        <location filename="../gui/explorer/explorer_tree_view.cpp" line="185"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
 </context>
 <context>
+    <name>fastoredis::FastoTableModel</name>
+    <message>
+        <location filename="../gui/fasto_table_model.cpp" line="58"/>
+        <source>Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/fasto_table_model.cpp" line="61"/>
+        <source>Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/fasto_table_model.cpp" line="64"/>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>fastoredis::InfoServerDialog</name>
     <message>
-        <location filename="../gui/dialogs/info_server_dialog.cpp" line="96"/>
+        <location filename="../gui/dialogs/info_server_dialog.cpp" line="95"/>
         <source>Loading...</source>
         <translation>Загрузка...</translation>
     </message>
@@ -238,12 +258,12 @@
 <context>
     <name>fastoredis::LogTabWidget</name>
     <message>
-        <location filename="../gui/widgets/log_tab_widget.cpp" line="50"/>
+        <location filename="../gui/widgets/log_tab_widget.cpp" line="48"/>
         <source>Errors</source>
         <translation>Ошибки</translation>
     </message>
     <message>
-        <location filename="../gui/widgets/log_tab_widget.cpp" line="51"/>
+        <location filename="../gui/widgets/log_tab_widget.cpp" line="49"/>
         <source>Commands</source>
         <translation>Команды</translation>
     </message>
@@ -287,62 +307,67 @@
 <context>
     <name>fastoredis::MainWindow</name>
     <message>
-        <location filename="../gui/main_window.cpp" line="147"/>
+        <location filename="../gui/main_window.cpp" line="154"/>
         <source>&amp;Open...</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="148"/>
+        <location filename="../gui/main_window.cpp" line="155"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="149"/>
+        <location filename="../gui/main_window.cpp" line="156"/>
         <source>Save &amp;As...</source>
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="150"/>
+        <location filename="../gui/main_window.cpp" line="157"/>
         <source>&amp;Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="151"/>
+        <location filename="../gui/main_window.cpp" line="158"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="152"/>
+        <location filename="../gui/main_window.cpp" line="159"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="153"/>
+        <location filename="../gui/main_window.cpp" line="160"/>
+        <source>Check updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/main_window.cpp" line="161"/>
         <source>View</source>
         <translation>Представление</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="154"/>
+        <location filename="../gui/main_window.cpp" line="162"/>
         <source>Options</source>
         <translation>Опции</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="155"/>
+        <location filename="../gui/main_window.cpp" line="163"/>
         <source>&amp;About %1...</source>
         <translation>Об %</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="156"/>
+        <location filename="../gui/main_window.cpp" line="164"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="157"/>
+        <location filename="../gui/main_window.cpp" line="165"/>
         <source>Explorer tree</source>
         <translation>Проводник</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="158"/>
+        <location filename="../gui/main_window.cpp" line="166"/>
         <source>Logs</source>
         <translation>Логи</translation>
     </message>
@@ -401,42 +426,42 @@
 <context>
     <name>fastoredis::ShellWidget</name>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="123"/>
+        <location filename="../shell/shell_widget.cpp" line="113"/>
         <source>Connect</source>
         <translation>Соединиться</translation>
     </message>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="126"/>
+        <location filename="../shell/shell_widget.cpp" line="116"/>
         <source>Disconnect</source>
         <translation>Отсоединиться</translation>
     </message>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="129"/>
+        <location filename="../shell/shell_widget.cpp" line="119"/>
         <source>Execute</source>
         <translation>Выполнить</translation>
     </message>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="132"/>
+        <location filename="../shell/shell_widget.cpp" line="122"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="157"/>
+        <location filename="../shell/shell_widget.cpp" line="150"/>
         <source>Based on redis-cli version: %1</source>
         <translation>Основан на redis-cli версии: %1</translation>
     </message>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="111"/>
+        <location filename="../shell/shell_widget.cpp" line="104"/>
         <source>Load</source>
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="114"/>
+        <location filename="../shell/shell_widget.cpp" line="107"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="117"/>
+        <location filename="../shell/shell_widget.cpp" line="110"/>
         <source>Save as</source>
         <translation>Сохранить как ...</translation>
     </message>

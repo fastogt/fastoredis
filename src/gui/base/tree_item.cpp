@@ -40,7 +40,8 @@ namespace fastoredis
         if(pos < childrens_.size()){
             return childrens_[pos];
         }
-        return NULL;
+
+        return 0;
     }
 
     int TreeItem::indexOf(TreeItem *item) const

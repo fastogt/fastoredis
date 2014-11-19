@@ -1,9 +1,15 @@
 #include "common/net/socket_tcp.h"
 
+#ifdef OS_POSIX
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#else
+#include <winsock2.h>
+#include <wspiapi.h>
+#endif
+
 #include <errno.h>
 #include <unistd.h>
 
@@ -109,7 +115,7 @@ namespace common
             }
 
             #ifdef OS_WIN
-                ssize_t nwritten = send(fd_, data.c_str(), data.size(),0);
+                ssize_t nwritten = send(fd_, (const char*)data.c_str(), data.size(),0);
             #else
                 ssize_t nwritten = ::write(fd_, data.c_str(), data.size());
             #endif
@@ -128,7 +134,7 @@ namespace common
             }
 
             #ifdef OS_WIN
-                ssize_t nread = recv(fd_, data, maxSize, 0);
+                ssize_t nread = recv(fd_, (char*)data, maxSize, 0);
             #else
                 ssize_t nread = ::read(fd_, data, maxSize);
             #endif
