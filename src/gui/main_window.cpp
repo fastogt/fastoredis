@@ -3,7 +3,9 @@
 #include <QAction>
 #include <QMenuBar>
 #include <QDockWidget>
+#include <QMessageBox>
 
+#include "common/net/socket_tcp.h"
 #include "common/qt/convert_string.h"
 
 #include "gui/gui_factory.h"
@@ -19,6 +21,8 @@
 #include "core/settings_manager.h"
 #include "core/logger.h"
 #include "core/command_logger.h"
+
+#include "server_config_daemon/server_config.h"
 
 #include "translations/translations.h"
 
@@ -73,6 +77,11 @@ namespace fastoredis
 
         QMenu *optionsMenu = new QMenu(this);
         optionsAction_ = menuBar()->addMenu(optionsMenu);
+
+        checkUpdateAction_ = new QAction(this);
+        VERIFY(connect(checkUpdateAction_, SIGNAL(triggered()), this, SLOT(checkUpdate())));
+
+        optionsMenu->addAction(checkUpdateAction_);
         optionsMenu->addAction(preferencesAction_);
 
         aboutAction_ = new QAction(this);
@@ -148,6 +157,7 @@ namespace fastoredis
         exitAction_->setText(tr("&Exit"));
         fileAction_->setText(tr("File"));
         preferencesAction_->setText(tr("Preferences"));
+        checkUpdateAction_->setText(tr("Check updates"));
         viewAction_->setText(tr("View"));
         optionsAction_->setText(tr("Options"));
         aboutAction_->setText(tr("&About %1...").arg(PROJECT_NAME));
@@ -178,6 +188,33 @@ namespace fastoredis
     {
         PreferencesDialog dlg(this);
         dlg.exec();
+    }
+
+    void MainWindow::checkUpdate()
+    {
+        common::net::SocketTcp s(SITE_URL, SERV_PORT);
+        bool res = s.connect();
+        if(!res){
+            return;
+        }
+
+        res = s.write(common::convertFromString<common::buffer_type>(GET_VERSION));
+        if(!res){
+            s.close();
+            return;
+        }
+
+        common::buffer_type version;
+        res = s.read(version, 128);
+        if(res){
+            std::string sversion = common::convertToString(version);
+            QMessageBox::information(this, QString("version"),
+                QObject::tr(PROJECT_NAME" version: %1.")
+                    .arg(common::convertFromString<QString>(sversion)));
+        }
+
+        s.close();
+        return;
     }
 
     MainWidget *const MainWindow::mainWidget() const

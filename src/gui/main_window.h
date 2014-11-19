@@ -28,6 +28,7 @@ namespace fastoredis
         void saveAs();
         void about();
         void openPreferences();
+        void checkUpdate();
 
     private:
         void createStatusBar();
@@ -42,6 +43,7 @@ namespace fastoredis
         QAction *aboutAction_;
         QAction *fileAction_;
         QAction *optionsAction_;
+        QAction *checkUpdateAction_;
         QAction *viewAction_;
         QAction *helpAction_;
         QAction *explorerAction_;

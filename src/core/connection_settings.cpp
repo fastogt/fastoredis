@@ -5,7 +5,7 @@
 #include "core/settings_manager.h"
 
 #include "common/utils.h"
-#include "common/net.h"
+#include "common/net/net.h"
 #include "common/logger.h"
 
 #define LOGGING_FILE_EXTENSION ".red"
