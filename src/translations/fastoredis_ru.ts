@@ -21,37 +21,37 @@
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="12"/>
         <source>&lt;h2&gt;Server:&lt;/h2&gt;&lt;br/&gt;Redis version: %1&lt;br/&gt;Redis git_sha1: %2&lt;br/&gt;Redis git_dirty: %3&lt;br/&gt;Redis mode: %4&lt;br/&gt;Os: %5&lt;br/&gt;Arch: %6&lt;br/&gt;Multiplexing Api: %7&lt;br/&gt;Gcc version: %8&lt;br/&gt;Process id: %9&lt;br/&gt;Run id: %10&lt;br/&gt;Tcp port: %11&lt;br/&gt;Uptime sec: %12&lt;br/&gt;Uptime days: %13&lt;br/&gt;Lru clock: %14</source>
-        <translation></translation>
+        <translation>&lt;h2&gt;Сервер:&lt;/h2&gt;&lt;br/&gt;Redis версия: %1&lt;br/&gt;Redis git_sha1: %2&lt;br/&gt;Redis git_dirty: %3&lt;br/&gt;Redis режим: %4&lt;br/&gt;Операционная система: %5&lt;br/&gt;Архитектура: %6&lt;br/&gt;Мультеплексинг Api: %7&lt;br/&gt;Gcc версия: %8&lt;br/&gt;Процес id: %9&lt;br/&gt;Запуск id: %10&lt;br/&gt;Tcp порт: %11&lt;br/&gt;Обновление сек: %12&lt;br/&gt;Обновление дни: %13&lt;br/&gt;Lru время: %14</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="28"/>
         <source>&lt;h2&gt;Clients:&lt;/h2&gt;&lt;br/&gt;Connected clients_: %1&lt;br/&gt;Client longest output list: %2&lt;br/&gt;Client biggest input buf: %3&lt;br/&gt;Blocked clients: %4</source>
-        <translation></translation>
+        <translation>&lt;h2&gt;Клиенты:&lt;/h2&gt;&lt;br/&gt;Соединенные клиенты: %1&lt;br/&gt;Клиенты с длинным выводом: %2&lt;br/&gt;Клиенты с длинным вводом: %3&lt;br/&gt;Заблокированные клиенты: %4</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="34"/>
         <source>&lt;h2&gt;Memory:&lt;/h2&gt;&lt;br/&gt;Used memory: %1&lt;br/&gt;Used memory human: %2&lt;br/&gt;Used memory rss: %3&lt;br/&gt;Used memory peak: %4&lt;br/&gt;Used memory peak human: %5&lt;br/&gt;Used memory lua: %6&lt;br/&gt;Mem fragmentation ratio: %7&lt;br/&gt;Mem allocator: %8</source>
-        <translation></translation>
+        <translation>&lt;h2&gt;Память:&lt;/h2&gt;&lt;br/&gt;Используемая память: %1&lt;br/&gt;Используемая память human: %2&lt;br/&gt;Используемая память rss: %3&lt;br/&gt;Используемая память peak: %4&lt;br/&gt;Используемая память peak human: %5&lt;br/&gt;Используемая память lua: %6&lt;br/&gt;Маштаб фрагментации памяти: %7&lt;br/&gt;Алакатор памяти: %8</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="44"/>
         <source>&lt;h2&gt;Persistence:&lt;/h2&gt;&lt;br/&gt;Loading: %1&lt;br/&gt;Rdb changes since last save: %2&lt;br/&gt;Rdb bgsave in_progress: %3&lt;br/&gt;Rdb last save_time: %4&lt;br/&gt;Rdb last bgsave_status: %5&lt;br/&gt;Rdb last bgsave time sec: %6&lt;br/&gt;Rdb current bgsave time sec: %7&lt;br/&gt;Aof enabled: %8&lt;br/&gt;Aof rewrite in progress: %9&lt;br/&gt;Aof rewrite scheduled: %10&lt;br/&gt;Aof last rewrite time sec: %11&lt;br/&gt;Aof current rewrite time sec: %12&lt;br/&gt;Aof last bgrewrite status: %13</source>
-        <translation></translation>
+        <translation>&lt;h2&gt;Persistence:&lt;/h2&gt;&lt;br/&gt;Загрузка: %1&lt;br/&gt;Rdb шанс сохранения: %2&lt;br/&gt;Rdb bgsave in_progress: %3&lt;br/&gt;Rdb последнее время сохранения: %4&lt;br/&gt;Rdb последний bgsave статус: %5&lt;br/&gt;Rdb последний bgsave время сек: %6&lt;br/&gt;Rdb тякущее bgsave время sec: %7&lt;br/&gt;Aof enabled: %8&lt;br/&gt;Aof в прогрессе: %9&lt;br/&gt;Aof rewrite установленно: %10&lt;br/&gt;Aof последнее переписанное время сек: %11&lt;br/&gt;Aof тякущее переписанное время сек: %12&lt;br/&gt;Aof последний bgrewrite статус: %13</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="59"/>
         <source>&lt;h2&gt;Stats:&lt;/h2&gt;&lt;br/&gt;Total connections received: %1&lt;br/&gt;Total commands processed: %2&lt;br/&gt;Instantaneous ops per sec: %3&lt;br/&gt;Rejected connections: %4&lt;br/&gt;Expired keys: %5&lt;br/&gt;Evicted keys: %6&lt;br/&gt;Keyspace hits: %7&lt;br/&gt;Keyspace misses: %8&lt;br/&gt;Pubsub channels: %9&lt;br/&gt;Pubsub patterns: %10&lt;br/&gt;Latest fork usec: %11</source>
-        <translation></translation>
+        <translation>&lt;h2&gt;Статистика:&lt;/h2&gt;&lt;br/&gt;Общее количество соединений: %1&lt;br/&gt;Общее количество запросов: %2&lt;br/&gt;Instantaneous ops per sec: %3&lt;br/&gt;Откланенные соединения: %4&lt;br/&gt;Истекшие по времени ключи: %5&lt;br/&gt;Evicted keys: %6&lt;br/&gt;Keyspace hits: %7&lt;br/&gt;Keyspace misses: %8&lt;br/&gt;Pubsub каналы: %9&lt;br/&gt;Pubsub шаблоны: %10&lt;br/&gt;Последняя нать usec: %11</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="72"/>
         <source>&lt;h2&gt;Replication:&lt;/h2&gt;&lt;br/&gt;Role: %1&lt;br/&gt;Connected slaves: %2</source>
-        <translation></translation>
+        <translation>&lt;h2&gt;Репликация:&lt;/h2&gt;&lt;br/&gt;Роль: %1&lt;br/&gt;Сохраненные соединения: %2</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="76"/>
         <source>&lt;h2&gt;Cpu:&lt;/h2&gt;&lt;br/&gt;Used cpu sys: %1&lt;br/&gt;Used cpu user: %2&lt;br/&gt;Used cpu sys children: %3&lt;br/&gt;Used cpu user children: %4</source>
-        <translation></translation>
+        <translation>&lt;h2&gt;Процессор:&lt;/h2&gt;&lt;br/&gt;Загрузка процессора: %1&lt;br/&gt;Загрузка процессора пользователем: %2&lt;br/&gt;Загрузка процессора предками: %3&lt;br/&gt;Загрузка процессора пользовательскими предками: %4</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/about_dialog.cpp" line="15"/>
@@ -61,22 +61,22 @@
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="19"/>
         <source>Private Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватный ключ</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="20"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="21"/>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрыть</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="22"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать</translation>
     </message>
 </context>
 <context>
@@ -93,17 +93,17 @@
         <location filename="../gui/dialogs/connection_dialog.cpp" line="97"/>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="106"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="263"/>
         <source>Select private key file</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать приватный ключ</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="264"/>
         <source>Private key files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватный ключ</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="321"/>
@@ -113,47 +113,47 @@
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="322"/>
         <source>Logging enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Логированние</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="323"/>
         <source>&amp;Test</source>
-        <translation type="unfinished"></translation>
+        <translation>Тест</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="324"/>
         <source>Use SSH tunnel</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать SSH тунель</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="325"/>
         <source>User Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль:</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="326"/>
         <source>Private key:</source>
-        <translation type="unfinished"></translation>
+        <translation>Приватный ключ:</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="327"/>
         <source>Passphrase:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="328"/>
         <source>SSH Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>SSH адрес:</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="329"/>
         <source>SSH User Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>SSH Имя пользователя:</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/connection_dialog.cpp" line="330"/>
         <source>SSH Auth Method:</source>
-        <translation type="unfinished"></translation>
+        <translation>SSH Метод авторизации:</translation>
     </message>
 </context>
 <context>
@@ -232,7 +232,7 @@
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="96"/>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка...</translation>
     </message>
 </context>
 <context>
@@ -352,7 +352,7 @@
     <message>
         <location filename="../gui/widgets/output_widget.cpp" line="163"/>
         <source>Execute milliseconds time: </source>
-        <translation type="unfinished"></translation>
+        <translation>Время выполнения в миллесекундах:</translation>
     </message>
 </context>
 <context>
@@ -403,42 +403,42 @@
     <message>
         <location filename="../shell/shell_widget.cpp" line="123"/>
         <source>Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Соединиться</translation>
     </message>
     <message>
         <location filename="../shell/shell_widget.cpp" line="126"/>
         <source>Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсоединиться</translation>
     </message>
     <message>
         <location filename="../shell/shell_widget.cpp" line="129"/>
         <source>Execute</source>
-        <translation type="unfinished"></translation>
+        <translation>Выполнить</translation>
     </message>
     <message>
         <location filename="../shell/shell_widget.cpp" line="132"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Остановить</translation>
     </message>
     <message>
         <location filename="../shell/shell_widget.cpp" line="157"/>
         <source>Based on redis-cli version: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Основан на redis-cli версии: %1</translation>
     </message>
     <message>
         <location filename="../shell/shell_widget.cpp" line="111"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить</translation>
     </message>
     <message>
         <location filename="../shell/shell_widget.cpp" line="114"/>
         <source>Save</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../shell/shell_widget.cpp" line="117"/>
         <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить как ...</translation>
     </message>
 </context>
 </TS>

@@ -1,4 +1,4 @@
-0.1.0 / November 13, 2014
+0.1.0 / November 18, 2014
 - Fix utf conversions string problem
 - Add translation support
 - Fix server information displaying
