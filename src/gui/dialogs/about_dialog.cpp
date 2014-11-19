@@ -1,14 +1,11 @@
 #include "gui/dialogs/about_dialog.h"
 
+#include <QPushButton>
+#include <QLabel>
 #include <QDialogButtonBox>
 #include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QEvent>
 
 #include "gui/gui_factory.h"
-
-#include "common/macros.h"
 
 namespace
 {

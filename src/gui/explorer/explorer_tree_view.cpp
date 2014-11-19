@@ -1,12 +1,8 @@
 #include "gui/explorer/explorer_tree_view.h"
 
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QKeyEvent>
-#include <QTreeView>
-#include <QAction>
-#include <QHeaderView>
 #include <QMenu>
+#include <QHeaderView>
+#include <QAction>
 
 #include "gui/explorer/explorer_tree_model.h"
 

@@ -1,11 +1,12 @@
 #include "gui/widgets/commands_widget.h"
 
-#include <QHBoxLayout>
 #include <QScrollBar>
-#include <QMenu>
 #include <QTime>
+#include <QMenu>
 #include <QAction>
-#include <QPlainTextEdit>
+#include <QHBoxLayout>
+#include <QTextEdit>
+#include <QEvent>
 
 #include "common/qt/convert_string.h"
 
@@ -18,7 +19,7 @@ namespace fastoredis
         logTextEdit_->setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(logTextEdit_, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
         QHBoxLayout *hlayout = new QHBoxLayout;
-        hlayout->setContentsMargins(0,0,0,0);
+        hlayout->setContentsMargins(0, 0, 0, 0);
         hlayout->addWidget(logTextEdit_);
         clear_ = new QAction(this);
         VERIFY(connect(clear_, SIGNAL(triggered()),logTextEdit_, SLOT(clear())));

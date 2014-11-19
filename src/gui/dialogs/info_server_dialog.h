@@ -5,7 +5,6 @@
 #include <QDialog>
 
 #include "core/events/events_info.h"
-#include "core/connection_types.h"
 
 #include "core/redis/redis_infos.h"
 
@@ -19,20 +18,20 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        explicit InfoServerDialog(const QString &title, QWidget *parent = 0);
+        explicit InfoServerDialog(const QString& title, QWidget* parent = 0);
 
     Q_SIGNALS:
         void showed();
 
     public Q_SLOTS:
-        void startServerInfo(const EventsInfo::ServerInfoRequest &req);
-        void finishServerInfo(const EventsInfo::ServerInfoResponce &res);
+        void startServerInfo(const EventsInfo::ServerInfoRequest& req);
+        void finishServerInfo(const EventsInfo::ServerInfoResponce& res);
 
     protected:
-        virtual void showEvent(QShowEvent *e);
+        virtual void showEvent(QShowEvent* e);
 
     private:
-        void updateText(const RedisServerInfo &serv);
+        void updateText(const RedisServerInfo& serv);
         QLabel *serverTextInfo_;
         QLabel *hardwareTextInfo_;
         GlassWidget *glassWidget_;

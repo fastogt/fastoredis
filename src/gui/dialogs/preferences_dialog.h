@@ -19,9 +19,15 @@ namespace fastoredis
 
     public:
         explicit PreferencesDialog(QWidget *parent);
-        enum { height = 640, width = 480};
+        enum
+        {
+            height = 640,
+            width = 480
+        };
+
     public Q_SLOTS:
         virtual void accept();
+
     private:
         void syncWithSettings();
 

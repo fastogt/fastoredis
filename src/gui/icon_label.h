@@ -13,13 +13,13 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        IconLabel(const QIcon &icon, const QString &text, QWidget* parent = 0);
+        IconLabel(const QIcon& icon, const QString& text, const QSize& size, QWidget* parent = 0);
 
-        void setText(const QString &text);
-        void setIcon(const QIcon &icon);
+        void setText(const QString& text);
+        void setIcon(const QIcon& icon, const QSize& size);
 
     private:
-        QLabel *icon_;
-        QLabel *text_;
+        QLabel* icon_;
+        QLabel* text_;
     };
 }

@@ -6,7 +6,6 @@
 #include "gui/fasto_tree_item.h"
 #include "gui/gui_factory.h"
 
-#include "common/qt/convert_string.h"
 #include "common/qt/utils_qt.h"
 
 namespace
@@ -56,13 +55,13 @@ namespace fastoredis
 
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
             if(section == FastoTreeItem::eKey){
-                return "Key";
+                return tr("Key");
             }
             else if(section == FastoTreeItem::eValue){
-                return "Value";
+                return tr("Value");
             }
             else if(section == FastoTreeItem::eType){
-                return "Type";
+                return tr("Type");
             }
         } else {
             return QString("%1").arg(section + 1);

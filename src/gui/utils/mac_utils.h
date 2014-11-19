@@ -1,12 +1,10 @@
-#ifndef NPTV_WIDGETS_MACUTILS_H
-#define NPTV_WIDGETS_MACUTILS_H
+#pragma once
+
 #include <QWidget>
 
-namespace nptv
+namespace fastoredis
 {
     void addFullscreenButton(QWidget *widget);
     void gotoFullScreen(QWidget *widget);
 }
-
-#endif
 

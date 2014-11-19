@@ -1,8 +1,5 @@
 #include "global/global.h"
 
-#include <string.h>
-#include <stdlib.h>
-
 #include "common/utils.h"
 
 namespace

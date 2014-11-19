@@ -1,7 +1,6 @@
 #include "gui/widgets/output_widget.h"
 
 #include <QHBoxLayout>
-#include <QMenu>
 #include <QPushButton>
 #include <QSplitter>
 
@@ -12,8 +11,9 @@
 #include "gui/fasto_tree_item.h"
 #include "gui/gui_factory.h"
 #include "gui/icon_label.h"
+
 #include "core/settings_manager.h"
-//#include "gui/fasto_table_model.h"
+
 #include "common/qt/convert_string.h"
 #include "common/time.h"
 
@@ -78,7 +78,7 @@ namespace fastoredis
          tableView_->setModel(treeModel_);
 
         textView_ = new FastoEditor;
-        timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(),common::convertFromString16<QString>(common::time::mstime2string(0)));
+        timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(), common::convertFromString16<QString>(common::time::mstime2string(0)), QSize(16, 16));
 
         QVBoxLayout *mainL = new QVBoxLayout;
         QHBoxLayout *topL = new QHBoxLayout;

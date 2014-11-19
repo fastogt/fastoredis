@@ -2,9 +2,6 @@
 
 /**/
 
-#include <vector>
-
-#include "common/types.h"
 #include "global/global.h"
 #include "core/connection_types.h"
 

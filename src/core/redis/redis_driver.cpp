@@ -2,8 +2,6 @@
 
 #include <errno.h>
 
-#include <sys/types.h>
-
 extern "C" {
 #include "third-party/redis/deps/hiredis/sds.h"
 #include "third-party/redis/src/release.h"
@@ -13,10 +11,7 @@ extern "C" {
 #include "third-party/redis/src/anet.h"
 }
 
-#include "common/qt/convert_string.h"
 #include "core/command_logger.h"
-#include "common/utils.h"
-
 #include "core/redis/redis_infos.h"
 
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */

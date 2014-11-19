@@ -4,12 +4,16 @@
 #include "gui/gui_factory.h"
 
 #include "common/qt/utils_qt.h"
-#include "common/qt/convert_string.h"
 
 namespace fastoredis
 {
     FastoTreeModel::FastoTreeModel(QObject *parent)
         : TreeModel(parent)
+    {
+
+    }
+
+    FastoTreeModel::~FastoTreeModel()
     {
 
     }
@@ -90,10 +94,5 @@ namespace fastoredis
             result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
         }
         return result;
-    }
-
-    FastoTreeModel::~FastoTreeModel()
-    {
-
     }
 }

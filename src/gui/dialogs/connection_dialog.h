@@ -15,21 +15,20 @@ class QLabel;
 
 namespace fastoredis
 {
-    class IConnectionSettingsBase;
     class ConnectionDialog
             : public QDialog
     {
         Q_OBJECT
 
     public:
-        ConnectionDialog(const IConnectionSettingsBasePtr &connection, QWidget *parent = 0);
+        ConnectionDialog(const IConnectionSettingsBasePtr& connection, QWidget* parent = 0);
 
     public Q_SLOTS:
         virtual void accept();
 
     private Q_SLOTS:
         void testConnection();
-        void typeConnectionChange(const QString &value);
+        void typeConnectionChange(const QString& value);
         void securityChange(const QString& val);
         void sshSupportStateChange(int value);
         void togglePasswordEchoMode();
@@ -37,7 +36,7 @@ namespace fastoredis
         void setPrivateFile();
 
     protected:
-        virtual void changeEvent(QEvent *);
+        virtual void changeEvent(QEvent* );
 
     private:
         void syncWithConnection();

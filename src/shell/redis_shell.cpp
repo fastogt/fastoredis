@@ -3,8 +3,6 @@
 #include <QKeyEvent>
 #include <QMenu>
 
-#include "common/macros.h"
-
 #include "shell/redis_lexer.h"
 
 #include "gui/gui_factory.h"

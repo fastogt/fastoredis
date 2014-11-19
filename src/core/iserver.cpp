@@ -3,11 +3,7 @@
 #include <QApplication>
 
 #include "common/qt/convert_string.h"
-
 #include "core/logger.h"
-#include "core/connection_settings.h"
-#include "core/servers_manager.h"
-#include "core/events/events.h"
 
 namespace
 {
@@ -48,7 +44,7 @@ namespace
 namespace fastoredis
 {
     IServer::IServer(const IDriverPtr &drv, bool isMaster)
-        : _drv(drv), _isMaster(isMaster)
+        : drv_(drv), isMaster_(isMaster)
     {
     }
 
@@ -68,22 +64,22 @@ namespace fastoredis
 
     IDriverPtr IServer::driver() const
     {
-        return _drv;
+        return drv_;
     }
 
     QString IServer::name() const
     {
-        return common::convertFromString<QString>(_drv->settings()->connectionName());
+        return common::convertFromString<QString>(drv_->settings()->connectionName());
     }
 
     QString IServer::address() const
     {
-        return common::convertFromString<QString>(_drv->address());
+        return common::convertFromString<QString>(drv_->address());
     }
 
     connectionTypes IServer::connectionType() const
     {
-        return _drv->connectionType();
+        return drv_->connectionType();
     }
 
     void IServer::connect()
@@ -172,22 +168,22 @@ namespace fastoredis
 
     void IServer::stopCurrentEvent()
     {
-        _drv->interrupt();
+        drv_->interrupt();
     }
 
     bool IServer::isConnected() const
     {
-        return _drv->isConnected();
+        return drv_->isConnected();
     }
 
     bool IServer::isMaster() const
     {
-        return _isMaster;
+        return isMaster_;
     }
 
     void IServer::setIsMaster(bool isMaster)
     {
-        _isMaster = isMaster;
+        isMaster_ = isMaster;
     }
 
     IServer::~IServer()
@@ -197,7 +193,7 @@ namespace fastoredis
     void IServer::notify(QEvent *ev)
     {
         emit progressChanged(0);
-        qApp->postEvent(_drv.get(),ev);
+        qApp->postEvent(drv_.get(), ev);
     }
 
     void IServer::customEvent(QEvent *event)

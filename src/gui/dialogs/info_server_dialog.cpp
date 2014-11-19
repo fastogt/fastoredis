@@ -3,7 +3,6 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
-#include "common/qt/convert_string.h"
 #include "gui/gui_factory.h"
 #include "gui/glass_widget.h"
 

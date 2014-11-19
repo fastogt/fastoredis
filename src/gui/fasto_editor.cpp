@@ -3,7 +3,6 @@
 #include <QKeyEvent>
 
 #include "gui/gui_factory.h"
-#include "common/macros.h"
 
 namespace
 {

@@ -11,7 +11,8 @@ class QAction;
 
 namespace fastoredis
 {
-    class LogWidget : public QWidget
+    class LogWidget
+            : public QWidget
     {
         Q_OBJECT
 

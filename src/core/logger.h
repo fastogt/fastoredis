@@ -16,11 +16,13 @@ namespace fastoredis
     {
         friend class common::patterns::lazy_singleton<Logger>;
         Q_OBJECT
+
     public:
         void print(const char *mess, common::logging::LEVEL_LOG level, bool notify);
         void print(const std::string &mess, common::logging::LEVEL_LOG level, bool notify);
         void print(const common::string16 &mess, common::logging::LEVEL_LOG level, bool notify);
         void print(const QString &mess, common::logging::LEVEL_LOG level, bool notify);
+
     Q_SIGNALS:
         void printed(const QString &mess, common::logging::LEVEL_LOG level);
 

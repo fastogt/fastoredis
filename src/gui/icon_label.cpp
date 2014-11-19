@@ -6,14 +6,14 @@
 
 namespace fastoredis
 {
-    IconLabel::IconLabel(const QIcon &icon, const QString &text, QWidget* parent)
+    IconLabel::IconLabel(const QIcon& icon, const QString& text, const QSize& size, QWidget* parent)
         : QWidget(parent)
     {
         QHBoxLayout *mainL = new QHBoxLayout;
         icon_ = new QLabel;
         text_ = new QLabel;
         setText(text);
-        setIcon(icon);
+        setIcon(icon, size);
 
         mainL->addWidget(icon_);
         mainL->addWidget(text_);
@@ -25,8 +25,9 @@ namespace fastoredis
         text_->setText(text);
     }
 
-    void IconLabel::setIcon(const QIcon &icon)
+    void IconLabel::setIcon(const QIcon &icon, const QSize& size)
     {
-        icon_->setPixmap(icon.pixmap(16, 16));
+        QPixmap pm = icon.pixmap(size);
+        icon_->setPixmap(pm);
     }
 }

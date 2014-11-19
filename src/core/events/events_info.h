@@ -2,8 +2,6 @@
 
 /**/
 
-#include <boost/shared_ptr.hpp>
-
 #include "global/global.h"
 
 #include "core/types.h"

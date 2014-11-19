@@ -1,16 +1,13 @@
 #include "shell/shell_widget.h"
 
-#include <QVBoxLayout>
-#include <QMenu>
-#include <QAction>
-#include <QPlainTextEdit>
-#include <QToolBar>
-#include <QAction>
 #include <QProgressBar>
 #include <QSplitter>
-#include <QTextStream>
-#include <QApplication>
+#include <QAction>
+#include <QToolBar>
+#include <QVBoxLayout>
 #include <QMessageBox>
+#include <QApplication>
+#include <QTextStream>
 #include <QFileDialog>
 
 #include "common/qt/convert_string.h"
@@ -25,7 +22,7 @@
 
 namespace
 {
-    const QString filterForScripts = QObject::tr("Text Files (*.txt);; All Files (*.*)");
+    const QString filterForScripts = QObject::tr("Text Files (*.txt); All Files (*.*)");
 
     bool loadFromFileText(const QString &filePath, QString &text, QWidget* parent)
     {
@@ -98,16 +95,12 @@ namespace fastoredis
         VERIFY(connect(server_.get(), SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), this, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &))));
         VERIFY(connect(server_.get(), SIGNAL(progressChanged(const EventsInfo::ProgressInfoResponce &)), this, SLOT(progressChange(const EventsInfo::ProgressInfoResponce &))));
 
-        QVBoxLayout *mainlayout = new QVBoxLayout;
-        QHBoxLayout *hlayout = new QHBoxLayout;
+        QVBoxLayout* mainlayout = new QVBoxLayout;
+        QHBoxLayout* hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0, 0, 0, 0);
-
-        input_ = new RedisShell;
-        input_->setContextMenuPolicy(Qt::CustomContextMenu);
-        VERIFY(connect(input_, SIGNAL(executed()), this, SLOT(execute())));
+        hlayout->setSpacing(0);
 
         QToolBar *savebar = new QToolBar;
-        savebar->setMovable(true);
         loadAction_ = new QAction(GuiFactory::instance().loadIcon(), tr("Load"), savebar);
         VERIFY(connect(loadAction_, SIGNAL(triggered()), this, SLOT(loadFromFile())));
         savebar->addAction(loadAction_);
@@ -117,27 +110,23 @@ namespace fastoredis
         saveAsAction_ = new QAction(GuiFactory::instance().saveAsIcon(), tr("Save as"), savebar);
         VERIFY(connect(saveAsAction_, SIGNAL(triggered()), this, SLOT(saveToFileAs())));
         savebar->addAction(saveAsAction_);
-
-        QToolBar *conbar = new QToolBar;
-        conbar->setMovable(true);
-        connectAction_ = new QAction(GuiFactory::instance().connectIcon(), tr("Connect"), conbar);
+        connectAction_ = new QAction(GuiFactory::instance().connectIcon(), tr("Connect"), savebar);
         VERIFY(connect(connectAction_, SIGNAL(triggered()), this, SLOT(connectToServer())));
-        conbar->addAction(connectAction_);
-        disConnectAction_ = new QAction(GuiFactory::instance().disConnectIcon(), tr("Disconnect"), conbar);
+        savebar->addAction(connectAction_);
+        disConnectAction_ = new QAction(GuiFactory::instance().disConnectIcon(), tr("Disconnect"), savebar);
         VERIFY(connect(disConnectAction_, SIGNAL(triggered()), this, SLOT(disconnectFromServer())));
-        conbar->addAction(disConnectAction_);
-        executeAction_ = new QAction(GuiFactory::instance().executeIcon(), tr("Execute"), conbar);
+        savebar->addAction(disConnectAction_);
+        executeAction_ = new QAction(GuiFactory::instance().executeIcon(), tr("Execute"), savebar);
         VERIFY(connect(executeAction_, SIGNAL(triggered()), this, SLOT(execute())));
-        conbar->addAction(executeAction_);
-        QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), tr("Stop"), conbar);
+        savebar->addAction(executeAction_);
+        QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), tr("Stop"), savebar);
         VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
-        conbar->addAction(stopAction);
+        savebar->addAction(stopAction);
 
-        serverName_ = new IconLabel(GuiFactory::instance().serverIcon(), server_->address());
-        conbar->addWidget(serverName_);
+        serverName_ = new IconLabel(GuiFactory::instance().serverIcon(), server_->address(), QSize(16, 16));
+        savebar->addWidget(serverName_);
 
         hlayout->addWidget(savebar);
-        hlayout->addWidget(conbar);
 
         QSplitter *splitter = new QSplitter;
         splitter->setOrientation(Qt::Horizontal);
@@ -147,6 +136,10 @@ namespace fastoredis
 
         workProgressBar_ = new QProgressBar;
         hlayout->addWidget(workProgressBar_);
+
+        input_ = new RedisShell;
+        input_->setContextMenuPolicy(Qt::CustomContextMenu);
+        VERIFY(connect(input_, SIGNAL(executed()), this, SLOT(execute())));
 
         mainlayout->addLayout(hlayout);
         mainlayout->addWidget(input_);

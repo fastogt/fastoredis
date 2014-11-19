@@ -1,12 +1,8 @@
 #include "gui/widgets/main_widget.h"
 
-#include <QTabBar>
-
 #include "gui/main_tab_bar.h"
 #include "gui/gui_factory.h"
 #include "gui/widgets/query_widget.h"
-#include "common/macros.h"
-
 
 namespace fastoredis
 {

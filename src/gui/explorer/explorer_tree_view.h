@@ -36,8 +36,8 @@ namespace fastoredis
         void openHistoryServerDialog();
         void closeConnection();
 
-        void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req);
-        void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
+        void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req);
+        void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res);
 
     protected:
         virtual void changeEvent(QEvent *);

@@ -1,10 +1,8 @@
 #include "gui/widgets/query_widget.h"
 
 #include <QHBoxLayout>
-#include <QMenu>
 #include <QSplitter>
 
-#include "common/macros.h"
 #include "shell/shell_widget.h"
 #include "gui/widgets/output_widget.h"
 

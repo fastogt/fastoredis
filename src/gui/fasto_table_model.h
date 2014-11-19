@@ -13,8 +13,8 @@ namespace fastoredis
 
     public:
         typedef std::vector<QString> ColumnsValuesType;
-
         explicit FastoTableModel(QObject *parent = 0);
+
         QVariant data(const QModelIndex &index, int role) const;
 
         int rowCount(const QModelIndex &parent=QModelIndex()) const;

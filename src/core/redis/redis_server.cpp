@@ -1,7 +1,5 @@
 #include "core/redis/redis_server.h"
 
-#include "core/connection_settings.h"
-#include "common/qt/convert_string.h"
 #include "core/logger.h"
 
 namespace fastoredis

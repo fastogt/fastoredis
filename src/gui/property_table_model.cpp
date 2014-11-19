@@ -1,7 +1,5 @@
 #include "gui/property_table_model.h"
 
-#include "gui/gui_factory.h"
-
 #include "common/qt/utils_qt.h"
 #include "common/qt/convert_string.h"
 

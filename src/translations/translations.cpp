@@ -33,7 +33,7 @@ namespace
         for(int i = 0; i < languages.size(); ++i){
             QPair<QString, QLocale> p = convertToLocale(languages[i]);
             QString lang = QLocale::languageToString(p.second.language());
-            if( l == lang){
+            if(l == lang){
                 return p.first;
             }
         }
@@ -59,7 +59,7 @@ namespace fastoredis
             }
 
             if(langres == common::convertFromString<QString>(defLanguage)){
-                langres =  QLocale::languageToString(QLocale::system().language());
+                langres = QLocale::languageToString(QLocale::system().language());
             }
 
             QString qmPath = pathToQm(langres);

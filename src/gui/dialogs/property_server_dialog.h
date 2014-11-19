@@ -3,12 +3,11 @@
 /**/
 
 #include <QDialog>
-#include <QTableView>
 
 #include "core/events/events_info.h"
-#include "core/connection_types.h"
 
 class QLabel;
+class QTableView;
 
 namespace fastoredis
 {
@@ -18,18 +17,18 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        explicit PropertyServerDialog(const QString &title, connectionTypes type, QWidget *parent = 0);
+        explicit PropertyServerDialog(const QString& title, connectionTypes type, QWidget* parent = 0);
 
     Q_SIGNALS:
         void showed();
-        void changedProperty(const PropertyType &);
+        void changedProperty(const PropertyType &prop);
 
     public Q_SLOTS:
-        void startServerProperty(const EventsInfo::ServerPropertyInfoRequest &req);
-        void finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &res);
+        void startServerProperty(const EventsInfo::ServerPropertyInfoRequest& req);
+        void finishServerProperty(const EventsInfo::ServerPropertyInfoResponce& res);
 
-        void startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest &req);
-        void finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &res);
+        void startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest& req);
+        void finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce& res);
 
     protected:
         virtual void showEvent(QShowEvent *e);

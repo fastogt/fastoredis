@@ -3,7 +3,6 @@
 #include "common/patterns/singleton_pattern.h"
 
 #include "core/iserver.h"
-#include "core/events/events_info.h"
 
 namespace fastoredis
 {
@@ -14,7 +13,7 @@ namespace fastoredis
     public:
         typedef std::vector<IServerPtr> ServersContainer;
 
-        IServerPtr createServer(const IConnectionSettingsBasePtr &settings);
+        IServerPtr createServer(const IConnectionSettingsBasePtr& settings);
         void closeServer(IServerPtr server);
         void setSyncServers(bool isSync);        
 
@@ -23,8 +22,8 @@ namespace fastoredis
         ~ServersManager();
 
         void refreshSyncServers();
-        IServerPtr findServerBySetting(const IConnectionSettingsBasePtr &settings) const;
-        std::vector<QObject*> findAllListeners(const IDriverPtr &drv);
+        IServerPtr findServerBySetting(const IConnectionSettingsBasePtr& settings) const;
+        std::vector<QObject*> findAllListeners(const IDriverPtr& drv);
 
         ServersContainer _servers;
         bool syncServers_;

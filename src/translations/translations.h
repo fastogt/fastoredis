@@ -4,8 +4,6 @@
 
 #include <QString>
 
-#include "common/types.h"
-
 namespace fastoredis
 {
     namespace translations

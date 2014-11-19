@@ -7,7 +7,7 @@
 
 namespace fastoredis
 {
-    FastoTreeView::FastoTreeView(QWidget *parent)
+    FastoTreeView::FastoTreeView(QWidget* parent)
         :QTreeView(parent)
     {
         setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -16,7 +16,7 @@ namespace fastoredis
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
     }
 
-    void FastoTreeView::showContextMenu(const QPoint &point)
+    void FastoTreeView::showContextMenu(const QPoint& point)
     {
         QPoint menuPoint = mapToGlobal(point);
         menuPoint.setY(menuPoint.y() + header()->height());

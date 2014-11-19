@@ -1,12 +1,12 @@
 #include "gui/widgets/log_widget.h"
 
-#include <QHBoxLayout>
+#include <QEvent>
 #include <QScrollBar>
-#include <QMenu>
 #include <QTime>
+#include <QMenu>
 #include <QAction>
-#include <QPlainTextEdit>
-#include "common/macros.h"
+#include <QHBoxLayout>
+#include <QTextEdit>
 
 namespace fastoredis
 {

@@ -9,11 +9,12 @@ class QMovie;
 
 namespace fastoredis
 {
-    class GlassWidget : public QObject
+    class GlassWidget
+            : public QObject
     {
         Q_OBJECT
     public:
-        GlassWidget(const QString path, const QString text, qreal opacity = 0.5, const QColor& color = QColor(111, 111, 100), QObject *parent = 0);
+        GlassWidget(const QString& path, const QString& text, qreal opacity = 0.5, const QColor& color = QColor(111, 111, 100), QObject* parent = 0);
         ~GlassWidget();
 
         void start();

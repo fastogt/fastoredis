@@ -1,13 +1,10 @@
 #include "gui/base/graph_widget.h"
 
-#include <QToolButton>
-#include <QPainter>
-#include <QWheelEvent>
-#include <QStylePainter>
-#include <QStyleOptionFocusRect>
-#include <QDateTime>
-
 #include <math.h>
+
+#include <QStylePainter>
+#include <QDateTime>
+#include <QWheelEvent>
 
 namespace fastoredis
 {
@@ -34,7 +31,7 @@ namespace fastoredis
     {
         qreal stepX = span_x() / num_x_ticks_;
         qreal stepY = span_y() / num_y_ticks_;
-        plot_settings tmp(min_x_ + dx * stepX,max_x_ + dx * stepX,min_y_ +dy * stepY,max_y_ +dy * stepY);
+        plot_settings tmp(min_x_ + dx * stepX, max_x_ + dx * stepX, min_y_ +dy * stepY, max_y_ + dy * stepY);
         if(is_valid_setting(tmp))
         {
             min_x_ += dx * stepX;

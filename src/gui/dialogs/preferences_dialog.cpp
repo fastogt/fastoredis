@@ -1,21 +1,21 @@
 #include "gui/dialogs/preferences_dialog.h"
 
 #include <QDialogButtonBox>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGroupBox>
-#include <QLabel>
-#include <QComboBox>
-#include <QPushButton>
-#include <QCheckBox>
 #include <QLineEdit>
-#include <QEvent>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLabel>
+#include <QGroupBox>
+#include <QHBoxLayout>
 
 #include "gui/app_style.h"
 #include "gui/gui_factory.h"
+
 #include "translations/translations.h"
+
 #include "core/settings_manager.h"
 #include "core/servers_manager.h"
+
 #include "common/qt/convert_string.h"
 
 namespace fastoredis

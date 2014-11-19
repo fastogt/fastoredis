@@ -1,18 +1,18 @@
 #include "gui/dialogs/connection_dialog.h"
 
+#include <QDialogButtonBox>
+#include <QEvent>
+#include <QFileDialog>
+#include <QLabel>
 #include <QPushButton>
 #include <QHBoxLayout>
-#include <QDialogButtonBox>
-#include <QComboBox>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QLineEdit>
-#include <QEvent>
-#include <QLabel>
-#include <QFileDialog>
+
+#include "common/qt/convert_string.h"
 
 #include "gui/gui_factory.h"
-#include "common/qt/convert_string.h"
-#include "common/utils.h"
 
 namespace
 {
@@ -94,7 +94,7 @@ namespace fastoredis
         passwordBox_ = new QLineEdit;
         passwordBox_->setText(common::convertFromString<QString>(info.password_));
         passwordBox_->setEchoMode(QLineEdit::Password);
-        passwordEchoModeButton_ = new QPushButton(tr("Show"));
+        passwordEchoModeButton_ = new QPushButton(trShow);
         VERIFY(connect(passwordEchoModeButton_, SIGNAL(clicked()), this, SLOT(togglePasswordEchoMode())));
 
         privateKeyBox_ = new QLineEdit;
@@ -103,7 +103,7 @@ namespace fastoredis
         passphraseBox_ = new QLineEdit;
         passphraseBox_->setText(common::convertFromString<QString>(info.passphrase_));
         passphraseBox_->setEchoMode(QLineEdit::Password);
-        passphraseEchoModeButton_ = new QPushButton(tr("Show"));
+        passphraseEchoModeButton_ = new QPushButton(trShow);
         VERIFY(connect(passphraseEchoModeButton_, SIGNAL(clicked()), this, SLOT(togglePassphraseEchoMode())));
 
         useSshWidget_ = new QWidget;
@@ -182,10 +182,10 @@ namespace fastoredis
         passphraseBox_->setText(common::convertFromString<QString>(info.passphrase_));
 
         if (info.authMethod() == SSHInfo::PUBLICKEY) {
-            security_->setCurrentText("Private Key");
+            security_->setCurrentText(trPrivateKey);
         }
         else {
-            security_->setCurrentText("Password");
+            security_->setCurrentText(trPassword);
         }
     }
 

@@ -1,11 +1,9 @@
 #include "gui/dialogs/history_server_dialog.h"
 
-#include <QLabel>
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QComboBox>
 
-#include "common/qt/convert_string.h"
 #include "core/redis/redis_infos.h"
 
 #include "gui/base/graph_widget.h"

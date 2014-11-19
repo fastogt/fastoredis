@@ -11,8 +11,10 @@
 #include <QEvent>
 
 #include "common/qt/convert_string.h"
+
 #include "core/settings_manager.h"
 #include "core/connection_settings.h"
+
 #include "gui/gui_factory.h"
 #include "gui/dialogs/connection_dialog.h"
 
@@ -53,35 +55,35 @@ namespace fastoredis
         // Remove help button (?)
         setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);;
 
-        _listWidget = new QTreeWidget;
-        _listWidget->setIndentation(5);
+        listWidget_ = new QTreeWidget;
+        listWidget_->setIndentation(5);
 
         QStringList colums;
         colums << tr("Name") << tr("Address") << tr("Auth. Database / User");
-        _listWidget->setHeaderLabels(colums);
+        listWidget_->setHeaderLabels(colums);
 
-        _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-        _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
-        _listWidget->header()->setSectionResizeMode(2, QHeaderView::Stretch);
+        listWidget_->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+        listWidget_->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+        listWidget_->header()->setSectionResizeMode(2, QHeaderView::Stretch);
 
-        //_listWidget->setViewMode(QListView::ListMode);
-        _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
-        _listWidget->setIndentation(15);
-        _listWidget->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
-        _listWidget->setDragEnabled(true);
-        _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
-        _listWidget->setMinimumHeight(300);
-        _listWidget->setMinimumWidth(630);
-        VERIFY(connect(_listWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept())));
-        VERIFY(connect(_listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(connectionSelectChange())));
+        //listWidget_->setViewMode(QListView::ListMode);
+        listWidget_->setContextMenuPolicy(Qt::ActionsContextMenu);
+        listWidget_->setIndentation(15);
+        listWidget_->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
+        listWidget_->setDragEnabled(true);
+        listWidget_->setDragDropMode(QAbstractItemView::InternalMove);
+        listWidget_->setMinimumHeight(300);
+        listWidget_->setMinimumWidth(630);
+        VERIFY(connect(listWidget_, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept())));
+        VERIFY(connect(listWidget_, SIGNAL(itemSelectionChanged()), this, SLOT(connectionSelectChange())));
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
         buttonBox->button(QDialogButtonBox::Ok)->setIcon(GuiFactory::instance().serverIcon());
-        _acButton = buttonBox->button(QDialogButtonBox::Ok);
+        acButton_ = buttonBox->button(QDialogButtonBox::Ok);
 
-        _acButton->setEnabled(false);
+        acButton_->setEnabled(false);
 
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
@@ -111,7 +113,7 @@ namespace fastoredis
 
         QVBoxLayout *firstColumnLayout = new QVBoxLayout;
         firstColumnLayout->addLayout(toolBarLayout);
-        firstColumnLayout->addWidget(_listWidget);
+        firstColumnLayout->addWidget(listWidget_);
         firstColumnLayout->addLayout(bottomLayout);
 
         QHBoxLayout *mainLayout = new QHBoxLayout(this);
@@ -125,21 +127,20 @@ namespace fastoredis
         }
 
         // Highlight first item
-        if (_listWidget->topLevelItemCount() > 0)
-            _listWidget->setCurrentItem(_listWidget->topLevelItem(0));
+        if (listWidget_->topLevelItemCount() > 0)
+            listWidget_->setCurrentItem(listWidget_->topLevelItem(0));
         retranslateUi();
     }
 
     void ConnectionsDialog::connectionSelectChange()
     {
-        _acButton->setEnabled(selectedConnection());
+        acButton_->setEnabled(selectedConnection());
     }
 
     void ConnectionsDialog::add(const IConnectionSettingsBasePtr &con)
     {
         ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
-        _listWidget->addTopLevelItem(item);
-        _connectionItems.push_back(item);
+        listWidget_->addTopLevelItem(item);
     }
 
     void ConnectionsDialog::add()
@@ -157,7 +158,7 @@ namespace fastoredis
     void ConnectionsDialog::remove()
     {
         ConnectionListWidgetItem *currentItem =
-                    dynamic_cast<ConnectionListWidgetItem *>(_listWidget->currentItem());
+                    dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -180,7 +181,7 @@ namespace fastoredis
     void ConnectionsDialog::edit()
     {
         ConnectionListWidgetItem *currentItem =
-                    dynamic_cast<ConnectionListWidgetItem *>(_listWidget->currentItem());
+                    dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -204,7 +205,7 @@ namespace fastoredis
         IConnectionSettingsBasePtr res;
 
         ConnectionListWidgetItem *currentItem =
-                    dynamic_cast<ConnectionListWidgetItem *>(_listWidget->currentItem());
+                    dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
         if (currentItem){
             res = currentItem->connection();
         }
@@ -231,6 +232,6 @@ namespace fastoredis
     void ConnectionsDialog::retranslateUi()
     {
         setWindowTitle(tr("Redis Connections"));
-        _acButton->setText(tr("Open"));
+        acButton_->setText(tr("Open"));
     }
 }

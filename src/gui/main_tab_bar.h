@@ -6,7 +6,8 @@
 
 namespace fastoredis
 {
-    class MainTabBar : public QTabBar
+    class MainTabBar
+            : public QTabBar
     {
         Q_OBJECT
 

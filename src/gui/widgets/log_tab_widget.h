@@ -13,7 +13,8 @@ namespace fastoredis
     class LogWidget;
     class CommandsWidget;
 
-    class LogTabWidget : public QTabWidget
+    class LogTabWidget
+            : public QTabWidget
     {
         Q_OBJECT
 

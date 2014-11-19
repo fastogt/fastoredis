@@ -2,13 +2,10 @@
 
 #include <QObject>
 
-#include <sstream>
-
 #include "core/settings_manager.h"
 
 #include "common/utils.h"
 #include "common/net.h"
-#include "common/convert2string.h"
 #include "common/logger.h"
 
 #define LOGGING_FILE_EXTENSION ".red"

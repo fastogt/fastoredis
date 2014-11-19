@@ -23,18 +23,18 @@ namespace fastoredis
 	public:
         typedef std::vector<FastoObject*> child_container_type;
 
-        FastoObject(FastoObject* parent, common::Value *val);
+        FastoObject(FastoObject* parent, common::Value* val);
         ~FastoObject();
 
         common::Value::Type type() const;
         common::string16 toString16() const;
-        FastoObject *deepCopy(FastoObject *parent) const;
-        FastoObject *deepCopyChangeParent(FastoObject *parent) const;
+        FastoObject *deepCopy(FastoObject* parent) const;
+        FastoObject *deepCopyChangeParent(FastoObject* parent) const;
 
 		child_container_type childrens() const;
-        static FastoObject* createRoot(const std::string &text);
-        static FastoObject* createRoot(const common::string16 &text = common::string16());
-        void addChildren(FastoObject *child);
+        static FastoObject* createRoot(const std::string& text);
+        static FastoObject* createRoot(const common::string16& text = common::string16());
+        void addChildren(FastoObject* child);
         bool isRoot() const;
 
     private:

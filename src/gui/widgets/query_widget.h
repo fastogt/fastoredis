@@ -24,8 +24,6 @@ namespace fastoredis
         QString inputText() const;
         void reload();
 
-    public Q_SLOTS:
-
     private:
         ShellWidget *shellWidget_;
         OutputWidget *outputWidget_;

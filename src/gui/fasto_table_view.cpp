@@ -8,7 +8,7 @@
 namespace fastoredis
 {
     FastoTableView::FastoTableView(QWidget *parent)
-        :QTableView(parent)
+        : QTableView(parent)
     {
         verticalHeader()->setDefaultAlignment(Qt::AlignLeft);
         horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);

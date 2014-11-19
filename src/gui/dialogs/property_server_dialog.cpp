@@ -1,9 +1,8 @@
 #include "gui/dialogs/property_server_dialog.h"
 
-#include <QLabel>
 #include <QHBoxLayout>
+#include <QTableView>
 
-#include "common/qt/convert_string.h"
 #include "gui/gui_factory.h"
 #include "gui/glass_widget.h"
 #include "gui/property_table_model.h"

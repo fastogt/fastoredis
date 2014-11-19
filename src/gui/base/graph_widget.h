@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QPixmap>
-#include <QWidget>
 #include <vector>
+
+#include <QWidget>
 
 namespace fastoredis
 {

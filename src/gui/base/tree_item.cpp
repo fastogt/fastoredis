@@ -1,7 +1,5 @@
 #include "gui/base/tree_item.h"
 
-#include <algorithm>
-
 namespace fastoredis
 {
     TreeItem::TreeItem(TreeItem *parent)

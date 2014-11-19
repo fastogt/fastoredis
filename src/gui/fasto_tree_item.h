@@ -4,7 +4,7 @@
 
 #include <QString>
 
-#include "global/global.h"
+#include "common/value.h"
 #include "gui/base/tree_item.h"
 
 namespace fastoredis

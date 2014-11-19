@@ -14,6 +14,7 @@ namespace fastoredis
     {
         friend class common::patterns::lazy_singleton<CommandLogger>;
         Q_OBJECT
+
     public:
         void print(const Command &command);
 

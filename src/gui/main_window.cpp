@@ -2,8 +2,6 @@
 
 #include <QAction>
 #include <QMenuBar>
-#include <QToolButton>
-#include <QStatusBar>
 #include <QDockWidget>
 
 #include "common/qt/convert_string.h"

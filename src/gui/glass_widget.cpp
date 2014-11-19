@@ -3,15 +3,13 @@
 #include <QLabel>
 #include <QMovie>
 #include <QEvent>
+
 #include <QGraphicsOpacityEffect>
 
 namespace fastoredis
 {
-    GlassWidget::GlassWidget(const QString path, const QString text, qreal opacity, const QColor& color, QObject *parent)
-        : QObject(parent)
-        , movie_(0)
-        , glassColor_(color)
-        , text_(text)
+    GlassWidget::GlassWidget(const QString& path, const QString& text, qreal opacity, const QColor& color, QObject *parent)
+        : QObject(parent), movie_(0), glassColor_(color), text_(text)
     {
         wGlass_ = new QLabel;
 
@@ -23,7 +21,7 @@ namespace fastoredis
         wAnimationContainer_ = new QLabel;
         wInfoTextContaiter_ = new QLabel;
 
-        movie_ = new QMovie(path,QByteArray(),this);
+        movie_ = new QMovie(path, QByteArray(), this);
     }
 
     GlassWidget::~GlassWidget()
@@ -84,14 +82,17 @@ namespace fastoredis
                 wGlass_->height() / 2 - wAnimationContainer_->height());
             wInfoTextContaiter_->move((wGlass_->width() - wInfoTextContaiter_->width()) / 2,
                 wGlass_->height() / 2 + wInfoTextContaiter_->height());
-        } else {
-            if (wAnimationContainer_->isVisible())
+        }
+        else {
+            if (wAnimationContainer_->isVisible()){
                 wAnimationContainer_->move((wGlass_->width() - wAnimationContainer_->width()) / 2,
                 (wGlass_->height() - wAnimationContainer_->height()) / 2);
+            }
 
-            if (wInfoTextContaiter_->isVisible())
+            if (wInfoTextContaiter_->isVisible()){
                 wInfoTextContaiter_->move((wGlass_->width() - wInfoTextContaiter_->width()) / 2,
                 (wGlass_->height() - wInfoTextContaiter_->height()) / 2);
+            }
         }
     }
 

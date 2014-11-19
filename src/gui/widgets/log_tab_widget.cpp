@@ -3,8 +3,6 @@
 #include <QTabBar>
 #include <QEvent>
 
-#include "common/macros.h"
-
 #include "gui/widgets/log_widget.h"
 #include "gui/widgets/commands_widget.h"
 #include "gui/gui_factory.h"

@@ -2,9 +2,8 @@
 
 /**/
 
-#include <Qsci/qscilexercustom.h>
-#include <Qsci/qscilexerdiff.h>
 #include <Qsci/qsciabstractapis.h>
+#include <Qsci/qscilexercustom.h>
 
 namespace fastoredis
 {

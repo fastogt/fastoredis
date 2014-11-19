@@ -2,8 +2,6 @@
 
 #include <ostream>
 
-#include "common/convert2string.h"
-
 namespace fastoredis
 {
     RedisServerInfo::Server::Server::Server()

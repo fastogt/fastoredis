@@ -14,7 +14,7 @@ namespace fastoredis
         REDIS
     };
 
-    static inline connectionTypes badConnectionType()
+    inline connectionTypes badConnectionType()
     {
         return DBUNKNOWN;
     }

@@ -1,7 +1,5 @@
 #include "core/types.h"
 
-#include "common/convert2string.h"
-
 namespace fastoredis
 {
     ServerInfo::~ServerInfo()

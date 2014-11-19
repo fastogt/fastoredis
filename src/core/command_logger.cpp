@@ -1,7 +1,5 @@
 #include "core/command_logger.h"
 
-#include "common/qt/convert_string.h"
-
 namespace fastoredis
 {
     CommandLogger::CommandLogger()

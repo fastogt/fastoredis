@@ -2,7 +2,7 @@
 
 #include <QThread>
 #include <QApplication>
-#include <QDateTime>
+
 #include "common/file_system.h"
 #include "common/time.h"
 
