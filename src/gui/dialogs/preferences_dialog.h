@@ -37,7 +37,8 @@ namespace fastoredis
     private:
         void retranslateUi();
 
-        QGroupBox* uiBox_;
+        QGroupBox* generalBox_;
+        QCheckBox* autoCheckUpdates_;
         QLabel *langLabel_;
         QComboBox *languagesComboBox_;
         QLabel *stylesLabel_;
@@ -46,7 +47,7 @@ namespace fastoredis
         QComboBox *defaultViewComboBox_;
 
         QGroupBox* serverSettingsBox_;
-        QCheckBox *syncTabs_;
+        QCheckBox* syncTabs_;
         QLabel *logDirLabel_;
         QLineEdit* logDirPath_;
     };

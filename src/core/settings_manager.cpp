@@ -19,6 +19,7 @@
 #define view_ ('v','i','e','w')
 #define synctabs_ ('s','y','n','c','t','a','b','s')
 #define loggingdir_ ('l','o','g','g','i','n','g','d','i','r')
+#define checkupdates_ ('c','h','e','c','k','u','p','d','a','t','e','s')
 
 namespace
 {
@@ -32,10 +33,11 @@ namespace
     BEGIN_DECL_TYPLE(view_, int, static_path_storage)
     BEGIN_DECL_TYPLE(synctabs_, bool, static_path_storage)
     BEGIN_DECL_TYPLE(loggingdir_, std::string, static_path_storage)
+    BEGIN_DECL_TYPLE(checkupdates_, bool, static_path_storage)
 
     typedef common::storages::storage_container<genereted_settings::setting_langauge_, genereted_settings::setting_style_,
                                                 genereted_settings::setting_connections_, genereted_settings::setting_view_,
-                                                genereted_settings::setting_synctabs_, genereted_settings::setting_loggingdir_> static_storage_type;
+                                                genereted_settings::setting_synctabs_, genereted_settings::setting_loggingdir_, genereted_settings::setting_checkupdates_ > static_storage_type;
 
     typedef common::storages::settings_container<static_storage_type> server_main_t;
 
@@ -43,7 +45,7 @@ namespace
     {
         static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::AppStyle::defStyle,
                                                      fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree,
-                                                     true, file_system::get_dir_path(static_path_storage::path_to_save()) ));
+                                                     true, file_system::get_dir_path(static_path_storage::path_to_save()), true ));
         return g_m;
     }
 }
@@ -185,5 +187,15 @@ namespace fastoredis
     std::string SettingsManager::loggingDirectory() const
     {
         return GET_SETTING(genereted_settings::setting_loggingdir_).value();
+    }
+
+    bool SettingsManager::autoCheckUpdates() const
+    {
+        return GET_SETTING(genereted_settings::setting_checkupdates_).value();
+    }
+
+    void SettingsManager::setAutoCheckUpdates(bool isCheck)
+    {
+        GET_SETTING(genereted_settings::setting_checkupdates_).set_value(isCheck);
     }
 }

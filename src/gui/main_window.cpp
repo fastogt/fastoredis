@@ -26,6 +26,57 @@
 
 #include "translations/translations.h"
 
+namespace
+{
+    bool isNeededUpdate(const std::string& serverVersion)
+    {
+        if(serverVersion.empty()){
+            return false;
+        }
+
+        std::string curVer;
+        int pos = 0;
+        uint16_t serMaj = 0;
+        uint16_t serMin = 0;
+        uint16_t serPatch = 0;
+
+        for(int i = 0; i < serverVersion.length(); ++i){
+            char ch = serverVersion[i];
+            if(ch == '.'){
+                if(pos == 0){
+                    serMaj = common::convertFromString<uint16_t>(curVer);
+                }
+                else if(pos == 1){
+                    serMin = common::convertFromString<uint16_t>(curVer);
+                }
+                else if(pos == 2){
+                    serPatch = common::convertFromString<uint16_t>(curVer);
+                }
+
+                ++pos;
+                curVer.clear();
+            }
+            else{
+                curVer += ch;
+            }
+        }
+
+        if(pos != 3){
+            return false;
+        }
+
+        if(PROJECT_VERSION_MAJOR < serMaj){
+            return true;
+        }
+
+        if(PROJECT_VERSION_MINOR < serMin){
+            return true;
+        }
+
+        return PROJECT_VERSION_PATCH < serPatch;
+    }
+}
+
 namespace fastoredis
 {
     MainWindow::MainWindow()
@@ -80,6 +131,7 @@ namespace fastoredis
 
         checkUpdateAction_ = new QAction(this);
         VERIFY(connect(checkUpdateAction_, SIGNAL(triggered()), this, SLOT(checkUpdate())));
+        VERIFY(connect(this, SIGNAL(showed()), this, SLOT(checkNeededUpdate()), Qt::QueuedConnection) );
 
         optionsMenu->addAction(checkUpdateAction_);
         optionsMenu->addAction(preferencesAction_);
@@ -141,6 +193,12 @@ namespace fastoredis
         }
     }
 
+    void MainWindow::showEvent(QShowEvent* e)
+    {
+        QMainWindow::showEvent(e);
+        emit showed();
+    }
+
     void MainWindow::changeEvent(QEvent *e)
     {
         if(e->type() == QEvent::LanguageChange){
@@ -157,7 +215,7 @@ namespace fastoredis
         exitAction_->setText(tr("&Exit"));
         fileAction_->setText(tr("File"));
         preferencesAction_->setText(tr("Preferences"));
-        checkUpdateAction_->setText(tr("Check updates"));
+        checkUpdateAction_->setText(tr("Check for updates..."));
         viewAction_->setText(tr("View"));
         optionsAction_->setText(tr("Options"));
         aboutAction_->setText(tr("&About %1...").arg(PROJECT_NAME));
@@ -190,16 +248,26 @@ namespace fastoredis
         dlg.exec();
     }
 
+    void MainWindow::checkNeededUpdate()
+    {
+        bool isA = SettingsManager::instance().autoCheckUpdates();
+        if(isA){
+            checkUpdate();
+        }
+    }
+
     void MainWindow::checkUpdate()
     {
         common::net::SocketTcp s(SITE_URL, SERV_PORT);
         bool res = s.connect();
         if(!res){
+            checkUpdateAction_->setEnabled(true);
             return;
         }
 
         res = s.write(common::convertFromString<common::buffer_type>(GET_VERSION));
         if(!res){
+            checkUpdateAction_->setEnabled(true);
             s.close();
             return;
         }
@@ -208,9 +276,23 @@ namespace fastoredis
         res = s.read(version, 128);
         if(res){
             std::string sversion = common::convertToString(version);
-            QMessageBox::information(this, QString("version"),
-                QObject::tr(PROJECT_NAME" version: %1.")
-                    .arg(common::convertFromString<QString>(sversion)));
+            bool isn = isNeededUpdate(sversion);
+            if(isn){
+                QMessageBox::information(this, QString("version"),
+                    QObject::tr("Availible new version: %1")
+                        .arg(common::convertFromString<QString>(sversion)));
+            }
+            else{
+                QMessageBox::information(this, QString("version"),
+                    QObject::tr("<h3>You're' up-to-date!</h3>"
+                                PROJECT_NAME" %1 is currently the newest version available.")
+                        .arg(common::convertFromString<QString>(sversion)));
+            }
+
+            checkUpdateAction_->setEnabled(isn);
+        }
+        else{
+            checkUpdateAction_->setEnabled(true);
         }
 
         s.close();

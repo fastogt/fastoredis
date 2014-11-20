@@ -36,6 +36,9 @@ namespace fastoredis
         void setLoggingDirectory(const std::string& dir);
         std::string loggingDirectory() const;
 
+        bool autoCheckUpdates() const;
+        void setAutoCheckUpdates(bool isCheck);
+
         ConnectionSettingsContainerType connections() const;
 
     private:

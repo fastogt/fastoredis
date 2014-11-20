@@ -28,7 +28,7 @@ namespace fastoredis
         setFixedSize(height, width);
 
 //      ui settings
-        uiBox_ = new QGroupBox;
+        generalBox_ = new QGroupBox;
 
         QHBoxLayout *styleswLayout = new QHBoxLayout;
         stylesLabel_ = new QLabel;
@@ -44,10 +44,12 @@ namespace fastoredis
         languagesComboBox_->addItems(translations::getSupportedLanguages());
         langLayout->addWidget(languagesComboBox_);
 
-        QVBoxLayout *uiLayout = new QVBoxLayout;
-        uiLayout->addLayout(styleswLayout);
-        uiLayout->addLayout(langLayout);
-        uiBox_->setLayout(uiLayout);
+        QVBoxLayout *generalLayout = new QVBoxLayout;
+        autoCheckUpdates_ = new QCheckBox;
+        generalLayout->addWidget(autoCheckUpdates_);
+        generalLayout->addLayout(styleswLayout);
+        generalLayout->addLayout(langLayout);
+        generalBox_->setLayout(generalLayout);
 
 //      servers settings
         serverSettingsBox_ = new QGroupBox;
@@ -77,7 +79,7 @@ namespace fastoredis
 
 //      main layout
         QVBoxLayout *layout = new QVBoxLayout(this);
-        layout->addWidget(uiBox_);
+        layout->addWidget(generalBox_);
         layout->addWidget(serverSettingsBox_);
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
@@ -94,6 +96,7 @@ namespace fastoredis
 
     void PreferencesDialog::syncWithSettings()
     {
+        autoCheckUpdates_->setChecked(SettingsManager::instance().autoCheckUpdates());
         languagesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentLanguage()));
         stylesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentStyle()));
         defaultViewComboBox_->setCurrentText(common::convertFromString<QString>(common::convertToString(SettingsManager::instance().defaultView())));
@@ -103,6 +106,8 @@ namespace fastoredis
 
     void PreferencesDialog::accept()
     {
+        SettingsManager::instance().setAutoCheckUpdates(autoCheckUpdates_->isChecked());
+
         QString newLang = translations::applyLanguage(languagesComboBox_->currentText());
         SettingsManager::instance().setCurrentLanguage(common::convertToString(newLang));
 
@@ -131,7 +136,8 @@ namespace fastoredis
     {
         setWindowTitle(tr("Preferences "PROJECT_NAME_TITLE));
 
-        uiBox_->setTitle(tr("User interface"));
+        generalBox_->setTitle(tr("General settings"));
+        autoCheckUpdates_->setText(tr("Automatically check for updates"));
         langLabel_->setText(tr("Language:"));
         stylesLabel_->setText(tr("Supported UI styles:"));
 

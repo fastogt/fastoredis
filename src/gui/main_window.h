@@ -21,6 +21,10 @@ namespace fastoredis
 
     protected:
         virtual void changeEvent(QEvent *);
+        virtual void showEvent(QShowEvent* e);
+
+    Q_SIGNALS:
+        void showed();
 
     private Q_SLOTS:
         void open();
@@ -29,6 +33,8 @@ namespace fastoredis
         void about();
         void openPreferences();
         void checkUpdate();
+
+        void checkNeededUpdate();
 
     private:
         void createStatusBar();
