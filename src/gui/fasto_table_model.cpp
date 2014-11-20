@@ -33,24 +33,24 @@ namespace fastoredis
 
     QModelIndex FastoTableModel::mapToSource( const QModelIndex &proxyIndex ) const
     {
-            if ( !proxyIndex.isValid() )
-                    return QModelIndex();
+        if ( !proxyIndex.isValid() )
+                return QModelIndex();
 
-            Q_ASSERT( proxyIndex.model() == this );
+        Q_ASSERT( proxyIndex.model() == this );
 
-            QModelIndex sourceIndex;
-            KDPrivateModelIndex* hack = reinterpret_cast<KDPrivateModelIndex*>(&sourceIndex);
-            hack->r = proxyIndex.row();
-            hack->c = proxyIndex.column();
-            hack->p = proxyIndex.internalPointer();
-            hack->m = sourceModel();
-            return sourceIndex;
+        QModelIndex sourceIndex;
+        KDPrivateModelIndex* hack = reinterpret_cast<KDPrivateModelIndex*>(&sourceIndex);
+        hack->r = proxyIndex.row();
+        hack->c = proxyIndex.column();
+        hack->p = proxyIndex.internalPointer();
+        hack->m = sourceModel();
+        return sourceIndex;
     }
 
     QVariant FastoTableModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
         if (role != Qt::DisplayRole){
-                    return QVariant();
+            return QVariant();
         }
 
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
@@ -63,7 +63,8 @@ namespace fastoredis
             else if(section == FastoTreeItem::eType){
                 return tr("Type");
             }
-        } else {
+        }
+        else {
             return QString("%1").arg(section + 1);
         }
 

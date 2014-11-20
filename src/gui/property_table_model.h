@@ -17,7 +17,9 @@ namespace fastoredis
             eValue = 1,
             eCountColumns = 2
         };
+
         PropertyTableItem(const QString &key, const QString &value);
+
         QString key_;
         QString value_;
     };

@@ -20,6 +20,7 @@ namespace fastoredis
         virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
         virtual QModelIndex index(int row, int column, const QModelIndex &parent= QModelIndex()) const;
         virtual QModelIndex parent(const QModelIndex& index) const;
+        TreeItem* root() const;
 
         virtual ~TreeModel();
 

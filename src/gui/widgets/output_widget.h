@@ -39,7 +39,7 @@ namespace fastoredis
         QPushButton *tableButton_;
         QPushButton *textButton_;
 
-        FastoTreeModel *treeModel_;
+        FastoTreeModel *commonModel_;
         FastoTreeView *treeView_;
         FastoTableView *tableView_;
         FastoEditor *textView_;

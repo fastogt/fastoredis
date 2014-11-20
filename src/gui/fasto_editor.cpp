@@ -2,6 +2,8 @@
 
 #include <QKeyEvent>
 
+#include "gui/fasto_tree_model.h"
+#include "gui/fasto_tree_item.h"
 #include "gui/gui_factory.h"
 
 namespace
@@ -40,7 +42,7 @@ namespace
 namespace fastoredis
 {
     FastoEditor::FastoEditor(QWidget *parent)
-        : QsciScintilla(parent), lineNumberMarginWidth_(0)
+        : QsciScintilla(parent), lineNumberMarginWidth_(0), model_(NULL)
     {
         setAutoIndent(true);
         setIndentationsUseTabs(false);
@@ -60,6 +62,116 @@ namespace fastoredis
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         VERIFY(connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineNumbersMarginWidth())));
+    }
+
+    void FastoEditor::setModel(FastoTreeModel *model)
+    {
+        if (model == model_){
+            return;
+        }
+
+        if(model_){
+            VERIFY(disconnect(model_, SIGNAL(destroyed()), this, SLOT(modelDestroyed())));
+            VERIFY(disconnect(model_, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex))));
+            VERIFY(disconnect(model_, SIGNAL(headerDataChanged(Qt::Orientation,int,int)), this, SLOT(headerDataChanged())));
+            VERIFY(disconnect(model_, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int))));
+            VERIFY(disconnect(model_, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int))));
+            VERIFY(disconnect(model_, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(rowsRemoved(QModelIndex,int,int))));
+            VERIFY(disconnect(model_, SIGNAL(columnsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(columnsAboutToBeRemoved(QModelIndex,int,int))));
+            VERIFY(disconnect(model_, SIGNAL(columnsRemoved(QModelIndex,int,int)), this, SLOT(columnsRemoved(QModelIndex,int,int))));
+            VERIFY(disconnect(model_, SIGNAL(columnsInserted(QModelIndex,int,int)), this, SLOT(columnsInserted(QModelIndex,int,int))));
+            VERIFY(disconnect(model_, SIGNAL(modelReset()), this, SLOT(reset())));
+            VERIFY(disconnect(model_, SIGNAL(layoutChanged()), this, SLOT(layoutChanged())));
+        }
+
+        model_ = model;
+
+        // These asserts do basic sanity checking of the model
+        Q_ASSERT_X(model_->index(0,0) == model_->index(0,0),
+                   "QAbstractItemView::setModel",
+                   "A model should return the exact same index "
+                   "(including its internal id/pointer) when asked for it twice in a row.");
+        Q_ASSERT_X(model_->index(0,0).parent() == QModelIndex(),
+                   "QAbstractItemView::setModel",
+                   "The parent of a top level index should be invalid");
+
+        if (model_) {
+            VERIFY(connect(model_, SIGNAL(destroyed()), this, SLOT(modelDestroyed())));
+            VERIFY(connect(model_, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex))));
+            VERIFY(connect(model_, SIGNAL(headerDataChanged(Qt::Orientation,int,int)), this, SLOT(headerDataChanged())));
+            VERIFY(connect(model_, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int))));
+            VERIFY(connect(model_, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int))));
+            VERIFY(connect(model_, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(rowsRemoved(QModelIndex,int,int))));
+            VERIFY(connect(model_, SIGNAL(columnsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(columnsAboutToBeRemoved(QModelIndex,int,int))));
+            VERIFY(connect(model_, SIGNAL(columnsRemoved(QModelIndex,int,int)), this, SLOT(columnsRemoved(QModelIndex,int,int))));
+            VERIFY(connect(model_, SIGNAL(columnsInserted(QModelIndex,int,int)),this, SLOT(columnsInserted(QModelIndex,int,int))));
+            VERIFY(connect(model_, SIGNAL(modelReset()), this, SLOT(reset())));
+            VERIFY(connect(model_, SIGNAL(layoutChanged()), this, SLOT(layoutChanged())));
+        }
+
+        reset();
+    }
+
+    void FastoEditor::modelDestroyed()
+    {
+
+    }
+
+    void FastoEditor::dataChanged(QModelIndex first, QModelIndex last)
+    {
+
+    }
+
+    void FastoEditor::headerDataChanged()
+    {
+
+    }
+
+    void FastoEditor::rowsInserted(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditor::rowsAboutToBeRemoved(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditor::rowsRemoved(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditor::columnsAboutToBeRemoved(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditor::columnsRemoved(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditor::columnsInserted(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditor::reset()
+    {
+        clear();
+        TreeItem* item = model_->root();
+        if(item){
+            FastoTreeItem* fitem = dynamic_cast<FastoTreeItem*>(item);
+            if(fitem){
+
+            }
+        }
+    }
+
+    void FastoEditor::layoutChanged()
+    {
+
     }
 
     void FastoEditor::keyPressEvent(QKeyEvent *keyEvent)

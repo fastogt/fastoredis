@@ -10,6 +10,11 @@ namespace fastoredis
 
     }
 
+    TreeItem* TreeModel::root() const
+    {
+        return _root.get();
+    }
+
     int TreeModel::rowCount(const QModelIndex &parent) const
     {
         const TreeItem *parentItem=NULL;

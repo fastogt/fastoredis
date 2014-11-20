@@ -69,15 +69,14 @@ namespace fastoredis
         : QWidget(parent)
     {
         treeView_ = new FastoTreeView(this);
-        treeModel_ = new FastoTreeModel(treeView_);
-        treeView_->setModel(treeModel_);
+        commonModel_ = new FastoTreeModel(treeView_);
+        treeView_->setModel(commonModel_);
 
         tableView_ = new FastoTableView(this);
-         //FastoTableModel* mod = new FastoTableModel(_tableView);
-         //mod->setSourceModel(_treeModel);
-         tableView_->setModel(treeModel_);
+        tableView_->setModel(commonModel_);
 
         textView_ = new FastoEditor;
+        textView_->setModel(commonModel_);
         timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(), common::convertFromString16<QString>(common::time::mstime2string(0)), QSize(16, 16));
 
         QVBoxLayout *mainL = new QVBoxLayout;
@@ -157,12 +156,13 @@ namespace fastoredis
         if(res._out){
             FastoTreeItem *root = parseOutput(res._out.get());
             if(root){
-                treeModel_->setRoot(root);
+                commonModel_->setRoot(root);
             }
+
+            //FastoObjectPtr ptr = res._out;
+            //std::string str = toStdString(ptr);
+            //_textView->setText(common::convertFromString16<QString>(str));
         }
-        timeLabel_->setText(tr("Execute milliseconds time: ") + common::convertFromString16<QString>(common::time::mstime2string(res.elapsedTime())));
-        //FastoObjectPtr ptr = res._out;
-        //std::string str = toStdString(ptr);
-        //_textView->setText(common::convertFromString16<QString>(str));
+        timeLabel_->setText(tr("Execute milliseconds time: %1").arg(res.elapsedTime()));
     }
 }
