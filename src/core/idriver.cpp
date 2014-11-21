@@ -158,8 +158,8 @@ namespace fastoredis
 
                 FastoObject* par = FastoObject::createRoot(createStamp());
                 FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
-                common::string16 data = common::convertToString16(toFile.get());
-                logFile_->write(common::convertToString(data));
+                std::string data = common::convertToString(toFile.get());
+                logFile_->write(data);
                 logFile_->flush();
             }
         }
@@ -217,7 +217,7 @@ namespace fastoredis
             res.setInfos(tmpInfos);
         }
         else{
-           common::ErrorValueSPtr er(new common::ErrorValue(common::convertToString16("Logging file not found"), common::ErrorValue::E_ERROR));
+           common::ErrorValueSPtr er(new common::ErrorValue("Logging file not found", common::ErrorValue::E_ERROR));
            res.setErrorInfo(er);
         }
 

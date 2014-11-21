@@ -29,9 +29,9 @@ namespace fastoredis
         return value_->getType();
     }
 
-    common::string16 FastoObject::toString16() const
+    std::string FastoObject::toString() const
     {
-        common::string16 result;
+        std::string result;
         result = value_->toString();//getAsString(&result);
         return result;
     }
@@ -58,12 +58,7 @@ namespace fastoredis
         return parent;
     }
 
-    FastoObject* FastoObject::createRoot(const std::string &text)
-    {
-        return createRoot(common::convertToString16(text));
-    }
-
-    FastoObject *FastoObject::createRoot(const common::string16 &text)
+    FastoObject *FastoObject::createRoot(const std::string &text)
     {
         return new FastoObject(NULL, common::Value::createStringValue(text));
     }
@@ -109,18 +104,18 @@ namespace common
         return common::utils::enums::findTypeInArray<fastoredis::supportedViews>(supportedViewsM, fromPtr);
     }
 
-    string16 convertToString16(fastoredis::FastoObject* obj)
+    std::string convertToString(fastoredis::FastoObject* obj)
     {
         using namespace fastoredis;
-        string16 result;
+        std::string result;
         if(obj){
-            const string16 str = obj->toString16();
+            const std::string str = obj->toString();
             if(!str.empty()){
                 result += common::escapedText(str);
             }
             FastoObject::child_container_type childrens = obj->childrens();
             for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
-                result += convertToString16(*it);
+                result += convertToString(*it);
             }
         }
         return result;

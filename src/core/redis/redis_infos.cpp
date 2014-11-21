@@ -728,7 +728,7 @@ namespace fastoredis
 
     ServerInfoSPtr makeRedisServerInfo(const FastoObjectPtr &root)
     {
-        const common::string16 content = common::convertToString16(root.get());
-        return makeRedisServerInfo(common::convertToString(content));
+        const std::string content = common::convertToString(root.get());
+        return makeRedisServerInfo(content);
     }
 }

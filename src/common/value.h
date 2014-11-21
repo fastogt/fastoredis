@@ -43,14 +43,12 @@ namespace common
         static FundamentalValue* createBooleanValue(bool in_value);
         static FundamentalValue* createIntegerValue(int in_value);
         static FundamentalValue* createDoubleValue(double in_value);
-        static StringValue* createStringValue(const string16& in_value);
         static StringValue* createStringValue(const std::string& in_value);
         static ArrayValue* createArrayValue();
-        static ErrorValue* createErrorValue(const string16& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
-        static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
+        static ErrorValue* createErrorValue(const std::string &in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
         static std::string toString(Type t);
-        virtual string16 toString() const;
+        virtual std::string toString() const;
         Type getType() const { return type_; }
 
         bool isType(Type type) const { return type == type_; }
@@ -59,7 +57,7 @@ namespace common
         virtual bool getAsInteger(int* out_value) const;
         virtual bool getAsUInteger(unsigned int* out_value) const;
         virtual bool getAsDouble(double* out_value) const;
-        virtual bool getAsString(string16* out_value) const;
+        virtual bool getAsString(std::string* out_value) const;
         virtual bool getAsError(ErrorValue* out_value) const;
         virtual bool getAsList(ArrayValue** out_value);
         virtual bool getAsList(const ArrayValue** out_value) const;
@@ -90,7 +88,7 @@ namespace common
 
         virtual ~FundamentalValue();
 
-        virtual string16 toString() const;
+        virtual std::string toString() const;
         virtual bool getAsBoolean(bool* out_value) const;
         virtual bool getAsInteger(int* out_value) const;
         virtual bool getAsUInteger(unsigned int* out_value) const;
@@ -113,17 +111,16 @@ namespace common
     {
         public:
             explicit StringValue(const std::string& in_value);
-            explicit StringValue(const string16& in_value);
             virtual ~StringValue();
 
-            virtual string16 toString() const;
-            virtual bool getAsString(string16* out_value) const;
+            virtual std::string toString() const;
+            virtual bool getAsString(std::string *out_value) const;
             virtual StringValue* deepCopy() const;
             virtual bool equals(const Value* other) const;
 
         private:
 			DISALLOW_COPY_AND_ASSIGN(StringValue);
-            string16 value_;
+            std::string value_;
     };
 
     class ArrayValue
@@ -136,7 +133,7 @@ namespace common
         ArrayValue();
         virtual ~ArrayValue();
 
-        virtual string16 toString() const;
+        virtual std::string toString() const;
         void clear();
 
         size_t getSize() const { return list_.size(); }
@@ -152,7 +149,7 @@ namespace common
         bool getBoolean(size_t index, bool* out_value) const;
         bool getInteger(size_t index, int* out_value) const;
         bool getDouble(size_t index, double* out_value) const;
-        bool getString(size_t index, string16* out_value) const;
+        bool getString(size_t index, std::string *out_value) const;
         bool getList(size_t index, const ArrayValue** out_value) const;
         bool getList(size_t index, ArrayValue** out_value);
 
@@ -169,8 +166,8 @@ namespace common
         void appendBoolean(bool in_value);
         void appendInteger(int in_value);
         void appendDouble(double in_value);
-        void appendString(const string16& in_value);
-        void appendStrings(const std::vector<string16> &in_values);
+        void appendString(const std::string &in_value);
+        void appendStrings(const std::vector<std::string> &in_values);
 
         bool appendIfNotPresent(Value* in_value);
 
@@ -203,19 +200,18 @@ namespace common
     {
     public:
         ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
-        ErrorValue(const string16& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
         ErrorValue();
         bool isError() const;
         common::logging::LEVEL_LOG level() const;
-        string16 description() const;
-        virtual string16 toString() const;
+        std::string description() const;
+        virtual std::string toString() const;
 
         virtual bool getAsError(ErrorValue* out_value) const;
         virtual ~ErrorValue();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(ErrorValue);
-        string16 description_;
+        std::string description_;
         ErrorsType errorType_;
         common::logging::LEVEL_LOG level_;
     };

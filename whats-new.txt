@@ -11,3 +11,4 @@
 
 [Denis Klimenko]
 - Fixed dmg build
+- Full utf-8 support

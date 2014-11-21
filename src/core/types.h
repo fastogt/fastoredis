@@ -36,8 +36,8 @@ namespace fastoredis
 
     struct DataBaseInfo
     {
-        DataBaseInfo(const common::string16& name, size_t size);
-        common::string16 name_;
+        DataBaseInfo(const std::string& name, size_t size);
+        std::string name_;
         size_t size_;
     };
 

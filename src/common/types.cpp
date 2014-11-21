@@ -4,10 +4,10 @@
 
 namespace common
 {
-    string16 escapedText(const string16 &str)
+    std::string escapedText(const std::string &str)
     {
         if(!str.empty() && str[str.length()-1] != '\n'){
-            return str + convertToString16("\n");
+            return str + "\n";
         }
         return str;
     }

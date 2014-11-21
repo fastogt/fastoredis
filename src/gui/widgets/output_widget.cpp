@@ -15,6 +15,7 @@
 #include "core/settings_manager.h"
 
 #include "common/qt/convert_string.h"
+#include "common/utf_string_conversions.h"
 #include "common/time.h"
 
 namespace
@@ -24,15 +25,15 @@ namespace
         fastoredis::FastoTreeItem *result = NULL;
         fastoredis::FastoObject::child_container_type cont = item->childrens();
         size_t contSize = cont.size();
-        const common::string16 itemData = item->toString16();
+        const std::string itemData = item->toString();
         if(contSize){
             char size[128] = {0};            
             sprintf(size, "{%zu}", contSize);
-            result = new fastoredis::FastoTreeItem( common::convertFromString16<QString>(itemData), size, item->type(), parent);
+            result = new fastoredis::FastoTreeItem( common::convertFromString<QString>(itemData), size, item->type(), parent);
         }
         else{
-            QString varName = QString("%1)").arg(parent->childrenCount()+1);
-            result = new fastoredis::FastoTreeItem( varName ,common::convertFromString16<QString>(itemData), item->type(), parent);
+            QString varName = QString("%1)").arg(parent->childrenCount() + 1);
+            result = new fastoredis::FastoTreeItem( varName ,common::convertFromString<QString>(itemData), item->type(), parent);
         }
 
         if(parent){

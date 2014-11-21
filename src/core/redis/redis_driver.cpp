@@ -194,8 +194,7 @@ namespace fastoredis
                     else
                         sprintf(buff, "Could not connect to Redis at %s: %s\n", config.hostsocket.c_str(), context->errstr);
 
-                    common::string16 buf16 = common::convertToString16(std::string(buff));
-                    er.reset(new common::ErrorValue(buf16, common::Value::E_ERROR));
+                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
                     redisFree(context);
                     context = NULL;
                     return REDIS_ERR;
@@ -251,7 +250,7 @@ namespace fastoredis
             if (context == NULL) return;
             char buff[512] = {0};
             sprintf(buff,"Error: %s\n",context->errstr);
-            er.reset(new common::ErrorValue(common::convertToString16(std::string(buff)), common::ErrorValue::E_ERROR));
+            er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
         }
 
         void cliFormatReplyRaw(FastoObject* out, redisReply *r)
@@ -293,7 +292,7 @@ namespace fastoredis
                 }
                 else{
                     common::ArrayValue *val =common::Value::createArrayValue();
-                    val->appendString(out->toString16());
+                    val->appendString(out->toString());
                     child = new FastoObject(out,val);
                     out->addChildren(child);
                 }
@@ -498,7 +497,7 @@ namespace fastoredis
                 return;
             }
 
-            const std::string scommand = common::convertToString(out->toString16());
+            const std::string scommand = out->toString();
             const char *command = scommand.c_str();
 
             if (command[0] != '\0') {
@@ -723,7 +722,7 @@ namespace fastoredis
             }else{
                 FastoObject::child_container_type childrens = root->childrens();
                 for(int i = 0; i < childrens.size(); ++i){
-                    DataBaseInfo dbInf(childrens[i]->toString16(), 0);
+                    DataBaseInfo dbInf(childrens[i]->toString(), 0);
                     res.databases_.push_back(dbInf);
                 }
             }
@@ -794,8 +793,8 @@ namespace fastoredis
         common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
-        FastoObject* root = FastoObject::createRoot(common::convertToString16(changeRequest));
-            LOG_COMMAND(Command(common::convertToString16(changeRequest)));
+        FastoObject* root = FastoObject::createRoot(changeRequest);
+            LOG_COMMAND(Command(changeRequest));
             impl_->repl_impl(root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);
