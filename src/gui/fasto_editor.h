@@ -6,9 +6,10 @@
 
 #include <QModelIndex>
 
+class QAbstractItemModel;
+
 namespace fastoredis
 {
-    class FastoTreeModel;
     class FastoEditor
             : public QsciScintilla
     {
@@ -17,7 +18,8 @@ namespace fastoredis
         enum { rowNumberWidth = 6, indentationWidth = 4 };
 
         FastoEditor(QWidget *parent = 0);
-        void setModel(FastoTreeModel *model);
+        void setModel(QAbstractItemModel* model);
+        void setRootIndex(const QModelIndex& index);
 
     private Q_SLOTS:
         void updateLineNumbersMarginWidth();
@@ -43,6 +45,8 @@ namespace fastoredis
         int textWidth(int style, const QString &text);        
 
         int lineNumberMarginWidth_;
-        FastoTreeModel* model_;
+        QAbstractItemModel* model_;
+
+        QModelIndex root_index_;
     };
 }

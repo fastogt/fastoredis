@@ -25,7 +25,6 @@ namespace fastoredis
             parentItem = _root.get();
         }
 
-        assert(parentItem);
         return parentItem ? parentItem->childrenCount() : 0;
     }
 
@@ -35,8 +34,13 @@ namespace fastoredis
             const TreeItem * parentItem = NULL;
             if (!parent.isValid()) {
                 parentItem = _root.get();
-            } else {
+            }
+            else {
                 parentItem = common::utils_qt::item<TreeItem*>(parent);
+            }
+
+            if(!parentItem){
+                return QModelIndex();
             }
 
             TreeItem *childItem = parentItem->child(row);

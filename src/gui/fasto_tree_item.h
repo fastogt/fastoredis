@@ -32,5 +32,7 @@ namespace fastoredis
         QString value_;
         common::Value::Type type_;
     };
+
+    QString toJson(FastoTreeItem* item);
 }
 

@@ -258,8 +258,19 @@ namespace fastoredis
         {
             switch (r->type) {
             case REDIS_REPLY_NIL:
+            {
+                common::Value *val = common::Value::createNullValue();
+                FastoObject *obj = new FastoObject(out, val);
+                out->addChildren(obj);
                 break;
+            }
             case REDIS_REPLY_ERROR:
+            {
+                common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                FastoObject *obj = new FastoObject(out, val);
+                out->addChildren(obj);
+                break;
+            }
             case REDIS_REPLY_STATUS:
             case REDIS_REPLY_STRING:
             {

@@ -53,7 +53,12 @@ namespace
 
     fastoredis::FastoTreeItem *parseOutput(const fastoredis::FastoObject* res)
     {
-        fastoredis::FastoTreeItem *result = createItem(NULL, res);
+        DCHECK(res);
+        if(!res){
+            return NULL;
+        }
+
+        fastoredis::FastoTreeItem* result = createItem(NULL, res);
         fastoredis::FastoObject::child_container_type cont = res->childrens();
         for(int i = 0; i < cont.size(); ++i){
             fastoredis::FastoObject* command = cont[i];
@@ -68,15 +73,17 @@ namespace fastoredis
     OutputWidget::OutputWidget(QWidget* parent)
         : QWidget(parent)
     {
-        treeView_ = new FastoTreeView(this);
-        commonModel_ = new FastoTreeModel(treeView_);
+        commonModel_ = new FastoTreeModel(this);
+
+        treeView_ = new FastoTreeView;
         treeView_->setModel(commonModel_);
 
-        tableView_ = new FastoTableView(this);
+        tableView_ = new FastoTableView;
         tableView_->setModel(commonModel_);
 
         textView_ = new FastoEditor;
         textView_->setModel(commonModel_);
+
         timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(), common::convertFromString16<QString>(common::time::mstime2string(0)), QSize(16, 16));
 
         QVBoxLayout *mainL = new QVBoxLayout;
@@ -145,24 +152,21 @@ namespace fastoredis
         textView_->setVisible(true);
     }
 
-    void OutputWidget::startExecute(const EventsInfo::ExecuteInfoRequest &req)
+    void OutputWidget::startExecute(const EventsInfo::ExecuteInfoRequest& req)
     {
 
     }
 
-    void OutputWidget::finishExecute(const EventsInfo::ExecuteInfoResponce &res)
+    void OutputWidget::finishExecute(const EventsInfo::ExecuteInfoResponce& res)
     {
-        textView_->clear();
-        if(res._out){
-            FastoTreeItem *root = parseOutput(res._out.get());
-            if(root){
-                commonModel_->setRoot(root);
-            }
+        FastoTreeItem *root = parseOutput(res._out.get());
 
-            //FastoObjectPtr ptr = res._out;
-            //std::string str = toStdString(ptr);
-            //_textView->setText(common::convertFromString16<QString>(str));
-        }
+        commonModel_->setRoot(root);
+        QModelIndex rootIndex = commonModel_->index(0, 0);
+        treeView_->setRootIndex(rootIndex);
+        tableView_->setRootIndex(rootIndex);
+        textView_->setRootIndex(rootIndex);
+
         timeLabel_->setText(tr("Execute milliseconds time: %1").arg(res.elapsedTime()));
     }
 }

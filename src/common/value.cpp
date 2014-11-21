@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "common/convert2string.h"
+#include "common/utf_string_conversions.h"
 
 namespace common 
 {
@@ -67,6 +68,9 @@ namespace common
 
     string16 Value::toString() const
 	{
+        if(type_ == TYPE_NULL){
+            return ASCIIToUTF16("(nil)");
+        }
         return string16();
 	}
 

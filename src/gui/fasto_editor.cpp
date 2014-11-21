@@ -1,8 +1,10 @@
 #include "gui/fasto_editor.h"
 
 #include <QKeyEvent>
+#include <QAbstractItemModel>
 
-#include "gui/fasto_tree_model.h"
+#include "common/qt/utils_qt.h"
+
 #include "gui/fasto_tree_item.h"
 #include "gui/gui_factory.h"
 
@@ -64,7 +66,7 @@ namespace fastoredis
         VERIFY(connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineNumbersMarginWidth())));
     }
 
-    void FastoEditor::setModel(FastoTreeModel *model)
+    void FastoEditor::setModel(QAbstractItemModel *model)
     {
         if (model == model_){
             return;
@@ -110,6 +112,17 @@ namespace fastoredis
         }
 
         reset();
+    }
+
+    void FastoEditor::setRootIndex(const QModelIndex &index)
+    {
+        if (index.isValid() && index.model() != model_) {
+            qWarning("QAbstractItemView::setRootIndex failed : index must be from the currently set model");
+            return;
+        }
+
+        root_index_ = index;
+        layoutChanged();
     }
 
     void FastoEditor::modelDestroyed()
@@ -160,18 +173,13 @@ namespace fastoredis
     void FastoEditor::reset()
     {
         clear();
-        TreeItem* item = model_->root();
-        if(item){
-            FastoTreeItem* fitem = dynamic_cast<FastoTreeItem*>(item);
-            if(fitem){
-
-            }
-        }
     }
 
     void FastoEditor::layoutChanged()
     {
-
+        FastoTreeItem* root = common::utils_qt::item<FastoTreeItem*>(root_index_);
+        QString json = toJson(root);
+        setText(json);
     }
 
     void FastoEditor::keyPressEvent(QKeyEvent *keyEvent)

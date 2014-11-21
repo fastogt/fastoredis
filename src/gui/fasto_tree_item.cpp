@@ -22,4 +22,22 @@ namespace fastoredis
     {
         return type_;
     }
+
+    QString toJson(FastoTreeItem* item)
+    {
+        if(!item){
+            return "{  }";
+        }
+
+        if(!item->childrenCount()){
+            return QString("{ %1 %2 }").arg(item->key()).arg(item->value());
+        }
+
+        QString value;
+        for(int i = 0; i < item->childrenCount(); ++i){
+            value += toJson(dynamic_cast<FastoTreeItem*>(item->child(i)));
+        }
+
+        return QString("{ %1 %2 }").arg(item->key()).arg(value);
+    }
 }
