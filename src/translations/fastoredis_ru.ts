@@ -78,6 +78,16 @@
         <source>Show</source>
         <translation>Показать</translation>
     </message>
+    <message>
+        <location filename="../gui/main_window.cpp" line="282"/>
+        <source>Availible new version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/main_window.cpp" line="287"/>
+        <source>&lt;h3&gt;You&apos;re&apos; up-to-date!&lt;/h3&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>fastoredis::CommandsWidget</name>
@@ -307,67 +317,67 @@
 <context>
     <name>fastoredis::MainWindow</name>
     <message>
-        <location filename="../gui/main_window.cpp" line="154"/>
+        <location filename="../gui/main_window.cpp" line="212"/>
         <source>&amp;Open...</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="155"/>
+        <location filename="../gui/main_window.cpp" line="213"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="156"/>
+        <location filename="../gui/main_window.cpp" line="214"/>
         <source>Save &amp;As...</source>
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="157"/>
+        <location filename="../gui/main_window.cpp" line="215"/>
         <source>&amp;Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="158"/>
+        <location filename="../gui/main_window.cpp" line="216"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="159"/>
+        <location filename="../gui/main_window.cpp" line="217"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="160"/>
-        <source>Check updates</source>
+        <location filename="../gui/main_window.cpp" line="218"/>
+        <source>Check for updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="161"/>
+        <location filename="../gui/main_window.cpp" line="219"/>
         <source>View</source>
         <translation>Представление</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="162"/>
+        <location filename="../gui/main_window.cpp" line="220"/>
         <source>Options</source>
         <translation>Опции</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="163"/>
+        <location filename="../gui/main_window.cpp" line="221"/>
         <source>&amp;About %1...</source>
         <translation>Об %</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="164"/>
+        <location filename="../gui/main_window.cpp" line="222"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="165"/>
+        <location filename="../gui/main_window.cpp" line="223"/>
         <source>Explorer tree</source>
         <translation>Проводник</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="166"/>
+        <location filename="../gui/main_window.cpp" line="224"/>
         <source>Logs</source>
         <translation>Логи</translation>
     </message>
@@ -375,50 +385,55 @@
 <context>
     <name>fastoredis::OutputWidget</name>
     <message>
-        <location filename="../gui/widgets/output_widget.cpp" line="163"/>
-        <source>Execute milliseconds time: </source>
-        <translation>Время выполнения в миллесекундах:</translation>
+        <location filename="../gui/widgets/output_widget.cpp" line="172"/>
+        <source>Execute milliseconds time: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>fastoredis::PreferencesDialog</name>
     <message>
-        <location filename="../gui/dialogs/preferences_dialog.cpp" line="132"/>
+        <location filename="../gui/dialogs/preferences_dialog.cpp" line="137"/>
         <source>Preferences </source>
         <translation>настройки</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/preferences_dialog.cpp" line="134"/>
-        <source>User interface</source>
-        <translation>Пользовательский интерфейс</translation>
+        <location filename="../gui/dialogs/preferences_dialog.cpp" line="139"/>
+        <source>General settings</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/preferences_dialog.cpp" line="135"/>
+        <location filename="../gui/dialogs/preferences_dialog.cpp" line="140"/>
+        <source>Automatically check for updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/preferences_dialog.cpp" line="141"/>
         <source>Language:</source>
         <translation>Языки</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/preferences_dialog.cpp" line="136"/>
+        <location filename="../gui/dialogs/preferences_dialog.cpp" line="142"/>
         <source>Supported UI styles:</source>
         <translation>Поддерживаемые стили</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/preferences_dialog.cpp" line="138"/>
+        <location filename="../gui/dialogs/preferences_dialog.cpp" line="144"/>
         <source>Servers global settings</source>
         <translation>Глобальные настройки сервера</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/preferences_dialog.cpp" line="139"/>
+        <location filename="../gui/dialogs/preferences_dialog.cpp" line="145"/>
         <source>Default views:</source>
         <translation>Представление по умолчанию</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/preferences_dialog.cpp" line="140"/>
+        <location filename="../gui/dialogs/preferences_dialog.cpp" line="146"/>
         <source>Sync tabs</source>
         <translation>Синхронизация вкладок</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/preferences_dialog.cpp" line="141"/>
+        <location filename="../gui/dialogs/preferences_dialog.cpp" line="147"/>
         <source>Logging directory:</source>
         <translation>Директория логирования</translation>
     </message>

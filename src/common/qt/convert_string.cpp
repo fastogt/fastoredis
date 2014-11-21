@@ -29,4 +29,26 @@ namespace common
     {
         return QString::fromUtf8((const char*)value.c_str(), value.size());
     }
+
+    QString escapedText(const QString &str)
+    {
+        if(!str.isEmpty() && str[str.length()-1] != '\n'){
+            return str + "\n";
+        }
+        return str;
+    }
+
+    QString doubleEscapedText(QString str)
+    {
+        if(!str.isEmpty()){
+            if(str[str.length()-1] != '\n'){
+                str += "\n";
+            }
+
+            if(str[0] != '\n'){
+                str = "\n" + str;
+            }
+        }
+        return str;
+    }
 }

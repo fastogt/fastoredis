@@ -3,6 +3,7 @@
 #include <QKeyEvent>
 #include <QAbstractItemModel>
 
+#include "common/qt/convert_string.h"
 #include "common/qt/utils_qt.h"
 
 #include "gui/fasto_tree_item.h"
@@ -178,8 +179,12 @@ namespace fastoredis
     void FastoEditor::layoutChanged()
     {
         FastoTreeItem* root = common::utils_qt::item<FastoTreeItem*>(root_index_);
-        QString json = toJson(root);
-        setText(json);
+        QString result;
+        for(int i = 0; i < root->childrenCount(); ++i){
+            QString json = toJson(dynamic_cast<FastoTreeItem*>(root->child(i)));
+            result += common::doubleEscapedText(json);
+        }
+        setText(result);
     }
 
     void FastoEditor::keyPressEvent(QKeyEvent *keyEvent)

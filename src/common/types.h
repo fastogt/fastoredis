@@ -25,4 +25,5 @@ namespace common
     typedef std::basic_ifstream<char16, string16_char_traits> string16_ifstream;
 
     std::string escapedText(const std::string &str);
+    std::string doubleEscapedText(std::string str);
 }

@@ -11,4 +11,18 @@ namespace common
         }
         return str;
     }
+
+    std::string doubleEscapedText(std::string str)
+    {
+        if(!str.empty()){
+            if(str[str.length()-1] != '\n'){
+                str += "\n";
+            }
+
+            if(str[0] != '\n'){
+                str = "\n" + str;
+            }
+        }
+        return str;
+    }
 }
