@@ -1,6 +1,6 @@
 // This class defines the "official" low-level API.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -1391,6 +1391,9 @@ public:
 
         //!
         SCI_COPYTEXT = 2420,
+
+        //!
+        SCI_SETHOTSPOTSINGLELINE = 2421,
 
         //!
         SCI_SETSELECTIONMODE = 2422,
@@ -3163,6 +3166,9 @@ public:
     void *SendScintillaPtrResult(unsigned int msg) const;
 
 
+    //! \internal
+    static int commandKey(int qt_key, int &modifiers);
+
 signals:
     //! This signal is emitted when text is selected or de-selected.
     //! \a yes is true if text has been selected and false if text has been
@@ -3429,6 +3435,9 @@ private:
     int preeditPos;
     int preeditNrBytes;
     QString preeditString;
+#if QT_VERSION >= 0x050000
+    bool clickCausedFocus;
+#endif
 
     void acceptAction(QDropEvent *e);
 

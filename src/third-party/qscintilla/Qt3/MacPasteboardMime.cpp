@@ -1,8 +1,8 @@
-// This module implements partt of the support for rectangular selections on
+// This module implements part of the support for rectangular selections on
 // OS/X.  It is a separate file to avoid clashes between OS/X and Scintilla
 // data types.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -25,10 +25,9 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
-#include <QtGlobal>
+#include <qglobal.h>
 
-#if defined(Q_OS_MAC)
-#if (QT_VERSION >= 0x040200 && QT_VERSION < 0x050000) || QT_VERSION >= 0x050200
+#if (QT_VERSION >= 0x040200 && QT_VERSION < 0x050000 && defined(Q_OS_MAC)) || (QT_VERSION >= 0x050200 && defined(Q_OS_OSX))
 
 #include <QByteArray>
 #include <QLatin1String>
@@ -114,5 +113,4 @@ void initialiseRectangularPasteboardMime()
 }
 
 
-#endif
 #endif

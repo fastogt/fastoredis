@@ -1,6 +1,6 @@
 // This module implements the "official" low-level API.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -42,6 +42,7 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPaintEvent>
+#include <QStyle>
 
 #include "ScintillaQt.h"
 
@@ -83,18 +84,17 @@ static const QLatin1String mimeTextPlain("text/plain");
 static const QLatin1String mimeRectangularWin("MSDEVColumnSelect");
 static const QLatin1String mimeRectangular("text/x-qscintilla-rectangular");
 
-#if defined(Q_OS_MAC)
-#if (QT_VERSION >= 0x040200 && QT_VERSION < 0x050000) || QT_VERSION >= 0x050200
-
+#if (QT_VERSION >= 0x040200 && QT_VERSION < 0x050000 && defined(Q_OS_MAC)) || (QT_VERSION >= 0x050200 && defined(Q_OS_OSX))
 extern void initialiseRectangularPasteboardMime();
-
-#endif
 #endif
 
 
 // The ctor.
 QsciScintillaBase::QsciScintillaBase(QWidget *parent)
     : QAbstractScrollArea(parent), preeditPos(-1), preeditNrBytes(0)
+#if QT_VERSION >= 0x050000
+        , clickCausedFocus(false)
+#endif
 {
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)),
             SLOT(handleVSb(int)));
@@ -106,6 +106,12 @@ QsciScintillaBase::QsciScintillaBase(QWidget *parent)
     setFocusPolicy(Qt::WheelFocus);
     setAttribute(Qt::WA_KeyCompression);
     setAttribute(Qt::WA_InputMethodEnabled);
+#if QT_VERSION >= 0x050100
+    setInputMethodHints(
+            Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhMultiLine);
+#elif QT_VERSION >= 0x040600
+    setInputMethodHints(Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText);
+#endif
 
     viewport()->setBackgroundRole(QPalette::Base);
     viewport()->setMouseTracking(true);
@@ -113,10 +119,8 @@ QsciScintillaBase::QsciScintillaBase(QWidget *parent)
 
     triple_click.setSingleShot(true);
 
-#if defined(Q_OS_MAC)
-#if (QT_VERSION >= 0x040200 && QT_VERSION < 0x050000) || QT_VERSION >= 0x050200
+#if (QT_VERSION >= 0x040200 && QT_VERSION < 0x050000 && defined(Q_OS_MAC)) || (QT_VERSION >= 0x050200 && defined(Q_OS_OSX))
     initialiseRectangularPasteboardMime();
-#endif
 #endif
 
     sci = new QsciScintillaQt(this);
@@ -318,16 +322,35 @@ void QsciScintillaBase::contextMenuEvent(QContextMenuEvent *e)
 
 
 // Re-implemented to tell the widget it has the focus.
-void QsciScintillaBase::focusInEvent(QFocusEvent *)
+void QsciScintillaBase::focusInEvent(QFocusEvent *e)
 {
     sci->SetFocusState(true);
+
+#if QT_VERSION >= 0x050000
+    clickCausedFocus = (e->reason() == Qt::MouseFocusReason);
+#endif
+
+    QAbstractScrollArea::focusInEvent(e);
 }
 
 
 // Re-implemented to tell the widget it has lost the focus.
-void QsciScintillaBase::focusOutEvent(QFocusEvent *)
+void QsciScintillaBase::focusOutEvent(QFocusEvent *e)
 {
-    sci->SetFocusState(false);
+    // Only tell Scintilla we have lost focus if the new active window isn't
+    // our auto-completion list.  This is probably only an issue on Linux and
+    // there are still problems because subsequent focus out events don't
+    // always seem to get generated (at least with Qt5).
+
+    if (e->reason() == Qt::ActiveWindowFocusReason)
+    {
+        QWidget *aw = QApplication::activeWindow();
+
+        if (!aw || aw->parent() != this || !aw->inherits("QsciSciListBox"))
+            sci->SetFocusState(false);
+    }
+
+    QAbstractScrollArea::focusOutEvent(e);
 }
 
 
@@ -352,7 +375,7 @@ void QsciScintillaBase::handleSelection()
 // Handle key presses.
 void QsciScintillaBase::keyPressEvent(QKeyEvent *e)
 {
-    unsigned key, modifiers = 0;
+    int modifiers = 0;
 
     if (e->modifiers() & Qt::ShiftModifier)
         modifiers |= SCMOD_SHIFT;
@@ -366,7 +389,42 @@ void QsciScintillaBase::keyPressEvent(QKeyEvent *e)
     if (e->modifiers() & Qt::MetaModifier)
         modifiers |= SCMOD_META;
 
-    switch (e->key())
+    int key = commandKey(e->key(), modifiers);
+
+    if (key)
+    {
+        bool consumed = false;
+
+        sci->KeyDownWithModifiers(key, modifiers, &consumed);
+
+        if (consumed)
+        {
+            e->accept();
+            return;
+        }
+    }
+
+    QString text = e->text();
+
+    if (!text.isEmpty() && text[0].isPrint())
+    {
+        ScintillaBytes bytes = textAsBytes(text);
+        sci->AddCharUTF(bytes.data(), bytes.length());
+        e->accept();
+    }
+    else
+    {
+        QAbstractScrollArea::keyPressEvent(e);
+    }
+}
+
+
+// Map a Qt key to a valid Scintilla command key, or 0 if none.
+int QsciScintillaBase::commandKey(int qt_key, int &modifiers)
+{
+    int key;
+
+    switch (qt_key)
     {
     case Qt::Key_Down:
         key = SCK_DOWN;
@@ -444,34 +502,11 @@ void QsciScintillaBase::keyPressEvent(QKeyEvent *e)
         break;
 
     default:
-        key = e->key();
+        if ((key = qt_key) > 0x7f)
+            key = 0;
     }
 
-    if (key)
-    {
-        bool consumed = false;
-
-        sci->KeyDownWithModifiers(key, modifiers, &consumed);
-
-        if (consumed)
-        {
-            e->accept();
-            return;
-        }
-    }
-
-    QString text = e->text();
-
-    if (!text.isEmpty() && text[0].isPrint())
-    {
-        ScintillaBytes bytes = textAsBytes(text);
-        sci->AddCharUTF(bytes.data(), bytes.length());
-        e->accept();
-    }
-    else
-    {
-        QAbstractScrollArea::keyPressEvent(e);
-    }
+    return key;
 }
 
 
@@ -586,12 +621,29 @@ void QsciScintillaBase::mousePressEvent(QMouseEvent *e)
 // Handle a mouse button releases.
 void QsciScintillaBase::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (sci->HaveMouseCapture() && e->button() == Qt::LeftButton)
+    if (e->button() != Qt::LeftButton)
+        return;
+
+    QSCI_SCI_NAMESPACE(Point) pt(e->x(), e->y());
+
+    if (sci->HaveMouseCapture())
     {
         bool ctrl = e->modifiers() & Qt::ControlModifier;
 
-        sci->ButtonUp(QSCI_SCI_NAMESPACE(Point)(e->x(), e->y()), 0, ctrl);
+        sci->ButtonUp(pt, 0, ctrl);
     }
+
+#if QT_VERSION >= 0x050000
+    if (!sci->pdoc->IsReadOnly() && !sci->PointInSelMargin(pt) && qApp->autoSipEnabled())
+    {
+        QStyle::RequestSoftwareInputPanel rsip = QStyle::RequestSoftwareInputPanel(style()->styleHint(QStyle::SH_RequestSoftwareInputPanel));
+
+        if (!clickCausedFocus || rsip == QStyle::RSIP_OnMouseClick)
+            qApp->inputMethod()->show();
+    }
+
+    clickCausedFocus = false;
+#endif
 }
 
 

@@ -1,7 +1,7 @@
 // This module defines the "official" high-level API of the Qt port of
 // Scintilla.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -1087,6 +1087,16 @@ public:
     //! \sa setFoldMarginColors()
     void resetFoldMarginColors();
 
+    //! Resets the background colour of an active hotspot area to the default.
+    //!
+    //! \sa setHotspotBackgroundColor(), resetHotspotForegroundColor()
+    void resetHotspotBackgroundColor();
+
+    //! Resets the foreground colour of an active hotspot area to the default.
+    //!
+    //! \sa setHotspotForegroundColor(), resetHotspotBackgroundColor()
+    void resetHotspotForegroundColor();
+
     //! The fold margin may be drawn as a one pixel sized checkerboard pattern
     //! of two colours, \a fore and \a back.
     //!
@@ -1313,6 +1323,24 @@ public:
     //!
     //! \sa setSelectionToEol()
     bool selectionToEol() const;
+
+    //! Sets the background colour of an active hotspot area to \a col.
+    //!
+    //! \sa resetHotspotBackgroundColor(), setHotspotForegroundColor()
+    void setHotspotBackgroundColor(const QColor &col);
+
+    //! Sets the foreground colour of an active hotspot area to \a col.
+    //!
+    //! \sa resetHotspotForegroundColor(), setHotspotBackgroundColor()
+    void setHotspotForegroundColor(const QColor &col);
+
+    //! Enables or disables, according to \a enable, the underlining of an
+    //! active hotspot area.  The default is false.
+    void setHotspotUnderline(bool enable);
+
+    //! Enables or disables, according to \a enable, the wrapping of a hotspot
+    //! area to following lines.  The default is true.
+    void setHotspotWrap(bool enable);
 
     //! Sets whether or not the selection is drawn up to the right hand border.
     //! \a filled is set if the selection is drawn to the border.
@@ -1949,6 +1977,9 @@ protected:
     virtual bool event(QEvent *e);
 
     //! \reimp
+    virtual void changeEvent(QEvent *e);
+
+    //! \reimp
     virtual void contextMenuEvent(QContextMenuEvent *e);
 
 private slots:
@@ -2008,6 +2039,7 @@ private:
     void setFoldMarker(int marknr, int mark = SC_MARK_EMPTY);
     void setLexerStyle(int style);
     void setStylesFont(const QFont &f, int style);
+    void setEnabledColors(int style, QColor &fore, QColor &back);
 
     void braceMatch();
     bool findMatchingBrace(long &brace, long &other, BraceMatch mode);

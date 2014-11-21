@@ -1,6 +1,6 @@
 # The project file for the QScintilla library.
 #
-# Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+# Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 # 
 # This file is part of QScintilla.
 # 
@@ -25,21 +25,29 @@
 
 # This must be kept in sync with Python/configure.py, Python/configure-old.py,
 # example-Qt4Qt5/application.pro and designer-Qt4Qt5/designer.pro.
-!win32:VERSION = 11.0.0
+!win32:VERSION = 11.3.0
 
 TEMPLATE = lib
 TARGET = qscintilla2
-CONFIG += qt warn_off release dll thread
-INCLUDEPATH = . ../include ../lexlib ../src
-DEFINES = QSCINTILLA_MAKE_DLL SCINTILLA_QT SCI_LEXER
+CONFIG += qt warn_off release thread exceptions
+INCLUDEPATH += . ../include ../lexlib ../src
+
+DEFINES += QSCINTILLA_MAKE_DLL SCINTILLA_QT SCI_LEXER
+greaterThan(QT_MAJOR_VERSION, 3) {
+    CONFIG(staticlib) {
+        DEFINES -= QSCINTILLA_MAKE_DLL
+    }
+}
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-	QT += widgets
-	QT += printsupport
+	QT += widgets printsupport
 
     greaterThan(QT_MINOR_VERSION, 1) {
 	    macx:QT += macextras
     }
+
+    # Work around QTBUG-39300.
+    CONFIG -= android_install
 }
 
 # Comment this in if you want the internal Scintilla classes to be placed in a
@@ -73,6 +81,12 @@ isEmpty(qsci.path) {
 
 INSTALLS += header trans qsci target
 
+greaterThan(QT_MAJOR_VERSION, 3) {
+    features.path = $$[QT_INSTALL_DATA]/mkspecs/features
+    features.files = $$PWD/features/qscintilla2.prf
+    INSTALLS += features
+}
+
 HEADERS = \
 	./Qsci/qsciglobal.h \
 	./Qsci/qsciscintilla.h \
@@ -83,9 +97,11 @@ HEADERS = \
 	./Qsci/qscicommandset.h \
 	./Qsci/qscidocument.h \
 	./Qsci/qscilexer.h \
+	./Qsci/qscilexeravs.h \
 	./Qsci/qscilexerbash.h \
 	./Qsci/qscilexerbatch.h \
 	./Qsci/qscilexercmake.h \
+	./Qsci/qscilexercoffeescript.h \
 	./Qsci/qscilexercpp.h \
 	./Qsci/qscilexercsharp.h \
 	./Qsci/qscilexercss.h \
@@ -105,6 +121,7 @@ HEADERS = \
 	./Qsci/qscilexerpascal.h \
 	./Qsci/qscilexerperl.h \
 	./Qsci/qscilexerpostscript.h \
+	./Qsci/qscilexerpo.h \
 	./Qsci/qscilexerpov.h \
 	./Qsci/qscilexerproperties.h \
 	./Qsci/qscilexerpython.h \
@@ -182,9 +199,11 @@ SOURCES = \
 	qscicommandset.cpp \
 	qscidocument.cpp \
 	qscilexer.cpp \
+	qscilexeravs.cpp \
 	qscilexerbash.cpp \
 	qscilexerbatch.cpp \
 	qscilexercmake.cpp \
+	qscilexercoffeescript.cpp \
 	qscilexercpp.cpp \
 	qscilexercsharp.cpp \
 	qscilexercss.cpp \
@@ -204,6 +223,7 @@ SOURCES = \
 	qscilexerpascal.cpp \
 	qscilexerperl.cpp \
 	qscilexerpostscript.cpp \
+	qscilexerpo.cpp \
 	qscilexerpov.cpp \
 	qscilexerproperties.cpp \
 	qscilexerpython.cpp \
@@ -359,5 +379,4 @@ TRANSLATIONS = \
 	qscintilla_de.ts \
 	qscintilla_es.ts \
 	qscintilla_fr.ts \
-	qscintilla_pt_br.ts \
-	qscintilla_ru.ts
+	qscintilla_pt_br.ts

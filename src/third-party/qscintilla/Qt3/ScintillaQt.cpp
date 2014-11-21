@@ -1,6 +1,6 @@
 // The implementation of the Qt specific subclass of ScintillaBase.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -235,14 +235,12 @@ void QsciScintillaQt::SetHorizontalScrollPos()
 bool QsciScintillaQt::ModifyScrollBars(int nMax,int nPage)
 {
     qsb->verticalScrollBar()->setMinValue(0);
-    qsb->horizontalScrollBar()->setMinValue(0);
-
     qsb->verticalScrollBar()->setMaxValue(nMax - nPage + 1);
-    qsb->horizontalScrollBar()->setMaxValue(scrollWidth);
-
+    qsb->verticalScrollBar()->setPageStep(nPage);
     qsb->verticalScrollBar()->setLineStep(1);
 
-    qsb->verticalScrollBar()->setPageStep(nPage);
+    qsb->horizontalScrollBar()->setMinValue(0);
+    qsb->horizontalScrollBar()->setMaxValue(scrollWidth);
     qsb->horizontalScrollBar()->setPageStep(scrollWidth / 10);
 
     return true;
@@ -422,13 +420,15 @@ void QsciScintillaQt::NotifyParent(QSCI_SCI_NAMESPACE(SCNotification) scn)
 QString QsciScintillaQt::textRange(
         const QSCI_SCI_NAMESPACE(SelectionText) *text) const
 {
-    if (!text->s)
+    const char *text_data = text->Data();
+
+    if (!text_data)
         return QString();
 
     if (IsUnicodeMode())
-        return QString::fromUtf8(text->Data());
+        return QString::fromUtf8(text_data);
 
-    return QString::fromLatin1(text->Data());
+    return QString::fromLatin1(text_data);
 }
 
 

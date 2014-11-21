@@ -1,3 +1,33 @@
+v2.8.4 11th September 2014
+  - Added setHotspotForegroundColor(), resetHotspotForegroundColor(),
+    setHotspotBackgroundColor(), resetHotspotBackgroundColor(),
+    setHotspotUnderline() and setHotspotWrap() to QsciScintilla.
+  - Added SCI_SETHOTSPOTSINGLELINE to QsciScintillaBase.
+  - Bug fixes.
+
+v2.8.3 3rd July 2014
+  - Added the QsciLexerCoffeeScript class.
+  - Font sizes are now handled as floating point values rather than integers.
+  - Bug fixes.
+
+v2.8.2 26th May 2014
+  - Added the QsciLexerAVS class.
+  - Added the QsciLexerPO class.
+  - Added the --sysroot, --no-sip-files and --no-qsci-api options to the Python
+    bindings' configure.py.
+  - Cross-compilation (specifically to iOS and Android) is now supported.
+  - configure.py has been refactored and relicensed so that it can be used as a
+    template for wrapping other bindings.
+  - Bug fixes.
+
+v2.8.1 14th March 2014
+  - Added support for iOS and Android.
+  - Added support for retina displays.
+  - A qscintilla2.prf file is installed so that application .pro files only
+    need to add CONFIG += qscintilla2.
+  - Updated the keywords recognised by the Octave lexer.
+  - Bug fixes.
+
 v2.8 9th November 2013
   - Based on Scintilla v3.3.6.
   - Added the SCN_FOCUSIN() and SCN_FOCUSOUT() signals to QsciScintillaBase.

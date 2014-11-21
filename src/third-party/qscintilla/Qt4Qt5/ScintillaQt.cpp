@@ -1,6 +1,6 @@
 // The implementation of the Qt specific subclass of ScintillaBase.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -243,15 +243,20 @@ void QsciScintillaQt::SetHorizontalScrollPos()
 bool QsciScintillaQt::ModifyScrollBars(int nMax,int nPage)
 {
     qsb->verticalScrollBar()->setMinimum(0);
-    qsb->horizontalScrollBar()->setMinimum(0);
-
     qsb->verticalScrollBar()->setMaximum(nMax - nPage + 1);
-    qsb->horizontalScrollBar()->setMaximum(scrollWidth);
-
+    qsb->verticalScrollBar()->setPageStep(nPage);
     qsb->verticalScrollBar()->setSingleStep(1);
 
-    qsb->verticalScrollBar()->setPageStep(nPage);
-    qsb->horizontalScrollBar()->setPageStep(scrollWidth / 10);
+    // QAbstractScrollArea ignores Qt::ScrollBarAsNeeded and shows the
+    // horizontal scrollbar if a non-zero maximum is set.  That isn't the
+    // behavior we want, so set the maximum to zero unless scrollWidth exceeds
+    // the viewport.
+    const int widthBeyondViewport = qMax(0,
+            scrollWidth - qsb->viewport()->width());
+
+    qsb->horizontalScrollBar()->setMinimum(0);
+    qsb->horizontalScrollBar()->setMaximum(qMax(0, widthBeyondViewport - 1));
+    qsb->horizontalScrollBar()->setPageStep(widthBeyondViewport / 10);
 
     return true;
 }
@@ -263,8 +268,8 @@ void QsciScintillaQt::ReconfigureScrollBars()
     // Hide or show the scrollbars if needed.
     bool hsb = (horizontalScrollBarVisible && !Wrapping());
 
-    qsb->setHorizontalScrollBarPolicy(hsb ? Qt::ScrollBarAlwaysOn : Qt::ScrollBarAlwaysOff);
-    qsb->setVerticalScrollBarPolicy(verticalScrollBarVisible ? Qt::ScrollBarAlwaysOn : Qt::ScrollBarAlwaysOff);
+    qsb->setHorizontalScrollBarPolicy(hsb ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    qsb->setVerticalScrollBarPolicy(verticalScrollBarVisible ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 }
 
 

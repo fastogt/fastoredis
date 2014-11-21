@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Riverbank Computing Limited
+// Copyright (c) 2014 Riverbank Computing Limited
 // Copyright (c) 2011 Archaeopteryx Software, Inc.
 // Copyright (c) 1990-2011, Scientific Toolworks, Inc.
 //
@@ -28,6 +28,11 @@
 
 void QsciScintillaBase::inputMethodEvent(QInputMethodEvent *event)
 {
+    // Do nothing if it appears to be a non-event.  This can sometimes happen
+    // (but why?) on losing focus.
+    if (event->commitString().isEmpty() && event->preeditString().isEmpty() && event->replacementLength() == 0)
+        return;
+
     ScintillaBytes bytes;
 
     // Clear the current selection.
@@ -114,6 +119,11 @@ QVariant QsciScintillaBase::inputMethodQuery(Qt::InputMethodQuery query) const
     int line = SendScintilla(SCI_LINEFROMPOSITION, pos);
 
     switch (query) {
+#if QT_VERSION >= 0x050000
+        case Qt::ImHints:
+            return QWidget::inputMethodQuery(query);
+#endif
+
         case Qt::ImMicroFocus:
         {
             int startPos = (preeditPos >= 0) ? preeditPos : pos;

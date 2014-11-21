@@ -1,6 +1,6 @@
 // This class defines the "official" low-level API.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -1392,6 +1392,9 @@ public:
 
         //!
         SCI_COPYTEXT = 2420,
+
+        //!
+        SCI_SETHOTSPOTSINGLELINE = 2421,
 
         //!
         SCI_SETSELECTIONMODE = 2422,
@@ -3176,6 +3179,9 @@ public:
 
     //! Re-implemented to filter certain events.
     virtual bool eventFilter(QObject *o, QEvent *e);
+
+    //! \internal
+    static int commandKey(int qt_key, int &modifiers);
 
 signals:
     //! This signal is emitted when text is selected or de-selected.

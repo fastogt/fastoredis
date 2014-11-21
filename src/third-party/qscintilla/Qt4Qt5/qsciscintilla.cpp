@@ -2,7 +2,7 @@
 // Scintilla.  It is modelled on QTextEdit - a method of the same name should
 // behave in the same way.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -829,7 +829,15 @@ void QsciScintilla::autoIndentation(char ch, long pos)
             autoIndentLine(pos, curr_line, blockIndent(curr_line - 1) - ind_width);
     }
     else if (ch == '\r' || ch == '\n')
-        autoIndentLine(pos, curr_line, blockIndent(curr_line - 1));
+    {
+        // Don't auto-indent the line (ie. preserve its existing indentation)
+        // if we have inserted a new line above by pressing return at the start
+        // of this line - in other words, if the previous line is empty.
+        long prev_line_length = SendScintilla(SCI_GETLINEENDPOSITION, curr_line - 1) - SendScintilla(SCI_POSITIONFROMLINE, curr_line - 1);
+
+        if (prev_line_length != 0)
+            autoIndentLine(pos, curr_line, blockIndent(curr_line - 1));
+    }
 }
 
 
@@ -1047,7 +1055,6 @@ bool QsciScintilla::isUtf8() const
 // Set the code page.
 void QsciScintilla::setUtf8(bool cp)
 {
-    setAttribute(Qt::WA_InputMethodEnabled, cp);
     SendScintilla(SCI_SETCODEPAGE, (cp ? SC_CP_UTF8 : 0));
 }
 
@@ -2037,6 +2044,48 @@ void QsciScintilla::setCaretLineVisible(bool enable)
 }
 
 
+// Set the background colour of a hotspot area.
+void QsciScintilla::setHotspotBackgroundColor(const QColor &col)
+{
+    SendScintilla(SCI_SETSELBACK, 1, col);
+}
+
+
+// Set the foreground colour of a hotspot area.
+void QsciScintilla::setHotspotForegroundColor(const QColor &col)
+{
+    SendScintilla(SCI_SETHOTSPOTACTIVEFORE, 1, col);
+}
+
+
+// Reset the background colour of a hotspot area to the default.
+void QsciScintilla::resetHotspotBackgroundColor()
+{
+    SendScintilla(SCI_SETSELBACK, 0UL);
+}
+
+
+// Reset the foreground colour of a hotspot area to the default.
+void QsciScintilla::resetHotspotForegroundColor()
+{
+    SendScintilla(SCI_SETHOTSPOTACTIVEFORE, 0UL);
+}
+
+
+// Set the underline of a hotspot area.
+void QsciScintilla::setHotspotUnderline(bool enable)
+{
+    SendScintilla(SCI_SETHOTSPOTACTIVEUNDERLINE, enable);
+}
+
+
+// Set the wrapping of a hotspot area.
+void QsciScintilla::setHotspotWrap(bool enable)
+{
+    SendScintilla(SCI_SETHOTSPOTSINGLELINE, !enable);
+}
+
+
 // Query the read-only state.
 bool QsciScintilla::isReadOnly() const
 {
@@ -2047,6 +2096,7 @@ bool QsciScintilla::isReadOnly() const
 // Set the read-only state.
 void QsciScintilla::setReadOnly(bool ro)
 {
+    setAttribute(Qt::WA_InputMethodEnabled, !ro);
     SendScintilla(SCI_SETREADONLY, ro);
 }
 
@@ -3281,7 +3331,8 @@ void QsciScintilla::handleStyleFontChange(const QFont &f, int style)
 void QsciScintilla::setStylesFont(const QFont &f, int style)
 {
     SendScintilla(SCI_STYLESETFONT, style, f.family().toLatin1().data());
-    SendScintilla(SCI_STYLESETSIZE, style, f.pointSize());
+    SendScintilla(SCI_STYLESETSIZEFRACTIONAL, style,
+            long(f.pointSizeF() * SC_FONT_SIZE_MULTIPLIER));
 
     // Pass the Qt weight via the back door.
     SendScintilla(SCI_STYLESETWEIGHT, style, -f.weight());
@@ -3841,6 +3892,9 @@ void QsciScintilla::showUserList(int id, const QStringList &list)
 void QsciScintilla::handleUserListSelection(const char *text, int id)
 {
     emit userListActivated(id, QString(text));
+
+    // Make sure the editor hasn't been deactivated as a side effect.
+    activateWindow();
 }
 
 
@@ -4149,6 +4203,65 @@ bool QsciScintilla::event(QEvent *e)
     }
 
     return QsciScintillaBase::event(e);
+}
+
+
+// Re-implemented to handle chenges to the enabled state.
+void QsciScintilla::changeEvent(QEvent *e)
+{
+    QsciScintillaBase::changeEvent(e);
+
+    if (e->type() != QEvent::EnabledChange)
+        return;
+
+    if (isEnabled())
+        SendScintilla(SCI_SETCARETSTYLE, CARETSTYLE_LINE);
+    else
+        SendScintilla(SCI_SETCARETSTYLE, CARETSTYLE_INVISIBLE);
+
+    QColor fore = palette().color(QPalette::Disabled, QPalette::Text);
+    QColor back = palette().color(QPalette::Disabled, QPalette::Base);
+
+    if (lex.isNull())
+    {
+        if (isEnabled())
+        {
+            fore = nl_text_colour;
+            back = nl_paper_colour;
+        }
+
+        SendScintilla(SCI_STYLESETFORE, 0, fore);
+
+        // Assume style 0 applies to everything so that we don't need to use
+        // SCI_STYLECLEARALL which clears everything.  We still have to set the
+        // default style as well for the background without any text.
+        SendScintilla(SCI_STYLESETBACK, 0, back);
+        SendScintilla(SCI_STYLESETBACK, STYLE_DEFAULT, back);
+    }
+    else
+    {
+        setEnabledColors(STYLE_DEFAULT, fore, back);
+
+        int nrStyles = 1 << SendScintilla(SCI_GETSTYLEBITS);
+
+        for (int s = 0; s < nrStyles; ++s)
+            if (!lex->description(s).isNull())
+                setEnabledColors(s, fore, back);
+    }
+}
+
+
+// Set the foreground and background colours for a style.
+void QsciScintilla::setEnabledColors(int style, QColor &fore, QColor &back)
+{
+    if (isEnabled())
+    {
+        fore = lex->color(style);
+        back = lex->paper(style);
+    }
+
+    handleStyleColorChange(fore, style);
+    handleStylePaperChange(back, style);
 }
 
 
