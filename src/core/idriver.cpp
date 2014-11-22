@@ -6,6 +6,8 @@
 #include "common/file_system.h"
 #include "common/time.h"
 
+namespace
+{
 #ifdef OS_WIN
 #include <winsock2.h>
 struct WinsockInit {
@@ -19,8 +21,6 @@ struct WinsockInit {
     } winsock_init;
 #endif
 
-namespace
-{
     const char magicNumber = 0x1E;
     std::string createStamp()
     {

@@ -6,6 +6,9 @@
 
 namespace fastoredis
 {
+    extern const QStringList redisTypesKeywords;
+    extern const QStringList redisCommandsKeywords;
+
     class RedisDriver
             : public IDriver
     {
@@ -20,9 +23,6 @@ namespace fastoredis
         std::string address() const;
         std::string version() const;
         static const char* versionApi();
-
-        static const QStringList& typesKeywords();
-        static const QStringList& commandsKeywords();
 
     private:
         virtual void customEvent(QEvent *event);

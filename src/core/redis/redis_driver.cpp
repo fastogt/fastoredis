@@ -57,7 +57,7 @@ namespace
         return version;
     }
 
-    typedef struct {
+    typedef struct{
         int type;
         int argc;
         sds *argv;
@@ -67,56 +67,63 @@ namespace
         struct commandHelp *org;
     } helpEntry;
 
-    helpEntry *helpEntries;
     const int helpEntriesLen = sizeof(commandHelp)/sizeof(struct commandHelp) + sizeof(commandGroups)/sizeof(char*);
-
-    QStringList g_types;
-    QStringList g_commands;
-
-    QStringList getList()
+    struct RedisInit
     {
-        int pos = 0;
+        helpEntry helpEntries[helpEntriesLen];
+        QStringList redisTypesKeywords;
+        QStringList redisCommandsKeywords;
 
-        helpEntry tmp;
-        helpEntries = (helpEntry*)malloc(sizeof(helpEntry)*helpEntriesLen);
-
-        QStringList list;
-        for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
-            char* command = commandGroups[i];
-            QString qcommand = common::convertFromString<QString>(std::string(command));
-            g_types.append(qcommand);
-            list.append(qcommand);
-            tmp.argc = 1;
-            tmp.argv = (sds*)malloc(sizeof(sds));
-            tmp.argv[0] = sdscatprintf(sdsempty(),"@%s",commandGroups[i]);
-            tmp.full = tmp.argv[0];
-            tmp.type = CLI_HELP_GROUP;
-            tmp.org = NULL;
-            helpEntries[pos++] = tmp;
+        static const RedisInit &instance()
+        {
+            static RedisInit r;
+            return r;
         }
 
-        for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
-            struct commandHelp command = commandHelp[i];
-            std::string commandN = command.name;
-            QString qCommandN = common::convertFromString<QString>(commandN);
-            g_commands.append(qCommandN);
-            list.append(qCommandN);
+      private:
+        RedisInit()
+        {
+            int pos = 0;
 
-            tmp.argv = sdssplitargs(commandHelp[i].name,&tmp.argc);
-            tmp.full = sdsnew(commandHelp[i].name);
-            tmp.type = CLI_HELP_COMMAND;
-            tmp.org = &commandHelp[i];
-            helpEntries[pos++] = tmp;
+            helpEntry tmp;
+
+            QStringList list;
+            for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
+                char* command = commandGroups[i];
+                QString qcommand = common::convertFromString<QString>(std::string(command));
+                redisTypesKeywords.append(qcommand);
+                list.append(qcommand);
+                tmp.argc = 1;
+                tmp.argv = (sds*)malloc(sizeof(sds));
+                tmp.argv[0] = sdscatprintf(sdsempty(), "@%s", commandGroups[i]);
+                tmp.full = tmp.argv[0];
+                tmp.type = CLI_HELP_GROUP;
+                tmp.org = NULL;
+                helpEntries[pos++] = tmp;
+            }
+
+            for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
+                struct commandHelp command = commandHelp[i];
+                std::string commandN = command.name;
+                QString qCommandN = common::convertFromString<QString>(commandN);
+                redisCommandsKeywords.append(qCommandN);
+                list.append(qCommandN);
+
+                tmp.argv = sdssplitargs(commandHelp[i].name, &tmp.argc);
+                tmp.full = sdsnew(commandHelp[i].name);
+                tmp.type = CLI_HELP_COMMAND;
+                tmp.org = &commandHelp[i];
+                helpEntries[pos++] = tmp;
+            }
         }
-        return list;
-    }
-
-    const QStringList g_allCommands = getList();
+    };
 }
-
 
 namespace fastoredis
 {
+    const QStringList redisTypesKeywords = RedisInit::instance().redisTypesKeywords;
+    const QStringList redisCommandsKeywords = RedisInit::instance().redisCommandsKeywords;
+
     struct RedisDriver::pimpl
     {
         pimpl(): interrupt_(false), context(NULL)
@@ -187,6 +194,18 @@ namespace fastoredis
                     context = redisConnectUnix(config.hostsocket.c_str());
                 }
 
+                if(!context){
+                    char buff[512] = {0};
+                    if (config.hostsocket.empty())
+                        sprintf(buff, "Could not connect to Redis at %s:%d: unknown error\n", config.hostip.c_str(), config.hostport);
+                    else
+                        sprintf(buff, "Could not connect to Redis at %s: unknown error\n", config.hostsocket.c_str());
+
+                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
+
+                    return REDIS_ERR;
+                }
+
                 if (context->err) {
                     char buff[512] = {0};
                     if (config.hostsocket.empty())
@@ -212,6 +231,7 @@ namespace fastoredis
                 if (cliSelect(er) != REDIS_OK)
                     return REDIS_ERR;
             }
+
             return REDIS_OK;
         }
 
@@ -346,7 +366,7 @@ namespace fastoredis
         {
             int i, j, len;
             int group = -1;
-            helpEntry *entry;
+            const helpEntry *entry;
             struct commandHelp *help;
 
             if (argc == 0) {
@@ -364,7 +384,7 @@ namespace fastoredis
 
             assert(argc > 0);
             for (i = 0; i < helpEntriesLen; i++) {
-                entry = &helpEntries[i];
+                entry = &RedisInit::instance().helpEntries[i];
                 if (entry->type != CLI_HELP_COMMAND) continue;
 
                 help = entry->org;
@@ -564,16 +584,6 @@ namespace fastoredis
 
     RedisDriver::~RedisDriver()
     {
-    }
-
-    const QStringList &RedisDriver::typesKeywords()
-    {
-        return g_types;
-    }
-
-    const QStringList &RedisDriver::commandsKeywords()
-    {
-        return g_commands;
     }
 
     std::string RedisDriver::address() const

@@ -4,8 +4,6 @@
 
 namespace
 {
-    static const QStringList& commands = fastoredis::RedisDriver::commandsKeywords();
-    static const QStringList& types = fastoredis::RedisDriver::typesKeywords();
     static const QString help("help");
 }
 
@@ -20,22 +18,22 @@ namespace fastoredis
     {        
         for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
             QString val = *it;
-            for(QStringList::const_iterator jt = commands.begin(); jt != commands.end(); ++jt){
+            for(QStringList::const_iterator jt = redisCommandsKeywords.begin(); jt != redisCommandsKeywords.end(); ++jt){
                 QString jval = *jt;
                 if(jval.startsWith(val, Qt::CaseInsensitive)){
-                    list.append(jval+"?1");
+                    list.append(jval + "?1");
                 }
             }
 
-            for(QStringList::const_iterator jt = types.begin(); jt != types.end(); ++jt){
+            for(QStringList::const_iterator jt = redisTypesKeywords.begin(); jt != redisTypesKeywords.end(); ++jt){
                 QString jval = *jt;
                 if(jval.startsWith(val, Qt::CaseInsensitive)){
-                    list.append(jval+"?2");
+                    list.append(jval + "?2");
                 }
             }
 
             if(help.startsWith(val, Qt::CaseInsensitive)){
-                list.append(help+"?3");
+                list.append(help + "?3");
             }
         }
     }
@@ -125,7 +123,7 @@ namespace fastoredis
 
     void RedisLexer::paintCommands(const QString &source, int start)
     {
-        for(QStringList::const_iterator it = commands.begin(); it != commands.end(); ++it){
+        for(QStringList::const_iterator it = redisCommandsKeywords.begin(); it != redisCommandsKeywords.end(); ++it){
             QString word = *it;
             int index = 0;
             int begin = 0;
@@ -141,7 +139,7 @@ namespace fastoredis
 
     void RedisLexer::paintTypes(const QString &source, int start)
     {
-        for(QStringList::const_iterator it = types.begin(); it != types.end(); ++it){
+        for(QStringList::const_iterator it = redisTypesKeywords.begin(); it != redisTypesKeywords.end(); ++it){
             QString word = *it;
             int index = 0;
             int begin = 0;
