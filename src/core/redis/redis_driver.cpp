@@ -71,8 +71,8 @@ namespace
     struct RedisInit
     {
         helpEntry helpEntries[helpEntriesLen];
-        QStringList redisTypesKeywords;
-        QStringList redisCommandsKeywords;
+        std::vector<QString> redisTypesKeywords;
+        std::vector<QString> redisCommandsKeywords;
 
         static const RedisInit &instance()
         {
@@ -85,14 +85,11 @@ namespace
         {
             int pos = 0;
 
-            helpEntry tmp;
-
-            QStringList list;
             for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
+                helpEntry tmp;
                 char* command = commandGroups[i];
                 QString qcommand = common::convertFromString<QString>(std::string(command));
-                redisTypesKeywords.append(qcommand);
-                list.append(qcommand);
+                redisTypesKeywords.push_back(qcommand);
                 tmp.argc = 1;
                 tmp.argv = (sds*)malloc(sizeof(sds));
                 tmp.argv[0] = sdscatprintf(sdsempty(), "@%s", commandGroups[i]);
@@ -103,11 +100,11 @@ namespace
             }
 
             for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
+                helpEntry tmp;
                 struct commandHelp command = commandHelp[i];
                 std::string commandN = command.name;
                 QString qCommandN = common::convertFromString<QString>(commandN);
-                redisCommandsKeywords.append(qCommandN);
-                list.append(qCommandN);
+                redisCommandsKeywords.push_back(qCommandN);
 
                 tmp.argv = sdssplitargs(commandHelp[i].name, &tmp.argc);
                 tmp.full = sdsnew(commandHelp[i].name);
@@ -121,8 +118,8 @@ namespace
 
 namespace fastoredis
 {
-    const QStringList redisTypesKeywords = RedisInit::instance().redisTypesKeywords;
-    const QStringList redisCommandsKeywords = RedisInit::instance().redisCommandsKeywords;
+    const std::vector<QString> redisTypesKeywords = RedisInit::instance().redisTypesKeywords;
+    const std::vector<QString> redisCommandsKeywords = RedisInit::instance().redisCommandsKeywords;
 
     struct RedisDriver::pimpl
     {

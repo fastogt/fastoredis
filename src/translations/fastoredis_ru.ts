@@ -79,12 +79,22 @@
         <translation>Показать</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="282"/>
-        <source>Availible new version: %1</source>
+        <location filename="../gui/main_window.cpp" line="79"/>
+        <source>Check version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/main_window.cpp" line="80"/>
+        <source>Connection error!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/main_window.cpp" line="287"/>
+        <source>Availible new version: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/main_window.cpp" line="292"/>
         <source>&lt;h3&gt;You&apos;re&apos; up-to-date!&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -312,67 +322,67 @@
 <context>
     <name>fastoredis::MainWindow</name>
     <message>
-        <location filename="../gui/main_window.cpp" line="212"/>
+        <location filename="../gui/main_window.cpp" line="215"/>
         <source>&amp;Open...</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="213"/>
+        <location filename="../gui/main_window.cpp" line="216"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="214"/>
+        <location filename="../gui/main_window.cpp" line="217"/>
         <source>Save &amp;As...</source>
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="215"/>
+        <location filename="../gui/main_window.cpp" line="218"/>
         <source>&amp;Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="216"/>
+        <location filename="../gui/main_window.cpp" line="219"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="217"/>
+        <location filename="../gui/main_window.cpp" line="220"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="218"/>
+        <location filename="../gui/main_window.cpp" line="221"/>
         <source>Check for updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="219"/>
+        <location filename="../gui/main_window.cpp" line="222"/>
         <source>View</source>
         <translation>Представление</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="220"/>
+        <location filename="../gui/main_window.cpp" line="223"/>
         <source>Options</source>
         <translation>Опции</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="221"/>
+        <location filename="../gui/main_window.cpp" line="224"/>
         <source>&amp;About %1...</source>
         <translation>Об %</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="222"/>
+        <location filename="../gui/main_window.cpp" line="225"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="223"/>
+        <location filename="../gui/main_window.cpp" line="226"/>
         <source>Explorer tree</source>
         <translation>Проводник</translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="224"/>
+        <location filename="../gui/main_window.cpp" line="227"/>
         <source>Logs</source>
         <translation>Логи</translation>
     </message>

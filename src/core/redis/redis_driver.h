@@ -6,8 +6,8 @@
 
 namespace fastoredis
 {
-    extern const QStringList redisTypesKeywords;
-    extern const QStringList redisCommandsKeywords;
+    extern const std::vector<QString> redisTypesKeywords;
+    extern const std::vector<QString> redisCommandsKeywords;
 
     class RedisDriver
             : public IDriver

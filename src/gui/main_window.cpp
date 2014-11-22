@@ -75,6 +75,9 @@ namespace
 
         return PROJECT_VERSION_PATCH < serPatch;
     }
+
+    const QString checkVersion = QObject::tr("Check version");
+    const QString connectionErrorText = QObject::tr("Connection error!");
 }
 
 namespace fastoredis
@@ -261,12 +264,14 @@ namespace fastoredis
         common::net::SocketTcp s(SITE_URL, SERV_PORT);
         bool res = s.connect();
         if(!res){
+            QMessageBox::information(this, checkVersion, connectionErrorText);
             checkUpdateAction_->setEnabled(true);
             return;
         }
 
         res = s.write(common::convertFromString<common::buffer_type>(GET_VERSION));
         if(!res){
+            QMessageBox::information(this, checkVersion, connectionErrorText);
             checkUpdateAction_->setEnabled(true);
             s.close();
             return;
@@ -278,12 +283,12 @@ namespace fastoredis
             std::string sversion = common::convertToString(version);
             bool isn = isNeededUpdate(sversion);
             if(isn){
-                QMessageBox::information(this, QString("version"),
+                QMessageBox::information(this, checkVersion,
                     QObject::tr("Availible new version: %1")
                         .arg(common::convertFromString<QString>(sversion)));
             }
             else{
-                QMessageBox::information(this, QString("version"),
+                QMessageBox::information(this, checkVersion,
                     QObject::tr("<h3>You're' up-to-date!</h3>"
                                 PROJECT_NAME" %1 is currently the newest version available.")
                         .arg(common::convertFromString<QString>(sversion)));

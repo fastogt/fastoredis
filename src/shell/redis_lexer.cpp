@@ -4,7 +4,7 @@
 
 namespace
 {
-    static const QString help("help");
+    const QString help("help");
 }
 
 namespace fastoredis
@@ -18,14 +18,14 @@ namespace fastoredis
     {        
         for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
             QString val = *it;
-            for(QStringList::const_iterator jt = redisCommandsKeywords.begin(); jt != redisCommandsKeywords.end(); ++jt){
+            for(std::vector<QString>::const_iterator jt = redisCommandsKeywords.begin(); jt != redisCommandsKeywords.end(); ++jt){
                 QString jval = *jt;
                 if(jval.startsWith(val, Qt::CaseInsensitive)){
                     list.append(jval + "?1");
                 }
             }
 
-            for(QStringList::const_iterator jt = redisTypesKeywords.begin(); jt != redisTypesKeywords.end(); ++jt){
+            for(std::vector<QString>::const_iterator jt = redisTypesKeywords.begin(); jt != redisTypesKeywords.end(); ++jt){
                 QString jval = *jt;
                 if(jval.startsWith(val, Qt::CaseInsensitive)){
                     list.append(jval + "?2");
@@ -123,7 +123,7 @@ namespace fastoredis
 
     void RedisLexer::paintCommands(const QString &source, int start)
     {
-        for(QStringList::const_iterator it = redisCommandsKeywords.begin(); it != redisCommandsKeywords.end(); ++it){
+        for(std::vector<QString>::const_iterator it = redisCommandsKeywords.begin(); it != redisCommandsKeywords.end(); ++it){
             QString word = *it;
             int index = 0;
             int begin = 0;
@@ -139,7 +139,7 @@ namespace fastoredis
 
     void RedisLexer::paintTypes(const QString &source, int start)
     {
-        for(QStringList::const_iterator it = redisTypesKeywords.begin(); it != redisTypesKeywords.end(); ++it){
+        for(std::vector<QString>::const_iterator it = redisTypesKeywords.begin(); it != redisTypesKeywords.end(); ++it){
             QString word = *it;
             int index = 0;
             int begin = 0;
