@@ -113,7 +113,7 @@ namespace fastoredis
         int index = 0;
         int begin = 0;
         while( (begin = source.indexOf(help, index, Qt::CaseInsensitive)) != -1){
-            index = begin + 1;
+            index = begin + help.length();
 
             startStyling(start + begin);
             setStyling(help.length(), HelpKeyword);
@@ -128,7 +128,7 @@ namespace fastoredis
             int index = 0;
             int begin = 0;
             while( (begin = source.indexOf(word, index, Qt::CaseInsensitive)) != -1){
-                index = begin + 1;
+                index = begin + word.length();
 
                 startStyling(start + begin);
                 setStyling(word.length(), Command);
@@ -144,7 +144,7 @@ namespace fastoredis
             int index = 0;
             int begin = 0;
             while( (begin = source.indexOf(word, index, Qt::CaseInsensitive)) != -1){
-                index = begin + 1;
+                index = begin + word.length();
 
                 startStyling(start + begin);
                 setStyling(word.length(), Types);
