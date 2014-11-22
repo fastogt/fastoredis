@@ -1,6 +1,6 @@
 #include "gui/fasto_tree_model.h"
 
-#include "gui/fasto_tree_item.h"
+#include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
 
 #include "common/qt/utils_qt.h"
@@ -18,7 +18,7 @@ namespace fastoredis
 
     }
 
-    void FastoTreeModel::setRoot(FastoTreeItem *root)
+    void FastoTreeModel::setRoot(FastoCommonItem *root)
     {
         beginResetModel();
         _root.reset(root);
@@ -32,29 +32,29 @@ namespace fastoredis
         if (!index.isValid())
             return result;
 
-        FastoTreeItem *node = common::utils_qt::item<FastoTreeItem*>(index);
+        FastoCommonItem *node = common::utils_qt::item<FastoCommonItem*>(index);
 
         if (!node)
             return result;
 
         int col = index.column();
 
-        if(role == Qt::DecorationRole && col == FastoTreeItem::eKey ){
+        if(role == Qt::DecorationRole && col == FastoCommonItem::eKey ){
             return GuiFactory::instance().getIcon(node->type());
         }
 
-        if(role == Qt::TextColorRole && col == FastoTreeItem::eType){
+        if(role == Qt::TextColorRole && col == FastoCommonItem::eType){
             return QColor(Qt::gray);
         }
 
         if (role == Qt::DisplayRole) {
-            if (col == FastoTreeItem::eKey) {
+            if (col == FastoCommonItem::eKey) {
                 result = node->key();
             }
-            else if (col == FastoTreeItem::eValue) {
+            else if (col == FastoCommonItem::eValue) {
                 result = node->value();
             }
-            else if (col == FastoTreeItem::eType) {
+            else if (col == FastoCommonItem::eType) {
                 result = common::convertFromString<QString>(common::Value::toString(node->type()));
             }
         }
@@ -68,10 +68,10 @@ namespace fastoredis
             return QVariant();
 
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-            if (section == FastoTreeItem::eKey) {
+            if (section == FastoCommonItem::eKey) {
                 return "Key";
             }
-            else if (section == FastoTreeItem::eValue) {
+            else if (section == FastoCommonItem::eValue) {
                 return "Value";
             }
             else {
@@ -84,7 +84,7 @@ namespace fastoredis
 
     int FastoTreeModel::columnCount(const QModelIndex &parent) const
     {
-        return FastoTreeItem::eCountColumns;
+        return FastoCommonItem::eCountColumns;
     }
 
     Qt::ItemFlags FastoTreeModel::flags(const QModelIndex &index) const

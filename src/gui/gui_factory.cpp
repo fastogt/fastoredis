@@ -67,6 +67,12 @@ namespace fastoredis
         return open;
     }
 
+    const QIcon &GuiFactory::messageBoxQuestionIcon() const
+    {
+        static QIcon open = qApp->style()->standardIcon(QStyle::SP_MessageBoxQuestion);
+        return open;
+    }
+
     const QIcon &GuiFactory::executeIcon() const
     {
         static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/start.png");

@@ -26,7 +26,8 @@ namespace fastoredis
         enum {
             Default = 0,
             Command = 1,
-            Types = 2
+            Types = 2,
+            HelpKeyword
         };
 
         RedisLexer(QObject *parent = 0);

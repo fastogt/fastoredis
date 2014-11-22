@@ -240,20 +240,15 @@
     </message>
 </context>
 <context>
-    <name>fastoredis::FastoTableModel</name>
+    <name>fastoredis::FastoEditorView</name>
     <message>
-        <location filename="../gui/fasto_table_model.cpp" line="58"/>
-        <source>Key</source>
+        <location filename="../gui/fasto_editor.cpp" line="323"/>
+        <source>Json</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/fasto_table_model.cpp" line="61"/>
-        <source>Value</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/fasto_table_model.cpp" line="64"/>
-        <source>Type</source>
+        <location filename="../gui/fasto_editor.cpp" line="324"/>
+        <source>Raw text</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

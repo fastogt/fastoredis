@@ -261,7 +261,8 @@ namespace fastoredis
     {
         if(filePath_.isEmpty()){
             saveToFileAs();
-        } else {
+        }
+        else {
             saveToFileText(filePath_, text(), this);
         }
     }

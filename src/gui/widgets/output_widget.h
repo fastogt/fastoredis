@@ -9,7 +9,7 @@ class QPushButton;
 
 namespace fastoredis
 {
-    class FastoEditor;
+    class FastoEditorView;
     class FastoTreeView;
     class FastoTableView;
     class FastoTreeModel;
@@ -42,6 +42,6 @@ namespace fastoredis
         FastoTreeModel *commonModel_;
         FastoTreeView *treeView_;
         FastoTableView *tableView_;
-        FastoEditor *textView_;
+        FastoEditorView *textView_;
     };
 }

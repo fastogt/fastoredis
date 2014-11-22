@@ -2,11 +2,13 @@
 
 #include <QKeyEvent>
 #include <QAbstractItemModel>
+#include <QVBoxLayout>
+#include <QRadioButton>
 
 #include "common/qt/convert_string.h"
 #include "common/qt/utils_qt.h"
 
-#include "gui/fasto_tree_item.h"
+#include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
 
 namespace
@@ -45,7 +47,7 @@ namespace
 namespace fastoredis
 {
     FastoEditor::FastoEditor(QWidget *parent)
-        : QsciScintilla(parent), lineNumberMarginWidth_(0), model_(NULL)
+        : QsciScintilla(parent), lineNumberMarginWidth_(0), model_(NULL), isJsonChecked_(true)
     {
         setAutoIndent(true);
         setIndentationsUseTabs(false);
@@ -176,14 +178,33 @@ namespace fastoredis
         clear();
     }
 
+    void FastoEditor::viewChanged(bool isJson)
+    {
+        isJsonChecked_ = isJson;
+        layoutChanged();
+    }
+
     void FastoEditor::layoutChanged()
     {
-        FastoTreeItem* root = common::utils_qt::item<FastoTreeItem*>(root_index_);
+        clear();
+
+        FastoCommonItem* root = common::utils_qt::item<FastoCommonItem*>(root_index_);
+        if(!root){
+            return;
+        }
+
         QString result;
         for(int i = 0; i < root->childrenCount(); ++i){
-            QString json = toJson(dynamic_cast<FastoTreeItem*>(root->child(i)));
-            result += common::doubleEscapedText(json);
+            if(isJsonChecked_){
+                QString json = toJson(dynamic_cast<FastoCommonItem*>(root->child(i)));
+                result += common::escapedText(json);
+            }
+            else{
+                QString raw = toRaw(dynamic_cast<FastoCommonItem*>(root->child(i)));
+                result += common::escapedText(raw);
+            }
         }
+
         setText(result);
     }
 
@@ -203,7 +224,6 @@ namespace fastoredis
         updateLineNumbersMarginWidth();
         if (!lineNumberMarginWidth()) {
             setMarginWidth(0, lineNumberMarginWidth_);
-
         }
         else {
             setMarginWidth(0, 0);
@@ -231,5 +251,76 @@ namespace fastoredis
         if (lineNumberMarginWidth()) {
             setMarginWidth(0, lineNumberMarginWidth_);
         }
+    }
+
+    FastoEditorView::FastoEditorView(QWidget* parent)
+        : QWidget(parent)
+    {
+        QVBoxLayout *mainL = new QVBoxLayout;
+        editor_ = new FastoEditor;
+
+        jsonRadioButton_ = new QRadioButton;
+        rawRadioButton_ = new QRadioButton;
+
+        VERIFY(connect(jsonRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
+        VERIFY(connect(rawRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
+
+        QHBoxLayout* radLaout = new QHBoxLayout;
+        radLaout->addWidget(jsonRadioButton_);
+        radLaout->addWidget(rawRadioButton_);
+
+        mainL->addLayout(radLaout);
+        mainL->addWidget(editor_);
+        setLayout(mainL);
+
+        jsonRadioButton_->setChecked(true);
+        retranslateUi();
+    }
+
+    void FastoEditorView::setModel(QAbstractItemModel* model)
+    {
+        editor_->setModel(model);
+    }
+
+    void FastoEditorView::setRootIndex(const QModelIndex& index)
+    {
+        editor_->setRootIndex(index);
+    }
+
+    void FastoEditorView::viewChanged(bool checked)
+    {
+        if (!checked){
+            return;
+        }
+
+        if(jsonRadioButton_->isChecked()){
+            editor_->viewChanged(true);
+            return;
+        }
+
+        if(rawRadioButton_->isChecked()){
+            editor_->viewChanged(false);
+            return;
+        }
+    }
+
+    void FastoEditorView::setReadOnly(bool readOnly)
+    {
+        editor_->setReadOnly(readOnly);
+    }
+
+    void FastoEditorView::changeEvent(QEvent *e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+
+        QWidget::changeEvent(e);
+    }
+
+    void FastoEditorView::retranslateUi()
+    {
+        jsonRadioButton_->setText(tr("Json"));
+        rawRadioButton_->setText(tr("Raw text"));
     }
 }

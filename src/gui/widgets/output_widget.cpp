@@ -8,7 +8,7 @@
 #include "gui/fasto_table_view.h"
 #include "gui/fasto_tree_view.h"
 #include "gui/fasto_tree_model.h"
-#include "gui/fasto_tree_item.h"
+#include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
 #include "gui/icon_label.h"
 
@@ -20,20 +20,20 @@
 
 namespace
 {
-    fastoredis::FastoTreeItem *createItem(fastoredis::FastoTreeItem *parent, const fastoredis::FastoObject* item)
+    fastoredis::FastoCommonItem *createItem(fastoredis::FastoCommonItem *parent, const fastoredis::FastoObject* item)
     {
-        fastoredis::FastoTreeItem *result = NULL;
+        fastoredis::FastoCommonItem *result = NULL;
         fastoredis::FastoObject::child_container_type cont = item->childrens();
         size_t contSize = cont.size();
         const std::string itemData = item->toString();
         if(contSize){
             char size[128] = {0};            
             sprintf(size, "{%zu}", contSize);
-            result = new fastoredis::FastoTreeItem( common::convertFromString<QString>(itemData), size, item->type(), parent);
+            result = new fastoredis::FastoCommonItem( common::convertFromString<QString>(itemData), size, item->type(), parent);
         }
         else{
             QString varName = QString("%1)").arg(parent->childrenCount() + 1);
-            result = new fastoredis::FastoTreeItem( varName ,common::convertFromString<QString>(itemData), item->type(), parent);
+            result = new fastoredis::FastoCommonItem( varName ,common::convertFromString<QString>(itemData), item->type(), parent);
         }
 
         if(parent){
@@ -42,9 +42,9 @@ namespace
         return result;
     }
 
-    void parseRedisImpl(fastoredis::FastoTreeItem *root, const fastoredis::FastoObject* item)
+    void parseRedisImpl(fastoredis::FastoCommonItem *root, const fastoredis::FastoObject* item)
     {
-        fastoredis::FastoTreeItem *child = createItem(root, item);
+        fastoredis::FastoCommonItem *child = createItem(root, item);
         fastoredis::FastoObject::child_container_type cont = item->childrens();
         for(int i = 0; i < cont.size(); ++i){
             fastoredis::FastoObject* obj = cont[i];
@@ -52,14 +52,14 @@ namespace
         }
     }
 
-    fastoredis::FastoTreeItem *parseOutput(const fastoredis::FastoObject* res)
+    fastoredis::FastoCommonItem *parseOutput(const fastoredis::FastoObject* res)
     {
         DCHECK(res);
         if(!res){
             return NULL;
         }
 
-        fastoredis::FastoTreeItem* result = createItem(NULL, res);
+        fastoredis::FastoCommonItem* result = createItem(NULL, res);
         fastoredis::FastoObject::child_container_type cont = res->childrens();
         for(int i = 0; i < cont.size(); ++i){
             fastoredis::FastoObject* command = cont[i];
@@ -82,7 +82,7 @@ namespace fastoredis
         tableView_ = new FastoTableView;
         tableView_->setModel(commonModel_);
 
-        textView_ = new FastoEditor;
+        textView_ = new FastoEditorView;
         textView_->setModel(commonModel_);
         textView_->setReadOnly(true);
 
@@ -161,7 +161,7 @@ namespace fastoredis
 
     void OutputWidget::finishExecute(const EventsInfo::ExecuteInfoResponce& res)
     {
-        FastoTreeItem *root = parseOutput(res._out.get());
+        FastoCommonItem *root = parseOutput(res._out.get());
 
         commonModel_->setRoot(root);
         QModelIndex rootIndex = commonModel_->index(0, 0);

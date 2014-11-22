@@ -566,11 +566,6 @@ namespace fastoredis
     {
     }
 
-    const QStringList &RedisDriver::allCommands()
-    {
-        return g_allCommands;
-    }
-
     const QStringList &RedisDriver::typesKeywords()
     {
         return g_types;

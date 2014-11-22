@@ -21,7 +21,6 @@ namespace fastoredis
         std::string version() const;
         static const char* versionApi();
 
-        static const QStringList& allCommands();
         static const QStringList& typesKeywords();
         static const QStringList& commandsKeywords();
 

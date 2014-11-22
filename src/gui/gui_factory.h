@@ -29,6 +29,7 @@ namespace fastoredis
         const QIcon& removeIcon() const;
         const QIcon& editIcon() const;
         const QIcon& messageBoxInformationIcon() const;
+        const QIcon& messageBoxQuestionIcon() const;
         const QIcon& executeIcon() const;
         const QIcon& stopIcon() const;
         const QIcon& timeIcon() const;

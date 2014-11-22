@@ -1,5 +1,9 @@
 0.2.3 /
 - Added check updates functionality
+- Full utf-8 support
+- Help keyword
+- View result as text/table/tree
+- TextView show as json or raw text
 
 0.1.0 / November 6, 2014
 [Alexandr Topilski]
@@ -11,4 +15,3 @@
 
 [Denis Klimenko]
 - Fixed dmg build
-- Full utf-8 support

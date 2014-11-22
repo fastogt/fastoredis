@@ -6,7 +6,7 @@
 
 namespace fastoredis
 {
-    class FastoTreeItem;
+    class FastoCommonItem;
 
     class FastoTreeModel
             : public TreeModel
@@ -22,7 +22,7 @@ namespace fastoredis
 
         virtual int columnCount(const QModelIndex &parent) const;
 
-        void setRoot(FastoTreeItem *root);
+        void setRoot(FastoCommonItem *root);
     };
 }
 
