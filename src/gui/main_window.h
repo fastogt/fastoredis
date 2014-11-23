@@ -23,9 +23,6 @@ namespace fastoredis
         virtual void changeEvent(QEvent *);
         virtual void showEvent(QShowEvent* e);
 
-    Q_SIGNALS:
-        void showed();
-
     private Q_SLOTS:
         void open();
         void save();
@@ -33,8 +30,6 @@ namespace fastoredis
         void about();
         void openPreferences();
         void checkUpdate();
-
-        void checkNeededUpdate();
 
         void versionAvailible(bool succesResult, const QString& version);
     private:
@@ -58,6 +53,7 @@ namespace fastoredis
         ExplorerTreeView *exp_;
         QDockWidget *expDock_;
         QDockWidget *logDock_;
+        bool isCheckedInSession_;
     };
 
     class UpdateChecker

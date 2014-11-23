@@ -117,7 +117,7 @@ namespace fastoredis
     }
 
     MainWindow::MainWindow()
-        : QMainWindow()
+        : QMainWindow(), isCheckedInSession_(false)
     {
         using namespace common;
         std::string lang = SettingsManager::instance().currentLanguage();
@@ -168,7 +168,6 @@ namespace fastoredis
 
         checkUpdateAction_ = new QAction(this);
         VERIFY(connect(checkUpdateAction_, SIGNAL(triggered()), this, SLOT(checkUpdate())));
-        VERIFY(connect(this, SIGNAL(showed()), this, SLOT(checkNeededUpdate()), Qt::QueuedConnection) );
 
         optionsMenu->addAction(checkUpdateAction_);
         optionsMenu->addAction(preferencesAction_);
@@ -233,7 +232,11 @@ namespace fastoredis
     void MainWindow::showEvent(QShowEvent* e)
     {
         QMainWindow::showEvent(e);
-        emit showed();
+        bool isA = SettingsManager::instance().autoCheckUpdates();
+        if(isA && !isCheckedInSession_){
+            isCheckedInSession_ = true;
+            checkUpdate();
+        }
     }
 
     void MainWindow::changeEvent(QEvent *e)
@@ -283,14 +286,6 @@ namespace fastoredis
     {
         PreferencesDialog dlg(this);
         dlg.exec();
-    }
-
-    void MainWindow::checkNeededUpdate()
-    {
-        bool isA = SettingsManager::instance().autoCheckUpdates();
-        if(isA){
-            checkUpdate();
-        }
     }
 
     void MainWindow::checkUpdate()
