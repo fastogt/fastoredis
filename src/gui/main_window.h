@@ -36,6 +36,7 @@ namespace fastoredis
 
         void checkNeededUpdate();
 
+        void versionAvailible(bool succesResult, const QString& version);
     private:
         void createStatusBar();
         void retranslateUi();
@@ -57,5 +58,19 @@ namespace fastoredis
         ExplorerTreeView *exp_;
         QDockWidget *expDock_;
         QDockWidget *logDock_;
+    };
+
+    class UpdateChecker
+            : public QObject
+    {
+        Q_OBJECT
+    public:
+        UpdateChecker(QObject *parent = 0);
+
+    Q_SIGNALS:
+        void versionAvailibled(bool succesResult, const QString& version);
+
+    public Q_SLOTS:
+        void routine();
     };
 }

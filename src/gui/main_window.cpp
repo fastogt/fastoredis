@@ -4,6 +4,7 @@
 #include <QMenuBar>
 #include <QDockWidget>
 #include <QMessageBox>
+#include <QThread>
 
 #include "common/net/socket_tcp.h"
 #include "common/qt/convert_string.h"
@@ -82,6 +83,39 @@ namespace
 
 namespace fastoredis
 {
+
+    UpdateChecker::UpdateChecker(QObject *parent)
+        : QObject(parent)
+    {
+
+    }
+
+    void UpdateChecker::routine()
+    {
+        common::net::SocketTcp s(SITE_URL, SERV_PORT);
+        bool res = s.connect();
+        if(!res){
+            emit versionAvailibled(res, QString());
+            return;
+        }
+
+        res = s.write(common::convertFromString<common::buffer_type>(GET_VERSION));
+        if(!res){
+            emit versionAvailibled(res, QString());
+            s.close();
+            return;
+        }
+
+        common::buffer_type version;
+        res = s.read(version, 128);
+
+        QString vers = common::convertFromString<QString>(common::convertToString(version));
+        emit versionAvailibled(res, vers);
+
+        s.close();
+        return;
+    }
+
     MainWindow::MainWindow()
         : QMainWindow()
     {
@@ -261,47 +295,39 @@ namespace fastoredis
 
     void MainWindow::checkUpdate()
     {
-        common::net::SocketTcp s(SITE_URL, SERV_PORT);
-        bool res = s.connect();
-        if(!res){
+        QThread* th = new QThread;
+        UpdateChecker* cheker = new UpdateChecker;
+        cheker->moveToThread(th);
+        VERIFY(connect(th, SIGNAL(started()), cheker, SLOT(routine())));
+        VERIFY(connect(cheker, SIGNAL(versionAvailibled(bool, const QString&)), this, SLOT(versionAvailible(bool, const QString&))));
+        VERIFY(connect(cheker, SIGNAL(versionAvailibled(bool, const QString&)), th, SLOT(quit())));
+        VERIFY(connect(th, SIGNAL(finished()), cheker, SLOT(deleteLater())));
+        VERIFY(connect(th, SIGNAL(finished()), th, SLOT(deleteLater())));
+        th->start();
+    }
+
+    void MainWindow::versionAvailible(bool succesResult, const QString& version)
+    {
+        if(!succesResult){
             QMessageBox::information(this, checkVersion, connectionErrorText);
             checkUpdateAction_->setEnabled(true);
-            return;
         }
-
-        res = s.write(common::convertFromString<common::buffer_type>(GET_VERSION));
-        if(!res){
-            QMessageBox::information(this, checkVersion, connectionErrorText);
-            checkUpdateAction_->setEnabled(true);
-            s.close();
-            return;
-        }
-
-        common::buffer_type version;
-        res = s.read(version, 128);
-        if(res){
-            std::string sversion = common::convertToString(version);
-            bool isn = isNeededUpdate(sversion);
+        else{
+            bool isn = isNeededUpdate(common::convertToString(version));
             if(isn){
                 QMessageBox::information(this, checkVersion,
                     QObject::tr("Availible new version: %1")
-                        .arg(common::convertFromString<QString>(sversion)));
+                        .arg(version));
             }
             else{
                 QMessageBox::information(this, checkVersion,
                     QObject::tr("<h3>You're' up-to-date!</h3>"
                                 PROJECT_NAME" %1 is currently the newest version available.")
-                        .arg(common::convertFromString<QString>(sversion)));
+                        .arg(version));
             }
 
             checkUpdateAction_->setEnabled(isn);
         }
-        else{
-            checkUpdateAction_->setEnabled(true);
-        }
-
-        s.close();
-        return;
     }
 
     MainWidget *const MainWindow::mainWidget() const
