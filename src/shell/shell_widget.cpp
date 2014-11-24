@@ -16,25 +16,20 @@
 #include "gui/gui_factory.h"
 #include "gui/icon_label.h"
 
+#include "translations/global.h"
+
 #include "shell/redis_shell.h"
 
 #include "core/logger.h"
 
+using namespace fastoredis::translations;
+
 namespace
 {
-    const QString trfilterForScripts = QObject::tr("Text Files (*.txt); All Files (*.*)");
-    const QString trLoad = QObject::tr("Load");
-    const QString trSave = QObject::tr("Save");
-    const QString trSaveAs = QObject::tr("Save as");
-    const QString trConnect = QObject::tr("Connect");
-    const QString trDisconnect = QObject::tr("Disconnect");
-    const QString trExecute = QObject::tr("Execute");
-    const QString trStop = QObject::tr("Stop");
-    const QString trError = QObject::tr("Error");
-
     bool loadFromFileText(const QString &filePath, QString &text, QWidget* parent)
     {
         using namespace common;
+
         bool result = false;
         QFile file(filePath);
         if (file.open(QFile::ReadOnly | QFile::Text)) {
@@ -244,7 +239,7 @@ namespace fastoredis
     bool ShellWidget::loadFromFile(const QString &path)
     {
         bool res = false;
-        QString filepath = QFileDialog::getOpenFileName(this, path, QString(), filterForScripts);
+        QString filepath = QFileDialog::getOpenFileName(this, path, QString(), trfilterForScripts);
         if (!filepath.isEmpty()) {
             QString out;
             if (loadFromFileText(filepath, out, this)) {
@@ -259,7 +254,7 @@ namespace fastoredis
     void ShellWidget::saveToFileAs()
     {
         QString filepath = QFileDialog::getSaveFileName(this,
-            trSaveAs, filePath_, filterForScripts);
+            trSaveAs, filePath_, trfilterForScripts);
 
         if (saveToFileText(filepath,text(), this)) {
             filePath_ = filepath;

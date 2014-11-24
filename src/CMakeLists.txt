@@ -208,6 +208,7 @@ ENDIF(GENERATE_TRANSLATIONS)
 
 SET(HEADERS_TRANSLATIONS
     translations/translations.h
+    translations/global.h
 )
 SET(SOURCES_TRANSLATIONS
     translations/translations.cpp
