@@ -10,6 +10,11 @@
 #include "gui/gui_factory.h"
 #include "gui/glass_widget.h"
 
+namespace
+{
+    const QString trLoding = QObject::tr("Loading...");
+}
+
 namespace fastoredis
 {
     ServerHistoryDialog::ServerHistoryDialog(const QString &title, connectionTypes type, QWidget *parent)
@@ -38,7 +43,7 @@ namespace fastoredis
             serverInfoGroupsNames_->addItem(common::convertFromString<QString>(redisHeaders[i]));
         }
 
-        QVBoxLayout *setingsLayout = new QVBoxLayout(this);
+        QVBoxLayout *setingsLayout = new QVBoxLayout;
         setingsLayout->addWidget(serverInfoGroupsNames_);
         setingsLayout->addWidget(serverInfoFields_);
         settingsGraph_->setLayout(setingsLayout);
@@ -46,7 +51,7 @@ namespace fastoredis
         splitter->addWidget(graphWidget_);
         setLayout(mainL);
 
-        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), "Loading...", 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoding, 0.5, QColor(111, 111, 100), this);
     }
 
     void ServerHistoryDialog::startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &req)

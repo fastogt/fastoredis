@@ -22,7 +22,15 @@
 
 namespace
 {
-    const QString filterForScripts = QObject::tr("Text Files (*.txt); All Files (*.*)");
+    const QString trfilterForScripts = QObject::tr("Text Files (*.txt); All Files (*.*)");
+    const QString trLoad = QObject::tr("Load");
+    const QString trSave = QObject::tr("Save");
+    const QString trSaveAs = QObject::tr("Save as");
+    const QString trConnect = QObject::tr("Connect");
+    const QString trDisconnect = QObject::tr("Disconnect");
+    const QString trExecute = QObject::tr("Execute");
+    const QString trStop = QObject::tr("Stop");
+    const QString trError = QObject::tr("Error");
 
     bool loadFromFileText(const QString &filePath, QString &text, QWidget* parent)
     {
@@ -43,7 +51,7 @@ namespace
                             convertToString(file.errorString()).c_str());
             ErrorValueSPtr er(new ErrorValue(buff, Value::E_ERROR));
             fastoredis::LOG_ERROR(er);
-            QMessageBox::critical(parent, QString("Error"),
+            QMessageBox::critical(parent, trError,
                 QObject::tr(PROJECT_NAME" can't read from %1:\n%2.")
                     .arg(filePath)
                     .arg(file.errorString()));
@@ -72,7 +80,7 @@ namespace
             result = true;
         }
         else {
-            QMessageBox::critical(parent, QString("Error"),
+            QMessageBox::critical(parent, trError,
                 QObject::tr(PROJECT_NAME" can't save to %1:\n%2.")
                     .arg(filePath)
                     .arg(file.errorString()));
@@ -101,25 +109,26 @@ namespace fastoredis
         hlayout->setSpacing(0);
 
         QToolBar *savebar = new QToolBar;
-        loadAction_ = new QAction(GuiFactory::instance().loadIcon(), tr("Load"), savebar);
+        savebar->setStyleSheet("QToolBar { border: 0px; }");
+        loadAction_ = new QAction(GuiFactory::instance().loadIcon(), trLoad, savebar);
         VERIFY(connect(loadAction_, SIGNAL(triggered()), this, SLOT(loadFromFile())));
         savebar->addAction(loadAction_);
-        saveAction_ = new QAction(GuiFactory::instance().saveIcon(), tr("Save"), savebar);
+        saveAction_ = new QAction(GuiFactory::instance().saveIcon(), trSave, savebar);
         VERIFY(connect(saveAction_, SIGNAL(triggered()), this, SLOT(saveToFile())));
         savebar->addAction(saveAction_);
-        saveAsAction_ = new QAction(GuiFactory::instance().saveAsIcon(), tr("Save as"), savebar);
+        saveAsAction_ = new QAction(GuiFactory::instance().saveAsIcon(), trSaveAs, savebar);
         VERIFY(connect(saveAsAction_, SIGNAL(triggered()), this, SLOT(saveToFileAs())));
         savebar->addAction(saveAsAction_);
-        connectAction_ = new QAction(GuiFactory::instance().connectIcon(), tr("Connect"), savebar);
+        connectAction_ = new QAction(GuiFactory::instance().connectIcon(), trConnect, savebar);
         VERIFY(connect(connectAction_, SIGNAL(triggered()), this, SLOT(connectToServer())));
         savebar->addAction(connectAction_);
-        disConnectAction_ = new QAction(GuiFactory::instance().disConnectIcon(), tr("Disconnect"), savebar);
+        disConnectAction_ = new QAction(GuiFactory::instance().disConnectIcon(), trDisconnect, savebar);
         VERIFY(connect(disConnectAction_, SIGNAL(triggered()), this, SLOT(disconnectFromServer())));
         savebar->addAction(disConnectAction_);
-        executeAction_ = new QAction(GuiFactory::instance().executeIcon(), tr("Execute"), savebar);
+        executeAction_ = new QAction(GuiFactory::instance().executeIcon(), trExecute, savebar);
         VERIFY(connect(executeAction_, SIGNAL(triggered()), this, SLOT(execute())));
         savebar->addAction(executeAction_);
-        QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), tr("Stop"), savebar);
+        QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), trStop, savebar);
         VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
         savebar->addAction(stopAction);
 
@@ -250,7 +259,7 @@ namespace fastoredis
     void ShellWidget::saveToFileAs()
     {
         QString filepath = QFileDialog::getSaveFileName(this,
-            QObject::tr("Save As"), filePath_, filterForScripts);
+            trSaveAs, filePath_, filterForScripts);
 
         if (saveToFileText(filepath,text(), this)) {
             filePath_ = filepath;
