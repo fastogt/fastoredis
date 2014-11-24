@@ -18,5 +18,15 @@ namespace fastoredis
         const QString trExecute = QObject::tr("Execute");
         const QString trStop = QObject::tr("Stop");
         const QString trError = QObject::tr("Error");
+        const QString trExit = QObject::tr("Exit");
+        const QString trOpen = QObject::tr("Open");
+        const QString trFile = QObject::tr("File");
+        const QString trPreferences = QObject::tr("Preferences");
+        const QString trView = QObject::tr("View");
+        const QString trCheckUpdate = QObject::tr("Check for updates...");
+        const QString trOptions = QObject::tr("Options");
+        const QString trHelp = QObject::tr("Help");
+        const QString trExpTree = QObject::tr("Explorer tree");
+        const QString trLogs = QObject::tr("Logs");
     }
 }

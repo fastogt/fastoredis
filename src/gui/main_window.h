@@ -37,22 +37,22 @@ namespace fastoredis
         void retranslateUi();
         MainWidget *const mainWidget() const;
 
-        QAction *openAction_;
-        QAction *saveAction_;
-        QAction *saveAsAction_;
-        QAction *exitAction_;
-        QAction *preferencesAction_;
-        QAction *aboutAction_;
-        QAction *fileAction_;
-        QAction *optionsAction_;
-        QAction *checkUpdateAction_;
-        QAction *viewAction_;
-        QAction *helpAction_;
-        QAction *explorerAction_;
-        QAction *logsAction_;
-        ExplorerTreeView *exp_;
-        QDockWidget *expDock_;
-        QDockWidget *logDock_;
+        QAction* openAction_;
+        QAction* saveAction_;
+        QAction* saveAsAction_;
+        QAction* exitAction_;
+        QAction* preferencesAction_;
+        QAction* aboutAction_;
+        QAction* fileAction_;
+        QAction* optionsAction_;
+        QAction* checkUpdateAction_;
+        QAction* viewAction_;
+        QAction* helpAction_;
+        QAction* explorerAction_;
+        QAction* logsAction_;
+        ExplorerTreeView* exp_;
+        QDockWidget* expDock_;
+        QDockWidget* logDock_;
         bool isCheckedInSession_;
     };
 

@@ -26,6 +26,7 @@
 #include "server_config_daemon/server_config.h"
 
 #include "translations/translations.h"
+#include "translations/global.h"
 
 namespace
 {
@@ -249,23 +250,22 @@ namespace fastoredis
 
     void MainWindow::retranslateUi()
     {
-        openAction_->setText(tr("&Open..."));
-        saveAction_->setText(tr("Save"));
-        saveAsAction_->setText(tr("Save &As..."));
-        exitAction_->setText(tr("&Exit"));
-        fileAction_->setText(tr("File"));
-        preferencesAction_->setText(tr("Preferences"));
-        checkUpdateAction_->setText(tr("Check for updates..."));
-        viewAction_->setText(tr("View"));
-        optionsAction_->setText(tr("Options"));
-        aboutAction_->setText(tr("&About %1...").arg(PROJECT_NAME));
-        helpAction_->setText(tr("Help"));
-        const QString &exp = tr("Explorer tree");
-        const QString &log = tr("Logs");
-        explorerAction_->setText(exp);
-        logsAction_->setText(log);
-        expDock_->setWindowTitle(exp);
-        logDock_->setWindowTitle(log);
+        using namespace translations;
+        openAction_->setText(trOpen);
+        saveAction_->setText(trSave);
+        saveAsAction_->setText(trSaveAs);
+        exitAction_->setText(trExit);
+        fileAction_->setText(trFile);
+        preferencesAction_->setText(trPreferences);
+        checkUpdateAction_->setText(trCheckUpdate);
+        viewAction_->setText(trView);
+        optionsAction_->setText(trOptions);
+        aboutAction_->setText(tr("About %1...").arg(PROJECT_NAME));
+        helpAction_->setText(trHelp);
+        explorerAction_->setText(trExpTree);
+        logsAction_->setText(trLogs);
+        expDock_->setWindowTitle(trExpTree);
+        logDock_->setWindowTitle(trLogs);
     }
 
     void MainWindow::save()

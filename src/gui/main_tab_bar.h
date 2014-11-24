@@ -29,10 +29,10 @@ namespace fastoredis
 
     private:
         void retranslateUi();
-        QAction *newShellAction_;
-        QAction *reloadShellAction_;
-        QAction *duplicateShellAction_;
-        QAction *closeShellAction_;
-        QAction *closeOtherShellsAction_;
+        QAction* newShellAction_;
+        QAction* reloadShellAction_;
+        QAction* duplicateShellAction_;
+        QAction* closeShellAction_;
+        QAction* closeOtherShellsAction_;
     };
 }
