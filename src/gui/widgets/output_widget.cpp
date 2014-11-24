@@ -54,7 +54,6 @@ namespace
 
     fastoredis::FastoCommonItem *parseOutput(const fastoredis::FastoObject* res)
     {
-        DCHECK(res);
         if(!res){
             return NULL;
         }
