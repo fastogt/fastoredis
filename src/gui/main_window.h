@@ -20,7 +20,7 @@ namespace fastoredis
         MainWindow();
 
     protected:
-        virtual void changeEvent(QEvent *);
+        virtual void changeEvent(QEvent* );
         virtual void showEvent(QShowEvent* e);
 
     private Q_SLOTS:
@@ -35,7 +35,7 @@ namespace fastoredis
     private:
         void createStatusBar();
         void retranslateUi();
-        MainWidget *const mainWidget() const;
+        MainWidget* const mainWidget() const;
 
         QAction* openAction_;
         QAction* saveAction_;

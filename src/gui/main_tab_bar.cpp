@@ -5,6 +5,8 @@
 
 #include "common/macros.h"
 
+#include "translations/global.h"
+
 namespace fastoredis
 {
     MainTabBar::MainTabBar(QWidget *parent)
@@ -52,15 +54,17 @@ namespace fastoredis
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();
         }
+
         QTabBar::changeEvent(e);
     }
 
     void MainTabBar::retranslateUi()
     {
-        newShellAction_->setText(tr("&New Tab"));
-        reloadShellAction_->setText(tr("&Reload"));
-        duplicateShellAction_->setText(tr("&Duplicate"));
-        closeShellAction_->setText(tr("&Close Tab"));
-        closeOtherShellsAction_->setText(tr("Close &Other Tab"));
+        using namespace translations;
+        newShellAction_->setText(trNewTab);
+        reloadShellAction_->setText(trReload);
+        duplicateShellAction_->setText(trDuplicate);
+        closeShellAction_->setText(trCloseTab);
+        closeOtherShellsAction_->setText(trCloseOtherTab);
     }
 }

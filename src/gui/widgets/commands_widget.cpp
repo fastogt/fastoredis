@@ -10,6 +10,8 @@
 
 #include "common/qt/convert_string.h"
 
+#include "translations/global.h"
+
 namespace fastoredis
 {
     CommandsWidget::CommandsWidget(QWidget* parent)
@@ -56,6 +58,7 @@ namespace fastoredis
 
     void CommandsWidget::retranslateUi()
     {
-        clear_->setText(tr("Clear All"));
+        using namespace translations;
+        clear_->setText(trClearAll);
     }
 }

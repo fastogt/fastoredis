@@ -4,6 +4,7 @@
 #include "gui/gui_factory.h"
 
 #include "common/qt/utils_qt.h"
+#include "translations/global.h"
 
 namespace fastoredis
 {
@@ -64,18 +65,19 @@ namespace fastoredis
 
     QVariant FastoTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
+        using namespace translations;
         if (role != Qt::DisplayRole)
             return QVariant();
 
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
             if (section == FastoCommonItem::eKey) {
-                return "Key";
+                return trKey;
             }
             else if (section == FastoCommonItem::eValue) {
-                return "Value";
+                return trValue;
             }
             else {
-                return "Type";
+                return trType;
             }
         }
 

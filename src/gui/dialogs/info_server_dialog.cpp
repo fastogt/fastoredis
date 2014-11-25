@@ -6,6 +6,8 @@
 #include "gui/gui_factory.h"
 #include "gui/glass_widget.h"
 
+#include "translations/global.h"
+
 namespace
 {
     const QString redisTextServerTemplate = QObject::tr("<h2>Server:</h2><br/>"
@@ -84,6 +86,8 @@ namespace fastoredis
     InfoServerDialog::InfoServerDialog(const QString &title, QWidget *parent)
         : QDialog(parent)
     {
+        using namespace translations;
+
         setWindowTitle(title);
         serverTextInfo_ = new QLabel;
         hardwareTextInfo_ = new QLabel;
@@ -92,7 +96,7 @@ namespace fastoredis
         mainL->addWidget(hardwareTextInfo_);
         setLayout(mainL);
 
-        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), tr("Loading..."), 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoading, 0.5, QColor(111, 111, 100), this);
         updateText(RedisServerInfo());
     }
 

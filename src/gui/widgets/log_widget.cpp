@@ -8,6 +8,8 @@
 #include <QHBoxLayout>
 #include <QTextEdit>
 
+#include "translations/global.h"
+
 namespace fastoredis
 {
     LogWidget::LogWidget(QWidget* parent) 
@@ -54,6 +56,7 @@ namespace fastoredis
 
     void LogWidget::retranslateUi()
     {
-        clear_->setText(tr("Clear All"));
+        using namespace translations;
+        clear_->setText(trClearAll);
     }
 }

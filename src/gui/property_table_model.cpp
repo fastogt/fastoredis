@@ -3,6 +3,8 @@
 #include "common/qt/utils_qt.h"
 #include "common/qt/convert_string.h"
 
+#include "translations/global.h"
+
 namespace fastoredis
 {
     PropertyTableItem::PropertyTableItem(const QString &key, const QString &value)
@@ -85,15 +87,16 @@ namespace fastoredis
 
     QVariant PropertyTableModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
+        using namespace translations;
         if (role != Qt::DisplayRole)
             return QVariant();
 
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
             if (section == PropertyTableItem::eKey) {
-                return "Key";
+                return trKey;
             }
             else if (section == PropertyTableItem::eValue) {
-                return "Value";
+                return trValue;
             }
         }
 

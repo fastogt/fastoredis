@@ -12,6 +12,8 @@
 
 #include "common/qt/convert_string.h"
 
+#include "translations/global.h"
+
 namespace fastoredis
 {
     ExplorerTreeView::ExplorerTreeView(QWidget *parent)
@@ -175,14 +177,16 @@ namespace fastoredis
 
     void ExplorerTreeView::retranslateUi()
     {
+        using namespace translations;
+
         connectAction_->setText(tr("Connect/Disconnect"));
-        openConsoleAction_->setText(tr("Open console"));
-        loadDatabaseAction_->setText(tr("Load databases"));
-        loadContentAction_->setText(tr("Load content of database"));
-        infoServerAction_->setText(tr("Info"));
-        propertyServerAction_->setText(tr("Property"));
-        historyServerAction_->setText(tr("History"));
-        closeAction_->setText(tr("Close"));
+        openConsoleAction_->setText(trOpenConsole);
+        loadDatabaseAction_->setText(trLoadDataBases);
+        loadContentAction_->setText(trLoadContOfDataBases);
+        infoServerAction_->setText(trInfo);
+        propertyServerAction_->setText(trProperty);
+        historyServerAction_->setText(trHistory);
+        closeAction_->setText(trClose);
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req)

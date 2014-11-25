@@ -10,16 +10,15 @@
 #include "gui/gui_factory.h"
 #include "gui/glass_widget.h"
 
-namespace
-{
-    const QString trLoding = QObject::tr("Loading...");
-}
+#include "translations/global.h"
 
 namespace fastoredis
 {
     ServerHistoryDialog::ServerHistoryDialog(const QString &title, connectionTypes type, QWidget *parent)
         : QDialog(parent, Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint ), type_(type)
     {
+        using namespace translations;
+
         setWindowTitle(title);
 
         graphWidget_ = new GraphWidget(this);
@@ -51,7 +50,7 @@ namespace fastoredis
         splitter->addWidget(graphWidget_);
         setLayout(mainL);
 
-        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoding, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoading, 0.5, QColor(111, 111, 100), this);
     }
 
     void ServerHistoryDialog::startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &req)

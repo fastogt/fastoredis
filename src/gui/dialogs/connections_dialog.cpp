@@ -18,6 +18,8 @@
 #include "gui/gui_factory.h"
 #include "gui/dialogs/connection_dialog.h"
 
+#include "translations/global.h"
+
 namespace fastoredis
 {
     class ConnectionListWidgetItem
@@ -50,6 +52,8 @@ namespace fastoredis
     ConnectionsDialog::ConnectionsDialog(QWidget *parent)
         : QDialog(parent)
     {
+        using namespace translations;
+
         setWindowIcon(GuiFactory::instance().connectIcon());
 
         // Remove help button (?)
@@ -59,7 +63,7 @@ namespace fastoredis
         listWidget_->setIndentation(5);
 
         QStringList colums;
-        colums << tr("Name") << tr("Address") << tr("Auth. Database / User");
+        colums << trName << trAddress << trAuthDbUser;
         listWidget_->setHeaderLabels(colums);
 
         listWidget_->header()->setSectionResizeMode(0, QHeaderView::Stretch);
@@ -231,7 +235,9 @@ namespace fastoredis
 
     void ConnectionsDialog::retranslateUi()
     {
+        using namespace translations;
+
         setWindowTitle(tr("Redis Connections"));
-        acButton_->setText(tr("Open"));
+        acButton_->setText(trOpen);
     }
 }

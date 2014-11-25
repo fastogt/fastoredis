@@ -7,11 +7,15 @@
 #include "gui/widgets/commands_widget.h"
 #include "gui/gui_factory.h"
 
+#include "translations/global.h"
+
 namespace fastoredis
 {
     LogTabWidget::LogTabWidget(QWidget* parent)
         : QTabWidget(parent)
     {
+        using namespace translations;
+
         QTabBar *tab = new QTabBar(this);
         setTabBar(tab);
         setTabsClosable(false);
@@ -19,9 +23,9 @@ namespace fastoredis
         setMovable(true);
         setDocumentMode(true);
         log_ = new LogWidget(this);
-        addTab(log_, GuiFactory::instance().loggingIcon(), "Errors");
+        addTab(log_, GuiFactory::instance().loggingIcon(), trErrors);
         commands_ = new CommandsWidget(this);
-        addTab(commands_, GuiFactory::instance().commandIcon(), "Commands");
+        addTab(commands_, GuiFactory::instance().commandIcon(), trCommands);
         retranslateUi();
     }
 
@@ -45,7 +49,9 @@ namespace fastoredis
 
     void LogTabWidget::retranslateUi()
     {
-        setTabText(0, tr("Errors"));
-        setTabText(1, tr("Commands"));
+        using namespace translations;
+
+        setTabText(0, trErrors);
+        setTabText(1, trCommands);
     }
 }

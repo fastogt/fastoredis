@@ -7,11 +7,15 @@
 #include "gui/glass_widget.h"
 #include "gui/property_table_model.h"
 
+#include "translations/global.h"
+
 namespace fastoredis
 {
     PropertyServerDialog::PropertyServerDialog(const QString &title, connectionTypes type, QWidget *parent)
         : QDialog(parent), type_(type)
     {
+        using namespace translations;
+
         setWindowTitle(title);
         propertyes_table_ = new QTableView(this);
         PropertyTableModel *mod = new PropertyTableModel(propertyes_table_);
@@ -22,7 +26,7 @@ namespace fastoredis
         mainL->addWidget(propertyes_table_);
         setLayout(mainL);
 
-        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), "Loading...", 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoading, 0.5, QColor(111, 111, 100), this);
     }
 
     void PropertyServerDialog::startServerProperty(const EventsInfo::ServerPropertyInfoRequest &req)

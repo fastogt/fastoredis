@@ -23,6 +23,7 @@
 
 namespace fastoredis
 {
+    extern const std::string defStyle;
     void applyStyle(const QString &styleName);
     QStringList getSupportedStyles();
 
@@ -30,8 +31,7 @@ namespace fastoredis
         :public OsStyle
     {
         Q_OBJECT
-    public:
-        static const std::string defStyle;
+    public:        
         virtual void drawControl(ControlElement element, const QStyleOption * option,   QPainter * painter,	const QWidget * widget) const;
         virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const;
         virtual QRect subElementRect( SubElement element, const QStyleOption * option, const QWidget * widget=0 ) const;

@@ -77,9 +77,6 @@ namespace
 
         return PROJECT_VERSION_PATCH < serPatch;
     }
-
-    const QString checkVersion = QObject::tr("Check version");
-    const QString connectionErrorText = QObject::tr("Connection error!");
 }
 
 namespace fastoredis
@@ -303,19 +300,20 @@ namespace fastoredis
 
     void MainWindow::versionAvailible(bool succesResult, const QString& version)
     {
+        using namespace translations;
         if(!succesResult){
-            QMessageBox::information(this, checkVersion, connectionErrorText);
+            QMessageBox::information(this, trCheckVersion, trConnectionErrorText);
             checkUpdateAction_->setEnabled(true);
         }
         else{
             bool isn = isNeededUpdate(common::convertToString(version));
             if(isn){
-                QMessageBox::information(this, checkVersion,
+                QMessageBox::information(this, trCheckVersion,
                     QObject::tr("Availible new version: %1")
                         .arg(version));
             }
             else{
-                QMessageBox::information(this, checkVersion,
+                QMessageBox::information(this, trCheckVersion,
                     QObject::tr("<h3>You're' up-to-date!</h3>"
                                 PROJECT_NAME" %1 is currently the newest version available.")
                         .arg(version));

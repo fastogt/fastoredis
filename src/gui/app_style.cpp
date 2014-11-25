@@ -7,11 +7,11 @@
 
 namespace fastoredis
 {
-    const std::string AppStyle::defStyle = "Native";
+    const std::string defStyle = "Native";
 
     void applyStyle(const QString &styleName)
     {
-        if (styleName == common::convertFromString<QString>(AppStyle::defStyle)) {
+        if (styleName == common::convertFromString<QString>(defStyle)) {
             QApplication::setStyle(new AppStyle);
         }
         else {
@@ -21,7 +21,7 @@ namespace fastoredis
 
     QStringList getSupportedStyles()
     {
-        static QStringList result = QStringList() << common::convertFromString<QString>(AppStyle::defStyle) << QStyleFactory::keys();
+        static QStringList result = QStringList() << common::convertFromString<QString>(defStyle) << QStyleFactory::keys();
         return result;
     }
 

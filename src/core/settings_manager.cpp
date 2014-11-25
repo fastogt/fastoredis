@@ -43,7 +43,7 @@ namespace
 
     inline server_main_t &get_config_storage()
     {
-        static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::AppStyle::defStyle,
+        static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::defStyle,
                                                      fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree,
                                                      true, file_system::get_dir_path(static_path_storage::path_to_save()), true ));
         return g_m;

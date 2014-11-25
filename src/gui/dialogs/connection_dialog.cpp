@@ -14,13 +14,7 @@
 
 #include "gui/gui_factory.h"
 
-namespace
-{
-    QString trPrivateKey = QObject::tr("Private Key");
-    QString trPassword = QObject::tr("Password");
-    QString trHide = QObject::tr("Hide");
-    QString trShow = QObject::tr("Show");
-}
+#include "translations/global.h"
 
 namespace fastoredis
 {
@@ -28,6 +22,8 @@ namespace fastoredis
         : QDialog(parent),
         connection_(connection)
     {
+        using namespace translations;
+
         setWindowIcon(GuiFactory::instance().serverIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
@@ -166,6 +162,8 @@ namespace fastoredis
 
     void ConnectionDialog::syncWithConnection()
     {
+        using namespace translations;
+
         connectionName_->setText(common::convertFromString<QString>(connection_->connectionName()));
         typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(connection_->connectionType())));
         commandLine_->setText(common::convertFromString<QString>(connection_->commandLine()));
@@ -218,6 +216,8 @@ namespace fastoredis
 
     SSHInfo::SupportedAuthenticationMetods ConnectionDialog::selectedAuthMethod() const
     {
+        using namespace translations;
+
         if (security_->currentText() == trPrivateKey){
             return SSHInfo::PUBLICKEY;
         }
@@ -270,6 +270,8 @@ namespace fastoredis
 
     void ConnectionDialog::togglePasswordEchoMode()
     {
+        using namespace translations;
+
         bool isPassword = passwordBox_->echoMode() == QLineEdit::Password;
         passwordBox_->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
         passwordEchoModeButton_->setText(isPassword ? trHide: trShow);
@@ -277,6 +279,8 @@ namespace fastoredis
 
     void ConnectionDialog::togglePassphraseEchoMode()
     {
+        using namespace translations;
+
         bool isPassword = passphraseBox_->echoMode() == QLineEdit::Password;
         passphraseBox_->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
         passphraseEchoModeButton_->setText(isPassword ? trHide: trShow);
