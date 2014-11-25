@@ -12,8 +12,6 @@
 
 namespace
 {
-    const uint16_t port = 27017;
-    const std::string defaultServerHost = "localhost";
     const std::string defaultNameConnection = "New Connection";
 }
 
@@ -145,8 +143,35 @@ namespace fastoredis
             return QString();
         }
         else if(type == REDIS){
-            return QObject::tr("-h host -p port");
+            return QObject::tr("Usage: [OPTIONS] [cmd [arg [arg ...]]]\n"
+                               "  -h <hostname>      Server hostname (default: 127.0.0.1).\n"
+                               "  -p <port>          Server port (default: 6379).\n"
+                               "  -s <socket>        Server socket (overrides hostname and port).\n"
+                               "  -a <password>      Password to use when connecting to the server.\n"
+                               "  -r <repeat>        Execute specified command N times.\n"
+                               "  -i <interval>      When -r is used, waits <interval> seconds per command.\n"
+                               "                     It is possible to specify sub-second times like -i 0.1.\n"
+                               "  -n <db>            Database number.\n"
+                               "  -c                 Enable cluster mode (follow -ASK and -MOVED redirections).\n"
+                               "  --latency          Enter a special mode continuously sampling latency.\n"
+                               "  --latency-history  Like --latency but tracking latency changes over time.\n"
+                               "                     Default time interval is 15 sec. Change it using -i.\n"
+                               "  --slave            Simulate a slave showing commands received from the master.\n"
+                               "  --rdb <filename>   Transfer an RDB dump from remote server to local file.\n"
+                               "  --pipe             Transfer raw Redis protocol from stdin to server.\n"
+                               "  --pipe-timeout <n> In --pipe mode, abort with error if after sending all data.\n"
+                               "                     no reply is received within <n> seconds.\n"
+                               "                     Default timeout: %d. Use 0 to wait forever.\n"
+                               "  --bigkeys          Sample Redis keys looking for big keys.\n"
+                               "  --scan             List all keys using the SCAN command.\n"
+                               "  --pattern <pat>    Useful with --scan to specify a SCAN pattern.\n"
+                               "  --intrinsic-latency <sec> Run a test to measure intrinsic system latency.\n"
+                               "                     The test will run for the specified amount of seconds.\n"
+                               "  --eval <file>      Send an EVAL command using the Lua script at <file>.\n"
+                               "\n");
         }
+
+        return QString();
     }
 
     RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName, const redisConfig &info)
@@ -158,11 +183,6 @@ namespace fastoredis
     std::string RedisConnectionSettings::host() const
     {
         return info_.hostip;
-    }
-
-    void RedisConnectionSettings::setHost(const std::string &host)
-    {
-        info_.hostip = host;
     }
 
     int RedisConnectionSettings::port() const
@@ -221,5 +241,15 @@ namespace fastoredis
     {
         RedisConnectionSettings *red = new RedisConnectionSettings(*this);
         return red;
+    }
+
+    ConnectionMode RedisConnectionSettings::mode() const
+    {
+        if(info_.slave_mode){
+            return Slave;
+        }
+        else{
+            return Intaractive;
+        }
     }
 }

@@ -10,6 +10,12 @@
 
 namespace fastoredis
 {
+    enum ConnectionMode
+    {
+        Intaractive,
+        Slave
+    };
+
     class IConnectionSettingsBase
     {
     public:
@@ -24,7 +30,6 @@ namespace fastoredis
         virtual std::string fullAddress() const = 0;
 
         virtual std::string host() const = 0;
-        virtual void setHost(const std::string &host) = 0;
         virtual int port() const = 0;
         virtual void setPort(int port) = 0;
 
@@ -42,6 +47,8 @@ namespace fastoredis
 
         SSHInfo sshInfo() const;
         void setSshInfo(const SSHInfo& info);
+
+        virtual ConnectionMode mode() const = 0;
 
     protected:
         virtual std::string toCommandLine() const = 0;
@@ -71,7 +78,6 @@ namespace fastoredis
         virtual std::string fullAddress() const;
 
         virtual std::string host() const;
-        virtual void setHost(const std::string &host);
         virtual int port() const;
         virtual void setPort(int port);
 
@@ -80,7 +86,8 @@ namespace fastoredis
         redisConfig info() const;
         void setInfo(const redisConfig& info);
 
-        virtual IConnectionSettingsBase* clone () const;
+        virtual IConnectionSettingsBase* clone() const;
+        virtual ConnectionMode mode() const;
 
     private:
         virtual std::string toCommandLine() const;

@@ -6,18 +6,23 @@
 
 #include "common/convert2string.h"
 
-#define REDIS_DEFAULT_PIPE_TIMEOUT 30 /* seconds */
+#define REDIS_CLI_DEFAULT_PIPE_TIMEOUT 30 /* seconds */
+#define OUTPUT_STANDARD 0
+#define OUTPUT_RAW 1
+#define OUTPUT_CSV 2
 
 namespace fastoredis
 {
-    struct redisConfig {
+    struct redisConfig
+    {
         redisConfig();
-        void parseOptions(const std::vector<std::string> &argv);
-        std::string hostip;
+        ~redisConfig();
+
+        char *hostip;
         int hostport;
-        std::string hostsocket;
-        int repeat;
-        int interval;
+        char *hostsocket;
+        long repeat;
+        long interval;
         int dbnum;
         int interactive;
         int shutdown;
@@ -32,14 +37,16 @@ namespace fastoredis
         int pipe_timeout;
         int getrdb_mode;
         int stat_mode;
-        std::string rdb_filename;
+        int scan_mode;
+        int intrinsic_latency_mode;
+        int intrinsic_latency_duration;
+        char *pattern;
+        char *rdb_filename;
         int bigkeys;
-        int stdinarg; /* get last arg from stdin. (-x option) */
-        std::string auth;
-        int output; /* output mode, see OUTPUT_* defines */
-        std::string mb_delim;
+        char *auth;
         char prompt[128];
-        std::string eval;
+        char *eval;
+        int last_cmd_type;
     };
 }
 

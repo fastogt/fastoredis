@@ -35,6 +35,8 @@ namespace fastoredis
         static FastoObject* createRoot(const std::string& text);
         void addChildren(FastoObject* child);
         bool isRoot() const;
+        FastoObject* parent() const;
+        void clear();
 
     private:
 		DISALLOW_COPY_AND_ASSIGN(FastoObject);

@@ -3,12 +3,12 @@
 #include <errno.h>
 
 extern "C" {
-#include "third-party/redis/deps/hiredis/sds.h"
 #include "third-party/redis/src/release.h"
 #include "third-party/redis/src/version.h"
 #include "third-party/redis/src/help.h"
 #include "third-party/redis/deps/hiredis/hiredis.h"
 #include "third-party/redis/src/anet.h"
+#include "third-party/redis/deps/hiredis/sds.h"
 }
 
 #include "core/command_logger.h"
@@ -17,9 +17,6 @@ extern "C" {
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */
 #define CLI_HELP_COMMAND 1
 #define CLI_HELP_GROUP 2
-#define OUTPUT_STANDARD 0
-#define OUTPUT_RAW 1
-#define OUTPUT_CSV 2
 #define INFO_REQUEST "INFO"
 
 namespace
@@ -141,26 +138,95 @@ namespace fastoredis
         redisConfig config;        
         SSHInfo sinfo_;
 
+        /*------------------------------------------------------------------------------
+         * Slave mode
+         *--------------------------------------------------------------------------- */
+
+        /* Sends SYNC and reads the number of bytes in the payload. Used both by
+         * slaveMode() and getRDB(). */
+        long long sendSync(int fd) {
+            /* To start we need to send the SYNC command and return the payload.
+             * The hiredis client lib does not understand this part of the protocol
+             * and we don't want to mess with its buffers, so everything is performed
+             * using direct low-level I/O. */
+            char buf[4096], *p;
+            ssize_t nread;
+
+            /* Send the SYNC command. */
+            if (write(fd,"SYNC\r\n",6) != 6) {
+                fprintf(stderr,"Error writing to master\n");
+                exit(1);
+            }
+
+            /* Read $<payload>\r\n, making sure to read just up to "\n" */
+            p = buf;
+            while(1) {
+                nread = read(fd,p,1);
+                if (nread <= 0) {
+                    fprintf(stderr,"Error reading bulk length while SYNCing\n");
+                    exit(1);
+                }
+                if (*p == '\n' && p != buf) break;
+                if (*p != '\n') p++;
+            }
+            *p = '\0';
+            if (buf[0] == '-') {
+                printf("SYNC with master failed: %s\n", buf);
+                exit(1);
+            }
+            return strtoull(buf+1,NULL,10);
+        }
+
+        void slaveMode(FastoObject* out, common::ErrorValueSPtr& er) {
+            int fd = context->fd;
+            unsigned long long payload = sendSync(fd);
+            char buf[1024];
+
+            fprintf(stderr,"SYNC with master, discarding %llu "
+                           "bytes of bulk transfer...\n", payload);
+
+            /* Discard the payload. */
+            while(payload) {
+                ssize_t nread;
+
+                nread = read(fd,buf,(payload > sizeof(buf)) ? sizeof(buf) : payload);
+                if (nread <= 0) {
+                    fprintf(stderr,"Error reading RDB payload while SYNCing\n");
+                    exit(1);
+                }
+                payload -= nread;
+            }
+            fprintf(stderr,"SYNC done. Logging commands from master.\n");
+
+            /* Now we can use hiredis to read the incoming protocol. */
+            while (cliReadReply(0, out, er) == REDIS_OK){
+                if (config.shutdown){
+                    return;
+                }
+            }
+        }
+
         int cliAuth(common::ErrorValueSPtr& er)
         {
-            redisReply *reply;
-            if (config.auth.empty()) return REDIS_OK;
+            if (config.auth == NULL)
+                return REDIS_OK;
 
-            reply = static_cast<redisReply*>(redisCommand(context,"AUTH %s",config.auth.c_str()));
-            if (reply) {
+            redisReply *reply = static_cast<redisReply*>(redisCommand(context, "AUTH %s", config.auth));
+            if (reply != NULL) {
                 freeReplyObject(reply);
                 return REDIS_OK;
-            }            
+            }
+
             cliPrintContextError(er);
             return REDIS_ERR;
         }
 
         int cliSelect(common::ErrorValueSPtr& er)
         {
-            redisReply *reply;
-            if (config.dbnum == 0) return REDIS_OK;
+            if (config.dbnum == 0)
+                return REDIS_OK;
 
-            reply = static_cast<redisReply*>(redisCommand(context,"SELECT %d",config.dbnum));
+            redisReply *reply = static_cast<redisReply*>(redisCommand(context, "SELECT %d", config.dbnum));
             if (reply != NULL) {
                 freeReplyObject(reply);
                 return REDIS_OK;
@@ -175,7 +241,7 @@ namespace fastoredis
                 if (context != NULL)
                     redisFree(context);
 
-                if (config.hostsocket.empty()) {
+                if (config.hostsocket == NULL) {
                     const char *username = toCString(sinfo_.userName_);
                     const char *password = toCString(sinfo_.password_);
                     const char *ssh_address = toCString(sinfo_.hostName_);
@@ -185,30 +251,19 @@ namespace fastoredis
                     const char *privateKey = toCString(sinfo_.privateKey_);
                     const char *passphrase = toCString(sinfo_.passphrase_);
 
-                    context = redisConnect(config.hostip.c_str(), config.hostport, ssh_address, ssh_port, username, password,
+                    context = redisConnect(config.hostip, config.hostport, ssh_address, ssh_port, username, password,
                                            publicKey, privateKey, passphrase, curM);
-                } else {
-                    context = redisConnectUnix(config.hostsocket.c_str());
                 }
-
-                if(!context){
-                    char buff[512] = {0};
-                    if (config.hostsocket.empty())
-                        sprintf(buff, "Could not connect to Redis at %s:%d: unknown error\n", config.hostip.c_str(), config.hostport);
-                    else
-                        sprintf(buff, "Could not connect to Redis at %s: unknown error\n", config.hostsocket.c_str());
-
-                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
-
-                    return REDIS_ERR;
+                else {
+                    context = redisConnectUnix(config.hostsocket);
                 }
 
                 if (context->err) {
                     char buff[512] = {0};
-                    if (config.hostsocket.empty())
-                        sprintf(buff, "Could not connect to Redis at %s:%d: %s\n", config.hostip.c_str(), config.hostport, context->errstr);
+                    if (config.hostsocket)
+                        sprintf(buff, "Could not connect to Redis at %s:%d: %s\n", config.hostip, config.hostport, context->errstr);
                     else
-                        sprintf(buff, "Could not connect to Redis at %s: %s\n", config.hostsocket.c_str(), context->errstr);
+                        sprintf(buff, "Could not connect to Redis at %s: %s\n", config.hostsocket, context->errstr);
 
                     er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
                     redisFree(context);
@@ -228,7 +283,6 @@ namespace fastoredis
                 if (cliSelect(er) != REDIS_OK)
                     return REDIS_ERR;
             }
-
             return REDIS_OK;
         }
 
@@ -239,7 +293,7 @@ namespace fastoredis
             }
             else{
                 char address[512] = {0};
-                sprintf(address, "%s:%d", config.hostip.c_str(), config.hostport);
+                sprintf(address, "%s:%d", config.hostip, config.hostport);
                 return address;
             }
         }
@@ -248,15 +302,15 @@ namespace fastoredis
         {
             int len;
 
-            if (!config.hostsocket.empty())
+            if (config.hostsocket != NULL)
                 len = snprintf(config.prompt,sizeof(config.prompt),"redis %s",
-                               config.hostsocket.c_str());
+                               config.hostsocket);
             else
                 len = snprintf(config.prompt,sizeof(config.prompt),
-                               strchr(config.hostip.c_str(),':') ? "[%s]:%d" : "%s:%d",
-                               config.hostip.c_str(), config.hostport);
+                               strchr(config.hostip,':') ? "[%s]:%d" : "%s:%d",
+                               config.hostip, config.hostport);
             /* Add [dbnum] if needed */
-            if (config.dbnum != 0)
+            if (config.dbnum != 0 && config.last_cmd_type != REDIS_REPLY_ERROR)
                 len += snprintf(config.prompt+len,sizeof(config.prompt)-len,"[%d]",
                     config.dbnum);
             snprintf(config.prompt+len,sizeof(config.prompt)-len,"> ");
@@ -264,7 +318,9 @@ namespace fastoredis
 
         void cliPrintContextError(common::ErrorValueSPtr& er)
         {
-            if (context == NULL) return;
+            if (context == NULL)
+                return;
+
             char buff[512] = {0};
             sprintf(buff,"Error: %s\n",context->errstr);
             er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
@@ -308,12 +364,18 @@ namespace fastoredis
                     child = out;
                 }
                 else{
-                    common::ArrayValue *val =common::Value::createArrayValue();
+                    common::ArrayValue* val = common::Value::createArrayValue();
                     val->appendString(out->toString());
-                    child = new FastoObject(out,val);
+
+                    child = new FastoObject(out, val);
                     out->addChildren(child);
                 }
+
                 for (size_t i = 0; i < r->elements; i++) {
+                    if (i > 0) {
+                        //out = sdscat(out,config.mb_delim);
+                    }
+
                     cliFormatReplyRaw(child, r->element[i]);
                 }
                 break;
@@ -337,7 +399,7 @@ namespace fastoredis
             if (group) {
                 char buff2[1024] = {0};
                 sprintf(buff2,"  group: %s", commandGroups[help->group]);
-                val =common::Value::createStringValue(buff2);
+                val = common::Value::createStringValue(buff2);
                 out->addChildren(new FastoObject(out, val));
             }
         }
@@ -403,12 +465,13 @@ namespace fastoredis
             }
         }
 
-        int cliReadReply(FastoObject* out, common::ErrorValueSPtr& er)
+        int cliReadReply(int output_raw_strings, FastoObject* out, common::ErrorValueSPtr& er)
         {
             void *_reply;
             redisReply *reply;
+            int output = 1;
 
-            if (redisGetReply(context,&_reply) != REDIS_OK) {
+            if (redisGetReply(context, &_reply) != REDIS_OK) {
                 if (config.shutdown)
                     return REDIS_OK;
 
@@ -423,6 +486,7 @@ namespace fastoredis
             }
 
             reply = static_cast<redisReply*>(_reply);
+            config.last_cmd_type = reply->type;
 
             if (config.cluster_mode && reply->type == REDIS_REPLY_ERROR &&
                 (!strncmp(reply->str,"MOVED",5) || !strcmp(reply->str,"ASK")))
@@ -430,22 +494,25 @@ namespace fastoredis
                 char *p = reply->str, *s;
                 int slot;
 
+                output = 0;
+
                 s = strchr(p,' ');      /* MOVED[S]3999 127.0.0.1:6381 */
                 p = strchr(s+1,' ');    /* MOVED[S]3999[P]127.0.0.1:6381 */
                 *p = '\0';
                 slot = atoi(s+1);
                 s = strchr(p+1,':');    /* MOVED 3999[P]127.0.0.1[S]6381 */
                 *s = '\0';                
-                config.hostip = std::string(p+1);
+                config.hostip = p+1;
                 config.hostport = atoi(s+1);                
                 char redir[512] = {0};
-                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip.c_str(), config.hostport);
-                common::StringValue *val =common::Value::createStringValue(redir);
+                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
+                common::StringValue *val = common::Value::createStringValue(redir);
                 out->addChildren(new FastoObject(out, val));
                 config.cluster_reissue_command = 1;
                 cliRefreshPrompt();
             }
-            else{
+
+            if (output) {
                 cliFormatReplyRaw(out, reply);
             }
 
@@ -457,6 +524,7 @@ namespace fastoredis
         {
             char *command = argv[0];
             size_t *argvlen;
+            int j, output_raw;
 
             if (!strcasecmp(command,"help") || !strcasecmp(command,"?")) {
                 cliOutputHelp(out, --argc, ++argv);
@@ -466,42 +534,71 @@ namespace fastoredis
             if (context == NULL)
                 return REDIS_ERR;
 
+            output_raw = 0;
+            if (!strcasecmp(command,"info") ||
+                (argc == 2 && !strcasecmp(command,"cluster") &&
+                              (!strcasecmp(argv[1],"nodes") ||
+                               !strcasecmp(argv[1],"info"))) ||
+                (argc == 2 && !strcasecmp(command,"client") &&
+                               !strcasecmp(argv[1],"list")) ||
+                (argc == 3 && !strcasecmp(command,"latency") &&
+                               !strcasecmp(argv[1],"graph")) ||
+                (argc == 2 && !strcasecmp(command,"latency") &&
+                               !strcasecmp(argv[1],"doctor")))
+            {
+                output_raw = 1;
+            }
+
             if (!strcasecmp(command,"shutdown")) config.shutdown = 1;
             if (!strcasecmp(command,"monitor")) config.monitor_mode = 1;
             if (!strcasecmp(command,"subscribe") ||
                 !strcasecmp(command,"psubscribe")) config.pubsub_mode = 1;
+            if (!strcasecmp(command,"sync") ||
+                !strcasecmp(command,"psync")) config.slave_mode = 1;
 
             /* Setup argument length */
-            argvlen = static_cast<size_t*>(malloc(argc*sizeof(size_t)));
-            for (int j = 0; j < argc; j++){
+            argvlen = (size_t*)malloc(argc*sizeof(size_t));
+            for (j = 0; j < argc; j++)
                 argvlen[j] = sdslen(argv[j]);
-            }
 
             while(repeat--) {
                 redisAppendCommandArgv(context,argc,(const char**)argv,argvlen);
                 while (config.monitor_mode) {
-                    if (cliReadReply(out, er) != REDIS_OK){
+                    if (cliReadReply(output_raw, out, er) != REDIS_OK){
                         return REDIS_ERR;
                     }
                 }
 
-                if (config.pubsub_mode) {
+                /*if (config.pubsub_mode) {
                     if (config.output != OUTPUT_RAW)
                     while (1) {
-                        if (cliReadReply(out, er) != REDIS_OK)
+                        if (cliReadReply(output_raw, out, er) != REDIS_OK)
                             return REDIS_ERR;
                     }
+                }*/
+
+                if (config.slave_mode) {
+                    //printf("Entering slave output mode...  (press Ctrl-C to quit)\n");
+                    slaveMode(out, er);
+                    config.slave_mode = 0;
+                    free(argvlen);
+                    return REDIS_ERR;  /* Error = slaveMode lost connection to master */
                 }
 
-                if (cliReadReply(out, er) != REDIS_OK) {
+                if (cliReadReply(output_raw, out, er) != REDIS_OK) {
                     free(argvlen);
                     return REDIS_ERR;
                 } else {
+                    /* Store database number when SELECT was successfully executed. */
                     if (!strcasecmp(command,"select") && argc == 2) {
                         config.dbnum = atoi(argv[1]);
                         cliRefreshPrompt();
+                    } else if (!strcasecmp(command,"auth") && argc == 2) {
+                        cliSelect(er);
                     }
                 }
+                if (config.interval)
+                    usleep(config.interval);
             }
 
             free(argvlen);
@@ -521,7 +618,7 @@ namespace fastoredis
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
 
-                if (!argv) {
+                if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
                     out->addChildren(new FastoObject(out, val));
                 }
@@ -551,13 +648,14 @@ namespace fastoredis
                             if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
                             != REDIS_OK)
                             {
-                                cliConnect(1, er);
+                              //  cliConnect(1, er);
 
                             /* If we still cannot send the command print error.
                             * We'll try to reconnect the next time. */
-                            if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                            != REDIS_OK)
+                            /*if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
+                            != REDIS_OK)*/
                                 cliPrintContextError(er);
+                                break;
                             }
                             /* Issue the command again if we got redirected in cluster mode */
                             if (config.cluster_mode && config.cluster_reissue_command) {
@@ -607,6 +705,7 @@ namespace fastoredis
     {
         IDriver::customEvent(event);
         impl_->interrupt_ = false;
+        impl_->config.shutdown = 0;
     }    
 
     void RedisDriver::initImpl()
@@ -679,10 +778,10 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        common::StringValue *val =common::Value::createStringValue(command);
+                        common::StringValue* val = common::Value::createStringValue(command);
                         FastoObject* child = new FastoObject(outRoot.get(), val);
                         outRoot->addChildren(child);
-                        LOG_COMMAND(Command(command,Command::UserCommand));
+                        LOG_COMMAND(Command(command, Command::UserCommand));
                         impl_->repl_impl(child, er);                        
                     }
                 }
@@ -816,5 +915,6 @@ namespace fastoredis
     void RedisDriver::interrupt()
     {
         impl_->interrupt_ = true;
+        impl_->config.shutdown = 1;
     }
 }

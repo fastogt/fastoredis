@@ -21,6 +21,13 @@ struct WinsockInit {
     } winsock_init;
 #endif
 
+    struct SigIgnInit
+    {
+        SigIgnInit(){
+            signal(SIGPIPE, SIG_IGN);
+        }
+    } sig_init;
+
     const char magicNumber = 0x1E;
     std::string createStamp()
     {
