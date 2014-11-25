@@ -44,7 +44,6 @@ namespace fastoredis
         char *rdb_filename;
         int bigkeys;
         char *auth;
-        char prompt[128];
         char *eval;
         int last_cmd_type;
     };

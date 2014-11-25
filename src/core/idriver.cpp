@@ -19,14 +19,14 @@ struct WinsockInit {
         }
         ~WinsockInit(){ WSACleanup(); }
     } winsock_init;
-#endif
-
+#else
     struct SigIgnInit
     {
         SigIgnInit(){
             signal(SIGPIPE, SIG_IGN);
         }
     } sig_init;
+#endif
 
     const char magicNumber = 0x1E;
     std::string createStamp()

@@ -33,6 +33,7 @@
         #include <sys/types.h>
     #ifdef OS_WIN
         #include <winsock2.h>
+        #include <Ws2tcpip.h>
     #else
         #include <sys/socket.h>
         #include <sys/stat.h>
@@ -405,6 +406,10 @@ int anetTcpNonBlockBindConnect(char *err, char *addr, int port, char *source_add
 
 int anetUnixGenericConnect(char *err, char *path, int flags)
 {
+#ifdef FASTOREDIS
+#ifdef OS_WIN
+    return ANET_ERR;
+#else
     int s;
     struct sockaddr_un sa;
 
@@ -427,6 +432,31 @@ int anetUnixGenericConnect(char *err, char *path, int flags)
         return ANET_ERR;
     }
     return s;
+#endif
+#else
+    int s;
+    struct sockaddr_un sa;
+
+    if ((s = anetCreateSocket(err,AF_LOCAL)) == ANET_ERR)
+        return ANET_ERR;
+
+    sa.sun_family = AF_LOCAL;
+    strncpy(sa.sun_path,path,sizeof(sa.sun_path)-1);
+    if (flags & ANET_CONNECT_NONBLOCK) {
+        if (anetNonBlock(err,s) != ANET_OK)
+            return ANET_ERR;
+    }
+    if (connect(s,(struct sockaddr*)&sa,sizeof(sa)) == -1) {
+        if (errno == EINPROGRESS &&
+            flags & ANET_CONNECT_NONBLOCK)
+            return s;
+
+        anetSetError(err, "connect: %s", strerror(errno));
+        close(s);
+        return ANET_ERR;
+    }
+    return s;
+#endif
 }
 
 int anetUnixConnect(char *err, char *path)
@@ -543,6 +573,10 @@ int anetTcp6Server(char *err, int port, char *bindaddr, int backlog)
 
 int anetUnixServer(char *err, char *path, mode_t perm, int backlog)
 {
+#ifdef FASTOREDIS
+#ifdef OS_WIN
+    return ANET_ERR;
+#else
     int s;
     struct sockaddr_un sa;
 
@@ -557,6 +591,23 @@ int anetUnixServer(char *err, char *path, mode_t perm, int backlog)
     if (perm)
         chmod(sa.sun_path, perm);
     return s;
+#endif
+#else
+    int s;
+    struct sockaddr_un sa;
+
+    if ((s = anetCreateSocket(err,AF_LOCAL)) == ANET_ERR)
+        return ANET_ERR;
+
+    memset(&sa,0,sizeof(sa));
+    sa.sun_family = AF_LOCAL;
+    strncpy(sa.sun_path,path,sizeof(sa.sun_path)-1);
+    if (anetListen(err,s,(struct sockaddr*)&sa,sizeof(sa),backlog) == ANET_ERR)
+        return ANET_ERR;
+    if (perm)
+        chmod(sa.sun_path, perm);
+    return s;
+#endif
 }
 
 static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *len) {
@@ -596,6 +647,10 @@ int anetTcpAccept(char *err, int s, char *ip, size_t ip_len, int *port) {
 }
 
 int anetUnixAccept(char *err, int s) {
+#ifdef FASTOREDIS
+#ifdef OS_WIN
+    return ANET_ERR;
+#else
     int fd;
     struct sockaddr_un sa;
     socklen_t salen = sizeof(sa);
@@ -603,6 +658,16 @@ int anetUnixAccept(char *err, int s) {
         return ANET_ERR;
 
     return fd;
+#endif
+#else
+    int fd;
+    struct sockaddr_un sa;
+    socklen_t salen = sizeof(sa);
+    if ((fd = anetGenericAccept(err,s,(struct sockaddr*)&sa,&salen)) == -1)
+        return ANET_ERR;
+
+    return fd;
+#endif
 }
 
 int anetPeerToString(int fd, char *ip, size_t ip_len, int *port) {

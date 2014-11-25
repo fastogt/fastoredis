@@ -298,24 +298,6 @@ namespace fastoredis
             }
         }
 
-        void cliRefreshPrompt(void)
-        {
-            int len;
-
-            if (config.hostsocket != NULL)
-                len = snprintf(config.prompt,sizeof(config.prompt),"redis %s",
-                               config.hostsocket);
-            else
-                len = snprintf(config.prompt,sizeof(config.prompt),
-                               strchr(config.hostip,':') ? "[%s]:%d" : "%s:%d",
-                               config.hostip, config.hostport);
-            /* Add [dbnum] if needed */
-            if (config.dbnum != 0 && config.last_cmd_type != REDIS_REPLY_ERROR)
-                len += snprintf(config.prompt+len,sizeof(config.prompt)-len,"[%d]",
-                    config.dbnum);
-            snprintf(config.prompt+len,sizeof(config.prompt)-len,"> ");
-        }
-
         void cliPrintContextError(common::ErrorValueSPtr& er)
         {
             if (context == NULL)
@@ -509,7 +491,6 @@ namespace fastoredis
                 common::StringValue *val = common::Value::createStringValue(redir);
                 out->addChildren(new FastoObject(out, val));
                 config.cluster_reissue_command = 1;
-                cliRefreshPrompt();
             }
 
             if (output) {
@@ -592,13 +573,17 @@ namespace fastoredis
                     /* Store database number when SELECT was successfully executed. */
                     if (!strcasecmp(command,"select") && argc == 2) {
                         config.dbnum = atoi(argv[1]);
-                        cliRefreshPrompt();
                     } else if (!strcasecmp(command,"auth") && argc == 2) {
                         cliSelect(er);
                     }
                 }
-                if (config.interval)
+                if (config.interval){
+ #ifdef OS_WIN
+
+ #else
                     usleep(config.interval);
+ #endif
+                }
             }
 
             free(argvlen);
@@ -624,16 +609,16 @@ namespace fastoredis
                 }
                 else if (argc > 0)
                 {
-                    if (strcasecmp(argv[0], "quit") == 0 ||
-                    strcasecmp(argv[0], "exit") == 0)
+                    if (strcasecmp(argv[0], "quit") == 0 || strcasecmp(argv[0], "exit") == 0)
                     {
                         config.shutdown = 1;
-                    } else if (argc == 3 && !strcasecmp(argv[0],"connect")) {
+                    }
+                    else if (argc == 3 && !strcasecmp(argv[0], "connect")) {
                         config.hostip = argv[1];
                         config.hostport = atoi(argv[2]);
-                        cliRefreshPrompt();
                         cliConnect(1, er);
-                    } else {
+                    }
+                    else {
                         int repeat, skipargs = 0;
 
                         repeat = atoi(argv[0]);
@@ -645,17 +630,14 @@ namespace fastoredis
 
                         while (1) {
                             config.cluster_reissue_command = 0;
-                            if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                            != REDIS_OK)
+                            if (cliSendCommand(out, er, argc-skipargs, argv+skipargs, repeat) != REDIS_OK)
                             {
-                              //  cliConnect(1, er);
+                                cliConnect(1, er);
 
-                            /* If we still cannot send the command print error.
-                            * We'll try to reconnect the next time. */
-                            /*if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                            != REDIS_OK)*/
-                                cliPrintContextError(er);
-                                break;
+                                /* If we still cannot send the command print error.
+                                * We'll try to reconnect the next time. */
+                                if (cliSendCommand(out, er, argc-skipargs, argv+skipargs, repeat) != REDIS_OK)
+                                    cliPrintContextError(er);
                             }
                             /* Issue the command again if we got redirected in cluster mode */
                             if (config.cluster_mode && config.cluster_reissue_command) {
@@ -737,11 +719,12 @@ namespace fastoredis
                         common::ErrorValueSPtr er(new common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
                         res.setErrorInfo(er);
                     }
-                    else if(impl_->cliConnect(0, er) == REDIS_ERR){
-                        res.setErrorInfo(er);
+                    else{
+                        if(impl_->cliConnect(0, er) == REDIS_ERR){
+                            res.setErrorInfo(er);
+                        }
                     }
         notifyProgress(sender, 75);
-                impl_->cliRefreshPrompt();
             }
             reply(sender, new Events::ConnectResponceEvent(this, res));
         notifyProgress(sender, 100);
@@ -756,8 +739,6 @@ namespace fastoredis
 
             common::ErrorValueSPtr er;
             if(inputLine){
-                impl_->cliRefreshPrompt();
-
                 size_t length = strlen(inputLine);
                 int offset = 0;
                 FastoObjectPtr outRoot = FastoObject::createRoot(inputLine);
