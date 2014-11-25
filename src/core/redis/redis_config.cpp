@@ -10,7 +10,7 @@ namespace fastoredis
         int parseOptions(int argc, char **argv, redisConfig& cfg) {
             int i;
 
-            for (i = 1; i < argc; i++) {
+            for (i = 0; i < argc; i++) {
                 int lastarg = i==argc-1;
 
                 if (!strcmp(argv[i],"-h") && !lastarg) {
@@ -96,18 +96,28 @@ namespace fastoredis
             return i;
         }
 
-        redisConfig parseOptions(int argv, const std::string& line)
+        redisConfig parseOptions(const std::string& commandLine)
         {
             redisConfig cfg;
-            sds argc = sdsnew(line.c_str());
-            int i = parseOptions(argv, &argc, cfg);
-            sdsfree(argc);
+            enum { kMaxArgs = 64 };
+            int argc = 0;
+            char *argv[kMaxArgs] = {0};
+
+            char* p2 = strtok((char*)commandLine.c_str(), " ");
+            while (p2)
+            {
+                argv[argc++] = p2;
+                p2 = strtok(0, " ");
+            }
+
+            int i = parseOptions(argc, argv, cfg);
             return cfg;
         }
     }
 
     redisConfig::redisConfig()
     {
+        output = OUTPUT_RAW;
         hostip = NULL;
         hostport = 0;
         hostsocket = NULL;
@@ -126,6 +136,8 @@ namespace fastoredis
         stat_mode = 0;
         scan_mode = 0;
         intrinsic_latency_mode = 0;
+        intrinsic_latency_duration = 0;
+        cluster_reissue_command = 0;
         pattern = NULL;
         rdb_filename = NULL;
         pipe_mode = 0;
@@ -162,7 +174,7 @@ namespace common
             argv.push_back("-p");
             argv.push_back(convertToString(conf.hostport));
         }
-        if(!conf.hostsocket){
+        if(conf.hostsocket){
             argv.push_back("-s");
             argv.push_back(conf.hostsocket);
         }
@@ -255,8 +267,7 @@ namespace common
     template<>
     fastoredis::redisConfig convertFromString(const std::string& line)
     {
-        int argv = std::count_if(line.begin(), line.end(), std::isspace);
-        fastoredis::redisConfig r = fastoredis::parseOptions(argv, line);
+        fastoredis::redisConfig r = fastoredis::parseOptions(line);
         return r;
     }
 }

@@ -16,9 +16,6 @@ extern "C" {
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */
 #define CLI_HELP_COMMAND 1
 #define CLI_HELP_GROUP 2
-#define OUTPUT_STANDARD 0
-#define OUTPUT_RAW 1
-#define OUTPUT_CSV 2
 #define INFO_REQUEST "INFO"
 
 namespace
