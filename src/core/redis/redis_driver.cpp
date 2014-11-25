@@ -200,7 +200,9 @@ namespace fastoredis
 
             /* Now we can use hiredis to read the incoming protocol. */
             while (cliReadReply(0, out, er) == REDIS_OK){
-                //emit update out
+                if (config.shutdown){
+                    return;
+                }
             }
         }
 
@@ -251,19 +253,9 @@ namespace fastoredis
 
                     context = redisConnect(config.hostip, config.hostport, ssh_address, ssh_port, username, password,
                                            publicKey, privateKey, passphrase, curM);
-                } else {
-                    context = redisConnectUnix(config.hostsocket);
                 }
-
-                if (context->err) {
-                    fprintf(stderr,"Could not connect to Redis at ");
-                    if (config.hostsocket == NULL)
-                        fprintf(stderr,"%s:%d: %s\n",config.hostip,config.hostport,context->errstr);
-                    else
-                        fprintf(stderr,"%s: %s\n",config.hostsocket,context->errstr);
-                    redisFree(context);
-                    context = NULL;
-                    return REDIS_ERR;
+                else {
+                    context = redisConnectUnix(config.hostsocket);
                 }
 
                 if (context->err) {
@@ -372,11 +364,13 @@ namespace fastoredis
                     child = out;
                 }
                 else{
-                    common::ArrayValue *val =common::Value::createArrayValue();
+                    common::ArrayValue* val = common::Value::createArrayValue();
                     val->appendString(out->toString());
-                    child = new FastoObject(out,val);
+
+                    child = new FastoObject(out, val);
                     out->addChildren(child);
                 }
+
                 for (size_t i = 0; i < r->elements; i++) {
                     if (i > 0) {
                         //out = sdscat(out,config.mb_delim);
@@ -405,7 +399,7 @@ namespace fastoredis
             if (group) {
                 char buff2[1024] = {0};
                 sprintf(buff2,"  group: %s", commandGroups[help->group]);
-                val =common::Value::createStringValue(buff2);
+                val = common::Value::createStringValue(buff2);
                 out->addChildren(new FastoObject(out, val));
             }
         }
@@ -477,7 +471,7 @@ namespace fastoredis
             redisReply *reply;
             int output = 1;
 
-            if (redisGetReply(context,&_reply) != REDIS_OK) {
+            if (redisGetReply(context, &_reply) != REDIS_OK) {
                 if (config.shutdown)
                     return REDIS_OK;
 
@@ -512,7 +506,7 @@ namespace fastoredis
                 config.hostport = atoi(s+1);                
                 char redir[512] = {0};
                 sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
-                common::StringValue *val =common::Value::createStringValue(redir);
+                common::StringValue *val = common::Value::createStringValue(redir);
                 out->addChildren(new FastoObject(out, val));
                 config.cluster_reissue_command = 1;
                 cliRefreshPrompt();
@@ -586,7 +580,7 @@ namespace fastoredis
                 if (config.slave_mode) {
                     //printf("Entering slave output mode...  (press Ctrl-C to quit)\n");
                     slaveMode(out, er);
-                    //config.slave_mode = 0;
+                    config.slave_mode = 0;
                     free(argvlen);
                     return REDIS_ERR;  /* Error = slaveMode lost connection to master */
                 }
@@ -654,13 +648,14 @@ namespace fastoredis
                             if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
                             != REDIS_OK)
                             {
-                                cliConnect(1, er);
+                              //  cliConnect(1, er);
 
                             /* If we still cannot send the command print error.
                             * We'll try to reconnect the next time. */
-                            if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
-                            != REDIS_OK)
+                            /*if (cliSendCommand(out, er, argc-skipargs,argv+skipargs,repeat)
+                            != REDIS_OK)*/
                                 cliPrintContextError(er);
+                                break;
                             }
                             /* Issue the command again if we got redirected in cluster mode */
                             if (config.cluster_mode && config.cluster_reissue_command) {
@@ -710,6 +705,7 @@ namespace fastoredis
     {
         IDriver::customEvent(event);
         impl_->interrupt_ = false;
+        impl_->config.shutdown = 0;
     }    
 
     void RedisDriver::initImpl()
@@ -782,10 +778,10 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        common::StringValue *val =common::Value::createStringValue(command);
+                        common::StringValue* val = common::Value::createStringValue(command);
                         FastoObject* child = new FastoObject(outRoot.get(), val);
                         outRoot->addChildren(child);
-                        LOG_COMMAND(Command(command,Command::UserCommand));
+                        LOG_COMMAND(Command(command, Command::UserCommand));
                         impl_->repl_impl(child, er);                        
                     }
                 }
@@ -919,5 +915,6 @@ namespace fastoredis
     void RedisDriver::interrupt()
     {
         impl_->interrupt_ = true;
+        impl_->config.shutdown = 1;
     }
 }

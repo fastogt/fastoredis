@@ -76,6 +76,20 @@ namespace fastoredis
         return !parent_ && type() == common::Value::TYPE_STRING;
     }
 
+    FastoObject* FastoObject::parent() const
+    {
+        return parent_;
+    }
+
+    void FastoObject::clear()
+    {
+        for (child_container_type::const_iterator it = childrens_.begin(); it != childrens_.end(); ++it){
+            FastoObject* child = (*it);
+            delete child;
+        }
+        childrens_.clear();
+    }
+
 	FastoObject::child_container_type FastoObject::childrens() const
     {
         return childrens_;
