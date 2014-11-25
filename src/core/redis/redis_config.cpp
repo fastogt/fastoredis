@@ -1,7 +1,11 @@
 #include "core/redis/redis_config.h"
 
+extern "C" {
+#include "third-party/redis/deps/hiredis/sds.h"
+}
+
 #include "core/logger.h"
-#include "common/safe_sprintf.h"
+
 
 namespace fastoredis
 {
@@ -16,13 +20,13 @@ namespace fastoredis
                 if (!strcmp(argv[i],"-h") && !lastarg) {
                     sdsfree(cfg.hostip);
                     cfg.hostip = sdsnew(argv[++i]);
-                } else if (!strcmp(argv[i],"-h") && lastarg) {
-                    //usage();
+                }/* else if (!strcmp(argv[i],"-h") && lastarg) {
+                    usage();
                 } else if (!strcmp(argv[i],"--help")) {
-                    //usage();
+                    usage();
                 } else if (!strcmp(argv[i],"-x")) {
                     cfg.stdinarg = 1;
-                } else if (!strcmp(argv[i],"-p") && !lastarg) {
+                }*/ else if (!strcmp(argv[i],"-p") && !lastarg) {
                     cfg.hostport = atoi(argv[++i]);
                 } else if (!strcmp(argv[i],"-s") && !lastarg) {
                     cfg.hostsocket = argv[++i];
@@ -35,13 +39,14 @@ namespace fastoredis
                     cfg.dbnum = atoi(argv[++i]);
                 } else if (!strcmp(argv[i],"-a") && !lastarg) {
                     cfg.auth = argv[++i];
-                } else if (!strcmp(argv[i],"--raw")) {
+                }
+                /*else if (!strcmp(argv[i],"--raw")) {
                     cfg.output = OUTPUT_RAW;
                 } else if (!strcmp(argv[i],"--no-raw")) {
                     cfg.output = OUTPUT_STANDARD;
                 } else if (!strcmp(argv[i],"--csv")) {
                     cfg.output = OUTPUT_CSV;
-                } else if (!strcmp(argv[i],"--latency")) {
+                }*/ else if (!strcmp(argv[i],"--latency")) {
                     cfg.latency_mode = 1;
                 } else if (!strcmp(argv[i],"--latency-history")) {
                     cfg.latency_mode = 1;
@@ -70,11 +75,12 @@ namespace fastoredis
                     cfg.eval = argv[++i];
                 } else if (!strcmp(argv[i],"-c")) {
                     cfg.cluster_mode = 1;
-                } else if (!strcmp(argv[i],"-d") && !lastarg) {
+                }
+                /*else if (!strcmp(argv[i],"-d") && !lastarg) {
                     sdsfree(cfg.mb_delim);
                     cfg.mb_delim = sdsnew(argv[++i]);
                 }
-                /*else if (!strcmp(argv[i],"-v") || !strcmp(argv[i], "--version")) {
+                else if (!strcmp(argv[i],"-v") || !strcmp(argv[i], "--version")) {
                     sds version = cliVersion();
                     printf("redis-cli %s\n", version);
                     sdsfree(version);
@@ -83,7 +89,7 @@ namespace fastoredis
                     if (argv[i][0] == '-') {
                         const uint16_t size_buff = 256;
                         char buff[size_buff] = {0};
-                        common::strings::SafeSNPrintf(buff, size_buff, "Unrecognized option or bad number of args for: '%s'", argv[i]);
+                        sprintf(buff, "Unrecognized option or bad number of args for: '%s'", argv[i]);
                         common::ErrorValueSPtr er(new common::ErrorValue(buff, common::Value::E_ERROR));
                         LOG_ERROR(er);
                         break;
@@ -117,9 +123,8 @@ namespace fastoredis
 
     redisConfig::redisConfig()
     {
-        output = OUTPUT_RAW;
-        hostip = NULL;
-        hostport = 0;
+        hostip = sdsnew("127.0.0.1");
+        hostport = 6379;
         hostsocket = NULL;
         repeat = 1;
         interval = 0;
@@ -143,7 +148,6 @@ namespace fastoredis
         pipe_mode = 0;
         pipe_timeout = REDIS_CLI_DEFAULT_PIPE_TIMEOUT;
         bigkeys = 0;
-        stdinarg = 0;
         auth = NULL;
         eval = NULL;
         last_cmd_type = -1;
@@ -164,10 +168,6 @@ namespace common
         if(conf.hostip){
             argv.push_back("-h");
             argv.push_back(conf.hostip);
-        }
-
-        if(conf.stdinarg){
-            argv.push_back("-x");
         }
 
         if(conf.hostport){
@@ -195,8 +195,6 @@ namespace common
             argv.push_back("-a");
             argv.push_back(conf.auth);
         }
-
-        //cfg.output = OUTPUT_RAW OUTPUT_STANDARD OUTPUT_CSV -a
 
         if(conf.latency_mode){
             if(conf.latency_history){
@@ -247,10 +245,6 @@ namespace common
         }
         if(conf.cluster_mode){
             argv.push_back("-c");
-        }
-        if(conf.mb_delim){
-           argv.push_back("-d");
-           argv.push_back(conf.mb_delim);
         }
 
         std::string result;

@@ -8,6 +8,7 @@ extern "C" {
 #include "third-party/redis/src/help.h"
 #include "third-party/redis/deps/hiredis/hiredis.h"
 #include "third-party/redis/src/anet.h"
+#include "third-party/redis/deps/hiredis/sds.h"
 }
 
 #include "core/command_logger.h"
@@ -180,7 +181,6 @@ namespace fastoredis
             int fd = context->fd;
             unsigned long long payload = sendSync(fd);
             char buf[1024];
-            int original_output = config.output;
 
             fprintf(stderr,"SYNC with master, discarding %llu "
                            "bytes of bulk transfer...\n", payload);
@@ -199,9 +199,7 @@ namespace fastoredis
             fprintf(stderr,"SYNC done. Logging commands from master.\n");
 
             /* Now we can use hiredis to read the incoming protocol. */
-            config.output = OUTPUT_CSV;
             while (cliReadReply(0, out, er) == REDIS_OK);
-            config.output = original_output;
         }
 
         int cliAuth(common::ErrorValueSPtr& er)
@@ -378,6 +376,10 @@ namespace fastoredis
                     out->addChildren(child);
                 }
                 for (size_t i = 0; i < r->elements; i++) {
+                    if (i > 0) {
+                        //out = sdscat(out,config.mb_delim);
+                    }
+
                     cliFormatReplyRaw(child, r->element[i]);
                 }
                 break;
@@ -515,19 +517,7 @@ namespace fastoredis
             }
 
             if (output) {
-                if (output_raw_strings) {
-                    cliFormatReplyRaw(out, reply);
-                } else {
-                    if (config.output == OUTPUT_RAW) {
-                        cliFormatReplyRaw(out, reply);
-                        //sdscat(out,"\n");
-                    } else if (config.output == OUTPUT_STANDARD) {
-                        //cliFormatReplyTTY(reply,"");
-                    } else if (config.output == OUTPUT_CSV) {
-                        //cliFormatReplyCSV(reply);
-                        //sdscat(out,"\n");
-                    }
-                }
+                cliFormatReplyRaw(out, reply);
             }
 
             freeReplyObject(reply);
@@ -583,13 +573,13 @@ namespace fastoredis
                     }
                 }
 
-                if (config.pubsub_mode) {
+                /*if (config.pubsub_mode) {
                     if (config.output != OUTPUT_RAW)
                     while (1) {
                         if (cliReadReply(output_raw, out, er) != REDIS_OK)
                             return REDIS_ERR;
                     }
-                }
+                }*/
 
                 if (config.slave_mode) {
                     printf("Entering slave output mode...  (press Ctrl-C to quit)\n");
