@@ -100,7 +100,7 @@ namespace fastoredis
 
     void MainWidget::openNewTab(QueryWidget *src, const QString &title, const QString &text)
     {
-        QueryWidget *newWid = QueryWidget::duplicate(src, text);
+        QueryWidget *newWid = src->clone(text);
         DCHECK(newWid);
         addWidgetToTab(newWid, title);
     }

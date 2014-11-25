@@ -85,7 +85,7 @@ namespace fastoredis
         textView_->setModel(commonModel_);
         textView_->setReadOnly(true);
 
-        timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(), common::convertFromString16<QString>(common::time::mstime2string(0)), QSize(16, 16));
+        timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(), QString::number(0), QSize(16, 16));
 
         QVBoxLayout *mainL = new QVBoxLayout;
         QHBoxLayout *topL = new QHBoxLayout;

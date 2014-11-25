@@ -13,7 +13,8 @@
 
 namespace fastoredis
 {
-    struct redisConfig {
+    struct redisConfig
+    {
         redisConfig();
         ~redisConfig();
 

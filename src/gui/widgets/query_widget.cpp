@@ -39,9 +39,9 @@ namespace fastoredis
 
     }
 
-    QueryWidget *QueryWidget::duplicate(QueryWidget *src, const QString &text)
+    QueryWidget* QueryWidget::clone(const QString &text)
     {
-        QueryWidget *result = new QueryWidget(src->shellWidget_->server(), src->parentWidget());
+        QueryWidget *result = new QueryWidget(shellWidget_->server(), parentWidget());
         result->shellWidget_->setText(text);
         return result;
     }

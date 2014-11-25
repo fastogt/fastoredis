@@ -199,7 +199,9 @@ namespace fastoredis
             fprintf(stderr,"SYNC done. Logging commands from master.\n");
 
             /* Now we can use hiredis to read the incoming protocol. */
-            while (cliReadReply(0, out, er) == REDIS_OK);
+            while (cliReadReply(0, out, er) == REDIS_OK){
+                //emit update out
+            }
         }
 
         int cliAuth(common::ErrorValueSPtr& er)
@@ -582,9 +584,9 @@ namespace fastoredis
                 }*/
 
                 if (config.slave_mode) {
-                    printf("Entering slave output mode...  (press Ctrl-C to quit)\n");
+                    //printf("Entering slave output mode...  (press Ctrl-C to quit)\n");
                     slaveMode(out, er);
-                    config.slave_mode = 0;
+                    //config.slave_mode = 0;
                     free(argvlen);
                     return REDIS_ERR;  /* Error = slaveMode lost connection to master */
                 }
