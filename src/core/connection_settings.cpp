@@ -147,6 +147,8 @@ namespace fastoredis
         else if(type == REDIS){
             return QObject::tr("-h host -p port");
         }
+
+        return QString();
     }
 
     RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName, const redisConfig &info)
@@ -158,11 +160,6 @@ namespace fastoredis
     std::string RedisConnectionSettings::host() const
     {
         return info_.hostip;
-    }
-
-    void RedisConnectionSettings::setHost(const std::string &host)
-    {
-        info_.hostip = host;
     }
 
     int RedisConnectionSettings::port() const

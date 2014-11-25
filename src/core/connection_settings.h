@@ -24,7 +24,6 @@ namespace fastoredis
         virtual std::string fullAddress() const = 0;
 
         virtual std::string host() const = 0;
-        virtual void setHost(const std::string &host) = 0;
         virtual int port() const = 0;
         virtual void setPort(int port) = 0;
 
@@ -71,7 +70,6 @@ namespace fastoredis
         virtual std::string fullAddress() const;
 
         virtual std::string host() const;
-        virtual void setHost(const std::string &host);
         virtual int port() const;
         virtual void setPort(int port);
 
