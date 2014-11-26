@@ -243,14 +243,4 @@ namespace fastoredis
         RedisConnectionSettings *red = new RedisConnectionSettings(*this);
         return red;
     }
-
-    ConnectionMode RedisConnectionSettings::mode() const
-    {
-        if(info_.slave_mode){
-            return Slave;
-        }
-        else{
-            return Intaractive;
-        }
-    }
 }

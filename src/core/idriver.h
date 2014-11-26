@@ -66,6 +66,7 @@ namespace fastoredis
         void loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev);
 
         virtual ServerInfoSPtr makeServerInfoFromString(const std::string& val) = 0;
+        virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev) = 0;
 
         QThread *thread_;
         int timer_info_id_;

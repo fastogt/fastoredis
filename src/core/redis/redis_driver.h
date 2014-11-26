@@ -37,10 +37,20 @@ namespace fastoredis
         virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent *ev);
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev);
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev);
+        virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev);
 
         ServerInfoSPtr makeServerInfoFromString(const std::string &val);
 
         struct pimpl;
         boost::scoped_ptr<pimpl> impl_;
+
+        void interacteveMode(Events::ProcessConfigArgsRequestEvent* ev);
+        void latencyMode(Events::ProcessConfigArgsRequestEvent* ev);
+        void slaveMode(Events::ProcessConfigArgsRequestEvent* ev);
+        void getRDBMode(Events::ProcessConfigArgsRequestEvent* ev);
+        void pipeMode(Events::ProcessConfigArgsRequestEvent* ev);
+        void findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev);
+        void statMode(Events::ProcessConfigArgsRequestEvent* ev);
+        void scanMode(Events::ProcessConfigArgsRequestEvent* ev);
     };
 }

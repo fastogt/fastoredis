@@ -29,6 +29,30 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
+        ProcessConfigArgsInfoRequest::ProcessConfigArgsInfoRequest(const error_type &er)
+            : base_class(er)
+        {
+
+        }
+
+        ProcessConfigArgsInfoResponce::ProcessConfigArgsInfoResponce(const base_class &request, const error_type &er)
+            : base_class(request)
+        {
+            base_class::errorInfo_ = er;
+        }
+
+        EnterModeInfo::EnterModeInfo(ConnectionMode mode, const error_type& er)
+            : base_class(er), mode_(mode)
+        {
+
+        }
+
+        LeaveModeInfo::LeaveModeInfo(ConnectionMode mode, const error_type& er)
+            : base_class(er), mode_(mode)
+        {
+
+        }
+
         DisonnectInfoRequest::DisonnectInfoRequest(const error_type &er)
             : base_class(er)
         {

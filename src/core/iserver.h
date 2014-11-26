@@ -64,6 +64,9 @@ namespace fastoredis
 
         void progressChanged(const EventsInfo::ProgressInfoResponce& res);
 
+        void enterMode(const EventsInfo::EnterModeInfo& res);
+        void leaveMode(const EventsInfo::LeaveModeInfo& res);
+
     public Q_SLOTS:
         //async
         void serverInfo();
@@ -92,6 +95,7 @@ namespace fastoredis
 
     private:
         void loadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent* ev);
+        void processConfigArgs();
         bool isMaster_;
     };
 

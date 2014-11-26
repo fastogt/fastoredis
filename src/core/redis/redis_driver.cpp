@@ -718,6 +718,149 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
+    void RedisDriver::processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev)
+    {
+        /* Latency mode */
+        if (impl_->config.latency_mode) {
+            latencyMode(ev);
+        }
+
+        /* Slave mode */
+        if (impl_->config.slave_mode) {
+            slaveMode(ev);
+        }
+
+        /* Get RDB mode. */
+        if (impl_->config.getrdb_mode) {
+            getRDBMode(ev);
+        }
+
+        /* Pipe mode */
+        if (impl_->config.pipe_mode) {
+            pipeMode(ev);
+        }
+
+        /* Find big keys */
+        if (impl_->config.bigkeys) {
+            findBigKeysMode(ev);
+        }
+
+        /* Stat mode */
+        if (impl_->config.stat_mode) {
+            if (impl_->config.interval == 0){
+                impl_->config.interval = 1000000;
+            }
+            statMode(ev);
+        }
+
+        /* Scan mode */
+        if (impl_->config.scan_mode) {
+            scanMode(ev);
+        }
+
+        interacteveMode(ev);
+
+        QObject *sender = ev->sender();
+        Events::ProcessConfigArgsResponceEvent::value_type res(ev->value());
+        reply(sender, new Events::ProcessConfigArgsResponceEvent(this, res));
+    }
+
+    void RedisDriver::interacteveMode(Events::ProcessConfigArgsRequestEvent *ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::EnterModeEvent::value_type res(IntaractiveMode);
+        reply(sender, new Events::EnterModeEvent(this, res));
+
+        Events::LeaveModeEvent::value_type res2(IntaractiveMode);
+        reply(sender, new Events::LeaveModeEvent(this, res2));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::latencyMode(Events::ProcessConfigArgsRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::EnterModeEvent::value_type res(LatencyMode);
+        reply(sender, new Events::EnterModeEvent(this, res));
+
+        Events::LeaveModeEvent::value_type res2(LatencyMode);
+        reply(sender, new Events::LeaveModeEvent(this, res2));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::slaveMode(Events::ProcessConfigArgsRequestEvent* ev)
+    {
+        QObject* sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::EnterModeEvent::value_type res(SlaveMode);
+        reply(sender, new Events::EnterModeEvent(this, res));
+
+        Events::LeaveModeEvent::value_type res2(SlaveMode);
+        reply(sender, new Events::LeaveModeEvent(this, res2));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::getRDBMode(Events::ProcessConfigArgsRequestEvent* ev)
+    {
+        QObject* sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::EnterModeEvent::value_type res(GetRDBMode);
+        reply(sender, new Events::EnterModeEvent(this, res));
+
+        Events::LeaveModeEvent::value_type res2(GetRDBMode);
+        reply(sender, new Events::LeaveModeEvent(this, res2));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::pipeMode(Events::ProcessConfigArgsRequestEvent* ev)
+    {
+        QObject* sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::EnterModeEvent::value_type res(PipeMode);
+        reply(sender, new Events::EnterModeEvent(this, res));
+
+        Events::LeaveModeEvent::value_type res2(PipeMode);
+        reply(sender, new Events::LeaveModeEvent(this, res2));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev)
+    {
+        QObject* sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::EnterModeEvent::value_type res(FindBigKeysMode);
+        reply(sender, new Events::EnterModeEvent(this, res));
+
+        Events::LeaveModeEvent::value_type res2(FindBigKeysMode);
+        reply(sender, new Events::LeaveModeEvent(this, res2));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::statMode(Events::ProcessConfigArgsRequestEvent* ev)
+    {
+        QObject* sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::EnterModeEvent::value_type res(StatMode);
+        reply(sender, new Events::EnterModeEvent(this, res));
+
+        Events::LeaveModeEvent::value_type res2(StatMode);
+        reply(sender, new Events::LeaveModeEvent(this, res2));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::scanMode(Events::ProcessConfigArgsRequestEvent* ev)
+    {
+        QObject* sender = ev->sender();
+        notifyProgress(sender, 0);
+        Events::EnterModeEvent::value_type res(ScanMode);
+        reply(sender, new Events::EnterModeEvent(this, res));
+
+        Events::LeaveModeEvent::value_type res2(ScanMode);
+        reply(sender, new Events::LeaveModeEvent(this, res2));
+        notifyProgress(sender, 100);
+    }
+
     void RedisDriver::executeEvent(Events::ExecuteRequestEvent *ev)
     {
         QObject *sender = ev->sender();

@@ -36,6 +36,36 @@ namespace fastoredis
             ConnectInfoResponce(const base_class &request, const error_type &er = error_type());
         };
 
+        struct ProcessConfigArgsInfoRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ProcessConfigArgsInfoRequest(const error_type &er = error_type());
+        };
+
+        struct ProcessConfigArgsInfoResponce
+                : ProcessConfigArgsInfoRequest
+        {
+            typedef ProcessConfigArgsInfoRequest base_class;
+            ProcessConfigArgsInfoResponce(const base_class &request, const error_type &er = error_type());
+        };
+
+        struct EnterModeInfo
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            EnterModeInfo(ConnectionMode mode, const error_type &er = error_type());
+            ConnectionMode mode_;
+        };
+
+        struct LeaveModeInfo
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            LeaveModeInfo(ConnectionMode mode, const error_type &er = error_type());
+            ConnectionMode mode_;
+        };
+
         struct DisonnectInfoRequest
                 : public EventInfoBase
         {

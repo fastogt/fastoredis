@@ -86,7 +86,7 @@ namespace fastoredis
     {
         EventsInfo::ConnectInfoRequest req;
         emit startedConnect(req);
-        QEvent *ev = new Events::ConnectRequestEvent(this,req);
+        QEvent *ev = new Events::ConnectRequestEvent(this, req);
         notify(ev);
     }
 
@@ -94,7 +94,7 @@ namespace fastoredis
     {
         EventsInfo::LoadDatabasesInfoRequest req;
         emit startedLoadDatabases(req);
-        QEvent *ev = new Events::LoadDatabasesInfoRequestEvent(this,req);
+        QEvent *ev = new Events::LoadDatabasesInfoRequestEvent(this, req);
         notify(ev);
     }
 
@@ -166,6 +166,13 @@ namespace fastoredis
         emit finishedLoadServerHistoryInfo(v);
     }
 
+    void IServer::processConfigArgs()
+    {
+        EventsInfo::ProcessConfigArgsInfoRequest req;
+        QEvent *ev = new Events::ProcessConfigArgsRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::stopCurrentEvent()
     {
         drv_->interrupt();
@@ -203,6 +210,24 @@ namespace fastoredis
         if (type == static_cast<QEvent::Type>(ConnectResponceEvent::EventType)){
             ConnectResponceEvent *ev = static_cast<ConnectResponceEvent*>(event);
             connectEvent(ev);
+
+            ConnectResponceEvent::value_type v = ev->value();
+            common::ErrorValueSPtr er(v.errorInfo());
+            if(!er){
+                processConfigArgs();
+            }
+        }
+        else if(type == static_cast<QEvent::Type>(EnterModeEvent::EventType))
+        {
+            EnterModeEvent *ev = static_cast<EnterModeEvent*>(event);
+            EnterModeEvent::value_type v = ev->value();
+            emit enterMode(v);
+        }
+        else if(type == static_cast<QEvent::Type>(LeaveModeEvent::EventType))
+        {
+            LeaveModeEvent *ev = static_cast<LeaveModeEvent*>(event);
+            LeaveModeEvent::value_type v = ev->value();
+            emit leaveMode(v);
         }
         else if(type == static_cast<QEvent::Type>(DisconnectResponceEvent::EventType))
         {
