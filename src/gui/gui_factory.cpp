@@ -110,7 +110,7 @@ namespace fastoredis
         return textFont;
     }
 
-    const QIcon &GuiFactory::getIcon(connectionTypes type) const
+    const QIcon &GuiFactory::icon(connectionTypes type) const
     {
         if(type == REDIS){
             return redisConnectionIcon();
@@ -120,7 +120,48 @@ namespace fastoredis
         }
     }
 
-    const QIcon &GuiFactory::getIcon(common::Value::Type type) const
+    const QIcon& GuiFactory::modeIcon(ConnectionMode mode) const
+    {
+        if(mode == LatencyMode){
+            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/latency_mode.png");
+            return i;
+        }
+        else if(mode == SlaveMode){
+            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/slave_mode.png");
+            return i;
+        }
+        else if(mode == GetRDBMode){
+            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/rdb_mode.png");
+            return i;
+        }
+        else if(mode == PipeMode){
+            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/pipe_mode.png");
+            return i;
+        }
+        else if(mode == FindBigKeysMode){
+            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/bigkeys_mode.png");
+            return i;
+        }
+        else if(mode == StatMode){
+            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/stat_mode.png");
+            return i;
+        }
+        else if(mode == ScanMode){
+            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/scan_mode.png");
+            return i;
+        }
+        else if(mode == IntaractiveMode){
+            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/interactive_mode.png");
+            return i;
+        }
+        else{
+            static QIcon err(":"PROJECT_NAME_LOWERCASE"/icons/error.png");
+            NOTREACHED();
+            return err;
+        }
+    }
+
+    const QIcon &GuiFactory::icon(common::Value::Type type) const
     {
         switch(type)
         {

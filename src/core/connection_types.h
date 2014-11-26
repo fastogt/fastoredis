@@ -47,9 +47,12 @@ namespace fastoredis
         /* Intaractive mode */
         IntaractiveMode
     };
+
+    std::vector<std::string> supportedConnectionMode();
 }
 
 namespace common
 {
     std::string convertToString(fastoredis::connectionTypes t);
+    std::string convertToString(fastoredis::ConnectionMode t);
 }

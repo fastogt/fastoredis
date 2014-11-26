@@ -29,5 +29,13 @@
     <file>icons/loading.gif</file>
     <file>icons/command.png</file>
     <file>icons/logging.png</file>
+    <file>icons/interactive_mode.png</file>
+    <file>icons/latency_mode.png</file>
+    <file>icons/pipe_mode.png</file>
+    <file>icons/stat_mode.png</file>
+    <file>icons/bigkeys_mode.png</file>
+    <file>icons/scan_mode.png</file>
+    <file>icons/rdb_mode.png</file>
+    <file>icons/slave_mode.png</file>
     </qresource>
 </RCC>

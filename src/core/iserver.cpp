@@ -221,13 +221,13 @@ namespace fastoredis
         {
             EnterModeEvent *ev = static_cast<EnterModeEvent*>(event);
             EnterModeEvent::value_type v = ev->value();
-            emit enterMode(v);
+            emit enteredMode(v);
         }
         else if(type == static_cast<QEvent::Type>(LeaveModeEvent::EventType))
         {
             LeaveModeEvent *ev = static_cast<LeaveModeEvent*>(event);
             LeaveModeEvent::value_type v = ev->value();
-            emit leaveMode(v);
+            emit leavedMode(v);
         }
         else if(type == static_cast<QEvent::Type>(DisconnectResponceEvent::EventType))
         {

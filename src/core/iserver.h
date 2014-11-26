@@ -64,8 +64,8 @@ namespace fastoredis
 
         void progressChanged(const EventsInfo::ProgressInfoResponce& res);
 
-        void enterMode(const EventsInfo::EnterModeInfo& res);
-        void leaveMode(const EventsInfo::LeaveModeInfo& res);
+        void enteredMode(const EventsInfo::EnterModeInfo& res);
+        void leavedMode(const EventsInfo::LeaveModeInfo& res);
 
     public Q_SLOTS:
         //async

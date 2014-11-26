@@ -105,7 +105,7 @@ namespace fastoredis
         if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){
             IExplorerTreeItem::eType t = node->type();
             if(t == IExplorerTreeItem::Server){
-                return GuiFactory::instance().getIcon(node->server()->connectionType());
+                return GuiFactory::instance().icon(node->server()->connectionType());
             }
             else{
                 return GuiFactory::instance().databaseIcon();

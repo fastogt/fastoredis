@@ -83,6 +83,8 @@ namespace
 
         return result;
     }
+
+    const QSize iconSize = QSize(16, 16);
 }
 
 namespace fastoredis
@@ -97,6 +99,9 @@ namespace fastoredis
         VERIFY(connect(server_.get(), SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), this, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &))));
         VERIFY(connect(server_.get(), SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), this, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &))));
         VERIFY(connect(server_.get(), SIGNAL(progressChanged(const EventsInfo::ProgressInfoResponce &)), this, SLOT(progressChange(const EventsInfo::ProgressInfoResponce &))));
+
+        VERIFY(connect(server_.get(), SIGNAL(enteredMode(const EventsInfo::EnterModeInfo&)), this, SLOT(enterMode(const EventsInfo::EnterModeInfo&))));
+        VERIFY(connect(server_.get(), SIGNAL(leavedMode(const EventsInfo::LeaveModeInfo&)), this, SLOT(leaveMode(const EventsInfo::LeaveModeInfo&))));
 
         QVBoxLayout* mainlayout = new QVBoxLayout;
         QHBoxLayout* hlayout = new QHBoxLayout;
@@ -128,7 +133,10 @@ namespace fastoredis
         savebar->addAction(stopAction);
 
         serverName_ = new IconLabel(GuiFactory::instance().serverIcon(), server_->address(), QSize(16, 16));
+        const ConnectionMode mode = IntaractiveMode;
+        connectionMode_ = new IconLabel(GuiFactory::instance().modeIcon(mode), common::convertFromString<QString>(common::convertToString(mode)), iconSize);
         savebar->addWidget(serverName_);
+        savebar->addWidget(connectionMode_);
 
         hlayout->addWidget(savebar);
 
@@ -152,6 +160,18 @@ namespace fastoredis
 
         syncConnectionActions();
         setToolTip(tr("Based on redis-cli version: %1").arg(input_->version()));
+    }
+
+    void ShellWidget::enterMode(const EventsInfo::EnterModeInfo& res)
+    {
+        ConnectionMode mode = res.mode_;
+        connectionMode_->setIcon(GuiFactory::instance().modeIcon(mode), iconSize);
+        connectAction_->setText(common::convertFromString<QString>(common::convertToString(mode)));
+    }
+
+    void ShellWidget::leaveMode(const EventsInfo::LeaveModeInfo& res)
+    {
+        ConnectionMode mode = res.mode_;
     }
 
     void ShellWidget::execute()

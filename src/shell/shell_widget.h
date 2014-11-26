@@ -50,20 +50,24 @@ namespace fastoredis
 
         void progressChange(const EventsInfo::ProgressInfoResponce& res);
 
+        void enterMode(const EventsInfo::EnterModeInfo& res);
+        void leaveMode(const EventsInfo::LeaveModeInfo& res);
+
     private:
         void syncConnectionActions();
 
         const IServerPtr server_;
-        QAction *executeAction_;
-        QAction *connectAction_;
-        QAction *disConnectAction_;
-        QAction *loadAction_;
-        QAction *saveAction_;
-        QAction *saveAsAction_;
+        QAction* executeAction_;
+        QAction* connectAction_;
+        QAction* disConnectAction_;
+        QAction* loadAction_;
+        QAction* saveAction_;
+        QAction* saveAsAction_;
 
-        IconLabel *serverName_;
-        RedisShell *input_;
-        QProgressBar *workProgressBar_;
+        IconLabel* serverName_;
+        RedisShell* input_;
+        QProgressBar* workProgressBar_;
+        IconLabel* connectionMode_;
         QString filePath_;
     };
 }

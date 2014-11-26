@@ -41,7 +41,7 @@ namespace fastoredis
         int col = index.column();
 
         if(role == Qt::DecorationRole && col == FastoCommonItem::eKey ){
-            return GuiFactory::instance().getIcon(node->type());
+            return GuiFactory::instance().icon(node->type());
         }
 
         if(role == Qt::TextColorRole && col == FastoCommonItem::eType){
