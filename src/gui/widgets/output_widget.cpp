@@ -160,13 +160,12 @@ namespace fastoredis
 
     void OutputWidget::finishExecute(const EventsInfo::ExecuteInfoResponce& res)
     {
-        FastoCommonItem *root = parseOutput(res._out.get());
+        FastoCommonItem *root = parseOutput(res.out_.get());
 
         commonModel_->setRoot(root);
-        QModelIndex rootIndex = commonModel_->index(0, 0);
-        treeView_->setRootIndex(rootIndex);
-        tableView_->setRootIndex(rootIndex);
-        textView_->setRootIndex(rootIndex);
+        //treeView_->setRootIndex(rootIndex);
+        //tableView_->setRootIndex(rootIndex);
+        //textView_->setRootIndex(QModelIndex());
 
         timeLabel_->setText(tr("Execute milliseconds time: %1").arg(res.elapsedTime()));
     }

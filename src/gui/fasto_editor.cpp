@@ -117,17 +117,6 @@ namespace fastoredis
         reset();
     }
 
-    void FastoEditor::setRootIndex(const QModelIndex &index)
-    {
-        if (index.isValid() && index.model() != model_) {
-            qWarning("QAbstractItemView::setRootIndex failed : index must be from the currently set model");
-            return;
-        }
-
-        root_index_ = index;
-        layoutChanged();
-    }
-
     void FastoEditor::modelDestroyed()
     {
 
@@ -175,7 +164,7 @@ namespace fastoredis
 
     void FastoEditor::reset()
     {
-        clear();
+        layoutChanged();
     }
 
     void FastoEditor::viewChanged(bool isJson)
@@ -187,8 +176,21 @@ namespace fastoredis
     void FastoEditor::layoutChanged()
     {
         clear();
+        if(!model_){
+            return;
+        }
 
-        FastoCommonItem* root = common::utils_qt::item<FastoCommonItem*>(root_index_);
+        QModelIndex index = model_->index(0, 0);
+        if(!index.isValid()){
+            return;
+        }
+
+        FastoCommonItem* child = common::utils_qt::item<FastoCommonItem*>(index);
+        if(!child){
+            return;
+        }
+
+        FastoCommonItem* root = dynamic_cast<FastoCommonItem*>(child->parent());
         if(!root){
             return;
         }
@@ -280,11 +282,6 @@ namespace fastoredis
     void FastoEditorView::setModel(QAbstractItemModel* model)
     {
         editor_->setModel(model);
-    }
-
-    void FastoEditorView::setRootIndex(const QModelIndex& index)
-    {
-        editor_->setRootIndex(index);
     }
 
     void FastoEditorView::viewChanged(bool checked)

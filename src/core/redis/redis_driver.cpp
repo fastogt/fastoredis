@@ -17,6 +17,7 @@ extern "C" {
 #define CLI_HELP_COMMAND 1
 #define CLI_HELP_GROUP 2
 #define INFO_REQUEST "INFO"
+#define SYNC_REQUEST "SYNC"
 
 namespace
 {
@@ -578,14 +579,15 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        void repl_impl(FastoObject* out, common::ErrorValueSPtr &er)
+        void repl_impl(const char *command, FastoObject* out, common::ErrorValueSPtr &er)
         {
             if(!out){
                 return;
             }
 
-            const std::string scommand = out->toString();
-            const char *command = scommand.c_str();
+            if(!command){
+                return;
+            }
 
             if (command[0] != '\0') {
                 int argc;
@@ -688,7 +690,7 @@ namespace fastoredis
         FastoObject* outRoot = FastoObject::createRoot(INFO_REQUEST);
         outInfo = outRoot;
         common::ErrorValueSPtr er;
-        impl_->repl_impl(outRoot, er);
+        impl_->repl_impl(INFO_REQUEST, outRoot, er);
         return er;
     }
 
@@ -796,6 +798,14 @@ namespace fastoredis
         Events::EnterModeEvent::value_type res(SlaveMode);
         reply(sender, new Events::EnterModeEvent(this, res));
 
+        common::ErrorValueSPtr er;
+        Events::ExecuteRequestEvent::value_type req(SYNC_REQUEST);
+        Events::ExecuteResponceEvent::value_type resex(req);
+        resex.out_ = FastoObject::createRoot(SYNC_REQUEST);
+        impl_->slaveMode(resex.out_.get(), er);
+
+        reply(sender, new Events::ExecuteResponceEvent(this, resex));
+
         Events::LeaveModeEvent::value_type res2(SlaveMode);
         reply(sender, new Events::LeaveModeEvent(this, res2));
         notifyProgress(sender, 100);
@@ -890,14 +900,11 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        common::StringValue* val = common::Value::createStringValue(command);
-                        FastoObject* child = new FastoObject(outRoot.get(), val, impl_->config.mb_delim);
-                        outRoot->addChildren(child);
                         LOG_COMMAND(Command(command, Command::UserCommand));
-                        impl_->repl_impl(child, er);                        
+                        impl_->repl_impl(command, outRoot.get(), er);
                     }
                 }
-                res._out = outRoot;
+                res.out_ = outRoot;
             }
             else{
                 common::ErrorValueSPtr er(new common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
@@ -929,7 +936,7 @@ namespace fastoredis
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(loadDabasesString));
-            impl_->repl_impl(root, er);
+            impl_->repl_impl(loadDabasesString, root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
@@ -963,7 +970,7 @@ namespace fastoredis
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(INFO_REQUEST));
-            impl_->repl_impl(root, er);
+            impl_->repl_impl(INFO_REQUEST, root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
@@ -987,7 +994,7 @@ namespace fastoredis
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(propetyString));
-            impl_->repl_impl(root, er);
+            impl_->repl_impl(propetyString, root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
@@ -1007,13 +1014,14 @@ namespace fastoredis
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         FastoObject* root = FastoObject::createRoot(changeRequest);
-            LOG_COMMAND(Command(changeRequest));
-            impl_->repl_impl(root, er);
-            if(er && er->isError()){
-                res.setErrorInfo(er);
-            }else{
-                res.isChange_ = true;
-            }
+        LOG_COMMAND(Command(changeRequest));
+        impl_->repl_impl(changeRequest.c_str(), root, er);
+        if(er && er->isError()){
+            res.setErrorInfo(er);
+        }
+        else{
+            res.isChange_ = true;
+        }
         notifyProgress(sender, 75);
             reply(sender, new Events::ChangeServerPropertyInfoResponceEvent(this, res));
         notifyProgress(sender, 100);

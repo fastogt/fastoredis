@@ -72,7 +72,7 @@ namespace fastoredis
         }
 
         ExecuteInfoResponce::ExecuteInfoResponce(const base_class &request, const error_type &er)
-            : base_class(request), _out()
+            : base_class(request), out_()
         {
             base_class::errorInfo_ = er;
         }

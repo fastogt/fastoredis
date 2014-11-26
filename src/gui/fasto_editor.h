@@ -51,7 +51,6 @@ namespace fastoredis
         int lineNumberMarginWidth_;
         QAbstractItemModel* model_;
 
-        QModelIndex root_index_;
         bool isJsonChecked_;
     };
 
@@ -62,7 +61,6 @@ namespace fastoredis
     public:
         FastoEditorView(QWidget* parent = 0);
         void setModel(QAbstractItemModel* model);
-        void setRootIndex(const QModelIndex& index);
         void setReadOnly(bool readOnly);
 
     protected:

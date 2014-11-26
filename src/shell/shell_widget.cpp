@@ -166,7 +166,8 @@ namespace fastoredis
     {
         ConnectionMode mode = res.mode_;
         connectionMode_->setIcon(GuiFactory::instance().modeIcon(mode), iconSize);
-        connectAction_->setText(common::convertFromString<QString>(common::convertToString(mode)));
+        std::string modeText = common::convertToString(mode);
+        connectionMode_->setText(common::convertFromString<QString>(modeText));
     }
 
     void ShellWidget::leaveMode(const EventsInfo::LeaveModeInfo& res)

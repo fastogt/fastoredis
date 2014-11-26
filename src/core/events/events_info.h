@@ -94,7 +94,7 @@ namespace fastoredis
             typedef ExecuteInfoRequest base_class;
             ExecuteInfoResponce(const base_class &request, const error_type &er = error_type());
 
-            FastoObjectPtr _out;
+            FastoObjectPtr out_;
         };
 
         struct LoadDatabasesInfoRequest
