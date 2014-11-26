@@ -23,7 +23,7 @@ namespace fastoredis
 	public:
         typedef std::vector<FastoObject*> child_container_type;
 
-        FastoObject(FastoObject* parent, common::Value* val);
+        FastoObject(FastoObject* parent, common::Value* val, const std::string& delemitr);
         ~FastoObject();
 
         common::Value::Type type() const;
@@ -37,12 +37,14 @@ namespace fastoredis
         bool isRoot() const;
         FastoObject* parent() const;
         void clear();
+        std::string delemitr() const;
 
     private:
 		DISALLOW_COPY_AND_ASSIGN(FastoObject);
 
         FastoObject* const parent_;
 		child_container_type childrens_;
+        const std::string delemitr_;
 
         const boost::scoped_ptr<common::Value> value_;
     };

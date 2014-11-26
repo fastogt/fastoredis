@@ -8,7 +8,6 @@ extern "C" {
 #include "third-party/redis/src/help.h"
 #include "third-party/redis/deps/hiredis/hiredis.h"
 #include "third-party/redis/src/anet.h"
-#include "third-party/redis/deps/hiredis/sds.h"
 }
 
 #include "core/command_logger.h"
@@ -310,66 +309,55 @@ namespace fastoredis
 
         void cliFormatReplyRaw(FastoObject* out, redisReply *r)
         {
+            FastoObject *obj = NULL;
             switch (r->type) {
-            case REDIS_REPLY_NIL:
-            {
-                common::Value *val = common::Value::createNullValue();
-                FastoObject *obj = new FastoObject(out, val);
-                out->addChildren(obj);
-                break;
-            }
-            case REDIS_REPLY_ERROR:
-            {
-                common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
-                FastoObject *obj = new FastoObject(out, val);
-                out->addChildren(obj);
-                break;
-            }
-            case REDIS_REPLY_STATUS:
-            case REDIS_REPLY_STRING:
-            {
-                common::StringValue *val = common::Value::createStringValue(r->str);
-                FastoObject *obj = new FastoObject(out, val);
-                out->addChildren(obj);
-                break;
-            }
-            case REDIS_REPLY_INTEGER:
-            {
-                common::FundamentalValue *val =common::Value::createIntegerValue(r->integer);
-                out->addChildren(new FastoObject(out, val));
-                break;
-            }
-            case REDIS_REPLY_ARRAY:
-            {
-                FastoObject* child = NULL;
-                if(out->isRoot()){
-                    child = out;
+                case REDIS_REPLY_NIL:
+                {
+                    common::Value *val = common::Value::createNullValue();
+                    obj = new FastoObject(out, val, config.mb_delim);
+                    break;
                 }
-                else{
+                case REDIS_REPLY_ERROR:
+                {
+                    common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    obj = new FastoObject(out, val, config.mb_delim);
+                    break;
+                }
+                case REDIS_REPLY_STATUS:
+                case REDIS_REPLY_STRING:
+                {
+                    common::StringValue *val = common::Value::createStringValue(r->str);
+                    obj = new FastoObject(out, val, config.mb_delim);
+                    break;
+                }
+                case REDIS_REPLY_INTEGER:
+                {
+                    common::FundamentalValue *val =common::Value::createIntegerValue(r->integer);
+                    obj = new FastoObject(out, val, config.mb_delim);
+                    break;
+                }
+                case REDIS_REPLY_ARRAY:
+                {
                     common::ArrayValue* val = common::Value::createArrayValue();
                     val->appendString(out->toString());
+                    obj = new FastoObject(out, val, config.mb_delim);
 
-                    child = new FastoObject(out, val);
-                    out->addChildren(child);
-                }
-
-                for (size_t i = 0; i < r->elements; i++) {
-                    if (i > 0) {
-                        //out = sdscat(out,config.mb_delim);
+                    for (size_t i = 0; i < r->elements; i++) {
+                        cliFormatReplyRaw(obj, r->element[i]);
                     }
-
-                    cliFormatReplyRaw(child, r->element[i]);
+                    break;
                 }
-                break;
-            }
             default:
                 {
                     char tmp2[128] = {0};
-                    sprintf(tmp2 ,"Unknown reply type: %d", r->type);
-                    common::ErrorValue *val =common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
-                    out->addChildren(new FastoObject(out, val));
+                    sprintf(tmp2, "Unknown reply type: %d", r->type);
+                    common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    obj = new FastoObject(out, val, config.mb_delim);
                 }
             }
+
+            DCHECK(obj);
+            out->addChildren(obj);
         }
 
         void cliOutputCommandHelp(FastoObject* out, struct commandHelp *help, int group)
@@ -377,12 +365,12 @@ namespace fastoredis
             char buff[1024] = {0};
             sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
             common::StringValue *val =common::Value::createStringValue(buff);
-            out->addChildren(new FastoObject(out, val));
+            out->addChildren(new FastoObject(out, val, config.mb_delim));
             if (group) {
                 char buff2[1024] = {0};
                 sprintf(buff2,"  group: %s", commandGroups[help->group]);
                 val = common::Value::createStringValue(buff2);
-                out->addChildren(new FastoObject(out, val));
+                out->addChildren(new FastoObject(out, val, config.mb_delim));
             }
         }
 
@@ -399,7 +387,7 @@ namespace fastoredis
                 version
             );
             common::StringValue *val =common::Value::createStringValue(buff);
-            out->addChildren(new FastoObject(out, val));
+            out->addChildren(new FastoObject(out, val, config.mb_delim));
             sdsfree(version);
         }
 
@@ -489,7 +477,7 @@ namespace fastoredis
                 char redir[512] = {0};
                 sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
                 common::StringValue *val = common::Value::createStringValue(redir);
-                out->addChildren(new FastoObject(out, val));
+                out->addChildren(new FastoObject(out, val, config.mb_delim));
                 config.cluster_reissue_command = 1;
             }
 
@@ -605,7 +593,7 @@ namespace fastoredis
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
-                    out->addChildren(new FastoObject(out, val));
+                    out->addChildren(new FastoObject(out, val, config.mb_delim));
                 }
                 else if (argc > 0)
                 {
@@ -760,7 +748,7 @@ namespace fastoredis
                         }
                         offset = n + 1;
                         common::StringValue* val = common::Value::createStringValue(command);
-                        FastoObject* child = new FastoObject(outRoot.get(), val);
+                        FastoObject* child = new FastoObject(outRoot.get(), val, impl_->config.mb_delim);
                         outRoot->addChildren(child);
                         LOG_COMMAND(Command(command, Command::UserCommand));
                         impl_->repl_impl(child, er);                        

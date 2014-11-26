@@ -9,8 +9,8 @@ namespace
 
 namespace fastoredis
 {
-    FastoObject::FastoObject(FastoObject *parent, common::Value *val)
-        : parent_(parent), value_(val)
+    FastoObject::FastoObject(FastoObject *parent, common::Value *val, const std::string& delemitr)
+        : parent_(parent), value_(val), delemitr_(delemitr)
     {
         DCHECK(val);
     }
@@ -38,7 +38,7 @@ namespace fastoredis
 
     FastoObject* FastoObject::deepCopy(FastoObject* parent) const
     {
-        FastoObject* result = new FastoObject(parent, value_->deepCopy());
+        FastoObject* result = new FastoObject(parent, value_->deepCopy(), delemitr_);
 
         for (child_container_type::const_iterator it = childrens_.begin(); it != childrens_.end(); ++it){
             FastoObject* child = (*it)->deepCopy(result);
@@ -60,7 +60,7 @@ namespace fastoredis
 
     FastoObject *FastoObject::createRoot(const std::string &text)
     {
-        return new FastoObject(NULL, common::Value::createStringValue(text));
+        return new FastoObject(NULL, common::Value::createStringValue(text), "");
     }
 
     void FastoObject::addChildren(FastoObject* child)
@@ -88,6 +88,11 @@ namespace fastoredis
             delete child;
         }
         childrens_.clear();
+    }
+
+    std::string FastoObject::delemitr() const
+    {
+        return delemitr_;
     }
 
 	FastoObject::child_container_type FastoObject::childrens() const
@@ -125,7 +130,7 @@ namespace common
         if(obj){
             const std::string str = obj->toString();
             if(!str.empty()){
-                result += common::escapedText(str);
+                result += obj->delemitr();
             }
             FastoObject::child_container_type childrens = obj->childrens();
             for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){

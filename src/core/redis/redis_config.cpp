@@ -1,9 +1,5 @@
 #include "core/redis/redis_config.h"
 
-extern "C" {
-#include "third-party/redis/deps/hiredis/sds.h"
-}
-
 #include "core/logger.h"
 
 
@@ -76,11 +72,11 @@ namespace fastoredis
                 } else if (!strcmp(argv[i],"-c")) {
                     cfg.cluster_mode = 1;
                 }
-                /*else if (!strcmp(argv[i],"-d") && !lastarg) {
+                else if (!strcmp(argv[i],"-d") && !lastarg) {
                     sdsfree(cfg.mb_delim);
                     cfg.mb_delim = sdsnew(argv[++i]);
                 }
-                else if (!strcmp(argv[i],"-v") || !strcmp(argv[i], "--version")) {
+                /*else if (!strcmp(argv[i],"-v") || !strcmp(argv[i], "--version")) {
                     sds version = cliVersion();
                     printf("redis-cli %s\n", version);
                     sdsfree(version);
@@ -151,6 +147,8 @@ namespace fastoredis
         auth = NULL;
         eval = NULL;
         last_cmd_type = -1;
+
+        mb_delim = sdsnew("\n");
     }
 
     redisConfig::~redisConfig()
@@ -243,6 +241,12 @@ namespace common
            argv.push_back("--eval");
            argv.push_back(conf.eval);
         }
+
+        if (conf.mb_delim) {
+            argv.push_back("-d");
+            argv.push_back(conf.mb_delim);
+        }
+
         if(conf.cluster_mode){
             argv.push_back("-c");
         }

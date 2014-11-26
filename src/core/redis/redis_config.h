@@ -6,10 +6,11 @@
 
 #include "common/convert2string.h"
 
+extern "C" {
+#include "third-party/redis/deps/hiredis/sds.h"
+}
+
 #define REDIS_CLI_DEFAULT_PIPE_TIMEOUT 30 /* seconds */
-#define OUTPUT_STANDARD 0
-#define OUTPUT_RAW 1
-#define OUTPUT_CSV 2
 
 namespace fastoredis
 {
@@ -45,6 +46,7 @@ namespace fastoredis
         int bigkeys;
         char *auth;
         char *eval;
+        sds mb_delim;
         int last_cmd_type;
     };
 }

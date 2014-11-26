@@ -152,6 +152,7 @@ namespace fastoredis
                                "  -i <interval>      When -r is used, waits <interval> seconds per command.\n"
                                "                     It is possible to specify sub-second times like -i 0.1.\n"
                                "  -n <db>            Database number.\n"
+                               "  -d <delimiter>     Multi-bulk delimiter in for raw formatting (default: \\n).\n"
                                "  -c                 Enable cluster mode (follow -ASK and -MOVED redirections).\n"
                                "  --latency          Enter a special mode continuously sampling latency.\n"
                                "  --latency-history  Like --latency but tracking latency changes over time.\n"
