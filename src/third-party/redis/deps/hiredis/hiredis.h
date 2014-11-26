@@ -204,7 +204,10 @@ void redisFree(redisContext *c);
 int redisFreeKeepFd(redisContext *c);
 int redisBufferRead(redisContext *c);
 int redisBufferWrite(redisContext *c, int *done);
-
+#ifdef FASTOREDIS
+int redisReadToBuffer(redisContext *c, char *buf, int size, ssize_t *readed);
+int redisWriteFromBuffer(redisContext *c, const char *buf);
+#endif
 /* In a blocking context, this function first checks if there are unconsumed
  * replies to return and returns one if so. Otherwise, it flushes the output
  * buffer to the socket and reads until it has a reply. In a non-blocking

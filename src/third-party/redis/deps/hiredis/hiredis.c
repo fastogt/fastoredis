@@ -1335,7 +1335,7 @@ int redisBufferWrite(redisContext *c, int *done) {
     if (sdslen(c->obuf) > 0) {
 #ifdef FASTOREDIS
     if(c->channel){
-        nwritten = libssh2_channel_write(c->channel, c->obuf,sdslen(c->obuf));
+        nwritten = libssh2_channel_write(c->channel, c->obuf, sdslen(c->obuf));
     }
     else{
 #ifdef OS_WIN
@@ -1382,6 +1382,63 @@ int redisBufferWrite(redisContext *c, int *done) {
     if (done != NULL) *done = (sdslen(c->obuf) == 0);
     return REDIS_OK;
 }
+
+#ifdef FASTOREDIS
+int redisReadToBuffer(redisContext *c, char* buf, int size, ssize_t *nread)
+{
+    /* Return early when the context has seen an error. */
+    if (c->err){
+        return REDIS_ERR;
+    }
+
+    if(c->channel){
+        nread = libssh2_channel_read(c->channel, buf, size);
+    }
+    else{
+        #ifdef OS_WIN
+            nread = recv(c->fd,buf,size,0);
+        #else
+            nread = read(c->fd,buf,size);
+        #endif
+    }
+
+    if (nread == -1) {
+        if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || (errno == F_EINTR)) {
+            nread = 0;
+        } else {
+            return REDIS_ERR;
+        }
+    }
+
+    return REDIS_OK;
+}
+
+int redisWriteFromBuffer(redisContext *c, const char *buf)
+{
+    int nwritten = -1;
+
+    /* Return early when the context has seen an error. */
+    if (c->err)
+        return -1;
+
+    size_t len = sdslen(buf);
+
+    if (len > 0) {
+        if(c->channel){
+            nwritten = libssh2_channel_write(c->channel, buf, len);
+        }
+        else{
+    #ifdef OS_WIN
+            nwritten = send(c->fd, buf, len, 0);
+    #else
+            nwritten = write(c->fd, buf, len);
+    #endif
+        }
+    }
+
+    return nwritten;
+}
+#endif
 
 /* Internal helper function to try and get a reply from the reader,
  * or set an error in the context otherwise. */
