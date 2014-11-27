@@ -370,5 +370,5 @@ namespace fastoredis
     std::ostream& operator<<(std::ostream& out, const RedisServerInfo& value);
 
     ServerInfoSPtr makeRedisServerInfo(const std::string &content);
-    ServerInfoSPtr makeRedisServerInfo(const FastoObjectPtr& root);
+    ServerInfoSPtr makeRedisServerInfo(FastoObject *root);
 }

@@ -10,7 +10,7 @@ namespace
 namespace fastoredis
 {
     FastoObject::FastoObject(FastoObject *parent, common::Value *val, const std::string& delemitr)
-        : parent_(parent), value_(val), delemitr_(delemitr)
+        : parent_(parent), value_(val), delemitr_(delemitr), childrens_()
     {
         DCHECK(val);
     }
@@ -130,7 +130,7 @@ namespace common
         if(obj){
             const std::string str = obj->toString();
             if(!str.empty()){
-                result += obj->delemitr();
+                result += str + obj->delemitr();
             }
             FastoObject::child_container_type childrens = obj->childrens();
             for(FastoObject::child_container_type::const_iterator it = childrens.begin(); it != childrens.end(); ++it ){
