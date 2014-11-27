@@ -66,6 +66,25 @@ namespace fastoredis
             ConnectionMode mode_;
         };
 
+        struct CommandRootCreatedInfo
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            CommandRootCreatedInfo(FastoObjectPtr root, const error_type &er = error_type());
+
+            FastoObjectPtr root_;
+        };
+
+        struct CommandRootAddedChildInfo
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            CommandRootAddedChildInfo(FastoObjectPtr root, FastoObject* child, const error_type &er = error_type());
+
+            FastoObjectPtr root_;
+            FastoObject* child_;
+        };
+
         struct DisonnectInfoRequest
                 : public EventInfoBase
         {

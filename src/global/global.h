@@ -17,6 +17,7 @@ namespace fastoredis
 
     std::vector<std::string> allSupportedViews();
 
+    class IFastoObjectObserver;
     class FastoObject
             : public common::boost_extension::intrusive_ptr_base<FastoObject>
     {
@@ -32,21 +33,27 @@ namespace fastoredis
         FastoObject *deepCopyChangeParent(FastoObject* parent) const;
 
 		child_container_type childrens() const;
-        static FastoObject* createRoot(const std::string& text);
+        static FastoObject* createRoot(const std::string& text, IFastoObjectObserver* observer = NULL);
         void addChildren(FastoObject* child);
-        bool isRoot() const;
         FastoObject* parent() const;
         void clear();
         std::string delemitr() const;
 
     private:
-		DISALLOW_COPY_AND_ASSIGN(FastoObject);
+        DISALLOW_COPY_AND_ASSIGN(FastoObject);
 
         FastoObject* const parent_;
 		child_container_type childrens_;
         const std::string delemitr_;
+        IFastoObjectObserver* observer_;
 
         const boost::scoped_ptr<common::Value> value_;
+    };
+
+    class IFastoObjectObserver
+    {
+    public:
+        virtual void addedChildren(FastoObject* child) = 0;
     };
 
     typedef boost::intrusive_ptr<FastoObject> FastoObjectPtr;

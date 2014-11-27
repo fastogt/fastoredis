@@ -53,6 +53,18 @@ namespace fastoredis
 
         }
 
+        CommandRootCreatedInfo::CommandRootCreatedInfo(FastoObjectPtr root, const error_type &er)
+            : base_class(er), root_(root)
+        {
+
+        }
+
+        CommandRootAddedChildInfo::CommandRootAddedChildInfo(FastoObjectPtr root, FastoObject* child, const error_type &er)
+            : base_class(er), root_(root), child_(child)
+        {
+
+        }
+
         DisonnectInfoRequest::DisonnectInfoRequest(const error_type &er)
             : base_class(er)
         {

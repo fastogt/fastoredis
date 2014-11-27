@@ -126,6 +126,19 @@ namespace fastoredis
         return QObject::customEvent(event);
     }
 
+    FastoObjectPtr IDriver::createRoot(QObject* reciver, const std::string& text)
+    {
+        FastoObjectPtr root = FastoObject::createRoot(text, this);
+        Events::CommandRootCreatedEvent::value_type res(root);
+        reply(reciver, new Events::CommandRootCreatedEvent(this, res));
+        return root;
+    }
+
+    void IDriver::addedChildren(FastoObject* child)
+    {
+
+    }
+
     void IDriver::reply(QObject *reciver, QEvent *ev)
     {
         qApp->postEvent(reciver, ev);

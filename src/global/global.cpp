@@ -58,22 +58,19 @@ namespace fastoredis
         return parent;
     }
 
-    FastoObject *FastoObject::createRoot(const std::string &text)
+    FastoObject *FastoObject::createRoot(const std::string &text, IFastoObjectObserver* observer)
     {
-        return new FastoObject(NULL, common::Value::createStringValue(text), "");
+        FastoObject* root =  new FastoObject(NULL, common::Value::createStringValue(text), "");
+        root->observer_ = observer;
+        return root;
     }
 
     void FastoObject::addChildren(FastoObject* child)
     {
         if(child){
             DCHECK(child->parent_ == this);
-			childrens_.push_back(child);
+            childrens_.push_back(child);
         }
-    }
-
-	bool FastoObject::isRoot() const
-	{
-        return !parent_ && type() == common::Value::TYPE_STRING;
     }
 
     FastoObject* FastoObject::parent() const
@@ -95,7 +92,7 @@ namespace fastoredis
         return delemitr_;
     }
 
-	FastoObject::child_container_type FastoObject::childrens() const
+    FastoObject::child_container_type FastoObject::childrens() const
     {
         return childrens_;
     }

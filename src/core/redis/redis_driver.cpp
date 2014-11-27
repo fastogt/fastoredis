@@ -124,7 +124,7 @@ namespace fastoredis
     struct RedisDriver::pimpl
     {
         pimpl()
-            : interrupt_(false), context(NULL)
+            : interrupt_(false), context(NULL), parent_(NULL)
         {
 
         }
@@ -141,6 +141,7 @@ namespace fastoredis
         redisContext *context;
         redisConfig config;        
         SSHInfo sinfo_;
+        RedisDriver* parent_;
 
         /*------------------------------------------------------------------------------
          * Slave mode
@@ -370,12 +371,14 @@ namespace fastoredis
             char buff[1024] = {0};
             sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
             common::StringValue *val =common::Value::createStringValue(buff);
-            out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
+            FastoObject* child = new FastoObject(out.get(), val, config.mb_delim);
+            out->addChildren(child);
             if (group) {
                 char buff2[1024] = {0};
                 sprintf(buff2,"  group: %s", commandGroups[help->group]);
                 val = common::Value::createStringValue(buff2);
-                out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
+                FastoObject* gchild = new FastoObject(out.get(), val, config.mb_delim);
+                out->addChildren(gchild);
             }
         }
 
@@ -392,7 +395,8 @@ namespace fastoredis
                 version
             );
             common::StringValue *val =common::Value::createStringValue(buff);
-            out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
+            FastoObject* child = new FastoObject(out.get(), val, config.mb_delim);
+            out->addChildren(child);
             sdsfree(version);
         }
 
@@ -486,7 +490,8 @@ namespace fastoredis
                 char redir[512] = {0};
                 sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
                 common::StringValue *val = common::Value::createStringValue(redir);
-                out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
+                FastoObject* child = new FastoObject(out.get(), val, config.mb_delim);
+                out->addChildren(child);
                 config.cluster_reissue_command = 1;
             }
 
@@ -608,7 +613,8 @@ namespace fastoredis
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
-                    out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
+                    FastoObject* child = new FastoObject(out.get(), val, config.mb_delim);
+                    out->addChildren(child);
                 }
                 else if (argc > 0)
                 {
@@ -659,7 +665,7 @@ namespace fastoredis
     RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
         : IDriver(settings), impl_(new pimpl)
     {
-
+        impl_->parent_ = this;
     }
 
     RedisDriver::~RedisDriver()
@@ -668,13 +674,13 @@ namespace fastoredis
 
     std::string RedisDriver::address() const
     {
-        if(!impl_->context){
-            return "not connected";
-        }
-        else{
+        if(impl_->context){
             char address[512] = {0};
             sprintf(address, "%s:%d", impl_->config.hostip, impl_->config.hostport);
             return address;
+        }
+        else{
+            return "not connected";
         }
     }
 
@@ -706,7 +712,7 @@ namespace fastoredis
 
     common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
     {
-        FastoObjectPtr outRoot = FastoObject::createRoot(INFO_REQUEST);
+        FastoObjectPtr outRoot = createRoot(NULL, INFO_REQUEST);
         outInfo = outRoot;
         common::ErrorValueSPtr er;
         impl_->execute(INFO_REQUEST, Command::InnerCommand, outRoot, er);
@@ -818,7 +824,7 @@ namespace fastoredis
         reply(sender, new Events::EnterModeEvent(this, res));
 
         common::ErrorValueSPtr er;
-        FastoObject* obj = FastoObject::createRoot(SYNC_REQUEST);
+        FastoObjectPtr obj = createRoot(sender, SYNC_REQUEST);
         impl_->slaveMode(obj, er);
 
         Events::LeaveModeEvent::value_type res2(SlaveMode);
@@ -897,7 +903,7 @@ namespace fastoredis
             if(inputLine){
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                FastoObjectPtr outRoot = FastoObject::createRoot(inputLine);
+                FastoObjectPtr outRoot = createRoot(sender, inputLine);
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->config.shutdown){
@@ -945,7 +951,7 @@ namespace fastoredis
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(GET_DATABASES);
+            FastoObjectPtr root = createRoot(sender, GET_DATABASES);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             impl_->execute(GET_DATABASES, Command::InnerCommand, root, er);
@@ -956,11 +962,11 @@ namespace fastoredis
                 FastoObject::child_container_type rchildrens = root->childrens();
                 if(rchildrens.size()){
                     DCHECK(rchildrens.size() == 1);
-                    FastoObject::child_container_type childrens = rchildrens[0]->childrens();
+                    /*FastoObject::child_container_type childrens = rchildrens[0]->childrens();
                     for(int i = 0; i < childrens.size(); ++i){
                         DataBaseInfo dbInf(childrens[i]->toString(), 0);
                         res.databases_.push_back(dbInf);
-                    }
+                    }*/
                 }
             }
         notifyProgress(sender, 75);
@@ -983,7 +989,7 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
+            FastoObjectPtr root = createRoot(sender, INFO_REQUEST);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             impl_->execute(INFO_REQUEST, Command::InnerCommand, root, er);
@@ -1007,7 +1013,7 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(GET_PROPERTY_SERVER);
+            FastoObjectPtr root = createRoot(sender, GET_PROPERTY_SERVER);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             impl_->execute(GET_PROPERTY_SERVER, Command::InnerCommand, root, er);
@@ -1029,7 +1035,7 @@ namespace fastoredis
         common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
-        FastoObjectPtr root = FastoObject::createRoot(changeRequest);
+        FastoObjectPtr root = createRoot(sender, changeRequest);
         impl_->execute(changeRequest.c_str(), Command::InnerCommand, root, er);
         if(er && er->isError()){
             res.setErrorInfo(er);

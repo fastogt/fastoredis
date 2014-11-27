@@ -20,7 +20,7 @@ namespace common
 namespace fastoredis
 {
     class IDriver
-            : public QObject
+            : public QObject, private IFastoObjectObserver
     {
         Q_OBJECT
     public:
@@ -62,8 +62,12 @@ namespace fastoredis
 
         const IConnectionSettingsBasePtr settings_;
 
+        FastoObjectPtr createRoot(QObject *reciver, const std::string &text);
+
     private:
         void loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev);
+
+        virtual void addedChildren(FastoObject *child);
 
         virtual ServerInfoSPtr makeServerInfoFromString(const std::string& val) = 0;
         virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev) = 0;
