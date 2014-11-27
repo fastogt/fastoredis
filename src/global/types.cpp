@@ -8,7 +8,7 @@ namespace fastoredis
 
     }
 
-    Command::Command(const std::string &mess, c_type t)
+    Command::Command(const std::string &mess, CommandType t)
         : message_(mess), type_(t)
     {
 
@@ -19,7 +19,7 @@ namespace fastoredis
         return message_;
     }
 
-    const Command::c_type Command::type() const
+    Command::CommandType Command::type() const
     {
         return type_;
     }

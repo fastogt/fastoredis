@@ -9,18 +9,18 @@ namespace fastoredis
     class Command
     {
     public:
-        enum c_type
+        enum CommandType
         {
             UserCommand,
             InnerCommand
         };
         Command();
-        Command(const std::string &mess, c_type t = InnerCommand);
+        Command(const std::string &mess, CommandType t = InnerCommand);
         const std::string& message() const;
-        const c_type type() const;
+        CommandType type() const;
 
     private:
         const std::string message_;
-        c_type type_;
+        const CommandType type_;
     };
 }

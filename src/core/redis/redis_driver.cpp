@@ -16,8 +16,11 @@ extern "C" {
 #define REDIS_CLI_KEEPALIVE_INTERVAL 15 /* seconds */
 #define CLI_HELP_COMMAND 1
 #define CLI_HELP_GROUP 2
+
 #define INFO_REQUEST "INFO"
 #define SYNC_REQUEST "SYNC"
+#define GET_DATABASES "CONFIG GET databases"
+#define GET_PROPERTY_SERVER "CONFIG GET *"
 
 namespace
 {
@@ -32,11 +35,11 @@ namespace
         return val.empty() ? NULL : val.c_str();
     }
 
-    char *redisGitSHA1(void) {
+    const char *redisGitSHA1(void) {
         return REDIS_GIT_SHA1;
     }
 
-    char *redisGitDirty(void) {
+    const char *redisGitDirty(void) {
         return REDIS_GIT_DIRTY;
     }
 
@@ -144,7 +147,7 @@ namespace fastoredis
 
         /* Sends SYNC and reads the number of bytes in the payload. Used both by
          * slaveMode() and getRDB(). */
-        long long sendSync(common::ErrorValueSPtr& er) {
+        long long sendSync(common::ErrorValueSPtr er) {
             /* To start we need to send the SYNC command and return the payload.
              * The hiredis client lib does not understand this part of the protocol
              * and we don't want to mess with its buffers, so everything is performed
@@ -186,7 +189,7 @@ namespace fastoredis
             return strtoull(buf+1, NULL, 10);
         }
 
-        void slaveMode(FastoObject* out, common::ErrorValueSPtr& er) {
+        void slaveMode(FastoObjectPtr out, common::ErrorValueSPtr er) {
             unsigned long long payload = sendSync(er);
             if(er){
                 return;
@@ -205,7 +208,7 @@ namespace fastoredis
             }
 
             /* Now we can use hiredis to read the incoming protocol. */
-            while (cliReadReply(0, out, er) == REDIS_OK){
+            while (cliReadReply(out, er) == REDIS_OK){
                 if (config.shutdown){
                     er.reset(new common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
                     return;
@@ -213,7 +216,7 @@ namespace fastoredis
             }
         }
 
-        int cliAuth(common::ErrorValueSPtr& er)
+        int cliAuth(common::ErrorValueSPtr er)
         {
             if (config.auth == NULL)
                 return REDIS_OK;
@@ -228,7 +231,7 @@ namespace fastoredis
             return REDIS_ERR;
         }
 
-        int cliSelect(common::ErrorValueSPtr& er)
+        int cliSelect(common::ErrorValueSPtr er)
         {
             if (config.dbnum == 0)
                 return REDIS_OK;
@@ -242,7 +245,7 @@ namespace fastoredis
             return REDIS_ERR;
         }
 
-        int cliConnect(int force, common::ErrorValueSPtr& er)
+        int cliConnect(int force, common::ErrorValueSPtr er)
         {
             if (context == NULL || force) {
                 if (context != NULL)
@@ -305,7 +308,7 @@ namespace fastoredis
             }
         }
 
-        void cliPrintContextError(common::ErrorValueSPtr& er)
+        void cliPrintContextError(common::ErrorValueSPtr er)
         {
             if (context == NULL)
                 return;
@@ -315,40 +318,40 @@ namespace fastoredis
             er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
         }
 
-        void cliFormatReplyRaw(FastoObject* out, redisReply *r)
+        void cliFormatReplyRaw(FastoObjectPtr out, redisReply *r)
         {
             FastoObject *obj = NULL;
             switch (r->type) {
                 case REDIS_REPLY_NIL:
                 {
                     common::Value *val = common::Value::createNullValue();
-                    obj = new FastoObject(out, val, config.mb_delim);
+                    obj = new FastoObject(out.get(), val, config.mb_delim);
                     break;
                 }
                 case REDIS_REPLY_ERROR:
                 {
                     common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
-                    obj = new FastoObject(out, val, config.mb_delim);
+                    obj = new FastoObject(out.get(), val, config.mb_delim);
                     break;
                 }
                 case REDIS_REPLY_STATUS:
                 case REDIS_REPLY_STRING:
                 {
                     common::StringValue *val = common::Value::createStringValue(r->str);
-                    obj = new FastoObject(out, val, config.mb_delim);
+                    obj = new FastoObject(out.get(), val, config.mb_delim);
                     break;
                 }
                 case REDIS_REPLY_INTEGER:
                 {
                     common::FundamentalValue *val =common::Value::createIntegerValue(r->integer);
-                    obj = new FastoObject(out, val, config.mb_delim);
+                    obj = new FastoObject(out.get(), val, config.mb_delim);
                     break;
                 }
                 case REDIS_REPLY_ARRAY:
                 {
                     common::ArrayValue* val = common::Value::createArrayValue();
                     val->appendString(out->toString());
-                    obj = new FastoObject(out, val, config.mb_delim);
+                    obj = new FastoObject(out.get(), val, config.mb_delim);
 
                     for (size_t i = 0; i < r->elements; i++) {
                         cliFormatReplyRaw(obj, r->element[i]);
@@ -360,7 +363,7 @@ namespace fastoredis
                     char tmp2[128] = {0};
                     sprintf(tmp2, "Unknown reply type: %d", r->type);
                     common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
-                    obj = new FastoObject(out, val, config.mb_delim);
+                    obj = new FastoObject(out.get(), val, config.mb_delim);
                 }
             }
 
@@ -368,21 +371,21 @@ namespace fastoredis
             out->addChildren(obj);
         }
 
-        void cliOutputCommandHelp(FastoObject* out, struct commandHelp *help, int group)
+        void cliOutputCommandHelp(FastoObjectPtr out, struct commandHelp *help, int group)
         {
             char buff[1024] = {0};
             sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
             common::StringValue *val =common::Value::createStringValue(buff);
-            out->addChildren(new FastoObject(out, val, config.mb_delim));
+            out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
             if (group) {
                 char buff2[1024] = {0};
                 sprintf(buff2,"  group: %s", commandGroups[help->group]);
                 val = common::Value::createStringValue(buff2);
-                out->addChildren(new FastoObject(out, val, config.mb_delim));
+                out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
             }
         }
 
-        void cliOutputGenericHelp(FastoObject* out)
+        void cliOutputGenericHelp(FastoObjectPtr out)
         {
             sds version = cliVersion();
             char buff[512] = {0};
@@ -395,11 +398,11 @@ namespace fastoredis
                 version
             );
             common::StringValue *val =common::Value::createStringValue(buff);
-            out->addChildren(new FastoObject(out, val, config.mb_delim));
+            out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
             sdsfree(version);
         }
 
-        void cliOutputHelp(FastoObject* out, int argc, char **argv)
+        void cliOutputHelp(FastoObjectPtr out, int argc, char **argv)
         {
             int i, j, len;
             int group = -1;
@@ -443,7 +446,7 @@ namespace fastoredis
             }
         }
 
-        int cliReadReply(int output_raw_strings, FastoObject* out, common::ErrorValueSPtr& er)
+        int cliReadReply(FastoObjectPtr out, common::ErrorValueSPtr er)
         {
             void *_reply;
             redisReply *reply;
@@ -485,7 +488,7 @@ namespace fastoredis
                 char redir[512] = {0};
                 sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
                 common::StringValue *val = common::Value::createStringValue(redir);
-                out->addChildren(new FastoObject(out, val, config.mb_delim));
+                out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
                 config.cluster_reissue_command = 1;
             }
 
@@ -497,7 +500,7 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        int cliSendCommand(FastoObject* out, common::ErrorValueSPtr& er, int argc, char **argv, int repeat)
+        int cliSendCommand(FastoObjectPtr out, common::ErrorValueSPtr er, int argc, char **argv, int repeat)
         {
             char *command = argv[0];
             size_t *argvlen;
@@ -541,7 +544,7 @@ namespace fastoredis
             while(repeat--) {
                 redisAppendCommandArgv(context,argc,(const char**)argv,argvlen);
                 while (config.monitor_mode) {
-                    if (cliReadReply(output_raw, out, er) != REDIS_OK){
+                    if (cliReadReply(out, er) != REDIS_OK){
                         return REDIS_ERR;
                     }
                 }
@@ -562,7 +565,7 @@ namespace fastoredis
                     return REDIS_ERR;  /* Error = slaveMode lost connection to master */
                 }
 
-                if (cliReadReply(output_raw, out, er) != REDIS_OK) {
+                if (cliReadReply(out, er) != REDIS_OK) {
                     free(argvlen);
                     return REDIS_ERR;
                 } else {
@@ -586,7 +589,7 @@ namespace fastoredis
             return REDIS_OK;
         }
 
-        void repl_impl(const char *command, FastoObject* out, common::ErrorValueSPtr &er)
+        void execute(const char *command, Command::CommandType type, FastoObjectPtr out, common::ErrorValueSPtr er)
         {
             if(!out){
                 return;
@@ -596,13 +599,15 @@ namespace fastoredis
                 return;
             }
 
+            LOG_COMMAND(Command(command, type));
+
             if (command[0] != '\0') {
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
-                    out->addChildren(new FastoObject(out, val, config.mb_delim));
+                    out->addChildren(new FastoObject(out.get(), val, config.mb_delim));
                 }
                 else if (argc > 0)
                 {
@@ -694,10 +699,10 @@ namespace fastoredis
 
     common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
     {
-        FastoObject* outRoot = FastoObject::createRoot(INFO_REQUEST);
+        FastoObjectPtr outRoot = FastoObject::createRoot(INFO_REQUEST);
         outInfo = outRoot;
         common::ErrorValueSPtr er;
-        impl_->repl_impl(INFO_REQUEST, outRoot, er);
+        impl_->execute(INFO_REQUEST, Command::InnerCommand, outRoot, er);
         return er;
     }
 
@@ -903,8 +908,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        LOG_COMMAND(Command(command, Command::UserCommand));
-                        impl_->repl_impl(command, outRoot.get(), er);
+                        impl_->execute(command, Command::UserCommand, outRoot, er);
                     }
                 }
                 res.out_ = outRoot;
@@ -931,15 +935,13 @@ namespace fastoredis
 
     void RedisDriver::loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev)
     {
-        static const char* loadDabasesString = "CONFIG GET databases";
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(loadDabasesString);
+            FastoObjectPtr root = FastoObject::createRoot(GET_DATABASES);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(loadDabasesString));
-            impl_->repl_impl(loadDabasesString, root, er);
+            impl_->execute(GET_DATABASES, Command::InnerCommand, root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
@@ -969,11 +971,10 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(INFO_REQUEST);
+            FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(INFO_REQUEST));
-            impl_->repl_impl(INFO_REQUEST, root, er);
+            impl_->execute(INFO_REQUEST, Command::InnerCommand, root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
@@ -989,15 +990,13 @@ namespace fastoredis
 
     void RedisDriver::loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev)
     {
-        static const char* propetyString = "CONFIG GET *";
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
-            FastoObject* root = FastoObject::createRoot(propetyString);
+            FastoObjectPtr root = FastoObject::createRoot(GET_PROPERTY_SERVER);
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            LOG_COMMAND(Command(propetyString));
-            impl_->repl_impl(propetyString, root, er);
+            impl_->execute(GET_PROPERTY_SERVER, Command::InnerCommand, root, er);
             if(er && er->isError()){
                 res.setErrorInfo(er);
             }else{
@@ -1016,9 +1015,8 @@ namespace fastoredis
         common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
-        FastoObject* root = FastoObject::createRoot(changeRequest);
-        LOG_COMMAND(Command(changeRequest));
-        impl_->repl_impl(changeRequest.c_str(), root, er);
+        FastoObjectPtr root = FastoObject::createRoot(changeRequest);
+        impl_->execute(changeRequest.c_str(), Command::InnerCommand, root, er);
         if(er && er->isError()){
             res.setErrorInfo(er);
         }
