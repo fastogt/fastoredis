@@ -152,7 +152,8 @@ namespace fastoredis
             char buf[4096], *p;
 
             /* Send the SYNC command. */
-            if (redisWriteFromBuffer(context, "SYNC\r\n") == 6) {
+            ssize_t nwrite = 0;
+            if (redisWriteFromBuffer(context, "SYNC\r\n", &nwrite) == REDIS_ERR) {
                 er.reset(new common::ErrorValue("Error writing to master", common::ErrorValue::E_ERROR));
                 return -1;
             }

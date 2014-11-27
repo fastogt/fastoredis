@@ -1386,25 +1386,26 @@ int redisBufferWrite(redisContext *c, int *done) {
 #ifdef FASTOREDIS
 int redisReadToBuffer(redisContext *c, char* buf, int size, ssize_t *nread)
 {
+    *nread = -1;
     /* Return early when the context has seen an error. */
     if (c->err){
         return REDIS_ERR;
     }
 
     if(c->channel){
-        nread = libssh2_channel_read(c->channel, buf, size);
+        *nread = libssh2_channel_read(c->channel, buf, size);
     }
     else{
         #ifdef OS_WIN
-            nread = recv(c->fd,buf,size,0);
+            *nread = recv(c->fd,buf,size,0);
         #else
-            nread = read(c->fd,buf,size);
+            *nread = read(c->fd, buf, size);
         #endif
     }
 
     if (nread == -1) {
         if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || (errno == F_EINTR)) {
-            nread = 0;
+            *nread = 0;
         } else {
             return REDIS_ERR;
         }
@@ -1413,30 +1414,34 @@ int redisReadToBuffer(redisContext *c, char* buf, int size, ssize_t *nread)
     return REDIS_OK;
 }
 
-int redisWriteFromBuffer(redisContext *c, const char *buf)
+int redisWriteFromBuffer(redisContext *c, const char *buf, ssize_t *nwritten)
 {
-    int nwritten = -1;
+    *nwritten = -1;
 
     /* Return early when the context has seen an error. */
     if (c->err)
-        return -1;
+        return REDIS_ERR;
 
-    size_t len = sdslen(buf);
+    size_t len = strlen(buf);
 
     if (len > 0) {
         if(c->channel){
-            nwritten = libssh2_channel_write(c->channel, buf, len);
+            *nwritten = libssh2_channel_write(c->channel, buf, len);
         }
         else{
     #ifdef OS_WIN
-            nwritten = send(c->fd, buf, len, 0);
+            *nwritten = send(c->fd, buf, len, 0);
     #else
-            nwritten = write(c->fd, buf, len);
+            *nwritten = write(c->fd, buf, len);
     #endif
         }
     }
 
-    return nwritten;
+    if (nwritten == -1) {
+        return REDIS_ERR;
+    }
+
+    return REDIS_OK;
 }
 #endif
 
