@@ -52,6 +52,8 @@ namespace fastoredis
 
         void enterMode(const EventsInfo::EnterModeInfo& res);
         void leaveMode(const EventsInfo::LeaveModeInfo& res);
+        void rootCreate(const EventsInfo::CommandRootCreatedInfo& res);
+        void addChild(FastoObject *child);
 
     private:
         void syncConnectionActions();

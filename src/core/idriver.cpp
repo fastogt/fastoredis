@@ -83,8 +83,8 @@ namespace fastoredis
     {
         using namespace Events;
         QEvent::Type type = event->type();
-        if (type == static_cast<QEvent::Type>(ConnectRequestEvent::EventType)){
-            ConnectRequestEvent *ev = static_cast<ConnectRequestEvent*>(event);            
+        if (type == static_cast<QEvent::Type>(ConnectRequestEvent::EventType)){            
+            ConnectRequestEvent *ev = static_cast<ConnectRequestEvent*>(event);
             connectEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ProcessConfigArgsRequestEvent::EventType)){
@@ -96,7 +96,7 @@ namespace fastoredis
             disconnectEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ExecuteRequestEvent::EventType)){
-            ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);           
+            ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);
             executeEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(LoadDatabasesInfoRequestEvent::EventType)){
@@ -126,7 +126,7 @@ namespace fastoredis
         return QObject::customEvent(event);
     }
 
-    FastoObjectPtr IDriver::createRoot(QObject* reciver, const std::string& text)
+    FastoObjectPtr IDriver::createRoot(QObject *reciver, const std::string& text)
     {
         FastoObjectPtr root = FastoObject::createRoot(text, this);
         Events::CommandRootCreatedEvent::value_type res(root);
@@ -136,7 +136,12 @@ namespace fastoredis
 
     void IDriver::addedChildren(FastoObject* child)
     {
+        DCHECK(child);
+        if(!child){
+            return;
+        }
 
+        emit addedChild(child);
     }
 
     void IDriver::reply(QObject *reciver, QEvent *ev)

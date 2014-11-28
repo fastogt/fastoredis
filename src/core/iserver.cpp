@@ -38,6 +38,9 @@ namespace
         VERIFY(func(src, SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)), dsc, SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)), Qt::UniqueConnection));
         VERIFY(func(src, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), dsc, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), Qt::UniqueConnection));
         VERIFY(func(src, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), dsc, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), Qt::UniqueConnection));
+
+        VERIFY(func(src, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo& )), dsc, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo& )), Qt::UniqueConnection));
+        VERIFY(func(src, SIGNAL(addedChild(FastoObject *)), dsc, SIGNAL(addedChild(FastoObject *)), Qt::UniqueConnection));
    }
 }
 
@@ -46,6 +49,9 @@ namespace fastoredis
     IServer::IServer(const IDriverPtr &drv, bool isMaster)
         : drv_(drv), isMaster_(isMaster)
     {
+        if(isMaster_){
+            VERIFY(QObject::connect(drv_.get(), SIGNAL(addedChild(FastoObject *)), this, SIGNAL(addedChild(FastoObject *))));
+        }
     }
 
     void IServer::unSyncServers(IServer *src, IServer *dsc)
@@ -228,6 +234,11 @@ namespace fastoredis
             LeaveModeEvent *ev = static_cast<LeaveModeEvent*>(event);
             LeaveModeEvent::value_type v = ev->value();
             emit leavedMode(v);
+        }
+        else if(type == static_cast<QEvent::Type>(CommandRootCreatedEvent::EventType)){
+            CommandRootCreatedEvent *ev = static_cast<CommandRootCreatedEvent*>(event);
+            CommandRootCreatedEvent::value_type v = ev->value();
+            emit rootCreated(v);
         }
         else if(type == static_cast<QEvent::Type>(DisconnectResponceEvent::EventType))
         {

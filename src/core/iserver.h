@@ -67,6 +67,11 @@ namespace fastoredis
         void enteredMode(const EventsInfo::EnterModeInfo& res);
         void leavedMode(const EventsInfo::LeaveModeInfo& res);
 
+        void rootCreated(const EventsInfo::CommandRootCreatedInfo& res);
+   Q_SIGNALS:
+
+        void addedChild(FastoObject *child);
+
     public Q_SLOTS:
         //async
         void serverInfo();

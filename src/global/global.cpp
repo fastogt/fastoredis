@@ -70,6 +70,10 @@ namespace fastoredis
         if(child){
             DCHECK(child->parent_ == this);
             childrens_.push_back(child);
+            if(observer_){
+                observer_->addedChildren(child);
+                child->observer_ = observer_;
+            }
         }
     }
 
