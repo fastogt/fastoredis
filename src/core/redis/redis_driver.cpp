@@ -712,7 +712,8 @@ namespace fastoredis
 
     common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
     {
-        FastoObjectPtr outRoot = createRoot(NULL, INFO_REQUEST);
+        RootLocker rl = make_locker(NULL, INFO_REQUEST);
+        FastoObjectPtr outRoot = rl.root_;
         outInfo = outRoot;
         common::ErrorValueSPtr er;
         impl_->execute(INFO_REQUEST, Command::InnerCommand, outRoot, er);
@@ -824,7 +825,9 @@ namespace fastoredis
         reply(sender, new Events::EnterModeEvent(this, res));
 
         common::ErrorValueSPtr er;
-        FastoObjectPtr obj = createRoot(sender, SYNC_REQUEST);
+        RootLocker lock = make_locker(sender, SYNC_REQUEST);
+
+        FastoObjectPtr obj = lock.root_;
         impl_->slaveMode(obj, er);
 
         Events::LeaveModeEvent::value_type res2(SlaveMode);
@@ -896,14 +899,15 @@ namespace fastoredis
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::ExecuteResponceEvent::value_type res(ev->value());
+            Events::ExecuteRequestEvent::value_type res(ev->value());
             const char *inputLine = toCString(res._text);
 
             common::ErrorValueSPtr er;
             if(inputLine){
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                FastoObjectPtr outRoot = createRoot(sender, inputLine);
+                RootLocker lock = make_locker(sender, inputLine);
+                FastoObjectPtr outRoot = lock.root_;
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->config.shutdown){
@@ -924,13 +928,14 @@ namespace fastoredis
                         impl_->execute(command, Command::UserCommand, outRoot, er);
                     }
                 }
-                res.out_ = outRoot;
+                //res.out_ = outRoot;
             }
             else{
                 common::ErrorValueSPtr er(new common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
-                res.setErrorInfo(er);
-            }            
-            reply(sender, new Events::ExecuteResponceEvent(this, res));
+                //res.setErrorInfo(er);
+            }
+
+            //reply(sender, new Events::ExecuteResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
@@ -951,7 +956,8 @@ namespace fastoredis
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = createRoot(sender, GET_DATABASES);
+            RootLocker lock = make_locker(sender, GET_DATABASES);
+            FastoObjectPtr root = lock.root_;
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             impl_->execute(GET_DATABASES, Command::InnerCommand, root, er);
@@ -989,7 +995,8 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = createRoot(sender, INFO_REQUEST);
+            RootLocker lock = make_locker(sender, INFO_REQUEST);
+            FastoObjectPtr root = lock.root_;
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             impl_->execute(INFO_REQUEST, Command::InnerCommand, root, er);
@@ -1013,7 +1020,8 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = createRoot(sender, GET_PROPERTY_SERVER);
+            RootLocker lock = make_locker(sender, GET_PROPERTY_SERVER);
+            FastoObjectPtr root = lock.root_;
             common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
             impl_->execute(GET_PROPERTY_SERVER, Command::InnerCommand, root, er);
@@ -1035,7 +1043,8 @@ namespace fastoredis
         common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
         const std::string &changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
-        FastoObjectPtr root = createRoot(sender, changeRequest);
+        RootLocker lock = make_locker(sender, changeRequest);
+        FastoObjectPtr root = lock.root_;
         impl_->execute(changeRequest.c_str(), Command::InnerCommand, root, er);
         if(er && er->isError()){
             res.setErrorInfo(er);

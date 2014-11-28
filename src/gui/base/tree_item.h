@@ -11,7 +11,7 @@ namespace fastoredis
     {
     public:
         typedef std::vector<TreeItem*> child_container_type;
-        TreeItem(TreeItem *parent);
+        TreeItem(TreeItem *parent, void* internalPointer = NULL);
         virtual ~TreeItem();
 
         void addChildren(TreeItem *child);
@@ -22,11 +22,14 @@ namespace fastoredis
         int indexOf(TreeItem *item) const;
         TreeItem *parent() const;
 
+        void* const internalPointer() const;
+
     protected:
         TreeItem *const parent_;
 
     private:
-        child_container_type childrens_;        
+        child_container_type childrens_;
+        void* const internalPointer_;
     };
 }
 

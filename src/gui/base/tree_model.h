@@ -22,9 +22,14 @@ namespace fastoredis
         virtual QModelIndex parent(const QModelIndex& index) const;
         TreeItem* root() const;
 
+        void setRoot(TreeItem *root);
+
+        virtual void inserItem(const QModelIndex& parent, TreeItem* child);
+        bool findItem(void* internalPointer, QModelIndex& index);
+
         virtual ~TreeModel();
 
-    protected:
+    protected:        
         boost::scoped_ptr<TreeItem> _root;
     };
 }

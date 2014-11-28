@@ -13,8 +13,9 @@ namespace fastoredis
     {
         shellWidget_ = new ShellWidget(server);
         outputWidget_ = new OutputWidget;
-        VERIFY(connect(shellWidget_, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), outputWidget_, SLOT(startExecute(const EventsInfo::ExecuteInfoRequest &))));
-        VERIFY(connect(shellWidget_, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), outputWidget_, SLOT(finishExecute(const EventsInfo::ExecuteInfoResponce &))));
+        VERIFY(connect(shellWidget_, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&)), outputWidget_, SLOT(rootCreate(const EventsInfo::CommandRootCreatedInfo&))));
+        VERIFY(connect(shellWidget_, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), outputWidget_, SLOT(rootCompleate(const EventsInfo::CommandRootCompleatedInfo&))));
+        VERIFY(connect(shellWidget_, SIGNAL(addedChild(FastoObject *)), outputWidget_, SLOT(addChild(FastoObject *))));
 
         QSplitter *splitter = new QSplitter;
         splitter->setOrientation(Qt::Vertical);

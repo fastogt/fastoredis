@@ -40,6 +40,7 @@ namespace
         VERIFY(func(src, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), dsc, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), Qt::UniqueConnection));
 
         VERIFY(func(src, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo& )), dsc, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo& )), Qt::UniqueConnection));
+        VERIFY(func(src, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), dsc, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), Qt::UniqueConnection));
         VERIFY(func(src, SIGNAL(addedChild(FastoObject *)), dsc, SIGNAL(addedChild(FastoObject *)), Qt::UniqueConnection));
    }
 }
@@ -240,15 +241,15 @@ namespace fastoredis
             CommandRootCreatedEvent::value_type v = ev->value();
             emit rootCreated(v);
         }
+        else if(type == static_cast<QEvent::Type>(CommandRootCompleatedEvent::EventType)){
+            CommandRootCompleatedEvent *ev = static_cast<CommandRootCompleatedEvent*>(event);
+            CommandRootCompleatedEvent::value_type v = ev->value();
+            emit rootCompleated(v);
+        }
         else if(type == static_cast<QEvent::Type>(DisconnectResponceEvent::EventType))
         {
             DisconnectResponceEvent *ev = static_cast<DisconnectResponceEvent*>(event);
             disconnectEvent(ev);
-        }
-        else if(type == static_cast<QEvent::Type>(ExecuteResponceEvent::EventType))
-        {
-            ExecuteResponceEvent *ev = static_cast<ExecuteResponceEvent*>(event);
-            executeEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(LoadDatabasesInfoResponceEvent::EventType))
         {

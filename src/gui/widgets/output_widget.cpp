@@ -20,49 +20,23 @@
 
 namespace
 {
-    fastoredis::FastoCommonItem *createItem(fastoredis::FastoCommonItem *parent, const fastoredis::FastoObject* item)
+    fastoredis::FastoCommonItem *createItem(fastoredis::TreeItem *parent, fastoredis::FastoObject* item)
     {
         fastoredis::FastoCommonItem *result = NULL;
         fastoredis::FastoObject::child_container_type cont = item->childrens();
         size_t contSize = cont.size();
         const std::string itemData = item->toString();
         if(contSize){
-            char size[128] = {0};            
+            char size[128] = {0};
             sprintf(size, "{%zu}", contSize);
-            result = new fastoredis::FastoCommonItem( common::convertFromString<QString>(itemData), size, item->type(), parent);
+            result = new fastoredis::FastoCommonItem( common::convertFromString<QString>(itemData), size, item->type(), parent, item);
         }
         else{
-            QString varName = QString("%1)").arg(parent->childrenCount() + 1);
-            result = new fastoredis::FastoCommonItem( varName ,common::convertFromString<QString>(itemData), item->type(), parent);
-        }
-
-        if(parent){
-            parent->addChildren(result);
-        }
-        return result;
-    }
-
-    void parseRedisImpl(fastoredis::FastoCommonItem *root, const fastoredis::FastoObject* item)
-    {
-        fastoredis::FastoCommonItem *child = createItem(root, item);
-        fastoredis::FastoObject::child_container_type cont = item->childrens();
-        for(int i = 0; i < cont.size(); ++i){
-            fastoredis::FastoObject* obj = cont[i];
-            parseRedisImpl(child, obj);
-        }
-    }
-
-    fastoredis::FastoCommonItem *parseOutput(const fastoredis::FastoObject* res)
-    {
-        if(!res){
-            return NULL;
-        }
-
-        fastoredis::FastoCommonItem* result = createItem(NULL, res);
-        fastoredis::FastoObject::child_container_type cont = res->childrens();
-        for(int i = 0; i < cont.size(); ++i){
-            fastoredis::FastoObject* command = cont[i];
-            parseRedisImpl(result, command);
+            QString varName;
+            if(parent){
+                varName = QString("%1)").arg(parent->childrenCount() + 1);
+            }
+            result = new fastoredis::FastoCommonItem( varName ,common::convertFromString<QString>(itemData), item->type(), parent, item);
         }
         return result;
     }
@@ -153,20 +127,37 @@ namespace fastoredis
         textView_->setVisible(true);
     }
 
-    void OutputWidget::startExecute(const EventsInfo::ExecuteInfoRequest& req)
+    void OutputWidget::rootCreate(const EventsInfo::CommandRootCreatedInfo& res)
+    {
+        FastoObject* rootObj = res.root_.get();
+        fastoredis::FastoCommonItem* root = createItem(NULL, rootObj);
+        commonModel_->setRoot(root);
+    }
+
+    void OutputWidget::rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res)
     {
 
     }
 
-    void OutputWidget::finishExecute(const EventsInfo::ExecuteInfoResponce& res)
+    void OutputWidget::addChild(FastoObject *child)
     {
-        FastoCommonItem *root = parseOutput(res.out_.get());
+        DCHECK(child->parent());
 
-        commonModel_->setRoot(root);
-        //treeView_->setRootIndex(rootIndex);
-        //tableView_->setRootIndex(rootIndex);
-        //textView_->setRootIndex(QModelIndex());
+        QModelIndex parent;
+        bool isFound = commonModel_->findItem(child->parent(), parent);
+        if(!isFound){
+            return;
+        }
 
-        timeLabel_->setText(tr("Execute milliseconds time: %1").arg(res.elapsedTime()));
+        fastoredis::TreeItem* par = NULL;
+        if(!parent.isValid()){
+            par = commonModel_->root();
+        }
+        else{
+            par = common::utils_qt::item<fastoredis::TreeItem*>(parent);
+        }
+
+        fastoredis::FastoCommonItem* comChild = createItem(par, child);
+        commonModel_->inserItem(parent, comChild);
     }
 }

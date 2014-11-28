@@ -18,7 +18,6 @@ namespace fastoredis
     protected:
         virtual void connectEvent(Events::ConnectResponceEvent *ev);
         virtual void disconnectEvent(Events::DisconnectResponceEvent *ev);
-        virtual void executeEvent(Events::ExecuteResponceEvent *ev);
         virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent *ev);
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent *ev);
         virtual void loadServerInfoEvent(Events::ServerInfoResponceEvent *ev);

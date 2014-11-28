@@ -42,7 +42,6 @@ namespace fastoredis
         void finishedDisconnect(const EventsInfo::DisConnectInfoResponce& res);
 
         void startedExecute(const EventsInfo::ExecuteInfoRequest& req);
-        void finishedExecute(const EventsInfo::ExecuteInfoResponce& res);
 
         void startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req);
         void finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res);
@@ -68,6 +67,7 @@ namespace fastoredis
         void leavedMode(const EventsInfo::LeaveModeInfo& res);
 
         void rootCreated(const EventsInfo::CommandRootCreatedInfo& res);
+        void rootCompleated(const EventsInfo::CommandRootCompleatedInfo& res);
    Q_SIGNALS:
 
         void addedChild(FastoObject *child);
@@ -87,7 +87,6 @@ namespace fastoredis
 
         virtual void connectEvent(Events::ConnectResponceEvent* ev) = 0;
         virtual void disconnectEvent(Events::DisconnectResponceEvent* ev) = 0;
-        virtual void executeEvent(Events::ExecuteResponceEvent* ev) = 0;
         virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent* ev) = 0;
         virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent* ev) = 0;
         virtual void loadServerInfoEvent(Events::ServerInfoResponceEvent* ev) = 0;

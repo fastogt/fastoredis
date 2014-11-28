@@ -97,14 +97,14 @@ namespace fastoredis
         VERIFY(connect(server_.get(), SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)), this, SLOT(startDisconnect(const EventsInfo::DisonnectInfoRequest &))));
         VERIFY(connect(server_.get(), SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)), this, SLOT(finishDisconnect(const EventsInfo::DisConnectInfoResponce &))));
         VERIFY(connect(server_.get(), SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), this, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &))));
-        VERIFY(connect(server_.get(), SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), this, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &))));
         VERIFY(connect(server_.get(), SIGNAL(progressChanged(const EventsInfo::ProgressInfoResponce &)), this, SLOT(progressChange(const EventsInfo::ProgressInfoResponce &))));
 
         VERIFY(connect(server_.get(), SIGNAL(enteredMode(const EventsInfo::EnterModeInfo&)), this, SLOT(enterMode(const EventsInfo::EnterModeInfo&))));
         VERIFY(connect(server_.get(), SIGNAL(leavedMode(const EventsInfo::LeaveModeInfo&)), this, SLOT(leaveMode(const EventsInfo::LeaveModeInfo&))));
 
-        VERIFY(connect(server_.get(), SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&)), this, SLOT(rootCreate(const EventsInfo::CommandRootCreatedInfo&))));
-        VERIFY(connect(server_.get(), SIGNAL(addedChild(FastoObject *)), this, SLOT(addChild(FastoObject *))));
+        VERIFY(connect(server_.get(), SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&)), this, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&))));
+        VERIFY(connect(server_.get(), SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), this, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo&))));
+        VERIFY(connect(server_.get(), SIGNAL(addedChild(FastoObject *)), this, SIGNAL(addedChild(FastoObject *))));
 
         QVBoxLayout* mainlayout = new QVBoxLayout;
         QHBoxLayout* hlayout = new QHBoxLayout;
@@ -171,16 +171,6 @@ namespace fastoredis
         connectionMode_->setIcon(GuiFactory::instance().modeIcon(mode), iconSize);
         std::string modeText = common::convertToString(mode);
         connectionMode_->setText(common::convertFromString<QString>(modeText));
-    }
-
-    void ShellWidget::rootCreate(const EventsInfo::CommandRootCreatedInfo &res)
-    {
-
-    }
-
-    void ShellWidget::addChild(FastoObject *child)
-    {
-
     }
 
     void ShellWidget::leaveMode(const EventsInfo::LeaveModeInfo& res)

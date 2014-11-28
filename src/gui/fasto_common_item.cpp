@@ -2,8 +2,8 @@
 
 namespace fastoredis
 {
-    FastoCommonItem::FastoCommonItem(const QString& key, const QString& value, common::Value::Type type, FastoCommonItem* parent)
-        : TreeItem(parent), key_(key), value_(value), type_(type)
+    FastoCommonItem::FastoCommonItem(const QString& key, const QString& value, common::Value::Type type, TreeItem *parent, void* internalPointer)
+        : TreeItem(parent, internalPointer), key_(key), value_(value), type_(type)
     {
 
     }

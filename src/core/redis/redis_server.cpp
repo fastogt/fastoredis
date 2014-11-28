@@ -42,17 +42,6 @@ namespace fastoredis
         emit finishedDisconnect(v);
     }
 
-    void RedisServer::executeEvent(Events::ExecuteResponceEvent *ev)
-    {
-        using namespace Events;
-        ExecuteResponceEvent::value_type v = ev->value();
-        common::ErrorValueSPtr er(v.errorInfo());
-        if(er && er->isError()){
-            LOG_ERROR(er, true);
-        }
-        emit finishedExecute(v);
-    }
-
     void RedisServer::loadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent *ev)
     {
         using namespace Events;

@@ -2,8 +2,8 @@
 
 namespace fastoredis
 {
-    TreeItem::TreeItem(TreeItem *parent)
-        : parent_(parent)
+    TreeItem::TreeItem(TreeItem *parent, void* internalPointer)
+        : parent_(parent), internalPointer_(internalPointer)
     {
 
     }
@@ -57,6 +57,11 @@ namespace fastoredis
     TreeItem *TreeItem::parent() const
     {
         return parent_;
+    }
+
+    void* const TreeItem::internalPointer() const
+    {
+        return internalPointer_;
     }
 }
 

@@ -75,14 +75,13 @@ namespace fastoredis
             FastoObjectPtr root_;
         };
 
-        struct CommandRootAddedChildInfo
+        struct CommandRootCompleatedInfo
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            CommandRootAddedChildInfo(FastoObjectPtr root, FastoObject* child, const error_type &er = error_type());
+            CommandRootCompleatedInfo(FastoObjectPtr root, const error_type &er = error_type());
 
             FastoObjectPtr root_;
-            FastoObject* child_;
         };
 
         struct DisonnectInfoRequest
@@ -105,15 +104,6 @@ namespace fastoredis
             typedef EventInfoBase base_class;
             ExecuteInfoRequest(const std::string &text, const error_type &er = error_type());
             const std::string _text;
-        };
-
-        struct ExecuteInfoResponce
-                : ExecuteInfoRequest
-        {
-            typedef ExecuteInfoRequest base_class;
-            ExecuteInfoResponce(const base_class &request, const error_type &er = error_type());
-
-            FastoObjectPtr out_;
         };
 
         struct LoadDatabasesInfoRequest

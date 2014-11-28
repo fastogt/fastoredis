@@ -4,6 +4,46 @@
 
 namespace fastoredis
 {
+    namespace
+    {
+        bool findChildInModel(const QModelIndex& parent, void* internalPointer, QModelIndex& index, TreeItem* root, QAbstractItemModel* model)
+        {
+            if(!root || !model){
+                return false;
+            }
+
+            TreeItem* par = NULL;
+            if(!parent.isValid()){
+                par = root;
+            }
+            else{
+                par = common::utils_qt::item<TreeItem*>(parent);
+            }
+
+            if(par->internalPointer() == internalPointer){
+                index = parent;
+                return true;
+            }
+
+            for(int i = 0; i < par->childrenCount(); ++i){
+                TreeItem* child = par->child(i);
+                QModelIndex ind = model->index(i, 0, parent);
+                if(child->internalPointer() == internalPointer){
+                    index = parent;
+                    return true;
+                }
+                else{
+                    bool res = findChildInModel(ind, internalPointer, index, root, model);
+                    if(res){
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+
     TreeModel::TreeModel(QObject *parent)
         : QAbstractItemModel(parent), _root(new TreeItem(NULL))
     {
@@ -28,6 +68,35 @@ namespace fastoredis
         return parentItem ? parentItem->childrenCount() : 0;
     }
 
+    void TreeModel::setRoot(TreeItem *root)
+    {
+        beginResetModel();
+        _root.reset(root);
+        endResetModel();
+    }
+
+    void TreeModel::inserItem(const QModelIndex& parent, TreeItem* child)
+    {
+        TreeItem* item = NULL;
+        if(!parent.isValid()){
+            item = _root.get();
+        }
+
+        if(!item){
+            item = common::utils_qt::item<TreeItem*>(parent);
+        }
+
+        int child_count = item->childrenCount();
+        beginInsertRows(parent, child_count, child_count);
+            item->addChildren(child);
+        endInsertRows();
+    }
+
+    bool TreeModel::findItem(void *internalPointer, QModelIndex& index)
+    {
+        return findChildInModel(QModelIndex(), internalPointer, index, _root.get(), this);
+    }
+
     QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
     {
         if (hasIndex(row, column, parent)) {
@@ -43,7 +112,7 @@ namespace fastoredis
                 return QModelIndex();
             }
 
-            TreeItem *childItem = parentItem->child(row);
+            TreeItem* childItem = parentItem->child(row);
             if (childItem) {
                 return createIndex(row, column, childItem);
             }

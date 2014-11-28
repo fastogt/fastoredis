@@ -134,7 +134,7 @@ namespace fastoredis
 
     void FastoEditor::rowsInserted(QModelIndex index, int r, int c)
     {
-
+        layoutChanged();
     }
 
     void FastoEditor::rowsAboutToBeRemoved(QModelIndex index, int r, int c)

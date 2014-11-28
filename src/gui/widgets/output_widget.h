@@ -23,14 +23,15 @@ namespace fastoredis
     public:
         OutputWidget(QWidget* parent = 0);
 
-    public Q_SLOTS:
-        void startExecute(const EventsInfo::ExecuteInfoRequest &);
-        void finishExecute(const EventsInfo::ExecuteInfoResponce &);
 
     private Q_SLOTS:
         void setTreeView();
         void setTableView();
         void setTextView();
+
+        void rootCreate(const EventsInfo::CommandRootCreatedInfo& res);
+        void rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res);
+        void addChild(FastoObject *child);
 
     private:
         void syncWithSettings();

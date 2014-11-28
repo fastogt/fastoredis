@@ -19,13 +19,6 @@ namespace fastoredis
 
     }
 
-    void FastoTreeModel::setRoot(FastoCommonItem *root)
-    {
-        beginResetModel();
-        _root.reset(root);
-        endResetModel();
-    }
-
     QVariant FastoTreeModel::data(const QModelIndex &index, int role) const
     {
         QVariant result;

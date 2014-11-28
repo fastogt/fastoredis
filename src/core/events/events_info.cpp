@@ -59,8 +59,8 @@ namespace fastoredis
 
         }
 
-        CommandRootAddedChildInfo::CommandRootAddedChildInfo(FastoObjectPtr root, FastoObject* child, const error_type &er)
-            : base_class(er), root_(root), child_(child)
+        CommandRootCompleatedInfo::CommandRootCompleatedInfo(FastoObjectPtr root, const error_type &er)
+            : base_class(er), root_(root)
         {
 
         }
@@ -81,12 +81,6 @@ namespace fastoredis
             : base_class(er), _text(text)
         {
 
-        }
-
-        ExecuteInfoResponce::ExecuteInfoResponce(const base_class &request, const error_type &er)
-            : base_class(request), out_()
-        {
-            base_class::errorInfo_ = er;
         }
 
         LoadDatabasesInfoRequest::LoadDatabasesInfoRequest(const error_type &er)

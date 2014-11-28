@@ -15,7 +15,7 @@ namespace fastoredis
         typedef common::utils_qt::Event<EventsInfo::ProcessConfigArgsInfoResponce, QEvent::User + 4> ProcessConfigArgsResponceEvent;
 
         typedef common::utils_qt::Event<EventsInfo::CommandRootCreatedInfo, QEvent::User + 5> CommandRootCreatedEvent;
-        typedef common::utils_qt::Event<EventsInfo::CommandRootAddedChildInfo, QEvent::User + 6> CommandRootAddedChildEvent;
+        typedef common::utils_qt::Event<EventsInfo::CommandRootCompleatedInfo, QEvent::User + 6> CommandRootCompleatedEvent;
 
         typedef common::utils_qt::Event<EventsInfo::EnterModeInfo, QEvent::User + 7> EnterModeEvent;
         typedef common::utils_qt::Event<EventsInfo::LeaveModeInfo, QEvent::User + 8> LeaveModeEvent;
@@ -24,7 +24,6 @@ namespace fastoredis
         typedef common::utils_qt::Event<EventsInfo::DisConnectInfoResponce, QEvent::User + 10> DisconnectResponceEvent;
 
         typedef common::utils_qt::Event<EventsInfo::ExecuteInfoRequest, QEvent::User + 11> ExecuteRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::ExecuteInfoResponce, QEvent::User + 12> ExecuteResponceEvent;
 
         typedef common::utils_qt::Event<EventsInfo::LoadDatabasesInfoRequest, QEvent::User + 13> LoadDatabasesInfoRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::LoadDatabasesInfoResponce, QEvent::User + 14> LoadDatabasesInfoResponceEvent;

@@ -21,8 +21,6 @@ namespace fastoredis
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
         virtual int columnCount(const QModelIndex& parent) const;
-
-        void setRoot(FastoCommonItem *root);
     };
 }
 
