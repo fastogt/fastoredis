@@ -1,6 +1,7 @@
 #include "core/redis/redis_driver.h"
 
 #include <errno.h>
+#include <fcntl.h>
 
 extern "C" {
 #include "third-party/redis/src/release.h"
@@ -13,6 +14,7 @@ extern "C" {
 #include "common/time.h"
 #include "common/utils.h"
 
+#include "core/logger.h"
 #include "core/command_logger.h"
 #include "core/redis/redis_infos.h"
 
@@ -22,12 +24,20 @@ extern "C" {
 
 #define INFO_REQUEST "INFO"
 #define SYNC_REQUEST "SYNC"
+#define FIND_BIG_KEYS_REQUEST "FIND_BIG_KEYS"
 #define LATENCY_REQUEST "LATENCY"
 #define GET_DATABASES "CONFIG GET databases"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 
 #define LATENCY_SAMPLE_RATE 10 /* milliseconds. */
 #define LATENCY_HISTORY_DEFAULT_INTERVAL 15000 /* milliseconds. */
+
+#define TYPE_STRING 0
+#define TYPE_LIST   1
+#define TYPE_SET    2
+#define TYPE_HASH   3
+#define TYPE_ZSET   4
+#define TYPE_NONE   5
 
 namespace
 {
@@ -292,6 +302,394 @@ namespace fastoredis
             }
         }
 
+        /*------------------------------------------------------------------------------
+         * RDB transfer mode
+         *--------------------------------------------------------------------------- */
+
+        /* This function implements --rdb, so it uses the replication protocol in order
+         * to fetch the RDB file from a remote server. */
+        void getRDB(FastoObjectPtr out, common::ErrorValueSPtr er)
+        {
+            unsigned long long payload = sendSync(er);
+            if(er){
+                return;
+            }
+
+            FastoObject* child = NULL;
+            common::ArrayValue* val = NULL;
+
+            int fd = INVALID_DESCRIPTOR;
+            /* Write to file. */
+            if (!strcmp(config.rdb_filename,"-")) {
+                val = new common::ArrayValue;
+                child = new FastoObject(out.get(), val, config.mb_delim);
+                out->addChildren(child);
+            }
+            else{
+                fd = open(config.rdb_filename, O_CREAT|O_WRONLY, 0644);
+                if (fd == INVALID_DESCRIPTOR) {
+                    char bufeEr[2048];
+                    sprintf(bufeEr, "Error opening '%s': %s", config.rdb_filename,
+                        strerror(errno));
+
+                    er.reset(new common::ErrorValue(bufeEr, common::ErrorValue::E_ERROR));
+                    return;
+                }
+            }
+
+            char buf[4096];
+
+            while(payload) {
+                ssize_t nread, nwritten;
+
+                int res = redisReadToBuffer(context, buf,(payload > sizeof(buf)) ? sizeof(buf) : payload, &nread);
+                if (res == REDIS_ERR) {
+                    er.reset(new common::ErrorValue("Error reading RDB payload while SYNCing", common::ErrorValue::E_ERROR));
+                    return;
+                }
+
+                if(!nread){
+                    continue;
+                }
+
+                if(fd != INVALID_DESCRIPTOR){
+                    nwritten = write(fd, buf, nread);
+                }
+                else{
+                    val->appendString(buf);
+                }
+
+                if (nwritten != nread) {
+                    char bufeEr[2048];
+                    sprintf(bufeEr, "Error writing data to file: %s",
+                            strerror(errno));
+
+                    er.reset(new common::ErrorValue(bufeEr, common::ErrorValue::E_ERROR));
+                    break;
+                }
+
+                payload -= nread;
+            }
+
+            if(fd != INVALID_DESCRIPTOR){
+                close(fd);
+            }
+
+            LOG_MSG("Transfer finished with success.", common::logging::L_INFO);
+        }
+
+        /*------------------------------------------------------------------------------
+         * Find big keys
+         *--------------------------------------------------------------------------- */
+
+        redisReply *sendScan(common::ErrorValueSPtr er, unsigned long long *it) {
+            redisReply *reply = (redisReply *)redisCommand(context, "SCAN %llu", *it);
+
+            /* Handle any error conditions */
+            if(reply == NULL) {
+                er.reset(new common::ErrorValue("I/O error", common::Value::E_ERROR));
+                return NULL;
+            } else if(reply->type == REDIS_REPLY_ERROR) {
+                char buff[512];
+                sprintf(buff, "SCAN error: %s", reply->str);
+                er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
+                return NULL;
+            } else if(reply->type != REDIS_REPLY_ARRAY) {
+                er.reset(new common::ErrorValue("Non ARRAY response from SCAN!", common::Value::E_ERROR));
+                return NULL;
+            } else if(reply->elements != 2) {
+                er.reset(new common::ErrorValue("Invalid element count from SCAN!", common::Value::E_ERROR));
+                return NULL;
+            }
+
+            /* Validate our types are correct */
+            assert(reply->element[0]->type == REDIS_REPLY_STRING);
+            assert(reply->element[1]->type == REDIS_REPLY_ARRAY);
+
+            /* Update iterator */
+            *it = atoi(reply->element[0]->str);
+
+            return reply;
+        }
+
+        int getDbSize(common::ErrorValueSPtr er) {
+            redisReply *reply;
+            int size;
+
+            reply = (redisReply *)redisCommand(context, "DBSIZE");
+
+            if(reply == NULL || reply->type != REDIS_REPLY_INTEGER) {
+                er.reset(new common::ErrorValue("Couldn't determine DBSIZE!", common::Value::E_ERROR));
+                return -1;
+            }
+
+            /* Grab the number of keys and free our reply */
+            size = reply->integer;
+            freeReplyObject(reply);
+
+            return size;
+        }
+
+        int toIntType(common::ErrorValueSPtr er, char *key, char *type) {
+            if(!strcmp(type, "string")) {
+                return TYPE_STRING;
+            } else if(!strcmp(type, "list")) {
+                return TYPE_LIST;
+            } else if(!strcmp(type, "set")) {
+                return TYPE_SET;
+            } else if(!strcmp(type, "hash")) {
+                return TYPE_HASH;
+            } else if(!strcmp(type, "zset")) {
+                return TYPE_ZSET;
+            } else if(!strcmp(type, "none")) {
+                return TYPE_NONE;
+            } else {
+                char buff[4096];
+                sprintf(buff, "Unknown type '%s' for key '%s'", type, key);
+                er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
+                return -1;
+            }
+        }
+
+        void getKeyTypes(common::ErrorValueSPtr er, redisReply *keys, int *types) {
+            redisReply *reply;
+            unsigned int i;
+
+            /* Pipeline TYPE commands */
+            for(i=0;i<keys->elements;i++) {
+                redisAppendCommand(context, "TYPE %s", keys->element[i]->str);
+            }
+
+            /* Retrieve types */
+            for(i=0;i<keys->elements;i++) {
+                if(redisGetReply(context, (void**)&reply)!=REDIS_OK) {
+                    char buff[4096];
+                    sprintf(buff, "Error getting type for key '%s' (%d: %s)",
+                        keys->element[i]->str, context->err, context->errstr);
+                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
+                    return;
+                } else if(reply->type != REDIS_REPLY_STATUS) {
+                    char buff[4096];
+                    sprintf(buff, "Invalid reply type (%d) for TYPE on key '%s'!",
+                        reply->type, keys->element[i]->str);
+                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
+                    return;
+                }
+
+                int res = toIntType(er, keys->element[i]->str, reply->str);
+                freeReplyObject(reply);
+                if(res != -1){
+                    types[i] = res;
+                }
+                else{
+                    return;
+                }
+            }
+        }
+
+        void getKeySizes(common::ErrorValueSPtr er, redisReply *keys, int *types,
+                                unsigned long long *sizes)
+        {
+            redisReply *reply;
+            char *sizecmds[] = {"STRLEN","LLEN","SCARD","HLEN","ZCARD"};
+            unsigned int i;
+
+            /* Pipeline size commands */
+            for(i=0;i<keys->elements;i++) {
+                /* Skip keys that were deleted */
+                if(types[i]==TYPE_NONE)
+                    continue;
+
+                redisAppendCommand(context, "%s %s", sizecmds[types[i]],
+                    keys->element[i]->str);
+            }
+
+            /* Retreive sizes */
+            for(i=0;i<keys->elements;i++) {
+                /* Skip keys that dissapeared between SCAN and TYPE */
+                if(types[i] == TYPE_NONE) {
+                    sizes[i] = 0;
+                    continue;
+                }
+
+                /* Retreive size */
+                if(redisGetReply(context, (void**)&reply)!=REDIS_OK) {
+                    char buff[4096];
+                    sprintf(buff, "Error getting size for key '%s' (%d: %s)",
+                        keys->element[i]->str, context->err, context->errstr);
+                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
+                    return;
+                } else if(reply->type != REDIS_REPLY_INTEGER) {
+                    /* Theoretically the key could have been removed and
+                     * added as a different type between TYPE and SIZE */
+                    char buff[4096];
+                    sprintf(buff,
+                        "Warning:  %s on '%s' failed (may have changed type)",
+                         sizecmds[types[i]], keys->element[i]->str);
+                    LOG_MSG(buff, common::logging::L_WARNING);
+                    sizes[i] = 0;
+                } else {
+                    sizes[i] = reply->integer;
+                }
+
+                freeReplyObject(reply);
+            }
+        }
+
+        void findBigKeys(FastoObjectPtr out, common::ErrorValueSPtr er) {
+            unsigned long long biggest[5] = {0}, counts[5] = {0}, totalsize[5] = {0};
+            unsigned long long sampled = 0, total_keys, totlen=0, *sizes=NULL, it=0;
+            sds maxkeys[5] = {0};
+            char *typeName[] = {"string","list","set","hash","zset"};
+            char *typeunit[] = {"bytes","items","members","fields","members"};
+            redisReply *reply, *keys;
+            unsigned int arrsize=0, i;
+            int type, *types=NULL;
+            double pct;
+
+            /* Total keys pre scanning */
+            total_keys = getDbSize(er);
+            if(er){
+                return;
+            }
+
+            /* Status message */
+            LOG_MSG("# Scanning the entire keyspace to find biggest keys as well as", common::logging::L_INFO);
+            LOG_MSG("# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec", common::logging::L_INFO);
+            LOG_MSG("# per 100 SCAN commands (not usually needed).", common::logging::L_INFO);
+
+            /* New up sds strings to keep track of overall biggest per type */
+            for(i=0;i<TYPE_NONE; i++) {
+                maxkeys[i] = sdsempty();
+                if(!maxkeys[i]) {
+                    er.reset(new common::ErrorValue("Failed to allocate memory for largest key names!", common::Value::E_ERROR));
+                    return;
+                }
+            }
+
+            /* SCAN loop */
+            do {
+                /* Calculate approximate percentage completion */
+                pct = 100 * (double)sampled/total_keys;
+
+                /* Grab some keys and point to the keys array */
+                reply = sendScan(er, &it);
+                if(er){
+                    return;
+                }
+
+                keys  = reply->element[1];
+
+                /* Reallocate our type and size array if we need to */
+                if(keys->elements > arrsize) {
+                    types = (int*)realloc(types, sizeof(int)*keys->elements);
+                    sizes = (unsigned long long*)realloc(sizes, sizeof(unsigned long long)*keys->elements);
+
+                    if(!types || !sizes) {
+                        er.reset(new common::ErrorValue("Failed to allocate storage for keys!", common::Value::E_ERROR));
+                        return;
+                    }
+
+                    arrsize = keys->elements;
+                }
+
+                /* Retreive types and then sizes */
+                getKeyTypes(er, keys, types);
+                if(er){
+                    return;
+                }
+
+                getKeySizes(er, keys, types, sizes);
+                if(er){
+                    return;
+                }
+
+                /* Now update our stats */
+                for(i=0;i<keys->elements;i++) {
+                    if((type = types[i]) == TYPE_NONE)
+                        continue;
+
+                    totalsize[type] += sizes[i];
+                    counts[type]++;
+                    totlen += keys->element[i]->len;
+                    sampled++;
+
+                    if(biggest[type]<sizes[i]) {
+                        char buff[4096];
+                        sprintf(buff,
+                           "[%05.2f%%] Biggest %-6s found so far '%s' with %llu %s",
+                           pct, typeName[type], keys->element[i]->str, sizes[i],
+                           typeunit[type]);
+
+                        LOG_MSG(buff, common::logging::L_INFO);
+
+                        /* Keep track of biggest key name for this type */
+                        maxkeys[type] = sdscpy(maxkeys[type], keys->element[i]->str);
+                        if(!maxkeys[type]) {
+                            er.reset(new common::ErrorValue("Failed to allocate memory for key!", common::Value::E_ERROR));
+                            return;
+                        }
+
+                        /* Keep track of the biggest size for this type */
+                        biggest[type] = sizes[i];
+                    }
+                }
+
+                /* Sleep if we've been directed to do so */
+                if(sampled && (sampled %100) == 0 && config.interval) {
+#ifdef OS_WIN
+#else
+                    usleep(config.interval);
+#endif
+                }
+
+                freeReplyObject(reply);
+            } while(it != 0);
+
+            if(types) free(types);
+            if(sizes) free(sizes);
+
+            /* We're done */
+            char buff[4096];
+            sprintf(buff, "Sampled %llu keys in the keyspace!", sampled);
+            LOG_MSG(buff, common::logging::L_INFO);
+
+            memset(&buff, 0, sizeof(buff));
+            sprintf(buff, "Total key length in bytes is %llu (avg len %.2f)",
+               totlen, totlen ? (double)totlen/sampled : 0);
+            LOG_MSG(buff, common::logging::L_INFO);
+
+            /* Output the biggest keys we found, for types we did find */
+            for(i=0;i<TYPE_NONE;i++) {
+                if(sdslen(maxkeys[i])>0) {
+                    memset(&buff, 0, sizeof(buff));
+                    sprintf(buff, "Biggest %6s found '%s' has %llu %s", typeName[i], maxkeys[i],
+                       biggest[i], typeunit[i]);
+                    common::StringValue *val = common::Value::createStringValue(buff);
+                    FastoObject* obj = new FastoObject(out.get(), val, config.mb_delim);
+                    out->addChildren(obj);
+                }
+            }
+
+            for(i=0;i<TYPE_NONE;i++) {
+                memset(&buff, 0, sizeof(buff));
+                sprintf(buff, "%llu %ss with %llu %s (%05.2f%% of keys, avg size %.2f)",
+                   counts[i], typeName[i], totalsize[i], typeunit[i],
+                   sampled ? 100 * (double)counts[i]/sampled : 0,
+                   counts[i] ? (double)totalsize[i]/counts[i] : 0);
+                common::StringValue *val = common::Value::createStringValue(buff);
+                FastoObject* obj = new FastoObject(out.get(), val, config.mb_delim);
+                out->addChildren(obj);
+            }
+
+            /* Free sds strings containing max keys */
+            for(i=0;i<TYPE_NONE;i++) {
+                sdsfree(maxkeys[i]);
+            }
+
+            /* Success! */
+        }
+
         int cliAuth(common::ErrorValueSPtr er)
         {
             if (config.auth == NULL)
@@ -347,9 +745,9 @@ namespace fastoredis
                 if (context->err) {
                     char buff[512] = {0};
                     if (config.hostsocket)
-                        sprintf(buff, "Could not connect to Redis at %s:%d: %s\n", config.hostip, config.hostport, context->errstr);
+                        sprintf(buff, "Could not connect to Redis at %s:%d: %s", config.hostip, config.hostport, context->errstr);
                     else
-                        sprintf(buff, "Could not connect to Redis at %s: %s\n", config.hostsocket, context->errstr);
+                        sprintf(buff, "Could not connect to Redis at %s: %s", config.hostsocket, context->errstr);
 
                     er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
                     redisFree(context);
@@ -378,7 +776,7 @@ namespace fastoredis
                 return;
 
             char buff[512] = {0};
-            sprintf(buff,"Error: %s\n",context->errstr);
+            sprintf(buff,"Error: %s",context->errstr);
             er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
         }
 
@@ -442,7 +840,7 @@ namespace fastoredis
         void cliOutputCommandHelp(FastoObjectPtr out, struct commandHelp *help, int group)
         {
             char buff[1024] = {0};
-            sprintf(buff,"\r\n  name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
+            sprintf(buff,"name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
             common::StringValue *val =common::Value::createStringValue(buff);
             FastoObject* child = new FastoObject(out.get(), val, config.mb_delim);
             out->addChildren(child);
@@ -636,7 +1034,6 @@ namespace fastoredis
                 }*/
 
                 if (config.slave_mode) {
-                    //printf("Entering slave output mode...  (press Ctrl-C to quit)\n");
                     slaveMode(out, er);
                     config.slave_mode = 0;
                     free(argvlen);
@@ -837,9 +1234,9 @@ namespace fastoredis
         }
 
         /* Pipe mode */
-        if (impl_->config.pipe_mode) {
+        /*if (impl_->config.pipe_mode) {
             pipeMode(ev);
-        }
+        }*/
 
         /* Find big keys */
         if (impl_->config.bigkeys) {
@@ -921,6 +1318,12 @@ namespace fastoredis
         Events::EnterModeEvent::value_type res(GetRDBMode);
         reply(sender, new Events::EnterModeEvent(this, res));
 
+        common::ErrorValueSPtr er;
+        RootLocker lock = make_locker(sender, SYNC_REQUEST);
+
+        FastoObjectPtr obj = lock.root_;
+        impl_->getRDB(obj, er);
+
         Events::LeaveModeEvent::value_type res2(GetRDBMode);
         reply(sender, new Events::LeaveModeEvent(this, res2));
         notifyProgress(sender, 100);
@@ -944,6 +1347,12 @@ namespace fastoredis
         notifyProgress(sender, 0);
         Events::EnterModeEvent::value_type res(FindBigKeysMode);
         reply(sender, new Events::EnterModeEvent(this, res));
+
+        common::ErrorValueSPtr er;
+        RootLocker lock = make_locker(sender, FIND_BIG_KEYS_REQUEST);
+
+        FastoObjectPtr obj = lock.root_;
+        impl_->findBigKeys(obj, er);
 
         Events::LeaveModeEvent::value_type res2(FindBigKeysMode);
         reply(sender, new Events::LeaveModeEvent(this, res2));

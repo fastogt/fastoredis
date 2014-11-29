@@ -34,8 +34,8 @@ namespace fastoredis
         int cluster_mode;
         int cluster_reissue_command;
         int slave_mode;
-        int pipe_mode;
-        int pipe_timeout;
+        //int pipe_mode;
+        //int pipe_timeout;
         int getrdb_mode;
         int stat_mode;
         int scan_mode;

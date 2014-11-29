@@ -34,7 +34,7 @@ namespace fastoredis
                 } else if (!strcmp(argv[i],"-n") && !lastarg) {
                     cfg.dbnum = atoi(argv[++i]);
                 } else if (!strcmp(argv[i],"-a") && !lastarg) {
-                    cfg.auth = argv[++i];
+                    cfg.auth = sdsnew(argv[++i]);
                 }
                 /*else if (!strcmp(argv[i],"--raw")) {
                     cfg.output = OUTPUT_RAW;
@@ -54,21 +54,21 @@ namespace fastoredis
                 } else if (!strcmp(argv[i],"--scan")) {
                     cfg.scan_mode = 1;
                 } else if (!strcmp(argv[i],"--pattern") && !lastarg) {
-                    cfg.pattern = argv[++i];
+                    cfg.pattern = sdsnew(argv[++i]);
                 } else if (!strcmp(argv[i],"--intrinsic-latency") && !lastarg) {
                     cfg.intrinsic_latency_mode = 1;
                     cfg.intrinsic_latency_duration = atoi(argv[++i]);
                 } else if (!strcmp(argv[i],"--rdb") && !lastarg) {
                     cfg.getrdb_mode = 1;
-                    cfg.rdb_filename = argv[++i];
-                } else if (!strcmp(argv[i],"--pipe")) {
+                    cfg.rdb_filename = sdsnew(argv[++i]);
+                /*} else if (!strcmp(argv[i],"--pipe")) {
                     cfg.pipe_mode = 1;
                 } else if (!strcmp(argv[i],"--pipe-timeout") && !lastarg) {
-                    cfg.pipe_timeout = atoi(argv[++i]);
+                    cfg.pipe_timeout = atoi(argv[++i]);*/
                 } else if (!strcmp(argv[i],"--bigkeys")) {
                     cfg.bigkeys = 1;
                 } else if (!strcmp(argv[i],"--eval") && !lastarg) {
-                    cfg.eval = argv[++i];
+                    cfg.eval = sdsnew(argv[++i]);
                 } else if (!strcmp(argv[i],"-c")) {
                     cfg.cluster_mode = 1;
                 }
@@ -106,13 +106,12 @@ namespace fastoredis
             char *argv[kMaxArgs] = {0};
 
             char* p2 = strtok((char*)commandLine.c_str(), " ");
-            while (p2)
-            {
+            while(p2){
                 argv[argc++] = p2;
                 p2 = strtok(0, " ");
             }
 
-            int i = parseOptions(argc, argv, cfg);
+            parseOptions(argc, argv, cfg);
             return cfg;
         }
     }
@@ -141,8 +140,8 @@ namespace fastoredis
         cluster_reissue_command = 0;
         pattern = NULL;
         rdb_filename = NULL;
-        pipe_mode = 0;
-        pipe_timeout = REDIS_CLI_DEFAULT_PIPE_TIMEOUT;
+        //pipe_mode = 0;
+        //pipe_timeout = REDIS_CLI_DEFAULT_PIPE_TIMEOUT;
         bigkeys = 0;
         auth = NULL;
         eval = NULL;
@@ -153,7 +152,13 @@ namespace fastoredis
 
     redisConfig::~redisConfig()
     {
+        if(hostip){
+            //sdsfree(hostip);
+        }
 
+        if(mb_delim){
+            //sdsfree(mb_delim);
+        }
     }
 }
 
@@ -226,13 +231,13 @@ namespace common
             argv.push_back("--rdb");
             argv.push_back(conf.rdb_filename);
         }
-        if(conf.pipe_mode){
+        /*if(conf.pipe_mode){
             argv.push_back("--pipe");
         }
         if(conf.pipe_timeout){
             argv.push_back("--pipe-timeout");
             argv.push_back(convertToString(conf.pipe_timeout));
-        }
+        }*/
         if(conf.bigkeys){
             argv.push_back("--bigkeys");
         }
