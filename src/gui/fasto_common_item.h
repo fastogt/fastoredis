@@ -25,6 +25,7 @@ namespace fastoredis
 
         QString key() const;
         QString value() const;
+        void setValue(const QString& val);
         common::Value::Type type() const;
 
     private:

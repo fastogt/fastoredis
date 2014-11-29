@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #ifdef OS_WIN
-
+#include <unistd.h>
 #elif defined OS_LINUX
 #include <signal.h>
 #include <sys/socket.h>
@@ -173,6 +173,11 @@ namespace common
             {
                 return crc64(crc, data.c_str(), data.length());
             }
+        }
+
+        void sleep(unsigned int msec)
+        {
+            usleep(msec*1000);
         }
 
 #ifdef OS_LINUX

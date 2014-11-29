@@ -92,6 +92,11 @@ namespace fastoredis
         endInsertRows();
     }
 
+    void TreeModel::updateItem(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+    {
+        emit dataChanged(topLeft, bottomRight);
+    }
+
     bool TreeModel::findItem(void *internalPointer, QModelIndex& index)
     {
         return findChildInModel(QModelIndex(), internalPointer, index, _root.get(), this);

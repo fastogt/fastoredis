@@ -71,6 +71,7 @@ namespace fastoredis
    Q_SIGNALS:
 
         void addedChild(FastoObject *child);
+        void itemUpdated(FastoObject* item, const QString& val);
 
     public Q_SLOTS:
         //async

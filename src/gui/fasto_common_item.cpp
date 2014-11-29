@@ -18,6 +18,11 @@ namespace fastoredis
         return value_;
     }
 
+    void FastoCommonItem::setValue(const QString& val)
+    {
+        value_ = val;
+    }
+
     common::Value::Type FastoCommonItem::type() const
     {
         return type_;

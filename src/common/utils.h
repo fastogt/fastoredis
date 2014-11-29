@@ -198,6 +198,9 @@ namespace common
                 return (first);
             }
         }
+
+        void sleep(unsigned int msec);
+
 #ifdef OS_LINUX
         namespace signal
         {

@@ -162,6 +162,12 @@ namespace fastoredis
         emit addedChild(child);
     }
 
+    void IDriver::updated(FastoObject* item, common::Value* val)
+    {
+        const QString value = common::convertFromString<QString>(val->toString());
+        emit itemUpdated(item, value);
+    }
+
     void IDriver::reply(QObject *reciver, QEvent *ev)
     {
         qApp->postEvent(reciver, ev);
@@ -196,15 +202,15 @@ namespace fastoredis
                 logFile_->open("ab+");
             }
             if(logFile_ && logFile_->isOpened()){
-                FastoObjectPtr outInf;
-                common::ErrorValueSPtr er = currentLoggingInfo(outInf);
+                FastoObjectPtr toFile;
+                common::ErrorValueSPtr er = currentLoggingInfo(toFile);
                 if(er && er->isError()){
                     QObject::timerEvent(event);
                     return;
                 }
 
-                FastoObject* par = FastoObject::createRoot(createStamp());
-                FastoObjectPtr toFile = outInf->deepCopyChangeParent(par);
+                common::StringValue* stamp = common::Value::createStringValue(createStamp());
+                toFile->parent()->changeValue(stamp);
                 std::string data = common::convertToString(toFile.get());
                 logFile_->write(data);
                 logFile_->flush();

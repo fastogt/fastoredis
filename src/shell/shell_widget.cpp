@@ -104,7 +104,9 @@ namespace fastoredis
 
         VERIFY(connect(server_.get(), SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&)), this, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&))));
         VERIFY(connect(server_.get(), SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), this, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo&))));
+
         VERIFY(connect(server_.get(), SIGNAL(addedChild(FastoObject *)), this, SIGNAL(addedChild(FastoObject *))));
+        VERIFY(connect(server_.get(), SIGNAL(itemUpdated(FastoObject*, const QString&)), this, SIGNAL(itemUpdated(FastoObject*, const QString&)), Qt::UniqueConnection));
 
         QVBoxLayout* mainlayout = new QVBoxLayout;
         QHBoxLayout* hlayout = new QHBoxLayout;

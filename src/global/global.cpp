@@ -36,28 +36,6 @@ namespace fastoredis
         return result;
     }
 
-    FastoObject* FastoObject::deepCopy(FastoObject* parent) const
-    {
-        FastoObject* result = new FastoObject(parent, value_->deepCopy(), delemitr_);
-
-        for (child_container_type::const_iterator it = childrens_.begin(); it != childrens_.end(); ++it){
-            FastoObject* child = (*it)->deepCopy(result);
-            result->addChildren(child);
-        }
-
-        return result;
-    }
-
-    FastoObject *FastoObject::deepCopyChangeParent(FastoObject *parent) const
-    {
-        for (child_container_type::const_iterator it = childrens_.begin(); it != childrens_.end(); ++it){
-            FastoObject* child = (*it)->deepCopy(parent);
-            parent->addChildren(child);
-        }
-
-        return parent;
-    }
-
     FastoObject *FastoObject::createRoot(const std::string &text, IFastoObjectObserver* observer)
     {
         FastoObject* root =  new FastoObject(NULL, common::Value::createStringValue(text), "");
@@ -94,6 +72,14 @@ namespace fastoredis
     std::string FastoObject::delemitr() const
     {
         return delemitr_;
+    }
+
+    void FastoObject::changeValue(common::Value* val)
+    {
+        value_.reset(val);
+        if(observer_){
+            observer_->updated(this, val);
+        }
     }
 
     FastoObject::child_container_type FastoObject::childrens() const

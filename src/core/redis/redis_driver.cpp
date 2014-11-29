@@ -10,6 +10,9 @@ extern "C" {
 #include "third-party/redis/src/anet.h"
 }
 
+#include "common/time.h"
+#include "common/utils.h"
+
 #include "core/command_logger.h"
 #include "core/redis/redis_infos.h"
 
@@ -19,8 +22,12 @@ extern "C" {
 
 #define INFO_REQUEST "INFO"
 #define SYNC_REQUEST "SYNC"
+#define LATENCY_REQUEST "LATENCY"
 #define GET_DATABASES "CONFIG GET databases"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
+
+#define LATENCY_SAMPLE_RATE 10 /* milliseconds. */
+#define LATENCY_HISTORY_DEFAULT_INTERVAL 15000 /* milliseconds. */
 
 namespace
 {
@@ -124,7 +131,7 @@ namespace fastoredis
     struct RedisDriver::pimpl
     {
         pimpl()
-            : interrupt_(false), context(NULL), parent_(NULL)
+            : context(NULL), parent_(NULL)
         {
 
         }
@@ -137,11 +144,78 @@ namespace fastoredis
             }
         }
 
-        volatile bool interrupt_;
         redisContext *context;
         redisConfig config;        
         SSHInfo sinfo_;
         RedisDriver* parent_;
+
+        /*------------------------------------------------------------------------------
+         * Latency and latency history modes
+         *--------------------------------------------------------------------------- */
+
+        void latencyMode(FastoObjectPtr out, common::ErrorValueSPtr er) {
+            redisReply *reply;
+            long long start, latency, min = 0, max = 0, tot = 0, count = 0;
+            long long history_interval =
+                    config.interval ? config.interval/1000 :
+                                      LATENCY_HISTORY_DEFAULT_INTERVAL;
+            double avg;
+            long long history_start = common::time::current_mstime();
+
+            if (!context){
+                er.reset(new common::ErrorValue("Not connected", common::Value::E_ERROR));
+                return;
+            }
+
+            FastoObject* child = NULL;
+
+            while(!config.shutdown) {
+                start = common::time::current_mstime();
+                reply = (redisReply*)redisCommand(context, "PING");
+                if (reply == NULL) {
+                    er.reset(new common::ErrorValue("I/O error", common::Value::E_ERROR));
+                    return ;
+                }
+
+                long long curTime = common::time::current_mstime();
+
+                latency = curTime - start;
+                freeReplyObject(reply);
+                count++;
+                if (count == 1) {
+                    min = max = tot = latency;
+                    avg = (double) latency;
+                } else {
+                    if (latency < min) min = latency;
+                    if (latency > max) max = latency;
+                    tot += latency;
+                    avg = (double) tot/count;
+                }
+
+                char buff[1024];
+                sprintf(buff, "min: %lld, max: %lld, avg: %.2f (%lld samples)",
+                                    min, max, avg, count);
+                common::Value *val = common::Value::createStringValue(buff);
+
+                if(!child){
+                    child = new FastoObject(out.get(), val, config.mb_delim);
+                    out->addChildren(child);
+                    continue;
+                }
+
+                if(config.latency_history && curTime - history_start > history_interval){
+                    child = new FastoObject(out.get(), val, config.mb_delim);
+                    out->addChildren(child);
+                    history_start = curTime;
+                    min = max = tot = count = 0;
+                }
+                else{
+                    child->changeValue(val);
+                }
+
+                common::utils::sleep(LATENCY_SAMPLE_RATE);
+            }
+        }
 
         /*------------------------------------------------------------------------------
          * Slave mode
@@ -348,13 +422,8 @@ namespace fastoredis
                 }
                 case REDIS_REPLY_ARRAY:
                 {
-                    common::ArrayValue* val = common::Value::createArrayValue();
-                    val->appendString(out->toString());
-                    obj = new FastoObject(out, val, config.mb_delim);
-                    out->addChildren(obj);
-
                     for (size_t i = 0; i < r->elements; i++) {
-                        cliFormatReplyRaw(obj, r->element[i]);
+                        cliFormatReplyRaw(out, r->element[i]);
                     }
                     break;
                 }
@@ -816,6 +885,12 @@ namespace fastoredis
         Events::EnterModeEvent::value_type res(LatencyMode);
         reply(sender, new Events::EnterModeEvent(this, res));
 
+        common::ErrorValueSPtr er;
+        RootLocker lock = make_locker(sender, LATENCY_REQUEST);
+
+        FastoObjectPtr obj = lock.root_;
+        impl_->latencyMode(obj, er);
+
         Events::LeaveModeEvent::value_type res2(LatencyMode);
         reply(sender, new Events::LeaveModeEvent(this, res2));
         notifyProgress(sender, 100);
@@ -932,14 +1007,11 @@ namespace fastoredis
                         impl_->execute(command, Command::UserCommand, outRoot, er);
                     }
                 }
-                //res.out_ = outRoot;
             }
             else{
                 common::ErrorValueSPtr er(new common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
-                //res.setErrorInfo(er);
+                res.setErrorInfo(er);
             }
-
-            //reply(sender, new Events::ExecuteResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
@@ -972,11 +1044,11 @@ namespace fastoredis
                 FastoObject::child_container_type rchildrens = root->childrens();
                 if(rchildrens.size()){
                     DCHECK(rchildrens.size() == 1);
-                    /*FastoObject::child_container_type childrens = rchildrens[0]->childrens();
+                    FastoObject::child_container_type childrens = rchildrens[0]->childrens();
                     for(int i = 0; i < childrens.size(); ++i){
                         DataBaseInfo dbInf(childrens[i]->toString(), 0);
                         res.databases_.push_back(dbInf);
-                    }*/
+                    }
                 }
             }
         notifyProgress(sender, 75);

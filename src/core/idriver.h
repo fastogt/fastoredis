@@ -38,6 +38,7 @@ namespace fastoredis
 
     Q_SIGNALS:
         void addedChild(FastoObject *child);
+        void itemUpdated(FastoObject* item, const QString& val);
 
     private Q_SLOTS:
         void init();
@@ -90,6 +91,7 @@ namespace fastoredis
         void loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev);
 
         virtual void addedChildren(FastoObject *child);
+        virtual void updated(FastoObject* item, common::Value* val);
 
         virtual ServerInfoSPtr makeServerInfoFromString(const std::string& val) = 0;
         virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev) = 0;

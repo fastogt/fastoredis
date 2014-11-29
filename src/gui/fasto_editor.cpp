@@ -124,7 +124,7 @@ namespace fastoredis
 
     void FastoEditor::dataChanged(QModelIndex first, QModelIndex last)
     {
-
+        layoutChanged();
     }
 
     void FastoEditor::headerDataChanged()

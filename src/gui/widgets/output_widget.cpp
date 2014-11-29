@@ -29,14 +29,14 @@ namespace
         if(contSize){
             char size[128] = {0};
             sprintf(size, "{%zu}", contSize);
-            result = new fastoredis::FastoCommonItem( common::convertFromString<QString>(itemData), size, item->type(), parent, item);
+            result = new fastoredis::FastoCommonItem(common::convertFromString<QString>(itemData), size, item->type(), parent, item);
         }
         else{
             QString varName;
             if(parent){
                 varName = QString("%1)").arg(parent->childrenCount() + 1);
             }
-            result = new fastoredis::FastoCommonItem( varName ,common::convertFromString<QString>(itemData), item->type(), parent, item);
+            result = new fastoredis::FastoCommonItem(varName, common::convertFromString<QString>(itemData), item->type(), parent, item);
         }
         return result;
     }
@@ -159,5 +159,22 @@ namespace fastoredis
 
         fastoredis::FastoCommonItem* comChild = createItem(par, child);
         commonModel_->inserItem(parent, comChild);
+    }
+
+    void OutputWidget::itemUpdate(FastoObject* item, const QString &newValue)
+    {
+        QModelIndex index;
+        bool isFound = commonModel_->findItem(item, index);
+        if(!isFound){
+            return;
+        }
+
+        fastoredis::FastoCommonItem* it = common::utils_qt::item<fastoredis::FastoCommonItem*>(index);
+        if(!it){
+            return;
+        }
+
+        it->setValue(newValue);
+        commonModel_->updateItem(index.parent(), index);
     }
 }

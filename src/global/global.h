@@ -29,8 +29,6 @@ namespace fastoredis
 
         common::Value::Type type() const;
         std::string toString() const;
-        FastoObject *deepCopy(FastoObject* parent) const;
-        FastoObject *deepCopyChangeParent(FastoObject* parent) const;
 
 		child_container_type childrens() const;
         static FastoObject* createRoot(const std::string& text, IFastoObjectObserver* observer = NULL);
@@ -38,6 +36,8 @@ namespace fastoredis
         FastoObject* parent() const;
         void clear();
         std::string delemitr() const;
+
+        void changeValue(common::Value* val);
 
     private:
         DISALLOW_COPY_AND_ASSIGN(FastoObject);
@@ -47,13 +47,14 @@ namespace fastoredis
         const std::string delemitr_;
         IFastoObjectObserver* observer_;
 
-        const boost::scoped_ptr<common::Value> value_;
+        boost::scoped_ptr<common::Value> value_;
     };
 
     class IFastoObjectObserver
     {
     public:
         virtual void addedChildren(FastoObject* child) = 0;
+        virtual void updated(FastoObject* item, common::Value* val) = 0;
     };
 
     typedef boost::intrusive_ptr<FastoObject> FastoObjectPtr;
