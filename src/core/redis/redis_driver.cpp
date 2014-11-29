@@ -188,11 +188,11 @@ namespace fastoredis
                 return -1;
             }
 
-            return strtoull(buf+1, NULL, 10);
+            return strtoll(buf+1, NULL, 10);
         }
 
         void slaveMode(FastoObjectPtr out, common::ErrorValueSPtr er) {
-            unsigned long long payload = sendSync(er);
+            long long payload = sendSync(er);
             if(er){
                 return;
             }
@@ -321,12 +321,14 @@ namespace fastoredis
                 {
                     common::Value *val = common::Value::createNullValue();
                     obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
                     break;
                 }
                 case REDIS_REPLY_ERROR:
                 {
                     common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
                     break;
                 }
                 case REDIS_REPLY_STATUS:
@@ -334,12 +336,14 @@ namespace fastoredis
                 {
                     common::StringValue *val = common::Value::createStringValue(r->str);
                     obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
                     break;
                 }
                 case REDIS_REPLY_INTEGER:
                 {
                     common::FundamentalValue *val =common::Value::createIntegerValue(r->integer);
                     obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
                     break;
                 }
                 case REDIS_REPLY_ARRAY:
@@ -347,6 +351,7 @@ namespace fastoredis
                     common::ArrayValue* val = common::Value::createArrayValue();
                     val->appendString(out->toString());
                     obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
 
                     for (size_t i = 0; i < r->elements; i++) {
                         cliFormatReplyRaw(obj, r->element[i]);
@@ -359,11 +364,10 @@ namespace fastoredis
                     sprintf(tmp2, "Unknown reply type: %d", r->type);
                     common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
                 }
             }
 
-            DCHECK(obj);
-            out->addChildren(obj);
         }
 
         void cliOutputCommandHelp(FastoObjectPtr out, struct commandHelp *help, int group)

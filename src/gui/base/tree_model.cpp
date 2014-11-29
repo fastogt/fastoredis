@@ -29,7 +29,7 @@ namespace fastoredis
                 TreeItem* child = par->child(i);
                 QModelIndex ind = model->index(i, 0, parent);
                 if(child->internalPointer() == internalPointer){
-                    index = parent;
+                    index = ind;
                     return true;
                 }
                 else{

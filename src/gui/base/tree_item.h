@@ -6,12 +6,11 @@
 
 namespace fastoredis
 {
-
     class TreeItem
     {
     public:
         typedef std::vector<TreeItem*> child_container_type;
-        TreeItem(TreeItem *parent, void* internalPointer = NULL);
+        TreeItem(TreeItem *parent, void* internalPointer = 0);
         virtual ~TreeItem();
 
         void addChildren(TreeItem *child);

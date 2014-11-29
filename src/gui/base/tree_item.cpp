@@ -1,5 +1,7 @@
 #include "gui/base/tree_item.h"
 
+#include "common/macros.h"
+
 namespace fastoredis
 {
     TreeItem::TreeItem(TreeItem *parent, void* internalPointer)
@@ -18,7 +20,10 @@ namespace fastoredis
 
     void TreeItem::addChildren(TreeItem *child)
     {
-        childrens_.push_back(child);
+        if(child){
+            DCHECK(child->parent_ == this);
+            childrens_.push_back(child);
+        }
     }
 
     void TreeItem::removeChildren(TreeItem *child)

@@ -1403,7 +1403,7 @@ int redisReadToBuffer(redisContext *c, char* buf, int size, ssize_t *nread)
         #endif
     }
 
-    if (nread == -1) {
+    if (*nread == -1) {
         if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || (errno == F_EINTR)) {
             *nread = 0;
         } else {
@@ -1437,7 +1437,7 @@ int redisWriteFromBuffer(redisContext *c, const char *buf, ssize_t *nwritten)
         }
     }
 
-    if (nwritten == -1) {
+    if (*nwritten == -1) {
         return REDIS_ERR;
     }
 
