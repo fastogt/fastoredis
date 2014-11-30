@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #ifdef OS_WIN
-#include <unistd.h>
+#include <synchapi.h>
 #elif defined OS_LINUX
 #include <signal.h>
 #include <sys/socket.h>
@@ -175,7 +175,16 @@ namespace common
             }
         }
 
-        void sleep(unsigned int msec)
+        void usleep(unsigned int usec)
+        {
+        #ifdef OS_WIN
+            Sleep(usec/1000);
+        #else
+            ::usleep(usec);
+        #endif
+        }
+
+        void msleep(unsigned int msec)
         {
             usleep(msec*1000);
         }

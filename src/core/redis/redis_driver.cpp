@@ -28,6 +28,9 @@ extern "C" {
 #define LATENCY_REQUEST "LATENCY"
 #define GET_DATABASES "CONFIG GET databases"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
+#define STAT_MODE_REQUEST "STAT"
+#define SCAN_MODE_REQUEST "SCAN"
+#define RDM_REQUEST "RDM"
 
 #define LATENCY_SAMPLE_RATE 10 /* milliseconds. */
 #define LATENCY_HISTORY_DEFAULT_INTERVAL 15000 /* milliseconds. */
@@ -223,7 +226,7 @@ namespace fastoredis
                     child->changeValue(val);
                 }
 
-                common::utils::sleep(LATENCY_SAMPLE_RATE);
+                common::utils::msleep(LATENCY_SAMPLE_RATE);
             }
         }
 
@@ -637,10 +640,7 @@ namespace fastoredis
 
                 /* Sleep if we've been directed to do so */
                 if(sampled && (sampled %100) == 0 && config.interval) {
-#ifdef OS_WIN
-#else
-                    usleep(config.interval);
-#endif
+                    common::utils::usleep(config.interval);
                 }
 
                 freeReplyObject(reply);
@@ -688,6 +688,198 @@ namespace fastoredis
             }
 
             /* Success! */
+        }
+
+        /*------------------------------------------------------------------------------
+         * Stats mode
+         *--------------------------------------------------------------------------- */
+
+        /* Return the specified INFO field from the INFO command output "info".
+         * A new buffer is allocated for the result, that needs to be free'd.
+         * If the field is not found NULL is returned. */
+        static char *getInfoField(char *info, char *field) {
+            char *p = strstr(info,field);
+            char *n1, *n2;
+            char *result;
+
+            if (!p) return NULL;
+            p += strlen(field)+1;
+            n1 = strchr(p,'\r');
+            n2 = strchr(p,',');
+            if (n2 && n2 < n1) n1 = n2;
+            result = (char*)malloc(sizeof(char)*(n1-p)+1);
+            memcpy(result,p,(n1-p));
+            result[n1-p] = '\0';
+            return result;
+        }
+
+        /* Like the above function but automatically convert the result into
+         * a long. On error (missing field) LONG_MIN is returned. */
+        static long getLongInfoField(char *info, char *field) {
+            char *value = getInfoField(info,field);
+            long l;
+
+            if (!value) return LONG_MIN;
+            l = strtol(value,NULL,10);
+            free(value);
+            return l;
+        }
+
+        /* Convert number of bytes into a human readable string of the form:
+         * 100B, 2G, 100M, 4K, and so forth. */
+        static void bytesToHuman(char *s, long long n) {
+            double d;
+
+            if (n < 0) {
+                *s = '-';
+                s++;
+                n = -n;
+            }
+            if (n < 1024) {
+                /* Bytes */
+                sprintf(s,"%lluB",n);
+                return;
+            } else if (n < (1024*1024)) {
+                d = (double)n/(1024);
+                sprintf(s,"%.2fK",d);
+            } else if (n < (1024LL*1024*1024)) {
+                d = (double)n/(1024*1024);
+                sprintf(s,"%.2fM",d);
+            } else if (n < (1024LL*1024*1024*1024)) {
+                d = (double)n/(1024LL*1024*1024);
+                sprintf(s,"%.2fG",d);
+            }
+        }
+
+        void statMode(FastoObjectPtr out, common::ErrorValueSPtr er) {
+
+            long aux, requests = 0;
+
+            while(!config.shutdown) {
+                char buf[64];
+                int j;
+
+                redisReply *reply = NULL;
+                while(reply == NULL) {
+                    reply = (redisReply*)redisCommand(context,"INFO");
+                    if (context->err && !(context->err & (REDIS_ERR_IO | REDIS_ERR_EOF))) {
+                        char buff[2048];
+                        sprintf(buff, "ERROR: %s", context->errstr);
+                        er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
+                        return;
+                    }
+                }
+
+                if (reply->type == REDIS_REPLY_ERROR) {
+                    char buff[2048];
+                    sprintf(buff, "ERROR: %s", reply->str);
+                    er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
+                    return;
+                }
+
+                /* Keys */
+                aux = 0;
+                for (j = 0; j < 20; j++) {
+                    long k;
+
+                    sprintf(buf,"db%d:keys",j);
+                    k = getLongInfoField(reply->str,buf);
+                    if (k == LONG_MIN) continue;
+                    aux += k;
+                }
+
+                std::string result;
+
+                sprintf(buf,"keys %ld",aux);
+                result += buf;
+
+                /* Used memory */
+                aux = getLongInfoField(reply->str,"used_memory");
+                bytesToHuman(buf,aux);
+                result += " used_memory: ";
+                result += buf;
+
+                /* Clients */
+                aux = getLongInfoField(reply->str,"connected_clients");
+                sprintf(buf," connected_clients: %ld",aux);
+                result += buf;
+
+                /* Blocked (BLPOPPING) Clients */
+                aux = getLongInfoField(reply->str,"blocked_clients");
+                sprintf(buf," blocked_clients: %ld",aux);
+                result += buf;
+
+                /* Requets */
+                aux = getLongInfoField(reply->str,"total_commands_processed");
+                sprintf(buf," total_commands_processed: %ld (+%ld)",aux,requests == 0 ? 0 : aux-requests);
+                result += buf;
+                requests = aux;
+
+                /* Connections */
+                aux = getLongInfoField(reply->str,"total_connections_received");
+                sprintf(buf," total_connections_received: %ld",aux);
+                result += buf;
+
+                /* Children */
+                aux = getLongInfoField(reply->str,"bgsave_in_progress");
+                aux |= getLongInfoField(reply->str,"aof_rewrite_in_progress") << 1;
+                switch(aux) {
+                case 0: break;
+                case 1:
+                    result += " SAVE";
+                    break;
+                case 2:
+                    result += " AOF";
+                    break;
+                case 3:
+                    result += " SAVE+AOF";
+                    break;
+                }
+
+                common::StringValue *val = common::Value::createStringValue(result);
+                FastoObject* obj = new FastoObject(out.get(), val, config.mb_delim);
+                out->addChildren(obj);
+
+                freeReplyObject(reply);
+
+                common::utils::usleep(config.interval);
+            }
+        }
+
+        /*------------------------------------------------------------------------------
+         * Scan mode
+         *--------------------------------------------------------------------------- */
+
+        void scanMode(FastoObjectPtr out, common::ErrorValueSPtr er) {
+            redisReply *reply;
+            unsigned long long cur = 0;
+
+            do {
+                if (config.pattern)
+                    reply = (redisReply*)redisCommand(context,"SCAN %llu MATCH %s",
+                        cur,config.pattern);
+                else
+                    reply = (redisReply*)redisCommand(context,"SCAN %llu",cur);
+                if (reply == NULL) {
+                    er.reset(new common::ErrorValue("I/O error", common::ErrorValue::E_ERROR));
+                    return;
+                } else if (reply->type == REDIS_REPLY_ERROR) {
+                    char buff[2048];
+                    sprintf(buff, "ERROR: %s", reply->str);
+                    er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
+                    return;
+                } else {
+                    unsigned int j;
+
+                    cur = strtoull(reply->element[0]->str,NULL,10);
+                    for (j = 0; j < reply->element[1]->elements; j++){
+                        common::StringValue *val = common::Value::createStringValue(reply->element[1]->element[j]->str);
+                        FastoObject* obj = new FastoObject(out.get(), val, config.mb_delim);
+                        out->addChildren(obj);
+                    }
+                }
+                freeReplyObject(reply);
+            } while(cur != 0);
         }
 
         int cliAuth(common::ErrorValueSPtr er)
@@ -1052,11 +1244,7 @@ namespace fastoredis
                     }
                 }
                 if (config.interval){
- #ifdef OS_WIN
-
- #else
-                    usleep(config.interval);
- #endif
+                    common::utils::usleep(config.interval);
                 }
             }
 
@@ -1319,7 +1507,7 @@ namespace fastoredis
         reply(sender, new Events::EnterModeEvent(this, res));
 
         common::ErrorValueSPtr er;
-        RootLocker lock = make_locker(sender, SYNC_REQUEST);
+        RootLocker lock = make_locker(sender, RDM_REQUEST);
 
         FastoObjectPtr obj = lock.root_;
         impl_->getRDB(obj, er);
@@ -1366,6 +1554,12 @@ namespace fastoredis
         Events::EnterModeEvent::value_type res(StatMode);
         reply(sender, new Events::EnterModeEvent(this, res));
 
+        common::ErrorValueSPtr er;
+        RootLocker lock = make_locker(sender, STAT_MODE_REQUEST);
+
+        FastoObjectPtr obj = lock.root_;
+        impl_->statMode(obj, er);
+
         Events::LeaveModeEvent::value_type res2(StatMode);
         reply(sender, new Events::LeaveModeEvent(this, res2));
         notifyProgress(sender, 100);
@@ -1377,6 +1571,12 @@ namespace fastoredis
         notifyProgress(sender, 0);
         Events::EnterModeEvent::value_type res(ScanMode);
         reply(sender, new Events::EnterModeEvent(this, res));
+
+        common::ErrorValueSPtr er;
+        RootLocker lock = make_locker(sender, SCAN_MODE_REQUEST);
+
+        FastoObjectPtr obj = lock.root_;
+        impl_->scanMode(obj, er);
 
         Events::LeaveModeEvent::value_type res2(ScanMode);
         reply(sender, new Events::LeaveModeEvent(this, res2));

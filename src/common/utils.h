@@ -199,7 +199,8 @@ namespace common
             }
         }
 
-        void sleep(unsigned int msec);
+        void msleep(unsigned int msec);
+        void usleep(unsigned int usec);
 
 #ifdef OS_LINUX
         namespace signal
