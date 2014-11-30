@@ -165,8 +165,13 @@ namespace fastoredis
          * Latency and latency history modes
          *--------------------------------------------------------------------------- */
 
-        int latencyMode(FastoObjectPtr out, common::ErrorValueSPtr er) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr latencyMode(FastoObject* out) WARN_UNUSED_RESULT
         {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
             redisReply *reply;
             long long start, latency, min = 0, max = 0, tot = 0, count = 0;
             long long history_interval =
@@ -176,8 +181,7 @@ namespace fastoredis
             long long history_start = common::time::current_mstime();
 
             if (!context){
-                er.reset(new common::ErrorValue("Not connected", common::Value::E_ERROR));
-                return REDIS_ERR;
+                return common::make_error_value("Not connected", common::Value::E_ERROR);
             }
 
             FastoObject* child = NULL;
@@ -186,8 +190,7 @@ namespace fastoredis
                 start = common::time::current_mstime();
                 reply = (redisReply*)redisCommand(context, "PING");
                 if (reply == NULL) {
-                    er.reset(new common::ErrorValue("I/O error", common::Value::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value("I/O error", common::Value::E_ERROR);
                 }
 
                 long long curTime = common::time::current_mstime();
@@ -211,13 +214,13 @@ namespace fastoredis
                 common::Value *val = common::Value::createStringValue(buff);
 
                 if(!child){
-                    child = new FastoObject(out.get(), val, config.mb_delim);
+                    child = new FastoObject(out, val, config.mb_delim);
                     out->addChildren(child);
                     continue;
                 }
 
                 if(config.latency_history && curTime - history_start > history_interval){
-                    child = new FastoObject(out.get(), val, config.mb_delim);
+                    child = new FastoObject(out, val, config.mb_delim);
                     out->addChildren(child);
                     history_start = curTime;
                     min = max = tot = count = 0;
@@ -229,7 +232,7 @@ namespace fastoredis
                 common::utils::msleep(LATENCY_SAMPLE_RATE);
             }
 
-            return REDIS_OK;
+            return common::make_error_value("Interrupted.", common::ErrorValue::E_INTERRUPTED);
         }
 
         /*------------------------------------------------------------------------------
@@ -238,7 +241,7 @@ namespace fastoredis
 
         /* Sends SYNC and reads the number of bytes in the payload. Used both by
          * slaveMode() and getRDB(). */
-        int sendSync(common::ErrorValueSPtr er, unsigned long long& payload) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr sendSync(unsigned long long& payload) WARN_UNUSED_RESULT
         {
             /* To start we need to send the SYNC command and return the payload.
              * The hiredis client lib does not understand this part of the protocol
@@ -249,8 +252,7 @@ namespace fastoredis
             /* Send the SYNC command. */
             ssize_t nwrite = 0;
             if (redisWriteFromBuffer(context, "SYNC\r\n", &nwrite) == REDIS_ERR) {
-                er.reset(new common::ErrorValue("Error writing to master", common::ErrorValue::E_ERROR));
-                return REDIS_ERR;
+                return common::make_error_value("Error writing to master", common::ErrorValue::E_ERROR);
             }
 
             /* Read $<payload>\r\n, making sure to read just up to "\n" */
@@ -259,8 +261,7 @@ namespace fastoredis
                 ssize_t nread = 0;
                 int res = redisReadToBuffer(context, p, 1, &nread);
                 if (res == REDIS_ERR) {
-                    er.reset(new common::ErrorValue("Error reading bulk length while SYNCing", common::ErrorValue::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value("Error reading bulk length while SYNCing", common::ErrorValue::E_ERROR);
                 }
 
                 if(!nread){
@@ -274,20 +275,24 @@ namespace fastoredis
             if (buf[0] == '-') {
                 char buf2[4096];
                 sprintf(buf2, "SYNC with master failed: %s", buf);
-                er.reset(new common::ErrorValue(buf2, common::ErrorValue::E_ERROR));
-                return REDIS_ERR;
+                return common::make_error_value(buf2, common::ErrorValue::E_ERROR);
             }
 
             payload = strtoull(buf+1, NULL, 10);
-            return REDIS_OK;
+            return common::ErrorValueSPtr();
         }
 
-        int slaveMode(FastoObjectPtr out, common::ErrorValueSPtr er) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr slaveMode(FastoObject* out) WARN_UNUSED_RESULT
         {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
             unsigned long long payload = 0;
-            int res = sendSync(er, payload);
-            if(res == REDIS_ERR){
-                return REDIS_ERR;
+            common::ErrorValueSPtr er = sendSync(payload);
+            if(er){
+                return er;
             }
 
             char buf[1024];
@@ -296,21 +301,19 @@ namespace fastoredis
                 ssize_t nread = 0;
                 int res = redisReadToBuffer(context, buf,(payload > sizeof(buf)) ? sizeof(buf) : payload, &nread);
                 if (res == REDIS_ERR) {
-                    er.reset(new common::ErrorValue("Error reading RDB payload while SYNCing", common::ErrorValue::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value("Error reading RDB payload while SYNCing", common::ErrorValue::E_ERROR);
                 }
                 payload -= nread;
             }
 
             /* Now we can use hiredis to read the incoming protocol. */
-            while (cliReadReply(out, er) == REDIS_OK){
+            while ((er = cliReadReply(out)) != NULL){
                 if (config.shutdown){
-                    er.reset(new common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
-                    return REDIS_OK;
+                    return common::make_error_value("Interrupted.", common::ErrorValue::E_INTERRUPTED);
                 }
             }
 
-            return REDIS_ERR;
+            return er;
         }
 
         /*------------------------------------------------------------------------------
@@ -319,12 +322,17 @@ namespace fastoredis
 
         /* This function implements --rdb, so it uses the replication protocol in order
          * to fetch the RDB file from a remote server. */
-        int getRDB(FastoObjectPtr out, common::ErrorValueSPtr er) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr getRDB(FastoObject* out) WARN_UNUSED_RESULT
         {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
             unsigned long long payload = 0;
-            int res = sendSync(er, payload);
-            if(res == REDIS_ERR){
-                return REDIS_ERR;
+            common::ErrorValueSPtr er = sendSync(payload);
+            if(er){
+                return er;
             }
 
             FastoObject* child = NULL;
@@ -334,7 +342,7 @@ namespace fastoredis
             /* Write to file. */
             if (!strcmp(config.rdb_filename,"-")) {
                 val = new common::ArrayValue;
-                child = new FastoObject(out.get(), val, config.mb_delim);
+                child = new FastoObject(out, val, config.mb_delim);
                 out->addChildren(child);
             }
             else{
@@ -344,8 +352,7 @@ namespace fastoredis
                     sprintf(bufeEr, "Error opening '%s': %s", config.rdb_filename,
                         strerror(errno));
 
-                    er.reset(new common::ErrorValue(bufeEr, common::ErrorValue::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value(bufeEr, common::ErrorValue::E_ERROR);
                 }
             }
 
@@ -356,8 +363,7 @@ namespace fastoredis
 
                 int res = redisReadToBuffer(context, buf,(payload > sizeof(buf)) ? sizeof(buf) : payload, &nread);
                 if (res == REDIS_ERR) {
-                    er.reset(new common::ErrorValue("Error reading RDB payload while SYNCing", common::ErrorValue::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value("Error reading RDB payload while SYNCing", common::ErrorValue::E_ERROR);
                 }
 
                 if(!nread){
@@ -376,8 +382,11 @@ namespace fastoredis
                     sprintf(bufeEr, "Error writing data to file: %s",
                             strerror(errno));
 
-                    er.reset(new common::ErrorValue(bufeEr, common::ErrorValue::E_ERROR));
-                    break;
+                    if(fd != INVALID_DESCRIPTOR){
+                        close(fd);
+                    }
+
+                    return common::make_error_value(bufeEr, common::ErrorValue::E_ERROR);
                 }
 
                 payload -= nread;
@@ -388,14 +397,14 @@ namespace fastoredis
             }
 
             LOG_MSG("Transfer finished with success.", common::logging::L_INFO);
-            return REDIS_OK;
+            return common::ErrorValueSPtr();
         }
 
         /*------------------------------------------------------------------------------
          * Find big keys
          *--------------------------------------------------------------------------- */
 
-        redisReply *sendScan(common::ErrorValueSPtr er, unsigned long long *it)
+        redisReply *sendScan(common::ErrorValueSPtr& er, unsigned long long *it)
         {
             redisReply *reply = (redisReply *)redisCommand(context, "SCAN %llu", *it);
 
@@ -426,25 +435,22 @@ namespace fastoredis
             return reply;
         }
 
-        int getDbSize(common::ErrorValueSPtr er, long long& size) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr getDbSize(long long& size) WARN_UNUSED_RESULT
         {
-            redisReply *reply;
-
-            reply = (redisReply *)redisCommand(context, "DBSIZE");
+            redisReply *reply = (redisReply *)redisCommand(context, "DBSIZE");
 
             if(reply == NULL || reply->type != REDIS_REPLY_INTEGER) {
-                er.reset(new common::ErrorValue("Couldn't determine DBSIZE!", common::Value::E_ERROR));
-                return REDIS_ERR;
+                return common::make_error_value("Couldn't determine DBSIZE!", common::Value::E_ERROR);
             }
 
             /* Grab the number of keys and free our reply */
             size = reply->integer;
             freeReplyObject(reply);
 
-            return REDIS_OK;
+            return common::ErrorValueSPtr();
         }
 
-        int toIntType(common::ErrorValueSPtr er, char *key, char *type) {
+        int toIntType(common::ErrorValueSPtr& er, char *key, char *type) {
             if(!strcmp(type, "string")) {
                 return TYPE_STRING;
             } else if(!strcmp(type, "list")) {
@@ -465,7 +471,7 @@ namespace fastoredis
             }
         }
 
-        int getKeyTypes(common::ErrorValueSPtr er, redisReply *keys, int *types) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr getKeyTypes(redisReply *keys, int *types) WARN_UNUSED_RESULT
         {
             redisReply *reply;
             unsigned int i;
@@ -481,30 +487,31 @@ namespace fastoredis
                     char buff[4096];
                     sprintf(buff, "Error getting type for key '%s' (%d: %s)",
                         keys->element[i]->str, context->err, context->errstr);
-                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
-                    return REDIS_ERR;
+
+                    return common::make_error_value(buff, common::Value::E_ERROR);
                 } else if(reply->type != REDIS_REPLY_STATUS) {
                     char buff[4096];
                     sprintf(buff, "Invalid reply type (%d) for TYPE on key '%s'!",
                         reply->type, keys->element[i]->str);
-                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
-                    return REDIS_ERR;
+
+                    return common::make_error_value(buff, common::Value::E_ERROR);
                 }
 
+                common::ErrorValueSPtr er;
                 int res = toIntType(er, keys->element[i]->str, reply->str);
                 freeReplyObject(reply);
                 if(res != -1){
                     types[i] = res;
                 }
                 else{
-                    return REDIS_ERR;
+                    return er;
                 }
             }
 
-            return REDIS_OK;
+            return common::ErrorValueSPtr();
         }
 
-        int getKeySizes(common::ErrorValueSPtr er, redisReply *keys, int *types,
+        common::ErrorValueSPtr getKeySizes(redisReply *keys, int *types,
                                 unsigned long long *sizes) WARN_UNUSED_RESULT
         {
             redisReply *reply;
@@ -534,8 +541,7 @@ namespace fastoredis
                     char buff[4096];
                     sprintf(buff, "Error getting size for key '%s' (%d: %s)",
                         keys->element[i]->str, context->err, context->errstr);
-                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value(buff, common::Value::E_ERROR);
                 } else if(reply->type != REDIS_REPLY_INTEGER) {
                     /* Theoretically the key could have been removed and
                      * added as a different type between TYPE and SIZE */
@@ -552,11 +558,16 @@ namespace fastoredis
                 freeReplyObject(reply);
             }
 
-            return REDIS_OK;
+            return common::ErrorValueSPtr();
         }
 
-        int findBigKeys(FastoObjectPtr out, common::ErrorValueSPtr er) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr findBigKeys(FastoObject* out) WARN_UNUSED_RESULT
         {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
             unsigned long long biggest[5] = {0}, counts[5] = {0}, totalsize[5] = {0};
             unsigned long long sampled = 0, totlen=0, *sizes=NULL, it=0;
             long long total_keys;
@@ -569,8 +580,9 @@ namespace fastoredis
             double pct;
 
             /* Total keys pre scanning */
-            if(getDbSize(er, total_keys) == REDIS_ERR){
-                return REDIS_ERR;
+            common::ErrorValueSPtr er = getDbSize(total_keys);
+            if(er){
+                return er;
             }
 
             /* Status message */
@@ -582,8 +594,7 @@ namespace fastoredis
             for(i=0;i<TYPE_NONE; i++) {
                 maxkeys[i] = sdsempty();
                 if(!maxkeys[i]) {
-                    er.reset(new common::ErrorValue("Failed to allocate memory for largest key names!", common::Value::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value("Failed to allocate memory for largest key names!", common::Value::E_ERROR);
                 }
             }
 
@@ -595,7 +606,7 @@ namespace fastoredis
                 /* Grab some keys and point to the keys array */
                 reply = sendScan(er, &it);
                 if(er){
-                    return REDIS_ERR;
+                    return er;
                 }
 
                 keys  = reply->element[1];
@@ -606,20 +617,21 @@ namespace fastoredis
                     sizes = (unsigned long long*)realloc(sizes, sizeof(unsigned long long)*keys->elements);
 
                     if(!types || !sizes) {
-                        er.reset(new common::ErrorValue("Failed to allocate storage for keys!", common::Value::E_ERROR));
-                        return REDIS_ERR;
+                        return common::make_error_value("Failed to allocate storage for keys!", common::Value::E_ERROR);
                     }
 
                     arrsize = keys->elements;
                 }
 
                 /* Retreive types and then sizes */
-                if(getKeyTypes(er, keys, types) == REDIS_ERR){
-                    return REDIS_ERR;
+                er = getKeyTypes(keys, types);
+                if(er){
+                    return er;
                 }
 
-                if(getKeySizes(er, keys, types, sizes) == REDIS_ERR){
-                    return REDIS_ERR;
+                er = getKeySizes(keys, types, sizes);
+                if(er){
+                    return er;
                 }
 
                 /* Now update our stats */
@@ -644,8 +656,7 @@ namespace fastoredis
                         /* Keep track of biggest key name for this type */
                         maxkeys[type] = sdscpy(maxkeys[type], keys->element[i]->str);
                         if(!maxkeys[type]) {
-                            er.reset(new common::ErrorValue("Failed to allocate memory for key!", common::Value::E_ERROR));
-                            return REDIS_ERR;
+                            return common::make_error_value("Failed to allocate memory for key!", common::Value::E_ERROR);
                         }
 
                         /* Keep track of the biggest size for this type */
@@ -681,7 +692,7 @@ namespace fastoredis
                     sprintf(buff, "Biggest %6s found '%s' has %llu %s", typeName[i], maxkeys[i],
                        biggest[i], typeunit[i]);
                     common::StringValue *val = common::Value::createStringValue(buff);
-                    FastoObject* obj = new FastoObject(out.get(), val, config.mb_delim);
+                    FastoObject* obj = new FastoObject(out, val, config.mb_delim);
                     out->addChildren(obj);
                 }
             }
@@ -693,7 +704,7 @@ namespace fastoredis
                    sampled ? 100 * (double)counts[i]/sampled : 0,
                    counts[i] ? (double)totalsize[i]/counts[i] : 0);
                 common::StringValue *val = common::Value::createStringValue(buff);
-                FastoObject* obj = new FastoObject(out.get(), val, config.mb_delim);
+                FastoObject* obj = new FastoObject(out, val, config.mb_delim);
                 out->addChildren(obj);
             }
 
@@ -703,7 +714,7 @@ namespace fastoredis
             }
 
             /* Success! */
-            return REDIS_OK;
+            return common::ErrorValueSPtr();
         }
 
         /*------------------------------------------------------------------------------
@@ -767,8 +778,13 @@ namespace fastoredis
             }
         }
 
-        int statMode(FastoObjectPtr out, common::ErrorValueSPtr er) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr statMode(FastoObject* out) WARN_UNUSED_RESULT
         {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
             long aux, requests = 0;
 
             while(!config.shutdown) {
@@ -781,16 +797,14 @@ namespace fastoredis
                     if (context->err && !(context->err & (REDIS_ERR_IO | REDIS_ERR_EOF))) {
                         char buff[2048];
                         sprintf(buff, "ERROR: %s", context->errstr);
-                        er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
-                        return REDIS_ERR;
+                        return common::make_error_value(buff, common::ErrorValue::E_ERROR);
                     }
                 }
 
                 if (reply->type == REDIS_REPLY_ERROR) {
                     char buff[2048];
                     sprintf(buff, "ERROR: %s", reply->str);
-                    er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value(buff, common::ErrorValue::E_ERROR);
                 }
 
                 /* Keys */
@@ -853,7 +867,7 @@ namespace fastoredis
                 }
 
                 common::StringValue *val = common::Value::createStringValue(result);
-                FastoObject* obj = new FastoObject(out.get(), val, config.mb_delim);
+                FastoObject* obj = new FastoObject(out, val, config.mb_delim);
                 out->addChildren(obj);
 
                 freeReplyObject(reply);
@@ -861,15 +875,20 @@ namespace fastoredis
                 common::utils::usleep(config.interval);
             }
 
-            return REDIS_OK;
+            return common::make_error_value("Interrupted.", common::ErrorValue::E_INTERRUPTED);;
         }
 
         /*------------------------------------------------------------------------------
          * Scan mode
          *--------------------------------------------------------------------------- */
 
-        int scanMode(FastoObjectPtr out, common::ErrorValueSPtr er) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr scanMode(FastoObject* out) WARN_UNUSED_RESULT
         {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
             redisReply *reply;
             unsigned long long cur = 0;
 
@@ -880,59 +899,58 @@ namespace fastoredis
                 else
                     reply = (redisReply*)redisCommand(context,"SCAN %llu",cur);
                 if (reply == NULL) {
-                    er.reset(new common::ErrorValue("I/O error", common::ErrorValue::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value("I/O error", common::ErrorValue::E_ERROR);
                 } else if (reply->type == REDIS_REPLY_ERROR) {
                     char buff[2048];
                     sprintf(buff, "ERROR: %s", reply->str);
-                    er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
-                    return REDIS_ERR;
+                    return common::make_error_value(buff, common::ErrorValue::E_ERROR);
                 } else {
                     unsigned int j;
 
                     cur = strtoull(reply->element[0]->str,NULL,10);
                     for (j = 0; j < reply->element[1]->elements; j++){
                         common::StringValue *val = common::Value::createStringValue(reply->element[1]->element[j]->str);
-                        FastoObject* obj = new FastoObject(out.get(), val, config.mb_delim);
+                        FastoObject* obj = new FastoObject(out, val, config.mb_delim);
                         out->addChildren(obj);
                     }
                 }
                 freeReplyObject(reply);
             } while(cur != 0);
 
-            return REDIS_OK;
+            return common::ErrorValueSPtr();
         }
 
-        int cliAuth(common::ErrorValueSPtr er)
+        common::ErrorValueSPtr cliAuth() WARN_UNUSED_RESULT
         {
-            if (config.auth == NULL)
-                return REDIS_OK;
+            if (config.auth == NULL){
+                return common::ErrorValueSPtr();
+            }
 
             redisReply *reply = static_cast<redisReply*>(redisCommand(context, "AUTH %s", config.auth));
             if (reply != NULL) {
                 freeReplyObject(reply);
-                return REDIS_OK;
+                return common::ErrorValueSPtr();
             }
 
-            cliPrintContextError(er);
-            return REDIS_ERR;
+            return cliPrintContextError();
         }
 
-        int cliSelect(common::ErrorValueSPtr er)
+        common::ErrorValueSPtr cliSelect() WARN_UNUSED_RESULT
         {
-            if (config.dbnum == 0)
-                return REDIS_OK;
+            if (config.dbnum == 0){
+                return common::ErrorValueSPtr();
+            }
 
             redisReply *reply = static_cast<redisReply*>(redisCommand(context, "SELECT %d", config.dbnum));
             if (reply != NULL) {
                 freeReplyObject(reply);
-                return REDIS_OK;
+                return common::ErrorValueSPtr();
             }
-            cliPrintContextError(er);
-            return REDIS_ERR;
+
+            return cliPrintContextError();
         }
 
-        int cliConnect(int force, common::ErrorValueSPtr er)
+        common::ErrorValueSPtr cliConnect(int force) WARN_UNUSED_RESULT
         {
             if (context == NULL || force) {
                 if (context != NULL)
@@ -957,15 +975,14 @@ namespace fastoredis
 
                 if (context->err) {
                     char buff[512] = {0};
-                    if (config.hostsocket)
+                    if (!config.hostsocket)
                         sprintf(buff, "Could not connect to Redis at %s:%d: %s", config.hostip, config.hostport, context->errstr);
                     else
                         sprintf(buff, "Could not connect to Redis at %s: %s", config.hostsocket, context->errstr);
 
-                    er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
                     redisFree(context);
                     context = NULL;
-                    return REDIS_ERR;
+                    return common::make_error_value(buff, common::Value::E_ERROR);
                 }
 
                 /* Set aggressive KEEP_ALIVE socket option in the Redis context socket
@@ -975,29 +992,36 @@ namespace fastoredis
                 anetKeepAlive(NULL, context->fd, REDIS_CLI_KEEPALIVE_INTERVAL);
 
                 /* Do AUTH and select the right DB. */
-                if (cliAuth(er) != REDIS_OK)
-                    return REDIS_ERR;
-                if (cliSelect(er) != REDIS_OK)
-                    return REDIS_ERR;
+                common::ErrorValueSPtr er = cliAuth();
+                if (er){
+                    return er;
+                }
+
+                er = cliSelect();
+                if (er){
+                    return er;
+                }
             }
-            return REDIS_OK;
+
+            return common::ErrorValueSPtr();
         }
 
-        void cliPrintContextError(common::ErrorValueSPtr er)
+        common::ErrorValueSPtr cliPrintContextError() WARN_UNUSED_RESULT
         {
-            if (context == NULL)
-                return;
+            if (context == NULL){
+                return common::make_error_value("Not connected", common::Value::E_ERROR);;
+            }
 
             char buff[512] = {0};
             sprintf(buff,"Error: %s",context->errstr);
-            er.reset(new common::ErrorValue(buff, common::ErrorValue::E_ERROR));
+            return common::make_error_value(buff, common::ErrorValue::E_ERROR);
         }
 
-        void cliFormatReplyRaw(FastoObject* out, redisReply *r)
+        common::ErrorValueSPtr cliFormatReplyRaw(FastoObject* out, redisReply *r) WARN_UNUSED_RESULT
         {
             DCHECK(out);
             if(!out){
-                return;
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
             FastoObject* obj = NULL;
@@ -1034,7 +1058,10 @@ namespace fastoredis
                 case REDIS_REPLY_ARRAY:
                 {
                     for (size_t i = 0; i < r->elements; i++) {
-                        cliFormatReplyRaw(out, r->element[i]);
+                        common::ErrorValueSPtr er = cliFormatReplyRaw(out, r->element[i]);
+                        if(er){
+                            return er;
+                        }
                     }
                     break;
                 }
@@ -1048,26 +1075,39 @@ namespace fastoredis
                 }
             }
 
+            return common::ErrorValueSPtr();
         }
 
-        void cliOutputCommandHelp(FastoObjectPtr out, struct commandHelp *help, int group)
+        common::ErrorValueSPtr cliOutputCommandHelp(FastoObject* out, struct commandHelp *help, int group) WARN_UNUSED_RESULT
         {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
             char buff[1024] = {0};
             sprintf(buff,"name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
             common::StringValue *val =common::Value::createStringValue(buff);
-            FastoObject* child = new FastoObject(out.get(), val, config.mb_delim);
+            FastoObject* child = new FastoObject(out, val, config.mb_delim);
             out->addChildren(child);
             if (group) {
                 char buff2[1024] = {0};
                 sprintf(buff2,"  group: %s", commandGroups[help->group]);
                 val = common::Value::createStringValue(buff2);
-                FastoObject* gchild = new FastoObject(out.get(), val, config.mb_delim);
+                FastoObject* gchild = new FastoObject(out, val, config.mb_delim);
                 out->addChildren(gchild);
             }
+
+            return common::ErrorValueSPtr();
         }
 
-        void cliOutputGenericHelp(FastoObjectPtr out)
+        common::ErrorValueSPtr cliOutputGenericHelp(FastoObject* out) WARN_UNUSED_RESULT
         {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
             sds version = cliVersion();
             char buff[512] = {0};
             sprintf(buff,
@@ -1079,21 +1119,27 @@ namespace fastoredis
                 version
             );
             common::StringValue *val =common::Value::createStringValue(buff);
-            FastoObject* child = new FastoObject(out.get(), val, config.mb_delim);
+            FastoObject* child = new FastoObject(out, val, config.mb_delim);
             out->addChildren(child);
             sdsfree(version);
+
+            return common::ErrorValueSPtr();
         }
 
-        void cliOutputHelp(FastoObjectPtr out, int argc, char **argv)
+        common::ErrorValueSPtr cliOutputHelp(FastoObject* out, int argc, char **argv) WARN_UNUSED_RESULT
         {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
             int i, j, len;
             int group = -1;
             const helpEntry *entry;
             struct commandHelp *help;
 
             if (argc == 0) {
-                cliOutputGenericHelp(out);
-                return;
+                return cliOutputGenericHelp(out);
             }
             else if (argc > 0 && argv[0][0] == '@') {
                 len = sizeof(commandGroups)/sizeof(char*);
@@ -1118,38 +1164,51 @@ namespace fastoredis
                             if (strcasecmp(argv[j],entry->argv[j]) != 0) break;
                         }
                         if (j == argc) {
-                            cliOutputCommandHelp(out, help,1);
+                            common::ErrorValueSPtr er = cliOutputCommandHelp(out, help,1);
+                            if(er){
+                                return er;
+                            }
                         }
                     }
                 }
                 else {
                     if (group == help->group) {
-                        cliOutputCommandHelp(out, help,0);
+                        common::ErrorValueSPtr er = cliOutputCommandHelp(out, help,0);
+                        if(er){
+                            return er;
+                        }
                     }
                 }
             }
+
+            return common::ErrorValueSPtr();
         }
 
-        int cliReadReply(FastoObjectPtr out, common::ErrorValueSPtr er)
+        common::ErrorValueSPtr cliReadReply(FastoObject* out) WARN_UNUSED_RESULT
         {
             DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
 
             void *_reply;
             redisReply *reply;
             int output = 1;
 
             if (redisGetReply(context, &_reply) != REDIS_OK) {
-                if (config.shutdown)
-                    return REDIS_OK;
+                if (config.shutdown){
+                    return common::make_error_value("Interrupted connect.", common::ErrorValue::E_INTERRUPTED);
+                }
 
                 /* Filter cases where we should reconnect */
-                if (context->err == REDIS_ERR_IO && errno == ECONNRESET)
-                    return REDIS_ERR;
-                if (context->err == REDIS_ERR_EOF)
-                    return REDIS_ERR;
+                if (context->err == REDIS_ERR_IO && errno == ECONNRESET){
+                    return common::make_error_value("Needed reconnect.", common::ErrorValue::E_ERROR);
+                }
+                if (context->err == REDIS_ERR_EOF){
+                    return common::make_error_value("Needed reconnect.", common::ErrorValue::E_ERROR);
+                }
 
-                cliPrintContextError(er);
-                return REDIS_ERR; /* avoid compiler warning */
+                return cliPrintContextError(); /* avoid compiler warning */
             }
 
             reply = static_cast<redisReply*>(_reply);
@@ -1174,34 +1233,38 @@ namespace fastoredis
                 char redir[512] = {0};
                 sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
                 common::StringValue *val = common::Value::createStringValue(redir);
-                FastoObject* child = new FastoObject(out.get(), val, config.mb_delim);
+                FastoObject* child = new FastoObject(out, val, config.mb_delim);
                 out->addChildren(child);
                 config.cluster_reissue_command = 1;
             }
 
+            common::ErrorValueSPtr er;
             if (output) {
-                cliFormatReplyRaw(out.get(), reply);
+                er = cliFormatReplyRaw(out, reply);
             }
 
             freeReplyObject(reply);
-            return REDIS_OK;
+            return er;
         }
 
-        int cliSendCommand(FastoObjectPtr out, common::ErrorValueSPtr er, int argc, char **argv, int repeat)
+        common::ErrorValueSPtr cliSendCommand(FastoObject* out, int argc, char **argv, int repeat) WARN_UNUSED_RESULT
         {
             DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
 
             char *command = argv[0];
             size_t *argvlen;
             int j, output_raw;
 
             if (!strcasecmp(command,"help") || !strcasecmp(command,"?")) {
-                cliOutputHelp(out, --argc, ++argv);
-                return REDIS_OK;
+                return cliOutputHelp(out, --argc, ++argv);
             }
 
-            if (context == NULL)
-                return REDIS_ERR;
+            if (context == NULL){
+                return common::make_error_value("Not connected", common::Value::E_ERROR);
+            }
 
             output_raw = 0;
             if (!strcasecmp(command,"info") ||
@@ -1233,8 +1296,9 @@ namespace fastoredis
             while(repeat--) {
                 redisAppendCommandArgv(context,argc,(const char**)argv,argvlen);
                 while (config.monitor_mode) {
-                    if (cliReadReply(out, er) != REDIS_OK){
-                        return REDIS_ERR;
+                    common::ErrorValueSPtr er = cliReadReply(out);
+                    if (er){
+                        return er;
                     }
                 }
 
@@ -1247,21 +1311,25 @@ namespace fastoredis
                 }*/
 
                 if (config.slave_mode) {
-                    slaveMode(out, er);
+                    common::ErrorValueSPtr er = slaveMode(out);
                     config.slave_mode = 0;
                     free(argvlen);
-                    return REDIS_ERR;  /* Error = slaveMode lost connection to master */
+                    return er;  /* Error = slaveMode lost connection to master */
                 }
 
-                if (cliReadReply(out, er) != REDIS_OK) {
+                common::ErrorValueSPtr er = cliReadReply(out);
+                if (er) {
                     free(argvlen);
-                    return REDIS_ERR;
+                    return er;
                 } else {
                     /* Store database number when SELECT was successfully executed. */
                     if (!strcasecmp(command,"select") && argc == 2) {
                         config.dbnum = atoi(argv[1]);
                     } else if (!strcasecmp(command,"auth") && argc == 2) {
-                        cliSelect(er);
+                        er = cliSelect();
+                        if(er){
+                            return er;
+                        }
                     }
                 }
                 if (config.interval){
@@ -1270,31 +1338,30 @@ namespace fastoredis
             }
 
             free(argvlen);
-            return REDIS_OK;
+            return common::ErrorValueSPtr();
         }
 
-        int execute(const char *command, Command::CommandType type, FastoObjectPtr out, common::ErrorValueSPtr er) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr execute(const char *command, Command::CommandType type, FastoObject* out) WARN_UNUSED_RESULT
         {
             DCHECK(out);
             if(!out){
-                er.reset(new common::ErrorValue("Invalid input argument", common::ErrorValue::E_ERROR));
-                return REDIS_ERR;
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
             if(!command){
-                er.reset(new common::ErrorValue("Command empty", common::ErrorValue::E_ERROR));
-                return REDIS_ERR;
+                return common::make_error_value("Command empty", common::ErrorValue::E_ERROR);
             }
 
             LOG_COMMAND(Command(command, type));
 
+            common::ErrorValueSPtr er;
             if (command[0] != '\0') {
                 int argc;
                 sds *argv = sdssplitargs(command,&argc);
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
-                    FastoObject* child = new FastoObject(out.get(), val, config.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config.mb_delim);
                     out->addChildren(child);
                 }
                 else if (argc > 0)
@@ -1306,9 +1373,9 @@ namespace fastoredis
                     else if (argc == 3 && !strcasecmp(argv[0], "connect")) {
                         config.hostip = argv[1];
                         config.hostport = atoi(argv[2]);
-                        int res = cliConnect(1, er);
-                        if(res == REDIS_ERR){
-                            return REDIS_ERR;
+                        er = cliConnect(1);
+                        if(er){
+                            return er;
                         }
                     }
                     else {
@@ -1323,21 +1390,22 @@ namespace fastoredis
 
                         while (1) {
                             config.cluster_reissue_command = 0;
-                            if (cliSendCommand(out, er, argc-skipargs, argv+skipargs, repeat) != REDIS_OK)
+                            er = cliSendCommand(out, argc-skipargs, argv+skipargs, repeat);
+                            if (er)
                             {
-                                cliConnect(1, er);
+                                er = cliConnect(1);
 
                                 /* If we still cannot send the command print error.
                                 * We'll try to reconnect the next time. */
-                                if (cliSendCommand(out, er, argc-skipargs, argv+skipargs, repeat) != REDIS_OK){
-                                    cliPrintContextError(er);
+                                er = cliSendCommand(out, argc-skipargs, argv+skipargs, repeat);
+                                if (er){
                                     sdsfreesplitres(argv,argc);
-                                    return REDIS_ERR;
+                                    return cliPrintContextError();
                                 }
                             }
                             /* Issue the command again if we got redirected in cluster mode */
                             if (config.cluster_mode && config.cluster_reissue_command) {
-                                cliConnect(1, er);
+                                er = cliConnect(1);
                             } else {
                                 break;
                             }
@@ -1347,7 +1415,7 @@ namespace fastoredis
                 sdsfreesplitres(argv,argc);
             }
 
-            return REDIS_OK;
+            return er;
         }
     };
 
@@ -1404,9 +1472,7 @@ namespace fastoredis
         RootLocker rl = make_locker(NULL, INFO_REQUEST);
         FastoObjectPtr outRoot = rl.root_;
         outInfo = outRoot;
-        common::ErrorValueSPtr er;
-        int res = impl_->execute(INFO_REQUEST, Command::InnerCommand, outRoot, er);
-        return er;
+        return impl_->execute(INFO_REQUEST, Command::InnerCommand, outRoot.get());
     }
 
     void RedisDriver::connectEvent(Events::ConnectRequestEvent *ev)
@@ -1425,7 +1491,8 @@ namespace fastoredis
                         res.setErrorInfo(er);
                     }
                     else{
-                        if(impl_->cliConnect(0, er) == REDIS_ERR){
+                        er = impl_->cliConnect(0);
+                        if(er){
                             res.setErrorInfo(er);
                         }
                     }
@@ -1482,7 +1549,7 @@ namespace fastoredis
         reply(sender, new Events::ProcessConfigArgsResponceEvent(this, res));
     }
 
-    void RedisDriver::interacteveMode(Events::ProcessConfigArgsRequestEvent *ev)
+    common::ErrorValueSPtr RedisDriver::interacteveMode(Events::ProcessConfigArgsRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
@@ -1492,71 +1559,70 @@ namespace fastoredis
         Events::LeaveModeEvent::value_type res2(IntaractiveMode);
         reply(sender, new Events::LeaveModeEvent(this, res2));
         notifyProgress(sender, 100);
+        return common::ErrorValueSPtr();
     }
 
-    int RedisDriver::latencyMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::latencyMode(Events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::EnterModeEvent::value_type resEv(LatencyMode);
         reply(sender, new Events::EnterModeEvent(this, resEv));
 
-        common::ErrorValueSPtr er;
         RootLocker lock = make_locker(sender, LATENCY_REQUEST);
 
         FastoObjectPtr obj = lock.root_;
-        int res = impl_->latencyMode(obj, er);
-        if(res == REDIS_ERR){
+        common::ErrorValueSPtr er = impl_->latencyMode(obj.get());
+        if(er){
             LOG_ERROR(er);
         }
 
         Events::LeaveModeEvent::value_type resEv2(LatencyMode);
         reply(sender, new Events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
-        return res;
+        return er;
     }
 
-    int RedisDriver::slaveMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::slaveMode(Events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
         Events::EnterModeEvent::value_type resEv(SlaveMode);
         reply(sender, new Events::EnterModeEvent(this, resEv));
 
-        common::ErrorValueSPtr er;
         RootLocker lock = make_locker(sender, SYNC_REQUEST);
 
         FastoObjectPtr obj = lock.root_;
-        int res = impl_->slaveMode(obj, er);
-        if(res == REDIS_ERR){
+        common::ErrorValueSPtr er = impl_->slaveMode(obj.get());
+        if(er){
             LOG_ERROR(er);
         }
 
         Events::LeaveModeEvent::value_type resEv2(SlaveMode);
         reply(sender, new Events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
+        return er;
     }
 
-    int RedisDriver::getRDBMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::getRDBMode(Events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
         Events::EnterModeEvent::value_type resEv(GetRDBMode);
         reply(sender, new Events::EnterModeEvent(this, resEv));
 
-        common::ErrorValueSPtr er;
         RootLocker lock = make_locker(sender, RDM_REQUEST);
 
         FastoObjectPtr obj = lock.root_;
-        int res = impl_->getRDB(obj, er);
-        if(res == REDIS_ERR){
+        common::ErrorValueSPtr er = impl_->getRDB(obj.get());
+        if(er){
             LOG_ERROR(er);
         }
 
         Events::LeaveModeEvent::value_type resEv2(GetRDBMode);
         reply(sender, new Events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
-        return res;
+        return er;
     }
 
     /*void RedisDriver::pipeMode(Events::ProcessConfigArgsRequestEvent* ev)
@@ -1571,70 +1637,67 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }*/
 
-    int RedisDriver::findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
         Events::EnterModeEvent::value_type resEv(FindBigKeysMode);
         reply(sender, new Events::EnterModeEvent(this, resEv));
 
-        common::ErrorValueSPtr er;
         RootLocker lock = make_locker(sender, FIND_BIG_KEYS_REQUEST);
 
         FastoObjectPtr obj = lock.root_;
-        int res = impl_->findBigKeys(obj, er);
-        if(res == REDIS_ERR){
+        common::ErrorValueSPtr er = impl_->findBigKeys(obj.get());
+        if(er){
             LOG_ERROR(er);
         }
 
         Events::LeaveModeEvent::value_type resEv2(FindBigKeysMode);
         reply(sender, new Events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
-        return res;
+        return er;
     }
 
-    int RedisDriver::statMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::statMode(Events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
         Events::EnterModeEvent::value_type resEv(StatMode);
         reply(sender, new Events::EnterModeEvent(this, resEv));
 
-        common::ErrorValueSPtr er;
         RootLocker lock = make_locker(sender, STAT_MODE_REQUEST);
 
         FastoObjectPtr obj = lock.root_;
-        int res = impl_->statMode(obj, er);
-        if(res == REDIS_ERR){
+        common::ErrorValueSPtr er = impl_->statMode(obj.get());
+        if(er){
             LOG_ERROR(er);
         }
 
         Events::LeaveModeEvent::value_type resEv2(StatMode);
         reply(sender, new Events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
-        return res;
+        return er;
     }
 
-    int RedisDriver::scanMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::scanMode(Events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
         Events::EnterModeEvent::value_type resEv(ScanMode);
         reply(sender, new Events::EnterModeEvent(this, resEv));
 
-        common::ErrorValueSPtr er;
         RootLocker lock = make_locker(sender, SCAN_MODE_REQUEST);
 
         FastoObjectPtr obj = lock.root_;
-        int res = impl_->scanMode(obj, er);
-        if(res == REDIS_ERR){
+        common::ErrorValueSPtr er = impl_->scanMode(obj.get());
+        if(er){
             LOG_ERROR(er);
         }
 
         Events::LeaveModeEvent::value_type resEv2(ScanMode);
         reply(sender, new Events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
-        return res;
+        return er;
     }
 
     void RedisDriver::executeEvent(Events::ExecuteRequestEvent *ev)
@@ -1667,8 +1730,9 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;                        
-                        int resEx = impl_->execute(command, Command::UserCommand, outRoot, er);
-                        if(resEx == REDIS_ERR){
+                        er = impl_->execute(command, Command::UserCommand, outRoot.get());
+                        if(er){
+                            res.setErrorInfo(er);
                             break;
                         }
                     }
@@ -1705,10 +1769,9 @@ namespace fastoredis
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
             RootLocker lock = make_locker(sender, GET_DATABASES);
             FastoObjectPtr root = lock.root_;
-            common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            int resEx = impl_->execute(GET_DATABASES, Command::InnerCommand, root, er);
-            if(resEx == REDIS_ERR){
+            common::ErrorValueSPtr er = impl_->execute(GET_DATABASES, Command::InnerCommand, root.get());
+            if(er){
                 res.setErrorInfo(er);
             }
             else{
@@ -1744,10 +1807,9 @@ namespace fastoredis
             Events::ServerInfoResponceEvent::value_type res(ev->value());
             RootLocker lock = make_locker(sender, INFO_REQUEST);
             FastoObjectPtr root = lock.root_;
-            common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            int resEx = impl_->execute(INFO_REQUEST, Command::InnerCommand, root, er);
-            if(resEx == REDIS_ERR){
+            common::ErrorValueSPtr er = impl_->execute(INFO_REQUEST, Command::InnerCommand, root.get());
+            if(er){
                 res.setErrorInfo(er);
             }
             else{
@@ -1769,10 +1831,9 @@ namespace fastoredis
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
             RootLocker lock = make_locker(sender, GET_PROPERTY_SERVER);
             FastoObjectPtr root = lock.root_;
-            common::ErrorValueSPtr er;
         notifyProgress(sender, 50);
-            int resEx = impl_->execute(GET_PROPERTY_SERVER, Command::InnerCommand, root, er);
-            if(resEx == REDIS_ERR){
+            common::ErrorValueSPtr er = impl_->execute(GET_PROPERTY_SERVER, Command::InnerCommand, root.get());
+            if(er){
                 res.setErrorInfo(er);
             }
             else{
@@ -1788,13 +1849,13 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ChangeServerPropertyInfoResponceEvent::value_type res(ev->value());
-        common::ErrorValueSPtr er;
+
         notifyProgress(sender, 50);
         const std::string changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         RootLocker lock = make_locker(sender, changeRequest);
         FastoObjectPtr root = lock.root_;
-        int resEx = impl_->execute(changeRequest.c_str(), Command::InnerCommand, root, er);
-        if(resEx == REDIS_ERR){
+        common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), Command::InnerCommand, root.get());
+        if(er){
             res.setErrorInfo(er);
         }
         else{

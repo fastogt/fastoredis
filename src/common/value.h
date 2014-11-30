@@ -218,6 +218,8 @@ namespace common
 
     typedef boost::shared_ptr<ErrorValue> ErrorValueSPtr;
 
+    ErrorValueSPtr make_error_value(const std::string& in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
+
     std::ostream& operator<<(std::ostream& out, const Value& value);
 
     inline std::ostream& operator<<(std::ostream& out, const FundamentalValue& value) {

@@ -44,13 +44,13 @@ namespace fastoredis
         struct pimpl;
         boost::scoped_ptr<pimpl> impl_;
 
-        void interacteveMode(Events::ProcessConfigArgsRequestEvent* ev);
-        int latencyMode(Events::ProcessConfigArgsRequestEvent* ev);
-        int slaveMode(Events::ProcessConfigArgsRequestEvent* ev);
-        int getRDBMode(Events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr interacteveMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
+        common::ErrorValueSPtr latencyMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
+        common::ErrorValueSPtr slaveMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
+        common::ErrorValueSPtr getRDBMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
         //void pipeMode(Events::ProcessConfigArgsRequestEvent* ev);
-        int findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev);
-        int statMode(Events::ProcessConfigArgsRequestEvent* ev);
-        int scanMode(Events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
+        common::ErrorValueSPtr statMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
+        common::ErrorValueSPtr scanMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
     };
 }
