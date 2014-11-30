@@ -23,7 +23,7 @@ namespace fastoredis
         setMovable(true);
         setDocumentMode(true);
         log_ = new LogWidget(this);
-        addTab(log_, GuiFactory::instance().loggingIcon(), trErrors);
+        addTab(log_, GuiFactory::instance().loggingIcon(), trLogs);
         commands_ = new CommandsWidget(this);
         addTab(commands_, GuiFactory::instance().commandIcon(), trCommands);
         retranslateUi();
@@ -51,7 +51,7 @@ namespace fastoredis
     {
         using namespace translations;
 
-        setTabText(0, trErrors);
+        setTabText(0, trLogs);
         setTabText(1, trCommands);
     }
 }

@@ -1,4 +1,14 @@
+0.3.4 /
+[Alexandr Topilski]
+- Implement latency mode
+- Implement slave mode
+- Implement rdb mode
+- Implement bigkeys mode
+- Implement stat mode
+- Implement scan mode
+
 0.2.3 / November 24, 2014
+[Alexandr Topilski]
 - Added check updates functionality
 - Full utf-8 support
 - Help keyword

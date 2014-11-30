@@ -45,12 +45,12 @@ namespace fastoredis
         boost::scoped_ptr<pimpl> impl_;
 
         void interacteveMode(Events::ProcessConfigArgsRequestEvent* ev);
-        void latencyMode(Events::ProcessConfigArgsRequestEvent* ev);
-        void slaveMode(Events::ProcessConfigArgsRequestEvent* ev);
-        void getRDBMode(Events::ProcessConfigArgsRequestEvent* ev);
-        void pipeMode(Events::ProcessConfigArgsRequestEvent* ev);
-        void findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev);
-        void statMode(Events::ProcessConfigArgsRequestEvent* ev);
-        void scanMode(Events::ProcessConfigArgsRequestEvent* ev);
+        int latencyMode(Events::ProcessConfigArgsRequestEvent* ev);
+        int slaveMode(Events::ProcessConfigArgsRequestEvent* ev);
+        int getRDBMode(Events::ProcessConfigArgsRequestEvent* ev);
+        //void pipeMode(Events::ProcessConfigArgsRequestEvent* ev);
+        int findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev);
+        int statMode(Events::ProcessConfigArgsRequestEvent* ev);
+        int scanMode(Events::ProcessConfigArgsRequestEvent* ev);
     };
 }
