@@ -1,5 +1,9 @@
 #include "core/idriver.h"
 
+#ifdef OS_POSIX
+#include <signal.h>
+#endif
+
 #include <QThread>
 #include <QApplication>
 
