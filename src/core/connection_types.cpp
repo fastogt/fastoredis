@@ -13,6 +13,12 @@ namespace
 
 namespace fastoredis
 {
+
+    connectionTypes badConnectionType()
+    {
+        return DBUNKNOWN;
+    }
+
     std::vector<std::string> supportedConnectionTypes()
     {
         return common::utils::enums::convertToVector(connnectionType);

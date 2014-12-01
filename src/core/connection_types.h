@@ -14,10 +14,7 @@ namespace fastoredis
         REDIS
     };
 
-    inline connectionTypes badConnectionType()
-    {
-        return DBUNKNOWN;
-    }
+    connectionTypes badConnectionType();
 
     std::vector<std::string> supportedConnectionTypes();
 

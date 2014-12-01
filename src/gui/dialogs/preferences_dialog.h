@@ -39,16 +39,16 @@ namespace fastoredis
 
         QGroupBox* generalBox_;
         QCheckBox* autoCheckUpdates_;
-        QLabel *langLabel_;
-        QComboBox *languagesComboBox_;
-        QLabel *stylesLabel_;
-        QComboBox *stylesComboBox_;
+        QLabel* langLabel_;
+        QComboBox* languagesComboBox_;
+        QLabel* stylesLabel_;
+        QComboBox* stylesComboBox_;
         QLabel* defaultViewLabel_;
-        QComboBox *defaultViewComboBox_;
+        QComboBox* defaultViewComboBox_;
 
         QGroupBox* serverSettingsBox_;
         QCheckBox* syncTabs_;
-        QLabel *logDirLabel_;
+        QLabel* logDirLabel_;
         QLineEdit* logDirPath_;
     };
 }
