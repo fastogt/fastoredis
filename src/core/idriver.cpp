@@ -70,13 +70,18 @@ namespace fastoredis
 
     IDriver::~IDriver()
     {
+        delete logFile_;
+        logFile_ = NULL;
+    }
+
+    void IDriver::clear()
+    {
         killTimer(timer_info_id_);
         timer_info_id_ = 0;
         thread_->quit();
         if (!thread_->wait(2000)){
             thread_->terminate();
         }
-        delete logFile_;
     }
 
     void IDriver::customEvent(QEvent *event)

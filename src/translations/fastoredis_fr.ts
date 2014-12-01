@@ -288,11 +288,6 @@
         <source>&lt;h3&gt;You&apos;re&apos; up-to-date!&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../core/connection_settings.cpp" line="146"/>
-        <source>&lt;b&gt;Usage: [OPTIONS] [cmd [arg [arg ...]]]&lt;/b&gt;&lt;br/&gt;&lt;b&gt;-h &amp;lt;hostname&amp;gt;&lt;/b&gt;      Server hostname (default: 127.0.0.1).&lt;br/&gt;&lt;b&gt;-p &amp;lt;port&amp;gt;&lt;/b&gt;          Server port (default: 6379).&lt;br/&gt;&lt;b&gt;-s &amp;lt;socket&amp;gt;&lt;/b&gt;        Server socket (overrides hostname and port).&lt;br/&gt;&lt;b&gt;-a &amp;lt;password&amp;gt;&lt;/b&gt;      Password to use when connecting to the server.&lt;br/&gt;&lt;b&gt;-r &amp;lt;repeat&amp;gt;&lt;/b&gt;        Execute specified command N times.&lt;br/&gt;&lt;b&gt;-i &amp;lt;interval&amp;gt;&lt;/b&gt;      When &lt;b&gt;-r&lt;/b&gt; is used, waits &amp;lt;interval&amp;gt; seconds per command.&lt;br/&gt;                   It is possible to specify sub-second times like &lt;b&gt;-i&lt;/b&gt; 0.1.&lt;br/&gt;&lt;b&gt;-n &amp;lt;db&amp;gt;&lt;/b&gt;            Database number.&lt;br/&gt;&lt;b&gt;-d &amp;lt;delimiter&amp;gt;&lt;/b&gt;     Multi-bulk delimiter in for raw formatting (default: \n).&lt;br/&gt;&lt;b&gt;-c&lt;/b&gt;                 Enable cluster mode (follow -ASK and -MOVED redirections).&lt;br/&gt;&lt;b&gt;--latency&lt;/b&gt;          Enter a special mode continuously sampling latency.&lt;br/&gt;&lt;b&gt;--latency-history&lt;/b&gt;  Like &lt;b&gt;--latency&lt;/b&gt; but tracking latency changes over time.&lt;br/&gt;                   Default time interval is 15 sec. Change it using &lt;b&gt;-i&lt;/b&gt;.&lt;br/&gt;&lt;b&gt;--slave&lt;/b&gt;            Simulate a slave showing commands received from the master.&lt;br/&gt;&lt;b&gt;--rdb &amp;lt;filename&amp;gt;&lt;/b&gt;   Transfer an RDB dump from remote server to local file.&lt;br/&gt;&lt;b&gt;--scan&lt;/b&gt;             List all keys using the SCAN command.&lt;br/&gt;&lt;b&gt;--pattern &amp;lt;pat&amp;gt;&lt;/b&gt;    Useful with &lt;b&gt;--scan&lt;/b&gt; to specify a SCAN pattern.&lt;br/&gt;&lt;b&gt;--intrinsic-latency &amp;lt;sec&amp;gt;&lt;/b&gt; Run a test to measure intrinsic system latency.&lt;br/&gt;                   The test will run for the specified amount of seconds.&lt;br/&gt;&lt;b&gt;--eval &amp;lt;file&amp;gt;&lt;/b&gt;      Send an EVAL command using the Lua script at &lt;b&gt;&amp;lt;file&amp;gt;&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>fastoredis::ConnectionDialog</name>
@@ -307,52 +302,52 @@
         <translation>Prive cle  files (*.*)</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="325"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="328"/>
         <source>Connection Settings</source>
         <translation>Connection regulation</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="326"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="329"/>
         <source>Logging enabled</source>
         <translation>Logging permet</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="327"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="330"/>
         <source>&amp;Test</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="328"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="331"/>
         <source>Use SSH tunnel</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="329"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="332"/>
         <source>User Password:</source>
         <translation>User mot de passe:</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="330"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="333"/>
         <source>Private key:</source>
         <translation>Cle privee:</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="331"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="334"/>
         <source>Passphrase:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="332"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="335"/>
         <source>SSH Address:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="333"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="336"/>
         <source>SSH User Name:</source>
         <translation>SSH Nom d&apos;utilisateur:</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="334"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="337"/>
         <source>SSH Auth Method:</source>
         <translation></translation>
     </message>

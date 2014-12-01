@@ -84,6 +84,8 @@ namespace fastoredis
             return RootLocker(this, reciver, text);
         }
 
+        void clear();
+
     private:
         FastoObjectPtr createRoot(QObject *reciver, const std::string &text);
         void compleateRoot(QObject *reciver, FastoObjectPtr root);

@@ -954,8 +954,10 @@ namespace fastoredis
         common::ErrorValueSPtr cliConnect(int force) WARN_UNUSED_RESULT
         {
             if (context == NULL || force) {
-                if (context != NULL)
+                if (context != NULL){
                     redisFree(context);
+                    context = NULL;
+                }
 
                 if (config.hostsocket == NULL) {
                     const char *username = toCString(sinfo_.userName_);
@@ -976,10 +978,12 @@ namespace fastoredis
 
                 if (context->err) {
                     char buff[512] = {0};
-                    if (!config.hostsocket)
+                    if (!config.hostsocket){
                         sprintf(buff, "Could not connect to Redis at %s:%d: %s", config.hostip, config.hostport, context->errstr);
-                    else
+                    }
+                    else{
                         sprintf(buff, "Could not connect to Redis at %s: %s", config.hostsocket, context->errstr);
+                    }
 
                     redisFree(context);
                     context = NULL;
@@ -1428,6 +1432,7 @@ namespace fastoredis
 
     RedisDriver::~RedisDriver()
     {
+        clear();
     }
 
     std::string RedisDriver::address() const
@@ -1756,8 +1761,10 @@ namespace fastoredis
             Events::DisconnectResponceEvent::value_type res(ev->value());            
         notifyProgress(sender, 50);
 
+        if(impl_->context){
             redisFree(impl_->context);
             impl_->context = NULL;
+        }
 
             reply(sender, new Events::DisconnectResponceEvent(this, res));
         notifyProgress(sender, 100);

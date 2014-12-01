@@ -1,5 +1,6 @@
 0.3.4 /
 [Alexandr Topilski]
+- Update redis-cli sources to version 2.9.999
 - Implement latency mode
 - Implement slave mode
 - Implement rdb mode
