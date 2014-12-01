@@ -2,6 +2,8 @@
 
 /**/
 
+#include <string.h>
+
 #ifdef OS_POSIX
 #include <signal.h>
 #endif
