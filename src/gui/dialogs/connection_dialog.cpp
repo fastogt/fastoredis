@@ -18,7 +18,7 @@
 
 namespace fastoredis
 {
-    ConnectionDialog::ConnectionDialog(const IConnectionSettingsBasePtr &connection, QWidget *parent)
+    ConnectionDialog::ConnectionDialog(const IConnectionSettingsBasePtr& connection, QWidget* parent)
         : QDialog(parent),
         connection_(connection)
     {
@@ -244,7 +244,7 @@ namespace fastoredis
         passwordLabel_->setEnabled(value);
     }
 
-    void ConnectionDialog::securityChange(const QString&)
+    void ConnectionDialog::securityChange(const QString& )
     {
         bool isKey = selectedAuthMethod() == SSHInfo::PUBLICKEY;
         sshPrivateKeyLabel_->setVisible(isKey);
@@ -286,7 +286,7 @@ namespace fastoredis
         passphraseEchoModeButton_->setText(isPassword ? trHide: trShow);
     }
 
-    void ConnectionDialog::typeConnectionChange(const QString &value)
+    void ConnectionDialog::typeConnectionChange(const QString& value)
     {
         connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(value));
         bool isValidType = currentType != badConnectionType();
@@ -294,7 +294,10 @@ namespace fastoredis
         testButton_->setEnabled(isValidType);
         commandLine_->setEnabled(isValidType);
         buttonBox_->button(QDialogButtonBox::Save)->setEnabled(isValidType);
-        commandLine_->setToolTip(useHelpText(currentType));
+
+        const char* helpText = useHelpText(currentType);
+        QString trHelp = tr(helpText);
+        commandLine_->setToolTip(trHelp);
 
         useSsh_->setEnabled(isValidType);
     }
@@ -312,7 +315,7 @@ namespace fastoredis
         }
     }
 
-    void ConnectionDialog::changeEvent(QEvent *e)
+    void ConnectionDialog::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();

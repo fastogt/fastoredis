@@ -2,8 +2,11 @@
 
 #ifndef __REDIS_HELP_H
 #define __REDIS_HELP_H
-
+#ifdef FASTOREDIS
+static const char *commandGroups[] = {
+#else
 static char *commandGroups[] = {
+#endif
     "generic",
     "string",
     "list",
@@ -18,6 +21,15 @@ static char *commandGroups[] = {
     "hyperloglog"
 };
 
+#ifdef FASTOREDIS
+struct commandHelp {
+  const char *name;
+  const char *params;
+  const char *summary;
+  int group;
+  const char *since;
+} commandHelp[] = {
+#else
 struct commandHelp {
   char *name;
   char *params;
@@ -25,6 +37,7 @@ struct commandHelp {
   int group;
   char *since;
 } commandHelp[] = {
+#endif
     { "APPEND",
     "key value",
     "Append a value to a key",

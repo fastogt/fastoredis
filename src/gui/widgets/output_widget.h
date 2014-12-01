@@ -12,7 +12,7 @@ namespace fastoredis
     class FastoEditorView;
     class FastoTreeView;
     class FastoTableView;
-    class FastoTreeModel;
+    class FastoCommonModel;
     class IconLabel;
 
     class OutputWidget
@@ -32,7 +32,7 @@ namespace fastoredis
         void rootCreate(const EventsInfo::CommandRootCreatedInfo& res);
         void rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res);
 
-        void addChild(FastoObject *child);
+        void addChild(FastoObject* child);
         void itemUpdate(FastoObject*, const QString& newValue);
 
     private:
@@ -42,7 +42,7 @@ namespace fastoredis
         QPushButton *tableButton_;
         QPushButton *textButton_;
 
-        FastoTreeModel *commonModel_;
+        FastoCommonModel *commonModel_;
         FastoTreeView *treeView_;
         FastoTableView *tableView_;
         FastoEditorView *textView_;

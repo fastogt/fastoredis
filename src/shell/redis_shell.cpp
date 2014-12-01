@@ -11,7 +11,7 @@ namespace fastoredis
 {
     const QColor RedisShell::paperColor = QColor(166, 190, 233);
 
-    RedisShell::RedisShell(QWidget *parent)
+    RedisShell::RedisShell(QWidget* parent)
         : FastoEditor(parent)
     {
         RedisLexer* red = new RedisLexer(this);
@@ -36,14 +36,14 @@ namespace fastoredis
         return version_;
     }
 
-    void RedisShell::showContextMenu(const QPoint &pt)
+    void RedisShell::showContextMenu(const QPoint& pt)
     {
         QMenu *menu = createStandardContextMenu();
         menu->exec(mapToGlobal(pt));
         delete menu;
     }
 
-    void RedisShell::keyPressEvent(QKeyEvent *keyEvent)
+    void RedisShell::keyPressEvent(QKeyEvent* keyEvent)
     {
         if((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Return) ){
             emit executed();

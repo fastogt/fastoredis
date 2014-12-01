@@ -29,12 +29,12 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void LogTabWidget::addLogMessage(const QString &message, common::logging::LEVEL_LOG level)
+    void LogTabWidget::addLogMessage(const QString& message, common::logging::LEVEL_LOG level)
     {
         log_->addLogMessage(message, level);
     }
 
-    void LogTabWidget::addCommand(const Command &command)
+    void LogTabWidget::addCommand(const Command& command)
     {
         commands_->addCommand(command);
     }

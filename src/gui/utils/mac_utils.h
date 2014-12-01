@@ -4,7 +4,7 @@
 
 namespace fastoredis
 {
-    void addFullscreenButton(QWidget *widget);
-    void gotoFullScreen(QWidget *widget);
+    void addFullscreenButton(QWidget* widget);
+    void gotoFullScreen(QWidget* widget);
 }
 

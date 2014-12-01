@@ -83,7 +83,7 @@ namespace
 
 namespace fastoredis
 {
-    InfoServerDialog::InfoServerDialog(const QString &title, QWidget *parent)
+    InfoServerDialog::InfoServerDialog(const QString& title, QWidget* parent)
         : QDialog(parent)
     {
         using namespace translations;
@@ -126,7 +126,7 @@ namespace fastoredis
         }
     }
 
-    void InfoServerDialog::updateText(const RedisServerInfo &serv)
+    void InfoServerDialog::updateText(const RedisServerInfo& serv)
     {
         using namespace common;
         RedisServerInfo::Server ser = serv.server_;
@@ -203,7 +203,7 @@ namespace fastoredis
         hardwareTextInfo_->setText(textCl + textPer + textStat + textRepl);
     }
 
-    void InfoServerDialog::showEvent(QShowEvent *e)
+    void InfoServerDialog::showEvent(QShowEvent* e)
     {
         QDialog::showEvent(e);
         emit showed();

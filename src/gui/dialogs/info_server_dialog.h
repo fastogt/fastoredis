@@ -32,8 +32,8 @@ namespace fastoredis
 
     private:
         void updateText(const RedisServerInfo& serv);
-        QLabel *serverTextInfo_;
-        QLabel *hardwareTextInfo_;
-        GlassWidget *glassWidget_;
+        QLabel* serverTextInfo_;
+        QLabel* hardwareTextInfo_;
+        GlassWidget* glassWidget_;
     };
 }

@@ -14,7 +14,7 @@
 
 namespace fastoredis
 {
-    ServerHistoryDialog::ServerHistoryDialog(const QString &title, connectionTypes type, QWidget *parent)
+    ServerHistoryDialog::ServerHistoryDialog(const QString& title, connectionTypes type, QWidget* parent)
         : QDialog(parent, Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint ), type_(type)
     {
         using namespace translations;
@@ -53,12 +53,12 @@ namespace fastoredis
         glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoading, 0.5, QColor(111, 111, 100), this);
     }
 
-    void ServerHistoryDialog::startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &req)
+    void ServerHistoryDialog::startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest& req)
     {
         glassWidget_->start();
     }
 
-    void ServerHistoryDialog::finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &res)
+    void ServerHistoryDialog::finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce& res)
     {
         glassWidget_->stop();
         common::ErrorValueSPtr er = res.errorInfo();
@@ -112,7 +112,7 @@ namespace fastoredis
         graphWidget_->setNodes(nodes);
     }
 
-    void ServerHistoryDialog::showEvent(QShowEvent *e)
+    void ServerHistoryDialog::showEvent(QShowEvent* e)
     {
         QDialog::showEvent(e);
         emit showed();

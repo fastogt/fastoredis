@@ -68,8 +68,8 @@ namespace fastoredis
 
         void rootCreated(const EventsInfo::CommandRootCreatedInfo& res);
         void rootCompleated(const EventsInfo::CommandRootCompleatedInfo& res);
-   Q_SIGNALS:
 
+   Q_SIGNALS:
         void addedChild(FastoObject *child);
         void itemUpdated(FastoObject* item, const QString& val);
 

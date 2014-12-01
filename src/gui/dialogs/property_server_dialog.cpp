@@ -11,7 +11,7 @@
 
 namespace fastoredis
 {
-    PropertyServerDialog::PropertyServerDialog(const QString &title, connectionTypes type, QWidget *parent)
+    PropertyServerDialog::PropertyServerDialog(const QString& title, connectionTypes type, QWidget* parent)
         : QDialog(parent), type_(type)
     {
         using namespace translations;
@@ -29,12 +29,12 @@ namespace fastoredis
         glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoading, 0.5, QColor(111, 111, 100), this);
     }
 
-    void PropertyServerDialog::startServerProperty(const EventsInfo::ServerPropertyInfoRequest &req)
+    void PropertyServerDialog::startServerProperty(const EventsInfo::ServerPropertyInfoRequest& req)
     {
         glassWidget_->start();
     }
 
-    void PropertyServerDialog::finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &res)
+    void PropertyServerDialog::finishServerProperty(const EventsInfo::ServerPropertyInfoResponce& res)
     {
         glassWidget_->stop();
         common::ErrorValueSPtr er = res.errorInfo();
@@ -53,12 +53,12 @@ namespace fastoredis
         }
     }
 
-    void PropertyServerDialog::startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest &req)
+    void PropertyServerDialog::startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest& req)
     {
 
     }
 
-    void PropertyServerDialog::finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &res)
+    void PropertyServerDialog::finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce& res)
     {
         common::ErrorValueSPtr er = res.errorInfo();
         if(er && er->isError()){
@@ -74,7 +74,7 @@ namespace fastoredis
         }
     }
 
-    void PropertyServerDialog::showEvent(QShowEvent *e)
+    void PropertyServerDialog::showEvent(QShowEvent* e)
     {
         QDialog::showEvent(e);
         emit showed();

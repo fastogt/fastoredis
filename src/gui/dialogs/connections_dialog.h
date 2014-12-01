@@ -18,7 +18,7 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        ConnectionsDialog(QWidget *parent = 0);
+        ConnectionsDialog(QWidget* parent = 0);
         IConnectionSettingsBasePtr selectedConnection() const;
         virtual void accept();
 

@@ -2,9 +2,9 @@
 
 /**/
 
+#ifdef OS_POSIX
 #include <signal.h>
-
-#include <string.h>
+#endif
 
 #include <typeinfo>
 #include <vector>
@@ -202,13 +202,15 @@ namespace common
         void msleep(unsigned int msec);
         void usleep(unsigned int usec);
 
-#ifdef OS_LINUX
+#ifdef OS_POSIX
         namespace signal
         {
             bool signal(int sig, void (*handler)(int));
-            bool sigaddset(sigset_t &signal_mask,int sig);
+#ifdef OS_LINUX
+            bool sigaddset(sigset_t &signal_mask, int sig);
             bool sigemptyset(sigset_t &signal_mask);
             bool sigprocmask(int how, const sigset_t *set, sigset_t *oset);
+#endif
         }
 #endif
     }

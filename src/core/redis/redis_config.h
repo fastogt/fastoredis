@@ -6,10 +6,6 @@
 
 #include "common/convert2string.h"
 
-extern "C" {
-#include "third-party/redis/deps/hiredis/sds.h"
-}
-
 #define REDIS_CLI_DEFAULT_PIPE_TIMEOUT 30 /* seconds */
 
 namespace fastoredis
@@ -17,6 +13,9 @@ namespace fastoredis
     struct redisConfig
     {
         redisConfig();
+        redisConfig(const redisConfig& other);
+        redisConfig& operator=(const redisConfig &other);
+
         ~redisConfig();
 
         char *hostip;
@@ -46,11 +45,14 @@ namespace fastoredis
         int bigkeys;
         char *auth;
         char *eval;
-        sds mb_delim;
+        char *mb_delim;
         int last_cmd_type;
+
+    private:
+        void copy(const redisConfig& other);
+        void init();
     };
 }
-
 
 namespace common
 {

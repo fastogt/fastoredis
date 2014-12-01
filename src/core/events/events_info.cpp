@@ -78,7 +78,7 @@ namespace fastoredis
         }
 
         ExecuteInfoRequest::ExecuteInfoRequest(const std::string &text, const error_type &er)
-            : base_class(er), _text(text)
+            : base_class(er), text_(text)
         {
 
         }
@@ -180,8 +180,8 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
-        ProgressInfoResponce::ProgressInfoResponce(int pr)
-            : _progress(pr)
+        ProgressInfoResponce::ProgressInfoResponce(uint8_t pr)
+            : progress_(pr)
         {
 
         }

@@ -18,7 +18,7 @@ namespace fastoredis
             eCountColumns = 2
         };
 
-        PropertyTableItem(const QString &key, const QString &value);
+        PropertyTableItem(const QString& key, const QString& value);
 
         QString key_;
         QString value_;
@@ -30,19 +30,19 @@ namespace fastoredis
         Q_OBJECT
     public:
         PropertyTableModel(QObject *parent = 0);
-        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-        virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-        virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+        virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+        virtual bool setData(const QModelIndex& index, const QVariant &value, int role = Qt::EditRole);
+        virtual Qt::ItemFlags flags(const QModelIndex& index) const;
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-        virtual int columnCount(const QModelIndex &parent) const;
-        void addItem(PropertyTableItem *item);
-        void changeProperty(const PropertyType &pr);
+        virtual int columnCount(const QModelIndex& parent) const;
+        void addItem(PropertyTableItem* item);
+        void changeProperty(const PropertyType& pr);
 
         ~PropertyTableModel();
 
     Q_SIGNALS:
-        void changedProperty(const PropertyType &);
+        void changedProperty(const PropertyType& );
     };
 }
 

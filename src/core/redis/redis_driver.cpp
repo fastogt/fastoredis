@@ -9,6 +9,7 @@ extern "C" {
 #include "third-party/redis/src/help.h"
 #include "third-party/redis/deps/hiredis/hiredis.h"
 #include "third-party/redis/src/anet.h"
+#include "third-party/redis/deps/hiredis/sds.h"
 }
 
 #include "common/time.h"
@@ -106,7 +107,7 @@ namespace
 
             for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
                 helpEntry tmp;
-                char* command = commandGroups[i];
+                const char* command = commandGroups[i];
                 QString qcommand = common::convertFromString<QString>(std::string(command));
                 redisTypesKeywords.push_back(qcommand);
                 tmp.argc = 1;
@@ -1705,7 +1706,7 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ExecuteRequestEvent::value_type res(ev->value());
-            const char *inputLine = toCString(res._text);
+            const char *inputLine = toCString(res.text_);
 
             common::ErrorValueSPtr er;
             if(inputLine){

@@ -1,4 +1,4 @@
-#include "gui/fasto_tree_model.h"
+#include "gui/fasto_common_model.h"
 
 #include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
@@ -8,18 +8,18 @@
 
 namespace fastoredis
 {
-    FastoTreeModel::FastoTreeModel(QObject *parent)
+    FastoCommonModel::FastoCommonModel(QObject *parent)
         : TreeModel(parent)
     {
 
     }
 
-    FastoTreeModel::~FastoTreeModel()
+    FastoCommonModel::~FastoCommonModel()
     {
 
     }
 
-    QVariant FastoTreeModel::data(const QModelIndex &index, int role) const
+    QVariant FastoCommonModel::data(const QModelIndex &index, int role) const
     {
         QVariant result;
 
@@ -56,7 +56,7 @@ namespace fastoredis
         return result;
     }
 
-    QVariant FastoTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
+    QVariant FastoCommonModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
         using namespace translations;
         if (role != Qt::DisplayRole)
@@ -77,12 +77,12 @@ namespace fastoredis
         return TreeModel::headerData(section,orientation,role);
     }
 
-    int FastoTreeModel::columnCount(const QModelIndex &parent) const
+    int FastoCommonModel::columnCount(const QModelIndex &parent) const
     {
         return FastoCommonItem::eCountColumns;
     }
 
-    Qt::ItemFlags FastoTreeModel::flags(const QModelIndex &index) const
+    Qt::ItemFlags FastoCommonModel::flags(const QModelIndex &index) const
     {
         Qt::ItemFlags result = 0;
         if (index.isValid()) {

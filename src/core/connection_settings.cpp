@@ -1,7 +1,5 @@
 #include "core/connection_settings.h"
 
-#include <QObject>
-
 #include "core/settings_manager.h"
 
 #include "common/utils.h"
@@ -137,13 +135,14 @@ namespace fastoredis
         return connectionName_;
     }
 
-    QString useHelpText(connectionTypes type)
+    const char* useHelpText(connectionTypes type)
     {
         if(type == DBUNKNOWN){
-            return QString();
+            NOTREACHED();
+            return NULL;
         }
         else if(type == REDIS){
-            return QObject::tr("<b>Usage: [OPTIONS] [cmd [arg [arg ...]]]</b><br/>"
+            return "<b>Usage: [OPTIONS] [cmd [arg [arg ...]]]</b><br/>"
                                "<b>-h &lt;hostname&gt;</b>      Server hostname (default: 127.0.0.1).<br/>"
                                "<b>-p &lt;port&gt;</b>          Server port (default: 6379).<br/>"
                                "<b>-s &lt;socket&gt;</b>        Server socket (overrides hostname and port).<br/>"
@@ -168,11 +167,11 @@ namespace fastoredis
                                "<b>--pattern &lt;pat&gt;</b>    Useful with <b>--scan</b> to specify a SCAN pattern.<br/>"
                                "<b>--intrinsic-latency &lt;sec&gt;</b> Run a test to measure intrinsic system latency.<br/>"
                                "                   The test will run for the specified amount of seconds.<br/>"
-                               "<b>--eval &lt;file&gt;</b>      Send an EVAL command using the Lua script at <b>&lt;file&gt;</b>."
-                               );
+                               "<b>--eval &lt;file&gt;</b>      Send an EVAL command using the Lua script at <b>&lt;file&gt;</b>.";
         }
 
-        return QString();
+        NOTREACHED();
+        return NULL;
     }
 
     RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName, const redisConfig &info)

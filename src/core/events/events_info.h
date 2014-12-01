@@ -103,7 +103,7 @@ namespace fastoredis
         {
             typedef EventInfoBase base_class;
             ExecuteInfoRequest(const std::string &text, const error_type &er = error_type());
-            const std::string _text;
+            const std::string text_;
         };
 
         struct LoadDatabasesInfoRequest
@@ -217,9 +217,9 @@ namespace fastoredis
 
         struct ProgressInfoResponce
         {
-            ProgressInfoResponce(int pr);
+            ProgressInfoResponce(uint8_t pr);
 
-            const int _progress;
+            const uint8_t progress_;
         };
     }
 }

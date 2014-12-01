@@ -68,7 +68,7 @@ namespace common
             int rv;
             if ((rv = getaddrinfo(host.c_str(), _port, &hints, &result)) != 0) {
                  hints.ai_family = AF_INET6;
-                 if ((rv = getaddrinfo(host.c_str(), _port,&hints, &result)) != 0) {
+                 if ((rv = getaddrinfo(host.c_str(), _port, &hints, &result)) != 0) {
                     return false;
                 }
             }
@@ -84,13 +84,13 @@ namespace common
                    break;                  /* Success */
 
                ::close(sfd);
-           }
+            }
 
-           if (rp == NULL) {               /* No address succeeded */
+            if (rp == NULL) {               /* No address succeeded */
                return false;
-           }
+            }
 
-           freeaddrinfo(result);           /* No longer needed */
+            freeaddrinfo(result);           /* No longer needed */
             fd_ = sfd;
             return true;
         }

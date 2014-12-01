@@ -11,10 +11,10 @@ namespace fastoredis
     {        
         Q_OBJECT
     public:
-        FastoTableView(QWidget *parent = 0);
+        FastoTableView(QWidget* parent = 0);
 
     private Q_SLOTS:
-        void showContextMenu(const QPoint &point);
+        void showContextMenu(const QPoint& point);
     };
 }
 

@@ -18,7 +18,7 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        explicit PreferencesDialog(QWidget *parent);
+        explicit PreferencesDialog(QWidget* parent);
         enum
         {
             height = 640,
@@ -32,23 +32,23 @@ namespace fastoredis
         void syncWithSettings();
 
     protected:
-        virtual void changeEvent(QEvent *);
+        virtual void changeEvent(QEvent* );
 
     private:
         void retranslateUi();
 
         QGroupBox* generalBox_;
         QCheckBox* autoCheckUpdates_;
-        QLabel *langLabel_;
-        QComboBox *languagesComboBox_;
-        QLabel *stylesLabel_;
-        QComboBox *stylesComboBox_;
+        QLabel* langLabel_;
+        QComboBox* languagesComboBox_;
+        QLabel* stylesLabel_;
+        QComboBox* stylesComboBox_;
         QLabel* defaultViewLabel_;
-        QComboBox *defaultViewComboBox_;
+        QComboBox* defaultViewComboBox_;
 
         QGroupBox* serverSettingsBox_;
         QCheckBox* syncTabs_;
-        QLabel *logDirLabel_;
+        QLabel* logDirLabel_;
         QLineEdit* logDirPath_;
     };
 }

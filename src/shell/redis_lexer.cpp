@@ -14,7 +14,7 @@ namespace fastoredis
     {
     }
 
-    void RedisApi::updateAutoCompletionList(const QStringList &context, QStringList &list)
+    void RedisApi::updateAutoCompletionList(const QStringList& context, QStringList& list)
     {        
         for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
             QString val = *it;
@@ -38,12 +38,12 @@ namespace fastoredis
         }
     }
 
-    QStringList RedisApi::callTips(const QStringList &context, int commas, QsciScintilla::CallTipsStyle style, QList<int> &shifts)
+    QStringList RedisApi::callTips(const QStringList& context, int commas, QsciScintilla::CallTipsStyle style, QList<int>& shifts)
     {
         return QStringList();
     }
 
-    RedisLexer::RedisLexer(QObject *parent)
+    RedisLexer::RedisLexer(QObject* parent)
         : QsciLexerCustom(parent)
     {
         setAPIs(new RedisApi(this));
@@ -121,7 +121,7 @@ namespace fastoredis
         }
     }
 
-    void RedisLexer::paintCommands(const QString &source, int start)
+    void RedisLexer::paintCommands(const QString& source, int start)
     {
         for(std::vector<QString>::const_iterator it = redisCommandsKeywords.begin(); it != redisCommandsKeywords.end(); ++it){
             QString word = *it;
@@ -137,7 +137,7 @@ namespace fastoredis
         }
     }
 
-    void RedisLexer::paintTypes(const QString &source, int start)
+    void RedisLexer::paintTypes(const QString& source, int start)
     {
         for(std::vector<QString>::const_iterator it = redisTypesKeywords.begin(); it != redisTypesKeywords.end(); ++it){
             QString word = *it;

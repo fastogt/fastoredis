@@ -26,7 +26,7 @@ using namespace fastoredis::translations;
 
 namespace
 {
-    bool loadFromFileText(const QString &filePath, QString &text, QWidget* parent)
+    bool loadFromFileText(const QString& filePath, QString& text, QWidget* parent)
     {
         using namespace common;
 
@@ -55,7 +55,7 @@ namespace
         return result;
     }
 
-    bool saveToFileText(QString filePath, const QString &text, QWidget* parent)
+    bool saveToFileText(QString filePath, const QString& text, QWidget* parent)
     {
         if (filePath.isEmpty())
             return false;
@@ -89,7 +89,7 @@ namespace
 
 namespace fastoredis
 {
-    ShellWidget::ShellWidget(IServerPtr server, const QString &filePath, QWidget *parent)
+    ShellWidget::ShellWidget(IServerPtr server, const QString& filePath, QWidget* parent)
         : QWidget(parent), server_(server), filePath_(filePath)
     {
         VERIFY(connect(server_.get(), SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), this, SLOT(startConnect(const EventsInfo::ConnectInfoRequest &))));
@@ -227,30 +227,30 @@ namespace fastoredis
         executeAction_->setEnabled(server_->isConnected());
     }
 
-    void ShellWidget::startConnect(const EventsInfo::ConnectInfoRequest &req)
+    void ShellWidget::startConnect(const EventsInfo::ConnectInfoRequest& req)
     {
         syncConnectionActions();
     }
 
-    void ShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce &res)
+    void ShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce& res)
     {
         serverName_->setText(server_->address());
         syncConnectionActions();
     }
 
-    void ShellWidget::startDisconnect(const EventsInfo::DisonnectInfoRequest &req)
+    void ShellWidget::startDisconnect(const EventsInfo::DisonnectInfoRequest& req)
     {
         syncConnectionActions();
     }
 
-    void ShellWidget::finishDisconnect(const EventsInfo::DisConnectInfoResponce &res)
+    void ShellWidget::finishDisconnect(const EventsInfo::DisConnectInfoResponce& res)
     {
         syncConnectionActions();
     }
 
-    void ShellWidget::progressChange(const EventsInfo::ProgressInfoResponce &res)
+    void ShellWidget::progressChange(const EventsInfo::ProgressInfoResponce& res)
     {
-        workProgressBar_->setValue(res._progress);
+        workProgressBar_->setValue(res.progress_);
     }
 
     void ShellWidget::loadFromFile()
@@ -262,7 +262,7 @@ namespace fastoredis
         }
     }
 
-    bool ShellWidget::loadFromFile(const QString &path)
+    bool ShellWidget::loadFromFile(const QString& path)
     {
         bool res = false;
         QString filepath = QFileDialog::getOpenFileName(this, path, QString(), trfilterForScripts);

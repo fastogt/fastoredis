@@ -7,7 +7,7 @@
 
 namespace fastoredis
 {
-    FastoTableView::FastoTableView(QWidget *parent)
+    FastoTableView::FastoTableView(QWidget* parent)
         : QTableView(parent)
     {
         verticalHeader()->setDefaultAlignment(Qt::AlignLeft);
@@ -18,7 +18,7 @@ namespace fastoredis
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
     }
 
-    void FastoTableView::showContextMenu(const QPoint &point)
+    void FastoTableView::showContextMenu(const QPoint& point)
     {
         QPoint menuPoint = mapToGlobal(point);
         menuPoint.setY(menuPoint.y() + horizontalHeader()->height());

@@ -20,13 +20,13 @@ namespace fastoredis
         LogWidget(QWidget* parent = 0);        
 
     public Q_SLOTS:
-        void addLogMessage(const QString &message, common::logging::LEVEL_LOG level);
+        void addLogMessage(const QString& message, common::logging::LEVEL_LOG level);
 
     private Q_SLOTS:
-        void showContextMenu(const QPoint &pt);
+        void showContextMenu(const QPoint& pt);
 
     protected:
-        virtual void changeEvent(QEvent *);
+        virtual void changeEvent(QEvent* );
 
     private:
         void retranslateUi();

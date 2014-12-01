@@ -41,7 +41,7 @@ namespace fastoredis
         void layoutChanged();
 
     protected:
-        virtual void keyPressEvent(QKeyEvent *e);
+        virtual void keyPressEvent(QKeyEvent* e);
         int lineNumberMarginWidth() const;
 
     private:
