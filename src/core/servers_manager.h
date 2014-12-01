@@ -25,7 +25,7 @@ namespace fastoredis
         IServerPtr findServerBySetting(const IConnectionSettingsBasePtr& settings) const;
         std::vector<QObject*> findAllListeners(const IDriverPtr& drv);
 
-        ServersContainer _servers;
+        ServersContainer servers_;
         bool syncServers_;
     };
 }

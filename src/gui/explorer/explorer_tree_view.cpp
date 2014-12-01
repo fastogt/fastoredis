@@ -16,7 +16,7 @@
 
 namespace fastoredis
 {
-    ExplorerTreeView::ExplorerTreeView(QWidget *parent)
+    ExplorerTreeView::ExplorerTreeView(QWidget* parent)
         : QTreeView(parent)
     {
         setModel(new ExplorerTreeModel(this));
@@ -50,7 +50,7 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void ExplorerTreeView::showContextMenu(const QPoint &point)
+    void ExplorerTreeView::showContextMenu(const QPoint& point)
     {
         QPoint menuPoint = mapToGlobal(point);
         menuPoint.setY(menuPoint.y() + header()->height());
@@ -167,7 +167,7 @@ namespace fastoredis
         return indexses[0];
     }
 
-    void ExplorerTreeView::changeEvent(QEvent *e)
+    void ExplorerTreeView::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();
@@ -189,12 +189,12 @@ namespace fastoredis
         closeAction_->setText(trClose);
     }
 
-    void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &req)
+    void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req)
     {
 
     }
 
-    void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res)
+    void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res)
     {
         common::ErrorValueSPtr er = res.errorInfo();
         if(er && er->isError()){

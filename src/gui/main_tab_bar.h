@@ -22,10 +22,10 @@ namespace fastoredis
         void closedOtherTabs();
 
     private Q_SLOTS:
-        void showContextMenu(const QPoint &p);        
+        void showContextMenu(const QPoint& p);
 
     protected:
-        virtual void changeEvent(QEvent *);
+        virtual void changeEvent(QEvent* );
 
     private:
         void retranslateUi();

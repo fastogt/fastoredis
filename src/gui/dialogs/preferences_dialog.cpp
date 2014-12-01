@@ -124,7 +124,7 @@ namespace fastoredis
         return QDialog::accept();
     }
 
-    void PreferencesDialog::changeEvent(QEvent *e)
+    void PreferencesDialog::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();

@@ -21,7 +21,7 @@
 
 namespace
 {
-    fastoredis::FastoCommonItem *createItem(fastoredis::TreeItem *parent, fastoredis::FastoObject* item)
+    fastoredis::FastoCommonItem *createItem(fastoredis::TreeItem* parent, fastoredis::FastoObject* item)
     {
         fastoredis::FastoCommonItem *result = NULL;
         fastoredis::FastoObject::child_container_type cont = item->childrens();

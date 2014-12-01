@@ -17,8 +17,8 @@ namespace fastoredis
     public:
         explicit MainWidget(QWidget *parent = 0);
         void addWidgetBySetting(const IConnectionSettingsBasePtr& setting);
-        QueryWidget *currentWidget() const;
-        QueryWidget *widget(int index) const;
+        QueryWidget* currentWidget() const;
+        QueryWidget* widget(int index) const;
 
     public Q_SLOTS:
         void openConsole(IServerPtr server);
@@ -32,7 +32,7 @@ namespace fastoredis
         void closedOtherTabs();
 
     private:
-        void addWidgetToTab(QWidget *wid, const QString &title);
-        void openNewTab(QueryWidget *src, const QString &title, const QString &text);
+        void addWidgetToTab(QWidget* wid, const QString& title);
+        void openNewTab(QueryWidget* src, const QString& title, const QString& text);
     };
 }

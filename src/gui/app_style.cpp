@@ -9,7 +9,7 @@ namespace fastoredis
 {
     const std::string defStyle = "Native";
 
-    void applyStyle(const QString &styleName)
+    void applyStyle(const QString& styleName)
     {
         if (styleName == common::convertFromString<QString>(defStyle)) {
             QApplication::setStyle(new AppStyle);
@@ -25,12 +25,12 @@ namespace fastoredis
         return result;
     }
 
-    void AppStyle::drawControl(ControlElement element,	const QStyleOption * option,	QPainter * painter,	const QWidget * widget) const
+    void AppStyle::drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const
     {
         return OsStyle::drawControl(element, option, painter, widget);
     }
 
-    void AppStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+    void AppStyle::drawPrimitive(PrimitiveElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const
     {
 #ifdef Q_OS_WIN
 
@@ -42,7 +42,7 @@ namespace fastoredis
         return OsStyle::drawPrimitive(element, option, painter, widget);
     }
 
-    QRect AppStyle::subElementRect( SubElement element, const QStyleOption * option, const QWidget * widget /*= 0 */ ) const
+    QRect AppStyle::subElementRect(SubElement element, const QStyleOption* option, const QWidget* widget /*= 0 */) const
     {
         return OsStyle::subElementRect(element, option, widget);
     }

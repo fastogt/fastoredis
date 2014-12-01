@@ -5,7 +5,7 @@
 
 namespace fastoredis
 {
-    IExplorerTreeItem::IExplorerTreeItem(TreeItem *parent)
+    IExplorerTreeItem::IExplorerTreeItem(TreeItem* parent)
         : TreeItem(parent)
     {
 
@@ -16,7 +16,7 @@ namespace fastoredis
 
     }
 
-    ExplorerServerItem::ExplorerServerItem(IServerPtr server, TreeItem *parent)
+    ExplorerServerItem::ExplorerServerItem(IServerPtr server, TreeItem* parent)
         : IExplorerTreeItem(parent), server_(server)
     {
 
@@ -42,7 +42,7 @@ namespace fastoredis
         return server_->name();
     }
 
-    ExplorerDatabaseItem::ExplorerDatabaseItem(const DataBaseInfo &db, ExplorerServerItem *parent)
+    ExplorerDatabaseItem::ExplorerDatabaseItem(const DataBaseInfo& db, ExplorerServerItem* parent)
         : IExplorerTreeItem(parent), db_(db)
     {
 
@@ -88,7 +88,7 @@ namespace fastoredis
     {
     }
 
-    QVariant ExplorerTreeModel::data(const QModelIndex &index, int role) const
+    QVariant ExplorerTreeModel::data(const QModelIndex& index, int role) const
     {
         if (!index.isValid()){
             return QVariant();
@@ -135,12 +135,12 @@ namespace fastoredis
         return TreeModel::headerData(section,orientation,role);
     }
 
-    int ExplorerTreeModel::columnCount(const QModelIndex &parent) const
+    int ExplorerTreeModel::columnCount(const QModelIndex& parent) const
     {
         return ExplorerServerItem::eCountColumns;
     }
 
-    Qt::ItemFlags ExplorerTreeModel::flags(const QModelIndex &index) const
+    Qt::ItemFlags ExplorerTreeModel::flags(const QModelIndex& index) const
     {
         Qt::ItemFlags result = 0;
         if (index.isValid()) {
@@ -175,7 +175,7 @@ namespace fastoredis
         endRemoveRows();
     }
 
-    void ExplorerTreeModel::addDatabase(IServer * server, const DataBaseInfo &db)
+    void ExplorerTreeModel::addDatabase(IServer* server, const DataBaseInfo& db)
     {
         ExplorerServerItem *parent = findServerItem(server);
         DCHECK(parent);
@@ -190,7 +190,7 @@ namespace fastoredis
         }
     }
 
-    ExplorerServerItem *ExplorerTreeModel::findServerItem(IServer *server) const
+    ExplorerServerItem *ExplorerTreeModel::findServerItem(IServer* server) const
     {
         TreeItem *parent = dynamic_cast<TreeItem*>(_root.get());
         DCHECK(parent);
@@ -204,7 +204,7 @@ namespace fastoredis
         return NULL;
     }
 
-    ExplorerDatabaseItem *ExplorerTreeModel::findDatabaseItem(ExplorerServerItem *server, const DataBaseInfo &db) const
+    ExplorerDatabaseItem *ExplorerTreeModel::findDatabaseItem(ExplorerServerItem* server, const DataBaseInfo& db) const
     {
         ExplorerDatabaseItem *result = NULL;
         if(server){

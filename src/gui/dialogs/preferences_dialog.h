@@ -18,7 +18,7 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        explicit PreferencesDialog(QWidget *parent);
+        explicit PreferencesDialog(QWidget* parent);
         enum
         {
             height = 640,
@@ -32,7 +32,7 @@ namespace fastoredis
         void syncWithSettings();
 
     protected:
-        virtual void changeEvent(QEvent *);
+        virtual void changeEvent(QEvent* );
 
     private:
         void retranslateUi();

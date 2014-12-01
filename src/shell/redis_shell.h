@@ -13,17 +13,17 @@ namespace fastoredis
     public:
         static const QColor paperColor;
 
-        RedisShell(QWidget *parent = 0);
+        RedisShell(QWidget* parent = 0);
         QString version() const;
 
     Q_SIGNALS:
         void executed();
 
     private Q_SLOTS:
-        void showContextMenu(const QPoint &pt);
+        void showContextMenu(const QPoint& pt);
 
     protected:
-        virtual void keyPressEvent(QKeyEvent *keyEvent);
+        virtual void keyPressEvent(QKeyEvent* keyEvent);
 
     private:
         QString version_;

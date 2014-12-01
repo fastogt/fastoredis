@@ -9,7 +9,7 @@
 
 namespace fastoredis
 {
-    MainTabBar::MainTabBar(QWidget *parent)
+    MainTabBar::MainTabBar(QWidget* parent)
         : QTabBar(parent)
     {
         newShellAction_ = new QAction(this);
@@ -36,7 +36,7 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void MainTabBar::showContextMenu(const QPoint &p)
+    void MainTabBar::showContextMenu(const QPoint& p)
     {
         QMenu menu(this);
         menu.addAction(newShellAction_);
@@ -49,7 +49,7 @@ namespace fastoredis
         menu.exec(mapToGlobal(p));
     }
 
-    void MainTabBar::changeEvent(QEvent *e)
+    void MainTabBar::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();

@@ -19,17 +19,17 @@ namespace fastoredis
         CommandsWidget(QWidget* parent = 0);
 
     public Q_SLOTS:
-        void addCommand(const Command &command);
+        void addCommand(const Command& command);
 
     private Q_SLOTS:
-        void showContextMenu(const QPoint &pt);
+        void showContextMenu(const QPoint& pt);
 
     protected:
         virtual void changeEvent(QEvent *);
 
     private:
         void retranslateUi();
-        QTextEdit *const logTextEdit_;
-        QAction *clear_;
+        QTextEdit* const logTextEdit_;
+        QAction* clear_;
     };
 }

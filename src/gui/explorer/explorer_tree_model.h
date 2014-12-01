@@ -21,7 +21,7 @@ namespace fastoredis
             Server,
             Database
         };        
-        IExplorerTreeItem(TreeItem *parent);
+        IExplorerTreeItem(TreeItem* parent);
         virtual ~IExplorerTreeItem();
 
         virtual QString name() const = 0;
@@ -32,7 +32,7 @@ namespace fastoredis
     struct ExplorerServerItem
             : public IExplorerTreeItem
     {
-        ExplorerServerItem(IServerPtr server, TreeItem *parent);
+        ExplorerServerItem(IServerPtr server, TreeItem* parent);
         virtual ~ExplorerServerItem();
 
         virtual QString name() const;
@@ -46,10 +46,10 @@ namespace fastoredis
     struct ExplorerDatabaseItem
             : public IExplorerTreeItem
     {
-        ExplorerDatabaseItem(const DataBaseInfo &db, ExplorerServerItem *parent);
+        ExplorerDatabaseItem(const DataBaseInfo& db, ExplorerServerItem* parent);
         virtual ~ExplorerDatabaseItem();
 
-        ExplorerServerItem *parent() const;
+        ExplorerServerItem* parent() const;
         virtual QString name() const;
         virtual IServerPtr server() const;
         virtual eType type() const;
@@ -65,22 +65,22 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        ExplorerTreeModel(QObject *parent = 0);
+        ExplorerTreeModel(QObject* parent = 0);
         virtual ~ExplorerTreeModel();
 
-        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-        virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+        virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+        virtual Qt::ItemFlags flags(const QModelIndex& index) const;
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
         virtual int columnCount(const QModelIndex &parent) const;
 
         void addServer(IServerPtr server);
         void removeServer(IServerPtr server);
 
-        void addDatabase(IServer *server, const DataBaseInfo &db);
+        void addDatabase(IServer *server, const DataBaseInfo& db);
 
     private:
-        ExplorerServerItem *findServerItem(IServer *server) const;
-        ExplorerDatabaseItem *findDatabaseItem(ExplorerServerItem *server, const DataBaseInfo &db) const;
+        ExplorerServerItem *findServerItem(IServer* server) const;
+        ExplorerDatabaseItem *findDatabaseItem(ExplorerServerItem* server, const DataBaseInfo& db) const;
     };
 }
 

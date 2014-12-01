@@ -16,7 +16,7 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        ExplorerTreeView(QWidget *parent);
+        ExplorerTreeView(QWidget* parent);
 
     Q_SIGNALS:
         void openedConsole(IServerPtr server);
@@ -26,7 +26,7 @@ namespace fastoredis
         void removeServer(IServerPtr server);
 
     private Q_SLOTS:
-        void showContextMenu(const QPoint &point);
+        void showContextMenu(const QPoint& point);
         void connectDisconnectToServer();
         void openConsole();
         void loadDatabases();
@@ -40,7 +40,7 @@ namespace fastoredis
         void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res);
 
     protected:
-        virtual void changeEvent(QEvent *);
+        virtual void changeEvent(QEvent* );
 
     private:
         void retranslateUi();

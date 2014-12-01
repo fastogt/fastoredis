@@ -26,7 +26,7 @@ namespace fastoredis
             : public QTreeWidgetItem
     {
     public:
-        ConnectionListWidgetItem(const IConnectionSettingsBasePtr &connection): connection_(connection) { refreshFields(); }
+        ConnectionListWidgetItem(const IConnectionSettingsBasePtr& connection): connection_(connection) { refreshFields(); }
         IConnectionSettingsBasePtr connection() { return connection_; }
 
         void refreshFields()
@@ -49,7 +49,7 @@ namespace fastoredis
     /**
      * @brief Creates dialog
      */
-    ConnectionsDialog::ConnectionsDialog(QWidget *parent)
+    ConnectionsDialog::ConnectionsDialog(QWidget* parent)
         : QDialog(parent)
     {
         using namespace translations;
@@ -141,7 +141,7 @@ namespace fastoredis
         acButton_->setEnabled(selectedConnection());
     }
 
-    void ConnectionsDialog::add(const IConnectionSettingsBasePtr &con)
+    void ConnectionsDialog::add(const IConnectionSettingsBasePtr& con)
     {
         ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
         listWidget_->addTopLevelItem(item);
@@ -225,7 +225,7 @@ namespace fastoredis
         QDialog::accept();
     }
 
-    void ConnectionsDialog::changeEvent(QEvent *e)
+    void ConnectionsDialog::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();

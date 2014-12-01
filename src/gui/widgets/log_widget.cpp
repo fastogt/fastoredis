@@ -46,7 +46,7 @@ namespace fastoredis
         sb->setValue(sb->maximum());
     }
 
-    void LogWidget::changeEvent(QEvent *e)
+    void LogWidget::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();

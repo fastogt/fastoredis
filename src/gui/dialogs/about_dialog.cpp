@@ -27,7 +27,7 @@ namespace
 
 namespace fastoredis
 {
-    AboutDialog::AboutDialog(QWidget *parent)
+    AboutDialog::AboutDialog(QWidget* parent)
         : QDialog(parent)
     {
         setWindowIcon(GuiFactory::instance().mainWindowIcon());

@@ -32,7 +32,7 @@ namespace fastoredis
         void rootCreate(const EventsInfo::CommandRootCreatedInfo& res);
         void rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res);
 
-        void addChild(FastoObject *child);
+        void addChild(FastoObject* child);
         void itemUpdate(FastoObject*, const QString& newValue);
 
     private:

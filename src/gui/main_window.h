@@ -61,7 +61,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        UpdateChecker(QObject *parent = 0);
+        UpdateChecker(QObject* parent = 0);
 
     Q_SIGNALS:
         void versionAvailibled(bool succesResult, const QString& version);

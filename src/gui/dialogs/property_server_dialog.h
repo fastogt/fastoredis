@@ -6,7 +6,6 @@
 
 #include "core/events/events_info.h"
 
-class QLabel;
 class QTableView;
 
 namespace fastoredis

@@ -12,10 +12,10 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        RedisApi(QsciLexer *lexer);
-        virtual void updateAutoCompletionList(const QStringList &context, QStringList &list);
+        RedisApi(QsciLexer* lexer);
+        virtual void updateAutoCompletionList(const QStringList& context, QStringList& list);
 
-        virtual QStringList callTips(const QStringList &context, int commas, QsciScintilla::CallTipsStyle style, QList<int> &shifts);
+        virtual QStringList callTips(const QStringList& context, int commas, QsciScintilla::CallTipsStyle style, QList<int>& shifts);
     };
 
     class RedisLexer
@@ -30,15 +30,15 @@ namespace fastoredis
             HelpKeyword
         };
 
-        RedisLexer(QObject *parent = 0);
-        virtual const char *language() const;
+        RedisLexer(QObject* parent = 0);
+        virtual const char* language() const;
         const char* version() const;
         virtual QString description(int style) const;
         virtual void styleText(int start, int end);
         virtual QColor defaultColor(int style) const;
 
     private:
-        void paintCommands(const QString &source, int start);
-        void paintTypes(const QString &source, int start);
+        void paintCommands(const QString& source, int start);
+        void paintTypes(const QString& source, int start);
     };
 }
