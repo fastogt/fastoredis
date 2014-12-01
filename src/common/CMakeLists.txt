@@ -78,7 +78,7 @@ SET(MULTI_THREADING_SOURCES
         multi_threading/pthread_thread_pool_impl.hpp
         multi_threading/pthread_wrapper.hpp)
 
-SET(COMMON_SOURCES runtime_bitset.h runtime_bitset.cpp log_levels.h logger.h logger.cpp common_config.h
+SET(COMMON_SOURCES log_levels.h logger.h logger.cpp common_config.h
 basictypes.h
 safe_sprintf.h safe_sprintf.cpp utf_string_conversions.h utf_string_conversions.cpp utf_string_conversion_utils.h utf_string_conversion_utils.cpp
 string_util.h string_util.cpp icu_utf.h icu_utf.cpp string_piece.h string_piece.cpp string16.h string16.cpp hash_tables.h

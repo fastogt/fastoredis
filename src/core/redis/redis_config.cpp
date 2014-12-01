@@ -2,6 +2,26 @@
 
 #include "core/logger.h"
 
+namespace
+{
+    char *strdupornull(const char *src)
+    {
+        if(!src){
+            return NULL;
+        }
+
+        return strdup(src);
+    }
+
+    void freeifnotnull(void* ptr)
+    {
+        if(!ptr){
+            return;
+        }
+
+        free(ptr);
+    }
+}
 
 namespace fastoredis
 {
@@ -14,8 +34,8 @@ namespace fastoredis
                 int lastarg = i==argc-1;
 
                 if (!strcmp(argv[i],"-h") && !lastarg) {
-                    sdsfree(cfg.hostip);
-                    cfg.hostip = sdsnew(argv[++i]);
+                    free(cfg.hostip);
+                    cfg.hostip = strdup(argv[++i]);
                 }/* else if (!strcmp(argv[i],"-h") && lastarg) {
                     usage();
                 } else if (!strcmp(argv[i],"--help")) {
@@ -34,7 +54,7 @@ namespace fastoredis
                 } else if (!strcmp(argv[i],"-n") && !lastarg) {
                     cfg.dbnum = atoi(argv[++i]);
                 } else if (!strcmp(argv[i],"-a") && !lastarg) {
-                    cfg.auth = sdsnew(argv[++i]);
+                    cfg.auth = strdup(argv[++i]);
                 }
                 /*else if (!strcmp(argv[i],"--raw")) {
                     cfg.output = OUTPUT_RAW;
@@ -54,13 +74,13 @@ namespace fastoredis
                 } else if (!strcmp(argv[i],"--scan")) {
                     cfg.scan_mode = 1;
                 } else if (!strcmp(argv[i],"--pattern") && !lastarg) {
-                    cfg.pattern = sdsnew(argv[++i]);
+                    cfg.pattern = strdup(argv[++i]);
                 } else if (!strcmp(argv[i],"--intrinsic-latency") && !lastarg) {
                     cfg.intrinsic_latency_mode = 1;
                     cfg.intrinsic_latency_duration = atoi(argv[++i]);
                 } else if (!strcmp(argv[i],"--rdb") && !lastarg) {
                     cfg.getrdb_mode = 1;
-                    cfg.rdb_filename = sdsnew(argv[++i]);
+                    cfg.rdb_filename = strdup(argv[++i]);
                 /*} else if (!strcmp(argv[i],"--pipe")) {
                     cfg.pipe_mode = 1;
                 } else if (!strcmp(argv[i],"--pipe-timeout") && !lastarg) {
@@ -68,13 +88,13 @@ namespace fastoredis
                 } else if (!strcmp(argv[i],"--bigkeys")) {
                     cfg.bigkeys = 1;
                 } else if (!strcmp(argv[i],"--eval") && !lastarg) {
-                    cfg.eval = sdsnew(argv[++i]);
+                    cfg.eval = strdup(argv[++i]);
                 } else if (!strcmp(argv[i],"-c")) {
                     cfg.cluster_mode = 1;
                 }
                 else if (!strcmp(argv[i],"-d") && !lastarg) {
-                    sdsfree(cfg.mb_delim);
-                    cfg.mb_delim = sdsnew(argv[++i]);
+                    free(cfg.mb_delim);
+                    cfg.mb_delim = strdup(argv[++i]);
                 }
                 /*else if (!strcmp(argv[i],"-v") || !strcmp(argv[i], "--version")) {
                     sds version = cliVersion();
@@ -86,8 +106,7 @@ namespace fastoredis
                         const uint16_t size_buff = 256;
                         char buff[size_buff] = {0};
                         sprintf(buff, "Unrecognized option or bad number of args for: '%s'", argv[i]);
-                        common::ErrorValueSPtr er(new common::ErrorValue(buff, common::Value::E_ERROR));
-                        LOG_ERROR(er);
+                        LOG_MSG(buff, common::logging::L_WARNING);
                         break;
                     } else {
                         /* Likely the command name, stop here. */
@@ -97,28 +116,73 @@ namespace fastoredis
             }
             return i;
         }
-
-        redisConfig parseOptions(const std::string& commandLine)
-        {
-            redisConfig cfg;
-            enum { kMaxArgs = 64 };
-            int argc = 0;
-            char *argv[kMaxArgs] = {0};
-
-            char* p2 = strtok((char*)commandLine.c_str(), " ");
-            while(p2){
-                argv[argc++] = p2;
-                p2 = strtok(0, " ");
-            }
-
-            parseOptions(argc, argv, cfg);
-            return cfg;
-        }
     }
 
     redisConfig::redisConfig()
     {
-        hostip = sdsnew("127.0.0.1");
+        init();
+    }
+
+    redisConfig::redisConfig(const redisConfig &other)
+    {
+        init();
+        copy(other);
+    }
+
+    redisConfig& redisConfig::operator=(const redisConfig &other)
+    {
+        copy(other);
+        return *this;
+    }
+
+    void redisConfig::copy(const redisConfig& other)
+    {
+        freeifnotnull(hostip);
+        hostip = strdupornull(other.hostip); //
+
+        hostport = other.hostport;
+
+        freeifnotnull(hostsocket);
+        hostsocket = strdupornull(other.hostsocket); //
+
+        repeat = other.repeat;
+        interval = other.interval;
+        dbnum = other.dbnum;
+        interactive = other.interactive;
+        shutdown = other.shutdown;
+        monitor_mode = other.monitor_mode;
+        pubsub_mode = other.pubsub_mode;
+        latency_mode = other.latency_mode;
+        latency_history = other.latency_history;
+        cluster_mode = other.cluster_mode;
+        cluster_reissue_command = other.cluster_reissue_command;
+        slave_mode = other.slave_mode;
+        getrdb_mode = other.getrdb_mode;
+        stat_mode = other.stat_mode;
+        scan_mode = other.scan_mode;
+        intrinsic_latency_mode = other.intrinsic_latency_mode;
+        intrinsic_latency_duration = other.intrinsic_latency_duration;
+
+        freeifnotnull(pattern);
+        pattern = strdupornull(other.pattern); //
+        freeifnotnull(rdb_filename);
+        rdb_filename = strdupornull(other.rdb_filename); //
+
+        bigkeys = other.bigkeys;
+
+        freeifnotnull(auth);
+        auth = strdupornull(other.auth); //
+        freeifnotnull(eval);
+        eval = strdupornull(other.eval); //
+        freeifnotnull(mb_delim);
+        mb_delim = strdupornull(other.mb_delim); //
+
+        last_cmd_type = other.last_cmd_type;
+    }
+
+    void redisConfig::init()
+    {
+        hostip = strdup("127.0.0.1");
         hostport = 6379;
         hostsocket = NULL;
         repeat = 1;
@@ -147,18 +211,18 @@ namespace fastoredis
         eval = NULL;
         last_cmd_type = -1;
 
-        mb_delim = sdsnew("\n");
+        mb_delim = strdup("\n");
     }
 
     redisConfig::~redisConfig()
     {
-        if(hostip){
-            //sdsfree(hostip);
-        }
-
-        if(mb_delim){
-            //sdsfree(mb_delim);
-        }
+        freeifnotnull(hostip);
+        freeifnotnull(hostsocket);
+        freeifnotnull(pattern);
+        freeifnotnull(rdb_filename);
+        freeifnotnull(auth);
+        freeifnotnull(eval);
+        freeifnotnull(mb_delim);
     }
 }
 
@@ -270,7 +334,18 @@ namespace common
     template<>
     fastoredis::redisConfig convertFromString(const std::string& line)
     {
-        fastoredis::redisConfig r = fastoredis::parseOptions(line);
-        return r;
+        fastoredis::redisConfig cfg;
+        enum { kMaxArgs = 64 };
+        int argc = 0;
+        char *argv[kMaxArgs] = {0};
+
+        char* p2 = strtok((char*)line.c_str(), " ");
+        while(p2){
+            argv[argc++] = p2;
+            p2 = strtok(0, " ");
+        }
+
+        fastoredis::parseOptions(argc, argv, cfg);
+        return cfg;
     }
 }

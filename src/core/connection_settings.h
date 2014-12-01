@@ -2,8 +2,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <QString>
-
 #include "core/connection_types.h"
 #include "core/redis/redis_config.h"
 #include "core/ssh_info.h"
@@ -54,7 +52,7 @@ namespace fastoredis
         SSHInfo sshInfo_;
     };
 
-    QString useHelpText(connectionTypes type);
+    const char *useHelpText(connectionTypes type);
 
     typedef boost::shared_ptr<IConnectionSettingsBase> IConnectionSettingsBasePtr;
 

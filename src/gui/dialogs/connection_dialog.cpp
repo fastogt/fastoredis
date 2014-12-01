@@ -294,7 +294,10 @@ namespace fastoredis
         testButton_->setEnabled(isValidType);
         commandLine_->setEnabled(isValidType);
         buttonBox_->button(QDialogButtonBox::Save)->setEnabled(isValidType);
-        commandLine_->setToolTip(useHelpText(currentType));
+
+        const char* helpText = useHelpText(currentType);
+        QString trHelp = tr(helpText);
+        commandLine_->setToolTip(trHelp);
 
         useSsh_->setEnabled(isValidType);
     }

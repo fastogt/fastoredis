@@ -8,13 +8,13 @@ namespace fastoredis
 {
     class FastoCommonItem;
 
-    class FastoTreeModel
+    class FastoCommonModel
             : public TreeModel
     {
         Q_OBJECT
     public:
-        FastoTreeModel(QObject *parent = 0);
-        ~FastoTreeModel();
+        FastoCommonModel(QObject *parent = 0);
+        ~FastoCommonModel();
 
         virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
         virtual Qt::ItemFlags flags(const QModelIndex& index) const;

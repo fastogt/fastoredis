@@ -7,8 +7,9 @@
 #include "gui/fasto_editor.h"
 #include "gui/fasto_table_view.h"
 #include "gui/fasto_tree_view.h"
-#include "gui/fasto_tree_model.h"
+#include "gui/fasto_common_model.h"
 #include "gui/fasto_common_item.h"
+
 #include "gui/gui_factory.h"
 #include "gui/icon_label.h"
 
@@ -47,7 +48,7 @@ namespace fastoredis
     OutputWidget::OutputWidget(QWidget* parent)
         : QWidget(parent)
     {
-        commonModel_ = new FastoTreeModel(this);
+        commonModel_ = new FastoCommonModel(this);
 
         treeView_ = new FastoTreeView;
         treeView_->setModel(commonModel_);

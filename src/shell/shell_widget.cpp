@@ -250,7 +250,7 @@ namespace fastoredis
 
     void ShellWidget::progressChange(const EventsInfo::ProgressInfoResponce &res)
     {
-        workProgressBar_->setValue(res._progress);
+        workProgressBar_->setValue(res.progress_);
     }
 
     void ShellWidget::loadFromFile()

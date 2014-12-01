@@ -30,7 +30,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/widgets/query_widget.h
     gui/widgets/output_widget.h
     gui/fasto_tree_view.h
-    gui/fasto_tree_model.h
+    gui/fasto_common_model.h
     gui/fasto_table_view.h
     gui/icon_label.h
     gui/glass_widget.h
@@ -67,7 +67,7 @@ SET(SOURCES_GUI
     gui/explorer/explorer_tree_view.cpp
     gui/explorer/explorer_tree_model.cpp
     gui/fasto_tree_view.cpp
-    gui/fasto_tree_model.cpp
+    gui/fasto_common_model.cpp
     gui/fasto_table_view.cpp
     gui/fasto_common_item.cpp
     gui/icon_label.cpp
