@@ -25,10 +25,10 @@ namespace fastoredis
         typedef std::vector<FastoObject*> child_container_type;
 
         FastoObject(FastoObject* parent, common::Value* val, const std::string& delemitr);
-        ~FastoObject();
+        virtual ~FastoObject();
 
         common::Value::Type type() const;
-        std::string toString() const;
+        virtual std::string toString() const;
 
 		child_container_type childrens() const;
         static FastoObject* createRoot(const std::string& text, IFastoObjectObserver* observer = NULL);
@@ -39,15 +39,27 @@ namespace fastoredis
 
         void changeValue(common::Value* val);
 
+    protected:
+        IFastoObjectObserver* observer_;
+        boost::scoped_ptr<common::Value> value_;
+
     private:
         DISALLOW_COPY_AND_ASSIGN(FastoObject);
 
         FastoObject* const parent_;
 		child_container_type childrens_;
         const std::string delemitr_;
-        IFastoObjectObserver* observer_;
+    };
 
-        boost::scoped_ptr<common::Value> value_;
+    class FastoObjectArray
+            : public FastoObject
+    {
+    public:
+        FastoObjectArray(FastoObject* parent, common::ArrayValue* ar, const std::string& delemitr);
+
+        // Appends a Value to the end of the list.
+        void append(common::Value* in_value);
+        virtual std::string toString() const;
     };
 
     class IFastoObjectObserver

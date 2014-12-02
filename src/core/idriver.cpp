@@ -83,9 +83,7 @@ namespace fastoredis
         killTimer(timer_info_id_);
         timer_info_id_ = 0;
         thread_->quit();
-        if (!thread_->wait(2000)){
-            thread_->terminate();
-        }
+        thread_->wait();
     }
 
     void IDriver::customEvent(QEvent *event)

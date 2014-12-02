@@ -31,8 +31,7 @@ namespace fastoredis
 
     std::string FastoObject::toString() const
     {
-        std::string result;
-        result = value_->toString();//getAsString(&result);
+        std::string result = value_->toString();//getAsString(&result);
         return result;
     }
 
@@ -85,6 +84,41 @@ namespace fastoredis
     FastoObject::child_container_type FastoObject::childrens() const
     {
         return childrens_;
+    }
+
+    FastoObjectArray::FastoObjectArray(FastoObject* parent, common::ArrayValue* ar, const std::string& delemitr)
+        : FastoObject(parent, ar, delemitr)
+    {
+
+    }
+
+    void FastoObjectArray::append(common::Value* in_value)
+    {
+        common::ArrayValue* ar = dynamic_cast<common::ArrayValue*>(value_.get());
+        if(!ar){
+            return;
+        }
+
+       ar->append(in_value);
+    }
+
+    std::string FastoObjectArray::toString() const
+    {
+        common::ArrayValue* ar = dynamic_cast<common::ArrayValue*>(value_.get());
+        if(!ar){
+            return std::string();
+        }
+
+        std::string result;
+        for(common::ArrayValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
+            std::string val = (*it)->toString();
+            common::ArrayValue::const_iterator lastIt = it + 1;
+            result += val;
+            if(!val.empty() && lastIt != ar->end()){
+                result += delemitr();
+            }
+        }
+        return result;
     }
 
     std::vector<std::string> allSupportedViews()

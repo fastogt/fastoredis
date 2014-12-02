@@ -624,8 +624,9 @@ namespace common
 	{
         std::string result;
 
-		for (ValueVector::const_iterator i(list_.begin()); i != list_.end(); ++i)
-			result += (*i)->toString();
+        for (ValueVector::const_iterator i(list_.begin()); i != list_.end(); ++i){
+            result += (*i)->toString();
+        }
 
 		return result;
     }

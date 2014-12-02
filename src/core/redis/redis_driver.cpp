@@ -308,7 +308,12 @@ namespace fastoredis
             }
 
             /* Now we can use hiredis to read the incoming protocol. */
-            while ((er = cliReadReply(out)) != NULL){
+            while (1){
+                er = cliReadReply(out);
+                if(er){
+                    break;
+                }
+
                 if (config.shutdown){
                     return common::make_error_value("Interrupted.", common::ErrorValue::E_INTERRUPTED);
                 }
@@ -1029,41 +1034,68 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
+            FastoObjectArray* ar = dynamic_cast<FastoObjectArray*>(out);
+
             FastoObject* obj = NULL;
             switch (r->type) {
                 case REDIS_REPLY_NIL:
                 {
                     common::Value *val = common::Value::createNullValue();
-                    obj = new FastoObject(out, val, config.mb_delim);
-                    out->addChildren(obj);
+                    if(ar){
+                        ar->append(val);
+                    }
+                    else{
+                        obj = new FastoObject(out, val, config.mb_delim);
+                        out->addChildren(obj);
+                    }
+
                     break;
                 }
                 case REDIS_REPLY_ERROR:
                 {
                     common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
-                    obj = new FastoObject(out, val, config.mb_delim);
-                    out->addChildren(obj);
+                    if(ar){
+                        ar->append(val);
+                    }
+                    else{
+                        obj = new FastoObject(out, val, config.mb_delim);
+                        out->addChildren(obj);
+                    }
                     break;
                 }
                 case REDIS_REPLY_STATUS:
                 case REDIS_REPLY_STRING:
                 {
                     common::StringValue *val = common::Value::createStringValue(r->str);
-                    obj = new FastoObject(out, val, config.mb_delim);
-                    out->addChildren(obj);
+                    if(ar){
+                        ar->append(val);
+                    }
+                    else{
+                        obj = new FastoObject(out, val, config.mb_delim);
+                        out->addChildren(obj);
+                    }
                     break;
                 }
                 case REDIS_REPLY_INTEGER:
                 {
-                    common::FundamentalValue *val =common::Value::createIntegerValue(r->integer);
-                    obj = new FastoObject(out, val, config.mb_delim);
-                    out->addChildren(obj);
+                    common::FundamentalValue *val = common::Value::createIntegerValue(r->integer);
+                    if(ar){
+                        ar->append(val);
+                    }
+                    else{
+                        obj = new FastoObject(out, val, config.mb_delim);
+                        out->addChildren(obj);
+                    }
                     break;
                 }
                 case REDIS_REPLY_ARRAY:
                 {
-                    for (size_t i = 0; i < r->elements; i++) {
-                        common::ErrorValueSPtr er = cliFormatReplyRaw(out, r->element[i]);
+                    common::ArrayValue* arv = common::Value::createArrayValue();
+                    FastoObject* child = new FastoObjectArray(out, arv, config.mb_delim);
+                    out->addChildren(child);
+
+                    for (size_t i = 0; i < r->elements; ++i) {
+                        common::ErrorValueSPtr er = cliFormatReplyRaw(child, r->element[i]);
                         if(er){
                             return er;
                         }
@@ -1075,8 +1107,13 @@ namespace fastoredis
                     char tmp2[128] = {0};
                     sprintf(tmp2, "Unknown reply type: %d", r->type);
                     common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
-                    obj = new FastoObject(out, val, config.mb_delim);
-                    out->addChildren(obj);
+                    if(ar){
+                        ar->append(val);
+                    }
+                    else{
+                        obj = new FastoObject(out, val, config.mb_delim);
+                        out->addChildren(obj);
+                    }
                 }
             }
 
@@ -1432,6 +1469,7 @@ namespace fastoredis
 
     RedisDriver::~RedisDriver()
     {
+        interrupt();
         clear();
     }
 
