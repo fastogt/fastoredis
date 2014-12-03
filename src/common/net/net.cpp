@@ -90,7 +90,7 @@ namespace common
 {
     namespace net
     {
-        bool getRemoteMacAddress(const common::string16& host, string16& out_mac_address)
+        bool getRemoteMacAddress(const std::string& host, std::string& out_mac_address)
         {
             // Socket to send ARP packet
             int udp_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);//socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));

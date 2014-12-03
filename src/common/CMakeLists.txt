@@ -61,11 +61,7 @@ SET(QT_UTILS_SOURCES
         qt/convert_string.h)
 ENDIF()
 SET(PATTERNS_SOURCES
-        patterns/command_pattern.h
         patterns/crtp_pattern.h
-        patterns/factory_pattern.h
-        patterns/factory_method.h
-        patterns/observer_pattern.h
         patterns/singleton_pattern.h)
 SET(FILE_PARSERS file_parsers/parser_ini.h file_parsers/parser_ini.cpp)
 SET(MULTI_THREADING_SOURCES 

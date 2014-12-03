@@ -161,8 +161,8 @@ namespace fastoredis
                                /*"<b>--pipe</b>             Transfer raw Redis protocol from stdin to server.<br/>"
                                "<b>--pipe-timeout &lt;n&gt;</b> In <b>--pipe mode</b>, abort with error if after sending all data.<br/>"
                                "                   no reply is received within &lt;n&gt; seconds.<br/>"
-                               "                   Default timeout: %d. Use 0 to wait forever.<br/>"
-                               "<b>--bigkeys</b>          Sample Redis keys looking for big keys.<br/>"*/
+                               "                   Default timeout: %d. Use 0 to wait forever.<br/>"*/
+                               "<b>--bigkeys</b>          Sample Redis keys looking for big keys.<br/>"
                                "<b>--scan</b>             List all keys using the SCAN command.<br/>"
                                "<b>--pattern &lt;pat&gt;</b>    Useful with <b>--scan</b> to specify a SCAN pattern.<br/>"
                                "<b>--intrinsic-latency &lt;sec&gt;</b> Run a test to measure intrinsic system latency.<br/>"

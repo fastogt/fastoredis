@@ -26,13 +26,8 @@ namespace fastoredis
         }
     }
 
-    void Logger::print(const common::string16 &mess, common::logging::LEVEL_LOG level, bool notify)
-    {
-        print(common::convertToString(mess), level, notify);
-    }
-
     void Logger::print(const QString &mess, common::logging::LEVEL_LOG level, bool notify)
     {
-        print(common::convertToString16(mess), level, notify);
+        print(common::convertToString(mess), level, notify);
     }
 }

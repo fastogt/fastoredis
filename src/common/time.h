@@ -22,7 +22,7 @@ namespace common
         struct timeval mstime2timeval(int64_t mst);
         struct timespec mstime2timespec(int64_t mst);
 
-        string16 mstime2string(int64_t ms);
+        std::string mstime2string(int64_t ms);
 
         time_t timegm(struct tm * time_tm);
     }

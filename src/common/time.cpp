@@ -99,12 +99,12 @@ namespace common
             return ts;
         }
 
-        string16 mstime2string(int64_t ms)
+        std::string mstime2string(int64_t ms)
         {
             /*
             char buff[64] = {0};
             sprintf(buff, "%.3fs",(double)ms/1000.f);*/
-            return convertToString16(ms);
+            return convertToString(ms);
         }
 
         time_t timegm(struct tm * time_tm)
