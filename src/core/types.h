@@ -32,7 +32,7 @@ namespace fastoredis
         std::vector<PropertyType> propertyes_;
     };
 
-    ServerPropertyInfo makeServerProperty(const FastoObjectPtr& root);
+    ServerPropertyInfo makeServerProperty(FastoObjectArray* array);
 
     struct DataBaseInfo
     {

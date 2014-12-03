@@ -1813,8 +1813,7 @@ namespace fastoredis
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
-            RootLocker lock = make_locker(sender, GET_DATABASES);
-            FastoObjectPtr root = lock.root_;
+            FastoObjectPtr root = FastoObject::createRoot(GET_DATABASES);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(GET_DATABASES, Command::InnerCommand, root.get());
             if(er){
@@ -1824,10 +1823,17 @@ namespace fastoredis
                 FastoObject::child_container_type rchildrens = root->childrens();
                 if(rchildrens.size()){
                     DCHECK(rchildrens.size() == 1);
-                    FastoObject::child_container_type childrens = rchildrens[0]->childrens();
-                    for(int i = 0; i < childrens.size(); ++i){
-                        DataBaseInfo dbInf(childrens[i]->toString(), 0);
-                        res.databases_.push_back(dbInf);
+                    FastoObjectArray* array = dynamic_cast<FastoObjectArray*>(rchildrens[0]);
+                    if(array){
+                        common::ArrayValue* ar = array->array();
+                        if(ar){
+                            for(common::ArrayValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
+                                common::Value* val = *it;
+
+                                DataBaseInfo dbInf(val->toString(), 0);
+                                res.databases_.push_back(dbInf);
+                            }
+                        }
                     }
                 }
             }
@@ -1851,8 +1857,7 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
-            RootLocker lock = make_locker(sender, INFO_REQUEST);
-            FastoObjectPtr root = lock.root_;
+            FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(INFO_REQUEST, Command::InnerCommand, root.get());
             if(er){
@@ -1875,15 +1880,21 @@ namespace fastoredis
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
-            RootLocker lock = make_locker(sender, GET_PROPERTY_SERVER);
-            FastoObjectPtr root = lock.root_;
+            FastoObjectPtr root = FastoObject::createRoot(GET_PROPERTY_SERVER);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(GET_PROPERTY_SERVER, Command::InnerCommand, root.get());
             if(er){
                 res.setErrorInfo(er);
             }
             else{
-                res.info_ = makeServerProperty(root);
+                FastoObject::child_container_type ch = root->childrens();
+                if(ch.size()){
+                    DCHECK(ch.size() == 1);
+                    FastoObjectArray* array = dynamic_cast<FastoObjectArray*>(ch[0]);
+                    if(array){
+                        res.info_ = makeServerProperty(array);
+                    }
+                }
             }
         notifyProgress(sender, 75);
             reply(sender, new Events::ServerPropertyInfoResponceEvent(this, res));
@@ -1898,8 +1909,7 @@ namespace fastoredis
 
         notifyProgress(sender, 50);
         const std::string changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
-        RootLocker lock = make_locker(sender, changeRequest);
-        FastoObjectPtr root = lock.root_;
+        FastoObjectPtr root = FastoObject::createRoot(changeRequest);
         common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), Command::InnerCommand, root.get());
         if(er){
             res.setErrorInfo(er);

@@ -125,6 +125,11 @@ namespace fastoredis
     {
         return common::utils::enums::convertToVector(supportedViewsM);
     }
+
+    common::ArrayValue* FastoObjectArray::array() const
+    {
+        return dynamic_cast<common::ArrayValue*>(value_.get());
+    }
 }
 
 namespace common

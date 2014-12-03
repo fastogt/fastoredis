@@ -60,6 +60,8 @@ namespace fastoredis
         // Appends a Value to the end of the list.
         void append(common::Value* in_value);
         virtual std::string toString() const;
+
+        common::ArrayValue* array() const;
     };
 
     class IFastoObjectObserver
