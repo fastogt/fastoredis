@@ -5,7 +5,6 @@
 #include <QDockWidget>
 #include <QMessageBox>
 #include <QThread>
-#include <QDebug>
 
 #include <QKeyEvent>
 
