@@ -28,6 +28,9 @@ namespace fastoredis
         const QString trKey = QObject::tr("Key");
         const QString trValue = QObject::tr("Value");
         const QString trOptions = QObject::tr("Options");
+        const QString trWindow = QObject::tr("Window");
+        const QString trEnterFullScreen = QObject::tr("Enter Full Screen");
+        const QString trExitFullScreen = QObject::tr("Exit Full Screen");
         const QString trHelp = QObject::tr("Help");
         const QString trConnect = QObject::tr("Connect");
         const QString trDisconnect = QObject::tr("Disconnect");

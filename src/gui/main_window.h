@@ -22,6 +22,7 @@ namespace fastoredis
     protected:
         virtual void changeEvent(QEvent* );
         virtual void showEvent(QShowEvent* e);
+        virtual void keyPressEvent(QKeyEvent* e);
 
     private Q_SLOTS:
         void open();
@@ -42,6 +43,8 @@ namespace fastoredis
         QAction* saveAsAction_;
         QAction* exitAction_;
         QAction* preferencesAction_;
+        QAction* fullScreanAction_;
+        QAction* windowAction_;
         QAction* aboutAction_;
         QAction* fileAction_;
         QAction* optionsAction_;

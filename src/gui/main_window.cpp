@@ -5,6 +5,9 @@
 #include <QDockWidget>
 #include <QMessageBox>
 #include <QThread>
+#include <QDebug>
+
+#include <QKeyEvent>
 
 #include "common/net/socket_tcp.h"
 #include "common/qt/convert_string.h"
@@ -170,10 +173,20 @@ namespace fastoredis
         optionsMenu->addAction(checkUpdateAction_);
         optionsMenu->addAction(preferencesAction_);
 
+        QMenu *window = new QMenu(this);
+        windowAction_ = menuBar()->addMenu(window);
+        fullScreanAction_ = new QAction(this);
+#ifdef OS_MACOSX
+        fullScreanAction_->setShortcut(QKeySequence("Meta+Ctrl+F"));
+#else
+        fullScreanAction_->setShortcut(QKeySequence("Ctrl+Shift+F11"));
+#endif
+        window->addAction(fullScreanAction_);
+
+        QMenu *helpMenu = new QMenu(this);
         aboutAction_ = new QAction(this);
         VERIFY(connect(aboutAction_, SIGNAL(triggered()), this, SLOT(about())));
 
-        QMenu *helpMenu = new QMenu(this);
         helpAction_ = menuBar()->addMenu(helpMenu);
         helpMenu->addAction(aboutAction_);
 
@@ -245,6 +258,25 @@ namespace fastoredis
         QMainWindow::changeEvent(e);
     }
 
+    void MainWindow::keyPressEvent(QKeyEvent* keyEvent)
+    {
+    #ifdef OS_MACOSX
+        if (((keyEvent->modifiers() & Qt::ShiftModifier) && ((keyEvent->modifiers() & Qt::ControlModifier))) && (keyEvent->key() == Qt::Key_F)) {
+    #else
+        if (((keyEvent->modifiers() & Qt::ShiftModifier) && ((keyEvent->modifiers() & Qt::ControlModifier)))  && (keyEvent->key() == Qt::Key_F11)) {
+    #endif
+            if(isFullScreen()){
+                showNormal();
+            }
+            else{
+                showFullScreen();
+            }
+            return;
+        }
+
+        return QMainWindow::keyPressEvent(keyEvent);
+    }
+
     void MainWindow::retranslateUi()
     {
         using namespace translations;
@@ -257,6 +289,8 @@ namespace fastoredis
         checkUpdateAction_->setText(trCheckUpdate);
         viewAction_->setText(trView);
         optionsAction_->setText(trOptions);
+        windowAction_->setText(trWindow);
+        fullScreanAction_->setText(trEnterFullScreen);
         aboutAction_->setText(tr("About %1...").arg(PROJECT_NAME));
         helpAction_->setText(trHelp);
         explorerAction_->setText(trExpTree);

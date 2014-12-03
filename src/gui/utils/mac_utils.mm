@@ -1,4 +1,4 @@
-#include "mac_utils.h"
+#include "gui/utils/mac_utils.h"
 
 #include <Cocoa/Cocoa.h>
 
