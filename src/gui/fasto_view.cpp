@@ -1,10 +1,8 @@
 #include "gui/fasto_view.h"
 
 #include <QToolButton>
-#include <QAbstractItemModel>
 #include <QVBoxLayout>
 #include <QRadioButton>
-#include <QEvent>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QCheckBox>
@@ -33,7 +31,7 @@ namespace fastoredis
         close_->setIconSize(QSize(16, 16));
         findLine_->setAlignment(Qt::AlignLeft | Qt::AlignAbsolute);
 
-        QHBoxLayout *layout = new QHBoxLayout();
+        QHBoxLayout *layout = new QHBoxLayout;
         layout->setContentsMargins(6, 0, 6, 0);
         layout->setSpacing(4);
         layout->addWidget(close_);
@@ -46,7 +44,8 @@ namespace fastoredis
         findPanel_->setLayout(layout);
 
         QVBoxLayout *mainL = new QVBoxLayout;
-        editor_ = new FastoEditorOutput(delemitr);
+        editor_ = new FastoEditorOutput(delemitr, this);
+        editor_->installEventFilter(this);
 
         jsonRadioButton_ = new QRadioButton;
         csvRadioButton_ = new QRadioButton;
@@ -117,29 +116,42 @@ namespace fastoredis
         QWidget::changeEvent(e);
     }
 
+    bool FastoEditorView::eventFilter(QObject* object, QEvent* event)
+    {
+        if (object == editor_) {
+            if (event->type() == QEvent::KeyPress) {
+                QKeyEvent *keyEvent = (QKeyEvent *)event;
+                if (((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key() == Qt::Key_F)) {
+                    findPanel_->show();
+                    findLine_->setFocus();
+                    //findPanel_->selectAll();
+                    keyEvent->accept();
+                    return true;
+                }
+            }
+        }
+
+        return QWidget::eventFilter(object, event);
+    }
+
     void FastoEditorView::keyPressEvent(QKeyEvent *keyEvent)
     {
         bool isFocusScin = editor_->isActiveWindow();
         bool isShowFind = findPanel_->isVisible();
-        if (Qt::Key_Escape == keyEvent->key() && isFocusScin && isShowFind) {
+
+        if (keyEvent->key() == Qt::Key_Escape && isFocusScin && isShowFind) {
             findPanel_->hide();
             editor_->setFocus();
-            return keyEvent->accept();
+            keyEvent->accept();
         }
-        else if (Qt::Key_Return == keyEvent->key() && (keyEvent->modifiers() & Qt::ShiftModifier) && isFocusScin && isShowFind) {
+        else if (keyEvent->key() == Qt::Key_Return && (keyEvent->modifiers() & Qt::ShiftModifier) && isFocusScin && isShowFind) {
             goToPrevElement();
         }
-        else if (Qt::Key_Return == keyEvent->key() && isFocusScin && isShowFind) {
+        else if (keyEvent->key() == Qt::Key_Return && isFocusScin && isShowFind) {
             goToNextElement();
         }
-        else if (((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key() == Qt::Key_F) && isFocusScin) {
-            findPanel_->show();
-            findPanel_->setFocus();
-            //findPanel_->selectAll();
-            return keyEvent->accept();
-        }
-        else {
-            return QWidget::keyPressEvent(keyEvent);
+        else{
+            QWidget::keyPressEvent(keyEvent);
         }
     }
 
@@ -164,8 +176,9 @@ namespace fastoredis
             int line = 0;
             editor_->getCursorPosition(&line, &index);
 
-            if (!forward)
-               index -= editor_->selectedText().length();
+            if (!forward){
+                index -= editor_->selectedText().length();
+            }
 
             editor_->setCursorPosition(line, 0);
             bool isFounded = editor_->findFirst(text, re, caseSensitive_->checkState() == Qt::Checked, wo, looped, forward, line, index);
@@ -174,7 +187,7 @@ namespace fastoredis
                 editor_->ensureCursorVisible();
             }
             else {
-                QMessageBox::warning(this, tr("Search"),tr("The specified text was not found."));
+                QMessageBox::warning(this, tr("Search"), tr("The specified text was not found."));
             }
         }
     }
