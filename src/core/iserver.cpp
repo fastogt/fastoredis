@@ -87,6 +87,11 @@ namespace fastoredis
         return common::convertFromString<QString>(drv_->address());
     }
 
+    QString IServer::outputDelemitr() const
+    {
+        return common::convertFromString<QString>(drv_->outputDelemitr());
+    }
+
     connectionTypes IServer::connectionType() const
     {
         return drv_->connectionType();

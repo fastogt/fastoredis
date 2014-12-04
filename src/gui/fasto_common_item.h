@@ -36,5 +36,6 @@ namespace fastoredis
 
     QString toJson(FastoCommonItem* item);
     QString toRaw(FastoCommonItem* item);
+    QString toCsv(FastoCommonItem* item, const QString &delemitr);
 }
 

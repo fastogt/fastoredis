@@ -35,6 +35,7 @@ namespace fastoredis
         virtual bool isConnected() const = 0;
         virtual std::string address() const = 0;
         virtual std::string version() const = 0;
+        virtual std::string outputDelemitr() const = 0;
 
     Q_SIGNALS:
         void addedChild(FastoObject *child);

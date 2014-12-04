@@ -21,7 +21,7 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        OutputWidget(QWidget* parent = 0);
+        OutputWidget(const QString &delemitr, QWidget* parent = 0);
 
 
     private Q_SLOTS:

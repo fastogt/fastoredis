@@ -1490,6 +1490,11 @@ namespace fastoredis
         return versionApi();
     }
 
+    std::string RedisDriver::outputDelemitr() const
+    {
+        return impl_->config.mb_delim;
+    }
+
     const char* RedisDriver::versionApi()
     {
         return REDIS_VERSION;

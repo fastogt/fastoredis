@@ -53,7 +53,7 @@ namespace fastoredis
         }
 
         if(!item->childrenCount()){
-            return QString("%1 %2").arg(item->key()).arg(item->value());
+            return item->value();
         }
 
         QString value;
@@ -61,6 +61,27 @@ namespace fastoredis
             value += toJson(dynamic_cast<FastoCommonItem*>(item->child(i)));
         }
 
-        return QString("%1 %2").arg(item->key()).arg(value);
+        return value;
+    }
+
+    QString toCsv(FastoCommonItem* item, const QString& delemitr)
+    {
+        if(!item){
+            return "";
+        }
+
+        if(!item->childrenCount()){
+            return item->value().replace(delemitr, ",");
+        }
+
+        QString value;
+        for(int i = 0; i < item->childrenCount(); ++i){
+            value += toCsv(dynamic_cast<FastoCommonItem*>(item->child(i)), delemitr);
+            if(i != item->childrenCount() - 1){
+                value += ",";
+            }
+        }
+
+        return value;
     }
 }

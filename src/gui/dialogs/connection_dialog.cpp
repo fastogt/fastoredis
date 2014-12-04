@@ -16,6 +16,19 @@
 
 #include "translations/global.h"
 
+namespace
+{
+    QString stableCommandLine(QString input)
+    {
+        return input.replace('\n', "\\n");
+    }
+
+    QString toRawCommandLine(QString input)
+    {
+        return input.replace("\\n", "\n");
+    }
+}
+
 namespace fastoredis
 {
     ConnectionDialog::ConnectionDialog(const IConnectionSettingsBasePtr& connection, QWidget* parent)
@@ -42,7 +55,7 @@ namespace fastoredis
         logging_->setChecked(connection_->loggingEnabled());
 
         commandLine_ = new QLineEdit;
-        commandLine_->setText(common::convertFromString<QString>(connection_->commandLine()));
+        commandLine_->setText(stableCommandLine(common::convertFromString<QString>(connection_->commandLine())));
 
         QVBoxLayout *inputLayout = new QVBoxLayout;
         inputLayout->addWidget(connectionName_);
@@ -166,7 +179,7 @@ namespace fastoredis
 
         connectionName_->setText(common::convertFromString<QString>(connection_->connectionName()));
         typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(connection_->connectionType())));
-        commandLine_->setText(common::convertFromString<QString>(connection_->commandLine()));
+        commandLine_->setText(stableCommandLine(common::convertFromString<QString>(connection_->commandLine())));
         logging_->setChecked(connection_->loggingEnabled());
 
         SSHInfo info = connection_->sshInfo();
@@ -191,7 +204,7 @@ namespace fastoredis
     {
         if(validateAndApply()){
             connection_->setConnectionName(common::convertToString(connectionName_->text()));
-            connection_->setCommandLine(common::convertToString(commandLine_->text()));
+            connection_->setCommandLine(common::convertToString(toRawCommandLine(commandLine_->text())));
             connection_->setLoggingEnabled(logging_->isChecked());
 
             SSHInfo info = connection_->sshInfo();

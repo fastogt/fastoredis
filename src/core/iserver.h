@@ -16,6 +16,7 @@ namespace fastoredis
         QString name() const;
         IDriverPtr driver() const;
         QString address() const;
+        QString outputDelemitr() const;
 
         //async
         void connect();

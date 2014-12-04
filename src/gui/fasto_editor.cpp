@@ -11,6 +11,10 @@
 #include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
 
+#define JSON 0
+#define CSV 1
+#define RAW 2
+
 namespace
 {
     int getNumberOfDigits(int x)
@@ -47,7 +51,7 @@ namespace
 namespace fastoredis
 {
     FastoEditor::FastoEditor(QWidget *parent)
-        : QsciScintilla(parent), lineNumberMarginWidth_(0), model_(NULL), isJsonChecked_(true)
+        : QsciScintilla(parent), lineNumberMarginWidth_(0)
     {
         setAutoIndent(true);
         setIndentationsUseTabs(false);
@@ -69,7 +73,58 @@ namespace fastoredis
         VERIFY(connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineNumbersMarginWidth())));
     }
 
-    void FastoEditor::setModel(QAbstractItemModel *model)
+    void FastoEditor::updateLineNumbersMarginWidth()
+    {
+        int numberOfDigits = getNumberOfDigits(lines());
+
+        lineNumberMarginWidth_ = numberOfDigits * textWidth(STYLE_LINENUMBER, "0") + rowNumberWidth;
+
+        // If line numbers margin already displayed, update its width
+        if (lineNumberMarginWidth()) {
+            setMarginWidth(0, lineNumberMarginWidth_);
+        }
+    }
+
+    void FastoEditor::showOrHideLinesNumbers()
+    {
+        updateLineNumbersMarginWidth();
+        if (!lineNumberMarginWidth()) {
+            setMarginWidth(0, lineNumberMarginWidth_);
+        }
+        else {
+            setMarginWidth(0, 0);
+        }
+    }
+
+    void FastoEditor::keyPressEvent(QKeyEvent *keyEvent)
+    {
+        if (keyEvent->key() == Qt::Key_F11) {
+            keyEvent->ignore();
+            showOrHideLinesNumbers();
+            return;
+        }
+
+        return QsciScintilla::keyPressEvent(keyEvent);
+    }
+
+    int FastoEditor::lineNumberMarginWidth() const
+    {
+        return marginWidth(0);
+    }
+
+    int FastoEditor::textWidth(int style, const QString &text)
+    {
+        const char *byteArray = (text.toUtf8()).constData();
+        return SendScintilla(SCI_TEXTWIDTH, style, byteArray);
+    }
+
+    FastoEditorOutput::FastoEditorOutput(const QString &delemitr, QWidget *parent)
+        : FastoEditor(parent), delemitr_(delemitr), model_(NULL), viewMethod_(JSON)
+    {
+
+    }
+
+    void FastoEditorOutput::setModel(QAbstractItemModel *model)
     {
         if (model == model_){
             return;
@@ -117,63 +172,63 @@ namespace fastoredis
         reset();
     }
 
-    void FastoEditor::modelDestroyed()
+    void FastoEditorOutput::modelDestroyed()
     {
 
     }
 
-    void FastoEditor::dataChanged(QModelIndex first, QModelIndex last)
-    {
-        layoutChanged();
-    }
-
-    void FastoEditor::headerDataChanged()
-    {
-
-    }
-
-    void FastoEditor::rowsInserted(QModelIndex index, int r, int c)
+    void FastoEditorOutput::dataChanged(QModelIndex first, QModelIndex last)
     {
         layoutChanged();
     }
 
-    void FastoEditor::rowsAboutToBeRemoved(QModelIndex index, int r, int c)
+    void FastoEditorOutput::headerDataChanged()
     {
 
     }
 
-    void FastoEditor::rowsRemoved(QModelIndex index, int r, int c)
-    {
-
-    }
-
-    void FastoEditor::columnsAboutToBeRemoved(QModelIndex index, int r, int c)
-    {
-
-    }
-
-    void FastoEditor::columnsRemoved(QModelIndex index, int r, int c)
-    {
-
-    }
-
-    void FastoEditor::columnsInserted(QModelIndex index, int r, int c)
-    {
-
-    }
-
-    void FastoEditor::reset()
+    void FastoEditorOutput::rowsInserted(QModelIndex index, int r, int c)
     {
         layoutChanged();
     }
 
-    void FastoEditor::viewChanged(bool isJson)
+    void FastoEditorOutput::rowsAboutToBeRemoved(QModelIndex index, int r, int c)
     {
-        isJsonChecked_ = isJson;
+
+    }
+
+    void FastoEditorOutput::rowsRemoved(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditorOutput::columnsAboutToBeRemoved(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditorOutput::columnsRemoved(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditorOutput::columnsInserted(QModelIndex index, int r, int c)
+    {
+
+    }
+
+    void FastoEditorOutput::reset()
+    {
         layoutChanged();
     }
 
-    void FastoEditor::layoutChanged()
+    void FastoEditorOutput::viewChanged(int viewMethod)
+    {
+        viewMethod_ = viewMethod;
+        layoutChanged();
+    }
+
+    void FastoEditorOutput::layoutChanged()
     {
         clear();
         if(!model_){
@@ -197,12 +252,21 @@ namespace fastoredis
 
         QString result;
         for(int i = 0; i < root->childrenCount(); ++i){
-            if(isJsonChecked_){
-                QString json = toJson(dynamic_cast<FastoCommonItem*>(root->child(i)));
+            FastoCommonItem* child = dynamic_cast<FastoCommonItem*>(root->child(i));
+            if(!child){
+                continue;
+            }
+
+            if(viewMethod_ == JSON){
+                QString json = toJson(child);
                 result += common::escapedText(json);
             }
-            else{
-                QString raw = toRaw(dynamic_cast<FastoCommonItem*>(root->child(i)));
+            else if(viewMethod_ == CSV){
+                QString csv = toCsv(child, delemitr_);
+                result += common::escapedText(csv);
+            }
+            else if(viewMethod_ == RAW){
+                QString raw = toRaw(child);
                 result += common::escapedText(raw);
             }
         }
@@ -210,65 +274,23 @@ namespace fastoredis
         setText(result);
     }
 
-    void FastoEditor::keyPressEvent(QKeyEvent *keyEvent)
-    {
-        if (keyEvent->key() == Qt::Key_F11) {
-            keyEvent->ignore();
-            showOrHideLinesNumbers();
-            return;
-        }
-
-        return QsciScintilla::keyPressEvent(keyEvent);
-    }
-
-    void FastoEditor::showOrHideLinesNumbers()
-    {
-        updateLineNumbersMarginWidth();
-        if (!lineNumberMarginWidth()) {
-            setMarginWidth(0, lineNumberMarginWidth_);
-        }
-        else {
-            setMarginWidth(0, 0);
-        }
-    }
-
-    int FastoEditor::lineNumberMarginWidth() const
-    {
-        return marginWidth(0);
-    }
-
-    int FastoEditor::textWidth(int style, const QString &text)
-    {
-        const char *byteArray = (text.toUtf8()).constData();
-        return SendScintilla(SCI_TEXTWIDTH, style, byteArray);
-    }
-
-    void FastoEditor::updateLineNumbersMarginWidth()
-    {
-        int numberOfDigits = getNumberOfDigits(lines());
-
-        lineNumberMarginWidth_ = numberOfDigits * textWidth(STYLE_LINENUMBER, "0") + rowNumberWidth;
-
-        // If line numbers margin already displayed, update its width
-        if (lineNumberMarginWidth()) {
-            setMarginWidth(0, lineNumberMarginWidth_);
-        }
-    }
-
-    FastoEditorView::FastoEditorView(QWidget* parent)
+    FastoEditorView::FastoEditorView(const QString &delemitr, QWidget* parent)
         : QWidget(parent)
     {
         QVBoxLayout *mainL = new QVBoxLayout;
-        editor_ = new FastoEditor;
+        editor_ = new FastoEditorOutput(delemitr);
 
         jsonRadioButton_ = new QRadioButton;
+        csvRadioButton_ = new QRadioButton;
         rawRadioButton_ = new QRadioButton;
 
         VERIFY(connect(jsonRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
+        VERIFY(connect(csvRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
         VERIFY(connect(rawRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
 
         QHBoxLayout* radLaout = new QHBoxLayout;
         radLaout->addWidget(jsonRadioButton_);
+        radLaout->addWidget(csvRadioButton_);
         radLaout->addWidget(rawRadioButton_);
 
         mainL->addLayout(radLaout);
@@ -291,12 +313,17 @@ namespace fastoredis
         }
 
         if(jsonRadioButton_->isChecked()){
-            editor_->viewChanged(true);
+            editor_->viewChanged(JSON);
+            return;
+        }
+
+        if(csvRadioButton_->isChecked()){
+            editor_->viewChanged(CSV);
             return;
         }
 
         if(rawRadioButton_->isChecked()){
-            editor_->viewChanged(false);
+            editor_->viewChanged(RAW);
             return;
         }
     }
@@ -318,6 +345,7 @@ namespace fastoredis
     void FastoEditorView::retranslateUi()
     {
         jsonRadioButton_->setText(tr("Json"));
+        csvRadioButton_->setText(tr("Csv"));
         rawRadioButton_->setText(tr("Raw text"));
     }
 }

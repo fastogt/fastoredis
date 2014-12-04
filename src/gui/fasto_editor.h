@@ -12,22 +12,42 @@ class QRadioButton;
 namespace fastoredis
 {
     class FastoEditor
-            : public QsciScintilla
+        : public QsciScintilla
     {
         Q_OBJECT
     public:
         enum { rowNumberWidth = 6, indentationWidth = 4 };
 
         FastoEditor(QWidget *parent = 0);
-        void setModel(QAbstractItemModel* model);
-        void setRootIndex(const QModelIndex& index);
-
-    public Q_SLOTS:
-        void viewChanged(bool isJson);
 
     private Q_SLOTS:
         void updateLineNumbersMarginWidth();
 
+    protected:
+        virtual void keyPressEvent(QKeyEvent* e);
+        int lineNumberMarginWidth() const;
+
+    private:
+        void showOrHideLinesNumbers();
+        int textWidth(int style, const QString &text);
+
+        int lineNumberMarginWidth_;
+    };
+
+    class FastoEditorOutput
+            : public FastoEditor
+    {
+        Q_OBJECT
+    public:
+
+        FastoEditorOutput(const QString &delemitr, QWidget *parent = 0);
+        void setModel(QAbstractItemModel* model);
+        void setRootIndex(const QModelIndex& index);
+
+    public Q_SLOTS:
+        void viewChanged(int viewMethod);
+
+    private Q_SLOTS:
         void modelDestroyed();
         void dataChanged(QModelIndex first, QModelIndex last);
         void headerDataChanged();
@@ -40,18 +60,10 @@ namespace fastoredis
         void reset();
         void layoutChanged();
 
-    protected:
-        virtual void keyPressEvent(QKeyEvent* e);
-        int lineNumberMarginWidth() const;
-
     private:
-        void showOrHideLinesNumbers();
-        int textWidth(int style, const QString &text);        
-
-        int lineNumberMarginWidth_;
         QAbstractItemModel* model_;
-
-        bool isJsonChecked_;
+        int viewMethod_;
+        const QString delemitr_;
     };
 
     class FastoEditorView
@@ -59,7 +71,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        FastoEditorView(QWidget* parent = 0);
+        FastoEditorView(const QString& delemitr, QWidget* parent = 0);
         void setModel(QAbstractItemModel* model);
         void setReadOnly(bool readOnly);
 
@@ -73,7 +85,8 @@ namespace fastoredis
         void retranslateUi();
 
         QRadioButton* jsonRadioButton_;
+        QRadioButton* csvRadioButton_;
         QRadioButton* rawRadioButton_;
-        FastoEditor* editor_;
+        FastoEditorOutput* editor_;
     };
 }

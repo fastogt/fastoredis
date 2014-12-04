@@ -12,7 +12,9 @@ namespace fastoredis
         : QWidget(parent)
     {
         shellWidget_ = new ShellWidget(server);
-        outputWidget_ = new OutputWidget;
+        const QString delemitr = server->outputDelemitr();
+
+        outputWidget_ = new OutputWidget(delemitr);
         VERIFY(connect(shellWidget_, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&)), outputWidget_, SLOT(rootCreate(const EventsInfo::CommandRootCreatedInfo&))));
         VERIFY(connect(shellWidget_, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), outputWidget_, SLOT(rootCompleate(const EventsInfo::CommandRootCompleatedInfo&))));
 

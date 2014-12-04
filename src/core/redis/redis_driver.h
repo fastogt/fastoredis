@@ -22,6 +22,8 @@ namespace fastoredis
         virtual void interrupt();
         std::string address() const;
         std::string version() const;
+        virtual std::string outputDelemitr() const;
+
         static const char* versionApi();
 
     private:

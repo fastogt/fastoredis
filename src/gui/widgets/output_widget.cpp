@@ -45,7 +45,7 @@ namespace
 
 namespace fastoredis
 {
-    OutputWidget::OutputWidget(QWidget* parent)
+    OutputWidget::OutputWidget(const QString& delemitr, QWidget* parent)
         : QWidget(parent)
     {
         commonModel_ = new FastoCommonModel(this);
@@ -56,7 +56,7 @@ namespace fastoredis
         tableView_ = new FastoTableView;
         tableView_->setModel(commonModel_);
 
-        textView_ = new FastoEditorView;
+        textView_ = new FastoEditorView(delemitr);
         textView_->setModel(commonModel_);
         textView_->setReadOnly(true);
 
