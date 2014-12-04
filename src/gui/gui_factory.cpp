@@ -254,6 +254,12 @@ namespace fastoredis
         }
     }
 
+    const QIcon& GuiFactory::close16Icon() const
+    {
+        static QIcon close(":"PROJECT_NAME_LOWERCASE"/icons/close16.png");
+        return close;
+    }
+
     const QIcon& GuiFactory::typeIcon(connectionTypes type) const
     {
         if(type == REDIS){

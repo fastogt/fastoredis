@@ -27,6 +27,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/widgets/main_widget.h
     gui/main_tab_bar.h
     gui/fasto_editor.h
+    gui/fasto_view.h
     gui/widgets/query_widget.h
     gui/widgets/output_widget.h
     gui/fasto_tree_view.h
@@ -62,6 +63,7 @@ SET(SOURCES_GUI
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
     gui/fasto_editor.cpp
+    gui/fasto_view.cpp
     gui/widgets/query_widget.cpp
     gui/widgets/output_widget.cpp
     gui/explorer/explorer_tree_view.cpp

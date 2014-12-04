@@ -1,19 +1,12 @@
 #include "gui/fasto_editor.h"
 
 #include <QKeyEvent>
-#include <QAbstractItemModel>
-#include <QVBoxLayout>
-#include <QRadioButton>
 
 #include "common/qt/convert_string.h"
 #include "common/qt/utils_qt.h"
 
 #include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
-
-#define JSON 0
-#define CSV 1
-#define RAW 2
 
 namespace
 {
@@ -272,80 +265,5 @@ namespace fastoredis
         }
 
         setText(result);
-    }
-
-    FastoEditorView::FastoEditorView(const QString &delemitr, QWidget* parent)
-        : QWidget(parent)
-    {
-        QVBoxLayout *mainL = new QVBoxLayout;
-        editor_ = new FastoEditorOutput(delemitr);
-
-        jsonRadioButton_ = new QRadioButton;
-        csvRadioButton_ = new QRadioButton;
-        rawRadioButton_ = new QRadioButton;
-
-        VERIFY(connect(jsonRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
-        VERIFY(connect(csvRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
-        VERIFY(connect(rawRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
-
-        QHBoxLayout* radLaout = new QHBoxLayout;
-        radLaout->addWidget(jsonRadioButton_);
-        radLaout->addWidget(csvRadioButton_);
-        radLaout->addWidget(rawRadioButton_);
-
-        mainL->addLayout(radLaout);
-        mainL->addWidget(editor_);
-        setLayout(mainL);
-
-        jsonRadioButton_->setChecked(true);
-        retranslateUi();
-    }
-
-    void FastoEditorView::setModel(QAbstractItemModel* model)
-    {
-        editor_->setModel(model);
-    }
-
-    void FastoEditorView::viewChanged(bool checked)
-    {
-        if (!checked){
-            return;
-        }
-
-        if(jsonRadioButton_->isChecked()){
-            editor_->viewChanged(JSON);
-            return;
-        }
-
-        if(csvRadioButton_->isChecked()){
-            editor_->viewChanged(CSV);
-            return;
-        }
-
-        if(rawRadioButton_->isChecked()){
-            editor_->viewChanged(RAW);
-            return;
-        }
-    }
-
-    void FastoEditorView::setReadOnly(bool readOnly)
-    {
-        editor_->setReadOnly(readOnly);
-    }
-
-    void FastoEditorView::changeEvent(QEvent *e)
-    {
-        if(e->type() == QEvent::LanguageChange){
-            retranslateUi();
-        }
-
-        QWidget::changeEvent(e);
-    }
-
-    void FastoEditorView::retranslateUi()
-    {
-        jsonRadioButton_->setText(tr("Json"));
-        csvRadioButton_->setText(tr("Csv"));
-        rawRadioButton_->setText(tr("Raw text"));
     }
 }

@@ -47,6 +47,7 @@ namespace fastoredis
         const QString& loadingPathFilePath() const;
         const QIcon& loggingIcon() const;
         const QIcon& commandIcon() const;
+        const QIcon& close16Icon() const;
 
         const QIcon& commandIcon(connectionTypes type) const;
         const QIcon& typeIcon(connectionTypes type) const;

@@ -38,5 +38,6 @@
     <file>icons/scan_mode.png</file>
     <file>icons/rdb_mode.png</file>
     <file>icons/slave_mode.png</file>
+    <file>icons/close16.png</file>
     </qresource>
 </RCC>

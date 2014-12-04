@@ -254,7 +254,8 @@ namespace fastoredis
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();
         }
-        QMainWindow::changeEvent(e);
+
+        return QMainWindow::changeEvent(e);
     }
 
     void MainWindow::keyPressEvent(QKeyEvent* keyEvent)

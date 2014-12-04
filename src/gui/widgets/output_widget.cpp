@@ -4,7 +4,7 @@
 #include <QPushButton>
 #include <QSplitter>
 
-#include "gui/fasto_editor.h"
+#include "gui/fasto_view.h"
 #include "gui/fasto_table_view.h"
 #include "gui/fasto_tree_view.h"
 #include "gui/fasto_common_model.h"

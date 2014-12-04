@@ -5,9 +5,11 @@
 #include <Qsci/qsciscintilla.h>
 
 #include <QModelIndex>
+#include <QFrame>
 
-class QAbstractItemModel;
-class QRadioButton;
+#define JSON 0
+#define CSV 1
+#define RAW 2
 
 namespace fastoredis
 {
@@ -64,29 +66,5 @@ namespace fastoredis
         QAbstractItemModel* model_;
         int viewMethod_;
         const QString delemitr_;
-    };
-
-    class FastoEditorView
-            : public QWidget
-    {
-        Q_OBJECT
-    public:
-        FastoEditorView(const QString& delemitr, QWidget* parent = 0);
-        void setModel(QAbstractItemModel* model);
-        void setReadOnly(bool readOnly);
-
-    protected:
-        virtual void changeEvent(QEvent *);
-
-    private Q_SLOTS:
-        void viewChanged(bool checked);
-
-    private:
-        void retranslateUi();
-
-        QRadioButton* jsonRadioButton_;
-        QRadioButton* csvRadioButton_;
-        QRadioButton* rawRadioButton_;
-        FastoEditorOutput* editor_;
     };
 }
