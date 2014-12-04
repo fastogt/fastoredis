@@ -135,156 +135,171 @@
     </message>
     <message>
         <location filename="global.h" line="31"/>
+        <source>Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="global.h" line="32"/>
+        <source>Enter Full Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="global.h" line="33"/>
+        <source>Exit Full Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="global.h" line="34"/>
         <source>Help</source>
         <translation type="unfinished">Помощь</translation>
     </message>
     <message>
-        <location filename="global.h" line="32"/>
+        <location filename="global.h" line="35"/>
         <source>Connect</source>
         <translation type="unfinished">Соединиться</translation>
     </message>
     <message>
-        <location filename="global.h" line="33"/>
+        <location filename="global.h" line="36"/>
         <source>Disconnect</source>
         <translation type="unfinished">Отсоединиться</translation>
     </message>
     <message>
-        <location filename="global.h" line="34"/>
+        <location filename="global.h" line="37"/>
         <source>Execute</source>
         <translation type="unfinished">Выполнить</translation>
     </message>
     <message>
-        <location filename="global.h" line="35"/>
+        <location filename="global.h" line="38"/>
         <source>Preferences</source>
         <translation type="unfinished">Настройки</translation>
     </message>
     <message>
-        <location filename="global.h" line="36"/>
+        <location filename="global.h" line="39"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="37"/>
+        <location filename="global.h" line="40"/>
         <source>Duplicate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="38"/>
+        <location filename="global.h" line="41"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="39"/>
+        <location filename="global.h" line="42"/>
         <source>Clear All</source>
         <translation type="unfinished">Очистить все</translation>
     </message>
     <message>
-        <location filename="global.h" line="40"/>
+        <location filename="global.h" line="43"/>
         <source>Commands</source>
         <translation type="unfinished">Команды</translation>
     </message>
     <message>
-        <location filename="global.h" line="41"/>
+        <location filename="global.h" line="44"/>
         <source>Errors</source>
         <translation type="unfinished">Ошибки</translation>
     </message>
     <message>
-        <location filename="global.h" line="42"/>
+        <location filename="global.h" line="45"/>
         <source>Name</source>
         <translation type="unfinished">Имя</translation>
     </message>
     <message>
-        <location filename="global.h" line="43"/>
+        <location filename="global.h" line="46"/>
         <source>Address</source>
         <translation type="unfinished">Адрес</translation>
     </message>
     <message>
-        <location filename="global.h" line="44"/>
+        <location filename="global.h" line="47"/>
         <source>Auth. Database / User</source>
         <translation type="unfinished">База данных/Пользователь</translation>
     </message>
     <message>
-        <location filename="global.h" line="45"/>
+        <location filename="global.h" line="48"/>
         <source>Private Key</source>
         <translation>Приватный ключ</translation>
     </message>
     <message>
-        <location filename="global.h" line="46"/>
+        <location filename="global.h" line="49"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="global.h" line="47"/>
+        <location filename="global.h" line="50"/>
         <source>Hide</source>
         <translation>Скрыть</translation>
     </message>
     <message>
-        <location filename="global.h" line="48"/>
+        <location filename="global.h" line="51"/>
         <source>Show</source>
         <translation>Показать</translation>
     </message>
     <message>
-        <location filename="global.h" line="50"/>
+        <location filename="global.h" line="53"/>
         <source>Open console</source>
         <translation type="unfinished">Открыть консоль</translation>
     </message>
     <message>
-        <location filename="global.h" line="51"/>
+        <location filename="global.h" line="54"/>
         <source>Load databases</source>
         <translation type="unfinished">Загрузить базы данных</translation>
     </message>
     <message>
-        <location filename="global.h" line="52"/>
+        <location filename="global.h" line="55"/>
         <source>Load content of database</source>
         <translation type="unfinished">Загрузить содержимое базы</translation>
     </message>
     <message>
-        <location filename="global.h" line="53"/>
+        <location filename="global.h" line="56"/>
         <source>Check for updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="54"/>
+        <location filename="global.h" line="57"/>
         <source>Loading...</source>
         <translation type="unfinished">Загрузка...</translation>
     </message>
     <message>
-        <location filename="global.h" line="55"/>
+        <location filename="global.h" line="58"/>
         <source>Explorer tree</source>
         <translation type="unfinished">Проводник</translation>
     </message>
     <message>
-        <location filename="global.h" line="56"/>
+        <location filename="global.h" line="59"/>
         <source>Check version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="57"/>
+        <location filename="global.h" line="60"/>
         <source>Connection error!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="59"/>
+        <location filename="global.h" line="62"/>
         <source>New Tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="60"/>
+        <location filename="global.h" line="63"/>
         <source>Close Tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="61"/>
+        <location filename="global.h" line="64"/>
         <source>Close Other Tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="312"/>
+        <location filename="../gui/main_window.cpp" line="346"/>
         <source>Availible new version: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="317"/>
+        <location filename="../gui/main_window.cpp" line="351"/>
         <source>&lt;h3&gt;You&apos;re&apos; up-to-date!&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -292,62 +307,62 @@
 <context>
     <name>fastoredis::ConnectionDialog</name>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="263"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="276"/>
         <source>Select private key file</source>
         <translation>Выбрать приватный ключ</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="264"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="277"/>
         <source>Private key files (*.*)</source>
         <translation>Приватный ключ</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="328"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="341"/>
         <source>Connection Settings</source>
         <translation>Настройки соединения</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="329"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="342"/>
         <source>Logging enabled</source>
         <translation>Логированние</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="330"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="343"/>
         <source>&amp;Test</source>
         <translation>Тест</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="331"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="344"/>
         <source>Use SSH tunnel</source>
         <translation>Использовать SSH тунель</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="332"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="345"/>
         <source>User Password:</source>
         <translation>Пароль:</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="333"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="346"/>
         <source>Private key:</source>
         <translation>Приватный ключ:</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="334"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="347"/>
         <source>Passphrase:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="335"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="348"/>
         <source>SSH Address:</source>
         <translation>SSH адрес:</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="336"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="349"/>
         <source>SSH User Name:</source>
         <translation>SSH Имя пользователя:</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/connection_dialog.cpp" line="337"/>
+        <location filename="../gui/dialogs/connection_dialog.cpp" line="350"/>
         <source>SSH Auth Method:</source>
         <translation>SSH Метод авторизации:</translation>
     </message>
@@ -379,12 +394,27 @@
 <context>
     <name>fastoredis::FastoEditorView</name>
     <message>
-        <location filename="../gui/fasto_editor.cpp" line="320"/>
+        <location filename="../gui/fasto_view.cpp" line="190"/>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/fasto_view.cpp" line="190"/>
+        <source>The specified text was not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/fasto_view.cpp" line="197"/>
         <source>Json</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/fasto_editor.cpp" line="321"/>
+        <location filename="../gui/fasto_view.cpp" line="198"/>
+        <source>Csv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/fasto_view.cpp" line="199"/>
         <source>Raw text</source>
         <translation type="unfinished"></translation>
     </message>
@@ -392,7 +422,7 @@
 <context>
     <name>fastoredis::MainWindow</name>
     <message>
-        <location filename="../gui/main_window.cpp" line="260"/>
+        <location filename="../gui/main_window.cpp" line="294"/>
         <source>About %1...</source>
         <translation type="unfinished"></translation>
     </message>

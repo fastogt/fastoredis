@@ -70,7 +70,8 @@ namespace fastoredis
     {
         int numberOfDigits = getNumberOfDigits(lines());
 
-        lineNumberMarginWidth_ = numberOfDigits * textWidth(STYLE_LINENUMBER, "0") + rowNumberWidth;
+        int tw = textWidth(STYLE_LINENUMBER, "0");
+        lineNumberMarginWidth_ = numberOfDigits * tw + rowNumberWidth;
 
         // If line numbers margin already displayed, update its width
         if (lineNumberMarginWidth()) {
@@ -107,7 +108,8 @@ namespace fastoredis
 
     int FastoEditor::textWidth(int style, const QString &text)
     {
-        const char *byteArray = (text.toUtf8()).constData();
+        const QByteArray utf8 = text.toUtf8();
+        const char *byteArray = utf8.constData();
         return SendScintilla(SCI_TEXTWIDTH, style, byteArray);
     }
 
