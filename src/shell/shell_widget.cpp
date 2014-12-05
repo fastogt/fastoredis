@@ -11,7 +11,6 @@
 #include <QFileDialog>
 
 #include "common/qt/convert_string.h"
-#include "common/safe_sprintf.h"
 
 #include "gui/gui_factory.h"
 #include "gui/icon_label.h"
@@ -42,7 +41,7 @@ namespace
         else {
             static const uint16_t size_buff = 256;
             char buff[size_buff] = {0};
-            common::strings::SafeSNPrintf(buff, size_buff, PROJECT_NAME" can't read from %1:\n%2.", convertToString(filePath).c_str(),
+            sprintf(buff, PROJECT_NAME" can't read from %1:\n%2.", convertToString(filePath).c_str(),
                             convertToString(file.errorString()).c_str());
             ErrorValueSPtr er(new ErrorValue(buff, Value::E_ERROR));
             fastoredis::LOG_ERROR(er);

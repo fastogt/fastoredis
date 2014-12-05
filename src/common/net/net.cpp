@@ -38,9 +38,9 @@ namespace common
                         static const uint8_t size_buff = 4;
                         char tmp[size_buff] = {0};
                         if (i == (PhysAddrLen - 1))
-                            strings::SafeSNPrintf(tmp, size_buff, "%.2X", bPhysAddr[i]);
+                            sprintf(tmp, "%.2X", bPhysAddr[i]);
                         else
-                            strings::SafeSNPrintf(tmp, size_buff, "%.2X-", bPhysAddr[i]);
+                            sprintf(tmp, "%.2X-", bPhysAddr[i]);
 
                         out_mac_address += tmp;
                     }
@@ -136,7 +136,7 @@ namespace common
     {
         static const uint16_t size_buff = 512;
         char buff[size_buff] = {0};
-        strings::SafeSNPrintf(buff, size_buff, "%s:%d", host.first.c_str(), host.second);
+        sprintf(buff, "%s:%d", host.first.c_str(), host.second);
         return buff;
     }
 

@@ -478,7 +478,7 @@
 <context>
     <name>fastoredis::ShellWidget</name>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="167"/>
+        <location filename="../shell/shell_widget.cpp" line="166"/>
         <source>Based on redis-cli version: %1</source>
         <translation>Основан на redis-cli версии: %1</translation>
     </message>

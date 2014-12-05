@@ -4,8 +4,6 @@
 
 #include "common/log_levels.h"
 
-#include "common/safe_sprintf.h"
-
 #include "common/multi_threading/lockers.h"
 
 #include "common/patterns/singleton_pattern.h"
@@ -25,7 +23,8 @@ namespace common
             void printTradeSafe(LEVEL_LOG level, const char* fmt, T t1)
             {                
                 char buff[buff_size] = {0};
-                strings::SafeSNPrintf(buff, buff_size, fmt, t1);
+                int res = snprintf(buff, buff_size, fmt, t1);
+                DCHECK(res != -1 && res < buff_size);
                 printTradeSafe(level, buff);
             }            
 
@@ -33,7 +32,8 @@ namespace common
             void printTradeSafe(LEVEL_LOG level, const char* fmt, T1 t1, T2 t2)
             {
                 char buff[buff_size] = {0};
-                strings::SafeSNPrintf(buff, buff_size, fmt, t1, t2);
+                int res = snprintf(buff, buff_size, fmt, t1, t2);
+                DCHECK(res != -1 && res < buff_size);
                 printTradeSafe(level, buff);
             }
 
@@ -41,7 +41,8 @@ namespace common
             void printTradeSafe(LEVEL_LOG level, const char* fmt, T1 t1, T2 t2, T3 t3)
             {
                 char buff[buff_size] = {0};
-                strings::SafeSNPrintf(buff, fmt, t1, t2, t3);
+                int res = snprintf(buff, fmt, t1, t2, t3);
+                DCHECK(res != -1 && res < buff_size);
                 printTradeSafe(level, buff);
             }
 
@@ -49,7 +50,8 @@ namespace common
             void printTradeSafe(LEVEL_LOG level, const char* fmt, T1 t1, T2 t2, T3 t3, T4 t4)
             {
                 char buff[buff_size] = {0};
-                strings::SafeSNPrintf(buff, fmt, t1, t2, t3, t4);
+                int res = snprintf(buff, fmt, t1, t2, t3, t4);
+                DCHECK(res != -1 && res < buff_size);
                 printTradeSafe(level, buff);
             }
 

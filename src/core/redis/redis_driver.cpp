@@ -1442,7 +1442,7 @@ namespace fastoredis
                                 er = cliSendCommand(out, argc-skipargs, argv+skipargs, repeat);
                                 if (er){
                                     sdsfreesplitres(argv,argc);
-                                    return cliPrintContextError();
+                                    return er;
                                 }
                             }
                             /* Issue the command again if we got redirected in cluster mode */
