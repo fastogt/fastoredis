@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QString>
 #include <QObject>
 
@@ -62,6 +60,5 @@ namespace fastoredis
         const QString trNewTab = QObject::tr("New Tab");
         const QString trCloseTab = QObject::tr("Close Tab");
         const QString trCloseOtherTab = QObject::tr("Close Other Tab");
-
     }
 }

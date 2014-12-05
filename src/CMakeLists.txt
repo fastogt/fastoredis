@@ -27,7 +27,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/widgets/main_widget.h
     gui/main_tab_bar.h
     gui/fasto_editor.h
-    gui/fasto_view.h
+    gui/fasto_text_view.h
     gui/widgets/query_widget.h
     gui/widgets/output_widget.h
     gui/fasto_tree_view.h
@@ -41,6 +41,7 @@ SET(HEADERS_GUI_TO_MOC
 )
 SET(HEADERS_GUI
     gui/gui_factory.h
+    gui/shortcuts.h
     gui/fasto_common_item.h
     gui/base/tree_item.h
     gui/base/table_item.h
@@ -49,6 +50,7 @@ SET(SOURCES_GUI
     gui/main_window.cpp
     gui/app_style.cpp
     gui/gui_factory.cpp
+    gui/shortcuts.cpp
     gui/widgets/log_tab_widget.cpp
     gui/widgets/log_widget.cpp
     gui/widgets/commands_widget.cpp
@@ -63,7 +65,7 @@ SET(SOURCES_GUI
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
     gui/fasto_editor.cpp
-    gui/fasto_view.cpp
+    gui/fasto_text_view.cpp
     gui/widgets/query_widget.cpp
     gui/widgets/output_widget.cpp
     gui/explorer/explorer_tree_view.cpp
@@ -152,8 +154,6 @@ IF(WIN32)
     SET(PLATFORM_SRCS)
     SET(PLATFORM_LIBRARIES ws2_32)
 ELSEIF(APPLE)
-    SET(PLATFORM_HDRS gui/utils/mac_utils.h)
-    SET(PLATFORM_SRCS gui/utils/mac_utils.mm)
     FIND_LIBRARY(COCOA_LIBRARY Cocoa)
     SET(PLATFORM_LIBRARIES ${COCOA_LIBRARY})
 ELSEIF(UNIX)

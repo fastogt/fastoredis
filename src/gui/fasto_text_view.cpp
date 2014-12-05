@@ -1,4 +1,4 @@
-#include "gui/fasto_view.h"
+#include "gui/fasto_text_view.h"
 
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -16,7 +16,7 @@
 
 namespace fastoredis
 {
-    FastoEditorView::FastoEditorView(const QString &delemitr, QWidget* parent)
+    FastoTextView::FastoTextView(const QString &delemitr, QWidget* parent)
         : QWidget(parent)
     {
         findPanel_ = new QFrame(this);
@@ -75,12 +75,12 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void FastoEditorView::setModel(QAbstractItemModel* model)
+    void FastoTextView::setModel(QAbstractItemModel* model)
     {
         editor_->setModel(model);
     }
 
-    void FastoEditorView::viewChanged(bool checked)
+    void FastoTextView::viewChanged(bool checked)
     {
         if (!checked){
             return;
@@ -102,12 +102,12 @@ namespace fastoredis
         }
     }
 
-    void FastoEditorView::setReadOnly(bool readOnly)
+    void FastoTextView::setReadOnly(bool readOnly)
     {
         editor_->setReadOnly(readOnly);
     }
 
-    void FastoEditorView::changeEvent(QEvent *e)
+    void FastoTextView::changeEvent(QEvent *e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();
@@ -116,7 +116,7 @@ namespace fastoredis
         QWidget::changeEvent(e);
     }
 
-    bool FastoEditorView::eventFilter(QObject* object, QEvent* event)
+    bool FastoTextView::eventFilter(QObject* object, QEvent* event)
     {
         if (object == editor_) {
             if (event->type() == QEvent::KeyPress) {
@@ -134,7 +134,7 @@ namespace fastoredis
         return QWidget::eventFilter(object, event);
     }
 
-    void FastoEditorView::keyPressEvent(QKeyEvent *keyEvent)
+    void FastoTextView::keyPressEvent(QKeyEvent *keyEvent)
     {
         bool isFocusScin = editor_->isActiveWindow();
         bool isShowFind = findPanel_->isVisible();
@@ -155,17 +155,17 @@ namespace fastoredis
         }
     }
 
-    void FastoEditorView::goToNextElement()
+    void FastoTextView::goToNextElement()
     {
         findElement(true);
     }
 
-    void FastoEditorView::goToPrevElement()
+    void FastoTextView::goToPrevElement()
     {
         findElement(false);
     }
 
-    void FastoEditorView::findElement(bool forward)
+    void FastoTextView::findElement(bool forward)
     {
         const QString &text = findLine_->text();
         if (!text.isEmpty()) {
@@ -192,7 +192,7 @@ namespace fastoredis
         }
     }
 
-    void FastoEditorView::retranslateUi()
+    void FastoTextView::retranslateUi()
     {
         jsonRadioButton_->setText(tr("Json"));
         csvRadioButton_->setText(tr("Csv"));

@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QString>
 
 #include "common/value.h"

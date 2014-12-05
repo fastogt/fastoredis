@@ -1,9 +1,6 @@
 #pragma once
 
-/**/
-
 #include <QFrame>
-
 
 class QAbstractItemModel;
 class QRadioButton;
@@ -16,7 +13,7 @@ namespace fastoredis
 {
     class FastoEditorOutput;
 
-    class FastoEditorView
+    class FastoTextView
             : public QWidget
     {
         Q_OBJECT
@@ -26,7 +23,7 @@ namespace fastoredis
             HeightFindPanel = 40
         };
 
-        FastoEditorView(const QString& delemitr, QWidget* parent = 0);
+        FastoTextView(const QString& delemitr, QWidget* parent = 0);
         void setModel(QAbstractItemModel* model);
         void setReadOnly(bool readOnly);
 

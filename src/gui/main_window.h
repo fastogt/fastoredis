@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QMainWindow>
 
 class QAction;

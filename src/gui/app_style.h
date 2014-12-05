@@ -1,8 +1,7 @@
 #pragma once
 
-/**/
-
 #include <QStyle>
+
 #ifdef OS_WIN
     #include <QProxyStyle>
     typedef QProxyStyle OsStyle;

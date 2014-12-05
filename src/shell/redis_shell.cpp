@@ -5,6 +5,7 @@
 
 #include "shell/redis_lexer.h"
 
+#include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
 
 namespace fastoredis
@@ -36,6 +37,16 @@ namespace fastoredis
         return version_;
     }
 
+    void RedisShell::showAutocompletion()
+    {
+
+    }
+
+    void RedisShell::hideAutocompletion()
+    {
+
+    }
+
     void RedisShell::showContextMenu(const QPoint& pt)
     {
         QMenu *menu = createStandardContextMenu();
@@ -45,8 +56,16 @@ namespace fastoredis
 
     void RedisShell::keyPressEvent(QKeyEvent* keyEvent)
     {
-        if((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Return) ){
+        if(isExecuteScriptShortcut(keyEvent)){
             emit executed();
+        }
+        else if(isAutoCompleteShortcut(keyEvent)){
+            showAutocompletion();
+            return;
+        }
+        else if(isHideAutoCompleteShortcut(keyEvent)){
+            hideAutocompletion();
+            return;
         }
 
         return FastoEditor::keyPressEvent(keyEvent);

@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <Qsci/qsciabstractapis.h>
 #include <Qsci/qscilexercustom.h>
 

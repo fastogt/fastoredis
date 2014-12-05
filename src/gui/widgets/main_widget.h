@@ -20,6 +20,9 @@ namespace fastoredis
         QueryWidget* currentWidget() const;
         QueryWidget* widget(int index) const;
 
+        void nextTab();
+        void previousTab();
+
     public Q_SLOTS:
         void openConsole(IServerPtr server);
 
@@ -30,6 +33,9 @@ namespace fastoredis
         void closeTab(int index);
         void closeCurrentTab();
         void closedOtherTabs();
+
+    protected:
+        virtual void keyPressEvent(QKeyEvent* e);
 
     private:
         void addWidgetToTab(QWidget* wid, const QString& title);

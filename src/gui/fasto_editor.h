@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <Qsci/qsciscintilla.h>
 
 #include <QModelIndex>

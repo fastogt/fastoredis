@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "gui/fasto_editor.h"
 
 namespace fastoredis
@@ -18,6 +16,10 @@ namespace fastoredis
 
     Q_SIGNALS:
         void executed();
+
+    public Q_SLOTS:
+        void showAutocompletion();
+        void hideAutocompletion();
 
     private Q_SLOTS:
         void showContextMenu(const QPoint& pt);

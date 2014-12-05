@@ -1,5 +1,6 @@
 #include "gui/widgets/main_widget.h"
 
+#include "gui/shortcuts.h"
 #include "gui/main_tab_bar.h"
 #include "gui/gui_factory.h"
 #include "gui/widgets/query_widget.h"
@@ -103,6 +104,78 @@ namespace fastoredis
         QueryWidget *newWid = src->clone(text);
         DCHECK(newWid);
         addWidgetToTab(newWid, title);
+    }
+
+    void MainWidget::nextTab()
+    {
+        int index = currentIndex();
+        int tabsCount = count();
+        if (index == tabsCount - 1)
+        {
+            setCurrentIndex(0);
+            return;
+        }
+        if (index >= 0 && index < tabsCount - 1)
+        {
+            setCurrentIndex(index + 1);
+            return;
+        }
+    }
+
+    void MainWidget::previousTab()
+    {
+        int index = currentIndex();
+        if (index == 0)
+        {
+            setCurrentIndex(count() - 1);
+            return;
+        }
+
+        if (index > 0)
+        {
+            setCurrentIndex(index - 1);
+            return;
+        }
+    }
+
+    /**
+    * @brief Overrides QTabWidget::keyPressEvent() in order to intercept
+    * tab close key shortcuts (Ctrl+F4 and Ctrl+W)
+    */
+    void MainWidget::keyPressEvent(QKeyEvent *keyEvent)
+    {
+        if (isCloseTabShortcut(keyEvent))
+        {
+            int index = currentIndex();
+            closeTab(index);
+            return;
+        }
+
+        if (isCloseTabShortcut(keyEvent)) {
+            previousTab();
+            return;
+        }
+        else if (isNextTabShortcut(keyEvent)) {
+            nextTab();
+            return;
+        }
+        else if (isNewTabShortcut(keyEvent)) {
+            createNewTab();
+            return;
+        }
+        else if (isDuplicateTabShortcut(keyEvent)) {
+            duplicateCurrentTab();
+            return;
+        }
+        else if (isSetFocusOnQueryLineShortcut(keyEvent)) {
+            QueryWidget* wid = currentWidget();
+            if(wid){
+                wid->setFocus();
+            }
+            return;
+        }
+
+        QTabWidget::keyPressEvent(keyEvent);
     }
 }
 

@@ -56,8 +56,9 @@ namespace
 
     bool saveToFileText(QString filePath, const QString& text, QWidget* parent)
     {
-        if (filePath.isEmpty())
+        if (filePath.isEmpty()){
             return false;
+        }
 
 #ifdef OS_LINUX
         if (QFileInfo(filePath).suffix().isEmpty()) {

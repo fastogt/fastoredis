@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QTabBar>
 
 namespace fastoredis

@@ -4,7 +4,29 @@
 
 namespace
 {
+    QStringList initRedisCommand()
+    {
+        QStringList list;
+        for(std::vector<QString>::const_iterator jt = fastoredis::redisCommandsKeywords.begin(); jt != fastoredis::redisCommandsKeywords.end(); ++jt){
+            QString jval = *jt;
+            list.append(jval + "?1");
+        }
+        return list;
+    }
+
+    QStringList initRedisTypes()
+    {
+        QStringList list;
+        for(std::vector<QString>::const_iterator jt = fastoredis::redisTypesKeywords.begin(); jt != fastoredis::redisTypesKeywords.end(); ++jt){
+            QString jval = *jt;
+            list.append(jval + "?2");
+        }
+        return list;
+    }
+
     const QString help("help");
+    const QStringList nredisCommandsKeywords = initRedisCommand();
+    const QStringList nredisTypesKeywords = initRedisTypes();
 }
 
 namespace fastoredis
@@ -18,17 +40,17 @@ namespace fastoredis
     {        
         for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
             QString val = *it;
-            for(std::vector<QString>::const_iterator jt = redisCommandsKeywords.begin(); jt != redisCommandsKeywords.end(); ++jt){
+            for(QStringList::const_iterator jt = nredisCommandsKeywords.begin(); jt != nredisCommandsKeywords.end(); ++jt){
                 QString jval = *jt;
                 if(jval.startsWith(val, Qt::CaseInsensitive)){
-                    list.append(jval + "?1");
+                    list.append(jval);
                 }
             }
 
-            for(std::vector<QString>::const_iterator jt = redisTypesKeywords.begin(); jt != redisTypesKeywords.end(); ++jt){
+            for(QStringList::const_iterator jt = nredisTypesKeywords.begin(); jt != nredisTypesKeywords.end(); ++jt){
                 QString jval = *jt;
                 if(jval.startsWith(val, Qt::CaseInsensitive)){
-                    list.append(jval + "?2");
+                    list.append(jval);
                 }
             }
 
@@ -124,7 +146,7 @@ namespace fastoredis
     void RedisLexer::paintCommands(const QString& source, int start)
     {
         for(std::vector<QString>::const_iterator it = redisCommandsKeywords.begin(); it != redisCommandsKeywords.end(); ++it){
-            QString word = *it;
+            QString word = (*it);
             int index = 0;
             int begin = 0;
             while( (begin = source.indexOf(word, index, Qt::CaseInsensitive)) != -1){

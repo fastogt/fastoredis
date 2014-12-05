@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "gui/base/tree_model.h"
 
 namespace fastoredis
