@@ -6,7 +6,7 @@
     <message>
         <location filename="global.h" line="10"/>
         <source>Text Files (*.txt); All Files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Текстовые файлы (*.txt); Все файлы (*.*)</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/info_server_dialog.cpp" line="13"/>
@@ -51,172 +51,172 @@
     <message>
         <location filename="global.h" line="12"/>
         <source>Load</source>
-        <translation type="unfinished">Загрузить</translation>
+        <translation>Загрузить</translation>
     </message>
     <message>
         <location filename="global.h" line="13"/>
         <source>Open</source>
-        <translation type="unfinished">Открыть</translation>
+        <translation>Открыть</translation>
     </message>
     <message>
         <location filename="global.h" line="14"/>
         <source>Close</source>
-        <translation type="unfinished">Закрыть</translation>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <location filename="global.h" line="15"/>
         <source>Info</source>
-        <translation type="unfinished">Информация</translation>
+        <translation>Информация</translation>
     </message>
     <message>
         <location filename="global.h" line="16"/>
         <source>Property</source>
-        <translation type="unfinished">Свойства</translation>
+        <translation>Свойства</translation>
     </message>
     <message>
         <location filename="global.h" line="17"/>
         <source>History</source>
-        <translation type="unfinished">История</translation>
+        <translation>История</translation>
     </message>
     <message>
         <location filename="global.h" line="18"/>
         <source>Save</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="global.h" line="19"/>
         <source>Save as</source>
-        <translation type="unfinished">Сохранить как ...</translation>
+        <translation>Сохранить как </translation>
     </message>
     <message>
         <location filename="global.h" line="20"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <location filename="global.h" line="21"/>
         <source>File</source>
-        <translation type="unfinished">Файл</translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location filename="global.h" line="22"/>
         <source>Stop</source>
-        <translation type="unfinished">Остановить</translation>
+        <translation>Остановить</translation>
     </message>
     <message>
         <location filename="global.h" line="23"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <location filename="global.h" line="24"/>
         <source>View</source>
-        <translation type="unfinished">Представление</translation>
+        <translation>Представление</translation>
     </message>
     <message>
         <location filename="global.h" line="25"/>
         <source>Logs</source>
-        <translation type="unfinished">Логи</translation>
+        <translation>Логи</translation>
     </message>
     <message>
         <location filename="global.h" line="26"/>
         <source>Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключ</translation>
     </message>
     <message>
         <location filename="global.h" line="27"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Значение</translation>
     </message>
     <message>
         <location filename="global.h" line="28"/>
         <source>Options</source>
-        <translation type="unfinished">Опции</translation>
+        <translation>Опции</translation>
     </message>
     <message>
         <location filename="global.h" line="29"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Окно</translation>
     </message>
     <message>
         <location filename="global.h" line="30"/>
         <source>Enter Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейти в полно экранный режим</translation>
     </message>
     <message>
         <location filename="global.h" line="31"/>
         <source>Exit Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Выйте из полно экранного режима</translation>
     </message>
     <message>
         <location filename="global.h" line="32"/>
         <source>Help</source>
-        <translation type="unfinished">Помощь</translation>
+        <translation>Помощь</translation>
     </message>
     <message>
         <location filename="global.h" line="33"/>
         <source>Connect</source>
-        <translation type="unfinished">Соединиться</translation>
+        <translation>Соединиться</translation>
     </message>
     <message>
         <location filename="global.h" line="34"/>
         <source>Disconnect</source>
-        <translation type="unfinished">Отсоединиться</translation>
+        <translation>Отсоединиться</translation>
     </message>
     <message>
         <location filename="global.h" line="35"/>
         <source>Execute</source>
-        <translation type="unfinished">Выполнить</translation>
+        <translation>Выполнить</translation>
     </message>
     <message>
         <location filename="global.h" line="36"/>
         <source>Preferences</source>
-        <translation type="unfinished">Настройки</translation>
+        <translation>Настройки</translation>
     </message>
     <message>
         <location filename="global.h" line="37"/>
         <source>Reload</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить</translation>
     </message>
     <message>
         <location filename="global.h" line="38"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>Дублировать</translation>
     </message>
     <message>
         <location filename="global.h" line="39"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location filename="global.h" line="40"/>
         <source>Clear All</source>
-        <translation type="unfinished">Очистить все</translation>
+        <translation>Очистить все</translation>
     </message>
     <message>
         <location filename="global.h" line="41"/>
         <source>Commands</source>
-        <translation type="unfinished">Команды</translation>
+        <translation>Команды</translation>
     </message>
     <message>
         <location filename="global.h" line="42"/>
         <source>Errors</source>
-        <translation type="unfinished">Ошибки</translation>
+        <translation>Ошибки</translation>
     </message>
     <message>
         <location filename="global.h" line="43"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="global.h" line="44"/>
         <source>Address</source>
-        <translation type="unfinished">Адрес</translation>
+        <translation>Адрес</translation>
     </message>
     <message>
         <location filename="global.h" line="45"/>
         <source>Auth. Database / User</source>
-        <translation type="unfinished">База данных/Пользователь</translation>
+        <translation>База данных/Пользователь</translation>
     </message>
     <message>
         <location filename="global.h" line="46"/>
@@ -241,77 +241,77 @@
     <message>
         <location filename="global.h" line="51"/>
         <source>Open console</source>
-        <translation type="unfinished">Открыть консоль</translation>
+        <translation>Открыть консоль</translation>
     </message>
     <message>
         <location filename="global.h" line="52"/>
         <source>Load databases</source>
-        <translation type="unfinished">Загрузить базы данных</translation>
+        <translation>Загрузить базы данных</translation>
     </message>
     <message>
         <location filename="global.h" line="53"/>
         <source>Load content of database</source>
-        <translation type="unfinished">Загрузить содержимое базы</translation>
+        <translation>Загрузить содержимое базы</translation>
     </message>
     <message>
         <location filename="global.h" line="54"/>
         <source>Check for updates...</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверить обновление</translation>
     </message>
     <message>
         <location filename="global.h" line="55"/>
         <source>Loading...</source>
-        <translation type="unfinished">Загрузка...</translation>
+        <translation>Загрузка...</translation>
     </message>
     <message>
         <location filename="global.h" line="56"/>
         <source>Explorer tree</source>
-        <translation type="unfinished">Проводник</translation>
+        <translation>Проводник</translation>
     </message>
     <message>
         <location filename="global.h" line="57"/>
         <source>Check version</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверка версии</translation>
     </message>
     <message>
         <location filename="global.h" line="58"/>
         <source>Connection error!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка соединения!</translation>
     </message>
     <message>
         <location filename="global.h" line="60"/>
         <source>New Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая вкладка</translation>
     </message>
     <message>
         <location filename="global.h" line="61"/>
         <source>Next Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Следущая вкладка</translation>
     </message>
     <message>
         <location filename="global.h" line="62"/>
         <source>Prev Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Предыдушая вкладка</translation>
     </message>
     <message>
         <location filename="global.h" line="63"/>
         <source>Close Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть вкладку</translation>
     </message>
     <message>
         <location filename="global.h" line="64"/>
         <source>Close Other Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть остальные вкладки</translation>
     </message>
     <message>
         <location filename="../gui/main_window.cpp" line="335"/>
         <source>Availible new version: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступна новая версияЖ %1</translation>
     </message>
     <message>
         <location filename="../gui/main_window.cpp" line="340"/>
         <source>&lt;h3&gt;You&apos;re&apos; up-to-date!&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;У вас актуальная версия!&lt;/h3&gt;</translation>
     </message>
 </context>
 <context>
@@ -390,7 +390,7 @@
     <message>
         <location filename="../gui/explorer/explorer_tree_model.cpp" line="131"/>
         <source>Name</source>
-        <translation type="unfinished">Имя</translation>
+        <translation>Имя</translation>
     </message>
 </context>
 <context>
@@ -406,27 +406,27 @@
     <message>
         <location filename="../gui/fasto_text_view.cpp" line="190"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск</translation>
     </message>
     <message>
         <location filename="../gui/fasto_text_view.cpp" line="190"/>
         <source>The specified text was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Искомый текст не найден</translation>
     </message>
     <message>
         <location filename="../gui/fasto_text_view.cpp" line="197"/>
         <source>Json</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/fasto_text_view.cpp" line="198"/>
         <source>Csv</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/fasto_text_view.cpp" line="199"/>
         <source>Raw text</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -434,7 +434,7 @@
     <message>
         <location filename="../gui/main_window.cpp" line="270"/>
         <source>About %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Об %1...</translation>
     </message>
 </context>
 <context>
@@ -447,12 +447,12 @@
     <message>
         <location filename="../gui/dialogs/preferences_dialog.cpp" line="139"/>
         <source>General settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Общие настройки</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/preferences_dialog.cpp" line="140"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматически проверять версию</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/preferences_dialog.cpp" line="141"/>

@@ -1,6 +1,8 @@
-0.3.5 /
+0.3.5 / December 3, 2014
 [Alexandr Topilski]
 - Find support for output widget
+- Key shortcuts
+- Fixed delemitr bug
 
 0.3.4 / December 3, 2014
 [Alexandr Topilski]
