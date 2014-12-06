@@ -3,6 +3,8 @@
 #include <Qsci/qsciabstractapis.h>
 #include <Qsci/qscilexercustom.h>
 
+#define ALL_COMMANDS "ALL_COMMANDS"
+
 namespace fastoredis
 {
     class RedisApi
@@ -21,7 +23,8 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        enum {
+        enum
+        {
             Default = 0,
             Command = 1,
             Types = 2,

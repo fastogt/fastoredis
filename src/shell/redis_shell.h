@@ -14,9 +14,6 @@ namespace fastoredis
         RedisShell(QWidget* parent = 0);
         QString version() const;
 
-    Q_SIGNALS:
-        void executed();
-
     public Q_SLOTS:
         void showAutocompletion();
         void hideAutocompletion();

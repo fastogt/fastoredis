@@ -14,6 +14,8 @@ namespace fastoredis
 
     Q_SIGNALS:
         void createdNewTab();
+        void nextTab();
+        void prevTab();
         void reloadedTab();
         void duplicatedTab();
         void closedTab();
@@ -28,6 +30,8 @@ namespace fastoredis
     private:
         void retranslateUi();
         QAction* newShellAction_;
+        QAction* nextTabAction_;
+        QAction* prevTabAction_;
         QAction* reloadShellAction_;
         QAction* duplicateShellAction_;
         QAction* closeShellAction_;

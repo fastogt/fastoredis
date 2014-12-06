@@ -4,7 +4,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="global.h" line="12"/>
+        <location filename="global.h" line="10"/>
         <source>Text Files (*.txt); All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -49,238 +49,248 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="global.h" line="14"/>
+        <location filename="global.h" line="12"/>
         <source>Load</source>
         <translation type="unfinished">Загрузить</translation>
     </message>
     <message>
-        <location filename="global.h" line="15"/>
+        <location filename="global.h" line="13"/>
         <source>Open</source>
         <translation type="unfinished">Открыть</translation>
     </message>
     <message>
-        <location filename="global.h" line="16"/>
+        <location filename="global.h" line="14"/>
         <source>Close</source>
         <translation type="unfinished">Закрыть</translation>
     </message>
     <message>
-        <location filename="global.h" line="17"/>
+        <location filename="global.h" line="15"/>
         <source>Info</source>
         <translation type="unfinished">Информация</translation>
     </message>
     <message>
-        <location filename="global.h" line="18"/>
+        <location filename="global.h" line="16"/>
         <source>Property</source>
         <translation type="unfinished">Свойства</translation>
     </message>
     <message>
-        <location filename="global.h" line="19"/>
+        <location filename="global.h" line="17"/>
         <source>History</source>
         <translation type="unfinished">История</translation>
     </message>
     <message>
-        <location filename="global.h" line="20"/>
+        <location filename="global.h" line="18"/>
         <source>Save</source>
         <translation type="unfinished">Сохранить</translation>
     </message>
     <message>
-        <location filename="global.h" line="21"/>
+        <location filename="global.h" line="19"/>
         <source>Save as</source>
         <translation type="unfinished">Сохранить как ...</translation>
     </message>
     <message>
-        <location filename="global.h" line="22"/>
+        <location filename="global.h" line="20"/>
         <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="23"/>
+        <location filename="global.h" line="21"/>
         <source>File</source>
         <translation type="unfinished">Файл</translation>
     </message>
     <message>
-        <location filename="global.h" line="24"/>
+        <location filename="global.h" line="22"/>
         <source>Stop</source>
         <translation type="unfinished">Остановить</translation>
     </message>
     <message>
-        <location filename="global.h" line="25"/>
+        <location filename="global.h" line="23"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="26"/>
+        <location filename="global.h" line="24"/>
         <source>View</source>
         <translation type="unfinished">Представление</translation>
     </message>
     <message>
-        <location filename="global.h" line="27"/>
+        <location filename="global.h" line="25"/>
         <source>Logs</source>
         <translation type="unfinished">Логи</translation>
     </message>
     <message>
-        <location filename="global.h" line="28"/>
+        <location filename="global.h" line="26"/>
         <source>Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="29"/>
+        <location filename="global.h" line="27"/>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="30"/>
+        <location filename="global.h" line="28"/>
         <source>Options</source>
         <translation type="unfinished">Опции</translation>
     </message>
     <message>
-        <location filename="global.h" line="31"/>
+        <location filename="global.h" line="29"/>
         <source>Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="32"/>
+        <location filename="global.h" line="30"/>
         <source>Enter Full Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="33"/>
+        <location filename="global.h" line="31"/>
         <source>Exit Full Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="34"/>
+        <location filename="global.h" line="32"/>
         <source>Help</source>
         <translation type="unfinished">Помощь</translation>
     </message>
     <message>
-        <location filename="global.h" line="35"/>
+        <location filename="global.h" line="33"/>
         <source>Connect</source>
         <translation type="unfinished">Соединиться</translation>
     </message>
     <message>
-        <location filename="global.h" line="36"/>
+        <location filename="global.h" line="34"/>
         <source>Disconnect</source>
         <translation type="unfinished">Отсоединиться</translation>
     </message>
     <message>
-        <location filename="global.h" line="37"/>
+        <location filename="global.h" line="35"/>
         <source>Execute</source>
         <translation type="unfinished">Выполнить</translation>
     </message>
     <message>
-        <location filename="global.h" line="38"/>
+        <location filename="global.h" line="36"/>
         <source>Preferences</source>
         <translation type="unfinished">Настройки</translation>
     </message>
     <message>
-        <location filename="global.h" line="39"/>
+        <location filename="global.h" line="37"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="40"/>
+        <location filename="global.h" line="38"/>
         <source>Duplicate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="41"/>
+        <location filename="global.h" line="39"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="42"/>
+        <location filename="global.h" line="40"/>
         <source>Clear All</source>
         <translation type="unfinished">Очистить все</translation>
     </message>
     <message>
-        <location filename="global.h" line="43"/>
+        <location filename="global.h" line="41"/>
         <source>Commands</source>
         <translation type="unfinished">Команды</translation>
     </message>
     <message>
-        <location filename="global.h" line="44"/>
+        <location filename="global.h" line="42"/>
         <source>Errors</source>
         <translation type="unfinished">Ошибки</translation>
     </message>
     <message>
-        <location filename="global.h" line="45"/>
+        <location filename="global.h" line="43"/>
         <source>Name</source>
         <translation type="unfinished">Имя</translation>
     </message>
     <message>
-        <location filename="global.h" line="46"/>
+        <location filename="global.h" line="44"/>
         <source>Address</source>
         <translation type="unfinished">Адрес</translation>
     </message>
     <message>
-        <location filename="global.h" line="47"/>
+        <location filename="global.h" line="45"/>
         <source>Auth. Database / User</source>
         <translation type="unfinished">База данных/Пользователь</translation>
     </message>
     <message>
-        <location filename="global.h" line="48"/>
+        <location filename="global.h" line="46"/>
         <source>Private Key</source>
         <translation>Приватный ключ</translation>
     </message>
     <message>
-        <location filename="global.h" line="49"/>
+        <location filename="global.h" line="47"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="global.h" line="50"/>
+        <location filename="global.h" line="48"/>
         <source>Hide</source>
         <translation>Скрыть</translation>
     </message>
     <message>
-        <location filename="global.h" line="51"/>
+        <location filename="global.h" line="49"/>
         <source>Show</source>
         <translation>Показать</translation>
     </message>
     <message>
-        <location filename="global.h" line="53"/>
+        <location filename="global.h" line="51"/>
         <source>Open console</source>
         <translation type="unfinished">Открыть консоль</translation>
     </message>
     <message>
-        <location filename="global.h" line="54"/>
+        <location filename="global.h" line="52"/>
         <source>Load databases</source>
         <translation type="unfinished">Загрузить базы данных</translation>
     </message>
     <message>
-        <location filename="global.h" line="55"/>
+        <location filename="global.h" line="53"/>
         <source>Load content of database</source>
         <translation type="unfinished">Загрузить содержимое базы</translation>
     </message>
     <message>
-        <location filename="global.h" line="56"/>
+        <location filename="global.h" line="54"/>
         <source>Check for updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="57"/>
+        <location filename="global.h" line="55"/>
         <source>Loading...</source>
         <translation type="unfinished">Загрузка...</translation>
     </message>
     <message>
-        <location filename="global.h" line="58"/>
+        <location filename="global.h" line="56"/>
         <source>Explorer tree</source>
         <translation type="unfinished">Проводник</translation>
     </message>
     <message>
-        <location filename="global.h" line="59"/>
+        <location filename="global.h" line="57"/>
         <source>Check version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="60"/>
+        <location filename="global.h" line="58"/>
         <source>Connection error!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="global.h" line="62"/>
+        <location filename="global.h" line="60"/>
         <source>New Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="global.h" line="61"/>
+        <source>Next Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="global.h" line="62"/>
+        <source>Prev Tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -294,12 +304,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="346"/>
+        <location filename="../gui/main_window.cpp" line="335"/>
         <source>Availible new version: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/main_window.cpp" line="351"/>
+        <location filename="../gui/main_window.cpp" line="340"/>
         <source>&lt;h3&gt;You&apos;re&apos; up-to-date!&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -392,29 +402,29 @@
     </message>
 </context>
 <context>
-    <name>fastoredis::FastoEditorView</name>
+    <name>fastoredis::FastoTextView</name>
     <message>
-        <location filename="../gui/fasto_view.cpp" line="190"/>
+        <location filename="../gui/fasto_text_view.cpp" line="190"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/fasto_view.cpp" line="190"/>
+        <location filename="../gui/fasto_text_view.cpp" line="190"/>
         <source>The specified text was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/fasto_view.cpp" line="197"/>
+        <location filename="../gui/fasto_text_view.cpp" line="197"/>
         <source>Json</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/fasto_view.cpp" line="198"/>
+        <location filename="../gui/fasto_text_view.cpp" line="198"/>
         <source>Csv</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/fasto_view.cpp" line="199"/>
+        <location filename="../gui/fasto_text_view.cpp" line="199"/>
         <source>Raw text</source>
         <translation type="unfinished"></translation>
     </message>
@@ -422,7 +432,7 @@
 <context>
     <name>fastoredis::MainWindow</name>
     <message>
-        <location filename="../gui/main_window.cpp" line="294"/>
+        <location filename="../gui/main_window.cpp" line="270"/>
         <source>About %1...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -478,7 +488,7 @@
 <context>
     <name>fastoredis::ShellWidget</name>
     <message>
-        <location filename="../shell/shell_widget.cpp" line="166"/>
+        <location filename="../shell/shell_widget.cpp" line="175"/>
         <source>Based on redis-cli version: %1</source>
         <translation>Основан на redis-cli версии: %1</translation>
     </message>

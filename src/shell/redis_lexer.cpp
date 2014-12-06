@@ -4,29 +4,7 @@
 
 namespace
 {
-    QStringList initRedisCommand()
-    {
-        QStringList list;
-        for(std::vector<QString>::const_iterator jt = fastoredis::redisCommandsKeywords.begin(); jt != fastoredis::redisCommandsKeywords.end(); ++jt){
-            QString jval = *jt;
-            list.append(jval + "?1");
-        }
-        return list;
-    }
-
-    QStringList initRedisTypes()
-    {
-        QStringList list;
-        for(std::vector<QString>::const_iterator jt = fastoredis::redisTypesKeywords.begin(); jt != fastoredis::redisTypesKeywords.end(); ++jt){
-            QString jval = *jt;
-            list.append(jval + "?2");
-        }
-        return list;
-    }
-
     const QString help("help");
-    const QStringList nredisCommandsKeywords = initRedisCommand();
-    const QStringList nredisTypesKeywords = initRedisTypes();
 }
 
 namespace fastoredis
@@ -37,24 +15,24 @@ namespace fastoredis
     }
 
     void RedisApi::updateAutoCompletionList(const QStringList& context, QStringList& list)
-    {        
+    {
         for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
             QString val = *it;
-            for(QStringList::const_iterator jt = nredisCommandsKeywords.begin(); jt != nredisCommandsKeywords.end(); ++jt){
+            for(std::vector<QString>::const_iterator jt = redisCommandsKeywords.begin(); jt != redisCommandsKeywords.end(); ++jt){
                 QString jval = *jt;
-                if(jval.startsWith(val, Qt::CaseInsensitive)){
-                    list.append(jval);
+                if(jval.startsWith(val, Qt::CaseInsensitive) || (val == ALL_COMMANDS && context.size() == 1) ){
+                    list.append(jval + "?1");
                 }
             }
 
-            for(QStringList::const_iterator jt = nredisTypesKeywords.begin(); jt != nredisTypesKeywords.end(); ++jt){
+            for(std::vector<QString>::const_iterator jt = redisTypesKeywords.begin(); jt != redisTypesKeywords.end(); ++jt){
                 QString jval = *jt;
-                if(jval.startsWith(val, Qt::CaseInsensitive)){
-                    list.append(jval);
+                if(jval.startsWith(val, Qt::CaseInsensitive) || (val == ALL_COMMANDS && context.size() == 1) ){
+                    list.append(jval + "?2");
                 }
             }
 
-            if(help.startsWith(val, Qt::CaseInsensitive)){
+            if(help.startsWith(val, Qt::CaseInsensitive) || (val == ALL_COMMANDS && context.size() == 1) ){
                 list.append(help + "?3");
             }
         }

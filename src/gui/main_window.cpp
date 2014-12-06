@@ -6,11 +6,10 @@
 #include <QMessageBox>
 #include <QThread>
 
-#include <QKeyEvent>
-
 #include "common/net/socket_tcp.h"
 #include "common/qt/convert_string.h"
 
+#include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
 #include "gui/app_style.h"
 #include "gui/dialogs/about_dialog.h"
@@ -79,6 +78,9 @@ namespace
 
         return PROJECT_VERSION_PATCH < serPatch;
     }
+
+    const QKeySequence logsKeySequence = Qt::CTRL + Qt::Key_L;
+    const QKeySequence explorerKeySequence = Qt::CTRL + Qt::Key_T;
 }
 
 namespace fastoredis
@@ -132,20 +134,20 @@ namespace fastoredis
 
         openAction_ = new QAction(this);
         openAction_->setIcon(GuiFactory::instance().openIcon());
-        openAction_->setShortcut(QKeySequence::Open);
+        openAction_->setShortcut(openKey);
         VERIFY(connect(openAction_, SIGNAL(triggered()), this, SLOT(open())));
 
         saveAction_ = new QAction(this);
-        saveAction_->setShortcuts(QKeySequence::Save);
+        saveAction_->setShortcut(saveKey);
         VERIFY(connect(saveAction_, SIGNAL(triggered()), this, SLOT(save())));
 
         saveAsAction_ = new QAction(this);
-        saveAsAction_->setShortcuts(QKeySequence::SaveAs);
+        saveAsAction_->setShortcut(saveAsKey);
         VERIFY(connect(saveAsAction_, SIGNAL(triggered()), this, SLOT(saveAs())));
 
         // Exit action
         exitAction_ = new QAction(this);
-        exitAction_->setShortcut(QKeySequence::Quit);
+        exitAction_->setShortcut(quitKey);
         VERIFY(connect(exitAction_, SIGNAL(triggered()), this, SLOT(close())));
 
         // File menu
@@ -160,9 +162,6 @@ namespace fastoredis
         preferencesAction_ = new QAction(this);
         VERIFY(connect(preferencesAction_, SIGNAL(triggered()), this, SLOT(openPreferences())));
 
-        QMenu *viewMenu = new QMenu(this);
-        viewAction_ = menuBar()->addMenu(viewMenu);
-
         QMenu *optionsMenu = new QMenu(this);
         optionsAction_ = menuBar()->addMenu(optionsMenu);
 
@@ -175,11 +174,8 @@ namespace fastoredis
         QMenu *window = new QMenu(this);
         windowAction_ = menuBar()->addMenu(window);
         fullScreanAction_ = new QAction(this);
-#ifdef OS_MACOSX
-        fullScreanAction_->setShortcut(QKeySequence("Meta+Ctrl+F"));
-#else
-        fullScreanAction_->setShortcut(QKeySequence("Ctrl+Shift+F11"));
-#endif
+        fullScreanAction_->setShortcut(fullScreenKey);
+        VERIFY(connect(fullScreanAction_, SIGNAL(triggered()), this, SLOT(enterLeaveFullScreen())));
         window->addAction(fullScreanAction_);
 
         QMenu *helpMenu = new QMenu(this);
@@ -196,9 +192,9 @@ namespace fastoredis
         VERIFY(connect(exp_, SIGNAL(openedConsole(IServerPtr)), mainW, SLOT(openConsole(IServerPtr))));
         expDock_ = new QDockWidget(this);
         explorerAction_ = expDock_->toggleViewAction();
-        explorerAction_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+        explorerAction_->setShortcut(explorerKeySequence);
         explorerAction_->setChecked(true);
-        viewMenu->addAction(explorerAction_);
+        window->addAction(explorerAction_);
 
         expDock_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         expDock_->setWidget(exp_);
@@ -211,9 +207,9 @@ namespace fastoredis
         VERIFY(connect(&CommandLogger::instance(), SIGNAL(printed(const Command&)), log, SLOT(addCommand(const Command&))));
         logDock_ = new QDockWidget(this);
         logsAction_ = logDock_->toggleViewAction();
-        logsAction_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
+        logsAction_->setShortcut(logsKeySequence);
         logsAction_->setChecked(false);
-        viewMenu->addAction(logsAction_);
+        window->addAction(logsAction_);
 
         logDock_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         logDock_->setWidget(log);
@@ -258,25 +254,6 @@ namespace fastoredis
         return QMainWindow::changeEvent(e);
     }
 
-    void MainWindow::keyPressEvent(QKeyEvent* keyEvent)
-    {
-    #ifdef OS_MACOSX
-        if (((keyEvent->modifiers() & Qt::ShiftModifier) && ((keyEvent->modifiers() & Qt::ControlModifier))) && (keyEvent->key() == Qt::Key_F)) {
-    #else
-        if (((keyEvent->modifiers() & Qt::ShiftModifier) && ((keyEvent->modifiers() & Qt::ControlModifier)))  && (keyEvent->key() == Qt::Key_F11)) {
-    #endif
-            if(isFullScreen()){
-                showNormal();
-            }
-            else{
-                showFullScreen();
-            }
-            return;
-        }
-
-        return QMainWindow::keyPressEvent(keyEvent);
-    }
-
     void MainWindow::retranslateUi()
     {
         using namespace translations;
@@ -287,7 +264,6 @@ namespace fastoredis
         fileAction_->setText(trFile);
         preferencesAction_->setText(trPreferences);
         checkUpdateAction_->setText(trCheckUpdate);
-        viewAction_->setText(trView);
         optionsAction_->setText(trOptions);
         windowAction_->setText(trWindow);
         fullScreanAction_->setText(trEnterFullScreen);
@@ -332,6 +308,19 @@ namespace fastoredis
         th->start();
     }
 
+    void MainWindow::enterLeaveFullScreen()
+    {
+        using namespace translations;
+        if(isFullScreen()){
+            showNormal();
+            fullScreanAction_->setText(trEnterFullScreen);
+        }
+        else{
+            showFullScreen();
+            fullScreanAction_->setText(trExitFullScreen);
+        }
+    }
+
     void MainWindow::versionAvailible(bool succesResult, const QString& version)
     {
         using namespace translations;
@@ -355,13 +344,6 @@ namespace fastoredis
 
             checkUpdateAction_->setEnabled(isn);
         }
-    }
-
-    MainWidget *const MainWindow::mainWidget() const
-    {
-        MainWidget *wid = qobject_cast<MainWidget*>(centralWidget());
-        VERIFY(wid);
-        return wid;
     }
 }
 

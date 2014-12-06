@@ -20,7 +20,6 @@ namespace fastoredis
     protected:
         virtual void changeEvent(QEvent* );
         virtual void showEvent(QShowEvent* e);
-        virtual void keyPressEvent(QKeyEvent* e);
 
     private Q_SLOTS:
         void open();
@@ -29,12 +28,12 @@ namespace fastoredis
         void about();
         void openPreferences();
         void checkUpdate();
+        void enterLeaveFullScreen();
 
         void versionAvailible(bool succesResult, const QString& version);
     private:
         void createStatusBar();
         void retranslateUi();
-        MainWidget* const mainWidget() const;
 
         QAction* openAction_;
         QAction* saveAction_;
@@ -47,7 +46,6 @@ namespace fastoredis
         QAction* fileAction_;
         QAction* optionsAction_;
         QAction* checkUpdateAction_;
-        QAction* viewAction_;
         QAction* helpAction_;
         QAction* explorerAction_;
         QAction* logsAction_;

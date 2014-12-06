@@ -9,7 +9,7 @@ namespace fastoredis
 {
     const QIcon &GuiFactory::openIcon() const
     {
-        static QIcon open;
+        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/open.png");
         return open;
     }
 

@@ -12,6 +12,7 @@
 
 #include "common/qt/convert_string.h"
 
+#include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
 #include "gui/icon_label.h"
 
@@ -115,24 +116,32 @@ namespace fastoredis
 
         QToolBar *savebar = new QToolBar;
         savebar->setStyleSheet("QToolBar { border: 0px; }");
+
         loadAction_ = new QAction(GuiFactory::instance().loadIcon(), trLoad, savebar);
         VERIFY(connect(loadAction_, SIGNAL(triggered()), this, SLOT(loadFromFile())));
         savebar->addAction(loadAction_);
+
         saveAction_ = new QAction(GuiFactory::instance().saveIcon(), trSave, savebar);
         VERIFY(connect(saveAction_, SIGNAL(triggered()), this, SLOT(saveToFile())));
         savebar->addAction(saveAction_);
+
         saveAsAction_ = new QAction(GuiFactory::instance().saveAsIcon(), trSaveAs, savebar);
         VERIFY(connect(saveAsAction_, SIGNAL(triggered()), this, SLOT(saveToFileAs())));
         savebar->addAction(saveAsAction_);
+
         connectAction_ = new QAction(GuiFactory::instance().connectIcon(), trConnect, savebar);
         VERIFY(connect(connectAction_, SIGNAL(triggered()), this, SLOT(connectToServer())));
         savebar->addAction(connectAction_);
+
         disConnectAction_ = new QAction(GuiFactory::instance().disConnectIcon(), trDisconnect, savebar);
         VERIFY(connect(disConnectAction_, SIGNAL(triggered()), this, SLOT(disconnectFromServer())));
         savebar->addAction(disConnectAction_);
+
         executeAction_ = new QAction(GuiFactory::instance().executeIcon(), trExecute, savebar);
+        executeAction_->setShortcut(executeKey);
         VERIFY(connect(executeAction_, SIGNAL(triggered()), this, SLOT(execute())));
         savebar->addAction(executeAction_);
+
         QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), trStop, savebar);
         VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
         savebar->addAction(stopAction);
@@ -156,7 +165,6 @@ namespace fastoredis
 
         input_ = new RedisShell;
         input_->setContextMenuPolicy(Qt::CustomContextMenu);
-        VERIFY(connect(input_, SIGNAL(executed()), this, SLOT(execute())));
 
         mainlayout->addLayout(hlayout);
         mainlayout->addWidget(input_);

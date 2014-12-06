@@ -18,7 +18,7 @@ namespace fastoredis
     public:
         enum { rowNumberWidth = 6, indentationWidth = 4 };
 
-        FastoEditor(QWidget *parent = 0);
+        FastoEditor(QWidget *parent = 0);        
 
     private Q_SLOTS:
         void updateLineNumbersMarginWidth();

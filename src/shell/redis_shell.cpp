@@ -39,12 +39,39 @@ namespace fastoredis
 
     void RedisShell::showAutocompletion()
     {
+        int start, ignore;
+        QStringList context = apiContext(SendScintilla(SCI_GETCURRENTPOS), start,
+                ignore);
 
+        if(context.empty()){
+            // Generate the string representing the valid words to select from.
+            QStringList wlist;
+
+            QsciAbstractAPIs *apis = lexer()->apis();
+
+            if (apis)
+                apis->updateAutoCompletionList(QStringList() << ALL_COMMANDS, wlist);
+
+            if (wlist.isEmpty())
+                return;
+
+            wlist.sort();
+
+            SendScintilla(SCI_AUTOCSETCHOOSESINGLE, autoCompletionShowSingle());
+            SendScintilla(SCI_AUTOCSETSEPARATOR, '\x03');
+
+            ScintillaBytes wlist_s = textAsBytes(wlist.join(QChar('\x03')));
+            int last_len = 0;
+            SendScintilla(SCI_AUTOCSHOW, last_len, ScintillaBytesConstData(wlist_s));
+        }
+        else{
+            autoCompleteFromAll();
+        }
     }
 
     void RedisShell::hideAutocompletion()
     {
-
+        cancelList();
     }
 
     void RedisShell::showContextMenu(const QPoint& pt)
@@ -56,10 +83,7 @@ namespace fastoredis
 
     void RedisShell::keyPressEvent(QKeyEvent* keyEvent)
     {
-        if(isExecuteScriptShortcut(keyEvent)){
-            emit executed();
-        }
-        else if(isAutoCompleteShortcut(keyEvent)){
+        if(isAutoCompleteShortcut(keyEvent)){
             showAutocompletion();
             return;
         }

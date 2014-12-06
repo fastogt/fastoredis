@@ -11,7 +11,11 @@ namespace fastoredis
         : QTabWidget(parent)
     {
         MainTabBar *tab = new MainTabBar(this);
+
         VERIFY(connect(tab, SIGNAL(createdNewTab()), this, SLOT(createNewTab())));
+        VERIFY(connect(tab, SIGNAL(nextTab()), this, SLOT(nextTab())));
+        VERIFY(connect(tab, SIGNAL(prevTab()), this, SLOT(previousTab())));
+
         VERIFY(connect(tab, SIGNAL(reloadedTab()), this, SLOT(reloadeCurrentTab())));
         VERIFY(connect(tab, SIGNAL(duplicatedTab()), this, SLOT(duplicateCurrentTab())));
         VERIFY(connect(tab, SIGNAL(closedOtherTabs()), this, SLOT(closedOtherTabs())));
@@ -136,46 +140,6 @@ namespace fastoredis
             setCurrentIndex(index - 1);
             return;
         }
-    }
-
-    /**
-    * @brief Overrides QTabWidget::keyPressEvent() in order to intercept
-    * tab close key shortcuts (Ctrl+F4 and Ctrl+W)
-    */
-    void MainWidget::keyPressEvent(QKeyEvent *keyEvent)
-    {
-        if (isCloseTabShortcut(keyEvent))
-        {
-            int index = currentIndex();
-            closeTab(index);
-            return;
-        }
-
-        if (isCloseTabShortcut(keyEvent)) {
-            previousTab();
-            return;
-        }
-        else if (isNextTabShortcut(keyEvent)) {
-            nextTab();
-            return;
-        }
-        else if (isNewTabShortcut(keyEvent)) {
-            createNewTab();
-            return;
-        }
-        else if (isDuplicateTabShortcut(keyEvent)) {
-            duplicateCurrentTab();
-            return;
-        }
-        else if (isSetFocusOnQueryLineShortcut(keyEvent)) {
-            QueryWidget* wid = currentWidget();
-            if(wid){
-                wid->setFocus();
-            }
-            return;
-        }
-
-        QTabWidget::keyPressEvent(keyEvent);
     }
 }
 

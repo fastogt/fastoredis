@@ -5,6 +5,8 @@
 
 #include "common/macros.h"
 
+#include "gui/shortcuts.h"
+
 #include "translations/global.h"
 
 namespace fastoredis
@@ -13,18 +15,26 @@ namespace fastoredis
         : QTabBar(parent)
     {
         newShellAction_ = new QAction(this);
-        newShellAction_->setShortcut(Qt::CTRL + Qt::Key_T);
+        newShellAction_->setShortcut(newTabKey);
         VERIFY(connect(newShellAction_, SIGNAL(triggered()), this , SIGNAL(createdNewTab())));
 
+        nextTabAction_ = new QAction(this);
+        nextTabAction_->setShortcut(nextTabKey);
+        VERIFY(connect(nextTabAction_, SIGNAL(triggered()), this , SIGNAL(nextTab())));
+
+        prevTabAction_ = new QAction(this);
+        prevTabAction_->setShortcut(prevTabKey);
+        VERIFY(connect(prevTabAction_, SIGNAL(triggered()), this , SIGNAL(prevTab())));
+
         reloadShellAction_ = new QAction(this);
-        reloadShellAction_->setShortcut(Qt::CTRL + Qt::Key_R);
+        reloadShellAction_->setShortcut(refreshKey);
         VERIFY(connect(reloadShellAction_, SIGNAL(triggered()), this , SIGNAL(reloadedTab())));
 
         duplicateShellAction_ = new QAction(this);
         VERIFY(connect(duplicateShellAction_, SIGNAL(triggered()), this , SIGNAL(duplicatedTab())));
 
         closeShellAction_ = new QAction(this);
-        closeShellAction_->setShortcut(Qt::CTRL + Qt::Key_W);
+        closeShellAction_->setShortcut(closeKey);
         VERIFY(connect(closeShellAction_, SIGNAL(triggered()), this , SIGNAL(closedTab())));
 
         closeOtherShellsAction_ = new QAction(this);
@@ -40,6 +50,8 @@ namespace fastoredis
     {
         QMenu menu(this);
         menu.addAction(newShellAction_);
+        menu.addAction(nextTabAction_);
+        menu.addAction(prevTabAction_);
         menu.addSeparator();
         menu.addAction(reloadShellAction_);
         menu.addAction(duplicateShellAction_);
@@ -62,6 +74,8 @@ namespace fastoredis
     {
         using namespace translations;
         newShellAction_->setText(trNewTab);
+        nextTabAction_->setText(trNextTab);
+        prevTabAction_->setText(trPrevTab);
         reloadShellAction_->setText(trReload);
         duplicateShellAction_->setText(trDuplicate);
         closeShellAction_->setText(trCloseTab);

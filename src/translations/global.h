@@ -58,6 +58,8 @@ namespace fastoredis
         const QString trConnectionErrorText = QObject::tr("Connection error!");
 
         const QString trNewTab = QObject::tr("New Tab");
+        const QString trNextTab = QObject::tr("Next Tab");
+        const QString trPrevTab = QObject::tr("Prev Tab");
         const QString trCloseTab = QObject::tr("Close Tab");
         const QString trCloseOtherTab = QObject::tr("Close Other Tab");
     }
