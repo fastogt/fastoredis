@@ -18,7 +18,11 @@
 
 #include "translations/global.h"
 
+#ifdef PYTHON_ENABLED
+#include "shell/python_shell.h"
+#else
 #include "shell/redis_shell.h"
+#endif
 
 #include "core/logger.h"
 
@@ -162,8 +166,11 @@ namespace fastoredis
 
         workProgressBar_ = new QProgressBar;
         hlayout->addWidget(workProgressBar_);
-
+#ifdef PYTHON_ENABLED
+        input_ = new PythonShell;
+#else
         input_ = new RedisShell;
+#endif
         input_->setContextMenuPolicy(Qt::CustomContextMenu);
 
         mainlayout->addLayout(hlayout);

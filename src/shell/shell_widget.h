@@ -12,6 +12,7 @@ class QToolButton;
 namespace fastoredis
 {
     class RedisShell;
+    class PythonShell;
     class IconLabel;
 
     class ShellWidget
@@ -67,7 +68,12 @@ namespace fastoredis
         QAction* saveAsAction_;
 
         IconLabel* serverName_;
+
+#ifdef PYTHON_ENABLED
+        PythonShell* input_;
+#else
         RedisShell* input_;
+#endif
         QProgressBar* workProgressBar_;
         IconLabel* connectionMode_;
         QString filePath_;
