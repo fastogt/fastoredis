@@ -2,11 +2,13 @@
 
 #include <QDialogButtonBox>
 #include <QLineEdit>
+#include <QFileDialog>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QPushButton>
 
 #include "gui/app_style.h"
 #include "gui/gui_factory.h"
@@ -44,11 +46,24 @@ namespace fastoredis
         languagesComboBox_->addItems(translations::getSupportedLanguages());
         langLayout->addWidget(languagesComboBox_);
 
+        QHBoxLayout *pythonExecLayout = new QHBoxLayout;
+        pythonExecPath_ = new QLineEdit;
+        QPushButton* selectPythonFileButton = new QPushButton("...");
+        selectPythonFileButton->setFixedSize(20, 20);
+        VERIFY(connect(selectPythonFileButton, SIGNAL(clicked()), this, SLOT(setPythonExecFile())));
+        pythonExecLabel_ = new QLabel;
+
+        pythonExecLayout->addWidget(pythonExecLabel_);
+        pythonExecLayout->addWidget(pythonExecPath_);
+        pythonExecLayout->addWidget(selectPythonFileButton);
+
         QVBoxLayout *generalLayout = new QVBoxLayout;
         autoCheckUpdates_ = new QCheckBox;
         generalLayout->addWidget(autoCheckUpdates_);
         generalLayout->addLayout(styleswLayout);
         generalLayout->addLayout(langLayout);
+        generalLayout->addLayout(pythonExecLayout);
+
         generalBox_->setLayout(generalLayout);
 
 //      servers settings
@@ -96,6 +111,7 @@ namespace fastoredis
 
     void PreferencesDialog::syncWithSettings()
     {
+        pythonExecPath_->setText(common::convertFromString<QString>(SettingsManager::instance().pythonExecPath()));
         autoCheckUpdates_->setChecked(SettingsManager::instance().autoCheckUpdates());
         languagesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentLanguage()));
         stylesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentStyle()));
@@ -106,6 +122,7 @@ namespace fastoredis
 
     void PreferencesDialog::accept()
     {
+        SettingsManager::instance().setPythonExecPath(common::convertToString(pythonExecPath_->text()));
         SettingsManager::instance().setAutoCheckUpdates(autoCheckUpdates_->isChecked());
 
         QString newLang = translations::applyLanguage(languagesComboBox_->currentText());
@@ -139,11 +156,23 @@ namespace fastoredis
         generalBox_->setTitle(tr("General settings"));
         autoCheckUpdates_->setText(tr("Automatically check for updates"));
         langLabel_->setText(tr("Language:"));
+        pythonExecLabel_->setText(tr("Python execute:"));
         stylesLabel_->setText(tr("Supported UI styles:"));
 
         serverSettingsBox_->setTitle(tr("Servers global settings"));
         defaultViewLabel_->setText(tr("Default views:"));
         syncTabs_->setText(tr("Sync tabs"));
         logDirLabel_->setText(tr("Logging directory:"));
+    }
+
+    void PreferencesDialog::setPythonExecFile()
+    {
+        QString filepath = QFileDialog::getOpenFileName(this, tr("Select execute file file"),
+        pythonExecPath_->text(), tr("Python execute file (python.exe)"));
+        if (filepath.isNull()){
+            return;
+        }
+
+        pythonExecPath_->setText(filepath);
     }
 }

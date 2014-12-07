@@ -78,6 +78,8 @@ namespace common
         bool write_to_descriptor(int fd_desc, const void *buf, unsigned int len) WARN_UNUSED_RESULT;
         bool read_from_descriptor(int fd_desc, void *buf, unsigned int len, int &readlen) WARN_UNUSED_RESULT;
 
+        bool findFileInPath(const char* fileName, std::string &outPath) WARN_UNUSED_RESULT;
+
         //==============================Path=====================================//
 
         class Path

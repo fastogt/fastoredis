@@ -1,5 +1,10 @@
 #include "common/file_system.h"
 
+#ifdef OS_WIN
+#include <Shlwapi.h>
+#else
+#endif
+
 #include <fcntl.h>
 #include <sys/stat.h>
 
@@ -225,6 +230,24 @@ namespace common
 
             return stat_buf.st_size;
         }
+
+        bool findFileInPath(const char* fileName, std::string &outPath)
+        {
+            if(!fileName){
+                return false;
+            }
+
+        #ifdef OS_WIN
+            char* buff = (char*)calloc(MAX_PATH, sizeof(char));
+            memcpy(buff, fileName, strlen(fileName));
+            bool res = PathFindOnPathA(buff, NULL);
+            outPath = buff;
+            free(buff);
+            return res;
+        #else
+            return false;
+        #endif
+        }
     }
 }
 
@@ -232,7 +255,7 @@ namespace common
 {
     namespace file_system
     {
-        Path make_path(const Path& p,const std::string &file_path)
+        Path make_path(const Path& p, const std::string &file_path)
         {
             Path result(p);
             result.append(file_path);

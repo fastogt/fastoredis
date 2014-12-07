@@ -1,5 +1,6 @@
 #include "core/settings_manager.h"
 
+#include "common/file_system.h"
 #include "common/settings/settings.h"
 
 #include <boost/archive/iterators/binary_from_base64.hpp>
@@ -11,6 +12,12 @@
 #include "translations/translations.h"
 #include "gui/app_style.h"
 
+#ifdef OS_WIN
+#define PYTHON_EXE "python.exe"
+#else
+#define PYTHON_EXE "python"
+#endif
+
 #define INI_PATH ('~','/','.','c','o','n','f','i','g','/',PROJECT_NAME_DELEMITED,'/','c','o','n','f','i','g','.','i','n','i')
 
 #define langauge_ ('l','a','n','g','u','a','g','e')
@@ -20,6 +27,7 @@
 #define synctabs_ ('s','y','n','c','t','a','b','s')
 #define loggingdir_ ('l','o','g','g','i','n','g','d','i','r')
 #define checkupdates_ ('c','h','e','c','k','u','p','d','a','t','e','s')
+#define pythonexecpath_ ('p','y','t','h','o','n','e','x','e','c','p','a','t','h')
 
 namespace
 {
@@ -34,18 +42,31 @@ namespace
     BEGIN_DECL_TYPLE(synctabs_, bool, static_path_storage)
     BEGIN_DECL_TYPLE(loggingdir_, std::string, static_path_storage)
     BEGIN_DECL_TYPLE(checkupdates_, bool, static_path_storage)
+    BEGIN_DECL_TYPLE(pythonexecpath_, std::string, static_path_storage)
 
     typedef common::storages::storage_container<genereted_settings::setting_langauge_, genereted_settings::setting_style_,
                                                 genereted_settings::setting_connections_, genereted_settings::setting_view_,
-                                                genereted_settings::setting_synctabs_, genereted_settings::setting_loggingdir_, genereted_settings::setting_checkupdates_ > static_storage_type;
+                                                genereted_settings::setting_synctabs_, genereted_settings::setting_loggingdir_,
+                                                genereted_settings::setting_checkupdates_, genereted_settings::setting_pythonexecpath_ > static_storage_type;
 
     typedef common::storages::settings_container<static_storage_type> server_main_t;
+
+    std::string pythonExecPath()
+    {
+        std::string path;
+        bool res = common::file_system::findFileInPath(PYTHON_EXE, path);
+        if(res){
+            return common::file_system::prepare_path(path);
+        }
+
+        return std::string();
+    }
 
     inline server_main_t &get_config_storage()
     {
         static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::defStyle,
                                                      fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree,
-                                                     true, file_system::get_dir_path(static_path_storage::path_to_save()), true ));
+                                                     true, file_system::get_dir_path(static_path_storage::path_to_save()), true, pythonExecPath() ));
         return g_m;
     }
 }
@@ -197,5 +218,15 @@ namespace fastoredis
     void SettingsManager::setAutoCheckUpdates(bool isCheck)
     {
         GET_SETTING(genereted_settings::setting_checkupdates_).set_value(isCheck);
+    }
+
+    std::string SettingsManager::pythonExecPath() const
+    {
+        return GET_SETTING(genereted_settings::setting_pythonexecpath_).value();
+    }
+
+    void SettingsManager::setPythonExecPath(const std::string& path)
+    {
+        GET_SETTING(genereted_settings::setting_pythonexecpath_).set_value(path);
     }
 }

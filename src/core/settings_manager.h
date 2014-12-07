@@ -41,6 +41,9 @@ namespace fastoredis
 
         ConnectionSettingsContainerType connections() const;
 
+        std::string pythonExecPath() const;
+        void setPythonExecPath(const std::string& path);
+
     private:
         SettingsManager();
     };
