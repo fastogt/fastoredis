@@ -54,7 +54,7 @@ namespace fastoredis
         return "Redis";
     }
 
-    const char* RedisLexer::version() const
+    const char* RedisLexer::version()
     {
         return RedisDriver::versionApi();
     }

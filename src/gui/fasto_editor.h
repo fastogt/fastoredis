@@ -65,4 +65,26 @@ namespace fastoredis
         int viewMethod_;
         const QString delemitr_;
     };
+
+    class FastoEditorShell
+            : public FastoEditor
+    {
+        Q_OBJECT
+    public:
+        QString version() const;
+
+    public:
+        virtual void showAutocompletion();
+        virtual void hideAutocompletion();
+
+    private Q_SLOTS:
+        void showContextMenu(const QPoint& pt);
+
+    protected:
+        FastoEditorShell(const QString& version, QWidget *parent = 0);
+        void keyPressEvent(QKeyEvent* keyEvent);
+
+    private:
+        const QString version_;
+    };
 }

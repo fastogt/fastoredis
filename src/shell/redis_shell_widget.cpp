@@ -1,4 +1,4 @@
-#include "shell/shell_widget.h"
+#include "shell/redis_shell_widget.h"
 
 #include <QProgressBar>
 #include <QSplitter>
@@ -18,11 +18,7 @@
 
 #include "translations/global.h"
 
-#ifdef PYTHON_ENABLED
-#include "shell/python_shell.h"
-#else
 #include "shell/redis_shell.h"
-#endif
 
 #include "core/logger.h"
 
@@ -94,7 +90,7 @@ namespace
 
 namespace fastoredis
 {
-    ShellWidget::ShellWidget(IServerPtr server, const QString& filePath, QWidget* parent)
+    RedisShellWidget::RedisShellWidget(IServerPtr server, const QString& filePath, QWidget* parent)
         : QWidget(parent), server_(server), filePath_(filePath)
     {
         VERIFY(connect(server_.get(), SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), this, SLOT(startConnect(const EventsInfo::ConnectInfoRequest &))));
@@ -166,11 +162,10 @@ namespace fastoredis
 
         workProgressBar_ = new QProgressBar;
         hlayout->addWidget(workProgressBar_);
-#ifdef PYTHON_ENABLED
-        input_ = new PythonShell;
-#else
+
         input_ = new RedisShell;
-#endif
+        setToolTip(tr("Based on redis-cli version: %1").arg(input_->version()));
+
         input_->setContextMenuPolicy(Qt::CustomContextMenu);
 
         mainlayout->addLayout(hlayout);
@@ -179,10 +174,9 @@ namespace fastoredis
         setLayout(mainlayout);
 
         syncConnectionActions();
-        setToolTip(tr("Based on redis-cli version: %1").arg(input_->version()));
     }
 
-    void ShellWidget::enterMode(const EventsInfo::EnterModeInfo& res)
+    void RedisShellWidget::enterMode(const EventsInfo::EnterModeInfo& res)
     {
         ConnectionMode mode = res.mode_;
         connectionMode_->setIcon(GuiFactory::instance().modeIcon(mode), iconSize);
@@ -190,12 +184,12 @@ namespace fastoredis
         connectionMode_->setText(common::convertFromString<QString>(modeText));
     }
 
-    void ShellWidget::leaveMode(const EventsInfo::LeaveModeInfo& res)
+    void RedisShellWidget::leaveMode(const EventsInfo::LeaveModeInfo& res)
     {
         ConnectionMode mode = res.mode_;
     }
 
-    void ShellWidget::execute()
+    void RedisShellWidget::execute()
     {
         QString selected = input_->selectedText();
         if(selected.isEmpty()){
@@ -205,70 +199,70 @@ namespace fastoredis
         server_->execute(selected);
     }
 
-    QString ShellWidget::text() const
+    QString RedisShellWidget::text() const
     {
         return input_->text();
     }
 
-    void ShellWidget::stop()
+    void RedisShellWidget::stop()
     {
         server_->stopCurrentEvent();
     }
 
-    void ShellWidget::connectToServer()
+    void RedisShellWidget::connectToServer()
     {
         server_->connect();
     }
 
-    void ShellWidget::disconnectFromServer()
+    void RedisShellWidget::disconnectFromServer()
     {
         server_->disconnect();
     }
 
-    IServerPtr ShellWidget::server() const
+    IServerPtr RedisShellWidget::server() const
     {
         return server_;
     }
 
-    void ShellWidget::setText(const QString& text)
+    void RedisShellWidget::setText(const QString& text)
     {
         input_->setText(text);
     }
 
-    void ShellWidget::syncConnectionActions()
+    void RedisShellWidget::syncConnectionActions()
     {
         connectAction_->setVisible(!server_->isConnected());
         disConnectAction_->setVisible(server_->isConnected());
         executeAction_->setEnabled(server_->isConnected());
     }
 
-    void ShellWidget::startConnect(const EventsInfo::ConnectInfoRequest& req)
+    void RedisShellWidget::startConnect(const EventsInfo::ConnectInfoRequest& req)
     {
         syncConnectionActions();
     }
 
-    void ShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce& res)
+    void RedisShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce& res)
     {
         serverName_->setText(server_->address());
         syncConnectionActions();
     }
 
-    void ShellWidget::startDisconnect(const EventsInfo::DisonnectInfoRequest& req)
+    void RedisShellWidget::startDisconnect(const EventsInfo::DisonnectInfoRequest& req)
     {
         syncConnectionActions();
     }
 
-    void ShellWidget::finishDisconnect(const EventsInfo::DisConnectInfoResponce& res)
+    void RedisShellWidget::finishDisconnect(const EventsInfo::DisConnectInfoResponce& res)
     {
         syncConnectionActions();
     }
 
-    void ShellWidget::progressChange(const EventsInfo::ProgressInfoResponce& res)
+    void RedisShellWidget::progressChange(const EventsInfo::ProgressInfoResponce& res)
     {
         workProgressBar_->setValue(res.progress_);
     }
 
-    void ShellWidget::loadFromFile()
+    void RedisShellWidget::loadFromFile()
     {
         QString out;
         bool res = loadFromFile(filePath_);
@@ -277,7 +271,7 @@ namespace fastoredis
         }
     }
 
-    bool ShellWidget::loadFromFile(const QString& path)
+    bool RedisShellWidget::loadFromFile(const QString& path)
     {
         bool res = false;
         QString filepath = QFileDialog::getOpenFileName(this, path, QString(), trfilterForScripts);
@@ -292,7 +286,7 @@ namespace fastoredis
         return res;
     }
 
-    void ShellWidget::saveToFileAs()
+    void RedisShellWidget::saveToFileAs()
     {
         QString filepath = QFileDialog::getSaveFileName(this,
             trSaveAs, filePath_, trfilterForScripts);
@@ -302,7 +296,7 @@ namespace fastoredis
         }
     }
 
-    void ShellWidget::saveToFile()
+    void RedisShellWidget::saveToFile()
     {
         if(filePath_.isEmpty()){
             saveToFileAs();

@@ -24,6 +24,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/preferences_dialog.h
     gui/dialogs/connections_dialog.h
     gui/dialogs/connection_dialog.h
+    gui/dialogs/python_console_dialog.h
     gui/widgets/main_widget.h
     gui/main_tab_bar.h
     gui/fasto_editor.h
@@ -62,6 +63,7 @@ SET(SOURCES_GUI
     gui/dialogs/info_server_dialog.cpp
     gui/dialogs/property_server_dialog.cpp
     gui/dialogs/history_server_dialog.cpp
+    gui/dialogs/python_console_dialog.cpp
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
     gui/fasto_editor.cpp
@@ -121,16 +123,18 @@ SET(SOURCES_CORE
     core/ssh_info.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
-    shell/shell_widget.h
+    shell/redis_shell_widget.h
     shell/redis_shell.h
     shell/redis_lexer.h
+    shell/python_shell.h
 )
 SET(HEADERS_SHELL
 )
 SET(SOURCES_SHELL
-    shell/shell_widget.cpp
+    shell/redis_shell_widget.cpp
     shell/redis_shell.cpp
     shell/redis_lexer.cpp
+    shell/python_shell.cpp
 )
 
 SET(HEADERS_TRANSLATIONS
@@ -183,17 +187,18 @@ ADD_SUBDIRECTORY(third-party/redis)
 
 ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
 
+IF(BOOST_ENABLED)
+    INTEGRATE_BOOST(system)
+ENDIF(BOOST_ENABLED)
+
 IF(PYTHON_ENABLED)
     FIND_PACKAGE(PythonLibs REQUIRED)
-    SET(HEADERS_PYTHON_SHELL)
-    SET(SOURCES_PYTHON_SHELL shell/python_shell.cpp)
-    SET(HEADERS_PYTHON_SHELL_TO_MOC shell/python_shell.h)
 ENDIF(PYTHON_ENABLED)
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIR})
 
-SET(HEADERS ${HEADERS} ${HEADERS_GLOBAL} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL} ${HEADERS_TRANSLATIONS} ${HEADERS_PYTHON_SHELL})
-SET(SOURCES ${SOURCES} ${SOURCES_GLOBAL} ${SOURCES_GUI} ${SOURCES_CORE} ${SOURCES_SHELL} ${SOURCES_TRANSLATIONS} ${SOURCES_PYTHON_SHELL})
-SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC} ${HEADERS_SHELL_TO_MOC} ${HEADERS_PYTHON_SHELL_TO_MOC})
+SET(HEADERS ${HEADERS} ${HEADERS_GLOBAL} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL} ${HEADERS_TRANSLATIONS})
+SET(SOURCES ${SOURCES} ${SOURCES_GLOBAL} ${SOURCES_GUI} ${SOURCES_CORE} ${SOURCES_SHELL} ${SOURCES_TRANSLATIONS})
+SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC} ${HEADERS_SHELL_TO_MOC})
 
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 CONFIGURE_FILE("resources/gui.qrc.in" "${CMAKE_CURRENT_LIST_DIR}/resources/gui.qrc" @ONLY IMMEDIATE)

@@ -12,15 +12,14 @@ class QToolButton;
 namespace fastoredis
 {
     class RedisShell;
-    class PythonShell;
     class IconLabel;
 
-    class ShellWidget
+    class RedisShellWidget
             : public QWidget
     {
         Q_OBJECT
     public:
-        ShellWidget(IServerPtr server, const QString& filePath = QString(), QWidget* parent = 0);
+        RedisShellWidget(IServerPtr server, const QString& filePath = QString(), QWidget* parent = 0);
 
         IServerPtr server() const;
         QString text() const;
@@ -69,11 +68,8 @@ namespace fastoredis
 
         IconLabel* serverName_;
 
-#ifdef PYTHON_ENABLED
-        PythonShell* input_;
-#else
         RedisShell* input_;
-#endif
+
         QProgressBar* workProgressBar_;
         IconLabel* connectionMode_;
         QString filePath_;

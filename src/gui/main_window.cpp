@@ -18,6 +18,7 @@
 #include "gui/widgets/log_tab_widget.h"
 #include "gui/widgets/main_widget.h"
 #include "gui/explorer/explorer_tree_view.h"
+#include "gui/dialogs/python_console_dialog.h"
 
 #include "core/servers_manager.h"
 #include "core/settings_manager.h"
@@ -171,6 +172,14 @@ namespace fastoredis
         optionsMenu->addAction(checkUpdateAction_);
         optionsMenu->addAction(preferencesAction_);
 
+        //tools menu
+        QMenu *tools = new QMenu(this);
+        toolsAction_ = menuBar()->addMenu(tools);
+        pythonConsoleAction_ = new QAction(this);
+        VERIFY(connect(pythonConsoleAction_, SIGNAL(triggered()), this, SLOT(openPythonConsole())));
+        tools->addAction(pythonConsoleAction_);
+
+        //window menu
         QMenu *window = new QMenu(this);
         windowAction_ = menuBar()->addMenu(window);
         fullScreanAction_ = new QAction(this);
@@ -262,6 +271,8 @@ namespace fastoredis
         saveAsAction_->setText(trSaveAs);
         exitAction_->setText(trExit);
         fileAction_->setText(trFile);
+        toolsAction_->setText(trTools);
+        pythonConsoleAction_->setText(trPythonConsole);
         preferencesAction_->setText(trPreferences);
         checkUpdateAction_->setText(trCheckUpdate);
         optionsAction_->setText(trOptions);
@@ -306,6 +317,12 @@ namespace fastoredis
         VERIFY(connect(th, SIGNAL(finished()), cheker, SLOT(deleteLater())));
         VERIFY(connect(th, SIGNAL(finished()), th, SLOT(deleteLater())));
         th->start();
+    }
+
+    void MainWindow::openPythonConsole()
+    {
+        PythonConsoleDialog dlg(QString(), this);
+        dlg.exec();
     }
 
     void MainWindow::enterLeaveFullScreen()

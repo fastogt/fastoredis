@@ -33,7 +33,7 @@ namespace fastoredis
 
         RedisLexer(QObject* parent = 0);
         virtual const char* language() const;
-        const char* version() const;
+        static const char* version();
         virtual QString description(int style) const;
         virtual void styleText(int start, int end);
         virtual QColor defaultColor(int style) const;

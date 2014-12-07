@@ -1,12 +1,13 @@
 #include "gui/fasto_editor.h"
 
-#include <QKeyEvent>
+#include <QMenu>
 
 #include "common/qt/convert_string.h"
 #include "common/qt/utils_qt.h"
 
 #include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
+#include "gui/shortcuts.h"
 
 namespace
 {
@@ -267,5 +268,47 @@ namespace fastoredis
         }
 
         setText(result);
+    }
+
+    FastoEditorShell::FastoEditorShell(const QString &version, QWidget *parent)
+        : FastoEditor(parent), version_(version)
+    {
+        VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
+    }
+
+    QString FastoEditorShell::version() const
+    {
+        return version_;
+    }
+
+    void FastoEditorShell::showAutocompletion()
+    {
+        autoCompleteFromAll();
+    }
+
+    void FastoEditorShell::hideAutocompletion()
+    {
+        cancelList();
+    }
+
+    void FastoEditorShell::keyPressEvent(QKeyEvent* keyEvent)
+    {
+        if(isAutoCompleteShortcut(keyEvent)){
+            showAutocompletion();
+            return;
+        }
+        else if(isHideAutoCompleteShortcut(keyEvent)){
+            hideAutocompletion();
+            return;
+        }
+
+        return FastoEditor::keyPressEvent(keyEvent);
+    }
+
+    void FastoEditorShell::showContextMenu(const QPoint& pt)
+    {
+        QMenu *menu = createStandardContextMenu();
+        menu->exec(mapToGlobal(pt));
+        delete menu;
     }
 }

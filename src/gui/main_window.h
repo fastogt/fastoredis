@@ -29,6 +29,7 @@ namespace fastoredis
         void openPreferences();
         void checkUpdate();
         void enterLeaveFullScreen();
+        void openPythonConsole();
 
         void versionAvailible(bool succesResult, const QString& version);
     private:
@@ -46,6 +47,8 @@ namespace fastoredis
         QAction* fileAction_;
         QAction* optionsAction_;
         QAction* checkUpdateAction_;
+        QAction* toolsAction_;
+        QAction* pythonConsoleAction_;
         QAction* helpAction_;
         QAction* explorerAction_;
         QAction* logsAction_;

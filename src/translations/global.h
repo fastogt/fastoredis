@@ -8,11 +8,14 @@ namespace fastoredis
     namespace translations
     {
         const QString trfilterForScripts = QObject::tr("Text Files (*.txt); All Files (*.*)");
+        const QString trfilterForPython = QObject::tr("Text Files (*.py); All Files (*.*)");
 
         const QString trLoad = QObject::tr("Load");
         const QString trOpen = QObject::tr("Open");
         const QString trClose = QObject::tr("Close");
         const QString trInfo = QObject::tr("Info");
+        const QString trTools = QObject::tr("Tools");
+        const QString trPythonConsole = QObject::tr("Python console");
         const QString trProperty = QObject::tr("Property");
         const QString trHistory = QObject::tr("History");
         const QString trSave = QObject::tr("Save");

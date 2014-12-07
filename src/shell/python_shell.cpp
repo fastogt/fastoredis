@@ -1,18 +1,19 @@
 #include "shell/python_shell.h"
 
+#ifdef PYTHON_ENABLED
 #include <Python.h>
+#endif
 
 #include <Qsci/qscilexerpython.h>
 #include <Qsci/qsciapis.h>
 
-#include <QKeyEvent>
-#include <QMenu>
-
-#include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
+
+#define PYTHON_SHELL_VERSION "Unknown"
 
 namespace
 {
+#ifdef PYTHON_ENABLED
     struct PythonInit
     {
         PythonInit()
@@ -26,18 +27,39 @@ namespace
             Py_Finalize();
         }
     };
+#endif
 }
 
 namespace fastoredis
 {
+    bool isPythonEnabled()
+    {
+#ifdef PYTHON_ENABLED
+        return true
+#else
+        return false;
+#endif
+    }
+
     const QColor PythonShell::paperColor = QColor(166, 190, 233);
 
-    PythonShell::PythonShell(QWidget* parent)
-        : FastoEditor(parent)
+    class RedisPythonLexer
+            : public QsciLexerPython
     {
-        QsciLexerPython* lexer = new QsciLexerPython(this);
-        QsciAPIs* api = new QsciAPIs(lexer);
-        lexer->setAPIs(api);
+    public:
+        RedisPythonLexer(QObject *parent = 0)
+            : QsciLexerPython(parent)
+        {
+            QsciAPIs* api = new QsciAPIs(this);
+            api->prepare();
+            setAPIs(api);
+        }
+    };
+
+    PythonShell::PythonShell(QWidget* parent)
+        : FastoEditorShell(PYTHON_SHELL_VERSION, parent)
+    {
+        RedisPythonLexer* lexer = new RedisPythonLexer(this);
         setLexer(lexer);
 
         setAutoCompletionThreshold(1);
@@ -47,44 +69,6 @@ namespace fastoredis
 
         setIndentationWidth(4);
         setTabWidth(4);
-
-        VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
-    }
-
-    QString PythonShell::version() const
-    {
-        return version_;
-    }
-
-    void PythonShell::showContextMenu(const QPoint& pt)
-    {
-        QMenu *menu = createStandardContextMenu();
-        menu->exec(mapToGlobal(pt));
-        delete menu;
-    }
-
-    void PythonShell::showAutocompletion()
-    {
-        autoCompleteFromAll();
-    }
-
-    void PythonShell::hideAutocompletion()
-    {
-        cancelList();
-    }
-
-    void PythonShell::keyPressEvent(QKeyEvent* keyEvent)
-    {
-        if(isAutoCompleteShortcut(keyEvent)){
-            showAutocompletion();
-            return;
-        }
-        else if(isHideAutoCompleteShortcut(keyEvent)){
-            hideAutocompletion();
-            return;
-        }
-
-        return FastoEditor::keyPressEvent(keyEvent);
     }
 }
 
