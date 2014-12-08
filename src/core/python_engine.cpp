@@ -14,6 +14,7 @@
 #endif
 
 #define PYTHON_SHELL_VERSION "Unknown"
+#define OUT_FILE_NAME "out.tmp"
 
 namespace fastoredis
 {
@@ -65,7 +66,64 @@ namespace fastoredis
     void PythonWorker::execute(const std::string& script)
     {
         const char* ptr = script.c_str();
-        int len = strlen(ptr);
+        if(!ptr){
+            return;
+        }
+
+        PyObject* main = PyImport_AddModule("__main__");
+        if(!main){
+            Py_DECREF(main);
+            return;
+        }
+
+        PyObject* globalDictionary = PyModule_GetDict(main);
+        if(!globalDictionary){
+            Py_DECREF(main);
+            return;
+        }
+        PyObject* localDictionary = PyDict_New();
+        if(!localDictionary){
+            Py_DECREF(globalDictionary);
+            Py_DECREF(main);
+            return;
+        }
+
+        fflush(stdout);
+        FILE* pythonOutput = freopen(OUT_FILE_NAME, "w", stdout);
+        if(!pythonOutput){
+            return;
+        }
+
+        PyObject* result = PyRun_String(ptr, Py_file_input, globalDictionary, localDictionary);
+        Py_DECREF(result);
+        Py_DECREF(main);
+        Py_DECREF(globalDictionary);
+        Py_DECREF(localDictionary);
+
+        fclose(pythonOutput);
+
+        pythonOutput = fopen(OUT_FILE_NAME, "r");
+        if(!pythonOutput){
+            return;
+        }
+
+        int readed = 0;
+        const unsigned int size = 1024;
+        char buff[size];
+        QString out;
+        while ((readed = fread(buff, sizeof(char), size, pythonOutput))){
+            if(readed == -1){
+                break;
+            }
+
+            std::string data(buff, readed);
+            out += common::convertFromString<QString>(data);
+        }
+
+        emit textOut(out);
+        fclose(pythonOutput);
+        remove(OUT_FILE_NAME);
+        fflush(stdout);
     }
 
     const char* PythonEngine::version()

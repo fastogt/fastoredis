@@ -6,7 +6,6 @@
 #include <QString>
 
 #include "global/global.h"
-#include "common/patterns/singleton_pattern.h"
 
 namespace fastoredis
 {
@@ -22,6 +21,11 @@ namespace fastoredis
         int id() const;
         void stop();
 
+        ~PythonWorker();
+
+    Q_SIGNALS:
+        void textOut(const QString& data);
+
     private Q_SLOTS:
         void init();
 
@@ -31,20 +35,19 @@ namespace fastoredis
     private:
         void execute(const std::string& script);
 
-        PythonWorker(int id);
-        ~PythonWorker();
+        PythonWorker(int id);        
 
         const int id_;
     };
 
     class PythonEngine
-            : public QObject, public common::patterns::lazy_singleton<PythonEngine>
+            : public QObject
     {
-        friend class common::patterns::lazy_singleton<PythonEngine>;
-
         Q_OBJECT
     public:
         static const char* version();
+        PythonEngine();
+        ~PythonEngine();
 
         std::string execPath() const;
 
@@ -54,8 +57,5 @@ namespace fastoredis
 
     private:
         int generateId();
-
-        PythonEngine();
-        ~PythonEngine();
     };
 }

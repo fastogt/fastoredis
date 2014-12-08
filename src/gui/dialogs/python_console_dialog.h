@@ -10,6 +10,8 @@ namespace fastoredis
 {
     class PythonShell;
     class PythonWorker;
+    class PythonEngine;
+    class FastoEditor;
 
     class PythonConsoleDialog
             : public QDialog
@@ -23,6 +25,7 @@ namespace fastoredis
         };
 
         PythonConsoleDialog(const QString& filePath = QString(), QWidget* parent = 0);
+        ~PythonConsoleDialog();
 
     private Q_SLOTS:
         void execute();
@@ -39,8 +42,10 @@ namespace fastoredis
         void retranslateUi();
 
         PythonShell* shell_;
+        FastoEditor* output_;
         QString filePath_;
         QProgressBar* workProgressBar_;
         PythonWorker* worker_;
+        PythonEngine* engine_;
     };
 }
