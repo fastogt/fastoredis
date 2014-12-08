@@ -26,7 +26,7 @@ namespace common
                 pimpl_.post(task);
             }
 
-            void resize(size_t num,bool is_reload=false)
+            void resize(size_t num, bool is_reload = false)
             {
                 pimpl_.resize(num,is_reload);
             }

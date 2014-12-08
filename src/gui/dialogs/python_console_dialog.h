@@ -9,6 +9,8 @@ class QProgressBar;
 namespace fastoredis
 {
     class PythonShell;
+    class PythonWorker;
+
     class PythonConsoleDialog
             : public QDialog
     {
@@ -39,5 +41,6 @@ namespace fastoredis
         PythonShell* shell_;
         QString filePath_;
         QProgressBar* workProgressBar_;
+        PythonWorker* worker_;
     };
 }

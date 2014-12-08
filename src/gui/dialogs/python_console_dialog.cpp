@@ -16,6 +16,7 @@
 #include "translations/global.h"
 
 #include "shell/python_shell.h"
+#include "core/python_engine.h"
 
 using namespace fastoredis::translations;
 
@@ -58,7 +59,7 @@ namespace
 
 #ifdef OS_LINUX
         if (QFileInfo(filePath).suffix().isEmpty()) {
-            filePath += ".txt";
+            filePath += ".py";
         }
 #endif
         bool result = false;
@@ -86,9 +87,11 @@ namespace
 namespace fastoredis
 {
     PythonConsoleDialog::PythonConsoleDialog(const QString& filePath, QWidget* parent)
-        : QDialog(parent), filePath_(filePath)
+        : QDialog(parent), filePath_(filePath), worker_(NULL)
     {
         using namespace translations;
+
+        worker_ = PythonEngine::instance().createWorker();
 
         setWindowIcon(GuiFactory::instance().pythonIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
@@ -208,6 +211,12 @@ namespace fastoredis
 
     void PythonConsoleDialog::execute()
     {
+        QString selected = shell_->selectedText();
+        if(selected.isEmpty()){
+            selected = shell_->text();
+        }
+
+        PythonEngine::instance().execute(worker_, selected);
     }
 
     void PythonConsoleDialog::stop()

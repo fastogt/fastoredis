@@ -92,6 +92,7 @@ SET(HEADERS_CORE_TO_MOC
     core/iserver.h
     core/redis/redis_server.h
     core/redis/redis_driver.h
+    core/python_engine.h
 )
 SET(HEADERS_CORE
     core/connection_types.h
@@ -121,6 +122,7 @@ SET(SOURCES_CORE
     core/redis/redis_config.cpp
     core/types.cpp
     core/ssh_info.cpp
+    core/python_engine.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/redis_shell_widget.h

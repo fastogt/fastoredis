@@ -237,16 +237,24 @@ namespace common
                 return false;
             }
 
-        #ifdef OS_WIN
-            char* buff = (char*)calloc(MAX_PATH, sizeof(char));
-            memcpy(buff, fileName, strlen(fileName));
-            bool res = PathFindOnPathA(buff, NULL);
-            outPath = buff;
-            free(buff);
-            return res;
-        #else
+            std::stringstream path(getenv("PATH"));
+            while (!path.eof()){
+                std::string test;
+                struct stat info;
+#ifdef OS_WIN
+                getline(path, test, ';');
+#else
+                getline(path, test, ':');
+#endif
+                test = stable_dir_path(test);
+                test.append(fileName);
+                if (stat(test.c_str(), &info) == 0){
+                    outPath = test;
+                    return true;
+                }
+            }
+
             return false;
-        #endif
         }
     }
 }
