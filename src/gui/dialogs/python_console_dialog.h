@@ -10,7 +10,6 @@ namespace fastoredis
 {
     class PythonShell;
     class PythonWorker;
-    class PythonEngine;
     class FastoEditor;
 
     class PythonConsoleDialog
@@ -46,6 +45,5 @@ namespace fastoredis
         QString filePath_;
         QProgressBar* workProgressBar_;
         PythonWorker* worker_;
-        PythonEngine* engine_;
     };
 }

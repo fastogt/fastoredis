@@ -10,14 +10,39 @@
 #include "core/events/events.h"
 
 #ifdef PYTHON_ENABLED
-#include <Python.h>
+#include <iostream>
+#include "PythonQtStdIn.h"
+#include "PythonQtStdOut.h"
+#include "PythonQtObjectPtr.h"
 #endif
 
 #define PYTHON_SHELL_VERSION "Unknown"
-#define OUT_FILE_NAME "out.tmp"
+
+namespace
+{
+    enum InitFlags {
+      RedirectStdOut = 1,   //!<< sets if the std out/err is redirected to pythonStdOut() and pythonStdErr() signals
+      IgnoreSiteModule = 2, //!<< sets if Python should ignore the site module
+      ExternalHelp = 4,     //!<< sets if help() calls on PythonQt modules are forwarded to the pythonHelpRequest() signal
+      PythonAlreadyInitialized = 8 //!<< sets that PythonQt should not can PyInitialize, since it is already done
+    };
+}
 
 namespace fastoredis
 {
+    namespace
+    {
+        void stdOutRedirectCB(const QString& str)
+        {
+            Q_EMIT PythonEngine::instance().pythonStdOut(str);
+        }
+
+        void stdErrRedirectCB(const QString& str)
+        {
+            Q_EMIT PythonEngine::instance().pythonStdErr(str);
+        }
+    }
+
     bool isPythonEnabled()
     {
     #ifdef PYTHON_ENABLED
@@ -88,42 +113,11 @@ namespace fastoredis
             return;
         }
 
-        fflush(stdout);
-        FILE* pythonOutput = freopen(OUT_FILE_NAME, "w", stdout);
-        if(!pythonOutput){
-            return;
-        }
-
         PyObject* result = PyRun_String(ptr, Py_file_input, globalDictionary, localDictionary);
         Py_DECREF(result);
         Py_DECREF(main);
         Py_DECREF(globalDictionary);
         Py_DECREF(localDictionary);
-
-        fclose(pythonOutput);
-
-        pythonOutput = fopen(OUT_FILE_NAME, "r");
-        if(!pythonOutput){
-            return;
-        }
-
-        int readed = 0;
-        const unsigned int size = 1024;
-        char buff[size];
-        QString out;
-        while ((readed = fread(buff, sizeof(char), size, pythonOutput))){
-            if(readed == -1){
-                break;
-            }
-
-            std::string data(buff, readed);
-            out += common::convertFromString<QString>(data);
-        }
-
-        emit textOut(out);
-        fclose(pythonOutput);
-        remove(OUT_FILE_NAME);
-        fflush(stdout);
     }
 
     const char* PythonEngine::version()
@@ -138,9 +132,60 @@ namespace fastoredis
     PythonEngine::PythonEngine()
     {
 #ifdef PYTHON_ENABLED
-        Py_SetProgramName(PROJECT_NAME);  /* optional but recommended */
-        Py_Initialize();
+        int flags = IgnoreSiteModule | RedirectStdOut;
+
+        // add our own python object types for redirection of stdout
+        if (PyType_Ready(&PythonQtStdOutRedirectType) < 0) {
+          std::cerr << "could not initialize PythonQtStdOutRedirectType" << ", in " << __FILE__ << ":" << __LINE__ << std::endl;
+        }
+        Py_INCREF(&PythonQtStdOutRedirectType);
+
+        // add our own python object types for redirection of stdin
+        if (PyType_Ready(&PythonQtStdInRedirectType) < 0) {
+          std::cerr << "could not initialize PythonQtStdInRedirectType" << ", in " << __FILE__ << ":" << __LINE__ << std::endl;
+        }
+        Py_INCREF(&PythonQtStdInRedirectType);
+        initPythonQtModule(flags & RedirectStdOut);
 #endif
+    }
+
+    void PythonEngine::initPythonQtModule(bool redirectStdOut)
+    {
+      Py_SetProgramName(PROJECT_NAME);  /* optional but recommended */
+      Py_Initialize();
+
+      PythonQtObjectPtr sys;
+      sys.setNewRef(PyImport_ImportModule("sys"));
+
+      if (redirectStdOut) {
+        PythonQtObjectPtr out;
+        PythonQtObjectPtr err;
+        // create a redirection object for stdout and stderr
+        out = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
+        ((PythonQtStdOutRedirect*)out.object())->_cb = stdOutRedirectCB;
+        err = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
+        ((PythonQtStdOutRedirect*)err.object())->_cb = stdErrRedirectCB;
+        // replace the built in file objects with our own objects
+        PyModule_AddObject(sys, "stdout", out);
+        PyModule_AddObject(sys, "stderr", err);
+      }
+
+      // add PythonQt to the list of builtin module names
+      PyObject *old_module_names = PyObject_GetAttrString(sys.object(),"builtin_module_names");
+      if (old_module_names && PyTuple_Check(old_module_names)) {
+        Py_ssize_t old_size = PyTuple_Size(old_module_names);
+        PyObject *module_names = PyTuple_New(old_size + 1);
+        for (Py_ssize_t i = 0; i < old_size; i++) {
+          PyTuple_SetItem(module_names, i, PyTuple_GetItem(old_module_names, i));
+        }
+        PyTuple_SetItem(module_names, old_size, PyString_FromString(PROJECT_NAME));
+        PyModule_AddObject(sys.object(), "builtin_module_names", module_names);
+      }
+      Py_XDECREF(old_module_names);
+
+    #ifdef PY3K
+      PyDict_SetItem(PyObject_GetAttrString(sys.object(), "modules"), PyUnicode_FromString(name.constData()), _p->_pythonQtModule.object());
+    #endif
     }
 
     std::string PythonEngine::execPath() const
@@ -181,7 +226,7 @@ namespace fastoredis
     PythonEngine::~PythonEngine()
     {
 #ifdef PYTHON_ENABLED
-        Py_Finalize();
+//        Py_Finalize();
 #endif
     }
 }

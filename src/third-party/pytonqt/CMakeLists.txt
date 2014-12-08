@@ -1,0 +1,26 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
+PROJECT(pythonqt)
+
+FIND_PACKAGE(PythonLibs REQUIRED)
+
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/src/)
+
+SET(HEADERS_PYTHONQT
+    src/PythonQtStdIn.h
+    src/PythonQtStdOut.h
+    src/PythonQtObjectPtr.h
+    src/PythonQtPythonInclude.h
+    src/PythonQtSystem.h
+)
+
+SET(SOURCES_PYTHONQT
+    src/PythonQtStdIn.cpp
+    src/PythonQtStdOut.cpp
+    src/PythonQtObjectPtr.cpp
+)
+
+SET(HEADERS ${HEADERS} ${HEADERS_PYTHONQT})
+SET(SOURCES ${SOURCES} ${SOURCES_PYTHONQT})
+ADD_LIBRARY(pythonqt OBJECT ${HEADERS_PYTHONQT} ${SOURCES_PYTHONQT})
+

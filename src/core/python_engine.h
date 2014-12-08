@@ -6,6 +6,7 @@
 #include <QString>
 
 #include "global/global.h"
+#include "common/patterns/singleton_pattern.h"
 
 namespace fastoredis
 {
@@ -23,9 +24,6 @@ namespace fastoredis
 
         ~PythonWorker();
 
-    Q_SIGNALS:
-        void textOut(const QString& data);
-
     private Q_SLOTS:
         void init();
 
@@ -41,13 +39,13 @@ namespace fastoredis
     };
 
     class PythonEngine
-            : public QObject
+            : public QObject, public common::patterns::lazy_singleton<PythonEngine>
     {
         Q_OBJECT
+        friend class common::patterns::lazy_singleton<PythonEngine>;
+
     public:
         static const char* version();
-        PythonEngine();
-        ~PythonEngine();
 
         std::string execPath() const;
 
@@ -55,7 +53,17 @@ namespace fastoredis
         PythonWorker* createWorker() WARN_UNUSED_RESULT;
         void stopThreads();
 
+    Q_SIGNALS:
+      //! emitted when python outputs something to stdout (and redirection is turned on)
+      void pythonStdOut(const QString& str);
+      //! emitted when python outputs something to stderr (and redirection is turned on)
+      void pythonStdErr(const QString& str);
+
     private:
         int generateId();
+        void initPythonQtModule(bool redirectStdOut);
+
+        PythonEngine();
+        ~PythonEngine();
     };
 }

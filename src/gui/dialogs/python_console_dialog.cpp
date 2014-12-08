@@ -87,11 +87,10 @@ namespace
 namespace fastoredis
 {
     PythonConsoleDialog::PythonConsoleDialog(const QString& filePath, QWidget* parent)
-        : QDialog(parent), filePath_(filePath), worker_(NULL), engine_(NULL)
+        : QDialog(parent), filePath_(filePath), worker_(NULL)
     {
         using namespace translations;
-        engine_ = new PythonEngine;
-        worker_ = engine_->createWorker();
+        worker_ = PythonEngine::instance().createWorker();
 
         setWindowIcon(GuiFactory::instance().pythonIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
@@ -146,7 +145,6 @@ namespace fastoredis
         shell_ = new PythonShell;
         output_ = new FastoEditor;
         output_->setReadOnly(true);
-        VERIFY(connect(worker_, SIGNAL(textOut(const QString&)), output_, SLOT(setText(const QString&))));
 
         mainLayout->addWidget(shell_);
         mainLayout->addWidget(output_);
@@ -159,7 +157,6 @@ namespace fastoredis
     PythonConsoleDialog::~PythonConsoleDialog()
     {
         delete worker_;
-        delete engine_;
     }
 
     void PythonConsoleDialog::changeEvent(QEvent* e)
@@ -227,7 +224,7 @@ namespace fastoredis
             selected = shell_->text();
         }
 
-        engine_->execute(worker_, selected);
+        PythonEngine::instance().execute(worker_, selected);
     }
 
     void PythonConsoleDialog::stop()
