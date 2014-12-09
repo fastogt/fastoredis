@@ -184,6 +184,7 @@ namespace fastoredis
 
     void PythonWorker::executeImpl(const std::string& script)
     {
+#ifdef PYTHON_ENABLED
 emit executeProgress(0);
 
         const char* ptr = script.c_str();
@@ -213,6 +214,7 @@ emit executeProgress(75);
         }
 
 emit executeProgress(100);
+#endif
     }
 
     void PythonWorker::execute(const QString& script)
@@ -225,6 +227,7 @@ emit executeProgress(100);
     bool PythonWorker::handleError()
     {
         bool flag = false;
+#ifdef PYTHON_ENABLED
         if (PyErr_Occurred()) {
             if (PyErr_ExceptionMatches(PyExc_SystemExit)) {
                 int exitcode = custom_system_exit_exception_handler();
@@ -250,6 +253,7 @@ emit executeProgress(100);
             }
             flag = true;
         }
+#endif
         return flag;
     }
 
