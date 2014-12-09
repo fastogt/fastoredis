@@ -33,6 +33,7 @@ namespace fastoredis
         bool loadFromFile(const QString& path);
         void saveToFileAs();
         void saveToFile();
+        void executeProgressChanged(int val);
 
     protected:
         virtual void changeEvent(QEvent* );

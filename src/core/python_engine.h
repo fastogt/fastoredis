@@ -23,6 +23,15 @@ namespace fastoredis
         void stop();
 
         ~PythonWorker();
+    Q_SIGNALS:
+      //! emitted when python outputs something to stdout (and redirection is turned on)
+      void pythonStdOut(const QString& str);
+      //! emitted when python outputs something to stderr (and redirection is turned on)
+      void pythonStdErr(const QString& str);
+      //! emitted when both custom SystemExit exception handler is enabled and a SystemExit
+      //! exception is raised.
+      //! \sa setSystemExitExceptionHandlerEnabled(bool)
+      void executeProgress(int val);
 
     private Q_SLOTS:
         void init();
@@ -32,7 +41,7 @@ namespace fastoredis
 
     private:
         void execute(const std::string& script);
-
+        bool handleError();
         PythonWorker(int id);        
 
         const int id_;
@@ -54,14 +63,13 @@ namespace fastoredis
         void stopThreads();
 
     Q_SIGNALS:
-      //! emitted when python outputs something to stdout (and redirection is turned on)
-      void pythonStdOut(const QString& str);
-      //! emitted when python outputs something to stderr (and redirection is turned on)
-      void pythonStdErr(const QString& str);
+      //! emitted when both custom SystemExit exception handler is enabled and a SystemExit
+      //! exception is raised.
+      //! \sa setSystemExitExceptionHandlerEnabled(bool)
+      void systemExitExceptionRaised(int exitCode);
 
     private:
         int generateId();
-        void initPythonQtModule(bool redirectStdOut);
 
         PythonEngine();
         ~PythonEngine();

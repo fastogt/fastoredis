@@ -144,6 +144,9 @@ namespace fastoredis
 
         shell_ = new PythonShell;
         output_ = new FastoEditor;
+        VERIFY(connect(worker_, SIGNAL(pythonStdOut(const QString&)), output_, SLOT(append(const QString&))));
+        VERIFY(connect(worker_, SIGNAL(pythonStdErr(const QString&)), output_, SLOT(append(const QString&))));
+        VERIFY(connect(worker_, SIGNAL(executeProgress(int)), this, SLOT(executeProgressChanged(int))));
         output_->setReadOnly(true);
 
         mainLayout->addWidget(shell_);
@@ -215,6 +218,14 @@ namespace fastoredis
         else {
             saveToFileText(filePath_, shell_->text(), this);
         }
+    }
+
+    void PythonConsoleDialog::executeProgressChanged(int val)
+    {
+        if(val == 0){
+            output_->clear();
+        }
+        workProgressBar_->setValue(val);
     }
 
     void PythonConsoleDialog::execute()

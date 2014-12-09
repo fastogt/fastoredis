@@ -80,12 +80,14 @@ static PyObject *PythonQtStdOutRedirect_write(PyObject *self, PyObject *args)
       }
     }
 
+    void* data = (*s).data;
+
     if (s->softspace > 0) {
-      (*s->_cb)(QString(""));
+      (*s->_cb)(QString(""), data);
       s->softspace = 0;
     }
 
-    (*s->_cb)(output);
+    (*s->_cb)(output, data);
   }
   return Py_BuildValue("");
 }

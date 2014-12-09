@@ -39,6 +39,7 @@
 */
 //----------------------------------------------------------------------------------
 #include "PythonQtObjectPtr.h"
+#include "common/macros.h"
 //#include <PythonQt.h>
 
 PythonQtObjectPtr::PythonQtObjectPtr(PyObject* o)
@@ -62,11 +63,13 @@ void PythonQtObjectPtr::setNewRef(PyObject* o)
   
 QVariant PythonQtObjectPtr::evalScript(const QString& script, int start)
 {
+    NOTREACHED();
   //return PythonQt::self()->evalScript(_object, script, start);
 }
 
 void PythonQtObjectPtr::evalFile(const QString& file)
 {
+    NOTREACHED();
  // PythonQt::self()->evalFile(_object, file);
 }
 
@@ -77,32 +80,38 @@ QVariant PythonQtObjectPtr::evalCode(PyObject* pycode)
 
 void PythonQtObjectPtr::addObject(const QString& name, QObject* object)
 {
+    NOTREACHED();
   //PythonQt::self()->addObject(_object, name, object);
 }
 
 void PythonQtObjectPtr::addVariable(const QString& name, const QVariant& v)
 {
+    NOTREACHED();
   //PythonQt::self()->addVariable(_object, name, v);
 }
 
 void PythonQtObjectPtr::removeVariable(const QString& name)
 {
+    NOTREACHED();
   //PythonQt::self()->removeVariable(_object, name);
 }
 
 QVariant PythonQtObjectPtr::getVariable(const QString& name)
 {
+    NOTREACHED();
   //return PythonQt::self()->getVariable(_object, name);
 }
 
 
 QVariant PythonQtObjectPtr::call(const QString& callable, const QVariantList& args, const QVariantMap& kwargs)
 {
+    NOTREACHED();
   //return PythonQt::self()->call(_object, callable, args, kwargs);
 }
 
 QVariant PythonQtObjectPtr::call(const QVariantList& args, const QVariantMap& kwargs)
 {
+    NOTREACHED();
   //return PythonQt::self()->call(_object, args, kwargs);
 }
 
