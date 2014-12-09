@@ -19,19 +19,21 @@ namespace fastoredis
     public:
         friend class PythonEngine;
 
-        int id() const;
+        void execute(const QString& script);
         void stop();
 
         ~PythonWorker();
+
     Q_SIGNALS:
-      //! emitted when python outputs something to stdout (and redirection is turned on)
-      void pythonStdOut(const QString& str);
-      //! emitted when python outputs something to stderr (and redirection is turned on)
-      void pythonStdErr(const QString& str);
-      //! emitted when both custom SystemExit exception handler is enabled and a SystemExit
-      //! exception is raised.
-      //! \sa setSystemExitExceptionHandlerEnabled(bool)
-      void executeProgress(int val);
+        //! emitted when python outputs something to stdout (and redirection is turned on)
+        void pythonStdOut(const QString& str);
+        //! emitted when python outputs something to stderr (and redirection is turned on)
+        void pythonStdErr(const QString& str);
+        //! emitted when both custom SystemExit exception handler is enabled and a SystemExit
+        //! exception is raised.
+        //! \sa setSystemExitExceptionHandlerEnabled(bool)
+        void systemExitExceptionRaised(int exitCode);
+        void executeProgress(int val);
 
     private Q_SLOTS:
         void init();
@@ -40,37 +42,24 @@ namespace fastoredis
         virtual void customEvent(QEvent *event);
 
     private:
-        void execute(const std::string& script);
-        bool handleError();
-        PythonWorker(int id);        
+        void executeImpl(const std::string& script);
 
-        const int id_;
+        bool handleError();
+        PythonWorker();
+        volatile bool stop_;
     };
 
     class PythonEngine
-            : public QObject, public common::patterns::lazy_singleton<PythonEngine>
+            : public common::patterns::lazy_singleton<PythonEngine>
     {
-        Q_OBJECT
         friend class common::patterns::lazy_singleton<PythonEngine>;
 
     public:
         static const char* version();
-
         std::string execPath() const;
-
-        void execute(PythonWorker* worker, const QString& script);
         PythonWorker* createWorker() WARN_UNUSED_RESULT;
-        void stopThreads();
-
-    Q_SIGNALS:
-      //! emitted when both custom SystemExit exception handler is enabled and a SystemExit
-      //! exception is raised.
-      //! \sa setSystemExitExceptionHandlerEnabled(bool)
-      void systemExitExceptionRaised(int exitCode);
 
     private:
-        int generateId();
-
         PythonEngine();
         ~PythonEngine();
     };

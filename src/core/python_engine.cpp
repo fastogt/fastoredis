@@ -90,9 +90,6 @@ namespace
 }
 #endif
 
-#define PYTHON_SHELL_VERSION "Unknown"
-
-
 namespace fastoredis
 {
     namespace
@@ -123,52 +120,10 @@ namespace fastoredis
     #endif
     }
 
-    PythonWorker::PythonWorker(int id)
-        : id_(id)
+    PythonWorker::PythonWorker()
+        : stop_(false)
     {
-#ifdef PYTHON_ENABLED
-        // add our own python object types for redirection of stdout
-        if (PyType_Ready(&PythonQtStdOutRedirectType) < 0) {
-          std::cerr << "could not initialize PythonQtStdOutRedirectType" << ", in " << __FILE__ << ":" << __LINE__ << std::endl;
-        }
-        Py_INCREF(&PythonQtStdOutRedirectType);
 
-        Py_SetProgramName(PROJECT_NAME);  /* optional but recommended */
-        Py_Initialize();
-
-        PythonQtObjectPtr sys;
-        sys.setNewRef(PyImport_ImportModule("sys"));
-
-          PythonQtObjectPtr out;
-          PythonQtObjectPtr err;
-          // create a redirection object for stdout and stderr
-          out = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
-          ((PythonQtStdOutRedirect*)out.object())->_cb = stdOutRedirectCB;
-          ((PythonQtStdOutRedirect*)out.object())->data = this;
-          err = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
-          ((PythonQtStdOutRedirect*)err.object())->_cb = stdErrRedirectCB;
-          ((PythonQtStdOutRedirect*)err.object())->data = this;
-          // replace the built in file objects with our own objects
-          PyModule_AddObject(sys, "stdout", out);
-          PyModule_AddObject(sys, "stderr", err);
-
-        // add PythonQt to the list of builtin module names
-        PyObject *old_module_names = PyObject_GetAttrString(sys.object(),"builtin_module_names");
-        if (old_module_names && PyTuple_Check(old_module_names)) {
-          Py_ssize_t old_size = PyTuple_Size(old_module_names);
-          PyObject *module_names = PyTuple_New(old_size + 1);
-          for (Py_ssize_t i = 0; i < old_size; i++) {
-            PyTuple_SetItem(module_names, i, PyTuple_GetItem(old_module_names, i));
-          }
-          PyTuple_SetItem(module_names, old_size, PyString_FromString(PROJECT_NAME));
-          PyModule_AddObject(sys.object(), "builtin_module_names", module_names);
-        }
-        Py_XDECREF(old_module_names);
-
-      #ifdef PY3K
-        PyDict_SetItem(PyObject_GetAttrString(sys.object(), "modules"), PyUnicode_FromString(name.constData()), _p->_pythonQtModule.object());
-      #endif
-#endif
     }
 
     PythonWorker::~PythonWorker()
@@ -178,17 +133,37 @@ namespace fastoredis
 
     void PythonWorker::stop()
     {
-
-    }
-
-    int PythonWorker::id() const
-    {
-        return id_;
+        stop_ = true;
     }
 
     void PythonWorker::init()
     {
+#ifdef PYTHON_ENABLED
+        // add our own python object types for redirection of stdout
+        if (PyType_Ready(&PythonQtStdOutRedirectType) < 0) {
+            std::cerr << "could not initialize PythonQtStdOutRedirectType" << ", in " << __FILE__ << ":" << __LINE__ << std::endl;
+        }
+        Py_INCREF(&PythonQtStdOutRedirectType);
 
+        Py_SetProgramName(PROJECT_NAME);  /* optional but recommended */
+        Py_Initialize();
+
+        PythonQtObjectPtr sys;
+        sys.setNewRef(PyImport_ImportModule("sys"));
+
+        PythonQtObjectPtr out;
+        PythonQtObjectPtr err;
+        // create a redirection object for stdout and stderr
+        out = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
+        ((PythonQtStdOutRedirect*)out.object())->_cb = stdOutRedirectCB;
+        ((PythonQtStdOutRedirect*)out.object())->data = this;
+        err = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
+        ((PythonQtStdOutRedirect*)err.object())->_cb = stdErrRedirectCB;
+        ((PythonQtStdOutRedirect*)err.object())->data = this;
+        // replace the built in file objects with our own objects
+        PyModule_AddObject(sys, "stdout", out);
+        PyModule_AddObject(sys, "stderr", err);
+#endif
     }
 
     void PythonWorker::customEvent(QEvent *event)
@@ -198,11 +173,16 @@ namespace fastoredis
         if (type == static_cast<QEvent::Type>(ExecuteRequestEvent::EventType)){
             ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);
             ExecuteRequestEvent::value_type val = ev->value();
-            execute(val.text_);
+            if(!stop_){
+                executeImpl(val.text_);
+            }
+            stop_ = false;
         }
+
+        QObject::customEvent(event);
     }
 
-    void PythonWorker::execute(const std::string& script)
+    void PythonWorker::executeImpl(const std::string& script)
     {
 emit executeProgress(0);
 
@@ -235,44 +215,50 @@ emit executeProgress(75);
 emit executeProgress(100);
     }
 
+    void PythonWorker::execute(const QString& script)
+    {
+        EventsInfo::ExecuteInfoRequest req(common::convertToString(script));
+        QEvent *ev = new Events::ExecuteRequestEvent(this, req);
+        qApp->postEvent(this, ev);
+    }
+
     bool PythonWorker::handleError()
     {
-      bool flag = false;
-      if (PyErr_Occurred()) {
+        bool flag = false;
+        if (PyErr_Occurred()) {
+            if (PyErr_ExceptionMatches(PyExc_SystemExit)) {
+                int exitcode = custom_system_exit_exception_handler();
+                Q_EMIT systemExitExceptionRaised(exitcode);
+            }
+            else
+            {
+                // currently we just print the error and the stderr handler parses the errors
+                PyErr_Print();
 
-        if (PyErr_ExceptionMatches(PyExc_SystemExit)) {
-              int exitcode = custom_system_exit_exception_handler();
-              Q_EMIT PythonEngine::instance().systemExitExceptionRaised(exitcode);
-          }
-        else
-          {
-          // currently we just print the error and the stderr handler parses the errors
-          PyErr_Print();
+                /*
+                // EXTRA: the format of the ptype and ptraceback is not really documented, so I use PyErr_Print() above
+                PyObject *ptype;
+                PyObject *pvalue;
+                PyObject *ptraceback;
+                PyErr_Fetch( &ptype, &pvalue, &ptraceback);
 
-          /*
-          // EXTRA: the format of the ptype and ptraceback is not really documented, so I use PyErr_Print() above
-          PyObject *ptype;
-          PyObject *pvalue;
-          PyObject *ptraceback;
-          PyErr_Fetch( &ptype, &pvalue, &ptraceback);
-
-            Py_XDECREF(ptype);
-            Py_XDECREF(pvalue);
-            Py_XDECREF(ptraceback);
-          */
-          PyErr_Clear();
-          }
-        flag = true;
-      }
-      return flag;
+                Py_XDECREF(ptype);
+                Py_XDECREF(pvalue);
+                Py_XDECREF(ptraceback);
+                */
+                PyErr_Clear();
+            }
+            flag = true;
+        }
+        return flag;
     }
 
     const char* PythonEngine::version()
     {
 #ifdef PYTHON_ENABLED
-        return PYTHON_SHELL_VERSION;
+        return PY_VERSION;
 #else
-        return PYTHON_SHELL_VERSION;
+        return "Unknown";
 #endif
     }
 
@@ -286,40 +272,20 @@ emit executeProgress(100);
         return SettingsManager::instance().pythonExecPath();
     }
 
-    void PythonEngine::execute(PythonWorker* worker, const QString& script)
-    {
-        EventsInfo::ExecuteInfoRequest req(common::convertToString(script));
-        QEvent *ev = new Events::ExecuteRequestEvent(this, req);
-        qApp->postEvent(worker, ev);
-    }
-
     PythonWorker* PythonEngine::createWorker()
     {
-        PythonWorker* worker = new PythonWorker(generateId());
+        PythonWorker* worker = new PythonWorker;
         QThread* thread = new QThread;
         worker->moveToThread(thread);
 
-        VERIFY(connect(thread, SIGNAL(started()), worker, SLOT(init())));
+        VERIFY(QObject::connect(thread, SIGNAL(started()), worker, SLOT(init())));
         thread->start();
 
         return worker;
     }
 
-    void PythonEngine::stopThreads()
-    {
-
-    }
-
-    int PythonEngine::generateId()
-    {
-        static int count = 0;
-        return ++count;
-    }
-
     PythonEngine::~PythonEngine()
     {
-#ifdef PYTHON_ENABLED
-//        Py_Finalize();
-#endif
+
     }
 }

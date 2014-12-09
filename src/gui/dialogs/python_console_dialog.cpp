@@ -235,7 +235,7 @@ namespace fastoredis
             selected = shell_->text();
         }
 
-        PythonEngine::instance().execute(worker_, selected);
+        worker_->execute(selected);
     }
 
     void PythonConsoleDialog::stop()
