@@ -2,9 +2,11 @@
 
 /**/
 
+#include <stdio.h>
+
 #include "common/log_levels.h"
 
-#include "common/multi_threading/lockers.h"
+#include "common/multi_threading/common_headers.h"
 
 #include "common/patterns/singleton_pattern.h"
 
@@ -59,11 +61,8 @@ namespace common
             Logger();
             ~Logger();
 
-#ifdef OS_WIN
-    typedef multi_threading::critical_section locker_type;
-#elif defined OS_POSIX
-    typedef multi_threading::pthread_mutex locker_type;
-#endif
+        typedef multi_threading::mutex_t locker_type;
+
             locker_type lock_;
             std::ostream* outStream_;
         };        

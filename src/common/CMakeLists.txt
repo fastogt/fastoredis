@@ -62,17 +62,15 @@ SET(QT_UTILS_SOURCES
 ENDIF()
 SET(PATTERNS_SOURCES
         patterns/crtp_pattern.h
-        patterns/singleton_pattern.h)
+        patterns/singleton_pattern.h
+)
 SET(FILE_PARSERS file_parsers/parser_ini.h file_parsers/parser_ini.cpp)
-SET(MULTI_THREADING_SOURCES 
-        multi_threading/lockers.h
-        multi_threading/lockers.cpp
+SET(MULTI_THREADING_SOURCES
         multi_threading/thread_safe_containers.h
         multi_threading/common_headers.h
         multi_threading/thread_pool.h
         multi_threading/std_thread_pool_impl.hpp
-        multi_threading/pthread_thread_pool_impl.hpp
-        multi_threading/pthread_wrapper.hpp)
+)
 
 SET(COMMON_SOURCES log_levels.h logger.h logger.cpp common_config.h
 basictypes.h
@@ -85,7 +83,7 @@ ${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${FILE_PARSERS} ${DATABASE_SUPPORT_SOURC
 
 SET(COMMON_LIBS ${DATABASE_SUPPORT_LIBS})
 
-IF(UNIX)
+IF(OS_LINUX)
     SET(COMMON_LIBS ${COMMON_LIBS})
 ELSE()
     SET(COMMON_LIBS ${COMMON_LIBS})
