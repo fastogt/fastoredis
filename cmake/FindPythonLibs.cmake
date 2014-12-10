@@ -145,17 +145,17 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
   endif()
 
   IF(PYTHON_USE_STATIC)
-  find_path(PYTHON_INCLUDE_DIR
-  NAMES Python.h
-  PATHS
-    /usr/local/include    
-  PATH_SUFFIXES    
-    python${_CURRENT_VERSION}mu
-    python${_CURRENT_VERSION}m
-    python${_CURRENT_VERSION}u
-    python${_CURRENT_VERSION}
-    NO_DEFAULT_PATH
-  )
+    FIND_PATH(PYTHON_INCLUDE_DIR
+      NAMES Python.h
+      PATHS
+        /usr/local/include
+      PATH_SUFFIXES
+        python${_CURRENT_VERSION}mu
+        python${_CURRENT_VERSION}m
+        python${_CURRENT_VERSION}u
+        python${_CURRENT_VERSION}
+        NO_DEFAULT_PATH
+      )
   ENDIF(PYTHON_USE_STATIC)
 
   find_path(PYTHON_INCLUDE_DIR

@@ -140,17 +140,19 @@ namespace fastoredis
     void PythonWorker::init()
     {
 #ifdef PYTHON_ENABLED
-        // add our own python object types for redirection of stdout
-        if (PyType_Ready(&PythonQtStdOutRedirectType) < 0) {
-            std::cerr << "could not initialize PythonQtStdOutRedirectType" << ", in " << __FILE__ << ":" << __LINE__ << std::endl;
-        }
-        Py_INCREF(&PythonQtStdOutRedirectType);
 #ifndef PY3K
         Py_SetProgramName(PROJECT_NAME);  /* optional but recommended */
 #else
         Py_SetProgramName(WCHAR_PROJECT_NAME);  /* optional but recommended */
 #endif
         Py_Initialize();
+
+        // add our own python object types for redirection of stdout
+        if (PyType_Ready(&PythonQtStdOutRedirectType) < 0) {
+            std::cerr << "could not initialize PythonQtStdOutRedirectType" << ", in " << __FILE__ << ":" << __LINE__ << std::endl;
+        }
+        Py_INCREF(&PythonQtStdOutRedirectType);
+
 
         PythonQtObjectPtr sys;
         sys.setNewRef(PyImport_ImportModule("sys"));
