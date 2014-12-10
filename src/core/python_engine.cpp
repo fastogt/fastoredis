@@ -181,9 +181,16 @@ namespace fastoredis
             ExecuteRequestEvent::value_type val = ev->value();
             if(!stop_){
                 executeImpl(val.text_);
-            }
-            stop_ = false;
+            }            
         }
+        else if(type == static_cast<QEvent::Type>(ExecuteScriptRequestEvent::EventType)){
+            ExecuteScriptRequestEvent *ev = static_cast<ExecuteScriptRequestEvent*>(event);
+            ExecuteScriptRequestEvent::value_type val = ev->value();
+            if(!stop_){
+                executeScriptImpl(val.path_, val.args_);
+            }
+        }
+        stop_ = false;
 
         QObject::customEvent(event);
     }
@@ -196,6 +203,7 @@ emit executeProgress(0);
         const char* ptr = script.c_str();
         if(!ptr){
             return;
+emit executeProgress(100);
         }
 
         PythonQtObjectPtr main = getMainModule();
@@ -223,10 +231,50 @@ emit executeProgress(100);
 #endif
     }
 
+    void PythonWorker::executeScriptImpl(const std::string& path, const std::vector<std::string>& args)
+    {
+#ifdef PYTHON_ENABLED
+emit executeProgress(0);
+        const char* ptrPath = path.c_str();
+        if(!ptrPath){
+            return;
+emit executeProgress(100);
+        }
+
+
+        FILE* file = fopen(ptrPath,"r");
+        if(file){
+            int argc = args.size();
+            wchar_t* argv = (wchar_t*)calloc(args.size(), sizeof(wchar_t));
+            for(int i = 0; i < args.size(); ++i){
+                memcpy(&argv[i], args[i].c_str(), args[i].size());
+            }
+            PySys_SetArgv(argc, &argv);
+            PyRun_SimpleFile(file, ptrPath);
+            free(argv);
+            fclose(file);
+        }
+emit executeProgress(100);
+#endif
+    }
+
     void PythonWorker::execute(const QString& script)
     {
         EventsInfo::ExecuteInfoRequest req(common::convertToString(script));
         QEvent *ev = new Events::ExecuteRequestEvent(this, req);
+        qApp->postEvent(this, ev);
+    }
+
+    void PythonWorker::executeScript(const QString& path, const QStringList& args)
+    {
+        std::vector<std::string> sargs;
+        for(QStringList::const_iterator it = args.begin(); it < args.end(); ++it){
+            QString val = *it;
+            sargs.push_back(common::convertToString(val));
+        }
+
+        EventsInfo::ExecuteScriptInfoRequest req(common::convertToString(path), sargs);
+        QEvent *ev = new Events::ExecuteScriptRequestEvent(this, req);
         qApp->postEvent(this, ev);
     }
 

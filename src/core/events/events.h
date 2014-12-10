@@ -24,6 +24,7 @@ namespace fastoredis
         typedef common::utils_qt::Event<EventsInfo::DisConnectInfoResponce, QEvent::User + 10> DisconnectResponceEvent;
 
         typedef common::utils_qt::Event<EventsInfo::ExecuteInfoRequest, QEvent::User + 11> ExecuteRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ExecuteScriptInfoRequest, QEvent::User + 12> ExecuteScriptRequestEvent;
 
         typedef common::utils_qt::Event<EventsInfo::LoadDatabasesInfoRequest, QEvent::User + 13> LoadDatabasesInfoRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::LoadDatabasesInfoResponce, QEvent::User + 14> LoadDatabasesInfoResponceEvent;

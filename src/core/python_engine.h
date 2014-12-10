@@ -20,6 +20,7 @@ namespace fastoredis
         friend class PythonEngine;
 
         void execute(const QString& script);
+        void executeScript(const QString& path, const QStringList& args);
         void stop();
 
         ~PythonWorker();
@@ -43,6 +44,7 @@ namespace fastoredis
 
     private:
         void executeImpl(const std::string& script);
+        void executeScriptImpl(const std::string& path, const std::vector<std::string> &args);
 
         bool handleError();
         PythonWorker();
