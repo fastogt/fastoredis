@@ -13,6 +13,7 @@
 #include <iostream>
 #include "PythonQtStdOut.h"
 #include "PythonQtObjectPtr.h"
+
 namespace
 {
     PythonQtObjectPtr getMainModule()
@@ -144,8 +145,11 @@ namespace fastoredis
             std::cerr << "could not initialize PythonQtStdOutRedirectType" << ", in " << __FILE__ << ":" << __LINE__ << std::endl;
         }
         Py_INCREF(&PythonQtStdOutRedirectType);
-
+#ifndef PY3K
         Py_SetProgramName(PROJECT_NAME);  /* optional but recommended */
+#else
+        Py_SetProgramName(WCHAR_PROJECT_NAME);  /* optional but recommended */
+#endif
         Py_Initialize();
 
         PythonQtObjectPtr sys;
