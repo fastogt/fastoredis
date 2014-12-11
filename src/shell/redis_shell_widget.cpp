@@ -264,11 +264,7 @@ namespace fastoredis
 
     void RedisShellWidget::loadFromFile()
     {
-        QString out;
-        bool res = loadFromFile(filePath_);
-        if(res){
-            setText(out);
-        }
+        loadFromFile(filePath_);
     }
 
     bool RedisShellWidget::loadFromFile(const QString& path)

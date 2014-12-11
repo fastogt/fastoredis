@@ -19,7 +19,7 @@ namespace fastoredis
     public:
         friend class PythonEngine;
 
-        void execute(const QString& script);
+        void execute(const QString& script, const QStringList& args);
         void executeScript(const QString& path, const QStringList& args);
         void stop();
 
@@ -43,7 +43,7 @@ namespace fastoredis
         virtual void customEvent(QEvent *event);
 
     private:
-        void executeImpl(const std::string& script);
+        void executeImpl(const std::string& script, const std::vector<std::string> &args);
         void executeScriptImpl(const std::string& path, const std::vector<std::string> &args);
 
         bool handleError();

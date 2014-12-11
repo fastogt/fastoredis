@@ -77,8 +77,8 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
-        ExecuteInfoRequest::ExecuteInfoRequest(const std::string &text, const error_type &er)
-            : base_class(er), text_(text)
+        ExecuteInfoRequest::ExecuteInfoRequest(const std::string &text, const std::vector<std::string>& args, const error_type &er)
+            : base_class(er), text_(text), args_(args)
         {
 
         }

@@ -9,6 +9,8 @@
 #include <QTextStream>
 #include <QApplication>
 #include <QMessageBox>
+#include <QMenu>
+#include <QInputDialog>
 
 #include "common/qt/convert_string.h"
 
@@ -118,6 +120,11 @@ namespace fastoredis
         QToolButton* executeButton = new QToolButton;
         executeButton->setIcon(GuiFactory::instance().executeIcon());
         executeButton->setEnabled(isPythonEnabled());
+        executeButton->setPopupMode(QToolButton::MenuButtonPopup);
+        QMenu *menu = new QMenu(tr("Menu"), this);
+        QAction* execArgs = menu->addAction(trExecuteWithArgs);
+        VERIFY(connect(execArgs, SIGNAL(triggered()), SLOT(executeWithArgs())));
+        executeButton->setMenu(menu);
 
         VERIFY(connect(executeButton, SIGNAL(clicked()), this, SLOT(execute())));
         toolBarLayout->addWidget(executeButton);
@@ -178,11 +185,7 @@ namespace fastoredis
 
     void PythonConsoleDialog::loadFromFile()
     {
-        QString out;
-        bool res = loadFromFile(filePath_);
-        if(res){
-            shell_->setText(out);
-        }
+        loadFromFile(filePath_);
     }
 
     bool PythonConsoleDialog::loadFromFile(const QString& path)
@@ -235,7 +238,28 @@ namespace fastoredis
             selected = shell_->text();
         }
 
-        worker_->execute(selected);
+        execute(selected, QStringList());
+    }
+
+    void PythonConsoleDialog::executeWithArgs()
+    {
+        bool ok;
+        QString text = QInputDialog::getText(this, tr("Args for script"), tr("Args:"), QLineEdit::Normal, QString(), &ok);
+
+        if(ok){
+            QString selected = shell_->selectedText();
+            if(selected.isEmpty()){
+                selected = shell_->text();
+            }
+
+            QStringList args = text.split(" ");
+            execute(selected, args);
+        }
+    }
+
+    void PythonConsoleDialog::execute(const QString& script, const QStringList &args)
+    {
+        worker_->execute(script, args);
     }
 
     void PythonConsoleDialog::stop()

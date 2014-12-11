@@ -102,8 +102,9 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ExecuteInfoRequest(const std::string &text, const error_type &er = error_type());
+            ExecuteInfoRequest(const std::string &text, const std::vector<std::string>& args = std::vector<std::string>(), const error_type &er = error_type());
             const std::string text_;
+            const std::vector<std::string> args_;
         };
 
         struct ExecuteScriptInfoRequest

@@ -28,12 +28,14 @@ namespace fastoredis
 
     private Q_SLOTS:
         void execute();
+        void executeWithArgs();
         void stop();
         void loadFromFile();
         bool loadFromFile(const QString& path);
         void saveToFileAs();
         void saveToFile();
         void executeProgressChanged(int val);
+        void execute(const QString& script, const QStringList &args);
 
     protected:
         virtual void changeEvent(QEvent* );

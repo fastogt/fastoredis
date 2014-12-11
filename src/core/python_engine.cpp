@@ -180,7 +180,7 @@ namespace fastoredis
             ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);
             ExecuteRequestEvent::value_type val = ev->value();
             if(!stop_){
-                executeImpl(val.text_);
+                executeImpl(val.text_, val.args_);
             }            
         }
         else if(type == static_cast<QEvent::Type>(ExecuteScriptRequestEvent::EventType)){
@@ -195,7 +195,7 @@ namespace fastoredis
         QObject::customEvent(event);
     }
 
-    void PythonWorker::executeImpl(const std::string& script)
+    void PythonWorker::executeImpl(const std::string& script, const std::vector<std::string> &args)
     {
 #ifdef PYTHON_ENABLED
 emit executeProgress(0);
@@ -216,14 +216,38 @@ emit executeProgress(25);
         else if (PyDict_Check(main)) {
             dict = main;
         }
+
         if (dict) {
-            p.setNewRef(PyRun_String(ptr, Py_single_input, dict, dict));
+            int argc = args.size();
+            if(argc){
+    #ifndef PY3K
+        typedef char char_type;
+    #else
+        typedef wchar_t char_type;
+    #endif
+                char_type** argv = (char_type**)calloc(args.size(), sizeof(char_type*));
+                for(int i = 0; i < args.size(); ++i){
+                    argv[i] = (char_type*)calloc(args[i].size(), sizeof(char_type));
+                    memcpy(argv[i], args[i].c_str(), args[i].size());
+                }
+                PySys_SetArgv(argc, argv);
+                PyRun_SimpleString(ptr);
+                for(int i = 0; i < args.size(); ++i){
+                    free(argv[i]);
+                }
+                free(argv);
+            }
+            else{
+                p.setNewRef(PyRun_String(ptr, Py_single_input, dict, dict));
+            }
+
         }
 emit executeProgress(75);
 
         if (p) {
             //result = PythonQtConv::PyObjToQVariant(p);
-        } else {
+        }
+        else {
             handleError();
         }
 
@@ -241,16 +265,24 @@ emit executeProgress(0);
 emit executeProgress(100);
         }
 
-
         FILE* file = fopen(ptrPath,"r");
         if(file){
             int argc = args.size();
-            wchar_t* argv = (wchar_t*)calloc(args.size(), sizeof(wchar_t));
+#ifndef PY3K
+            typedef char char_type;
+#else
+            typedef wchar_t char_type;
+#endif
+            char_type** argv = (char_type**)calloc(args.size(), sizeof(char_type*));
             for(int i = 0; i < args.size(); ++i){
-                memcpy(&argv[i], args[i].c_str(), args[i].size());
+                argv[i] = (char_type*)calloc(args[i].size(), sizeof(char_type));
+                memcpy(argv[i], args[i].c_str(), args[i].size());
             }
-            PySys_SetArgv(argc, &argv);
+            PySys_SetArgv(argc, argv);
             PyRun_SimpleFile(file, ptrPath);
+            for(int i = 0; i < args.size(); ++i){
+                free(argv[i]);
+            }
             free(argv);
             fclose(file);
         }
@@ -258,9 +290,15 @@ emit executeProgress(100);
 #endif
     }
 
-    void PythonWorker::execute(const QString& script)
+    void PythonWorker::execute(const QString& script, const QStringList &args)
     {
-        EventsInfo::ExecuteInfoRequest req(common::convertToString(script));
+        std::vector<std::string> sargs;
+        for(QStringList::const_iterator it = args.begin(); it < args.end(); ++it){
+            QString val = *it;
+            sargs.push_back(common::convertToString(val));
+        }
+
+        EventsInfo::ExecuteInfoRequest req(common::convertToString(script), sargs);
         QEvent *ev = new Events::ExecuteRequestEvent(this, req);
         qApp->postEvent(this, ev);
     }
