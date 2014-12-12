@@ -36,6 +36,7 @@ namespace fastoredis
         void saveToFile();
         void executeProgressChanged(int val);
         void execute(const QString& script, const QStringList &args);
+        void loadAndInstallFile();
 
     protected:
         virtual void changeEvent(QEvent* );

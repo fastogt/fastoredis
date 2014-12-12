@@ -40,5 +40,6 @@
     <file>icons/rdb_mode.png</file>
     <file>icons/slave_mode.png</file>
     <file>icons/close16.png</file>
+    <file>icons/python.png</file>
     </qresource>
 </RCC>

@@ -102,6 +102,11 @@ namespace fastoredis
         QHBoxLayout *toolBarLayout = new QHBoxLayout;
         toolBarLayout->setContentsMargins(0, 0, 0, 0);
 
+        QToolButton* loadAndInstall = new QToolButton;
+        loadAndInstall->setIcon(GuiFactory::instance().pythonIcon());
+        VERIFY(connect(loadAndInstall, SIGNAL(clicked()), this, SLOT(loadAndInstallFile())));
+        toolBarLayout->addWidget(loadAndInstall);
+
         QToolButton* loadButton = new QToolButton;
         loadButton->setIcon(GuiFactory::instance().loadIcon());
         VERIFY(connect(loadButton, SIGNAL(clicked()), this, SLOT(loadFromFile())));
@@ -151,8 +156,8 @@ namespace fastoredis
 
         shell_ = new PythonShell;
         output_ = new FastoEditor;
-        VERIFY(connect(worker_, SIGNAL(pythonStdOut(const QString&)), output_, SLOT(append(const QString&))));
-        VERIFY(connect(worker_, SIGNAL(pythonStdErr(const QString&)), output_, SLOT(append(const QString&))));
+        VERIFY(connect(worker_, SIGNAL(pythonStdOut(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));
+        VERIFY(connect(worker_, SIGNAL(pythonStdErr(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));
         VERIFY(connect(worker_, SIGNAL(executeProgress(int)), this, SLOT(executeProgressChanged(int))));
         output_->setReadOnly(true);
 
@@ -186,6 +191,13 @@ namespace fastoredis
     void PythonConsoleDialog::loadFromFile()
     {
         loadFromFile(filePath_);
+    }
+
+    void PythonConsoleDialog::loadAndInstallFile()
+    {
+        if(loadFromFile(filePath_)){
+            worker_->executeScript(filePath_, QStringList() << "install");
+        }
     }
 
     bool PythonConsoleDialog::loadFromFile(const QString& path)

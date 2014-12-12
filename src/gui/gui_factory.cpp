@@ -256,7 +256,7 @@ namespace fastoredis
 
     const QIcon& GuiFactory::pythonIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/logo.png");
+        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/python.png");
         return main;
     }
 

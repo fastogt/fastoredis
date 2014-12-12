@@ -37,6 +37,7 @@ namespace fastoredis
         const QString trDisconnect = QObject::tr("Disconnect");
         const QString trExecute = QObject::tr("Execute");
         const QString trExecuteWithArgs = QObject::tr("Execute with args");
+        const QString trLoadAndExecuteFile = QObject::tr("Load and execute file");
         const QString trPreferences = QObject::tr("Preferences");
         const QString trReload = QObject::tr("Reload");
         const QString trDuplicate = QObject::tr("Duplicate");

@@ -1,6 +1,9 @@
 #pragma once
 
 /**/
+#ifdef PYTHON_ENABLED
+#include "PythonQtObjectPtr.h"
+#endif
 
 #include <QObject>
 #include <QString>
@@ -49,6 +52,9 @@ namespace fastoredis
         bool handleError();
         PythonWorker();
         volatile bool stop_;
+    #ifdef PYTHON_ENABLED
+        PythonQtObjectPtr sys_;
+    #endif
     };
 
     class PythonEngine
