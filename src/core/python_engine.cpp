@@ -2,7 +2,6 @@
 
 #include <QThread>
 #include <QApplication>
-#include <QDebug>
 
 #include "common/file_system.h"
 #include "common/qt/convert_string.h"
@@ -98,7 +97,6 @@ namespace fastoredis
     {
         void stdOutRedirectCB(const QString& str, void* data)
         {
-            qDebug() << str;
             PythonWorker* worker = static_cast<PythonWorker*>(data);
             if(worker){
                 Q_EMIT worker->pythonStdOut(str);
@@ -107,7 +105,6 @@ namespace fastoredis
 
         void stdErrRedirectCB(const QString& str, void* data)
         {
-            qDebug() << str;
             PythonWorker* worker = static_cast<PythonWorker*>(data);
             if(worker){
                 Q_EMIT worker->pythonStdErr(str);
@@ -158,6 +155,7 @@ namespace fastoredis
 
 
         sys_.setNewRef(PyImport_ImportModule("sys"));
+        os_.setNewRef(PyImport_ImportModule("os"));
 
         PythonQtObjectPtr out;
         PythonQtObjectPtr err;
@@ -197,6 +195,27 @@ namespace fastoredis
         QObject::customEvent(event);
     }
 
+    namespace
+    {
+        template<typename char_type>
+        char_type** toPythonArgs(const std::vector<std::basic_string<char_type> >& args, int& argc)
+        {
+            argc = args.size() +1;
+            char_type** argv = (char_type**)calloc(argc, sizeof(char_type*));
+            std::basic_string<char_type> argv0 = common::convertToString(QCoreApplication::applicationFilePath());
+            argv[0] = (char_type*)calloc(argv0.size(), sizeof(char_type));
+            memcpy(argv[0], argv0.c_str(), argv0.size());
+
+            for(int i = 0; i < args.size(); ++i){
+                std::basic_string<char_type> argvi = args[i];
+                argv[i+1] = (char_type*)calloc(argvi.size(), sizeof(char_type));
+                memcpy(argv[i+1], argvi.c_str(), argvi.size());
+            }
+
+            return argv;
+        }
+    }
+
     void PythonWorker::executeImpl(const std::string& script, const std::vector<std::string> &args)
     {
 #ifdef PYTHON_ENABLED
@@ -227,14 +246,13 @@ emit executeProgress(25);
     #else
         typedef wchar_t char_type;
     #endif
-                char_type** argv = (char_type**)calloc(args.size(), sizeof(char_type*));
-                for(int i = 0; i < args.size(); ++i){
-                    argv[i] = (char_type*)calloc(args[i].size(), sizeof(char_type));
-                    memcpy(argv[i], args[i].c_str(), args[i].size());
-                }
+                int argc = 0;
+                char_type** argv = toPythonArgs(args, argc);
+
                 PySys_SetArgv(argc, argv);
                 PyRun_SimpleString(ptr);
-                for(int i = 0; i < args.size(); ++i){
+
+                for(int i = 0; i < argc; ++i){
                     free(argv[i]);
                 }
                 free(argv);
@@ -257,27 +275,6 @@ emit executeProgress(100);
 #endif
     }
 
-    namespace
-    {
-        template<typename char_type>
-        char_type** toPythonArgs(const std::vector<std::string>& args, int& argc)
-        {
-            argc = args.size() +1;
-            char_type** argv = (char_type**)calloc(argc, sizeof(char_type*));
-            std::string argv0 = common::convertToString(QCoreApplication::applicationFilePath());
-            argv[0] = (char_type*)calloc(argv0.size(), sizeof(char_type));
-            memcpy(argv[0], argv0.c_str(), argv0.size());
-
-            for(int i = 0; i < args.size(); ++i){
-                std::string argvi = args[i];
-                argv[i+1] = (char_type*)calloc(argvi.size(), sizeof(char_type));
-                memcpy(argv[i+1], argvi.c_str(), argvi.size());
-            }
-
-            return argv;
-        }
-    }
-
     void PythonWorker::executeScriptImpl(const std::string& path, const std::vector<std::string>& args)
     {
 #ifdef PYTHON_ENABLED
@@ -289,19 +286,29 @@ emit executeProgress(100);
         }
 
         FILE* file = fopen(ptrPath, "r");
-        if(file){
-            int argc = 0;
+        if(file){            
 #ifndef PY3K
             typedef char char_type;
 #else
             typedef wchar_t char_type;
-#endif            
-            char_type** argv = toPythonArgs<char_type>(args, argc);
+#endif
+            int argc = 0;
+            char_type** argv = toPythonArgs(args, argc);
 
-
-            PythonQtObjectPtr ppath = PyObject_GetAttrString(sys_, "path");
+            PyObject* ppath = PyObject_GetAttrString(sys_, "path");
             std::string dir = common::file_system::get_dir_path(path);
-            PyList_Append(ppath, PyString_FromString(dir.c_str()));
+            PyObject* pdir = PyString_FromString(dir.c_str());
+            PyList_Append(ppath, pdir);
+
+            //chdir
+            PyObject* chdirFunc = PyObject_GetAttrString(os_, "chdir");
+            if(chdirFunc && PyCallable_Check(chdirFunc)){
+                PyObject* pArgs = PyTuple_New(1);
+                PyTuple_SetItem(pArgs, 0, pdir);
+                PyObject_CallObject(chdirFunc, pArgs);
+                Py_DECREF(pArgs);
+                Py_DECREF(chdirFunc);
+            }
 
             PySys_SetArgv(argc, argv);
             PyRun_SimpleFile(file, ptrPath);

@@ -54,6 +54,7 @@ namespace fastoredis
         volatile bool stop_;
     #ifdef PYTHON_ENABLED
         PythonQtObjectPtr sys_;
+        PythonQtObjectPtr os_;
     #endif
     };
 
