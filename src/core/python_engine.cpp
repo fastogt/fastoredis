@@ -285,6 +285,20 @@ emit executeProgress(0);
 emit executeProgress(100);
         }
 
+        PythonQtObjectPtr main = getMainModule();
+        PyObject* dict = NULL;
+        if (PyModule_Check(main)) {
+            dict = PyModule_GetDict(main);
+        }
+        else if (PyDict_Check(main)) {
+            dict = main;
+        }
+
+        if (!dict) {
+            return;
+emit executeProgress(100);
+        }
+
         FILE* file = fopen(ptrPath, "r");
         if(file){            
 #ifndef PY3K
@@ -311,7 +325,15 @@ emit executeProgress(100);
             }
 
             PySys_SetArgv(argc, argv);
-            PyRun_SimpleFile(file, ptrPath);
+            PythonQtObjectPtr p;
+            p.setNewRef(PyRun_File(file, ptrPath, Py_file_input, dict, dict));
+            if (p) {
+                //result = PythonQtConv::PyObjToQVariant(p);
+            }
+            else {
+                handleError();
+            }
+            Py_DECREF(dict);
             for(int i = 0; i < argc; ++i){
                 free(argv[i]);
             }
