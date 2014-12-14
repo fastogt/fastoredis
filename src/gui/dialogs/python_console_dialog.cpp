@@ -106,6 +106,7 @@ namespace fastoredis
         loadAndInstall->setIcon(GuiFactory::instance().pythonIcon());
         VERIFY(connect(loadAndInstall, SIGNAL(clicked()), this, SLOT(loadAndInstallFile())));
         toolBarLayout->addWidget(loadAndInstall);
+        loadAndInstall->setEnabled(isPythonEnabled());
 
         QToolButton* loadButton = new QToolButton;
         loadButton->setIcon(GuiFactory::instance().loadIcon());

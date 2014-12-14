@@ -1471,6 +1471,7 @@ namespace fastoredis
     {
         interrupt();
         clear();
+        delete impl_;
     }
 
     std::string RedisDriver::address() const

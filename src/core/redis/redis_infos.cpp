@@ -672,6 +672,7 @@ namespace fastoredis
         }
 
         RedisServerInfo* result = new RedisServerInfo;
+        ServerInfoSPtr sresult(result);
         int j = 0;
         std::string word;
         size_t pos = 0;
@@ -723,7 +724,7 @@ namespace fastoredis
             }
         }
 
-        return ServerInfoSPtr(result);
+        return sresult;
     }
 
     ServerInfoSPtr makeRedisServerInfo(FastoObject* root)
