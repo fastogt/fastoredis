@@ -17,8 +17,6 @@ namespace common
     class ErrorValue;
     class Value;
 
-    typedef std::vector<Value*> ValueVector;
-
     class Value
     {
     public:
@@ -127,6 +125,8 @@ namespace common
             : public Value
     {
     public:
+        typedef std::vector<Value*> ValueVector;
+
         typedef ValueVector::iterator iterator;
         typedef ValueVector::const_iterator const_iterator;
 

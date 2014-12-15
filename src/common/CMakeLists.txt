@@ -66,7 +66,6 @@ SET(PATTERNS_SOURCES
 )
 
 SET(MULTI_THREADING_SOURCES
-        multi_threading/thread_safe_containers.h
         multi_threading/common_headers.h
         multi_threading/thread_pool.h
         multi_threading/std_thread_pool_impl.hpp
