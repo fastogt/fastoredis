@@ -44,7 +44,7 @@ namespace fastoredis
         ServerInfoSPtr makeServerInfoFromString(const std::string &val);
 
         struct pimpl;
-        boost::scoped_ptr<pimpl> impl_;
+        pimpl* const impl_;
 
         common::ErrorValueSPtr interacteveMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
         common::ErrorValueSPtr latencyMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;

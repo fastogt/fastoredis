@@ -64,7 +64,7 @@ SET(PATTERNS_SOURCES
         patterns/crtp_pattern.h
         patterns/singleton_pattern.h
 )
-SET(FILE_PARSERS file_parsers/parser_ini.h file_parsers/parser_ini.cpp)
+
 SET(MULTI_THREADING_SOURCES
         multi_threading/thread_safe_containers.h
         multi_threading/common_headers.h
@@ -77,9 +77,9 @@ basictypes.h
 safe_sprintf.h safe_sprintf.cpp utf_string_conversions.h utf_string_conversions.cpp utf_string_conversion_utils.h utf_string_conversion_utils.cpp
 string_util.h string_util.cpp icu_utf.h icu_utf.cpp string_piece.h string_piece.cpp string16.h string16.cpp hash_tables.h
 convert2string.h convert2string.cpp types.h types.cpp lexical_cast.h lexical_cast.cpp
-macros.h macros.cpp mpl.h utils.h utils.cpp file_system.h file_system.cpp value.h value.cpp
+macros.h macros.cpp utils.h utils.cpp file_system.h file_system.cpp value.h value.cpp
 boost_extension.h url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net/net.h net/net.cpp net/socket_tcp.h net/socket_tcp.cpp
-${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${FILE_PARSERS} ${DATABASE_SUPPORT_SOURCES} ${SETTINGS_SOURCES} ${MULTI_THREADING_SOURCES})
+${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${DATABASE_SUPPORT_SOURCES} ${SETTINGS_SOURCES} ${MULTI_THREADING_SOURCES})
 
 SET(COMMON_LIBS ${DATABASE_SUPPORT_LIBS})
 

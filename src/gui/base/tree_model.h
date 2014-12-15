@@ -2,8 +2,6 @@
 
 /**/
 
-#include <boost/scoped_ptr.hpp>
-
 #include <QAbstractItemModel>
 
 #include "gui/base/tree_item.h"
@@ -32,7 +30,7 @@ namespace fastoredis
         virtual ~TreeModel();
 
     protected:        
-        boost::scoped_ptr<TreeItem> _root;
+        TreeItem* root_;
     };
 }
 

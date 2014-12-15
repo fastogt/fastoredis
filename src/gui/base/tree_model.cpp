@@ -45,14 +45,14 @@ namespace fastoredis
     }
 
     TreeModel::TreeModel(QObject *parent)
-        : QAbstractItemModel(parent), _root(new TreeItem(NULL))
+        : QAbstractItemModel(parent), root_(new TreeItem(NULL))
     {
 
     }
 
     TreeItem* TreeModel::root() const
     {
-        return _root.get();
+        return root_;
     }
 
     int TreeModel::rowCount(const QModelIndex &parent) const
@@ -62,7 +62,7 @@ namespace fastoredis
             parentItem = common::utils_qt::item<TreeItem*>(parent);
         }
         else{
-            parentItem = _root.get();
+            parentItem = root_;
         }
 
         return parentItem ? parentItem->childrenCount() : 0;
@@ -71,7 +71,8 @@ namespace fastoredis
     void TreeModel::setRoot(TreeItem *root)
     {
         beginResetModel();
-        _root.reset(root);
+        delete root_;
+        root_ = root;
         endResetModel();
     }
 
@@ -79,7 +80,7 @@ namespace fastoredis
     {
         TreeItem* item = NULL;
         if(!parent.isValid()){
-            item = _root.get();
+            item = root_;
         }
 
         if(!item){
@@ -99,7 +100,7 @@ namespace fastoredis
 
     bool TreeModel::findItem(void *internalPointer, QModelIndex& index)
     {
-        return findChildInModel(QModelIndex(), internalPointer, index, _root.get(), this);
+        return findChildInModel(QModelIndex(), internalPointer, index, root_, this);
     }
 
     QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
@@ -107,7 +108,7 @@ namespace fastoredis
         if (hasIndex(row, column, parent)) {
             const TreeItem * parentItem = NULL;
             if (!parent.isValid()) {
-                parentItem = _root.get();
+                parentItem = root_;
             }
             else {
                 parentItem = common::utils_qt::item<TreeItem*>(parent);
@@ -135,7 +136,7 @@ namespace fastoredis
         TreeItem * childItem = common::utils_qt::item<TreeItem*>(index);
         if(childItem){
             TreeItem* parentItem = childItem->parent();
-            if (parentItem && parentItem != _root.get()) {
+            if (parentItem && parentItem != root_) {
                 TreeItem * grandParent = parentItem->parent();
                 int row = grandParent->indexOf(parentItem);
                 return createIndex(row, 0, parentItem);
@@ -147,6 +148,7 @@ namespace fastoredis
 
     TreeModel::~TreeModel()
     {
-
+        delete root_;
+        root_ = NULL;
     }
 }
