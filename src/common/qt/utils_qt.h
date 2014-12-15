@@ -40,7 +40,7 @@ namespace common
                 enum { EventType = event_t };
 
                 Event(senders_type sender, const value_t &initValue)
-                    : base_class((base_class::Type)EventType), _sender(sender), _value(initValue){}
+                    : base_class((base_class::Type)EventType), _value(initValue), _sender(sender){}
 
                 const value_t &value() const
                 {

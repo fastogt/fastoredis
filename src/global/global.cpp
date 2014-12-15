@@ -10,7 +10,7 @@ namespace
 namespace fastoredis
 {
     FastoObject::FastoObject(FastoObject *parent, common::Value *val, const std::string& delemitr)
-        : parent_(parent), value_(val), delemitr_(delemitr), childrens_(), observer_(NULL)
+        : observer_(NULL), value_(val), parent_(parent), childrens_(), delemitr_(delemitr)
     {
         DCHECK(val);
     }
