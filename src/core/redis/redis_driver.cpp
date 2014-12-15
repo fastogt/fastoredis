@@ -45,12 +45,6 @@ extern "C" {
 
 namespace
 {
-    common::Value::Type toValueTypeFromRedis(int redisT)
-    {
-        common::Value::Type res;
-        return res;
-    }
-
     const char *toCString(const std::string &val)
     {
         return val.empty() ? NULL : val.c_str();
@@ -365,7 +359,7 @@ namespace fastoredis
             char buf[4096];
 
             while(payload) {
-                ssize_t nread, nwritten;
+                ssize_t nread = 0, nwritten = 0;
 
                 int res = redisReadToBuffer(context, buf,(payload > sizeof(buf)) ? sizeof(buf) : payload, &nread);
                 if (res == REDIS_ERR) {
@@ -730,7 +724,7 @@ namespace fastoredis
         /* Return the specified INFO field from the INFO command output "info".
          * A new buffer is allocated for the result, that needs to be free'd.
          * If the field is not found NULL is returned. */
-        static char *getInfoField(char *info, char *field) {
+        static char *getInfoField(char *info, const char *field) {
             char *p = strstr(info,field);
             char *n1, *n2;
             char *result;
@@ -748,7 +742,7 @@ namespace fastoredis
 
         /* Like the above function but automatically convert the result into
          * a long. On error (missing field) LONG_MIN is returned. */
-        static long getLongInfoField(char *info, char *field) {
+        static long getLongInfoField(char *info, const char *field) {
             char *value = getInfoField(info,field);
             long l;
 
@@ -830,35 +824,35 @@ namespace fastoredis
                 result += buf;
 
                 /* Used memory */
-                aux = getLongInfoField(reply->str,"used_memory");
+                aux = getLongInfoField(reply->str, "used_memory");
                 bytesToHuman(buf,aux);
                 result += " used_memory: ";
                 result += buf;
 
                 /* Clients */
-                aux = getLongInfoField(reply->str,"connected_clients");
+                aux = getLongInfoField(reply->str, "connected_clients");
                 sprintf(buf," connected_clients: %ld",aux);
                 result += buf;
 
                 /* Blocked (BLPOPPING) Clients */
-                aux = getLongInfoField(reply->str,"blocked_clients");
+                aux = getLongInfoField(reply->str, "blocked_clients");
                 sprintf(buf," blocked_clients: %ld",aux);
                 result += buf;
 
                 /* Requets */
-                aux = getLongInfoField(reply->str,"total_commands_processed");
+                aux = getLongInfoField(reply->str, "total_commands_processed");
                 sprintf(buf," total_commands_processed: %ld (+%ld)",aux,requests == 0 ? 0 : aux-requests);
                 result += buf;
                 requests = aux;
 
                 /* Connections */
-                aux = getLongInfoField(reply->str,"total_connections_received");
+                aux = getLongInfoField(reply->str, "total_connections_received");
                 sprintf(buf," total_connections_received: %ld",aux);
                 result += buf;
 
                 /* Children */
-                aux = getLongInfoField(reply->str,"bgsave_in_progress");
-                aux |= getLongInfoField(reply->str,"aof_rewrite_in_progress") << 1;
+                aux = getLongInfoField(reply->str, "bgsave_in_progress");
+                aux |= getLongInfoField(reply->str, "aof_rewrite_in_progress") << 1;
                 switch(aux) {
                 case 0: break;
                 case 1:
@@ -1298,7 +1292,7 @@ namespace fastoredis
 
             char *command = argv[0];
             size_t *argvlen;
-            int j, output_raw;
+            //int output_raw = 0;
 
             if (!strcasecmp(command,"help") || !strcasecmp(command,"?")) {
                 return cliOutputHelp(out, --argc, ++argv);
@@ -1308,7 +1302,7 @@ namespace fastoredis
                 return common::make_error_value("Not connected", common::Value::E_ERROR);
             }
 
-            output_raw = 0;
+            //output_raw = 0;
             if (!strcasecmp(command,"info") ||
                 (argc == 2 && !strcasecmp(command,"cluster") &&
                               (!strcasecmp(argv[1],"nodes") ||
@@ -1320,7 +1314,7 @@ namespace fastoredis
                 (argc == 2 && !strcasecmp(command,"latency") &&
                                !strcasecmp(argv[1],"doctor")))
             {
-                output_raw = 1;
+                //output_raw = 1;
             }
 
             if (!strcasecmp(command,"shutdown")) config.shutdown = 1;
@@ -1332,7 +1326,7 @@ namespace fastoredis
 
             /* Setup argument length */
             argvlen = (size_t*)malloc(argc*sizeof(size_t));
-            for (j = 0; j < argc; j++)
+            for (int j = 0; j < argc; j++)
                 argvlen[j] = sdslen(argv[j]);
 
             while(repeat--) {
@@ -1340,6 +1334,7 @@ namespace fastoredis
                 while (config.monitor_mode) {
                     common::ErrorValueSPtr er = cliReadReply(out);
                     if (er){
+                        free(argvlen);
                         return er;
                     }
                 }

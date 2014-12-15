@@ -115,7 +115,7 @@ namespace fastoredis
     }
 
     FastoEditorOutput::FastoEditorOutput(const QString &delemitr, QWidget *parent)
-        : FastoEditor(parent), delemitr_(delemitr), model_(NULL), viewMethod_(JSON)
+        : FastoEditor(parent), model_(NULL), viewMethod_(JSON), delemitr_(delemitr)
     {
 
     }

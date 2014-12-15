@@ -15,7 +15,7 @@
 namespace fastoredis
 {
     SSHInfo::SSHInfo()
-        : hostName_(DEFAULT_SSH_HOST),userName_(),port_(DEFAULT_SSH_PORT),password_(),publicKey_(),currentMethod_(UNKNOWN)
+        : hostName_(DEFAULT_SSH_HOST),port_(DEFAULT_SSH_PORT), userName_(),password_(),publicKey_(),currentMethod_(UNKNOWN)
     {
     }
 
@@ -28,7 +28,7 @@ namespace fastoredis
     }
 
     SSHInfo::SSHInfo(const std::string& text)
-        : hostName_(DEFAULT_SSH_HOST), userName_(), port_(DEFAULT_SSH_PORT), password_(),
+        : hostName_(DEFAULT_SSH_HOST), port_(DEFAULT_SSH_PORT), userName_(), password_(),
           publicKey_(), privateKey_(), passphrase_(), currentMethod_(UNKNOWN)
     {
         size_t pos = 0;

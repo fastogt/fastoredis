@@ -40,7 +40,7 @@ namespace
         else {
             static const uint16_t size_buff = 256;
             char buff[size_buff] = {0};
-            sprintf(buff, PROJECT_NAME" can't read from %1:\n%2.", convertToString(filePath).c_str(),
+            sprintf(buff, PROJECT_NAME" can't read from %s:\n%s.", convertToString(filePath).c_str(),
                             convertToString(file.errorString()).c_str());
             //ErrorValueSPtr er(new ErrorValue(buff, Value::E_ERROR));
             //fastoredis::LOG_ERROR(er);

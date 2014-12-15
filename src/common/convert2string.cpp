@@ -564,7 +564,7 @@ namespace common
     float convertFromString16(const string16& val)
     {
         int output = 0;
-        bool res = String16ToIntImpl(val, &output);
+        String16ToIntImpl(val, &output);
         return output;
     }
 
@@ -764,7 +764,7 @@ namespace common
     float convertFromString(const std::string& val)
     {
         int output = 0;
-        bool res = StringToIntImpl(val, &output);
+        StringToIntImpl(val, &output);
         return output;
     }
 

@@ -3,15 +3,6 @@
 #include "common/file_system.h"
 #include <fstream>
 
-namespace
-{
-    const std::string &get_logger_path()
-    {
-        static std::string result = common::file_system::prepare_path("~/"PROJECT_NAME_LOWERCASE".log");
-        return result;
-    }
-}
-
 namespace common
 {
     namespace logging

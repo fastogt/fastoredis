@@ -47,7 +47,6 @@ namespace fastoredis
     bool PropertyTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
     {
         if (index.isValid() && role == Qt::EditRole) {
-            int row = index.row();
             int column = index.column();
             PropertyTableItem *node = common::utils_qt::item<PropertyTableItem*>(index);
 
