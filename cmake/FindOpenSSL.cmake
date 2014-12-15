@@ -36,6 +36,12 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+IF(OPENSSL_USE_STATIC)
+  MESSAGE(STATUS "OPENSSL_USE_STATIC: ON")
+ELSE()
+  MESSAGE(STATUS "OPENSSL_USE_STATIC: OFF")
+ENDIF(OPENSSL_USE_STATIC)
+
 if (UNIX)
   find_package(PkgConfig QUIET)
   pkg_check_modules(_OPENSSL QUIET openssl)
@@ -83,7 +89,6 @@ find_path(OPENSSL_INCLUDE_DIR
 )
 
 if(OPENSSL_USE_STATIC)
-  MESSAGE(STATUS "OPENSSL_USE_STATIC ON")
   find_library(OPENSSL_SSL_LIBRARY
     NAMES
       libssl.a
@@ -134,10 +139,7 @@ set(OPENSSL_SSL_LIBRARIES ${OPENSSL_SSL_LIBRARY})
 set(OPENSSL_CRYPTO_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY})
 
 set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
-
-endif(OPENSSL_USE_STATIC)
-
-if(NOT OPENSSL_USE_STATIC)
+else()
 if(WIN32 AND NOT CYGWIN)
   if(MSVC)
     # /MD and /MDd are the standard values - if someone wants to use
@@ -267,7 +269,6 @@ if(WIN32 AND NOT CYGWIN)
     set( OPENSSL_LIBRARIES ${SSL_EAY} ${LIB_EAY} )
   endif()
 else()
-
   find_library(OPENSSL_SSL_LIBRARY
     NAMES
       ssl
@@ -297,9 +298,8 @@ else()
   set(OPENSSL_CRYPTO_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY})
 
   set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
-
 endif()
-endif()
+endif(OPENSSL_USE_STATIC)
 
 function(from_hex HEX DEC)
   string(TOUPPER "${HEX}" HEX)

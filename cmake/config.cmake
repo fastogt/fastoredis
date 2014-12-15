@@ -40,13 +40,6 @@ ENDIF()
 INCLUDE(cmake/projecthelper.cmake)
 INCLUDE(cmake/utils.cmake)
 
-IF(SSH_ENABLED)
-    ADD_DEFINITIONS(-DSSH_SUPPORT_ENABLED)
-    IF(NOT OPENSSL_FOUND)
-        MESSAGE(FATAL_ERROR "OPENSSH_ENABLED but openssl not founded, please specify OPENSSL_ROOT_DIR variable and check the OPENSSL_ENABLED variable must be ON.")
-    ENDIF(NOT OPENSSL_FOUND)
-ENDIF(SSH_ENABLED)
-
 IF(BOOST_ENABLED)
     ADD_DEFINITIONS(-DBOOST_ENABLED)
     INCLUDE(${CMAKE_CURRENT_LIST_DIR}/integrate-boost.cmake)

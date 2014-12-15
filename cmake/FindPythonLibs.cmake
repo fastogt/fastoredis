@@ -47,11 +47,15 @@
 
 #PYTHON_USE_STATIC
 
+IF(PYTHON_USE_STATIC)
+  MESSAGE(STATUS "PYTHON_USE_STATIC: ON")
+ELSE()
+  MESSAGE(STATUS "PYTHON_USE_STATIC: OFF")
+ENDIF(PYTHON_USE_STATIC)
+
 include(CMakeFindFrameworks)
 # Search for the python framework on Apple.
-IF(NOT DEFINED PYTHON_USE_STATIC)
 CMAKE_FIND_FRAMEWORKS(Python)
-ENDIF(NOT DEFINED PYTHON_USE_STATIC)
 
 set(_PYTHON1_VERSIONS 1.6 1.5)
 set(_PYTHON2_VERSIONS 2.7 2.6 2.5 2.4 2.3 2.2 2.1 2.0)
@@ -96,17 +100,8 @@ unset(_PYTHON3_VERSIONS)
 
 foreach(_CURRENT_VERSION ${_Python_VERSIONS})
   string(REPLACE "." "" _CURRENT_VERSION_NO_DOTS ${_CURRENT_VERSION})
-  if(WIN32)
-    find_library(PYTHON_DEBUG_LIBRARY
-      NAMES python${_CURRENT_VERSION_NO_DOTS}_d python
-      PATHS
-      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs/Debug
-      [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs/Debug
-      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
-      [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
-      )
-  endif()
 
+IF(PYTHON_USE_STATIC)
   find_library(PYTHON_LIBRARY
     NAMES
     python${_CURRENT_VERSION_NO_DOTS}
@@ -128,6 +123,26 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
     # This is where the static library is usually located
     PATH_SUFFIXES python${_CURRENT_VERSION}/config
   )
+ELSE()
+  find_library(PYTHON_LIBRARY
+    NAMES
+    libpython${_CURRENT_VERSION_NO_DOTS}${CMAKE_SHARED_LIBRARY_SUFFIX}
+    libpython${_CURRENT_VERSION}mu${CMAKE_SHARED_LIBRARY_SUFFIX}
+    libpython${_CURRENT_VERSION}m${CMAKE_SHARED_LIBRARY_SUFFIX}
+    libpython${_CURRENT_VERSION}u${CMAKE_SHARED_LIBRARY_SUFFIX}
+    libpython${_CURRENT_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+    PATHS
+      [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
+      [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
+  )
+
+  # Look for the static library in the Python config directory
+  find_library(PYTHON_LIBRARY
+    NAMES python${_CURRENT_VERSION_NO_DOTS} libpython${_CURRENT_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+    # This is where the static library is usually located
+    PATH_SUFFIXES python${_CURRENT_VERSION}/config
+  )
+ENDIF(PYTHON_USE_STATIC)
 
   # For backward compatibility, honour value of PYTHON_INCLUDE_PATH, if
   # PYTHON_INCLUDE_DIR is not set.
@@ -136,15 +151,7 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
       "Path to where Python.h is found" FORCE)
   endif()
 
-  set(PYTHON_FRAMEWORK_INCLUDES)
-  if(Python_FRAMEWORKS AND NOT PYTHON_INCLUDE_DIR)
-    foreach(dir ${Python_FRAMEWORKS})
-      set(PYTHON_FRAMEWORK_INCLUDES ${PYTHON_FRAMEWORK_INCLUDES}
-        ${dir}/Versions/${_CURRENT_VERSION}/include/python${_CURRENT_VERSION})
-    endforeach()
-  endif()
-
-  IF(PYTHON_USE_STATIC)
+IF(PYTHON_USE_STATIC)
     FIND_PATH(PYTHON_INCLUDE_DIR
       NAMES Python.h
       PATHS
@@ -156,9 +163,16 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
         python${_CURRENT_VERSION}
         NO_DEFAULT_PATH
       )
-  ENDIF(PYTHON_USE_STATIC)
+ELSE()
+    set(PYTHON_FRAMEWORK_INCLUDES)
+    if(Python_FRAMEWORKS AND NOT PYTHON_INCLUDE_DIR)
+    foreach(dir ${Python_FRAMEWORKS})
+      set(PYTHON_FRAMEWORK_INCLUDES ${PYTHON_FRAMEWORK_INCLUDES}
+        ${dir}/Versions/${_CURRENT_VERSION}/include/python${_CURRENT_VERSION})
+    endforeach()
+    endif()
 
-  find_path(PYTHON_INCLUDE_DIR
+    find_path(PYTHON_INCLUDE_DIR
     NAMES Python.h
     PATHS
       ${PYTHON_FRAMEWORK_INCLUDES}
@@ -169,7 +183,8 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
       python${_CURRENT_VERSION}m
       python${_CURRENT_VERSION}u
       python${_CURRENT_VERSION}
-  )
+    )
+ENDIF(PYTHON_USE_STATIC)
 
   # For backward compatibility, set PYTHON_INCLUDE_PATH.
   set(PYTHON_INCLUDE_PATH "${PYTHON_INCLUDE_DIR}")
