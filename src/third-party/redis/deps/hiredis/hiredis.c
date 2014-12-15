@@ -1092,7 +1092,7 @@ redisContext *redisConnect(const char *ip, int port, const char *ssh_address, in
         }
 
         int auth_pw = 0;
-        const char *fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+        libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
         char *userauthlist = libssh2_userauth_list(session, username, strlen(username));
         if (strstr(userauthlist, "password") != NULL) {
             auth_pw |= 1;
