@@ -53,13 +53,13 @@ namespace fastoredis
 
         }
 
-        CommandRootCreatedInfo::CommandRootCreatedInfo(FastoObjectPtr root, const error_type &er)
+        CommandRootCreatedInfo::CommandRootCreatedInfo(FastoObjectIPtr root, const error_type &er)
             : base_class(er), root_(root)
         {
 
         }
 
-        CommandRootCompleatedInfo::CommandRootCompleatedInfo(FastoObjectPtr root, const error_type &er)
+        CommandRootCompleatedInfo::CommandRootCompleatedInfo(FastoObjectIPtr root, const error_type &er)
             : base_class(er), root_(root)
         {
 

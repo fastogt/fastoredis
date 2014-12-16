@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QTabWidget>
 
 #include "core/iserver.h"

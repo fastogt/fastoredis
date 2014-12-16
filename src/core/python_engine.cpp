@@ -250,7 +250,7 @@ emit executeProgress(25);
                 char_type** argv = toPythonArgs(args, argc);
 
                 PySys_SetArgv(argc, argv);
-                PyRun_SimpleString(ptr);
+                p.setNewRef(PyRun_String(ptr, Py_single_input, dict, dict));
 
                 for(int i = 0; i < argc; ++i){
                     free(argv[i]);

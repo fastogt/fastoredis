@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QDialog>
 
 #include "core/events/events_info.h"

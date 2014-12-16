@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <string.h>
 
 #ifdef OS_POSIX

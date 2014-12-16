@@ -1,11 +1,9 @@
 #pragma once
 
-/**/
 #ifdef BOOST_ENABLED
 
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
-#include <boost/atomic.hpp>
 #include <boost/thread/condition.hpp>
 
 namespace common

@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <istream>
 #include <iostream>
 

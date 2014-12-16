@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "common/settings/storages/ini_xml_storage.h"
 #ifdef OS_WIN
     #include "common/settings/storages/registry_storage.h"

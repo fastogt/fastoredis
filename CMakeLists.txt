@@ -47,6 +47,7 @@ OPTION(CPACK_SUPPORT "Enable package support" ON)
 OPTION(DEVELOPER_DYNAMIC_RUNTIME "Build with dynamic C++ runtime" ON)
 OPTION(DEVELOPER_FEATURES "Use some debug tricks for developers" OFF)
 OPTION(DEVELOPER_ENABLE_TESTS "Enable tests for ${PROJECT_NAME_TITLE} project" OFF)
+OPTION(USE_CXX_STANDART "Enable tests for ${PROJECT} project" OFF)
 
 IF(MSVC)
     IF(CMAKE_CL_64)
@@ -70,9 +71,20 @@ ENDIF()
 
 MESSAGE(STATUS "BUILD_64X: ${BUILD_64X}")
 
+##################################DEFAULT VALUES##########################################
 IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE DEBUG)
 ENDIF()
+
+IF(NOT CMAKE_INSTALL_PREFIX})
+    SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
+ENDIF()
+
+IF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+    MESSAGE(SEND_ERROR "In-source builds are not allowed.")
+ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+
+############################################################################
 
 INCLUDE(cmake/config.cmake)
 
@@ -147,16 +159,6 @@ ELSE()
     SET(ARCH_TEXT_PACKAGE i386)
 ENDIF()
 
-##################################DEFAULT VALUES##########################################
-IF(NOT CMAKE_INSTALL_PREFIX})
-    SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
-ENDIF()
-
-IF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-    MESSAGE(SEND_ERROR "In-source builds are not allowed.")
-ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-
-############################################################################
 IF(WIN32)
     SET(RESOURCE_OS    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/win.rc")
     SET(RESOURCE_OS_IN "${CMAKE_SOURCE_DIR}/install/windows/winres.rc.in")

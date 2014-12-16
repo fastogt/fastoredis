@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <vector>
 
 #include "common/convert2string.h"

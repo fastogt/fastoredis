@@ -1,6 +1,5 @@
 #pragma once
 
-/**/
 #include <sys/time.h>
 
 #include "common/types.h"

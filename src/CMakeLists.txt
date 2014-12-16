@@ -151,7 +151,7 @@ IF(WIN32)
     ADD_DEFINITIONS()
 ELSEIF(UNIX)
     ADD_DEFINITIONS()
-ENDIF()
+ENDIF(WIN32)
 
 SET_DESKTOP_TARGET()
 
@@ -307,8 +307,8 @@ TARGET_BUNDLEFIX(${PROJECT_NAME} ${LIB_INSTALL_DESTINATION})
 IF(DEVELOPER_ENABLE_TESTS)
 ########## PREPARE GTEST LIBRARY ##########
     IF(MSVC)
-	SET(gtest_force_shared_crt ON CACHE BOOL "Build shared gtest library")
-	ADD_DEFINITIONS(-D_VARIADIC_MAX=10)
+        SET(gtest_force_shared_crt ON CACHE BOOL "Build shared gtest library")
+        ADD_DEFINITIONS(-D_VARIADIC_MAX=10)
     ENDIF(MSVC)
     ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/tests/gtest-1.7.0 gtest)
     INCLUDE_DIRECTORIES(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
@@ -318,11 +318,11 @@ IF(DEVELOPER_ENABLE_TESTS)
         ${CMAKE_SOURCE_DIR}/tests/test_fasto_objects.cpp
         ${CMAKE_SOURCE_DIR}/tests/unit_test_common_net.cpp
         ${CMAKE_SOURCE_DIR}/tests/unit_test_common_strings.cpp
-        global/global.cpp)
+        global/global.cpp
+    )
 
     TARGET_LINK_LIBRARIES(unit_tests gtest gtest_main common)
 
     ADD_TEST(NAME unit_tests COMMAND tests)
     SET_PROPERTY(TARGET unit_tests PROPERTY FOLDER "Unit tests")
-
 ENDIF(DEVELOPER_ENABLE_TESTS)

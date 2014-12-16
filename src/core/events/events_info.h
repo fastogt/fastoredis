@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "global/global.h"
 
 #include "core/types.h"
@@ -70,18 +68,18 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            CommandRootCreatedInfo(FastoObjectPtr root, const error_type &er = error_type());
+            CommandRootCreatedInfo(FastoObjectIPtr root, const error_type &er = error_type());
 
-            FastoObjectPtr root_;
+            FastoObjectIPtr root_;
         };
 
         struct CommandRootCompleatedInfo
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            CommandRootCompleatedInfo(FastoObjectPtr root, const error_type &er = error_type());
+            CommandRootCompleatedInfo(FastoObjectIPtr root, const error_type &er = error_type());
 
-            FastoObjectPtr root_;
+            FastoObjectIPtr root_;
         };
 
         struct DisonnectInfoRequest

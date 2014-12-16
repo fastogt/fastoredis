@@ -1,6 +1,6 @@
 #pragma once
 
-/**/
+#include <stdint.h>
 
 namespace common
 {
@@ -18,20 +18,17 @@ namespace common
 
             }
 
-            thread_pool(const thread_pool&) = delete;
-            thread_pool& operator=(const thread_pool&) = delete;
-
             void post(task_type task)
             {
                 pimpl_.post(task);
             }
 
-            void resize(size_t num, bool is_reload = false)
+            void resize(uint16_t num, bool is_reload = false)
             {
                 pimpl_.resize(num,is_reload);
             }
 
-            void start(size_t num)
+            void start(uint16_t num)
             {
                 pimpl_.start(num);
             }
@@ -47,6 +44,9 @@ namespace common
             }
 
         private:
+            thread_pool(const thread_pool&);
+            thread_pool& operator=(const thread_pool&);
+
             impl_t pimpl_;
         };
     }

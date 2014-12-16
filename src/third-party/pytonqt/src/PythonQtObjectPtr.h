@@ -1,5 +1,4 @@
-#ifndef _PYTHONQTOBJECTPTR_H
-#define _PYTHONQTOBJECTPTR_H
+#pragma once
 
 #include "PythonQtPythonInclude.h"
 
@@ -68,6 +67,4 @@ protected:
 private:
     PyObject* _object;
 };
-
-#endif
 

@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "core/idriver.h"
 
 namespace fastoredis
@@ -29,7 +27,7 @@ namespace fastoredis
     private:
         virtual void customEvent(QEvent *event);
         virtual void initImpl();
-        virtual common::ErrorValueSPtr currentLoggingInfo(FastoObjectPtr& outInfo);
+        virtual common::ErrorValueSPtr currentLoggingInfo(FastoObjectIPtr& outInfo);
 
         virtual void connectEvent(Events::ConnectRequestEvent *ev);
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev);
@@ -46,13 +44,13 @@ namespace fastoredis
         struct pimpl;
         pimpl* const impl_;
 
-        common::ErrorValueSPtr interacteveMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
-        common::ErrorValueSPtr latencyMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
-        common::ErrorValueSPtr slaveMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
-        common::ErrorValueSPtr getRDBMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
+        common::ErrorValueSPtr interacteveMode(Events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr latencyMode(Events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr slaveMode(Events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr getRDBMode(Events::ProcessConfigArgsRequestEvent* ev);
         //void pipeMode(Events::ProcessConfigArgsRequestEvent* ev);
-        common::ErrorValueSPtr findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
-        common::ErrorValueSPtr statMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
-        common::ErrorValueSPtr scanMode(Events::ProcessConfigArgsRequestEvent* ev) WARN_UNUSED_RESULT;
+        common::ErrorValueSPtr findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr statMode(Events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr scanMode(Events::ProcessConfigArgsRequestEvent* ev);
     };
 }

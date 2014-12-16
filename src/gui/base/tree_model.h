@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QAbstractItemModel>
 
 #include "gui/base/tree_item.h"

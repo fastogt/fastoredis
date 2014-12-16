@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "global/global.h"
 
 #include "common/patterns/singleton_pattern.h"

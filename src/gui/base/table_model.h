@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QAbstractTableModel>
 
 #include "gui/base/table_item.h"

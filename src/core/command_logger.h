@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QObject>
 
 #include "common/patterns/singleton_pattern.h"

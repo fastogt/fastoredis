@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <stdio.h>
 
 #include "common/log_levels.h"
@@ -14,8 +12,8 @@ namespace common
 {
     namespace logging
     {
-        class Logger:
-                public patterns::lazy_singleton<Logger>
+        class Logger
+                : public patterns::lazy_singleton<Logger>
         {
             friend class patterns::lazy_singleton<Logger>;
         public:
@@ -61,7 +59,7 @@ namespace common
             Logger();
             ~Logger();
 
-        typedef multi_threading::mutex_t locker_type;
+            typedef multi_threading::mutex_t locker_type;
 
             locker_type lock_;
             std::ostream* outStream_;

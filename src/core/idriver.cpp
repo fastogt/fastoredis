@@ -145,15 +145,15 @@ namespace fastoredis
         parent_->compleateRoot(reciver_, root_);
     }
 
-    FastoObjectPtr IDriver::createRoot(QObject *reciver, const std::string& text)
+    FastoObjectIPtr IDriver::createRoot(QObject *reciver, const std::string& text)
     {
-        FastoObjectPtr root = FastoObject::createRoot(text, this);
+        FastoObjectIPtr root = FastoObject::createRoot(text, this);
         Events::CommandRootCreatedEvent::value_type res(root);
         reply(reciver, new Events::CommandRootCreatedEvent(this, res));
         return root;
     }
 
-    void IDriver::compleateRoot(QObject *reciver, FastoObjectPtr root)
+    void IDriver::compleateRoot(QObject *reciver, FastoObjectIPtr root)
     {
         Events::CommandRootCompleatedEvent::value_type res(root);
         reply(reciver, new Events::CommandRootCompleatedEvent(this, res));
@@ -209,7 +209,7 @@ namespace fastoredis
                 logFile_->open("ab+");
             }
             if(logFile_ && logFile_->isOpened()){
-                FastoObjectPtr toFile;
+                FastoObjectIPtr toFile;
                 common::ErrorValueSPtr er = currentLoggingInfo(toFile);
                 if(er && er->isError()){
                     QObject::timerEvent(event);

@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "common/convert2string.h"
 
 namespace common

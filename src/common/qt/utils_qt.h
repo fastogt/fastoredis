@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QModelIndex>
 #include <QEvent>
 #include <QDesktopServices>

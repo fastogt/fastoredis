@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QObject>
 
 #include "core/connection_settings.h"
@@ -54,7 +52,7 @@ namespace fastoredis
 
     protected:
         virtual void initImpl() = 0;
-        virtual common::ErrorValueSPtr currentLoggingInfo(FastoObjectPtr& outInfo) = 0;
+        virtual common::ErrorValueSPtr currentLoggingInfo(FastoObjectIPtr& outInfo) = 0;
 
         virtual void connectEvent(Events::ConnectRequestEvent *ev) = 0;
         virtual void disconnectEvent(Events::DisconnectRequestEvent *ev) = 0;
@@ -73,7 +71,7 @@ namespace fastoredis
             RootLocker(IDriver* parent, QObject *reciver, const std::string &text);
             ~RootLocker();
 
-            FastoObjectPtr root_;
+            FastoObjectIPtr root_;
 
         private:
             IDriver* parent_;
@@ -88,8 +86,8 @@ namespace fastoredis
         void clear();
 
     private:
-        FastoObjectPtr createRoot(QObject *reciver, const std::string &text);
-        void compleateRoot(QObject *reciver, FastoObjectPtr root);
+        FastoObjectIPtr createRoot(QObject *reciver, const std::string &text);
+        void compleateRoot(QObject *reciver, FastoObjectIPtr root);
 
         void loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev);
 

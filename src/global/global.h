@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "common/boost_extension.h"
 #include "common/value.h"
 #include "common/convert2string.h"
@@ -71,7 +69,7 @@ namespace fastoredis
         virtual void updated(FastoObject* item, common::Value* val) = 0;
     };
 
-    typedef boost::intrusive_ptr<FastoObject> FastoObjectPtr;
+    typedef boost::intrusive_ptr<FastoObject> FastoObjectIPtr;
 }
 
 namespace common

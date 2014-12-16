@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <iosfwd>
 
 #include "common/string16.h"

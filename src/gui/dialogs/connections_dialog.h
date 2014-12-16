@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <QDialog>
 
 #include "core/connection_settings.h"

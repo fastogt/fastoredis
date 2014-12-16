@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "global/global.h"
 #include "core/connection_types.h"
 

@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "common/settings/storages/storages_def.h"
 #include "common/lexical_cast.h"
 

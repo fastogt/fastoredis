@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <cassert>
 
 #include "common/common_config.h"

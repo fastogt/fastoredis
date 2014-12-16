@@ -1512,10 +1512,10 @@ namespace fastoredis
 
     }
 
-    common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObjectPtr& outInfo)
+    common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObjectIPtr& outInfo)
     {
         RootLocker rl = make_locker(NULL, INFO_REQUEST);
-        FastoObjectPtr outRoot = rl.root_;
+        FastoObjectIPtr outRoot = rl.root_;
         outInfo = outRoot;
         return impl_->execute(INFO_REQUEST, Command::InnerCommand, outRoot.get());
     }
@@ -1616,7 +1616,7 @@ namespace fastoredis
 
         RootLocker lock = make_locker(sender, LATENCY_REQUEST);
 
-        FastoObjectPtr obj = lock.root_;
+        FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->latencyMode(obj.get());
         if(er){
             LOG_ERROR(er);
@@ -1637,7 +1637,7 @@ namespace fastoredis
 
         RootLocker lock = make_locker(sender, SYNC_REQUEST);
 
-        FastoObjectPtr obj = lock.root_;
+        FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->slaveMode(obj.get());
         if(er){
             LOG_ERROR(er);
@@ -1658,7 +1658,7 @@ namespace fastoredis
 
         RootLocker lock = make_locker(sender, RDM_REQUEST);
 
-        FastoObjectPtr obj = lock.root_;
+        FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->getRDB(obj.get());
         if(er){
             LOG_ERROR(er);
@@ -1691,7 +1691,7 @@ namespace fastoredis
 
         RootLocker lock = make_locker(sender, FIND_BIG_KEYS_REQUEST);
 
-        FastoObjectPtr obj = lock.root_;
+        FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->findBigKeys(obj.get());
         if(er){
             LOG_ERROR(er);
@@ -1712,7 +1712,7 @@ namespace fastoredis
 
         RootLocker lock = make_locker(sender, STAT_MODE_REQUEST);
 
-        FastoObjectPtr obj = lock.root_;
+        FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->statMode(obj.get());
         if(er){
             LOG_ERROR(er);
@@ -1733,7 +1733,7 @@ namespace fastoredis
 
         RootLocker lock = make_locker(sender, SCAN_MODE_REQUEST);
 
-        FastoObjectPtr obj = lock.root_;
+        FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->scanMode(obj.get());
         if(er){
             LOG_ERROR(er);
@@ -1757,7 +1757,7 @@ namespace fastoredis
                 size_t length = strlen(inputLine);
                 int offset = 0;
                 RootLocker lock = make_locker(sender, inputLine);
-                FastoObjectPtr outRoot = lock.root_;
+                FastoObjectIPtr outRoot = lock.root_;
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
                     if(impl_->config.shutdown){
@@ -1814,7 +1814,7 @@ namespace fastoredis
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(GET_DATABASES);
+            FastoObjectIPtr root = FastoObject::createRoot(GET_DATABASES);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(GET_DATABASES, Command::InnerCommand, root.get());
             if(er){
@@ -1858,7 +1858,7 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ServerInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(INFO_REQUEST);
+            FastoObjectIPtr root = FastoObject::createRoot(INFO_REQUEST);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(INFO_REQUEST, Command::InnerCommand, root.get());
             if(er){
@@ -1881,7 +1881,7 @@ namespace fastoredis
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
         Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
-            FastoObjectPtr root = FastoObject::createRoot(GET_PROPERTY_SERVER);
+            FastoObjectIPtr root = FastoObject::createRoot(GET_PROPERTY_SERVER);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(GET_PROPERTY_SERVER, Command::InnerCommand, root.get());
             if(er){
@@ -1910,7 +1910,7 @@ namespace fastoredis
 
         notifyProgress(sender, 50);
         const std::string changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
-        FastoObjectPtr root = FastoObject::createRoot(changeRequest);
+        FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
         common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), Command::InnerCommand, root.get());
         if(er){
             res.setErrorInfo(er);

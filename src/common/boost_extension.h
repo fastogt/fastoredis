@@ -15,10 +15,12 @@ namespace common
         {
             typedef refcount_t refcount_type;
             typedef intrusive_ptr_base<T, refcount_t> class_type;
+
         protected:
             intrusive_ptr_base(): ref_count_(0)
             {
             }
+
             ~intrusive_ptr_base()
             {
             }
@@ -30,8 +32,7 @@ namespace common
 
             friend void intrusive_ptr_release(class_type const* s)
             {
-                if (--s->ref_count_ == 0)
-                {
+                if (--s->ref_count_ == 0){
                     T const*t = static_cast<T const*>(s);
                     delete t;
                     t = NULL;
@@ -42,6 +43,7 @@ namespace common
             {
                 return ref_count_;
             }
+
         private:
             intrusive_ptr_base(class_type const&);
             intrusive_ptr_base& operator=(class_type const& rhs);

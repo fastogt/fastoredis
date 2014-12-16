@@ -1,6 +1,5 @@
 #pragma once
 
-/**/
 #ifdef PYTHON_ENABLED
 #include "PythonQtObjectPtr.h"
 #endif

@@ -1,5 +1,4 @@
-#ifndef __PythonQtPythonInclude_h
-#define __PythonQtPythonInclude_h
+#pragma once
 
 // Undefine macros that Python.h defines to avoid redefinition warning.
 #undef _POSIX_C_SOURCE
@@ -61,6 +60,4 @@
 #define PyBytes_AsString  PyString_AsString
 #define PyBytes_GET_SIZE  PyString_GET_SIZE
 #define PyBytes_FromStringAndSize PyString_FromStringAndSize
-#endif
-
 #endif

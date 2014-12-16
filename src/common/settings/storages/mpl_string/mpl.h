@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include <boost/mpl/string.hpp>
 #include <boost/mpl/deref.hpp>
 #include <boost/mpl/replace.hpp>

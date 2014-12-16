@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "common/common_config.h"
 
 #include <boost/mpl/vector.hpp>

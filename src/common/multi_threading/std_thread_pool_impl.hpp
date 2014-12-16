@@ -1,7 +1,5 @@
 #pragma once
 
-/**/
-
 #include "common/multi_threading/common_headers.h"
 
 #include <vector>
@@ -35,7 +33,7 @@ namespace common
                 condition.notify_one();
             }
 
-            void start(size_t count_threads)
+            void start(uint16_t count_threads)
             {
                 init_work(count_threads);
             }
@@ -55,18 +53,22 @@ namespace common
 
         private:
 
-            void init_work(size_t threads)
+            void init_work(uint16_t threads)
             {
                 workers.clear();
                 tasks.clear();
-                for(size_t i = 0;i<threads;++i){
+                for(uint16_t i = 0; i < threads; ++i){
+#ifdef BOOST_ENABLED
+                    workers.push_back(thread_t(boost::bind(&std_thread_pool_impl::run_work, this)));
+#else
                     workers.push_back(thread_t(std::bind(&std_thread_pool_impl::run_work, this)));
+#endif
                 }
             }
 
             void wait_finish_work()
             {
-                for(size_t i = 0;i<workers.size();++i){
+                for(uint16_t i = 0;i<workers.size();++i){
                     workers[i].join();
                 }
             }

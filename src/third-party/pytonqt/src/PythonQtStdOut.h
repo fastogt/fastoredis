@@ -1,5 +1,4 @@
-#ifndef _PYTHONQTSTDOUT_H
-#define _PYTHONQTSTDOUT_H
+#pragma once
 
 #include "PythonQtPythonInclude.h"
 
@@ -19,5 +18,3 @@ typedef struct {
   int softspace;
   void* data;
 } PythonQtStdOutRedirect;
-
-#endif
