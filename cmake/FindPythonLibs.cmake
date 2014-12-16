@@ -112,6 +112,7 @@ IF(PYTHON_USE_STATIC)
     PATHS
       [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
       [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
+	  $ENV{MSYS_ROOT}/usr/lib
     # Avoid finding the .dll in the PATH.  We want the .lib.
     NO_SYSTEM_ENVIRONMENT_PATH
   )
@@ -134,6 +135,7 @@ ELSE()
     PATHS
       [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
       [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
+	  $ENV{MSYS_ROOT}/usr/lib
   )
 
   # Look for the static library in the Python config directory
@@ -156,6 +158,7 @@ IF(PYTHON_USE_STATIC)
       NAMES Python.h
       PATHS
         /usr/local/include
+		$ENV{MSYS_ROOT}/usr/include
       PATH_SUFFIXES
         python${_CURRENT_VERSION}mu
         python${_CURRENT_VERSION}m
@@ -178,6 +181,7 @@ ELSE()
       ${PYTHON_FRAMEWORK_INCLUDES}
       [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/include
       [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/include
+	  $ENV{MSYS_ROOT}/usr/lib
     PATH_SUFFIXES
       python${_CURRENT_VERSION}mu
       python${_CURRENT_VERSION}m
