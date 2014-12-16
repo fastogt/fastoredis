@@ -127,6 +127,11 @@ namespace
                 helpEntries[pos++] = tmp;
             }
         }
+
+        ~RedisInit()
+        {
+
+        }
     };
 }
 
