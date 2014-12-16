@@ -8,7 +8,7 @@
 
 namespace fastoredis
 {
-    QueryWidget::QueryWidget(IServerPtr server, QWidget* parent)
+    QueryWidget::QueryWidget(IServerSPtr server, QWidget* parent)
         : QWidget(parent)
     {
         RedisShellWidget_ = new RedisShellWidget(server);

@@ -49,7 +49,7 @@ namespace
 
 namespace fastoredis
 {
-    IServer::IServer(const IDriverPtr &drv, bool isMaster)
+    IServer::IServer(const IDriverSPtr &drv, bool isMaster)
         : drv_(drv), isMaster_(isMaster)
     {
         if(isMaster_){
@@ -72,7 +72,7 @@ namespace fastoredis
         syncServersFunct(dsc, src, f);
     }
 
-    IDriverPtr IServer::driver() const
+    IDriverSPtr IServer::driver() const
     {
         return drv_;
     }

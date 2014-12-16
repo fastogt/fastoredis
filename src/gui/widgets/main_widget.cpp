@@ -28,7 +28,7 @@ namespace fastoredis
         setDocumentMode(true);
     }
 
-    void MainWidget::openConsole(IServerPtr server)
+    void MainWidget::openConsole(IServerSPtr server)
     {
         if(server){
             QueryWidget *queryWidget = new QueryWidget(server);

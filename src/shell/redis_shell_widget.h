@@ -19,9 +19,9 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        RedisShellWidget(IServerPtr server, const QString& filePath = QString(), QWidget* parent = 0);
+        RedisShellWidget(IServerSPtr server, const QString& filePath = QString(), QWidget* parent = 0);
 
-        IServerPtr server() const;
+        IServerSPtr server() const;
         QString text() const;
 
     Q_SIGNALS:
@@ -58,7 +58,7 @@ namespace fastoredis
     private:
         void syncConnectionActions();
 
-        const IServerPtr server_;
+        const IServerSPtr server_;
         QAction* executeAction_;
         QAction* connectAction_;
         QAction* disConnectAction_;

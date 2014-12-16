@@ -26,10 +26,10 @@ namespace fastoredis
     void ServersManager::refreshSyncServers()
     {
         for(size_t i = 0; i < servers_.size(); ++i){
-            IServerPtr servi = servers_[i];
+            IServerSPtr servi = servers_[i];
             if(servi->isMaster()){
                 for(size_t j = 0; j < servers_.size(); ++j){
-                    IServerPtr servj = servers_[j];
+                    IServerSPtr servj = servers_[j];
                     if(servj != servi && servj->driver() == servi->driver()){
                         if(syncServers_){
                             servj->syncWithServer(servi.get());
@@ -43,15 +43,15 @@ namespace fastoredis
         }
     }
 
-    IServerPtr ServersManager::createServer(const IConnectionSettingsBasePtr &settings)
+    IServerSPtr ServersManager::createServer(const IConnectionSettingsBasePtr &settings)
     {
-        IServerPtr result;
+        IServerSPtr result;
         connectionTypes conT = settings->connectionType();
-        IServerPtr ser = findServerBySetting(settings);
+        IServerSPtr ser = findServerBySetting(settings);
         if(conT == REDIS){            
             RedisServer *newRed = NULL;
             if(!ser){
-                IDriverPtr dr(new RedisDriver(settings));
+                IDriverSPtr dr(new RedisDriver(settings));
                 newRed = new RedisServer(dr, true);
             }
             else{
@@ -67,15 +67,15 @@ namespace fastoredis
         return result;
     }
 
-    void ServersManager::closeServer(IServerPtr server)
+    void ServersManager::closeServer(IServerSPtr server)
     {
         for(size_t i = 0; i < servers_.size(); ++i){
-            IServerPtr ser = servers_[i];
+            IServerSPtr ser = servers_[i];
             if(ser == server){
                 if(ser->isMaster()){
-                    IDriverPtr drv = ser->driver();
+                    IDriverSPtr drv = ser->driver();
                     for(size_t j = 0; j < servers_.size(); ++j){
-                        IServerPtr servj = servers_[j];
+                        IServerSPtr servj = servers_[j];
                         if(servj->driver() == drv){
                             servj->setIsMaster(true);
                             break;
@@ -89,23 +89,23 @@ namespace fastoredis
         }
     }
 
-    IServerPtr ServersManager::findServerBySetting(const IConnectionSettingsBasePtr &settings) const
+    IServerSPtr ServersManager::findServerBySetting(const IConnectionSettingsBasePtr &settings) const
     {
         for(size_t i = 0; i < servers_.size(); ++i){
-            IServerPtr drp = servers_[i];
-            IDriverPtr curDr = drp->driver();
+            IServerSPtr drp = servers_[i];
+            IDriverSPtr curDr = drp->driver();
             if(curDr->settings() == settings){
                 return drp;
             }
         }
-        return IServerPtr();
+        return IServerSPtr();
     }
 
-    std::vector<QObject *> ServersManager::findAllListeners(const IDriverPtr &drv)
+    std::vector<QObject *> ServersManager::findAllListeners(const IDriverSPtr &drv)
     {
         std::vector<QObject *> result;
         for(size_t j = 0; j < servers_.size(); ++j){
-            IServerPtr ser = servers_[j];
+            IServerSPtr ser = servers_[j];
             if(ser->driver() == drv){
                 result.push_back(ser.get());
             }

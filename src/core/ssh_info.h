@@ -17,8 +17,8 @@ namespace fastoredis
         };
 
         SSHInfo();
-        SSHInfo(const std::string &hostName, int port, const std::string &userName, const std::string &password,
-                const std::string &publicKey, const std::string &privateKey, const std::string &passphrase,
+        SSHInfo(const std::string& hostName, int port, const std::string& userName, const std::string& password,
+                const std::string& publicKey, const std::string& privateKey, const std::string& passphrase,
                 SupportedAuthenticationMetods method);
 
         SSHInfo(const std::string& text);

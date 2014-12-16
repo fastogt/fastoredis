@@ -17,7 +17,7 @@ namespace fastoredis
         std::string loggingPath() const;
 
         virtual std::string commandLine() const = 0;
-        virtual void setCommandLine(const std::string &line) = 0;
+        virtual void setCommandLine(const std::string& line) = 0;
 
         virtual std::string fullAddress() const = 0;
 
@@ -29,7 +29,7 @@ namespace fastoredis
         void setConnectionName(const std::string &name);
 
         virtual connectionTypes connectionType() const;
-        static IConnectionSettingsBase *fromString(const std::string &val);
+        static IConnectionSettingsBase *fromString(const std::string& val);
         std::string toString() const;
 
         virtual IConnectionSettingsBase* clone () const = 0;
@@ -42,8 +42,8 @@ namespace fastoredis
 
     protected:
         virtual std::string toCommandLine() const = 0;
-        virtual void initFromCommandLine(const std::string &val) = 0;
-        IConnectionSettingsBase(const std::string &connectionName);
+        virtual void initFromCommandLine(const std::string& val) = 0;
+        IConnectionSettingsBase(const std::string& connectionName);
 
     private:
         std::string connectionName_;
@@ -60,10 +60,10 @@ namespace fastoredis
             : public IConnectionSettingsBase
     {
     public:
-        RedisConnectionSettings(const std::string &connectionName, const redisConfig &info);
+        RedisConnectionSettings(const std::string& connectionName, const redisConfig& info);
 
         virtual std::string commandLine() const;
-        virtual void setCommandLine(const std::string &line);
+        virtual void setCommandLine(const std::string& line);
 
         virtual std::string fullAddress() const;
 
@@ -80,7 +80,7 @@ namespace fastoredis
 
     private:
         virtual std::string toCommandLine() const;
-        virtual void initFromCommandLine(const std::string &val);
+        virtual void initFromCommandLine(const std::string& val);
         redisConfig info_;
     };
 

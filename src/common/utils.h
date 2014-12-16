@@ -28,12 +28,12 @@ namespace common
             template<typename T>
             struct size_trait_info
             {
-                enum {value = sizeof(T) };
+                enum { value = sizeof(T) };
             };
             template<size_t N>
             struct size_trait_info<const char16[N] >
             {
-                enum {value = N };
+                enum { value = N };
             };
         }
 

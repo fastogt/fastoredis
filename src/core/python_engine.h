@@ -45,8 +45,8 @@ namespace fastoredis
         virtual void customEvent(QEvent *event);
 
     private:
-        void executeImpl(const std::string& script, const std::vector<std::string> &args);
-        void executeScriptImpl(const std::string& path, const std::vector<std::string> &args);
+        void executeImpl(const std::string& script, const std::vector<std::string>& args);
+        void executeScriptImpl(const std::string& path, const std::vector<std::string>& args);
 
         bool handleError();
         PythonWorker();

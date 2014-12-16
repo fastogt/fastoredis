@@ -23,7 +23,7 @@ namespace fastoredis
 
     }
 
-    ServerPropertyInfo makeServerProperty(FastoObjectArray *array)
+    ServerPropertyInfo makeServerProperty(FastoObjectArray* array)
     {
         ServerPropertyInfo inf;
 
@@ -40,7 +40,7 @@ namespace fastoredis
         return inf;
     }
 
-    DataBaseInfo::DataBaseInfo(const std::string &name, size_t size)
+    DataBaseInfo::DataBaseInfo(const std::string& name, size_t size)
         : name_(name), size_(size)
     {
 

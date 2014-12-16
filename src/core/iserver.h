@@ -14,7 +14,7 @@ namespace fastoredis
 
         connectionTypes connectionType() const;
         QString name() const;
-        IDriverPtr driver() const;
+        IDriverSPtr driver() const;
         QString address() const;
         QString outputDelemitr() const;
 
@@ -95,9 +95,9 @@ namespace fastoredis
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev) = 0;
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
 
-        IServer(const IDriverPtr& drv, bool isMaster);
+        IServer(const IDriverSPtr& drv, bool isMaster);
 
-        const IDriverPtr drv_;
+        const IDriverSPtr drv_;
 
     private:
         void loadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent* ev);
@@ -105,5 +105,5 @@ namespace fastoredis
         bool isMaster_;
     };
 
-    typedef boost::shared_ptr<IServer> IServerPtr;
+    typedef boost::shared_ptr<IServer> IServerSPtr;
 }

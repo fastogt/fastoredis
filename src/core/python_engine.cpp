@@ -165,7 +165,7 @@ namespace fastoredis
 #endif
     }
 
-    void PythonWorker::customEvent(QEvent *event)
+    void PythonWorker::customEvent(QEvent* event)
     {
         using namespace Events;
         QEvent::Type type = event->type();
@@ -209,7 +209,7 @@ namespace fastoredis
         }
     }
 
-    void PythonWorker::executeImpl(const std::string& script, const std::vector<std::string> &args)
+    void PythonWorker::executeImpl(const std::string& script, const std::vector<std::string>& args)
     {
 #ifdef PYTHON_ENABLED
 emit executeProgress(0);

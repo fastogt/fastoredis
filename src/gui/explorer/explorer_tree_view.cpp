@@ -63,7 +63,7 @@ namespace fastoredis
                 menu.addAction(connectAction_);
                 menu.addAction(openConsoleAction_);
 
-                IServerPtr server = node->server();
+                IServerSPtr server = node->server();
                 bool isCon = server->isConnected();
 
                 loadDatabaseAction_->setEnabled(isCon);
@@ -91,7 +91,7 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                IServerPtr server = node->server();
+                IServerSPtr server = node->server();
                 if(server->isConnected()){
                     server->disconnect();
                 }
@@ -135,7 +135,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeView::addServer(IServerPtr server)
+    void ExplorerTreeView::addServer(IServerSPtr server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(connect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
@@ -146,7 +146,7 @@ namespace fastoredis
         mod->addServer(server);
     }
 
-    void ExplorerTreeView::removeServer(IServerPtr server)
+    void ExplorerTreeView::removeServer(IServerSPtr server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(disconnect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
@@ -223,7 +223,7 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                IServerPtr server = node->server();
+                IServerSPtr server = node->server();
                 InfoServerDialog infDialog(server->name() + " info", this);
                 VERIFY(connect(server.get(), SIGNAL(startedLoadServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
                 VERIFY(connect(server.get(), SIGNAL(finishedLoadServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
@@ -239,7 +239,7 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                IServerPtr server = node->server();
+                IServerSPtr server = node->server();
                 PropertyServerDialog infDialog(server->name() + " properties", server->connectionType(), this);
                 VERIFY(connect(server.get(), SIGNAL(startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest &)), &infDialog, SLOT(startServerProperty(const EventsInfo::ServerPropertyInfoRequest &))));
                 VERIFY(connect(server.get(), SIGNAL(finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &))));
@@ -258,7 +258,7 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                IServerPtr server = node->server();
+                IServerSPtr server = node->server();
                 ServerHistoryDialog histDialog(server->name() + " history", server->connectionType(), this);
                 VERIFY(connect(server.get(), SIGNAL(startedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &)), &histDialog, SLOT(startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &))));
                 VERIFY(connect(server.get(), SIGNAL(finishedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &)), &histDialog, SLOT(finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &))));
@@ -274,7 +274,7 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                IServerPtr server = node->server();
+                IServerSPtr server = node->server();
                 removeServer(server);
             }
         }        

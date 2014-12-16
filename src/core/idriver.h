@@ -22,7 +22,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        static void reply(QObject *reciver, QEvent *ev);
+        static void reply(QObject* reciver, QEvent* ev);
         virtual ~IDriver();
 
         connectionTypes connectionType() const;
@@ -36,7 +36,7 @@ namespace fastoredis
         virtual std::string outputDelemitr() const = 0;
 
     Q_SIGNALS:
-        void addedChild(FastoObject *child);
+        void addedChild(FastoObject* child);
         void itemUpdated(FastoObject* item, const QString& val);
 
     private Q_SLOTS:
@@ -54,21 +54,21 @@ namespace fastoredis
         virtual void initImpl() = 0;
         virtual common::ErrorValueSPtr currentLoggingInfo(FastoObjectIPtr& outInfo) = 0;
 
-        virtual void connectEvent(Events::ConnectRequestEvent *ev) = 0;
-        virtual void disconnectEvent(Events::DisconnectRequestEvent *ev) = 0;
-        virtual void executeEvent(Events::ExecuteRequestEvent *ev) = 0;
-        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev) = 0;
-        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev) = 0;
-        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent *ev) = 0;
-        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev) = 0;
-        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev) = 0;
+        virtual void connectEvent(Events::ConnectRequestEvent* ev) = 0;
+        virtual void disconnectEvent(Events::DisconnectRequestEvent* ev) = 0;
+        virtual void executeEvent(Events::ExecuteRequestEvent* ev) = 0;
+        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev) = 0;
+        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent* ev) = 0;
+        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent* ev) = 0;
+        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev) = 0;
+        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
 
         const IConnectionSettingsBasePtr settings_;
 
         class RootLocker
         {
         public:
-            RootLocker(IDriver* parent, QObject *reciver, const std::string &text);
+            RootLocker(IDriver* parent, QObject* reciver, const std::string& text);
             ~RootLocker();
 
             FastoObjectIPtr root_;
@@ -78,7 +78,7 @@ namespace fastoredis
             QObject *reciver_;
         };
 
-        RootLocker make_locker(QObject *reciver, const std::string &text)
+        RootLocker make_locker(QObject* reciver, const std::string& text)
         {
             return RootLocker(this, reciver, text);
         }
@@ -86,8 +86,8 @@ namespace fastoredis
         void clear();
 
     private:
-        FastoObjectIPtr createRoot(QObject *reciver, const std::string &text);
-        void compleateRoot(QObject *reciver, FastoObjectIPtr root);
+        FastoObjectIPtr createRoot(QObject* reciver, const std::string& text);
+        void compleateRoot(QObject* reciver, FastoObjectIPtr root);
 
         void loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev);
 
@@ -102,5 +102,5 @@ namespace fastoredis
         common::file_system::File* logFile_;
     };
 
-    typedef boost::shared_ptr<IDriver> IDriverPtr;
+    typedef boost::shared_ptr<IDriver> IDriverSPtr;
 }

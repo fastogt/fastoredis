@@ -16,7 +16,7 @@ namespace fastoredis
 
     }
 
-    ExplorerServerItem::ExplorerServerItem(IServerPtr server, TreeItem* parent)
+    ExplorerServerItem::ExplorerServerItem(IServerSPtr server, TreeItem* parent)
         : IExplorerTreeItem(parent), server_(server)
     {
 
@@ -32,7 +32,7 @@ namespace fastoredis
         return Server;
     }
 
-    IServerPtr ExplorerServerItem::server() const
+    IServerSPtr ExplorerServerItem::server() const
     {
         return server_;
     }
@@ -63,7 +63,7 @@ namespace fastoredis
         return db_;
     }
 
-    IServerPtr ExplorerDatabaseItem::server() const
+    IServerSPtr ExplorerDatabaseItem::server() const
     {
         return dynamic_cast<ExplorerServerItem*>(parent_)->server();
     }
@@ -149,7 +149,7 @@ namespace fastoredis
         return result;
     }
 
-    void ExplorerTreeModel::addServer(IServerPtr server)
+    void ExplorerTreeModel::addServer(IServerSPtr server)
     {
         ExplorerServerItem *serv = findServerItem(server.get());
         if(!serv){
@@ -166,7 +166,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeModel::removeServer(IServerPtr server)
+    void ExplorerTreeModel::removeServer(IServerSPtr server)
     {
         TreeItem *par = dynamic_cast<TreeItem*>(root_);
         DCHECK(par);

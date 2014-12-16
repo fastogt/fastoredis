@@ -14,16 +14,16 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        void print(const Command &command);
+        void print(const Command& command);
 
     Q_SIGNALS:
-        void printed(const Command &mess);
+        void printed(const Command& mess);
 
     private:
         CommandLogger();
     };
 
-    inline void LOG_COMMAND(const Command &command)
+    inline void LOG_COMMAND(const Command& command)
     {
         return CommandLogger::instance().print(command);
     }

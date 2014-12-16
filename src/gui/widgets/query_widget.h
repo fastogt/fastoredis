@@ -16,7 +16,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        QueryWidget(IServerPtr server, QWidget* parent = 0);
+        QueryWidget(IServerSPtr server, QWidget* parent = 0);
 
         QueryWidget* clone(const QString &text);
         QString inputText() const;

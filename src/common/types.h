@@ -6,9 +6,9 @@
 
 enum tribool
 {
-    FAIL=0,
-    SUCCESS=1,
-    INDETERMINATE=-1
+    FAIL = 0,
+    SUCCESS = 1,
+    INDETERMINATE = -1
 };
 
 namespace common

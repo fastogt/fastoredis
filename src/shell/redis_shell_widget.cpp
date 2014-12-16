@@ -90,7 +90,7 @@ namespace
 
 namespace fastoredis
 {
-    RedisShellWidget::RedisShellWidget(IServerPtr server, const QString& filePath, QWidget* parent)
+    RedisShellWidget::RedisShellWidget(IServerSPtr server, const QString& filePath, QWidget* parent)
         : QWidget(parent), server_(server), filePath_(filePath)
     {
         VERIFY(connect(server_.get(), SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), this, SLOT(startConnect(const EventsInfo::ConnectInfoRequest &))));
@@ -219,7 +219,7 @@ namespace fastoredis
         server_->disconnect();
     }
 
-    IServerPtr RedisShellWidget::server() const
+    IServerSPtr RedisShellWidget::server() const
     {
         return server_;
     }

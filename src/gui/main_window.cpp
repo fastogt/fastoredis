@@ -198,7 +198,7 @@ namespace fastoredis
         setCentralWidget(mainW);
 
         exp_ = new ExplorerTreeView(this);
-        VERIFY(connect(exp_, SIGNAL(openedConsole(IServerPtr)), mainW, SLOT(openConsole(IServerPtr))));
+        VERIFY(connect(exp_, SIGNAL(openedConsole(IServerSPtr)), mainW, SLOT(openConsole(IServerSPtr))));
         expDock_ = new QDockWidget(this);
         explorerAction_ = expDock_->toggleViewAction();
         explorerAction_->setShortcut(explorerKeySequence);
@@ -239,7 +239,7 @@ namespace fastoredis
         ConnectionsDialog dlg(this);
         int result = dlg.exec();
         if(result == QDialog::Accepted){
-            IServerPtr server = ServersManager::instance().createServer(dlg.selectedConnection());
+            IServerSPtr server = ServersManager::instance().createServer(dlg.selectedConnection());
             exp_->addServer(server);
         }
     }

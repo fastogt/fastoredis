@@ -11,9 +11,9 @@ namespace common
             public:
                 enum supported_protocols
                 {
-                    http=0,//defualt value
-                    ftp=1,
-                    file=2
+                    http = 0,//defualt value
+                    ftp = 1,
+                    file = 2
                 };
                 url();
                 explicit url(const char *url_s);

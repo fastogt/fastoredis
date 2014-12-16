@@ -13,7 +13,7 @@ namespace fastoredis
         Q_OBJECT
     public:        
 
-        RedisDriver(const IConnectionSettingsBasePtr &settings);
+        RedisDriver(const IConnectionSettingsBasePtr& settings);
         virtual ~RedisDriver();
 
         virtual bool isConnected() const;
@@ -29,17 +29,17 @@ namespace fastoredis
         virtual void initImpl();
         virtual common::ErrorValueSPtr currentLoggingInfo(FastoObjectIPtr& outInfo);
 
-        virtual void connectEvent(Events::ConnectRequestEvent *ev);
-        virtual void disconnectEvent(Events::DisconnectRequestEvent *ev);
-        virtual void executeEvent(Events::ExecuteRequestEvent *ev);
-        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev);
-        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev);
-        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent *ev);
-        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev);
-        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev);
+        virtual void connectEvent(Events::ConnectRequestEvent* ev);
+        virtual void disconnectEvent(Events::DisconnectRequestEvent* ev);
+        virtual void executeEvent(Events::ExecuteRequestEvent* ev);
+        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev);
+        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent* ev);
+        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent* ev);
+        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev);
+        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev);
         virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev);
 
-        ServerInfoSPtr makeServerInfoFromString(const std::string &val);
+        ServerInfoSPtr makeServerInfoFromString(const std::string& val);
 
         struct pimpl;
         pimpl* const impl_;
