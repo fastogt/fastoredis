@@ -129,7 +129,9 @@ namespace fastoredis
 
     PythonWorker::~PythonWorker()
     {
+#ifdef PYTHON_ENABLED
 
+#endif
     }
 
     void PythonWorker::stop()
@@ -146,9 +148,24 @@ namespace fastoredis
         }
         Py_INCREF(&PythonQtStdOutRedirectType);
 
+        PythonQtObjectPtr sys;
+        sys.setNewRef(PyImport_ImportModule("sys"));
 
-        sys_.setNewRef(PyImport_ImportModule("sys"));
-        os_.setNewRef(PyImport_ImportModule("os"));
+        //os.path.abspath(os.path.dirname(sys.argv[0]))
+
+        /*PythonQtObjectPtr os;
+        os.setNewRef(PyImport_ImportModule("os"));
+        PyObject* pathObj = PyObject_GetAttrString(os, "path");
+        PyObject* chdirFunc = PyObject_GetAttrString(pathObj, "abspath");
+        if(chdirFunc && PyCallable_Check(chdirFunc)){
+            PyObject* pArgs = PyTuple_New(1);
+            std::string app = common::convertToString(QCoreApplication::applicationDirPath());
+            PyObject* pdir = PyString_FromString(app.c_str());
+            PyTuple_SetItem(pArgs, 0, pdir);
+            PyObject_CallObject(chdirFunc, pArgs);
+            Py_DECREF(pArgs);
+            Py_DECREF(chdirFunc);
+        }*/
 
         PythonQtObjectPtr out;
         PythonQtObjectPtr err;
@@ -160,8 +177,8 @@ namespace fastoredis
         ((PythonQtStdOutRedirect*)err.object())->_cb = stdErrRedirectCB;
         ((PythonQtStdOutRedirect*)err.object())->data = this;
         // replace the built in file objects with our own objects
-        PyModule_AddObject(sys_, "stdout", out);
-        PyModule_AddObject(sys_, "stderr", err);
+        PyModule_AddObject(sys, "stdout", out);
+        PyModule_AddObject(sys, "stderr", err);
 #endif
     }
 
@@ -191,8 +208,9 @@ namespace fastoredis
     namespace
     {
         template<typename char_type>
-        char_type** toPythonArgs(const std::vector<std::basic_string<char_type> >& args, int& argc)
+        char_type** toPythonArgs(const std::vector<std::basic_string<char_type> >& args)
         {
+        #if 0
             argc = args.size() +1;
             char_type** argv = (char_type**)calloc(argc, sizeof(char_type*));
             std::basic_string<char_type> argv0 = common::convertToString(QCoreApplication::applicationFilePath());
@@ -206,6 +224,17 @@ namespace fastoredis
             }
 
             return argv;
+        #else
+            int argc = args.size();
+            char_type** argv = (char_type**)calloc(argc, sizeof(char_type*));
+            for(int i = 0; i < args.size(); ++i){
+                std::basic_string<char_type> argvi = args[i];
+                argv[i] = (char_type*)calloc(argvi.size(), sizeof(char_type));
+                memcpy(argv[i], argvi.c_str(), argvi.size());
+            }
+
+            return argv;
+        #endif
         }
     }
 
@@ -239,8 +268,7 @@ emit executeProgress(25);
     #else
         typedef wchar_t char_type;
     #endif
-                int argc = 0;
-                char_type** argv = toPythonArgs(args, argc);
+                char_type** argv = toPythonArgs(args);
 
                 PySys_SetArgv(argc, argv);
                 p.setNewRef(PyRun_String(ptr, Py_single_input, dict, dict));
@@ -274,8 +302,8 @@ emit executeProgress(100);
 emit executeProgress(0);
         const char* ptrPath = path.c_str();
         if(!ptrPath){
+            emit executeProgress(100);
             return;
-emit executeProgress(100);
         }
 
         PythonQtObjectPtr main = getMainModule();
@@ -287,9 +315,11 @@ emit executeProgress(100);
             dict = main;
         }
 
+        dict = PyDict_Copy(dict);
+
         if (!dict) {
+            emit executeProgress(100);
             return;
-emit executeProgress(100);
         }
 
         FILE* file = fopen(ptrPath, "r");
@@ -299,26 +329,28 @@ emit executeProgress(100);
 #else
             typedef wchar_t char_type;
 #endif
-            int argc = 0;
-            char_type** argv = toPythonArgs(args, argc);
-
-            PyObject* ppath = PyObject_GetAttrString(sys_, "path");
-            std::string dir = common::file_system::get_dir_path(path);
-            PyObject* pdir = PyString_FromString(dir.c_str());
-            PyList_Append(ppath, pdir);
-
-            //chdir
-            PyObject* chdirFunc = PyObject_GetAttrString(os_, "chdir");
-            if(chdirFunc && PyCallable_Check(chdirFunc)){
-                PyObject* pArgs = PyTuple_New(1);
-                PyTuple_SetItem(pArgs, 0, pdir);
-                PyObject_CallObject(chdirFunc, pArgs);
-                Py_DECREF(pArgs);
-                Py_DECREF(chdirFunc);
+            int argc = args.size() + 1;
+            std::vector<std::string> argssc;
+            argssc.push_back(ptrPath);
+            for(int i = 0; i < args.size(); ++i){
+                argssc.push_back(args[i]);
             }
 
+            char_type** argv = toPythonArgs(argssc);
             PySys_SetArgv(argc, argv);
             PythonQtObjectPtr p;
+
+            if (PyDict_GetItemString(dict, "__file__") == NULL) {
+                PyObject *f = PyString_FromString(ptrPath);
+                if (f == NULL) {
+                    goto done;
+                }
+                if (PyDict_SetItemString(dict, "__file__", f) < 0) {
+                    Py_DECREF(f);
+                    goto done;
+                }
+            }
+
             p.setNewRef(PyRun_File(file, ptrPath, Py_file_input, dict, dict));
             if (p) {
                 //result = PythonQtConv::PyObjToQVariant(p);
@@ -326,6 +358,8 @@ emit executeProgress(100);
             else {
                 handleError();
             }
+
+done:
             Py_DECREF(dict);
             for(int i = 0; i < argc; ++i){
                 free(argv[i]);
@@ -437,7 +471,7 @@ emit executeProgress(100);
     PythonEngine::~PythonEngine()
     {
 #ifdef PYTHON_ENABLED
-        Py_Finalize();
+        //Py_Finalize();
 #endif
     }
 }

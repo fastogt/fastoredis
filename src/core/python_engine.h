@@ -51,10 +51,6 @@ namespace fastoredis
         bool handleError();
         PythonWorker();
         volatile bool stop_;
-    #ifdef PYTHON_ENABLED
-        PythonQtObjectPtr sys_;
-        PythonQtObjectPtr os_;
-    #endif
     };
 
     class PythonEngine
