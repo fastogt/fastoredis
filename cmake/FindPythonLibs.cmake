@@ -113,6 +113,7 @@ IF(PYTHON_USE_STATIC)
       [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
       [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
 	  $ENV{MSYS_ROOT}/usr/lib
+	  $ENV{MSYS_ROOT}/mingw64/lib
     # Avoid finding the .dll in the PATH.  We want the .lib.
     NO_SYSTEM_ENVIRONMENT_PATH
   )
@@ -136,6 +137,7 @@ ELSE()
       [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
       [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
 	  $ENV{MSYS_ROOT}/usr/lib
+	  $ENV{MSYS_ROOT}/mingw64/lib
   )
 
   # Look for the static library in the Python config directory
@@ -159,6 +161,7 @@ IF(PYTHON_USE_STATIC)
       PATHS
         /usr/local/include
 		$ENV{MSYS_ROOT}/usr/include
+		$ENV{MSYS_ROOT}/mingw64/include
       PATH_SUFFIXES
         python${_CURRENT_VERSION}mu
         python${_CURRENT_VERSION}m
@@ -181,7 +184,8 @@ ELSE()
       ${PYTHON_FRAMEWORK_INCLUDES}
       [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/include
       [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/include
-	  $ENV{MSYS_ROOT}/usr/lib
+	  $ENV{MSYS_ROOT}/usr/include
+	  $ENV{MSYS_ROOT}/mingw64/include
     PATH_SUFFIXES
       python${_CURRENT_VERSION}mu
       python${_CURRENT_VERSION}m
