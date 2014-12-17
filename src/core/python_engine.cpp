@@ -28,61 +28,62 @@ namespace
     //! it gives the application an opportunity to properly terminate.
     int custom_system_exit_exception_handler()
     {
-      PyObject *exception, *value, *tb;
-      int exitcode = 0;
+        PyObject *exception, *value, *tb;
+        int exitcode = 0;
 
-    //  if (Py_InspectFlag)
-    //    /* Don't exit if -i flag was given. This flag is set to 0
-    //     * when entering interactive mode for inspecting. */
-    //    return exitcode;
+        //  if (Py_InspectFlag)
+        //    /* Don't exit if -i flag was given. This flag is set to 0
+        //     * when entering interactive mode for inspecting. */
+        //    return exitcode;
 
-      PyErr_Fetch(&exception, &value, &tb);
-    #ifndef PY3K
-      if (Py_FlushLine()) {
-        PyErr_Clear();
-      }
-    #else
-      std::cout << std::endl;
-    #endif
-      fflush(stdout);
-      if (value == NULL || value == Py_None)
-        goto done;
-      if (PyExceptionInstance_Check(value)) {
+        PyErr_Fetch(&exception, &value, &tb);
+#ifndef PY3K
+        if (Py_FlushLine()) {
+            PyErr_Clear();
+        }
+#else
+        std::cout << std::endl;
+#endif
+        fflush(stdout);
+        if (value == NULL || value == Py_None)
+            goto done;
+        if (PyExceptionInstance_Check(value)) {
         /* The error code should be in the `code' attribute. */
         PyObject *code = PyObject_GetAttrString(value, "code");
         if (code) {
-          Py_DECREF(value);
-          value = code;
-          if (value == Py_None)
-            goto done;
-        }
+            Py_DECREF(value);
+            value = code;
+            if (value == Py_None)
+                goto done;
+            }
         /* If we failed to dig out the 'code' attribute,
-           just let the else clause below print the error. */
-      }
-    #ifdef PY3K
-      if (PyLong_Check(value))
-        exitcode = (int)PyLong_AsLong(value);
-    #else
-      if (PyInt_Check(value))
-        exitcode = (int)PyInt_AsLong(value);
-    #endif
-      else {
-        PyObject *sys_stderr = PySys_GetObject(const_cast<char*>("stderr"));
-        if (sys_stderr != NULL && sys_stderr != Py_None) {
-          PyFile_WriteObject(value, sys_stderr, Py_PRINT_RAW);
-        } else {
-          PyObject_Print(value, stderr, Py_PRINT_RAW);
-          fflush(stderr);
+        just let the else clause below print the error. */
         }
-        PySys_WriteStderr("\n");
-        exitcode = 1;
-      }
-      done:
+#ifdef PY3K
+        if (PyLong_Check(value))
+            exitcode = (int)PyLong_AsLong(value);
+#else
+        if (PyInt_Check(value))
+            exitcode = (int)PyInt_AsLong(value);
+#endif
+        else {
+            PyObject *sys_stderr = PySys_GetObject(const_cast<char*>("stderr"));
+            if (sys_stderr != NULL && sys_stderr != Py_None) {
+                PyFile_WriteObject(value, sys_stderr, Py_PRINT_RAW);
+            }
+        else {
+            PyObject_Print(value, stderr, Py_PRINT_RAW);
+            fflush(stderr);
+        }
+            PySys_WriteStderr("\n");
+            exitcode = 1;
+        }
+    done:
         /* Restore and clear the exception info, in order to properly decref
-         * the exception, value, and traceback.      If we just exit instead,
-         * these leak, which confuses PYTHONDUMPREFS output, and may prevent
-         * some finalizers from running.
-         */
+        * the exception, value, and traceback.      If we just exit instead,
+        * these leak, which confuses PYTHONDUMPREFS output, and may prevent
+        * some finalizers from running.
+        */
         PyErr_Restore(exception, value, tb);
         PyErr_Clear();
         return exitcode;
@@ -129,9 +130,7 @@ namespace fastoredis
 
     PythonWorker::~PythonWorker()
     {
-#ifdef PYTHON_ENABLED
 
-#endif
     }
 
     void PythonWorker::stop()
@@ -150,22 +149,6 @@ namespace fastoredis
 
         PythonQtObjectPtr sys;
         sys.setNewRef(PyImport_ImportModule("sys"));
-
-        //os.path.abspath(os.path.dirname(sys.argv[0]))
-
-        /*PythonQtObjectPtr os;
-        os.setNewRef(PyImport_ImportModule("os"));
-        PyObject* pathObj = PyObject_GetAttrString(os, "path");
-        PyObject* chdirFunc = PyObject_GetAttrString(pathObj, "abspath");
-        if(chdirFunc && PyCallable_Check(chdirFunc)){
-            PyObject* pArgs = PyTuple_New(1);
-            std::string app = common::convertToString(QCoreApplication::applicationDirPath());
-            PyObject* pdir = PyString_FromString(app.c_str());
-            PyTuple_SetItem(pArgs, 0, pdir);
-            PyObject_CallObject(chdirFunc, pArgs);
-            Py_DECREF(pArgs);
-            Py_DECREF(chdirFunc);
-        }*/
 
         PythonQtObjectPtr out;
         PythonQtObjectPtr err;
@@ -210,21 +193,6 @@ namespace fastoredis
         template<typename char_type>
         char_type** toPythonArgs(const std::vector<std::basic_string<char_type> >& args)
         {
-        #if 0
-            argc = args.size() +1;
-            char_type** argv = (char_type**)calloc(argc, sizeof(char_type*));
-            std::basic_string<char_type> argv0 = common::convertToString(QCoreApplication::applicationFilePath());
-            argv[0] = (char_type*)calloc(argv0.size(), sizeof(char_type));
-            memcpy(argv[0], argv0.c_str(), argv0.size());
-
-            for(int i = 0; i < args.size(); ++i){
-                std::basic_string<char_type> argvi = args[i];
-                argv[i+1] = (char_type*)calloc(argvi.size(), sizeof(char_type));
-                memcpy(argv[i+1], argvi.c_str(), argvi.size());
-            }
-
-            return argv;
-        #else
             int argc = args.size();
             char_type** argv = (char_type**)calloc(argc, sizeof(char_type*));
             for(int i = 0; i < args.size(); ++i){
@@ -234,7 +202,6 @@ namespace fastoredis
             }
 
             return argv;
-        #endif
         }
     }
 
@@ -442,11 +409,11 @@ emit executeProgress(100);
     PythonEngine::PythonEngine()
     {
 #ifdef PYTHON_ENABLED
-#ifndef PY3K
-        Py_SetProgramName(PROJECT_NAME);  /* optional but recommended */
-#else
-        Py_SetProgramName(WCHAR_PROJECT_NAME);  /* optional but recommended */
-#endif
+    #ifndef PY3K
+            Py_SetProgramName(PROJECT_NAME);  /* optional but recommended */
+    #else
+            Py_SetProgramName(WCHAR_PROJECT_NAME);  /* optional but recommended */
+    #endif
         Py_Initialize();
 #endif
     }
@@ -471,7 +438,7 @@ emit executeProgress(100);
     PythonEngine::~PythonEngine()
     {
 #ifdef PYTHON_ENABLED
-        //Py_Finalize();
+        Py_Finalize();
 #endif
     }
 }

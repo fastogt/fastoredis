@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef PYTHON_ENABLED
-#include "PythonQtObjectPtr.h"
-#endif
-
 #include <QObject>
 #include <QString>
 
