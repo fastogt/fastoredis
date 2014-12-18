@@ -4,10 +4,13 @@
 
 #include "gui/gui_factory.h"
 
+namespace
+{
+    const QColor paperColor = QColor(166, 190, 233);
+}
+
 namespace fastoredis
 {
-    const QColor RedisShell::paperColor = QColor(166, 190, 233);
-
     RedisShell::RedisShell(QWidget* parent)
         : FastoEditorShell(common::convertFromString<QString>(RedisLexer::version()), parent)
     {

@@ -3,7 +3,6 @@
 #include <QModelIndex>
 #include <QEvent>
 #include <QDesktopServices>
-#include <QString>
 
 namespace common
 {

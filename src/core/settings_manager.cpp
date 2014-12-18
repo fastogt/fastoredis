@@ -89,7 +89,7 @@ public:
             internal_type::value_type ch = *it;
             if(ch == ','){
                 internal_type enc( binary_text(text.begin()), binary_text(text.end()));
-                fastoredis::IConnectionSettingsBasePtr item(fastoredis::IConnectionSettingsBase::fromString(enc));
+                fastoredis::IConnectionSettingsBaseSPtr item(fastoredis::IConnectionSettingsBase::fromString(enc));
                 if(item){
                     result.push_back(item);
                 }
@@ -163,7 +163,7 @@ namespace fastoredis
         return static_cast<supportedViews>(GET_SETTING(genereted_settings::setting_view_).value());
     }
 
-    void SettingsManager::addConnection(const IConnectionSettingsBasePtr &connection){
+    void SettingsManager::addConnection(const IConnectionSettingsBaseSPtr &connection){
         if(connection){
             SettingsManager::ConnectionSettingsContainerType conCont = GET_SETTING(genereted_settings::setting_connections_).value();
             ConnectionSettingsContainerType::iterator it = std::find(conCont.begin(),conCont.end(),connection);
@@ -174,7 +174,7 @@ namespace fastoredis
         }
     }
 
-    void SettingsManager::removeConnection(const IConnectionSettingsBasePtr &connection){
+    void SettingsManager::removeConnection(const IConnectionSettingsBaseSPtr &connection){
         if(connection){
             SettingsManager::ConnectionSettingsContainerType conCont = GET_SETTING(genereted_settings::setting_connections_).value();
             ConnectionSettingsContainerType::iterator it = std::find(conCont.begin(),conCont.end(),connection);

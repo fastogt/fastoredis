@@ -24,18 +24,19 @@ namespace fastoredis
         };
 
         FastoTextView(const QString& delemitr, QWidget* parent = 0);
+
         void setModel(QAbstractItemModel* model);
         void setReadOnly(bool readOnly);
-
-    protected:
-        virtual void changeEvent(QEvent *);
-        virtual void keyPressEvent(QKeyEvent *e);
-        virtual bool eventFilter(QObject* object, QEvent* event);
 
     private Q_SLOTS:
         void viewChanged(bool checked);
         void goToNextElement();
         void goToPrevElement();
+
+    protected:
+        virtual void changeEvent(QEvent *);
+        virtual void keyPressEvent(QKeyEvent *e);
+        virtual bool eventFilter(QObject* object, QEvent* event);
 
     private:
         void retranslateUi();

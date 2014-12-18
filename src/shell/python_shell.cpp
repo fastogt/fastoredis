@@ -3,8 +3,6 @@
 #include <Qsci/qscilexerpython.h>
 #include <Qsci/qsciapis.h>
 
-#include "gui/gui_factory.h"
-
 #include "core/python_engine.h"
 
 namespace fastoredis

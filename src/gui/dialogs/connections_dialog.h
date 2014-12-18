@@ -17,7 +17,7 @@ namespace fastoredis
 
     public:
         ConnectionsDialog(QWidget* parent = 0);
-        IConnectionSettingsBasePtr selectedConnection() const;
+        IConnectionSettingsBaseSPtr selectedConnection() const;
         virtual void accept();
 
     private Q_SLOTS:
@@ -31,7 +31,7 @@ namespace fastoredis
 
     private:
         void retranslateUi();
-        void add(const fastoredis::IConnectionSettingsBasePtr& con);
+        void add(const fastoredis::IConnectionSettingsBaseSPtr& con);
         QTreeWidget* listWidget_;
         QPushButton* acButton_;
     };

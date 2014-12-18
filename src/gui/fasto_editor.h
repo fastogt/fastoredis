@@ -1,9 +1,8 @@
 #pragma once
 
-#include <Qsci/qsciscintilla.h>
-
 #include <QModelIndex>
-#include <QFrame>
+
+#include <Qsci/qsciscintilla.h>
 
 #define JSON 0
 #define CSV 1
@@ -16,7 +15,11 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        enum { rowNumberWidth = 6, indentationWidth = 4 };
+        enum
+        {
+            rowNumberWidth = 6,
+            indentationWidth = 4
+        };
 
         FastoEditor(QWidget *parent = 0);        
 
@@ -29,7 +32,7 @@ namespace fastoredis
 
     private:
         void showOrHideLinesNumbers();
-        int textWidth(int style, const QString &text);
+        int textWidth(int style, const QString& text);
 
         int lineNumberMarginWidth_;
     };
@@ -41,6 +44,7 @@ namespace fastoredis
     public:
 
         FastoEditorOutput(const QString &delemitr, QWidget *parent = 0);
+
         void setModel(QAbstractItemModel* model);
         void setRootIndex(const QModelIndex& index);
 

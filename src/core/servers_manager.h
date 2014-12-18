@@ -13,7 +13,7 @@ namespace fastoredis
     public:
         typedef std::vector<IServerSPtr> ServersContainer;
 
-        IServerSPtr createServer(const IConnectionSettingsBasePtr& settings);
+        IServerSPtr createServer(const IConnectionSettingsBaseSPtr& settings);
         void closeServer(IServerSPtr server);
         void setSyncServers(bool isSync);        
 
@@ -22,7 +22,7 @@ namespace fastoredis
         ~ServersManager();
 
         void refreshSyncServers();
-        IServerSPtr findServerBySetting(const IConnectionSettingsBasePtr& settings) const;
+        IServerSPtr findServerBySetting(const IConnectionSettingsBaseSPtr& settings) const;
         std::vector<QObject*> findAllListeners(const IDriverSPtr& drv);
 
         ServersContainer servers_;

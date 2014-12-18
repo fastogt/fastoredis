@@ -9,10 +9,8 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        static const QColor paperColor;
         RedisShell(QWidget* parent = 0);
 
-    public:
         virtual void showAutocompletion();
     };
 }

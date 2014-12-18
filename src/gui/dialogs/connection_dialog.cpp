@@ -31,7 +31,7 @@ namespace
 
 namespace fastoredis
 {
-    ConnectionDialog::ConnectionDialog(const IConnectionSettingsBasePtr& connection, QWidget* parent)
+    ConnectionDialog::ConnectionDialog(const IConnectionSettingsBaseSPtr& connection, QWidget* parent)
         : QDialog(parent),
         connection_(connection)
     {

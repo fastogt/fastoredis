@@ -13,7 +13,7 @@ namespace fastoredis
         Q_OBJECT
     public:        
 
-        RedisDriver(const IConnectionSettingsBasePtr& settings);
+        RedisDriver(const IConnectionSettingsBaseSPtr& settings);
         virtual ~RedisDriver();
 
         virtual bool isConnected() const;

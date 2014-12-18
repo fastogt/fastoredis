@@ -3,9 +3,7 @@
 #include <stdio.h>
 
 #include "common/log_levels.h"
-
 #include "common/multi_threading/common_headers.h"
-
 #include "common/patterns/singleton_pattern.h"
 
 namespace common

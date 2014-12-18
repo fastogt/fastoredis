@@ -2,7 +2,7 @@
 
 namespace common
 {
-    string16 convertToString16(const QString &value)
+    string16 convertToString16(const QString& value)
     {
         return string16((const char16*)value.constData(), sizeof(QChar) * value.size());
     }

@@ -12,7 +12,7 @@ namespace fastoredis
             : public common::patterns::lazy_singleton<SettingsManager>
     {
     public:
-        typedef std::vector<IConnectionSettingsBasePtr> ConnectionSettingsContainerType;
+        typedef std::vector<IConnectionSettingsBaseSPtr> ConnectionSettingsContainerType;
         typedef common::patterns::lazy_singleton<SettingsManager> base_class;
         friend class common::patterns::lazy_singleton<SettingsManager>;
 
@@ -25,8 +25,8 @@ namespace fastoredis
         std::string currentLanguage() const;
         void setCurrentLanguage(const std::string& lang);
 
-        void addConnection(const IConnectionSettingsBasePtr& connection);
-        void removeConnection(const IConnectionSettingsBasePtr& connection);
+        void addConnection(const IConnectionSettingsBaseSPtr& connection);
+        void removeConnection(const IConnectionSettingsBaseSPtr& connection);
 
         bool syncTabs() const;
         void setSyncTabs(bool sync);

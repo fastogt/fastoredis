@@ -63,7 +63,7 @@ struct WinsockInit {
 
 namespace fastoredis
 {
-    IDriver::IDriver(const IConnectionSettingsBasePtr &settings)
+    IDriver::IDriver(const IConnectionSettingsBaseSPtr &settings)
         : settings_(settings), timer_info_id_(0), logFile_(NULL)
     {
         thread_ = new QThread(this);
@@ -231,7 +231,7 @@ namespace fastoredis
         return settings_->connectionType();
     }
 
-    const IConnectionSettingsBasePtr &IDriver::settings() const
+    const IConnectionSettingsBaseSPtr &IDriver::settings() const
     {
         return settings_;
     }

@@ -43,7 +43,7 @@ namespace fastoredis
         }
     }
 
-    IServerSPtr ServersManager::createServer(const IConnectionSettingsBasePtr &settings)
+    IServerSPtr ServersManager::createServer(const IConnectionSettingsBaseSPtr &settings)
     {
         IServerSPtr result;
         connectionTypes conT = settings->connectionType();
@@ -89,7 +89,7 @@ namespace fastoredis
         }
     }
 
-    IServerSPtr ServersManager::findServerBySetting(const IConnectionSettingsBasePtr &settings) const
+    IServerSPtr ServersManager::findServerBySetting(const IConnectionSettingsBaseSPtr &settings) const
     {
         for(size_t i = 0; i < servers_.size(); ++i){
             IServerSPtr drp = servers_[i];

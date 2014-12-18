@@ -26,8 +26,8 @@ namespace fastoredis
             : public QTreeWidgetItem
     {
     public:
-        ConnectionListWidgetItem(const IConnectionSettingsBasePtr& connection): connection_(connection) { refreshFields(); }
-        IConnectionSettingsBasePtr connection() { return connection_; }
+        ConnectionListWidgetItem(const IConnectionSettingsBaseSPtr& connection): connection_(connection) { refreshFields(); }
+        IConnectionSettingsBaseSPtr connection() { return connection_; }
 
         void refreshFields()
         {
@@ -43,7 +43,7 @@ namespace fastoredis
         }
 
     private:
-        IConnectionSettingsBasePtr connection_;
+        IConnectionSettingsBaseSPtr connection_;
     };
 
     /**
@@ -126,7 +126,7 @@ namespace fastoredis
         // Populate list with connections
         SettingsManager::ConnectionSettingsContainerType connections = SettingsManager::instance().connections();
         for (SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
-            IConnectionSettingsBasePtr connectionModel = (*it);
+            IConnectionSettingsBaseSPtr connectionModel = (*it);
             add(connectionModel);
         }
 
@@ -141,7 +141,7 @@ namespace fastoredis
         acButton_->setEnabled(selectedConnection());
     }
 
-    void ConnectionsDialog::add(const IConnectionSettingsBasePtr& con)
+    void ConnectionsDialog::add(const IConnectionSettingsBaseSPtr& con)
     {
         ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
         listWidget_->addTopLevelItem(item);
@@ -150,7 +150,7 @@ namespace fastoredis
     void ConnectionsDialog::add()
     {
         redisConfig conf;
-        IConnectionSettingsBasePtr p(new RedisConnectionSettings("New Connection", conf));
+        IConnectionSettingsBaseSPtr p(new RedisConnectionSettings("New Connection", conf));
         ConnectionDialog dlg(p,this);
         int result = dlg.exec();
         if(result == QDialog::Accepted){
@@ -177,7 +177,7 @@ namespace fastoredis
         if (answer != QMessageBox::Yes)
             return;
 
-        IConnectionSettingsBasePtr connection = currentItem->connection();
+        IConnectionSettingsBaseSPtr connection = currentItem->connection();
         delete currentItem;
         SettingsManager::instance().removeConnection(connection);
     }
@@ -191,8 +191,8 @@ namespace fastoredis
         if (!currentItem)
             return;
 
-        IConnectionSettingsBasePtr oldConnection = currentItem->connection();
-        IConnectionSettingsBasePtr newConnection(oldConnection->clone());
+        IConnectionSettingsBaseSPtr oldConnection = currentItem->connection();
+        IConnectionSettingsBaseSPtr newConnection(oldConnection->clone());
 
         ConnectionDialog dlg(newConnection,this);
         int result = dlg.exec();
@@ -204,9 +204,9 @@ namespace fastoredis
         }
     }
 
-    IConnectionSettingsBasePtr ConnectionsDialog::selectedConnection() const
+    IConnectionSettingsBaseSPtr ConnectionsDialog::selectedConnection() const
     {
-        IConnectionSettingsBasePtr res;
+        IConnectionSettingsBaseSPtr res;
 
         ConnectionListWidgetItem *currentItem =
                     dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());

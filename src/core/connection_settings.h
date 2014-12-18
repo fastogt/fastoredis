@@ -54,7 +54,7 @@ namespace fastoredis
 
     const char *useHelpText(connectionTypes type);
 
-    typedef boost::shared_ptr<IConnectionSettingsBase> IConnectionSettingsBasePtr;
+    typedef boost::shared_ptr<IConnectionSettingsBase> IConnectionSettingsBaseSPtr;
 
     class RedisConnectionSettings
             : public IConnectionSettingsBase
@@ -83,6 +83,4 @@ namespace fastoredis
         virtual void initFromCommandLine(const std::string& val);
         redisConfig info_;
     };
-
-    typedef boost::shared_ptr<RedisConnectionSettings> RedisConnectionSettingsPtr;
 }

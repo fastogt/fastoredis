@@ -26,7 +26,7 @@ namespace fastoredis
         virtual ~IDriver();
 
         connectionTypes connectionType() const;
-        const IConnectionSettingsBasePtr &settings() const;
+        const IConnectionSettingsBaseSPtr& settings() const;
 
         //sync
         virtual void interrupt() = 0;
@@ -45,7 +45,7 @@ namespace fastoredis
     protected:        
         virtual void timerEvent(QTimerEvent* event);
 
-        IDriver(const IConnectionSettingsBasePtr &settings);
+        IDriver(const IConnectionSettingsBaseSPtr &settings);
         void notifyProgress(QObject *reciver, int value);
 
         virtual void customEvent(QEvent *event);
@@ -63,7 +63,7 @@ namespace fastoredis
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev) = 0;
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
 
-        const IConnectionSettingsBasePtr settings_;
+        const IConnectionSettingsBaseSPtr settings_;
 
         class RootLocker
         {

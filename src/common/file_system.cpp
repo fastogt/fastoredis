@@ -1,18 +1,11 @@
 #include "common/file_system.h"
 
-#ifdef OS_WIN
-#include <Shlwapi.h>
-#else
-#endif
-
 #include <fcntl.h>
 #include <sys/stat.h>
-
 #include <unistd.h>
 
 #include "common/url.h"
 #include "common/logger.h"
-#include "common/convert2string.h"
 
 namespace
 {

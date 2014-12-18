@@ -26,7 +26,6 @@ namespace fastoredis
         void showAnimationBlock();
         void infoBlockPositioning();
 
-    private:
         QLabel* wGlass_;
         QLabel* wAnimationContainer_;
         QLabel* wInfoTextContaiter_;

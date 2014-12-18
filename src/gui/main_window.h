@@ -32,6 +32,7 @@ namespace fastoredis
         void openPythonConsole();
 
         void versionAvailible(bool succesResult, const QString& version);
+
     private:
         void createStatusBar();
         void retranslateUi();

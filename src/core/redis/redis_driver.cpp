@@ -1461,7 +1461,7 @@ namespace fastoredis
         }
     };
 
-    RedisDriver::RedisDriver(const IConnectionSettingsBasePtr &settings)
+    RedisDriver::RedisDriver(const IConnectionSettingsBaseSPtr &settings)
         : IDriver(settings), impl_(new pimpl)
     {
         impl_->parent_ = this;
