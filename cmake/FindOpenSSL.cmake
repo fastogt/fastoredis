@@ -42,10 +42,10 @@ ELSE()
   MESSAGE(STATUS "OPENSSL_USE_STATIC: OFF")
 ENDIF(OPENSSL_USE_STATIC)
 
-if (UNIX)
+if(UNIX)
   find_package(PkgConfig QUIET)
   pkg_check_modules(_OPENSSL QUIET openssl)
-endif ()
+endif()
 
 if (WIN32)
   # http://www.slproweb.com/products/Win32OpenSSL.html
