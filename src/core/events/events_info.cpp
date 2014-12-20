@@ -7,14 +7,14 @@ namespace fastoredis
     namespace EventsInfo
     {
         EventInfoBase::EventInfoBase(const error_type &er)
-            : base_class(er), _time_start(common::time::current_mstime())
+            : base_class(er), time_start_(common::time::current_mstime())
         {
 
         }
 
         long long EventInfoBase::elapsedTime() const
         {
-            return common::time::current_mstime() - _time_start;
+            return common::time::current_mstime() - time_start_;
         }
 
         ConnectInfoRequest::ConnectInfoRequest(const error_type &er)

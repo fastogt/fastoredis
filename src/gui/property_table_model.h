@@ -40,7 +40,7 @@ namespace fastoredis
         void changeProperty(const PropertyType& pr);
 
     Q_SIGNALS:
-        void changedProperty(const PropertyType& );
+        void changedProperty(const PropertyType& pr);
     };
 }
 

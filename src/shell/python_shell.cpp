@@ -5,10 +5,13 @@
 
 #include "core/python_engine.h"
 
+namespace
+{
+    const QColor paperColor = QColor(166, 190, 233);
+}
+
 namespace fastoredis
 {
-    const QColor PythonShell::paperColor = QColor(166, 190, 233);
-
     class RedisPythonLexer
             : public QsciLexerPython
     {

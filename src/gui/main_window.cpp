@@ -244,9 +244,9 @@ namespace fastoredis
         }
     }
 
-    void MainWindow::showEvent(QShowEvent* e)
+    void MainWindow::showEvent(QShowEvent* ev)
     {
-        QMainWindow::showEvent(e);
+        QMainWindow::showEvent(ev);
         bool isA = SettingsManager::instance().autoCheckUpdates();
         if(isA && !isCheckedInSession_){
             isCheckedInSession_ = true;
@@ -254,13 +254,13 @@ namespace fastoredis
         }
     }
 
-    void MainWindow::changeEvent(QEvent *e)
+    void MainWindow::changeEvent(QEvent *ev)
     {
-        if(e->type() == QEvent::LanguageChange){
+        if(ev->type() == QEvent::LanguageChange){
             retranslateUi();
         }
 
-        return QMainWindow::changeEvent(e);
+        return QMainWindow::changeEvent(ev);
     }
 
     void MainWindow::retranslateUi()

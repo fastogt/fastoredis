@@ -3,8 +3,6 @@
 #include <QApplication>
 #include <QStyle>
 
-#include "common/macros.h"
-
 namespace fastoredis
 {
     const QIcon &GuiFactory::openIcon() const

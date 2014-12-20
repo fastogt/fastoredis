@@ -11,6 +11,8 @@
 
 #include "common/macros.h"
 
+#include "translations/global.h"
+
 #include "gui/gui_factory.h"
 #include "gui/fasto_editor.h"
 
@@ -22,9 +24,9 @@ namespace fastoredis
         findPanel_ = new QFrame(this);
         findLine_ = new QLineEdit(this);
         close_ = new QToolButton(this);
-        next_ = new QPushButton("Next", this);
-        prev_ = new QPushButton("Previous", this);
-        caseSensitive_ = new QCheckBox("Match case", this);
+        next_ = new QPushButton(this);
+        prev_ = new QPushButton(this);
+        caseSensitive_ = new QCheckBox(this);
 
         close_->setIcon(GuiFactory::instance().close16Icon());
         close_->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -194,8 +196,13 @@ namespace fastoredis
 
     void FastoTextView::retranslateUi()
     {
-        jsonRadioButton_->setText(tr("Json"));
-        csvRadioButton_->setText(tr("Csv"));
-        rawRadioButton_->setText(tr("Raw text"));
+        using namespace translations;
+        next_->setText(trNext);
+        prev_->setText(trPrevious);
+        caseSensitive_->setText(trMatchCase);
+
+        jsonRadioButton_->setText(trJson);
+        csvRadioButton_->setText(trCsv);
+        rawRadioButton_->setText(trRawText);
     }
 }

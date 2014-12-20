@@ -30,7 +30,7 @@ namespace fastoredis
         void rootCompleated(const EventsInfo::CommandRootCompleatedInfo& res);
 
         void addedChild(FastoObject* child);
-        void itemUpdated(FastoObject*, const QString&);
+        void itemUpdated(FastoObject* item, const QString& value);
 
     public Q_SLOTS:
         void setText(const QString& text);

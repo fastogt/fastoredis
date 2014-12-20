@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QString>
 #include <QObject>
 
 namespace fastoredis
@@ -67,5 +66,12 @@ namespace fastoredis
         const QString trPrevTab = QObject::tr("Prev Tab");
         const QString trCloseTab = QObject::tr("Close Tab");
         const QString trCloseOtherTab = QObject::tr("Close Other Tab");
+
+        const QString trNext = QObject::tr("Next");
+        const QString trPrevious = QObject::tr("Previous");
+        const QString trMatchCase = QObject::tr("Match case");
+        const QString trJson = QObject::tr("Json");
+        const QString trCsv = QObject::tr("Csv");
+        const QString trRawText = QObject::tr("Raw text");
     }
 }

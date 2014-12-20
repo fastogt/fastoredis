@@ -9,8 +9,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-
-        static const QColor paperColor;
         PythonShell(QWidget* parent = 0);
     };
 }

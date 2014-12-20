@@ -42,8 +42,9 @@ namespace fastoredis
 
             QsciAbstractAPIs *apis = lexer()->apis();
 
-            if (apis)
+            if (apis){
                 apis->updateAutoCompletionList(QStringList() << ALL_COMMANDS, wlist);
+            }
 
             if (wlist.isEmpty())
                 return;

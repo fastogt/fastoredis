@@ -114,13 +114,12 @@ namespace fastoredis
     {
         int index = currentIndex();
         int tabsCount = count();
-        if (index == tabsCount - 1)
-        {
+        if (index == tabsCount - 1){
             setCurrentIndex(0);
             return;
         }
-        if (index >= 0 && index < tabsCount - 1)
-        {
+
+        if (index >= 0 && index < tabsCount - 1){
             setCurrentIndex(index + 1);
             return;
         }
@@ -129,14 +128,12 @@ namespace fastoredis
     void MainWidget::previousTab()
     {
         int index = currentIndex();
-        if (index == 0)
-        {
+        if (index == 0){
             setCurrentIndex(count() - 1);
             return;
         }
 
-        if (index > 0)
-        {
+        if (index > 0){
             setCurrentIndex(index - 1);
             return;
         }

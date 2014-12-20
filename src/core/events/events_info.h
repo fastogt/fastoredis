@@ -17,7 +17,9 @@ namespace fastoredis
             EventInfoBase(const error_type &er = error_type());
 
             long long elapsedTime() const;
-            long long _time_start;
+
+        private:
+            const long long time_start_;
         };
 
         struct ConnectInfoRequest

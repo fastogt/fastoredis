@@ -14,11 +14,13 @@ namespace fastoredis
             eName = 0,
             eCountColumns
         };
+
         enum eType
         {
             Server,
             Database
-        };        
+        };
+
         IExplorerTreeItem(TreeItem* parent);
         virtual ~IExplorerTreeItem();
 

@@ -18,8 +18,8 @@ namespace fastoredis
         MainWindow();
 
     protected:
-        virtual void changeEvent(QEvent* );
-        virtual void showEvent(QShowEvent* e);
+        virtual void changeEvent(QEvent* ev);
+        virtual void showEvent(QShowEvent* ev);
 
     private Q_SLOTS:
         void open();

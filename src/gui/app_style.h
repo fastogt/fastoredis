@@ -8,7 +8,7 @@
 #elif defined(OS_MACOSX)
     #include <QProxyStyle>
     typedef QProxyStyle OsStyle;
-#elif defined OS_LINUX
+#elif defined(OS_LINUX)
     #if !defined(QT_NO_STYLE_GTK)
         #include <QProxyStyle>
         typedef QProxyStyle OsStyle;

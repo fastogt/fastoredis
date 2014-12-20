@@ -3,17 +3,22 @@
 
 #include "gui/main_window.h"
 
-int main(int argc, char *argv[])
+namespace
 {
-    const QSize prefSize(1024, 768);
+    const QSize preferedSize = QSize(1024, 768);
+}
+
+int main(int argc, char *argv[])
+{    
     QApplication app(argc, argv);
+
     QRect screenGeometry = app.desktop()->availableGeometry();
-    const QSize screenSize(screenGeometry.width(), screenGeometry.height());
+    QSize screenSize(screenGeometry.width(), screenGeometry.height());
     QSize size(screenGeometry.width()/2, screenGeometry.height()/2);
 
     fastoredis::MainWindow win;
-    if(prefSize.height() < screenSize.height() && prefSize.width() < screenSize.width()){
-        win.resize(prefSize);
+    if(preferedSize.height() < screenSize.height() && preferedSize.width() < screenSize.width()){
+        win.resize(preferedSize);
     }
     else{
         win.resize(size);
