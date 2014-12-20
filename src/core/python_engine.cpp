@@ -2,6 +2,7 @@
 
 #include <QThread>
 #include <QApplication>
+#include <QCoreApplication>
 
 #include "common/file_system.h"
 #include "common/qt/convert_string.h"
@@ -263,6 +264,29 @@ emit executeProgress(100);
 #endif
     }
 
+    namespace
+    {
+        void chandgeDir(const std::string& path)
+        {
+            if(path.empty()){
+                return;
+            }
+
+            PythonQtObjectPtr os;
+            os.setNewRef(PyImport_ImportModule("os"));
+            PyObject* chdirFunc = PyObject_GetAttrString(os, "chdir");
+            if(chdirFunc && PyCallable_Check(chdirFunc)){
+                std::string dir = common::file_system::get_dir_path(path);
+                PyObject* pdir = PyString_FromString(dir.c_str());
+                PyObject* pArgs = PyTuple_New(1);
+                PyTuple_SetItem(pArgs, 0, pdir);
+                PyObject_CallObject(chdirFunc, pArgs);
+                Py_DECREF(pArgs);
+                Py_DECREF(chdirFunc);
+            }
+        }
+    }
+
     void PythonWorker::executeScriptImpl(const std::string& path, const std::vector<std::string>& args)
     {
 #ifdef PYTHON_ENABLED
@@ -303,7 +327,10 @@ emit executeProgress(0);
                 argssc.push_back(args[i]);
             }
 
+            chandgeDir(path);
+
             char_type** argv = toPythonArgs(argssc);
+
             PySys_SetArgv(argc, argv);
             PythonQtObjectPtr p;
 
@@ -319,6 +346,7 @@ emit executeProgress(0);
             }
 
             p.setNewRef(PyRun_File(file, ptrPath, Py_file_input, dict, dict));
+
             if (p) {
                 //result = PythonQtConv::PyObjToQVariant(p);
             }
@@ -327,6 +355,9 @@ emit executeProgress(0);
             }
 
 done:
+            std::string argv0 = common::convertToString(QCoreApplication::applicationFilePath());
+            chandgeDir(argv0);
+
             Py_DECREF(dict);
             for(int i = 0; i < argc; ++i){
                 free(argv[i]);
@@ -438,7 +469,7 @@ emit executeProgress(100);
     PythonEngine::~PythonEngine()
     {
 #ifdef PYTHON_ENABLED
-        Py_Finalize();
+        //Py_Finalize();
 #endif
     }
 }
