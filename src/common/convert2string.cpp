@@ -664,6 +664,15 @@ namespace common
         return buffer_type((const byte_type*)val.c_str(), val.length());
     }
 
+#if defined(WCHAR_T_IS_UTF16)
+#else
+    template<>
+    std::wstring convertFromString(const std::string& input)
+    {
+        return UTF8ToWide(input);
+    }
+#endif
+
     template<>
     string16 convertFromString(const std::string& input)
     {

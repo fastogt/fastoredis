@@ -192,14 +192,20 @@ namespace fastoredis
     namespace
     {
         template<typename char_type>
-        char_type** toPythonArgs(const std::vector<std::basic_string<char_type> >& args)
+        char_type** toPythonArgs(const std::vector<std::string>& args)
         {
             int argc = args.size();
             char_type** argv = (char_type**)calloc(argc, sizeof(char_type*));
             for(int i = 0; i < args.size(); ++i){
-                std::basic_string<char_type> argvi = args[i];
+                std::string argvi = args[i];
+#ifndef PY3K
                 argv[i] = (char_type*)calloc(argvi.size(), sizeof(char_type));
                 memcpy(argv[i], argvi.c_str(), argvi.size());
+#else
+                std::wstring wargvi = common::convertFromString<std::wstring>(argvi);
+                argv[i] = (char_type*)calloc(wargvi.size(), sizeof(char_type));
+                memcpy(argv[i], wargvi.c_str(), wargvi.size());
+#endif
             }
 
             return argv;
@@ -236,7 +242,7 @@ emit executeProgress(25);
     #else
         typedef wchar_t char_type;
     #endif
-                char_type** argv = toPythonArgs(args);
+                char_type** argv = toPythonArgs<char_type>(args);
 
                 PySys_SetArgv(argc, argv);
                 p.setNewRef(PyRun_String(ptr, Py_single_input, dict, dict));
@@ -329,7 +335,7 @@ emit executeProgress(0);
 
             chandgeDir(path);
 
-            char_type** argv = toPythonArgs(argssc);
+            char_type** argv = toPythonArgs<char_type>(argssc);
 
             PySys_SetArgv(argc, argv);
             PythonQtObjectPtr p;
