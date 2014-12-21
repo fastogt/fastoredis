@@ -90,6 +90,26 @@ namespace
         return exitcode;
         //Py_Exit(exitcode);
     }
+
+    void chandgeDir(const std::string& path)
+    {
+        if(path.empty()){
+            return;
+        }
+
+        PythonQtObjectPtr os;
+        os.setNewRef(PyImport_ImportModule("os"));
+        PyObject* chdirFunc = PyObject_GetAttrString(os, "chdir");
+        if(chdirFunc && PyCallable_Check(chdirFunc)){
+            std::string dir = common::file_system::get_dir_path(path);
+            PyObject* pdir = PyString_FromString(dir.c_str());
+            PyObject* pArgs = PyTuple_New(1);
+            PyTuple_SetItem(pArgs, 0, pdir);
+            PyObject_CallObject(chdirFunc, pArgs);
+            Py_DECREF(pArgs);
+            Py_DECREF(chdirFunc);
+        }
+    }
 }
 #endif
 
@@ -268,29 +288,6 @@ emit executeProgress(75);
 
 emit executeProgress(100);
 #endif
-    }
-
-    namespace
-    {
-        void chandgeDir(const std::string& path)
-        {
-            if(path.empty()){
-                return;
-            }
-
-            PythonQtObjectPtr os;
-            os.setNewRef(PyImport_ImportModule("os"));
-            PyObject* chdirFunc = PyObject_GetAttrString(os, "chdir");
-            if(chdirFunc && PyCallable_Check(chdirFunc)){
-                std::string dir = common::file_system::get_dir_path(path);
-                PyObject* pdir = PyString_FromString(dir.c_str());
-                PyObject* pArgs = PyTuple_New(1);
-                PyTuple_SetItem(pArgs, 0, pdir);
-                PyObject_CallObject(chdirFunc, pArgs);
-                Py_DECREF(pArgs);
-                Py_DECREF(chdirFunc);
-            }
-        }
     }
 
     void PythonWorker::executeScriptImpl(const std::string& path, const std::vector<std::string>& args)
