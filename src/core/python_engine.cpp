@@ -90,26 +90,6 @@ namespace
         return exitcode;
         //Py_Exit(exitcode);
     }
-
-    void chandgeDir(const std::string& path)
-    {
-        if(path.empty()){
-            return;
-        }
-
-        PythonQtObjectPtr os;
-        os.setNewRef(PyImport_ImportModule("os"));
-        PyObject* chdirFunc = PyObject_GetAttrString(os, "chdir");
-        if(chdirFunc && PyCallable_Check(chdirFunc)){
-            std::string dir = common::file_system::get_dir_path(path);
-            PyObject* pdir = PyString_FromString(dir.c_str());
-            PyObject* pArgs = PyTuple_New(1);
-            PyTuple_SetItem(pArgs, 0, pdir);
-            PyObject_CallObject(chdirFunc, pArgs);
-            Py_DECREF(pArgs);
-            Py_DECREF(chdirFunc);
-        }
-    }
 }
 #endif
 
@@ -330,7 +310,8 @@ emit executeProgress(0);
                 argssc.push_back(args[i]);
             }
 
-            chandgeDir(path);
+            std::string dir = common::file_system::get_dir_path(path);
+            common::file_system::change_directory(dir);
 
             char_type** argv = toPythonArgs<char_type>(argssc);
 
@@ -359,7 +340,8 @@ emit executeProgress(0);
 
 done:
             std::string argv0 = common::convertToString(QCoreApplication::applicationFilePath());
-            chandgeDir(argv0);
+            dir = common::file_system::get_dir_path(argv0);
+            common::file_system::change_directory(dir);
 
             Py_DECREF(dict);
             for(int i = 0; i < argc; ++i){

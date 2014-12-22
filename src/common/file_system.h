@@ -72,6 +72,7 @@ namespace common
         bool create_node(const std::string &path) WARN_UNUSED_RESULT;
 #endif
         bool create_directory(const std::string &path, bool isRecursive) WARN_UNUSED_RESULT;
+        bool change_directory(const std::string &path) WARN_UNUSED_RESULT;
 
         bool write_to_descriptor(int fd_desc, const void *buf, unsigned int len) WARN_UNUSED_RESULT;
         bool read_from_descriptor(int fd_desc, void *buf, unsigned int len, int &readlen) WARN_UNUSED_RESULT;

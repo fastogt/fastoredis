@@ -158,6 +158,21 @@ namespace common
             return create_directory_impl(prPathPtr);
         }
 
+        bool change_directory(const std::string &path)
+        {
+            if(path.empty()){
+                NOTREACHED();
+                return false;
+            }
+
+            bool result = chdir(path.c_str()) != ERROR_RESULT_VALUE;
+            if(!result){
+               DEBUG_MSG_PERROR("chdir");
+            }
+
+            return result;
+        }
+
         bool open_descriptor(const std::string& path, int &fd_desc, int oflags)
         {
             if(path.empty()){
