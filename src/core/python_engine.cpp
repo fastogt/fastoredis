@@ -430,7 +430,11 @@ emit executeProgress(100);
     #else
             Py_SetProgramName(WCHAR_PROJECT_NAME);  /* optional but recommended */
     #endif
+        std::string pySearchPath = common::file_system::pwd();
+        char* p = (char*)pySearchPath.c_str();
+        Py_SetPythonHome(p);
         Py_Initialize();
+        NOOP();
 #endif
     }
 
