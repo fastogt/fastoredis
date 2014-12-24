@@ -177,10 +177,6 @@ namespace common
         {
             char cwd[1024] = {0};
             getcwd(cwd, sizeof(cwd));
-        #ifdef OS_MACOSX
-            int len = strlen(cwd);
-            strcat(cwd + len, "/"PROJECT_NAME".app/Contents/MacOS");
-        #endif
             return cwd;
         }
 
