@@ -217,11 +217,13 @@ namespace fastoredis
 #ifdef PYTHON_ENABLED
 emit executeProgress(0);
 
-        const char* ptr = script.c_str();
+        const char* ptr = script.c_str();        
         if(!ptr){
             return;
 emit executeProgress(100);
         }
+
+        int len = strlen(ptr);
 
         PythonQtObjectPtr main = getMainModule();
 emit executeProgress(25);
@@ -245,7 +247,7 @@ emit executeProgress(25);
                 char_type** argv = toPythonArgs<char_type>(args);
 
                 PySys_SetArgv(argc, argv);
-                p.setNewRef(PyRun_String(ptr, Py_single_input, dict, dict));
+                p.setNewRef(PyRun_String(ptr, Py_file_input, dict, dict));
 
                 for(int i = 0; i < argc; ++i){
                     free(argv[i]);
@@ -253,9 +255,8 @@ emit executeProgress(25);
                 free(argv);
             }
             else{
-                p.setNewRef(PyRun_String(ptr, Py_single_input, dict, dict));
+                p.setNewRef(PyRun_String(ptr, Py_file_input, dict, dict));
             }
-
         }
 emit executeProgress(75);
 
