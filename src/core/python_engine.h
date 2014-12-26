@@ -58,6 +58,7 @@ namespace fastoredis
         static const char* version();
         std::string execPath() const;
         PythonWorker* createWorker() WARN_UNUSED_RESULT;
+        bool hasModule(const std::string& name);
 
     private:
         PythonEngine();

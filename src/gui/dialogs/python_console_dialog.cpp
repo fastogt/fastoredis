@@ -155,7 +155,8 @@ namespace fastoredis
 
         mainLayout->addLayout(toolBarLayout);
 
-        shell_ = new PythonShell;
+        shell_ = new RedisPyShell;
+
         output_ = new FastoEditor;
         VERIFY(connect(worker_, SIGNAL(pythonStdOut(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));
         VERIFY(connect(worker_, SIGNAL(pythonStdErr(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));

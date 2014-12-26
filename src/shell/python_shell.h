@@ -11,4 +11,12 @@ namespace fastoredis
     public:
         PythonShell(QWidget* parent = 0);
     };
+
+    class RedisPyShell
+            : public PythonShell
+    {
+        Q_OBJECT
+    public:
+        RedisPyShell(QWidget* parent = 0);
+    };
 }

@@ -444,6 +444,15 @@ emit executeProgress(100);
         return SettingsManager::instance().pythonExecPath();
     }
 
+    bool PythonEngine::hasModule(const std::string& name)
+    {
+        if(!isPythonEnabled()){
+            return false;
+        }
+
+        return true;
+    }
+
     PythonWorker* PythonEngine::createWorker()
     {
         PythonWorker* worker = new PythonWorker;
