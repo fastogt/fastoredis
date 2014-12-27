@@ -88,5 +88,5 @@ namespace common
         return logging::Logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2, t3, t4);
     }
 
-    void DEBUG_MSG_PERROR(const char* function);
+    void DEBUG_MSG_PERROR(const char* function, int err);
 }

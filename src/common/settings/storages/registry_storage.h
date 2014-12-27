@@ -1,10 +1,9 @@
 #pragma once
 
-#define REGISTER_SUPPORT
-
 #include "mpl_string/string_template.h"
 #include <boost/fusion/include/for_each.hpp>
 #include <Windows.h>
+
 namespace common
 {
     namespace storages

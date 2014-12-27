@@ -52,9 +52,9 @@ namespace common
         }
     }
 
-    void DEBUG_MSG_PERROR(const char *function)
+    void DEBUG_MSG_PERROR(const char *function, int err)
     {
-        const char* strer = strerror(errno);
+        const char* strer = strerror(err);
         return DEBUG_MSG_FORMAT<256>(logging::L_ERROR, "function: %s, %s\n", function, strer);
     }
 }

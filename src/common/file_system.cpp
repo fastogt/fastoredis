@@ -17,7 +17,7 @@ namespace
         bool result = mkdir(path, S_IRWXU|S_IRWXG|S_IRWXO) != ERROR_RESULT_VALUE;
 #endif
         if(!result){
-            common::DEBUG_MSG_PERROR("mkdir");
+            common::DEBUG_MSG_PERROR("mkdir",  errno);
         }
 
         return result;
@@ -63,7 +63,7 @@ namespace common
                 return S_ISDIR(filestat.st_mode) ? SUCCESS : FAIL;
             }
             else{
-                DEBUG_MSG_PERROR("stat");
+                DEBUG_MSG_PERROR("stat", errno);
                 return INDETERMINATE;
             }
         }
@@ -76,7 +76,7 @@ namespace common
 
             bool result = ftruncate(fd_desc,0)!=ERROR_RESULT_VALUE;
             if(!result){
-                DEBUG_MSG_PERROR("ftruncate");
+                DEBUG_MSG_PERROR("ftruncate", errno);
             }
             return result;
         }
@@ -95,7 +95,7 @@ namespace common
 
             bool result = mknod(path.c_str(), permissions, 0) != ERROR_RESULT_VALUE;
             if(!result){
-                DEBUG_MSG_PERROR("mknod");
+                DEBUG_MSG_PERROR("mknod", errno);
             }
 
             return result;
@@ -167,7 +167,7 @@ namespace common
 
             bool result = chdir(path.c_str()) != ERROR_RESULT_VALUE;
             if(!result){
-               DEBUG_MSG_PERROR("chdir");
+               DEBUG_MSG_PERROR("chdir", errno);
             }
 
             return result;
@@ -188,7 +188,7 @@ namespace common
 
             bool result = (fd_desc = open(path.c_str(), oflags)) != ERROR_RESULT_VALUE;
             if(!result){
-               DEBUG_MSG_PERROR("open_descriptor");
+               DEBUG_MSG_PERROR("open_descriptor", errno);
             }
 
             return result;
@@ -202,7 +202,7 @@ namespace common
 
             bool result = close(fd_desc) != ERROR_RESULT_VALUE;
             if(!result){
-               DEBUG_MSG_PERROR("close");
+               DEBUG_MSG_PERROR("close", errno);
             }
             return result;
         }
@@ -215,7 +215,7 @@ namespace common
 
             bool result = write(fd_desc, buf, len) != ERROR_RESULT_VALUE;
             if(!result){
-                DEBUG_MSG_PERROR("write");
+                DEBUG_MSG_PERROR("write", errno);
             }
             return result;
         }
@@ -229,7 +229,7 @@ namespace common
             readlen = read(fd_desc, buf, len);
             bool result = readlen != ERROR_RESULT_VALUE;
             if(!result){
-                DEBUG_MSG_PERROR("read");
+                DEBUG_MSG_PERROR("read", errno);
             }
             return result;
         }
@@ -477,7 +477,7 @@ namespace common
 
             size_t res = fwrite(data.c_str(), sizeof(byte_type), data.length(), file_);
             if(res != data.length()){
-                DEBUG_MSG_PERROR("write");
+                DEBUG_MSG_PERROR("write", errno);
             }
             return res == data.length();
         }
@@ -495,7 +495,7 @@ namespace common
 
             size_t res = fwrite(data.c_str(), sizeof(byte_type), data.length(), file_);
             if(res != data.length()){
-                DEBUG_MSG_PERROR("write");
+                DEBUG_MSG_PERROR("write", errno);
             }
             return res == data.length();
         }
@@ -513,7 +513,7 @@ namespace common
 
             size_t res = fwrite(data.c_str(), sizeof(common::string16::value_type), data.length(), file_);
             if(res != data.length()){
-                DEBUG_MSG_PERROR("write");
+                DEBUG_MSG_PERROR("write", errno);
             }
             return res == data.length();
         }
