@@ -198,7 +198,7 @@ namespace common
             {
                 bool result = ::signal(sig, handler)!= SIG_ERR;
                 if(!result){
-                    DEBUG_MSG_PERROR("signal");
+                    DEBUG_MSG_PERROR("signal", errno);
                 }
                 return result;
             }
@@ -207,7 +207,7 @@ namespace common
             {
                 bool result = ::sigaddset(&signal_m,sig)!= ERROR_RESULT_VALUE;
                 if(!result){
-                    DEBUG_MSG_PERROR("sigaddset");
+                    DEBUG_MSG_PERROR("sigaddset", errno);
                 }
                 return result;
             }
@@ -216,7 +216,7 @@ namespace common
             {
                 bool result = ::sigprocmask(how,set,oset)!= ERROR_RESULT_VALUE;
                 if(!result){
-                    DEBUG_MSG_PERROR("sigprocmask");
+                    DEBUG_MSG_PERROR("sigprocmask", errno);
                 }
                 return result;
             }
@@ -225,7 +225,7 @@ namespace common
             {
                 bool result = ::sigemptyset(&signal_m)!= ERROR_RESULT_VALUE;
                 if(!result){
-                    DEBUG_MSG_PERROR("sigemptyset");
+                    DEBUG_MSG_PERROR("sigemptyset", errno);
                 }
                 return result;
             }
