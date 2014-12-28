@@ -17,7 +17,7 @@ namespace common
 
             template<typename const_t>
             setting(const const_t &def)
-                :default_value(def),value_(defualt()),is_load_(false),is_changed_(false)
+                : default_value(def),value_(defualt()),is_load_(false),is_changed_(false)
             {
             }
 
@@ -63,6 +63,7 @@ namespace common
                 is_load_ = true;
                 return set_value(value);
             }
+
             const common::variant_defualter<value_type> default_value;
             value_type value_;
             bool is_load_;

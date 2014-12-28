@@ -1,5 +1,4 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
-CMAKE_POLICY(SET CMP0048 NEW)
 #############################################################
 PROJECT("FastoRedis" VERSION 0.4.5.0 LANGUAGES CXX C)
 #################### Project Settings ####################

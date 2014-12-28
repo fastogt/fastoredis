@@ -19,6 +19,7 @@ namespace common
                 static const char past_item = boost::mpl::deref<begin_iterator>::type::value ;
                 typedef typename boost::mpl::next<begin_iterator>::type next;
                 typedef typename string_to_vector_impl<next, index-1>::type rest;
+
             public:
                 typedef typename boost::mpl::push_front<rest, typename boost::mpl::char_<past_item> >::type type;
             };
