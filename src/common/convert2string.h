@@ -49,6 +49,7 @@ namespace common
     T convertFromString(const std::string& from);
 
     std::string HexEncode(const void* bytes, size_t size);
+    std::string HexEncode(const std::string& data);
 
     bool HexStringToInt(const StringPiece& input, int* output);
     bool HexStringToInt64(const StringPiece& input, int64_t* output);

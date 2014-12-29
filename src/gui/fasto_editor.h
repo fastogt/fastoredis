@@ -7,6 +7,7 @@
 #define JSON 0
 #define CSV 1
 #define RAW 2
+#define HEX 3
 
 namespace fastoredis
 {

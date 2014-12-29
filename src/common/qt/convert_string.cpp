@@ -14,7 +14,7 @@ namespace common
         const QChar* unicode = (const QChar *)value.c_str();
         return QString(unicode, value.size());
 #elif defined(WCHAR_T_IS_UTF32)
-        return QString::fromUtf8((const char*)value.c_str(), value.size()*2);
+        return QString::fromUtf8((const char*)value.c_str(), value.size() * 2);
 #endif
     }
 

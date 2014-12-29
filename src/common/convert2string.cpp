@@ -798,6 +798,11 @@ namespace common
       return ret;
     }
 
+    std::string HexEncode(const std::string& data)
+    {
+        return HexEncode(data.c_str(), data.size());
+    }
+
     bool HexStringToInt(const StringPiece& input, int* output)
     {
       return IteratorRangeToNumber<HexIteratorRangeToIntTraits>::Invoke(

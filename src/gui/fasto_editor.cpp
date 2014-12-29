@@ -265,6 +265,10 @@ namespace fastoredis
                 QString raw = toRaw(child);
                 result += common::escapedText(raw);
             }
+            else if(viewMethod_ == HEX){
+                QString hex = toHex(child);
+                result += common::escapedText(hex);
+            }
         }
 
         setText(result);

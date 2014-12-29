@@ -72,6 +72,7 @@ namespace fastoredis
         const QString trMatchCase = QObject::tr("Match case");
         const QString trJson = QObject::tr("Json");
         const QString trCsv = QObject::tr("Csv");
+        const QString trHex = QObject::tr("Hex");
         const QString trRawText = QObject::tr("Raw text");
     }
 }

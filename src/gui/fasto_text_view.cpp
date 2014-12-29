@@ -52,15 +52,18 @@ namespace fastoredis
         jsonRadioButton_ = new QRadioButton;
         csvRadioButton_ = new QRadioButton;
         rawRadioButton_ = new QRadioButton;
+        hexRadioButton_ = new QRadioButton;
 
         VERIFY(connect(jsonRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
         VERIFY(connect(csvRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
         VERIFY(connect(rawRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
+        VERIFY(connect(hexRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
 
         QHBoxLayout* radLaout = new QHBoxLayout;
         radLaout->addWidget(jsonRadioButton_);
         radLaout->addWidget(csvRadioButton_);
         radLaout->addWidget(rawRadioButton_);
+        radLaout->addWidget(hexRadioButton_);
 
         mainL->addLayout(radLaout);
         mainL->addWidget(editor_);
@@ -100,6 +103,11 @@ namespace fastoredis
 
         if(rawRadioButton_->isChecked()){
             editor_->viewChanged(RAW);
+            return;
+        }
+
+        if(hexRadioButton_->isChecked()){
+            editor_->viewChanged(HEX);
             return;
         }
     }
@@ -204,5 +212,6 @@ namespace fastoredis
         jsonRadioButton_->setText(trJson);
         csvRadioButton_->setText(trCsv);
         rawRadioButton_->setText(trRawText);
+        hexRadioButton_->setText(trHex);
     }
 }

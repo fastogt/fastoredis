@@ -1,5 +1,7 @@
 #include "gui/fasto_common_item.h"
 
+#include "common/qt/convert_string.h"
+
 namespace fastoredis
 {
     FastoCommonItem::FastoCommonItem(const QString& key, const QString& value, common::Value::Type type, TreeItem *parent, void* internalPointer)
@@ -58,7 +60,28 @@ namespace fastoredis
 
         QString value;
         for(int i = 0; i < item->childrenCount(); ++i){
-            value += toJson(dynamic_cast<FastoCommonItem*>(item->child(i)));
+            value += toRaw(dynamic_cast<FastoCommonItem*>(item->child(i)));
+        }
+
+        return value;
+    }
+
+    QString toHex(FastoCommonItem* item)
+    {
+        if(!item){
+            return "";
+        }
+
+        if(!item->childrenCount()){
+            QString val = item->value();
+            std::string sval = common::convertToString(val);
+            std::string hex = common::HexEncode(sval);
+            return common::convertFromString<QString>(hex);
+        }
+
+        QString value;
+        for(int i = 0; i < item->childrenCount(); ++i){
+            value += toHex(dynamic_cast<FastoCommonItem*>(item->child(i)));
         }
 
         return value;
