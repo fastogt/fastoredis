@@ -33,6 +33,20 @@ namespace fastoredis
             ConnectInfoResponce(const base_class &request, const error_type &er = error_type());
         };
 
+        struct ShutDownInfoRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ShutDownInfoRequest(const error_type &er = error_type());
+        };
+
+        struct ShutDownInfoResponce
+                : ShutDownInfoRequest
+        {
+            typedef ShutDownInfoRequest base_class;
+            ShutDownInfoResponce(const base_class &request, const error_type &er = error_type());
+        };
+
         struct ProcessConfigArgsInfoRequest
                 : public EventInfoBase
         {

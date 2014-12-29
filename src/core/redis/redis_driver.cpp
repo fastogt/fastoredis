@@ -28,6 +28,7 @@ extern "C" {
 #define FIND_BIG_KEYS_REQUEST "FIND_BIG_KEYS"
 #define LATENCY_REQUEST "LATENCY"
 #define GET_DATABASES "CONFIG GET databases"
+#define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 #define STAT_MODE_REQUEST "STAT"
 #define SCAN_MODE_REQUEST "SCAN"
@@ -1597,6 +1598,22 @@ namespace fastoredis
         QObject *sender = ev->sender();
         Events::ProcessConfigArgsResponceEvent::value_type res(ev->value());
         reply(sender, new Events::ProcessConfigArgsResponceEvent(this, res));
+    }
+
+    void RedisDriver::shutdownEvent(Events::ShutDownRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::ShutDownResponceEvent::value_type res(ev->value());
+        notifyProgress(sender, 25);
+            FastoObjectIPtr root = FastoObject::createRoot(SHUTDOWN);
+            common::ErrorValueSPtr er = impl_->execute(SHUTDOWN, Command::InnerCommand, root.get());
+            if(er){
+                res.setErrorInfo(er);
+            }
+        notifyProgress(sender, 75);
+            reply(sender, new Events::ShutDownResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
     common::ErrorValueSPtr RedisDriver::interacteveMode(Events::ProcessConfigArgsRequestEvent *ev)

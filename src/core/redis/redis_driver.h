@@ -38,6 +38,7 @@ namespace fastoredis
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev);
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev);
         virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev);
+        virtual void shutdownEvent(Events::ShutDownRequestEvent* ev);
 
         ServerInfoSPtr makeServerInfoFromString(const std::string& val);
 

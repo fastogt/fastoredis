@@ -21,7 +21,7 @@ namespace fastoredis
         virtual void loadServerInfoEvent(Events::ServerInfoResponceEvent* ev);
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev);
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev);
-
+        virtual void shutdownEvent(Events::ShutDownResponceEvent* ev);
 
     private:
         RedisServer(const IDriverSPtr& drv, bool isMaster);

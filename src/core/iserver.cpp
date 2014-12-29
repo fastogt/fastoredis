@@ -105,6 +105,14 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::shutDown()
+    {
+        EventsInfo::ShutDownInfoRequest req;
+        emit startedShutdown(req);
+        QEvent *ev = new Events::ShutDownRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::loadDatabases()
     {
         EventsInfo::LoadDatabasesInfoRequest req;

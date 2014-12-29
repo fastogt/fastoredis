@@ -34,6 +34,10 @@ namespace fastoredis
         void openHistoryServerDialog();
         void closeConnection();
 
+        void backupServer();
+        void importServer();
+        void shutdownServer();
+
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req);
         void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res);
 
@@ -53,5 +57,8 @@ namespace fastoredis
         QAction* propertyServerAction_;
         QAction* historyServerAction_;
         QAction* closeAction_;
+        QAction* importAction_;
+        QAction* backupAction_;
+        QAction* shutdownAction_;
     };
 }

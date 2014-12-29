@@ -24,6 +24,7 @@ namespace fastoredis
         void loadDatabases();
         void loadDatabaseContent(const DataBaseInfo& inf);
         void execute(const QString& script);
+        void shutDown();
 
         //sync
         void stopCurrentEvent();
@@ -41,6 +42,9 @@ namespace fastoredis
 
         void startedDisconnect(const EventsInfo::DisonnectInfoRequest& req);
         void finishedDisconnect(const EventsInfo::DisConnectInfoResponce& res);
+
+        void startedShutdown(const EventsInfo::ShutDownInfoRequest& req);
+        void finishedShutdown(const EventsInfo::ShutDownInfoResponce& res);
 
         void startedExecute(const EventsInfo::ExecuteInfoRequest& req);
 
@@ -94,6 +98,7 @@ namespace fastoredis
         virtual void loadServerInfoEvent(Events::ServerInfoResponceEvent* ev) = 0;
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev) = 0;
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
+        virtual void shutdownEvent(Events::ShutDownResponceEvent* ev) = 0;
 
         IServer(const IDriverSPtr& drv, bool isMaster);
 

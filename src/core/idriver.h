@@ -62,6 +62,7 @@ namespace fastoredis
         virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent* ev) = 0;
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev) = 0;
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
+        virtual void shutdownEvent(Events::ShutDownRequestEvent* ev) = 0;
 
         const IConnectionSettingsBaseSPtr settings_;
 

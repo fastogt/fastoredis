@@ -96,4 +96,15 @@ namespace fastoredis
         }
         emit finishedChangeServerProperty(v);
     }
+
+    void RedisServer::shutdownEvent(Events::ShutDownResponceEvent* ev)
+    {
+        using namespace Events;
+        ShutDownResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedShutdown(v);
+    }
 }

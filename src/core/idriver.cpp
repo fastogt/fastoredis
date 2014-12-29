@@ -94,6 +94,10 @@ namespace fastoredis
             ConnectRequestEvent *ev = static_cast<ConnectRequestEvent*>(event);
             connectEvent(ev);
         }
+        else if (type == static_cast<QEvent::Type>(ShutDownRequestEvent::EventType)){
+            ShutDownRequestEvent *ev = static_cast<ShutDownRequestEvent*>(event);
+            shutdownEvent(ev);
+        }
         else if (type == static_cast<QEvent::Type>(ProcessConfigArgsRequestEvent::EventType)){
             ProcessConfigArgsRequestEvent *ev = static_cast<ProcessConfigArgsRequestEvent*>(event);
             processCommandLineArgs(ev);

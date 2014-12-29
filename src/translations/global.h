@@ -8,6 +8,7 @@ namespace fastoredis
     {
         const QString trfilterForScripts = QObject::tr("Text Files (*.txt); All Files (*.*)");
         const QString trfilterForPython = QObject::tr("Text Files (*.py); All Files (*.*)");
+        const QString trfilterForAll = QObject::tr("All Files (*.*)");
 
         const QString trLoad = QObject::tr("Load");
         const QString trOpen = QObject::tr("Open");
@@ -74,5 +75,9 @@ namespace fastoredis
         const QString trCsv = QObject::tr("Csv");
         const QString trHex = QObject::tr("Hex");
         const QString trRawText = QObject::tr("Raw text");
+
+        const QString trBackup = QObject::tr("Backup");
+        const QString trImport = QObject::tr("Import");
+        const QString trShutdown = QObject::tr("Shutdown");
     }
 }

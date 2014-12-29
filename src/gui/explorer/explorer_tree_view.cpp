@@ -3,6 +3,7 @@
 #include <QMenu>
 #include <QHeaderView>
 #include <QAction>
+#include <QFileDialog>
 
 #include "gui/explorer/explorer_tree_model.h"
 
@@ -13,6 +14,11 @@
 #include "common/qt/convert_string.h"
 
 #include "translations/global.h"
+
+namespace
+{
+    const QString dumpPath("/var/lib/redis/");
+}
 
 namespace fastoredis
 {
@@ -47,6 +53,15 @@ namespace fastoredis
         closeAction_ = new QAction(this);
         VERIFY(connect(closeAction_, SIGNAL(triggered()), SLOT(closeConnection())));
 
+        importAction_ = new QAction(this);
+        VERIFY(connect(importAction_, SIGNAL(triggered()), SLOT(importServer())));
+
+        backupAction_ = new QAction(this);
+        VERIFY(connect(backupAction_, SIGNAL(triggered()), SLOT(backupServer())));
+
+        shutdownAction_ = new QAction(this);
+        VERIFY(connect(shutdownAction_, SIGNAL(triggered()), SLOT(shutdownServer())));
+
         retranslateUi();
     }
 
@@ -75,6 +90,12 @@ namespace fastoredis
 
                 menu.addAction(historyServerAction_);
                 menu.addAction(closeAction_);
+                importAction_->setEnabled(!isCon);
+                menu.addAction(importAction_);
+                backupAction_->setEnabled(isCon);
+                menu.addAction(backupAction_);
+                shutdownAction_->setEnabled(isCon);
+                menu.addAction(shutdownAction_);
                 menu.exec(menuPoint);
             }
             else if(node->type() == IExplorerTreeItem::Database){
@@ -187,6 +208,9 @@ namespace fastoredis
         propertyServerAction_->setText(trProperty);
         historyServerAction_->setText(trHistory);
         closeAction_->setText(trClose);
+        backupAction_->setText(trBackup);
+        importAction_->setText(trImport);
+        shutdownAction_->setText(trShutdown);
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req)
@@ -278,5 +302,60 @@ namespace fastoredis
                 removeServer(server);
             }
         }        
+    }
+
+    void ExplorerTreeView::backupServer()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+            if(node){
+                IServerSPtr server = node->server();
+
+                using namespace translations;
+                QString filepath = QFileDialog::getOpenFileName(this, trBackup, QString(), trfilterForAll);
+                if (!filepath.isEmpty()) {
+
+                }
+            }
+        }
+    }
+
+    void ExplorerTreeView::importServer()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+            if(node){
+                using namespace translations;
+                QString filepath = QFileDialog::getOpenFileName(this, trImport, QString(), trfilterForAll);
+                if (filepath.isEmpty()) {
+                    return;
+                }
+
+                IServerSPtr server = node->server();
+                if(server->isConnected()){
+
+                }
+            }
+        }
+    }
+
+    void ExplorerTreeView::shutdownServer()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(!node){
+            return;
+        }
+
+        IServerSPtr server = node->server();
+        if(server->isConnected()){
+            server->shutDown();
+        }
     }
 }

@@ -29,6 +29,18 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
+        ShutDownInfoRequest::ShutDownInfoRequest(const error_type &er)
+            : base_class(er)
+        {
+
+        }
+
+        ShutDownInfoResponce::ShutDownInfoResponce(const base_class &request, const error_type &er)
+            : base_class(request)
+        {
+            base_class::errorInfo_ = er;
+        }
+
         ProcessConfigArgsInfoRequest::ProcessConfigArgsInfoRequest(const error_type &er)
             : base_class(er)
         {
