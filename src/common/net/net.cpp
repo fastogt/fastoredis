@@ -7,11 +7,78 @@
 #include <wspiapi.h>
 #endif
 
+#ifdef OS_MACOSX
 #include <sys/uio.h>
+#endif
+
 #include <fcntl.h>
 #include <sys/stat.h>
 
 #include "common/logger.h"
+
+#ifdef OS_WINDOWS
+
+#define BUF_SIZE 8192
+
+namespace
+{
+    ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count)
+    {
+        off_t orig;
+        char buf[BUF_SIZE];
+        size_t numRead, numSent, totSent;
+
+        if (offset != NULL) {
+
+            /* Save current file offset and set offset to value in '*offset' */
+
+            orig = lseek(in_fd, 0, SEEK_CUR);
+            if (orig == -1)
+                return ERROR_RESULT_VALUE;
+            if (lseek(in_fd, *offset, SEEK_SET) == -1)
+                return ERROR_RESULT_VALUE;
+        }
+
+        totSent = 0;
+
+        while (count > 0) {
+            numRead = read(in_fd, buf, BUF_SIZE);
+            if (numRead == -1)
+                return ERROR_RESULT_VALUE;
+            if (numRead == 0)
+                break;                      /* EOF */
+#ifdef OS_WIN
+            numSent = send(out_fd, buf, numRead, 0);
+#else
+            numSent = write(out_fd, buf, numRead);
+#endif
+            if (numSent == -1)
+                return ERROR_RESULT_VALUE;
+
+            if (numSent == 0){
+                return ERROR_RESULT_VALUE;
+            }
+
+            count -= numSent;
+            totSent += numSent;
+        }
+
+        if (offset != NULL) {
+
+            /* Return updated file offset in '*offset', and reset the file offset
+               to the value it had when we were called. */
+
+            *offset = lseek(in_fd, 0, SEEK_CUR);
+            if (*offset == -1)
+                return ERROR_RESULT_VALUE;
+            if (lseek(in_fd, orig, SEEK_SET) == -1)
+                return ERROR_RESULT_VALUE;
+        }
+
+        return totSent;
+    }
+}
+#endif
 
 namespace common
 {
@@ -156,7 +223,11 @@ namespace common
             fstat(fd, &stat_buf);
 
             off_t offset = 0;
-            int res = sendfile(fd, sock, offset, &stat_buf.st_size, NULL, 0);
+#ifdef OS_MACOSX
+            int res = sendfile(sock, fd, offset, &stat_buf.st_size, NULL, 0);
+#else
+            int res = sendfile(sock, fd, &offset, stat_buf.st_size);
+#endif
             if(res == ERROR_RESULT_VALUE){
                 DEBUG_MSG_PERROR("sendfile", errno);
             }

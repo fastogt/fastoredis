@@ -105,6 +105,7 @@ SET(HEADERS_CORE
     core/servers_manager.h
     core/types.h
     core/ssh_info.h
+    core/scp_file_transfer.h
 )
 SET(SOURCES_CORE
     core/events/events_info.cpp
@@ -123,6 +124,7 @@ SET(SOURCES_CORE
     core/types.cpp
     core/ssh_info.cpp
     core/python_engine.cpp
+    core/scp_file_transfer.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/redis_shell_widget.h
