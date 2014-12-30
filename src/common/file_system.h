@@ -71,6 +71,8 @@ namespace common
 #else
         bool create_node(const std::string &path) WARN_UNUSED_RESULT;
 #endif
+        bool copy_file(const std::string& pathFrom, const std::string& pathTo) WARN_UNUSED_RESULT;
+        bool move_file(const std::string& pathFrom, const std::string& pathTo) WARN_UNUSED_RESULT;
         bool create_directory(const std::string &path, bool isRecursive) WARN_UNUSED_RESULT;
         bool change_directory(const std::string &path) WARN_UNUSED_RESULT;
         std::string pwd();

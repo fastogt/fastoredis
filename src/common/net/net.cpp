@@ -1,12 +1,176 @@
 #include "common/net/net.h"
 
+#ifdef OS_POSIX
+#include <netdb.h>
+#else
+#include <winsock2.h>
+#include <wspiapi.h>
+#endif
+
+#include <sys/uio.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+
+#include "common/logger.h"
+
 namespace common
 {
+    namespace net
+    {
+        hostAndPort::hostAndPort()
+            : host_(), port_(0)
+        {
+
+        }
+
+        hostAndPort::hostAndPort(const std::string& host, uint16_t port)
+            : host_(host), port_(port)
+        {
+
+        }
+
+        bool hostAndPort::isValid() const
+        {
+            return !host_.empty() && port_ != 0;
+        }
+
+        int connect(const net::hostAndPort& from)
+        {
+            if(!from.isValid()){
+                return INVALID_DESCRIPTOR;
+            }
+
+            std::string host = from.host_;
+            uint16_t port = from.port_;
+
+            struct addrinfo hints, *result, *rp;
+            char _port[6];
+            snprintf(_port, 6, "%d", port);
+            memset(&hints, 0, sizeof(hints));
+            hints.ai_family = AF_UNSPEC;
+            hints.ai_socktype = SOCK_STREAM;
+            hints.ai_flags = AI_PASSIVE;    /* For wildcard IP address */
+            hints.ai_protocol = 0;          /* Any protocol */
+            hints.ai_canonname = NULL;
+            hints.ai_addr = NULL;
+            hints.ai_next = NULL;
+
+            /* Try with IPv6 if no IPv4 address was found. We do it in this order since
+             * in a client you can't afford to test if you have IPv6 connectivity
+             * as this would add latency to every connect. Otherwise a more sensible
+             * route could be: Use IPv6 if both addresses are available and there is IPv6
+             * connectivity. */
+
+            int rv;
+            if ((rv = getaddrinfo(host.c_str(), _port, &hints, &result)) != 0) {
+                 hints.ai_family = AF_INET6;
+                 if ((rv = getaddrinfo(host.c_str(), _port, &hints, &result)) != 0) {
+                    return INVALID_DESCRIPTOR;
+                }
+            }
+
+            int sfd;
+            for (rp = result; rp != NULL; rp = rp->ai_next) {
+               sfd = socket(rp->ai_family, rp->ai_socktype,
+                            rp->ai_protocol);
+               if (sfd == -1)
+                   continue;
+
+               if (::connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1)
+                   break;                  /* Success */
+
+               ::close(sfd);
+            }
+
+            if (rp == NULL) {               /* No address succeeded */
+               return INVALID_DESCRIPTOR;
+            }
+
+            freeaddrinfo(result);           /* No longer needed */
+
+            return sfd;
+        }
+
+        ssize_t write_to_socket(int fd, const buffer_type& data)
+        {
+            if(fd == INVALID_DESCRIPTOR){
+                return ERROR_RESULT_VALUE;
+            }
+
+            if(data.empty()){
+                return ERROR_RESULT_VALUE;
+            }
+
+            #ifdef OS_WIN
+                ssize_t nwritten = send(fd, (const char*)data.c_str(), data.size(), 0);
+            #else
+                ssize_t nwritten = ::write(fd, data.c_str(), data.size());
+            #endif
+            return nwritten;
+        }
+
+        ssize_t read_from_socket(int fd, buffer_type& outData, uint16_t maxSize)
+        {
+            if(fd == INVALID_DESCRIPTOR){
+                return ERROR_RESULT_VALUE;
+            }
+
+            byte_type* data = (byte_type*)calloc(maxSize, sizeof(byte_type));
+            if(!data){
+                return ERROR_RESULT_VALUE;
+            }
+
+            #ifdef OS_WIN
+                ssize_t nread = recv(fd, (char*)data, maxSize, 0);
+            #else
+                ssize_t nread = ::read(fd, data, maxSize);
+            #endif
+
+            if(nread > 0){
+                outData = buffer_type(data, nread);
+            }
+
+            free(data);
+
+            return nread;
+        }
+
+        int sendFile(const std::string& path, const net::hostAndPort& to)
+        {
+            if(path.empty()){
+                return ERROR_RESULT_VALUE;
+            }
+
+            int sock = connect(to);
+            if(sock == INVALID_DESCRIPTOR){
+                return ERROR_RESULT_VALUE;
+            }
+
+            int fd = open(path.c_str(), O_RDONLY);
+            if (fd == INVALID_DESCRIPTOR) {
+                DEBUG_MSG_PERROR("open", errno);
+                return ERROR_RESULT_VALUE;
+            }
+
+            struct stat stat_buf;
+            fstat(fd, &stat_buf);
+
+            off_t offset = 0;
+            int res = sendfile(fd, sock, offset, &stat_buf.st_size, NULL, 0);
+            if(res == ERROR_RESULT_VALUE){
+                DEBUG_MSG_PERROR("sendfile", errno);
+            }
+
+            close(sock);
+            return res;
+        }
+    }
+
     std::string convertToString(const net::hostAndPort& host)
     {
         static const uint16_t size_buff = 512;
         char buff[size_buff] = {0};
-        sprintf(buff, "%s:%d", host.first.c_str(), host.second);
+        sprintf(buff, "%s:%d", host.host_.c_str(), host.port_);
         return buff;
     }
 
@@ -16,8 +180,8 @@ namespace common
         net::hostAndPort res;
         size_t del = host.find_first_of(':');
         if(del != std::string::npos){
-            res.first = host.substr(0, del);
-            res.second = convertFromString<uint16_t>(host.substr(del + 1));
+            res.host_ = host.substr(0, del);
+            res.port_ = convertFromString<uint16_t>(host.substr(del + 1));
         }
 
         return res;
