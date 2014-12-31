@@ -1,6 +1,7 @@
 #include "gui/explorer/explorer_tree_view.h"
 
 #include <QMenu>
+#include <QMessageBox>
 #include <QHeaderView>
 #include <QAction>
 #include <QFileDialog>
@@ -91,9 +92,10 @@ namespace fastoredis
                 menu.addAction(historyServerAction_);
                 menu.addAction(closeAction_);
 
-                importAction_->setEnabled(!isCon);
-                menu.addAction(importAction_);
                 bool isLocal = server->isLocalHost();
+
+                importAction_->setEnabled(!isCon && isLocal);
+                menu.addAction(importAction_);                
                 backupAction_->setEnabled(isCon && isLocal);
                 menu.addAction(backupAction_);
                 shutdownAction_->setEnabled(isCon);
@@ -355,6 +357,14 @@ namespace fastoredis
 
         IServerSPtr server = node->server();
         if(server->isConnected()){
+            // Ask user
+            int answer = QMessageBox::question(this,
+                "Shutdown", QString("Really shutdown \"%1\" server?").arg(server->name()),
+                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+            if (answer != QMessageBox::Yes)
+                return;
+
             server->shutDown();
         }
     }

@@ -26,6 +26,7 @@ namespace fastoredis
         const QString trStop = QObject::tr("Stop");
         const QString trError = QObject::tr("Error");
         const QString trView = QObject::tr("View");
+        const QString trViews = QObject::tr("Views");
         const QString trLogs = QObject::tr("Logs");
         const QString trKey = QObject::tr("Key");
         const QString trValue = QObject::tr("Value");

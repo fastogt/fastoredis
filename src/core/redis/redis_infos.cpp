@@ -61,7 +61,7 @@ namespace fastoredis
             else if(field == REDIS_UPTIME_IN_SECONDS_LABEL){
                 uptime_in_seconds_ = common::convertFromString<uint32_t>(value);
             }
-            else if(field == REDIS_UPTIME_IN_DAYS){
+            else if(field == REDIS_UPTIME_IN_DAYS_LABEL){
                 uptime_in_days_ = common::convertFromString<uint32_t>(value);
             }
             else if(field == REDIS_LRU_CLOCK_LABEL){
@@ -587,7 +587,7 @@ namespace fastoredis
                    << (REDIS_RUN_ID_LABEL":") << value.run_id_ << ("\r\n")
                    << (REDIS_TCP_PORT_LABEL":") << value.tcp_port_ << ("\r\n")
                    << (REDIS_UPTIME_IN_SECONDS_LABEL":") << value.uptime_in_seconds_ << ("\r\n")
-                   << (REDIS_UPTIME_IN_DAYS":") << value.uptime_in_days_ << ("\r\n")
+                   << (REDIS_UPTIME_IN_DAYS_LABEL":") << value.uptime_in_days_ << ("\r\n")
                    << (REDIS_LRU_CLOCK_LABEL":") << value.lru_clock_ << ("\r\n");
     }
 

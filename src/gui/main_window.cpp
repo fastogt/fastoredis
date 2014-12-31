@@ -176,6 +176,7 @@ namespace fastoredis
         QMenu *tools = new QMenu(this);
         toolsAction_ = menuBar()->addMenu(tools);
         pythonConsoleAction_ = new QAction(this);
+        pythonConsoleAction_->setIcon(GuiFactory::instance().pythonIcon());
         VERIFY(connect(pythonConsoleAction_, SIGNAL(triggered()), this, SLOT(openPythonConsole())));
         tools->addAction(pythonConsoleAction_);
 
@@ -186,6 +187,9 @@ namespace fastoredis
         fullScreanAction_->setShortcut(fullScreenKey);
         VERIFY(connect(fullScreanAction_, SIGNAL(triggered()), this, SLOT(enterLeaveFullScreen())));
         window->addAction(fullScreanAction_);
+
+        QMenu *views = new QMenu(translations::trViews, this);
+        window->addMenu(views);
 
         QMenu *helpMenu = new QMenu(this);
         aboutAction_ = new QAction(this);
@@ -203,7 +207,7 @@ namespace fastoredis
         explorerAction_ = expDock_->toggleViewAction();
         explorerAction_->setShortcut(explorerKeySequence);
         explorerAction_->setChecked(true);
-        window->addAction(explorerAction_);
+        views->addAction(explorerAction_);
 
         expDock_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         expDock_->setWidget(exp_);
@@ -218,7 +222,7 @@ namespace fastoredis
         logsAction_ = logDock_->toggleViewAction();
         logsAction_->setShortcut(logsKeySequence);
         logsAction_->setChecked(false);
-        window->addAction(logsAction_);
+        views->addAction(logsAction_);
 
         logDock_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         logDock_->setWidget(log);
