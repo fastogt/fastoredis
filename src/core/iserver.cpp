@@ -3,6 +3,8 @@
 #include <QApplication>
 
 #include "common/qt/convert_string.h"
+#include "common/net/net.h"
+
 #include "core/logger.h"
 
 namespace
@@ -84,7 +86,8 @@ namespace fastoredis
 
     QString IServer::address() const
     {
-        return common::convertFromString<QString>(drv_->address());
+        std::string shost = common::convertToString(drv_->address());
+        return common::convertFromString<QString>(shost);
     }
 
     QString IServer::outputDelemitr() const
@@ -110,6 +113,22 @@ namespace fastoredis
         EventsInfo::ShutDownInfoRequest req;
         emit startedShutdown(req);
         QEvent *ev = new Events::ShutDownRequestEvent(this, req);
+        notify(ev);
+    }
+
+    void IServer::backupToPath(const QString& path)
+    {
+        EventsInfo::BackupInfoRequest req(common::convertToString(path));
+        emit startedBackup(req);
+        QEvent *ev = new Events::BackupRequestEvent(this, req);
+        notify(ev);
+    }
+
+    void IServer::exportFromPath(const QString& path)
+    {
+        EventsInfo::ExportInfoRequest req(common::convertToString(path));
+        emit startedExport(req);
+        QEvent *ev = new Events::ExportRequestEvent(this, req);
         notify(ev);
     }
 
@@ -216,6 +235,11 @@ namespace fastoredis
         isMaster_ = isMaster;
     }
 
+    bool IServer::isLocalHost() const
+    {
+        return common::net::isLocalHost(drv_->address().host_);
+    }
+
     IServer::~IServer()
     {
     }
@@ -291,6 +315,14 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(ChangeServerPropertyInfoResponceEvent::EventType)){
             ChangeServerPropertyInfoResponceEvent *ev = static_cast<ChangeServerPropertyInfoResponceEvent*>(event);
             serverPropertyChangeEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(BackupResponceEvent::EventType)){
+            BackupResponceEvent *ev = static_cast<BackupResponceEvent*>(event);
+            handleBackupEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ExportResponceEvent::EventType)){
+            ExportResponceEvent *ev = static_cast<ExportResponceEvent*>(event);
+            handleExportEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
         {

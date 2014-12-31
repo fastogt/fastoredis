@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 #############################################################
-PROJECT("FastoRedis" VERSION 0.4.5.0 LANGUAGES CXX C)
+PROJECT("FastoRedis" VERSION 0.4.6.1 LANGUAGES CXX C)
 #################### Project Settings ####################
 #SET(PROJECT_NAME "FastoRedis" CACHE STRING "Project Name")
 SET(PROJECT_NAME_TITLE ${PROJECT_NAME} CACHE STRING "Title for ${PROJECT_NAME}")
@@ -12,7 +12,7 @@ SET(PROJECT_MAINTAINER_MAIL "fastoredis@gmail.com" CACHE STRING "Internet mail a
 SET(PROJECT_MAINTAINER_NAME "Fasto Redis" CACHE STRING "Name of ${PROJECT_NAME} mainteiner")
 SET(PROJECT_GITHUB_FORK "www.github.com/fasto/fastoredis" CACHE STRING "Git fork of ${PROJECT_NAME}")
 SET(PROJECT_GITHUB_ISSUES "www.github.com/fasto/fastoredis/issues" CACHE STRING "Git issue link for ${PROJECT_NAME}")
-SET(RELEASE_CANDIDATE ON)
+SET(RELEASE_CANDIDATE OFF)
 ##########################################################
 
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)

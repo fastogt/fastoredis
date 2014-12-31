@@ -25,13 +25,17 @@ namespace fastoredis
         void loadDatabaseContent(const DataBaseInfo& inf);
         void execute(const QString& script);
         void shutDown();
+        void backupToPath(const QString& path);
+        void exportFromPath(const QString& path);
 
         //sync
         void stopCurrentEvent();
         bool isConnected() const;
 
-        bool isMaster() const;
+        bool isMaster() const;        
         void setIsMaster(bool isMaster);
+
+        bool isLocalHost() const;
 
         virtual void syncWithServer(IServer* src) = 0;
         virtual void unSyncFromServer(IServer* src) = 0;
@@ -45,6 +49,12 @@ namespace fastoredis
 
         void startedShutdown(const EventsInfo::ShutDownInfoRequest& req);
         void finishedShutdown(const EventsInfo::ShutDownInfoResponce& res);
+
+        void startedBackup(const EventsInfo::BackupInfoRequest& req);
+        void finishedBackup(const EventsInfo::BackupInfoResponce& res);
+
+        void startedExport(const EventsInfo::ExportInfoRequest& req);
+        void finishedExport(const EventsInfo::ExportInfoResponce& res);
 
         void startedExecute(const EventsInfo::ExecuteInfoRequest& req);
 
@@ -98,7 +108,9 @@ namespace fastoredis
         virtual void loadServerInfoEvent(Events::ServerInfoResponceEvent* ev) = 0;
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev) = 0;
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
-        virtual void shutdownEvent(Events::ShutDownResponceEvent* ev) = 0;
+        virtual void handleShutdownEvent(Events::ShutDownResponceEvent* ev) = 0;
+        virtual void handleBackupEvent(Events::BackupResponceEvent* ev) = 0;
+        virtual void handleExportEvent(Events::ExportResponceEvent* ev) = 0;
 
         IServer(const IDriverSPtr& drv, bool isMaster);
 

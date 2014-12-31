@@ -18,7 +18,7 @@ namespace fastoredis
 
         virtual bool isConnected() const;
         virtual void interrupt();
-        std::string address() const;
+        common::net::hostAndPort address() const;
         std::string version() const;
         virtual std::string outputDelemitr() const;
 
@@ -38,7 +38,9 @@ namespace fastoredis
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev);
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev);
         virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev);
-        virtual void shutdownEvent(Events::ShutDownRequestEvent* ev);
+        virtual void handleShutdownEvent(Events::ShutDownRequestEvent* ev);
+        virtual void handleBackupEvent(Events::BackupRequestEvent* ev);
+        virtual void handleExportEvent(Events::ExportRequestEvent* ev);
 
         ServerInfoSPtr makeServerInfoFromString(const std::string& val);
 

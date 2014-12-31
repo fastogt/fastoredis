@@ -97,7 +97,7 @@ namespace fastoredis
         emit finishedChangeServerProperty(v);
     }
 
-    void RedisServer::shutdownEvent(Events::ShutDownResponceEvent* ev)
+    void RedisServer::handleShutdownEvent(Events::ShutDownResponceEvent* ev)
     {
         using namespace Events;
         ShutDownResponceEvent::value_type v = ev->value();
@@ -106,5 +106,27 @@ namespace fastoredis
             LOG_ERROR(er, true);
         }
         emit finishedShutdown(v);
+    }
+
+    void RedisServer::handleBackupEvent(Events::BackupResponceEvent* ev)
+    {
+        using namespace Events;
+        BackupResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedBackup(v);
+    }
+
+    void RedisServer::handleExportEvent(Events::ExportResponceEvent* ev)
+    {
+        using namespace Events;
+        ExportResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedExport(v);
     }
 }

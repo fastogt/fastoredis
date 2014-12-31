@@ -14,6 +14,7 @@ extern "C" {
 
 #include "common/time.h"
 #include "common/utils.h"
+#include "common/file_system.h"
 
 #include "core/logger.h"
 #include "core/command_logger.h"
@@ -33,6 +34,7 @@ extern "C" {
 #define STAT_MODE_REQUEST "STAT"
 #define SCAN_MODE_REQUEST "SCAN"
 #define RDM_REQUEST "RDM"
+#define BACKUP "SAVE"
 
 #define LATENCY_SAMPLE_RATE 10 /* milliseconds. */
 #define LATENCY_HISTORY_DEFAULT_INTERVAL 15000 /* milliseconds. */
@@ -1475,15 +1477,13 @@ namespace fastoredis
         delete impl_;
     }
 
-    std::string RedisDriver::address() const
+    common::net::hostAndPort RedisDriver::address() const
     {
         if(impl_->context){
-            char address[512] = {0};
-            sprintf(address, "%s:%d", impl_->config.hostip, impl_->config.hostport);
-            return address;
+            return common::net::hostAndPort(impl_->config.hostip, impl_->config.hostport);
         }
         else{
-            return "not connected";
+            return common::net::hostAndPort();
         }
     }
 
@@ -1600,7 +1600,7 @@ namespace fastoredis
         reply(sender, new Events::ProcessConfigArgsResponceEvent(this, res));
     }
 
-    void RedisDriver::shutdownEvent(Events::ShutDownRequestEvent* ev)
+    void RedisDriver::handleShutdownEvent(Events::ShutDownRequestEvent* ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
@@ -1613,6 +1613,43 @@ namespace fastoredis
             }
         notifyProgress(sender, 75);
             reply(sender, new Events::ShutDownResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::handleBackupEvent(Events::BackupRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::BackupRequestEvent::value_type res(ev->value());
+        notifyProgress(sender, 25);
+            FastoObjectIPtr root = FastoObject::createRoot(BACKUP);
+            common::ErrorValueSPtr er = impl_->execute(BACKUP, Command::InnerCommand, root.get());
+            if(er){
+                res.setErrorInfo(er);
+            }
+            else{
+                bool rc = common::file_system::copy_file("/var/lib/redis/dump.rdb", res.path_);
+                if(!rc){
+                    res.setErrorInfo(common::make_error_value("Copy failed.", common::ErrorValue::E_ERROR));
+                }
+            }
+        notifyProgress(sender, 75);
+            reply(sender, new Events::BackupResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::handleExportEvent(Events::ExportRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::ExportRequestEvent::value_type res(ev->value());
+        notifyProgress(sender, 25);
+            bool rc = common::file_system::copy_file(res.path_, "/var/lib/redis/dump.rdb");
+            if(!rc){
+                res.setErrorInfo(common::make_error_value("Copy failed.", common::ErrorValue::E_ERROR));
+            }
+        notifyProgress(sender, 75);
+            reply(sender, new Events::ExportResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 

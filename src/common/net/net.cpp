@@ -101,6 +101,18 @@ namespace common
             return !host_.empty() && port_ != 0;
         }
 
+        bool isLocalHost(const std::string& host)
+        {
+            if(host.empty()){
+                return false;
+            }
+
+            std::string lhost = host;
+            std::transform(lhost.begin(), lhost.end(), lhost.begin(), ::tolower);
+
+            return lhost == "localhost" || lhost == "127.0.0.1";
+        }
+
         int connect(const net::hostAndPort& from)
         {
             if(!from.isValid()){

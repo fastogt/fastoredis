@@ -96,7 +96,7 @@ namespace fastoredis
         }
         else if (type == static_cast<QEvent::Type>(ShutDownRequestEvent::EventType)){
             ShutDownRequestEvent *ev = static_cast<ShutDownRequestEvent*>(event);
-            shutdownEvent(ev);
+            handleShutdownEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ProcessConfigArgsRequestEvent::EventType)){
             ProcessConfigArgsRequestEvent *ev = static_cast<ProcessConfigArgsRequestEvent*>(event);
@@ -133,6 +133,14 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(ChangeServerPropertyInfoRequestEvent::EventType)){
             ChangeServerPropertyInfoRequestEvent *ev = static_cast<ChangeServerPropertyInfoRequestEvent*>(event);
             serverPropertyChangeEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(BackupRequestEvent::EventType)){
+            BackupRequestEvent *ev = static_cast<BackupRequestEvent*>(event);
+            handleBackupEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ExportRequestEvent::EventType)){
+            ExportRequestEvent *ev = static_cast<ExportRequestEvent*>(event);
+            handleExportEvent(ev);
         }
         return QObject::customEvent(event);
     }

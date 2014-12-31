@@ -41,6 +41,30 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
+        BackupInfoRequest::BackupInfoRequest(const std::string& path, const error_type &er)
+            : base_class(er), path_(path)
+        {
+
+        }
+
+        BackupInfoResponce::BackupInfoResponce(const base_class &request, const error_type &er)
+            : base_class(request)
+        {
+            base_class::errorInfo_ = er;
+        }
+
+        ExportInfoRequest::ExportInfoRequest(const std::string& path, const error_type& er)
+            : base_class(er), path_(path)
+        {
+
+        }
+
+        ExportInfoResponce::ExportInfoResponce(const base_class &request, const error_type& er)
+            : base_class(request)
+        {
+            base_class::errorInfo_ = er;
+        }
+
         ProcessConfigArgsInfoRequest::ProcessConfigArgsInfoRequest(const error_type &er)
             : base_class(er)
         {

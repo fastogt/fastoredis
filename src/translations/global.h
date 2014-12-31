@@ -9,6 +9,7 @@ namespace fastoredis
         const QString trfilterForScripts = QObject::tr("Text Files (*.txt); All Files (*.*)");
         const QString trfilterForPython = QObject::tr("Text Files (*.py); All Files (*.*)");
         const QString trfilterForAll = QObject::tr("All Files (*.*)");
+        const QString trfilterForRdb = QObject::tr("Redis database files (*.rdb)");
 
         const QString trLoad = QObject::tr("Load");
         const QString trOpen = QObject::tr("Open");

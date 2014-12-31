@@ -2,6 +2,8 @@
 
 #include <QObject>
 
+#include "common/net/net.h"
+
 #include "core/connection_settings.h"
 #include "core/events/events.h"
 
@@ -31,7 +33,7 @@ namespace fastoredis
         //sync
         virtual void interrupt() = 0;
         virtual bool isConnected() const = 0;
-        virtual std::string address() const = 0;
+        virtual common::net::hostAndPort address() const = 0;
         virtual std::string version() const = 0;
         virtual std::string outputDelemitr() const = 0;
 
@@ -62,7 +64,9 @@ namespace fastoredis
         virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent* ev) = 0;
         virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev) = 0;
         virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
-        virtual void shutdownEvent(Events::ShutDownRequestEvent* ev) = 0;
+        virtual void handleShutdownEvent(Events::ShutDownRequestEvent* ev) = 0;
+        virtual void handleBackupEvent(Events::BackupRequestEvent* ev) = 0;
+        virtual void handleExportEvent(Events::ExportRequestEvent* ev) = 0;
 
         const IConnectionSettingsBaseSPtr settings_;
 

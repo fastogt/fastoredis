@@ -90,12 +90,15 @@ namespace fastoredis
 
                 menu.addAction(historyServerAction_);
                 menu.addAction(closeAction_);
+
                 importAction_->setEnabled(!isCon);
                 menu.addAction(importAction_);
-                backupAction_->setEnabled(isCon);
+                bool isLocal = server->isLocalHost();
+                backupAction_->setEnabled(isCon && isLocal);
                 menu.addAction(backupAction_);
                 shutdownAction_->setEnabled(isCon);
                 menu.addAction(shutdownAction_);
+
                 menu.exec(menuPoint);
             }
             else if(node->type() == IExplorerTreeItem::Database){
@@ -313,9 +316,9 @@ namespace fastoredis
                 IServerSPtr server = node->server();
 
                 using namespace translations;
-                QString filepath = QFileDialog::getOpenFileName(this, trBackup, QString(), trfilterForAll);
+                QString filepath = QFileDialog::getOpenFileName(this, trBackup, QString(), trfilterForRdb);
                 if (!filepath.isEmpty()) {
-
+                    server->backupToPath(filepath);
                 }
             }
         }
@@ -327,15 +330,12 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                using namespace translations;
-                QString filepath = QFileDialog::getOpenFileName(this, trImport, QString(), trfilterForAll);
-                if (filepath.isEmpty()) {
-                    return;
-                }
-
                 IServerSPtr server = node->server();
-                if(server->isConnected()){
 
+                using namespace translations;
+                QString filepath = QFileDialog::getOpenFileName(this, trImport, QString(), trfilterForRdb);
+                if (filepath.isEmpty()) {
+                    server->exportFromPath(filepath);
                 }
             }
         }

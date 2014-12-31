@@ -47,6 +47,37 @@ namespace fastoredis
             ShutDownInfoResponce(const base_class &request, const error_type &er = error_type());
         };
 
+        struct BackupInfoRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            BackupInfoRequest(const std::string& path, const error_type &er = error_type());
+            std::string path_;
+        };
+
+        struct BackupInfoResponce
+                : EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            BackupInfoResponce(const base_class &request, const error_type &er = error_type());
+        };
+
+        struct ExportInfoRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ExportInfoRequest(const std::string& path, const error_type &er = error_type());
+            std::string path_;
+        };
+
+        struct ExportInfoResponce
+                : ExportInfoRequest
+        {
+            typedef ExportInfoRequest base_class;
+            ExportInfoResponce(const base_class &request, const error_type &er = error_type());
+        };
+
+
         struct ProcessConfigArgsInfoRequest
                 : public EventInfoBase
         {

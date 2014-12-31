@@ -1,3 +1,8 @@
+0.4.6
+[Alexandr Topilski]
+- Shutdown functionality
+- Backup/Import rdb files only localhost version
+
 0.4.5 / December 27, 2014
 [Alexandr Topilski]
 - Python embedded

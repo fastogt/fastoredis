@@ -17,6 +17,8 @@ namespace common
             bool isValid() const;
         };
 
+        bool isLocalHost(const std::string& host);
+
         int connect(const hostAndPort& from) WARN_UNUSED_RESULT;
         ssize_t write_to_socket(int fd, const buffer_type& data) WARN_UNUSED_RESULT;
         ssize_t read_from_socket(int fd, buffer_type& outData, uint16_t maxSize) WARN_UNUSED_RESULT;
