@@ -84,7 +84,7 @@
 //Replication
 #define REDIS_ROLE_LABEL "role"
 #define REDIS_CONNECTED_SLAVES_LABEL "connected_slaves"
-#define REDIS_REPL_OFFSET_LABEL "master_repl_offset"
+#define REDIS_MASTER_REPL_OFFSET_LABEL "master_repl_offset"
 #define REDIS_BACKLOG_ACTIVE_LABEL "repl_backlog_active"
 #define REDIS_BACKLOG_SIZE_LABEL "repl_backlog_size"
 #define REDIS_BACKLOG_FIRST_BYTE_OFFSET_LABEL "repl_backlog_first_byte_offset"
@@ -158,18 +158,18 @@ namespace fastoredis
 
     static const std::string redisPersistenceFields[] =
     {
-        REDIS_LOADING_LABEL,//
-        REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL,//
-        REDIS_RDB_DGSAVE_IN_PROGRESS_LABEL,//
-        REDIS_RDB_LAST_SAVE_TIME_LABEL,//
-        REDIS_RDB_LAST_DGSAVE_STATUS_LABEL,//
-        REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL,//
+        REDIS_LOADING_LABEL,
+        REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL,
+        REDIS_RDB_DGSAVE_IN_PROGRESS_LABEL,
+        REDIS_RDB_LAST_SAVE_TIME_LABEL,
+        REDIS_RDB_LAST_DGSAVE_STATUS_LABEL,
+        REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL,
         REDIS_RDB_CURRENT_DGSAVE_TIME_SEC_LABEL,
-        REDIS_AOF_ENABLED_LABEL,//
-        REDIS_AOF_REWRITE_IN_PROGRESS_LABEL,//
-        REDIS_AOF_REWRITE_SHEDULED_LABEL,//
-        REDIS_AOF_LAST_REWRITE_TIME_SEC_LABEL,//
-        REDIS_AOF_CURRENT_REWRITE_TIME_SEC_LABEL,//
+        REDIS_AOF_ENABLED_LABEL,
+        REDIS_AOF_REWRITE_IN_PROGRESS_LABEL,
+        REDIS_AOF_REWRITE_SHEDULED_LABEL,
+        REDIS_AOF_LAST_REWRITE_TIME_SEC_LABEL,
+        REDIS_AOF_CURRENT_REWRITE_TIME_SEC_LABEL,
         REDIS_AOF_LAST_DGREWRITE_STATUS_LABEL,
         REDIS_AOF_LAST_WRITE_STATUS_LABEL
     };
@@ -200,7 +200,7 @@ namespace fastoredis
     {
         REDIS_ROLE_LABEL,
         REDIS_CONNECTED_SLAVES_LABEL,
-        REDIS_REPL_OFFSET_LABEL,
+        REDIS_MASTER_REPL_OFFSET_LABEL,
         REDIS_BACKLOG_ACTIVE_LABEL,
         REDIS_BACKLOG_SIZE_LABEL,
         REDIS_BACKLOG_FIRST_BYTE_OFFSET_LABEL,
@@ -280,6 +280,7 @@ namespace fastoredis
             std::string redis_version_;
             std::string redis_git_sha1_;
             std::string redis_git_dirty_;
+            std::string redis_build_id_;//
             std::string redis_mode_;
             std::string os_;
             uint32_t arch_bits_;
@@ -290,6 +291,7 @@ namespace fastoredis
             uint32_t tcp_port_;
             uint32_t uptime_in_seconds_;
             uint32_t uptime_in_days_;
+            uint32_t hz_; //
             uint32_t lru_clock_;
         } server_;
 
@@ -343,6 +345,7 @@ namespace fastoredis
             int aof_last_rewrite_time_sec_;
             int aof_current_rewrite_time_sec_;
             std::string aof_last_bgrewrite_status_;
+            std::string aof_last_write_status_;//
         } persistence_;
 
         struct Stats
@@ -356,6 +359,9 @@ namespace fastoredis
             uint32_t total_commands_processed_;
             uint32_t instantaneous_ops_per_sec_;
             uint32_t rejected_connections_;
+            uint32_t sync_full_;//
+            uint32_t sync_partial_ok_;//
+            uint32_t sync_partial_err_;//
             uint32_t expired_keys_;
             uint32_t evicted_keys_;
             uint32_t keyspace_hits_;
@@ -374,6 +380,11 @@ namespace fastoredis
 
             std::string role_;
             uint32_t connected_slaves_;
+            uint32_t master_repl_offset_; //
+            uint32_t backlog_active_; //
+            uint32_t backlog_size_; //
+            uint32_t backlog_first_byte_offset_; //
+            uint32_t backlog_histen_; //
         } replication_;
 
         struct Cpu

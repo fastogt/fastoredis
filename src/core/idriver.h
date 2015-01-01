@@ -54,7 +54,7 @@ namespace fastoredis
 
     protected:
         virtual void initImpl() = 0;
-        virtual common::ErrorValueSPtr currentLoggingInfo(FastoObjectIPtr& outInfo) = 0;
+        virtual common::ErrorValueSPtr currentLoggingInfo(FastoObject* out) = 0;
 
         virtual void connectEvent(Events::ConnectRequestEvent* ev) = 0;
         virtual void disconnectEvent(Events::DisconnectRequestEvent* ev) = 0;

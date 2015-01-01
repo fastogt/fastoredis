@@ -221,15 +221,13 @@ namespace fastoredis
                 logFile_->open("ab+");
             }
             if(logFile_ && logFile_->isOpened()){
-                FastoObjectIPtr toFile;
-                common::ErrorValueSPtr er = currentLoggingInfo(toFile);
+                FastoObjectIPtr toFile = FastoObject::createRoot(createStamp());
+                common::ErrorValueSPtr er = currentLoggingInfo(toFile.get());
                 if(er && er->isError()){
                     QObject::timerEvent(event);
                     return;
                 }
 
-                common::StringValue* stamp = common::Value::createStringValue(createStamp());
-                toFile->parent()->changeValue(stamp);
                 std::string data = common::convertToString(toFile.get());
                 logFile_->write(data);
                 logFile_->flush();

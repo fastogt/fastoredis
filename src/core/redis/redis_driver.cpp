@@ -1518,12 +1518,9 @@ namespace fastoredis
 
     }
 
-    common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObjectIPtr& outInfo)
+    common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObject* out)
     {
-        RootLocker rl = make_locker(NULL, INFO_REQUEST);
-        FastoObjectIPtr outRoot = rl.root_;
-        outInfo = outRoot;
-        return impl_->execute(INFO_REQUEST, Command::InnerCommand, outRoot.get());
+        return impl_->execute(INFO_REQUEST, Command::InnerCommand, out);
     }
 
     void RedisDriver::connectEvent(Events::ConnectRequestEvent *ev)

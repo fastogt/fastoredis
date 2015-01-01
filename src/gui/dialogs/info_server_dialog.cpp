@@ -24,7 +24,8 @@ namespace
                                                   "Tcp port: %11<br/>"
                                                   "Uptime sec: %12<br/>"
                                                   "Uptime days: %13<br/>"
-                                                  "Lru clock: %14");
+                                                  "Hz: %14<br/>"
+                                                  "Lru clock: %15");
 
     const QString redisTextClientsTemplate = QObject::tr("<h2>Clients:</h2><br/>"
                                                          "Connected clients_: %1<br/>"
@@ -55,24 +56,33 @@ namespace
                                                   "Aof rewrite scheduled: %10<br/>"
                                                   "Aof last rewrite time sec: %11<br/>"
                                                   "Aof current rewrite time sec: %12<br/>"
-                                                  "Aof last bgrewrite status: %13");
+                                                  "Aof last bgrewrite status: %13<br/>"
+                                                  "Aof last write status: %14");
 
     const QString redisTextStatsTemplate = QObject::tr("<h2>Stats:</h2><br/>"
                                                   "Total connections received: %1<br/>"
                                                   "Total commands processed: %2<br/>"
                                                   "Instantaneous ops per sec: %3<br/>"
                                                   "Rejected connections: %4<br/>"
-                                                  "Expired keys: %5<br/>"
-                                                  "Evicted keys: %6<br/>"
-                                                  "Keyspace hits: %7<br/>"
-                                                  "Keyspace misses: %8<br/>"
-                                                  "Pubsub channels: %9<br/>"
-                                                  "Pubsub patterns: %10<br/>"
-                                                  "Latest fork usec: %11");
+                                                  "Sync full: %5<br/>"
+                                                  "Sync partial ok: %6<br/>"
+                                                  "Sync partial err: %7<br/>"
+                                                  "Expired keys: %8<br/>"
+                                                  "Evicted keys: %9<br/>"
+                                                  "Keyspace hits: %10<br/>"
+                                                  "Keyspace misses: %11<br/>"
+                                                  "Pubsub channels: %12<br/>"
+                                                  "Pubsub patterns: %13<br/>"
+                                                  "Latest fork usec: %14");
 
     const QString redisTextReplicationTemplate = QObject::tr("<h2>Replication:</h2><br/>"
-                                                  "Role: %1<br/>"
-                                                  "Connected slaves: %2");
+                                                   "Role: %1<br/>"
+                                                   "Connected slaves: %2<br/>"
+                                                   "Master reply offset: %3<br/>"
+                                                   "Backlog active: %4<br/>"
+                                                   "Backlog size: %5<br/>"
+                                                   "Backlog first byte offset: %6<br/>"
+                                                   "Backlog histen: %7");
 
     const QString redisTextCpuTemplate = QObject::tr("<h2>Cpu:</h2><br/>"
                                                          "Used cpu sys: %1<br/>"
@@ -143,6 +153,7 @@ namespace fastoredis
                 .arg(ser.tcp_port_)
                 .arg(ser.uptime_in_seconds_)
                 .arg(ser.uptime_in_days_)
+                .arg(ser.hz_)
                 .arg(ser.lru_clock_);
 
         RedisServerInfo::Clients cl = serv.clients_;
@@ -174,13 +185,17 @@ namespace fastoredis
                 .arg(per.aof_rewrite_scheduled_)
                 .arg(per.aof_last_rewrite_time_sec_)
                 .arg(per.aof_current_rewrite_time_sec_)
-                .arg(convertFromString<QString>(per.aof_last_bgrewrite_status_));
+                .arg(convertFromString<QString>(per.aof_last_bgrewrite_status_))
+                .arg(convertFromString<QString>(per.aof_last_write_status_));
 
         RedisServerInfo::Stats stat = serv.stats_;
         QString textStat = redisTextStatsTemplate.arg(stat.total_connections_received_)
                 .arg(stat.total_commands_processed_)
                 .arg(stat.instantaneous_ops_per_sec_)
                 .arg(stat.rejected_connections_)
+                .arg(stat.sync_full_)
+                .arg(stat.sync_partial_ok_)
+                .arg(stat.sync_partial_err_)
                 .arg(stat.expired_keys_)
                 .arg(stat.evicted_keys_)
                 .arg(stat.keyspace_hits_)
@@ -191,7 +206,12 @@ namespace fastoredis
 
         RedisServerInfo::Replication repl = serv.replication_;
         QString textRepl = redisTextReplicationTemplate.arg(convertFromString<QString>(repl.role_))
-                .arg(repl.connected_slaves_);
+                .arg(repl.connected_slaves_)
+                .arg(repl.master_repl_offset_)
+                .arg(repl.backlog_active_)
+                .arg(repl.backlog_size_)
+                .arg(repl.backlog_first_byte_offset_)
+                .arg(repl.backlog_histen_);
 
         RedisServerInfo::Cpu cpu = serv.cpu_;
         QString textCpu = redisTextCpuTemplate.arg(cpu.used_cpu_sys_)
