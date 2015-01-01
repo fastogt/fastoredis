@@ -22,6 +22,29 @@ namespace fastoredis
 
     typedef boost::shared_ptr<ServerInfo> ServerInfoSPtr;
 
+    struct ServerInfoSnapShoot
+    {
+        ServerInfoSnapShoot()
+            : msec_(0), info_()
+        {
+
+        }
+
+        ServerInfoSnapShoot(long long msec, ServerInfoSPtr info)
+            : msec_(msec), info_(info)
+        {
+
+        }
+
+        bool isValid() const
+        {
+            return msec_ > 0 && info_;
+        }
+
+        long long msec_;
+        ServerInfoSPtr info_;
+    };
+
     typedef std::pair<std::string, std::string> PropertyType;
 
     struct ServerPropertyInfo

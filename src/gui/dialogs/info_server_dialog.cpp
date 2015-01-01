@@ -101,7 +101,7 @@ namespace fastoredis
         setWindowTitle(title);
         serverTextInfo_ = new QLabel;
         hardwareTextInfo_ = new QLabel;
-        QHBoxLayout *mainL = new QHBoxLayout(this);
+        QHBoxLayout *mainL = new QHBoxLayout;
         mainL->addWidget(serverTextInfo_);
         mainL->addWidget(hardwareTextInfo_);
         setLayout(mainL);

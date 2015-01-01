@@ -291,6 +291,7 @@ namespace fastoredis
                 ServerHistoryDialog histDialog(server->name() + " history", server->connectionType(), this);
                 VERIFY(connect(server.get(), SIGNAL(startedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &)), &histDialog, SLOT(startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &))));
                 VERIFY(connect(server.get(), SIGNAL(finishedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &)), &histDialog, SLOT(finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &))));
+                VERIFY(connect(server.get(), SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), &histDialog, SLOT(snapShotAdd(ServerInfoSnapShoot ))));
                 VERIFY(connect(&histDialog, SIGNAL(showed()), server.get(), SLOT(requestHistoryInfo())));
                 histDialog.exec();
             }

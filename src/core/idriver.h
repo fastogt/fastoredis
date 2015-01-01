@@ -40,6 +40,7 @@ namespace fastoredis
     Q_SIGNALS:
         void addedChild(FastoObject* child);
         void itemUpdated(FastoObject* item, const QString& val);
+        void serverInfoSnapShoot(ServerInfoSnapShoot shot);
 
     private Q_SLOTS:
         void init();
@@ -102,9 +103,9 @@ namespace fastoredis
         virtual ServerInfoSPtr makeServerInfoFromString(const std::string& val) = 0;
         virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev) = 0;
 
-        QThread *thread_;
+        QThread* thread_;
         int timer_info_id_;
-        common::file_system::File* logFile_;
+        common::file_system::File* log_file_;
     };
 
     typedef boost::shared_ptr<IDriver> IDriverSPtr;

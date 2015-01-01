@@ -17,12 +17,12 @@ namespace fastoredis
         using namespace translations;
 
         setWindowTitle(title);
-        propertyes_table_ = new QTableView(this);
+        propertyes_table_ = new QTableView;
         PropertyTableModel *mod = new PropertyTableModel(propertyes_table_);
         VERIFY(connect(mod, SIGNAL(changedProperty(const PropertyType &)), this, SIGNAL(changedProperty(const PropertyType &))));
         propertyes_table_->setModel(mod);
 
-        QHBoxLayout *mainL = new QHBoxLayout(this);
+        QHBoxLayout *mainL = new QHBoxLayout;
         mainL->addWidget(propertyes_table_);
         setLayout(mainL);
 

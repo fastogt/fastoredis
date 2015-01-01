@@ -97,7 +97,7 @@ namespace fastoredis
         layout->addWidget(generalBox_);
         layout->addWidget(serverSettingsBox_);
 
-        QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
+        QDialogButtonBox *buttonBox = new QDialogButtonBox;
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));

@@ -33,9 +33,8 @@ struct WinsockInit {
 #endif
 
     const char magicNumber = 0x1E;
-    std::string createStamp()
+    std::string createStamp(long long time)
     {
-        long long time = common::time::current_mstime();
         return magicNumber + common::convertToString(time) + '\n';
     }
 
@@ -64,7 +63,7 @@ struct WinsockInit {
 namespace fastoredis
 {
     IDriver::IDriver(const IConnectionSettingsBaseSPtr &settings)
-        : settings_(settings), timer_info_id_(0), logFile_(NULL)
+        : settings_(settings), timer_info_id_(0), log_file_(NULL)
     {
         thread_ = new QThread(this);
         moveToThread(thread_);
@@ -74,8 +73,8 @@ namespace fastoredis
 
     IDriver::~IDriver()
     {
-        delete logFile_;
-        logFile_ = NULL;
+        delete log_file_;
+        log_file_ = NULL;
     }
 
     void IDriver::clear()
@@ -207,30 +206,40 @@ namespace fastoredis
     void IDriver::timerEvent(QTimerEvent* event)
     {
         if(timer_info_id_ == event->timerId() && isConnected() && settings_->loggingEnabled()){
-            if(!logFile_){
+            if(!log_file_){
                 std::string path = settings_->loggingPath();
                 std::string dir = common::file_system::get_dir_path(path);
                 common::file_system::create_directory(dir, true);
                 if(common::file_system::is_directory(dir) == SUCCESS){
                     common::file_system::Path p(path);
-                    logFile_ = new common::file_system::File(p);
+                    log_file_ = new common::file_system::File(p);
                 }
             }
 
-            if(logFile_ && !logFile_->isOpened()){
-                logFile_->open("ab+");
+            if(log_file_ && !log_file_->isOpened()){
+                log_file_->open("ab+");
             }
-            if(logFile_ && logFile_->isOpened()){
-                FastoObjectIPtr toFile = FastoObject::createRoot(createStamp());
-                common::ErrorValueSPtr er = currentLoggingInfo(toFile.get());
+            if(log_file_ && log_file_->isOpened()){
+                long long time = common::time::current_mstime();
+                FastoObjectIPtr toFile = FastoObject::createRoot(createStamp(time));
+                FastoObject* ptr = toFile.get();
+                common::ErrorValueSPtr er = currentLoggingInfo(ptr);
                 if(er && er->isError()){
                     QObject::timerEvent(event);
                     return;
                 }
 
-                std::string data = common::convertToString(toFile.get());
-                logFile_->write(data);
-                logFile_->flush();
+                std::string data = common::convertToString(ptr);
+
+                FastoObject::child_container_type ch = toFile->childrens();
+                if(ch.size()){
+                    std::string info = common::convertToString(ch[0]);
+                    ServerInfoSnapShoot shot(time, makeServerInfoFromString(info));
+                    emit serverInfoSnapShoot(shot);
+                }
+
+                log_file_->write(data);
+                log_file_->flush();
             }
         }
         QObject::timerEvent(event);
@@ -266,7 +275,7 @@ namespace fastoredis
                 bool res = readFile.readLine(data);
                 if(!res || readFile.isEof()){
                     if(curStamp){
-                        tmpInfos[curStamp] = makeServerInfoFromString(common::convertToString(dataInfo));
+                        tmpInfos.push_back(ServerInfoSnapShoot(curStamp, makeServerInfoFromString(common::convertToString(dataInfo))));
                     }
                     break;
                 }
@@ -275,7 +284,7 @@ namespace fastoredis
                 bool isSt = getStamp(data, tmpStamp);
                 if(isSt){
                     if(curStamp){
-                        tmpInfos[curStamp] = makeServerInfoFromString(common::convertToString(dataInfo));
+                        tmpInfos.push_back(ServerInfoSnapShoot(curStamp, makeServerInfoFromString(common::convertToString(dataInfo))));
                     }
                     curStamp = tmpStamp;
                     dataInfo.clear();

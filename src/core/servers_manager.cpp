@@ -9,7 +9,7 @@ namespace fastoredis
     ServersManager::ServersManager()
         : syncServers_(SettingsManager::instance().syncTabs())
     {
-
+        qRegisterMetaType<ServerInfoSnapShoot>("ServerInfoSnapShoot");
     }
 
     ServersManager::~ServersManager()

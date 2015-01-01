@@ -224,7 +224,7 @@ namespace fastoredis
                 : ServerInfoHistoryRequest
         {
             typedef ServerInfoHistoryRequest base_class;
-            typedef std::map<long long, ServerInfoSPtr > infos_container_type;
+            typedef std::vector<ServerInfoSnapShoot> infos_container_type;
             ServerInfoHistoryResponce(const base_class &request, const error_type &er = error_type());
 
             infos_container_type infos() const;

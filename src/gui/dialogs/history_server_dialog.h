@@ -24,6 +24,7 @@ namespace fastoredis
     public Q_SLOTS:
         void startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest& req);
         void finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce& res);
+        void snapShotAdd(ServerInfoSnapShoot snapshot);
 
     private Q_SLOTS:
         void refreshInfoFields(int index);
@@ -33,6 +34,7 @@ namespace fastoredis
         virtual void showEvent(QShowEvent* e);
 
     private:
+        void reset();
         QWidget* settingsGraph_;
         QComboBox* serverInfoGroupsNames_;
         QComboBox* serverInfoFields_;

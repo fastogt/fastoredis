@@ -46,6 +46,7 @@ namespace
 
         VERIFY(func(src, SIGNAL(addedChild(FastoObject *)), dsc, SIGNAL(addedChild(FastoObject *)), Qt::UniqueConnection));
         VERIFY(func(src, SIGNAL(itemUpdated(FastoObject*, const QString&)), dsc, SIGNAL(itemUpdated(FastoObject*, const QString&)), Qt::UniqueConnection));
+        VERIFY(func(src, SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), dsc, SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), Qt::UniqueConnection));
    }
 }
 
@@ -57,6 +58,7 @@ namespace fastoredis
         if(isMaster_){
             VERIFY(QObject::connect(drv_.get(), SIGNAL(addedChild(FastoObject *)), this, SIGNAL(addedChild(FastoObject *))));
             VERIFY(QObject::connect(drv_.get(), SIGNAL(itemUpdated(FastoObject*, const QString&)), this, SIGNAL(itemUpdated(FastoObject*, const QString&))));
+            VERIFY(QObject::connect(drv_.get(), SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), this, SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot ))));
         }
     }
 

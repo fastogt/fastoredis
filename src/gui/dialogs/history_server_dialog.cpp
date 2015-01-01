@@ -21,9 +21,9 @@ namespace fastoredis
 
         setWindowTitle(title);
 
-        graphWidget_ = new GraphWidget(this);
+        graphWidget_ = new GraphWidget;
         settingsGraph_ = new QWidget;
-        QHBoxLayout *mainL = new QHBoxLayout(this);
+        QHBoxLayout *mainL = new QHBoxLayout;
 
         QSplitter *splitter = new QSplitter;
         splitter->setOrientation(Qt::Horizontal);
@@ -69,7 +69,13 @@ namespace fastoredis
         if(type_ == REDIS){
             infos_ = res.infos();
         }
-        refreshGraph(0);
+        reset();
+    }
+
+    void ServerHistoryDialog::snapShotAdd(ServerInfoSnapShoot snapshot)
+    {
+        infos_.push_back(snapshot);
+        reset();
     }
 
     void ServerHistoryDialog::refreshInfoFields(int index)
@@ -87,6 +93,11 @@ namespace fastoredis
         }
     }
 
+    void ServerHistoryDialog::reset()
+    {
+        refreshGraph(serverInfoFields_->currentIndex());
+    }
+
     void ServerHistoryDialog::refreshGraph(int index)
     {
         if(index == -1){
@@ -99,11 +110,15 @@ namespace fastoredis
         GraphWidget::nodes_container_type nodes;
         for(EventsInfo::ServerInfoHistoryResponce::infos_container_type::iterator it = infos_.begin(); it != infos_.end(); ++it){
             EventsInfo::ServerInfoHistoryResponce::infos_container_type::value_type val = *it;
-            common::Value* value = val.second->valueByIndexes(serverIndex, indexIn); //allocate
+            if(!val.isValid()){
+                continue;
+            }
+
+            common::Value* value = val.info_->valueByIndexes(serverIndex, indexIn); //allocate
             if(value){
                 qreal graphY = 0.0f;
                 if(value->getAsDouble(&graphY)){
-                    nodes.push_back(std::make_pair(val.first, graphY));
+                    nodes.push_back(std::make_pair(val.msec_, graphY));
                 }
             }
             delete value;

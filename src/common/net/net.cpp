@@ -251,8 +251,12 @@ namespace common
 
     std::string convertToString(const net::hostAndPort& host)
     {
+        if(!host.isValid()){
+            return std::string();
+        }
+
         static const uint16_t size_buff = 512;
-        char buff[size_buff] = {0};
+        char buff[size_buff] = {0};        
         sprintf(buff, "%s:%d", host.host_.c_str(), host.port_);
         return buff;
     }
