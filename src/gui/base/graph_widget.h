@@ -54,11 +54,16 @@ namespace fastoredis
         void wheelEvent(QWheelEvent *event);
 
     private:
-        void update_rubber_band_region();
-        void draw_grid(QPainter *painter);
-        void draw_curves(QPainter *painter);
-        QRect get_paint_rect()const;
-        enum { margin = 50 };
+        void updateRubberBandRegion();
+        void drawGrid(QPainter *painter);
+        void drawCurves(QPainter *painter);
+        QRect paintRect()const;
+
+        enum
+        {
+            margin = 100
+        };
+
         static const Qt::GlobalColor grid_color = Qt::black, rubber_color = Qt::blue, line_color = Qt::red;
 
         std::vector<plot_settings> zoomStack;

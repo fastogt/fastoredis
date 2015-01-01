@@ -39,8 +39,8 @@ namespace common
     std::string convertToString(unsigned long value);
     std::string convertToString(long long value);
     std::string convertToString(unsigned long long value);
-    std::string convertToString(float value);
-    std::string convertToString(double value);
+    std::string convertToString(float value, int prec = 2);
+    std::string convertToString(double value, int prec = 2);
 
     template<typename T>
     T convertFromString16(const string16& from);

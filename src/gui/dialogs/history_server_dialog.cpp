@@ -69,6 +69,7 @@ namespace fastoredis
         if(type_ == REDIS){
             infos_ = res.infos();
         }
+        refreshGraph(0);
     }
 
     void ServerHistoryDialog::refreshInfoFields(int index)
@@ -96,8 +97,7 @@ namespace fastoredis
         QVariant var = serverInfoFields_->itemData(index);
         unsigned char indexIn = qvariant_cast<unsigned char>(var);
         GraphWidget::nodes_container_type nodes;
-        for(EventsInfo::ServerInfoHistoryResponce::infos_container_type::iterator it = infos_.begin(); it != infos_.end(); ++it)
-        {
+        for(EventsInfo::ServerInfoHistoryResponce::infos_container_type::iterator it = infos_.begin(); it != infos_.end(); ++it){
             EventsInfo::ServerInfoHistoryResponce::infos_container_type::value_type val = *it;
             common::Value* value = val.second->valueByIndexes(serverIndex, indexIn); //allocate
             if(value){

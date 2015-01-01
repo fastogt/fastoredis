@@ -6,6 +6,8 @@
 #include <QDateTime>
 #include <QWheelEvent>
 
+#include "common/qt/convert_string.h"
+
 namespace fastoredis
 {
     plot_settings::plot_settings(qreal min_x, qreal max_x, qreal min_y, qreal max_y, unsigned num_x_ticks, unsigned num_y_ticks)
@@ -132,13 +134,13 @@ namespace fastoredis
         }
     }
 
-    void GraphWidget::draw_grid(QPainter *painter)
+    void GraphWidget::drawGrid(QPainter *painter)
     {
         if(zoomStack.empty()){
             return;
         }
 
-        QRect rect = get_paint_rect();
+        QRect rect = paintRect();
         if (!rect.isValid()){
             return;
         }
@@ -158,18 +160,21 @@ namespace fastoredis
             qreal label = settings.min_y_ + (j * settings.span_y() / settings.num_y_ticks_);
             painter->drawLine(rect.left(), y, rect.right(), y);
             painter->drawLine(rect.left() - 5, y, rect.left(), y);
-            painter->drawText(rect.left() - margin, y - 10, margin - 5, 20, Qt::AlignRight | Qt::AlignVCenter, QString::number(label));
+
+            std::string slabel = common::convertToString(label);
+            QString numb = common::convertFromString<QString>(slabel);
+            painter->drawText(rect.left() - margin, y - 10, margin - 5, 20, Qt::AlignRight | Qt::AlignVCenter, numb);
         }
         painter->drawRect(rect.adjusted(0, 0, -1, -1));
     }
 
-    void GraphWidget::draw_curves(QPainter *painter)
+    void GraphWidget::drawCurves(QPainter *painter)
     {
         if(zoomStack.empty()){
             return;
         }
 
-        QRect rect = get_paint_rect();
+        QRect rect = paintRect();
 
         if (!rect.isValid()){
             return;
@@ -193,7 +198,7 @@ namespace fastoredis
         painter->drawPolyline(polyline);
     }
 
-    void GraphWidget::update_rubber_band_region()
+    void GraphWidget::updateRubberBandRegion()
     {
         QRect rect = rubber_band_rect_.normalized();
         update(rect.left(), rect.top(), rect.width(), 1);
@@ -256,7 +261,7 @@ namespace fastoredis
 
         if ((event->button() == Qt::LeftButton) && rubber_band_is_shown_){
             rubber_band_is_shown_ = false;
-            update_rubber_band_region();
+            updateRubberBandRegion();
             unsetCursor();
 
             QRect rect = rubber_band_rect_.normalized();
@@ -279,9 +284,9 @@ namespace fastoredis
     void GraphWidget::mouseMoveEvent(QMouseEvent *event)
     {
         if (rubber_band_is_shown_){
-            update_rubber_band_region();
+            updateRubberBandRegion();
             rubber_band_rect_.setBottomRight(event->pos());
-            update_rubber_band_region();
+            updateRubberBandRegion();
         }
 
         //QWidget::mouseMoveEvent(event);
@@ -294,11 +299,11 @@ namespace fastoredis
         }
 
         if (event->button() == Qt::LeftButton){
-            if (get_paint_rect().contains(event->pos())){
+            if (paintRect().contains(event->pos())){
                 rubber_band_is_shown_ = true;
                 rubber_band_rect_.setTopLeft(event->pos());
                 rubber_band_rect_.setBottomRight(event->pos());
-                update_rubber_band_region();
+                updateRubberBandRegion();
                 setCursor(Qt::CrossCursor);
             }
         }
@@ -313,11 +318,11 @@ namespace fastoredis
         }
 
         QPainter painter(this);
-        draw_grid(&painter);
-        draw_curves(&painter);
+        drawGrid(&painter);
+        drawCurves(&painter);
     }
 
-    QRect GraphWidget::get_paint_rect()const
+    QRect GraphWidget::paintRect()const
     {
         return QRect(margin, margin, width() - 2 * margin, height() - 2 * margin);
     }

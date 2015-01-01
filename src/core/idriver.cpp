@@ -36,7 +36,7 @@ struct WinsockInit {
     std::string createStamp()
     {
         long long time = common::time::current_mstime();
-        return magicNumber + common::convertToString(time);
+        return magicNumber + common::convertToString(time) + '\n';
     }
 
     bool getStamp(const common::buffer_type& stamp, long long& timeOut)
