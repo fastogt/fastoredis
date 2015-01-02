@@ -258,7 +258,7 @@ namespace fastoredis
         QEvent::Type type = event->type();
         if (type == static_cast<QEvent::Type>(ConnectResponceEvent::EventType)){
             ConnectResponceEvent *ev = static_cast<ConnectResponceEvent*>(event);
-            connectEvent(ev);
+            handleConnectEvent(ev);
 
             ConnectResponceEvent::value_type v = ev->value();
             common::ErrorValueSPtr er(v.errorInfo());
@@ -291,20 +291,20 @@ namespace fastoredis
         else if(type == static_cast<QEvent::Type>(DisconnectResponceEvent::EventType))
         {
             DisconnectResponceEvent *ev = static_cast<DisconnectResponceEvent*>(event);
-            disconnectEvent(ev);
+            handleDisconnectEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(LoadDatabasesInfoResponceEvent::EventType))
         {
             LoadDatabasesInfoResponceEvent *ev = static_cast<LoadDatabasesInfoResponceEvent*>(event);
-            loadDatabaseInfosEvent(ev);
+            handleLoadDatabaseInfosEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(LoadDatabaseContentResponceEvent::EventType)){
             LoadDatabaseContentResponceEvent *ev = static_cast<LoadDatabaseContentResponceEvent*>(event);
-            loadDatabaseContentEvent(ev);
+            handleLoadDatabaseContentEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ServerInfoResponceEvent::EventType)){
             ServerInfoResponceEvent *ev = static_cast<ServerInfoResponceEvent*>(event);
-            loadServerInfoEvent(ev);
+            handleLoadServerInfoEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ServerInfoHistoryResponceEvent::EventType)){
             ServerInfoHistoryResponceEvent *ev = static_cast<ServerInfoHistoryResponceEvent*>(event);
@@ -312,11 +312,11 @@ namespace fastoredis
         }
         else if (type == static_cast<QEvent::Type>(ServerPropertyInfoResponceEvent::EventType)){
             ServerPropertyInfoResponceEvent *ev = static_cast<ServerPropertyInfoResponceEvent*>(event);
-            loadServerPropertyEvent(ev);
+            handleLoadServerPropertyEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ChangeServerPropertyInfoResponceEvent::EventType)){
             ChangeServerPropertyInfoResponceEvent *ev = static_cast<ChangeServerPropertyInfoResponceEvent*>(event);
-            serverPropertyChangeEvent(ev);
+            handleServerPropertyChangeEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(BackupResponceEvent::EventType)){
             BackupResponceEvent *ev = static_cast<BackupResponceEvent*>(event);

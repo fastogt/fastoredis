@@ -55,6 +55,7 @@ namespace fastoredis
         logging_->setChecked(connection_->loggingEnabled());
 
         commandLine_ = new QLineEdit;
+        commandLine_->setMinimumWidth(240);
         commandLine_->setText(stableCommandLine(common::convertFromString<QString>(connection_->commandLine())));
 
         QVBoxLayout *inputLayout = new QVBoxLayout;
@@ -62,10 +63,6 @@ namespace fastoredis
         inputLayout->addWidget(typeConnection_);
         inputLayout->addWidget(logging_);
         inputLayout->addWidget(commandLine_);
-
-        testButton_ = new QPushButton;
-        testButton_->setIcon(GuiFactory::instance().messageBoxInformationIcon());
-        VERIFY(connect(testButton_, SIGNAL(clicked()), this, SLOT(testConnection())));
 
         SSHInfo info = connection_->sshInfo();
         useSsh_ = new QCheckBox;
@@ -149,19 +146,16 @@ namespace fastoredis
         VERIFY(connect(selectPrivateFileButton_, SIGNAL(clicked()), this, SLOT(setPrivateFile())));
         VERIFY(connect(useSsh_, SIGNAL(stateChanged(int)), this, SLOT(sshSupportStateChange(int))));
 
-        QHBoxLayout *bottomLayout = new QHBoxLayout;
-        bottomLayout->addWidget(testButton_, 1, Qt::AlignLeft);
         buttonBox_ = new QDialogButtonBox(this);
         buttonBox_->setOrientation(Qt::Horizontal);
         buttonBox_->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
         VERIFY(connect(buttonBox_, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(buttonBox_, SIGNAL(rejected()), this, SLOT(reject())));
-        bottomLayout->addWidget(buttonBox_);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addLayout(inputLayout);
         mainLayout->addWidget(useSshWidget_);
-        mainLayout->addLayout(bottomLayout);
+        mainLayout->addWidget(buttonBox_);
         mainLayout->setSizeConstraint(QLayout::SetFixedSize);
         setLayout(mainLayout);
 
@@ -304,7 +298,6 @@ namespace fastoredis
         connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(value));
         bool isValidType = currentType != badConnectionType();
         connectionName_->setEnabled(isValidType);
-        testButton_->setEnabled(isValidType);
         commandLine_->setEnabled(isValidType);
         buttonBox_->button(QDialogButtonBox::Save)->setEnabled(isValidType);
 
@@ -320,14 +313,6 @@ namespace fastoredis
         return true;
     }
 
-    void ConnectionDialog::testConnection()
-    {
-        if(validateAndApply()){
-           // ConnectionDiagnosticDialog diag(_connection,this);
-           // diag.exec();
-        }
-    }
-
     void ConnectionDialog::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
@@ -340,7 +325,6 @@ namespace fastoredis
     {
         setWindowTitle(tr("Connection Settings"));
         logging_->setText(tr("Logging enabled"));
-        testButton_->setText(tr("&Test"));
         useSsh_->setText(tr("Use SSH tunnel"));
         passwordLabel_->setText(tr("User Password:"));
         sshPrivateKeyLabel_->setText(tr("Private key:"));

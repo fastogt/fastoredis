@@ -25,7 +25,6 @@ namespace fastoredis
         virtual void accept();
 
     private Q_SLOTS:
-        void testConnection();
         void typeConnectionChange(const QString& value);
         void securityChange(const QString& val);
         void sshSupportStateChange(int value);
@@ -48,7 +47,6 @@ namespace fastoredis
         QCheckBox* logging_;
         QLineEdit* commandLine_;
 
-        QPushButton *testButton_;
         QDialogButtonBox *buttonBox_;
 
         QCheckBox* useSsh_;

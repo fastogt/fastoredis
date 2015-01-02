@@ -102,13 +102,13 @@ namespace fastoredis
         void notify(QEvent* ev);
         virtual void customEvent(QEvent* event);
 
-        virtual void connectEvent(Events::ConnectResponceEvent* ev) = 0;
-        virtual void disconnectEvent(Events::DisconnectResponceEvent* ev) = 0;
-        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent* ev) = 0;
-        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent* ev) = 0;
-        virtual void loadServerInfoEvent(Events::ServerInfoResponceEvent* ev) = 0;
-        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev) = 0;
-        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
+        virtual void handleConnectEvent(Events::ConnectResponceEvent* ev) = 0;
+        virtual void handleDisconnectEvent(Events::DisconnectResponceEvent* ev) = 0;
+        virtual void handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent* ev) = 0;
+        virtual void handleLoadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent* ev) = 0;
+        virtual void handleLoadServerInfoEvent(Events::ServerInfoResponceEvent* ev) = 0;
+        virtual void handleLoadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev) = 0;
+        virtual void handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
         virtual void handleShutdownEvent(Events::ShutDownResponceEvent* ev) = 0;
         virtual void handleBackupEvent(Events::BackupResponceEvent* ev) = 0;
         virtual void handleExportEvent(Events::ExportResponceEvent* ev) = 0;

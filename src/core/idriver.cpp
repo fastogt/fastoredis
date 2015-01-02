@@ -91,7 +91,7 @@ namespace fastoredis
         QEvent::Type type = event->type();
         if (type == static_cast<QEvent::Type>(ConnectRequestEvent::EventType)){            
             ConnectRequestEvent *ev = static_cast<ConnectRequestEvent*>(event);
-            connectEvent(ev);
+            handleConnectEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ShutDownRequestEvent::EventType)){
             ShutDownRequestEvent *ev = static_cast<ShutDownRequestEvent*>(event);
@@ -99,39 +99,39 @@ namespace fastoredis
         }
         else if (type == static_cast<QEvent::Type>(ProcessConfigArgsRequestEvent::EventType)){
             ProcessConfigArgsRequestEvent *ev = static_cast<ProcessConfigArgsRequestEvent*>(event);
-            processCommandLineArgs(ev);
+            handleProcessCommandLineArgs(ev);
         }
         else if (type == static_cast<QEvent::Type>(DisconnectRequestEvent::EventType)){
             DisconnectRequestEvent *ev = static_cast<DisconnectRequestEvent*>(event);
-            disconnectEvent(ev);
+            handleDisconnectEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ExecuteRequestEvent::EventType)){
             ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);
-            executeEvent(ev);
+            handleExecuteEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(LoadDatabasesInfoRequestEvent::EventType)){
             LoadDatabasesInfoRequestEvent *ev = static_cast<LoadDatabasesInfoRequestEvent*>(event);
-            loadDatabaseInfosEvent(ev);
+            handleLoadDatabaseInfosEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(LoadDatabaseContentRequestEvent::EventType)){
             LoadDatabaseContentRequestEvent *ev = static_cast<LoadDatabaseContentRequestEvent*>(event);
-            loadDatabaseContentEvent(ev);
+            handleLoadDatabaseContentEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ServerInfoRequestEvent::EventType)){
             ServerInfoRequestEvent *ev = static_cast<ServerInfoRequestEvent*>(event);
-            loadServerInfoEvent(ev);
+            handleLoadServerInfoEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ServerInfoHistoryRequestEvent::EventType)){
             ServerInfoHistoryRequestEvent *ev = static_cast<ServerInfoHistoryRequestEvent*>(event);
-            loadServerInfoHistoryEvent(ev);
+            handleLoadServerInfoHistoryEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ServerPropertyInfoRequestEvent::EventType)){
             ServerPropertyInfoRequestEvent *ev = static_cast<ServerPropertyInfoRequestEvent*>(event);
-            loadServerPropertyEvent(ev);
+            handleLoadServerPropertyEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ChangeServerPropertyInfoRequestEvent::EventType)){
             ChangeServerPropertyInfoRequestEvent *ev = static_cast<ChangeServerPropertyInfoRequestEvent*>(event);
-            serverPropertyChangeEvent(ev);
+            handleServerPropertyChangeEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(BackupRequestEvent::EventType)){
             BackupRequestEvent *ev = static_cast<BackupRequestEvent*>(event);
@@ -255,7 +255,7 @@ namespace fastoredis
         return settings_;
     }
 
-    void IDriver::loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev)
+    void IDriver::handleLoadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         Events::ServerInfoHistoryResponceEvent::value_type res(ev->value());        

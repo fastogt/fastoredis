@@ -1523,7 +1523,7 @@ namespace fastoredis
         return impl_->execute(INFO_REQUEST, Command::InnerCommand, out);
     }
 
-    void RedisDriver::connectEvent(Events::ConnectRequestEvent *ev)
+    void RedisDriver::handleConnectEvent(Events::ConnectRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
@@ -1550,7 +1550,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev)
+    void RedisDriver::handleProcessCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev)
     {
         /* Latency mode */
         if (impl_->config.latency_mode) {
@@ -1801,7 +1801,7 @@ namespace fastoredis
         return er;
     }
 
-    void RedisDriver::executeEvent(Events::ExecuteRequestEvent *ev)
+    void RedisDriver::handleExecuteEvent(Events::ExecuteRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
@@ -1849,7 +1849,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::disconnectEvent(Events::DisconnectRequestEvent *ev)
+    void RedisDriver::handleDisconnectEvent(Events::DisconnectRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
@@ -1865,7 +1865,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev)
+    void RedisDriver::handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev)
     {
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
@@ -1899,7 +1899,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev)
+    void RedisDriver::handleLoadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
@@ -1909,7 +1909,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadServerInfoEvent(Events::ServerInfoRequestEvent *ev)
+    void RedisDriver::handleLoadServerInfoEvent(Events::ServerInfoRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
@@ -1932,7 +1932,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev)
+    void RedisDriver::handleLoadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
@@ -1958,7 +1958,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev)
+    void RedisDriver::handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);

@@ -57,14 +57,14 @@ namespace fastoredis
         virtual void initImpl() = 0;
         virtual common::ErrorValueSPtr currentLoggingInfo(FastoObject* out) = 0;
 
-        virtual void connectEvent(Events::ConnectRequestEvent* ev) = 0;
-        virtual void disconnectEvent(Events::DisconnectRequestEvent* ev) = 0;
-        virtual void executeEvent(Events::ExecuteRequestEvent* ev) = 0;
-        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev) = 0;
-        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent* ev) = 0;
-        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent* ev) = 0;
-        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev) = 0;
-        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
+        virtual void handleConnectEvent(Events::ConnectRequestEvent* ev) = 0;
+        virtual void handleDisconnectEvent(Events::DisconnectRequestEvent* ev) = 0;
+        virtual void handleExecuteEvent(Events::ExecuteRequestEvent* ev) = 0;
+        virtual void handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev) = 0;
+        virtual void handleLoadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent* ev) = 0;
+        virtual void handleLoadServerInfoEvent(Events::ServerInfoRequestEvent* ev) = 0;
+        virtual void handleLoadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev) = 0;
+        virtual void handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
         virtual void handleShutdownEvent(Events::ShutDownRequestEvent* ev) = 0;
         virtual void handleBackupEvent(Events::BackupRequestEvent* ev) = 0;
         virtual void handleExportEvent(Events::ExportRequestEvent* ev) = 0;
@@ -95,13 +95,13 @@ namespace fastoredis
         FastoObjectIPtr createRoot(QObject* reciver, const std::string& text);
         void compleateRoot(QObject* reciver, FastoObjectIPtr root);
 
-        void loadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev);
+        void handleLoadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev);
 
         virtual void addedChildren(FastoObject *child);
         virtual void updated(FastoObject* item, common::Value* val);
 
         virtual ServerInfoSPtr makeServerInfoFromString(const std::string& val) = 0;
-        virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev) = 0;
+        virtual void handleProcessCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev) = 0;
 
         QThread* thread_;
         int timer_info_id_;

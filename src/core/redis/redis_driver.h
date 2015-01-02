@@ -29,15 +29,15 @@ namespace fastoredis
         virtual void initImpl();
         virtual common::ErrorValueSPtr currentLoggingInfo(FastoObject *out);
 
-        virtual void connectEvent(Events::ConnectRequestEvent* ev);
-        virtual void disconnectEvent(Events::DisconnectRequestEvent* ev);
-        virtual void executeEvent(Events::ExecuteRequestEvent* ev);
-        virtual void loadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev);
-        virtual void loadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent* ev);
-        virtual void loadServerInfoEvent(Events::ServerInfoRequestEvent* ev);
-        virtual void loadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev);
-        virtual void serverPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev);
-        virtual void processCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev);
+        virtual void handleConnectEvent(Events::ConnectRequestEvent* ev);
+        virtual void handleDisconnectEvent(Events::DisconnectRequestEvent* ev);
+        virtual void handleExecuteEvent(Events::ExecuteRequestEvent* ev);
+        virtual void handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev);
+        virtual void handleLoadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent* ev);
+        virtual void handleLoadServerInfoEvent(Events::ServerInfoRequestEvent* ev);
+        virtual void handleLoadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev);
+        virtual void handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev);
+        virtual void handleProcessCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev);
         virtual void handleShutdownEvent(Events::ShutDownRequestEvent* ev);
         virtual void handleBackupEvent(Events::BackupRequestEvent* ev);
         virtual void handleExportEvent(Events::ExportRequestEvent* ev);

@@ -20,7 +20,7 @@ namespace fastoredis
         IServer::unSyncServers(src, this);
     }
 
-    void RedisServer::connectEvent(Events::ConnectResponceEvent* ev)
+    void RedisServer::handleConnectEvent(Events::ConnectResponceEvent* ev)
     {
         using namespace Events;
         ConnectResponceEvent::value_type v = ev->value();
@@ -31,7 +31,7 @@ namespace fastoredis
         emit finishedConnect(v);
     }
 
-    void RedisServer::disconnectEvent(Events::DisconnectResponceEvent* ev)
+    void RedisServer::handleDisconnectEvent(Events::DisconnectResponceEvent* ev)
     {
         using namespace Events;
         DisconnectResponceEvent::value_type v = ev->value();
@@ -42,7 +42,7 @@ namespace fastoredis
         emit finishedDisconnect(v);
     }
 
-    void RedisServer::loadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent* ev)
+    void RedisServer::handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent* ev)
     {
         using namespace Events;
         LoadDatabasesInfoResponceEvent::value_type v = ev->value();
@@ -53,7 +53,7 @@ namespace fastoredis
         emit finishedLoadDatabases(v);
     }
 
-    void RedisServer::loadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent* ev)
+    void RedisServer::handleLoadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent* ev)
     {
         using namespace Events;
         LoadDatabaseContentResponceEvent::value_type v = ev->value();
@@ -64,7 +64,7 @@ namespace fastoredis
         emit finishedLoadDataBaseContent(v);
     }
 
-    void RedisServer::loadServerInfoEvent(Events::ServerInfoResponceEvent* ev)
+    void RedisServer::handleLoadServerInfoEvent(Events::ServerInfoResponceEvent* ev)
     {
         using namespace Events;
         ServerInfoResponceEvent::value_type v = ev->value();
@@ -75,7 +75,7 @@ namespace fastoredis
         emit finishedLoadServerInfo(v);
     }
 
-    void RedisServer::loadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev)
+    void RedisServer::handleLoadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev)
     {
         using namespace Events;
         ServerPropertyInfoResponceEvent::value_type v = ev->value();
@@ -86,7 +86,7 @@ namespace fastoredis
         emit finishedLoadServerProperty(v);
     }
 
-    void RedisServer::serverPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev)
+    void RedisServer::handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev)
     {
         using namespace Events;
         ChangeServerPropertyInfoResponceEvent::value_type v = ev->value();
