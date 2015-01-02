@@ -10,7 +10,7 @@ namespace common
 {
     namespace boost_extension
     {
-        template<class T,typename refcount_t = boost::atomic_uchar>
+        template<class T, typename refcount_t = boost::atomic_uchar>
         struct intrusive_ptr_base
         {
             typedef refcount_t refcount_type;

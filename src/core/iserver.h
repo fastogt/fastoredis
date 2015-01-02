@@ -118,7 +118,7 @@ namespace fastoredis
         const IDriverSPtr drv_;
 
     private:
-        void loadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent* ev);
+        void handleLoadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent* ev);
         void processConfigArgs();
         bool isMaster_;
     };

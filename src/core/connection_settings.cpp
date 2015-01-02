@@ -111,6 +111,11 @@ namespace fastoredis
         logging_enabled_ = isLogging;
     }
 
+    int IConnectionSettingsBase::loggingMsTimeInterval() const
+    {
+        return 60000;
+    }
+
     SSHInfo IConnectionSettingsBase::sshInfo() const
     {
         return sshInfo_;

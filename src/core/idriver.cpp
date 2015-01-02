@@ -198,7 +198,8 @@ namespace fastoredis
 
     void IDriver::init()
     {
-        timer_info_id_ = startTimer(60000);
+        int interval = settings_->loggingMsTimeInterval();
+        timer_info_id_ = startTimer(interval);
         DCHECK(timer_info_id_);
         initImpl();
     }

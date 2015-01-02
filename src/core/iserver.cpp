@@ -199,7 +199,7 @@ namespace fastoredis
         notify(ev);
     }
 
-    void IServer::loadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent *ev)
+    void IServer::handleLoadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent *ev)
     {
         using namespace Events;
         ServerInfoHistoryResponceEvent::value_type v = ev->value();
@@ -308,7 +308,7 @@ namespace fastoredis
         }
         else if (type == static_cast<QEvent::Type>(ServerInfoHistoryResponceEvent::EventType)){
             ServerInfoHistoryResponceEvent *ev = static_cast<ServerInfoHistoryResponceEvent*>(event);
-            loadServerInfoHistoryEvent(ev);
+            handleLoadServerInfoHistoryEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ServerPropertyInfoResponceEvent::EventType)){
             ServerPropertyInfoResponceEvent *ev = static_cast<ServerPropertyInfoResponceEvent*>(event);

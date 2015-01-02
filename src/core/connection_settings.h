@@ -37,6 +37,8 @@ namespace fastoredis
         bool loggingEnabled() const;
         void setLoggingEnabled(bool isLogging);
 
+        int loggingMsTimeInterval() const;
+
         SSHInfo sshInfo() const;
         void setSshInfo(const SSHInfo& info);
 

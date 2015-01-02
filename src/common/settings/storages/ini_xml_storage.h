@@ -21,7 +21,7 @@ namespace common
             struct load_funct
             {
                 load_funct(const Ptree& set)
-                    :set_(set)
+                    : set_(set)
                 {
 
                 }
@@ -42,7 +42,7 @@ namespace common
             struct save_funct
             {
                 save_funct(Ptree& set)
-                    :set_(set)
+                    : set_(set)
                 {
 
                 }
