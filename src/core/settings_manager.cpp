@@ -2,17 +2,12 @@
 
 #include <QSettings>
 
-#include <boost/archive/iterators/binary_from_base64.hpp>
-#include <boost/archive/iterators/base64_from_binary.hpp>
-#include <boost/archive/iterators/transform_width.hpp>
-#include <boost/archive/iterators/remove_whitespace.hpp>
-#include <boost/archive/iterators/insert_linebreaks.hpp>
-
 #include "translations/translations.h"
 #include "gui/app_style.h"
 
 #include "common/file_system.h"
 #include "common/qt/convert_string.h"
+#include "common/utils.h"
 
 #ifdef OS_WIN
 #define PYTHON_EXE "python.exe"
@@ -45,22 +40,6 @@ namespace
 
         return std::string();
     }
-
-    std::string encode_base64(const std::string& val)
-    {
-        using namespace boost::archive::iterators;
-        typedef transform_width< binary_from_base64<remove_whitespace<std::string::const_iterator> >,8,6 > binary_text;
-        std::string enc( binary_text(val.begin()), binary_text(val.end()));
-        return enc;
-    }
-
-    std::string decode_base64(const std::string& val)
-    {
-        using namespace boost::archive::iterators;
-        typedef insert_linebreaks<base64_from_binary<transform_width<std::string::const_iterator,6,8> >, 512 > base64_text;
-        std::string dec( base64_text(val.begin()), base64_text(val.end()));
-        return dec;
-    }
 }
 
 
@@ -89,7 +68,7 @@ namespace fastoredis
             QVariant var = *it;
             QString string = var.toString();
             std::string encoded = common::convertToString(string);
-            std::string raw = encode_base64(encoded);
+            std::string raw = common::utils::base64::decode64(encoded);
 
             IConnectionSettingsBaseSPtr sett(IConnectionSettingsBase::fromString(raw));
             if(sett){
@@ -119,8 +98,8 @@ namespace fastoredis
             IConnectionSettingsBaseSPtr conn = *it;
             if(conn){
                std::string raw = conn->toString();
-               std::string decoded = decode_base64(raw);
-               QString qdata = common::convertFromString<QString>(decoded);
+               std::string enc = common::utils::base64::encode64(raw);
+               QString qdata = common::convertFromString<QString>(enc);
                connections.push_back(qdata);
             }
         }

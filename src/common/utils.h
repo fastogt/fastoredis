@@ -199,6 +199,14 @@ namespace common
             }
         }
 
+        namespace base64
+        {
+            std::string encode64(const std::string& input);
+            std::string decode64(const std::string& input);
+            buffer_type encode64(const buffer_type& input);
+            buffer_type decode64(const buffer_type& input);
+        }
+
         void msleep(unsigned int msec);
         void usleep(unsigned int usec);
 

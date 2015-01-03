@@ -153,6 +153,112 @@ namespace
         UINT64_C(0xa6df411fbfb21ca3), UINT64_C(0xdc0731d78f8795da),
         UINT64_C(0x536fa08fdfd90e51), UINT64_C(0x29b7d047efec8728),
     };
+
+    const std::string alphabet64( "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" );
+        const char pad = '=';
+        const char np  = (char)std::string::npos;
+        char table64vals[] =
+        {
+            62, np, np, np, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, np, np, np, np, np,
+            np, np,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23, 24, 25, np, np, np, np, np, np, 26, 27, 28, 29, 30, 31,
+            32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
+        };
+
+        char table64(unsigned char c)
+        {
+            return ( c < 43 || c > 122 ) ? np : table64vals[c-43];
+        }
+
+        template<typename T>
+        T encode64_impl(const T& input)
+        {
+            T encoded;
+            typedef typename T::value_type value_type;
+            value_type c;
+            const typename T::size_type length = input.length();
+
+            encoded.reserve( length * 2 );
+
+            for( typename T::size_type i = 0; i < length; ++i )
+            {
+                c = static_cast<value_type>( ( input[i] >> 2 ) & 0x3f );
+                encoded += alphabet64[c];
+
+                c = static_cast<value_type>( ( input[i] << 4 ) & 0x3f );
+                if( ++i < length )
+                c = static_cast<value_type>( c | static_cast<value_type>( ( input[i] >> 4 ) & 0x0f ) );
+                encoded += alphabet64[c];
+
+                if( i < length )
+                {
+                    c = static_cast<value_type>( ( input[i] << 2 ) & 0x3c );
+                    if( ++i < length )
+                    c = static_cast<value_type>( c | static_cast<value_type>( ( input[i] >> 6 ) & 0x03 ) );
+                    encoded += alphabet64[c];
+                }
+                else
+                {
+                    ++i;
+                    encoded += pad;
+                }
+
+                if( i < length )
+                {
+                    c = static_cast<value_type>( input[i] & 0x3f );
+                    encoded += alphabet64[c];
+                }
+                else
+                {
+                    encoded += pad;
+                }
+            }
+
+            return encoded;
+        }
+
+        template<typename T>
+        T decode64_impl(const T& input)
+        {
+            typedef typename T::value_type value_type;
+            value_type c, d;
+            const typename T::size_type length = input.length();
+            T decoded;
+
+            decoded.reserve( length );
+
+            for( typename T::size_type i = 0; i < length; ++i )
+            {
+                c = table64(input[i]);
+                ++i;
+                d = table64(input[i]);
+                c = static_cast<value_type>( ( c << 2 ) | ( ( d >> 4 ) & 0x3 ) );
+                decoded += c;
+                if( ++i < length )
+                {
+                    c = input[i];
+                    if( pad == c )
+                    break;
+
+                    c = table64(input[i]);
+                    d = static_cast<value_type>( ( ( d << 4 ) & 0xf0 ) | ( ( c >> 2 ) & 0xf ) );
+                    decoded += d;
+                }
+
+                if( ++i < length )
+                {
+                    d = input[i];
+                    if( pad == d )
+                    break;
+
+                    d = table64(input[i]);
+                    c = static_cast<value_type>( ( ( c << 6 ) & 0xc0 ) | d );
+                    decoded += c;
+                }
+            }
+
+            return decoded;
+        }
 }
 
 namespace common
@@ -174,6 +280,29 @@ namespace common
             uint64_t crc64(uint64_t crc, const buffer_type& data)
             {
                 return crc64(crc, data.c_str(), data.length());
+            }
+        }
+
+        namespace base64
+        {
+            std::string encode64(const std::string& input)
+            {
+                return encode64_impl(input);
+            }
+
+            std::string decode64(const std::string& input)
+            {
+                return decode64_impl(input);
+            }
+
+            buffer_type encode64(const buffer_type& input)
+            {
+                return encode64_impl(input);
+            }
+
+            buffer_type decode64(const buffer_type& input )
+            {
+                return decode64_impl(input);
             }
         }
 
