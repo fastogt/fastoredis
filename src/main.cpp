@@ -11,7 +11,8 @@ namespace
 int main(int argc, char *argv[])
 {    
     QApplication app(argc, argv);
-
+    app.setOrganizationName(PROJECT_COMPANYNAME);
+    app.setApplicationName(PROJECT_NAME);
     QRect screenGeometry = app.desktop()->availableGeometry();
     QSize screenSize(screenGeometry.width(), screenGeometry.height());
     QSize size(screenGeometry.width()/2, screenGeometry.height()/2);

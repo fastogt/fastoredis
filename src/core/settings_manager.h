@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QString>
+
 #include "global/global.h"
 
 #include "common/patterns/singleton_pattern.h"
@@ -19,30 +21,43 @@ namespace fastoredis
         void setDefaultView(supportedViews view);
         supportedViews defaultView() const;
 
-        std::string currentStyle() const;
-        void setCurrentStyle(const std::string& style);
+        QString currentStyle() const;
+        void setCurrentStyle(const QString &style);
 
-        std::string currentLanguage() const;
-        void setCurrentLanguage(const std::string& lang);
+        QString currentLanguage() const;
+        void setCurrentLanguage(const QString &lang);
 
         void addConnection(const IConnectionSettingsBaseSPtr& connection);
         void removeConnection(const IConnectionSettingsBaseSPtr& connection);
 
+        ConnectionSettingsContainerType connections() const;
+
         bool syncTabs() const;
         void setSyncTabs(bool sync);
 
-        void setLoggingDirectory(const std::string& dir);
-        std::string loggingDirectory() const;
+        void setLoggingDirectory(const QString& dir);
+        QString loggingDirectory() const;
 
         bool autoCheckUpdates() const;
         void setAutoCheckUpdates(bool isCheck);
 
-        ConnectionSettingsContainerType connections() const;
-
-        std::string pythonExecPath() const;
-        void setPythonExecPath(const std::string& path);
+        QString pythonExecPath() const;
+        void setPythonExecPath(const QString& path);
 
     private:
+        void load();
+        void save();
+
         SettingsManager();
+        ~SettingsManager();
+
+        supportedViews views_;
+        QString curStyle_;
+        QString curLanguage_;
+        ConnectionSettingsContainerType connections_;
+        bool syncTabs_;
+        QString loggingDir_;
+        bool autoCheckUpdate_;
+        QString pythonExecPath_;
     };
 }

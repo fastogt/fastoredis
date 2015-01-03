@@ -16,6 +16,7 @@ namespace fastoredis
         Q_OBJECT
     public:
         MainWindow();
+        ~MainWindow();
 
     protected:
         virtual void changeEvent(QEvent* ev);

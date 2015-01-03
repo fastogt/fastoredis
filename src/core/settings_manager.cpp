@@ -1,7 +1,6 @@
 #include "core/settings_manager.h"
 
-#include "common/file_system.h"
-#include "common/settings/settings.h"
+#include <QSettings>
 
 #include <boost/archive/iterators/binary_from_base64.hpp>
 #include <boost/archive/iterators/base64_from_binary.hpp>
@@ -12,44 +11,29 @@
 #include "translations/translations.h"
 #include "gui/app_style.h"
 
+#include "common/file_system.h"
+#include "common/qt/convert_string.h"
+
 #ifdef OS_WIN
 #define PYTHON_EXE "python.exe"
 #else
 #define PYTHON_EXE "python"
 #endif
 
-#define INI_PATH ('~','/','.','c','o','n','f','i','g','/',PROJECT_NAME_DELEMITED,'/','c','o','n','f','i','g','.','i','n','i')
+#define PREFIX "settings/"
 
-#define langauge_ ('l','a','n','g','u','a','g','e')
-#define style_ ('s','t','y','l','e')
-#define connections_ ('c','o','n','n','e','c','t','i','o','n','s')
-#define view_ ('v','i','e','w')
-#define synctabs_ ('s','y','n','c','t','a','b','s')
-#define loggingdir_ ('l','o','g','g','i','n','g','d','i','r')
-#define checkupdates_ ('c','h','e','c','k','u','p','d','a','t','e','s')
-#define pythonexecpath_ ('p','y','t','h','o','n','e','x','e','c','p','a','t','h')
+#define LANGUAGE PREFIX"language"
+#define STYLE PREFIX"style"
+#define CONNECTIONS PREFIX"connections"
+#define VIEW PREFIX"view"
+#define SYNCTABS PREFIX"synctabs"
+#define LOGGINGDIR PREFIX"loggingdir"
+#define CHECKUPDATES PREFIX"checkupdates"
+#define PYTHONEXECPATH PREFIX"pythonexecpath"
 
 namespace
 {
-    typedef common::storages::ini::ini_storage<GEN_STRING_TYPLE(INI_PATH), true> static_path_storage;
-
-    using namespace common;
-
-    BEGIN_DECL_TYPLE(langauge_, std::string, static_path_storage)
-    BEGIN_DECL_TYPLE(style_, std::string, static_path_storage)
-    BEGIN_DECL_TYPLE(connections_, fastoredis::SettingsManager::ConnectionSettingsContainerType, static_path_storage)
-    BEGIN_DECL_TYPLE(view_, int, static_path_storage)
-    BEGIN_DECL_TYPLE(synctabs_, bool, static_path_storage)
-    BEGIN_DECL_TYPLE(loggingdir_, std::string, static_path_storage)
-    BEGIN_DECL_TYPLE(checkupdates_, bool, static_path_storage)
-    BEGIN_DECL_TYPLE(pythonexecpath_, std::string, static_path_storage)
-
-    typedef common::storages::storage_container<genereted_settings::setting_langauge_, genereted_settings::setting_style_,
-                                                genereted_settings::setting_connections_, genereted_settings::setting_view_,
-                                                genereted_settings::setting_synctabs_, genereted_settings::setting_loggingdir_,
-                                                genereted_settings::setting_checkupdates_, genereted_settings::setting_pythonexecpath_ > static_storage_type;
-
-    typedef common::storages::settings_container<static_storage_type> server_main_t;
+    const std::string iniPath("~/.config/"PROJECT_NAME"/config.ini");
 
     std::string pythonExecPath()
     {
@@ -62,171 +46,189 @@ namespace
         return std::string();
     }
 
-    inline server_main_t &get_config_storage()
+    std::string encode_base64(const std::string& val)
     {
-        static server_main_t g_m(static_storage_type(fastoredis::translations::defLanguage, fastoredis::defStyle,
-                                                     fastoredis::SettingsManager::ConnectionSettingsContainerType(),fastoredis::Tree,
-                                                     true, file_system::get_dir_path(static_path_storage::path_to_save()), true, pythonExecPath() ));
-        return g_m;
+        using namespace boost::archive::iterators;
+        typedef transform_width< binary_from_base64<remove_whitespace<std::string::const_iterator> >,8,6 > binary_text;
+        std::string enc( binary_text(val.begin()), binary_text(val.end()));
+        return enc;
+    }
+
+    std::string decode_base64(const std::string& val)
+    {
+        using namespace boost::archive::iterators;
+        typedef insert_linebreaks<base64_from_binary<transform_width<std::string::const_iterator,6,8> >, 512 > base64_text;
+        std::string dec( base64_text(val.begin()), base64_text(val.end()));
+        return dec;
     }
 }
 
-#define GET_SETTING(NAME) get_config_storage().get_value<NAME>()
-
-class ConnectionTranslator
-{
-public:
-    typedef std::string internal_type;
-    typedef fastoredis::SettingsManager::ConnectionSettingsContainerType external_type;
-
-    boost::optional<external_type> get_value(internal_type const &v)
-    {
-        using namespace boost::archive::iterators;
-        typedef transform_width< binary_from_base64<remove_whitespace<internal_type::const_iterator> >,8,6 > binary_text;
-        external_type result;
-        internal_type text;
-        for(internal_type::const_iterator it = v.begin(); it != v.end(); ++it){
-            internal_type::value_type ch = *it;
-            if(ch == ','){
-                internal_type enc( binary_text(text.begin()), binary_text(text.end()));
-                fastoredis::IConnectionSettingsBaseSPtr item(fastoredis::IConnectionSettingsBase::fromString(enc));
-                if(item){
-                    result.push_back(item);
-                }
-                text.clear();
-            }
-            else{
-                text += ch;
-            }
-        }
-        return result;
-    }
-    boost::optional<internal_type> put_value(external_type const& v)
-    {
-        using namespace boost::archive::iterators;
-        typedef insert_linebreaks<base64_from_binary<transform_width<internal_type::const_iterator,6,8> >, 512 > base64_text;
-        std::basic_ostringstream<internal_type::value_type> stream;
-        for(external_type::const_iterator it = v.begin(); it != v.end(); ++it){
-            internal_type text = (*it)->toString();
-            std::copy( base64_text(text.begin()), base64_text(text.end()), std::ostream_iterator<internal_type::value_type>(stream) );
-            stream << ',';
-        }
-        return stream.str();
-    }
-};
-
-namespace boost
-{
-    namespace property_tree
-    {
-        template<>
-        struct translator_between<std::string, fastoredis::SettingsManager::ConnectionSettingsContainerType>
-        {
-            typedef ConnectionTranslator type;
-        };
-    }
-}
 
 namespace fastoredis
 {
     SettingsManager::SettingsManager()
+        : views_(), curStyle_(), curLanguage_(), connections_(), syncTabs_(), loggingDir_(), autoCheckUpdate_(), pythonExecPath_()
     {
+       load();
     }
 
-    std::string SettingsManager::currentStyle() const
+    void SettingsManager::load()
     {
-        return GET_SETTING(genereted_settings::setting_style_).value();
+        QString inip = common::convertFromString<QString>(common::file_system::prepare_path(iniPath));
+        QSettings settings(inip, QSettings::IniFormat);
+        DCHECK(settings.status() == QSettings::NoError);
+
+        curStyle_ = settings.value(STYLE, fastoredis::defStyle).toString();
+        curLanguage_ = settings.value(LANGUAGE, fastoredis::translations::defLanguage).toString();
+
+        int view = settings.value(VIEW, fastoredis::Tree).toInt();
+        views_ = static_cast<supportedViews>(view);
+
+        QList<QVariant> connections = settings.value(CONNECTIONS, "").toList();
+        for(QList<QVariant>::const_iterator it = connections.begin(); it != connections.end(); ++it){
+            QVariant var = *it;
+            QString string = var.toString();
+            std::string encoded = common::convertToString(string);
+            std::string raw = encode_base64(encoded);
+
+            IConnectionSettingsBaseSPtr sett(IConnectionSettingsBase::fromString(raw));
+            if(sett){
+               connections_.push_back(sett);
+            }
+        }
+
+        syncTabs_= settings.value(SYNCTABS, false).toBool();
+
+        std::string dir = common::file_system::get_dir_path(iniPath);
+        loggingDir_ = settings.value(LOGGINGDIR, common::convertFromString<QString>(dir)).toString();
+        autoCheckUpdate_ = settings.value(CHECKUPDATES, true).toBool();
+        pythonExecPath_ = settings.value(PYTHONEXECPATH, common::convertFromString<QString>(::pythonExecPath())).toString();
     }
 
-    void SettingsManager::setCurrentStyle(const std::string &st)
+    void SettingsManager::save()
     {
-        GET_SETTING(genereted_settings::setting_style_).set_value(st);
+        QSettings settings(common::convertFromString<QString>(common::file_system::prepare_path(iniPath)), QSettings::IniFormat);
+        DCHECK(settings.status() == QSettings::NoError);
+
+        settings.setValue(STYLE, curStyle_);
+        settings.setValue(LANGUAGE, curLanguage_);
+        settings.setValue(VIEW, views_);
+
+        QList<QVariant> connections;
+        for(ConnectionSettingsContainerType::const_iterator it = connections_.begin(); it != connections_.end(); ++it){
+            IConnectionSettingsBaseSPtr conn = *it;
+            if(conn){
+               std::string raw = conn->toString();
+               std::string decoded = decode_base64(raw);
+               QString qdata = common::convertFromString<QString>(decoded);
+               connections.push_back(qdata);
+            }
+        }
+        settings.setValue(CONNECTIONS, connections);
+
+        settings.setValue(SYNCTABS, syncTabs_);
+        settings.setValue(LOGGINGDIR, loggingDir_);
+        settings.setValue(CHECKUPDATES, autoCheckUpdate_);
+        settings.setValue(PYTHONEXECPATH, pythonExecPath_);
     }
 
-    std::string SettingsManager::currentLanguage() const
+    SettingsManager::~SettingsManager()
     {
-        return GET_SETTING(genereted_settings::setting_langauge_).value();
+        save();
     }
 
-    void SettingsManager::setCurrentLanguage(const std::string &lang)
+    QString SettingsManager::currentStyle() const
     {
-        GET_SETTING(genereted_settings::setting_langauge_).set_value(lang);
+        return curStyle_;
     }
 
-    void SettingsManager::setDefaultView(supportedViews view)
+    void SettingsManager::setCurrentStyle(const QString &st)
     {
-        GET_SETTING(genereted_settings::setting_view_).set_value(view);
+        curStyle_ = st;
+    }
+
+    QString SettingsManager::currentLanguage() const
+    {
+        return curLanguage_;
+    }
+
+    void SettingsManager::setCurrentLanguage(const QString &lang)
+    {
+        curLanguage_ = lang;
     }
 
     supportedViews SettingsManager::defaultView() const
     {
-        return static_cast<supportedViews>(GET_SETTING(genereted_settings::setting_view_).value());
+        return views_;
     }
 
-    void SettingsManager::addConnection(const IConnectionSettingsBaseSPtr &connection){
+    void SettingsManager::setDefaultView(supportedViews view)
+    {
+        views_ = view;
+    }
+
+    void SettingsManager::addConnection(const IConnectionSettingsBaseSPtr &connection)
+    {
         if(connection){
-            SettingsManager::ConnectionSettingsContainerType conCont = GET_SETTING(genereted_settings::setting_connections_).value();
-            ConnectionSettingsContainerType::iterator it = std::find(conCont.begin(),conCont.end(),connection);
-            if (it == conCont.end()) {
-                conCont.push_back(connection);
+            ConnectionSettingsContainerType::iterator it = std::find(connections_.begin(),connections_.end(),connection);
+            if (it == connections_.end()) {
+                connections_.push_back(connection);
             }
-            GET_SETTING(genereted_settings::setting_connections_).set_value(conCont);
         }
     }
 
-    void SettingsManager::removeConnection(const IConnectionSettingsBaseSPtr &connection){
+    void SettingsManager::removeConnection(const IConnectionSettingsBaseSPtr &connection)
+    {
         if(connection){
-            SettingsManager::ConnectionSettingsContainerType conCont = GET_SETTING(genereted_settings::setting_connections_).value();
-            ConnectionSettingsContainerType::iterator it = std::find(conCont.begin(),conCont.end(),connection);
-            if (it != conCont.end()) {
-                conCont.erase(it);
+            ConnectionSettingsContainerType::iterator it = std::find(connections_.begin(),connections_.end(),connection);
+            if (it != connections_.end()) {
+                connections_.erase(it);
             }
-            GET_SETTING(genereted_settings::setting_connections_).set_value(conCont);
         }
     }
 
     SettingsManager::ConnectionSettingsContainerType SettingsManager::connections() const
     {
-        return GET_SETTING(genereted_settings::setting_connections_).value();
+        return connections_;
     }
 
     bool SettingsManager::syncTabs() const
     {
-        return GET_SETTING(genereted_settings::setting_synctabs_).value();
+        return syncTabs_;
     }
 
     void SettingsManager::setSyncTabs(bool sync)
     {
-        GET_SETTING(genereted_settings::setting_synctabs_).set_value(sync);
+        syncTabs_ = sync;
     }
 
-    void SettingsManager::setLoggingDirectory(const std::string &dir)
+    QString SettingsManager::loggingDirectory() const
     {
-         GET_SETTING(genereted_settings::setting_loggingdir_).set_value(dir);
+        return loggingDir_;
     }
 
-    std::string SettingsManager::loggingDirectory() const
+    void SettingsManager::setLoggingDirectory(const QString &dir)
     {
-        return GET_SETTING(genereted_settings::setting_loggingdir_).value();
+        loggingDir_ = dir;
     }
 
     bool SettingsManager::autoCheckUpdates() const
     {
-        return GET_SETTING(genereted_settings::setting_checkupdates_).value();
+        return autoCheckUpdate_;
     }
 
     void SettingsManager::setAutoCheckUpdates(bool isCheck)
     {
-        GET_SETTING(genereted_settings::setting_checkupdates_).set_value(isCheck);
+        autoCheckUpdate_ = isCheck;
     }
 
-    std::string SettingsManager::pythonExecPath() const
+    QString SettingsManager::pythonExecPath() const
     {
-        return GET_SETTING(genereted_settings::setting_pythonexecpath_).value();
+        return pythonExecPath_;
     }
 
-    void SettingsManager::setPythonExecPath(const std::string& path)
+    void SettingsManager::setPythonExecPath(const QString &path)
     {
-        GET_SETTING(genereted_settings::setting_pythonexecpath_).set_value(path);
+        pythonExecPath_ = path;
     }
 }

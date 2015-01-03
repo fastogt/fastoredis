@@ -47,7 +47,7 @@ namespace fastoredis
 {
     namespace translations
     {        
-        const std::string defLanguage = "System";
+        const QString defLanguage = "System";
 
         QString applyLanguage(const QString &lang)
         {
@@ -58,7 +58,7 @@ namespace fastoredis
                 qApp->installTranslator(&tr);
             }
 
-            if(langres == common::convertFromString<QString>(defLanguage)){
+            if(langres == defLanguage){
                 langres = QLocale::languageToString(QLocale::system().language());
             }
 
@@ -77,7 +77,7 @@ namespace fastoredis
             const QStringList languages = qmLanguages();
 
             QStringList result;
-            result << common::convertFromString<QString>(defLanguage) << builtInLanguage;
+            result << defLanguage << builtInLanguage;
             for(int i = 0; i < languages.size(); ++i){
                 QPair<QString,QLocale> p = convertToLocale(languages[i]);
                 QString lang = QLocale::languageToString(p.second.language());

@@ -2,6 +2,7 @@
 
 #include "core/settings_manager.h"
 
+#include "common/qt/convert_string.h"
 #include "common/utils.h"
 #include "common/net/net.h"
 #include "common/logger.h"
@@ -33,7 +34,7 @@ namespace fastoredis
 
     std::string IConnectionSettingsBase::loggingPath() const
     {
-        std::string logDir = SettingsManager::instance().loggingDirectory();
+        std::string logDir = common::convertToString(SettingsManager::instance().loggingDirectory());
         return logDir + hash() + LOGGING_FILE_EXTENSION;
     }
 

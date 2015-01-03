@@ -111,25 +111,25 @@ namespace fastoredis
 
     void PreferencesDialog::syncWithSettings()
     {
-        pythonExecPath_->setText(common::convertFromString<QString>(SettingsManager::instance().pythonExecPath()));
+        pythonExecPath_->setText(SettingsManager::instance().pythonExecPath());
         autoCheckUpdates_->setChecked(SettingsManager::instance().autoCheckUpdates());
-        languagesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentLanguage()));
-        stylesComboBox_->setCurrentText(common::convertFromString<QString>(SettingsManager::instance().currentStyle()));
+        languagesComboBox_->setCurrentText(SettingsManager::instance().currentLanguage());
+        stylesComboBox_->setCurrentText(SettingsManager::instance().currentStyle());
         defaultViewComboBox_->setCurrentText(common::convertFromString<QString>(common::convertToString(SettingsManager::instance().defaultView())));
         syncTabs_->setChecked(SettingsManager::instance().syncTabs());
-        logDirPath_->setText(common::convertFromString<QString>(SettingsManager::instance().loggingDirectory()));
+        logDirPath_->setText(SettingsManager::instance().loggingDirectory());
     }
 
     void PreferencesDialog::accept()
     {
-        SettingsManager::instance().setPythonExecPath(common::convertToString(pythonExecPath_->text()));
+        SettingsManager::instance().setPythonExecPath(pythonExecPath_->text());
         SettingsManager::instance().setAutoCheckUpdates(autoCheckUpdates_->isChecked());
 
         QString newLang = translations::applyLanguage(languagesComboBox_->currentText());
-        SettingsManager::instance().setCurrentLanguage(common::convertToString(newLang));
+        SettingsManager::instance().setCurrentLanguage(newLang);
 
         applyStyle(stylesComboBox_->currentText());
-        SettingsManager::instance().setCurrentStyle(common::convertToString(stylesComboBox_->currentText()));
+        SettingsManager::instance().setCurrentStyle(stylesComboBox_->currentText());
 
         const std::string defCombo = common::convertToString(defaultViewComboBox_->currentText());
         const fastoredis::supportedViews v = common::convertFromString<fastoredis::supportedViews>(defCombo);
@@ -137,6 +137,7 @@ namespace fastoredis
 
         ServersManager::instance().setSyncServers(syncTabs_->isChecked());
         SettingsManager::instance().setSyncTabs(syncTabs_->isChecked());
+        SettingsManager::instance().setLoggingDirectory(logDirPath_->text());
 
         return QDialog::accept();
     }

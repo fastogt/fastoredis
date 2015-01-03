@@ -3,15 +3,13 @@
 #include <QApplication>
 #include <QStyleFactory>
 
-#include "common/qt/convert_string.h"
-
 namespace fastoredis
 {
-    const std::string defStyle = "Native";
+    const QString defStyle = "Native";
 
     void applyStyle(const QString& styleName)
     {
-        if (styleName == common::convertFromString<QString>(defStyle)) {
+        if (styleName == defStyle) {
             QApplication::setStyle(new AppStyle);
         }
         else {
@@ -21,7 +19,7 @@ namespace fastoredis
 
     QStringList getSupportedStyles()
     {
-        static QStringList result = QStringList() << common::convertFromString<QString>(defStyle) << QStyleFactory::keys();
+        static QStringList result = QStringList() << defStyle << QStyleFactory::keys();
         return result;
     }
 

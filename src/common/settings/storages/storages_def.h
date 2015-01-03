@@ -21,7 +21,7 @@ namespace common
             struct find_f
             {
                 typedef typename stor_can::mpl_vector seq;
-                typedef typename boost::mpl::find<seq,type_t>::type it;
+                typedef typename boost::mpl::find<seq, type_t>::type it;
                 typedef typename boost::mpl::end<seq>::type end;
                 enum{ value = !boost::is_same<it,end>::value };
             };
@@ -36,8 +36,8 @@ namespace common
         struct is_elements_in_same_storage
         {
             typedef mpl_vector sequence;
-            typedef typename boost::mpl::count_if<sequence,detail::is_good_equal_storage_type<storage_type,boost::mpl::_1> >::type type;
-            static const bool value = type::value ==(unsigned) boost::mpl::size<sequence>::type::value;
+            typedef typename boost::mpl::count_if<sequence, detail::is_good_equal_storage_type<storage_type,boost::mpl::_1> >::type type;
+            static const bool value = type::value == (unsigned) boost::mpl::size<sequence>::type::value;
         };
 
         struct has_nested_id
@@ -51,9 +51,9 @@ namespace common
         template<typename type_t,typename strorages_mpl_vector>
         struct contains_in_storages
         {
-            typedef typename boost::mpl::find_if<strorages_mpl_vector,typename has_nested_id::apply<type_t,boost::mpl::_1> >::type iterator_type;
+            typedef typename boost::mpl::find_if<strorages_mpl_vector, typename has_nested_id::apply<type_t,boost::mpl::_1> >::type iterator_type;
             typedef typename boost::mpl::deref<iterator_type>::type container_type;
-            static const bool value = !boost::is_same<iterator_type,typename boost::mpl::end<strorages_mpl_vector>::type>::value;
+            static const bool value = !boost::is_same<iterator_type, typename boost::mpl::end<strorages_mpl_vector>::type>::value;
         };
         template< BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT(FUSION_MAX_VECTOR_SIZE,class T, void)>
         struct storage_container_base;

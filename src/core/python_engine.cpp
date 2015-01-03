@@ -439,7 +439,7 @@ emit executeProgress(100);
 #endif
     }
 
-    std::string PythonEngine::execPath() const
+    QString PythonEngine::execPath() const
     {
         return SettingsManager::instance().pythonExecPath();
     }

@@ -22,7 +22,7 @@
 
 namespace fastoredis
 {
-    extern const std::string defStyle;
+    extern const QString defStyle;
     void applyStyle(const QString& styleName);
     QStringList getSupportedStyles();
 

@@ -123,12 +123,12 @@ namespace fastoredis
         : QMainWindow(), isCheckedInSession_(false)
     {
         using namespace common;
-        std::string lang = SettingsManager::instance().currentLanguage();
-        QString newLang = fastoredis::translations::applyLanguage(convertFromString<QString>(lang));
-        SettingsManager::instance().setCurrentLanguage(convertToString(newLang));
+        QString lang = SettingsManager::instance().currentLanguage();
+        QString newLang = fastoredis::translations::applyLanguage(lang);
+        SettingsManager::instance().setCurrentLanguage(newLang);
 
-        std::string style = SettingsManager::instance().currentStyle();
-        fastoredis::applyStyle(convertFromString<QString>(style));
+        QString style = SettingsManager::instance().currentStyle();
+        fastoredis::applyStyle(style);
 
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
@@ -232,6 +232,10 @@ namespace fastoredis
 
         createStatusBar();
         retranslateUi();
+    }
+
+    MainWindow::~MainWindow()
+    {
     }
 
     void MainWindow::createStatusBar()
