@@ -1,5 +1,10 @@
 #include "core/scp_file_transfer.h"
 
+#ifdef OS_WIN
+#else
+#include <arpa/inet.h>
+#endif
+
 #include "third-party/libssh2/include/libssh2.h"
 
 #include "core/logger.h"

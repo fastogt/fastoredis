@@ -9,6 +9,8 @@
 
 #ifdef OS_MACOSX
 #include <sys/uio.h>
+#elif defined(OS_LINUX)
+#include <sys/sendfile.h>
 #endif
 
 #include <fcntl.h>
