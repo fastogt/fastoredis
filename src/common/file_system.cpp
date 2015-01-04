@@ -4,6 +4,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <algorithm>
+#include <sstream>
+
 #include "common/url.h"
 #include "common/logger.h"
 

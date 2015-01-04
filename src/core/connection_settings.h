@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include "common/smart_ptr.h"
 
 #include "core/connection_types.h"
 #include "core/redis/redis_config.h"
@@ -56,7 +56,7 @@ namespace fastoredis
 
     const char *useHelpText(connectionTypes type);
 
-    typedef boost::shared_ptr<IConnectionSettingsBase> IConnectionSettingsBaseSPtr;
+    typedef shared_ptr_t<IConnectionSettingsBase> IConnectionSettingsBaseSPtr;
 
     class RedisConnectionSettings
             : public IConnectionSettingsBase

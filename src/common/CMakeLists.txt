@@ -63,27 +63,21 @@ SET(PATTERNS_SOURCES
 )
 
 SET(MULTI_THREADING_SOURCES
-        multi_threading/common_headers.h
+        multi_threading/types.h
         multi_threading/thread_pool.h
         multi_threading/std_thread_pool_impl.hpp
 )
 
-SET(COMMON_SOURCES log_levels.h logger.h logger.cpp common_config.h
-basictypes.h
+SET(COMMON_SOURCES
+log_levels.h logger.h logger.cpp common_config.h basictypes.h
 safe_sprintf.h safe_sprintf.cpp utf_string_conversions.h utf_string_conversions.cpp utf_string_conversion_utils.h utf_string_conversion_utils.cpp
 string_util.h string_util.cpp icu_utf.h icu_utf.cpp string_piece.h string_piece.cpp string16.h string16.cpp hash_tables.h
-convert2string.h convert2string.cpp types.h types.cpp lexical_cast.h lexical_cast.cpp
+convert2string.h convert2string.cpp types.h types.cpp lexical_cast.h lexical_cast.cpp smart_ptr.h
 macros.h macros.cpp utils.h utils.cpp file_system.h file_system.cpp value.h value.cpp
-boost_extension.h url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net/net.h net/net.cpp net/socket_tcp.h net/socket_tcp.cpp
+intrusive_ptr.h url.h url.cpp memory_string.h memory_string.cpp time.h time.cpp net/net.h net/net.cpp net/socket_tcp.h net/socket_tcp.cpp
 ${QT_UTILS_SOURCES} ${PATTERNS_SOURCES} ${DATABASE_SUPPORT_SOURCES} ${SETTINGS_SOURCES} ${MULTI_THREADING_SOURCES})
 
 SET(COMMON_LIBS ${DATABASE_SUPPORT_LIBS})
-
-IF(OS_LINUX)
-    SET(COMMON_LIBS ${COMMON_LIBS})
-ELSE()
-    SET(COMMON_LIBS ${COMMON_LIBS})
-ENDIF()
 
 IF(BOOST_ENABLED)
     SET(COMMON_LIBS ${COMMON_LIBS} ${Boost_LIBRARIES})

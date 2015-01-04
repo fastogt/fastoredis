@@ -20,7 +20,7 @@ namespace fastoredis
         const connectionTypes type_;
     };
 
-    typedef boost::shared_ptr<ServerInfo> ServerInfoSPtr;
+    typedef shared_ptr_t<ServerInfo> ServerInfoSPtr;
 
     struct ServerInfoSnapShoot
     {

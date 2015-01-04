@@ -4,6 +4,12 @@
 
 #include "common/string16.h"
 
+#ifdef BOOST_ENABLED
+#include <boost/atomic.hpp>
+#elif defined(HAVE_CXX_STANDART)
+#include <atomic>
+#endif
+
 enum tribool
 {
     FAIL = 0,
@@ -13,6 +19,11 @@ enum tribool
 
 namespace common
 {
+#ifdef BOOST_ENABLED
+    typedef boost::atomic_uchar atomic_uchar_t;
+#elif defined(HAVE_CXX_STANDART)
+    typedef std::atomic_uchar atomic_uchar_t;
+#endif
     typedef uint8_t byte_type;
 
     typedef std::basic_string<byte_type> buffer_type;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "common/boost_extension.h"
 #include "common/value.h"
 #include "common/convert2string.h"
 
@@ -17,7 +16,7 @@ namespace fastoredis
 
     class IFastoObjectObserver;
     class FastoObject
-            : public common::boost_extension::intrusive_ptr_base<FastoObject>
+            : public common::intrusive_ptr_base<FastoObject>
     {
 	public:
         typedef std::vector<FastoObject*> child_container_type;
@@ -39,7 +38,7 @@ namespace fastoredis
 
     protected:
         IFastoObjectObserver* observer_;
-        boost::scoped_ptr<common::Value> value_;
+        scoped_ptr_t<common::Value> value_;
 
     private:
         DISALLOW_COPY_AND_ASSIGN(FastoObject);
@@ -69,7 +68,7 @@ namespace fastoredis
         virtual void updated(FastoObject* item, common::Value* val) = 0;
     };
 
-    typedef boost::intrusive_ptr<FastoObject> FastoObjectIPtr;
+    typedef intrusive_ptr_t<FastoObject> FastoObjectIPtr;
 }
 
 namespace common

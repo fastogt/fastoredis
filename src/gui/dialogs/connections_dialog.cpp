@@ -138,7 +138,8 @@ namespace fastoredis
 
     void ConnectionsDialog::connectionSelectChange()
     {
-        acButton_->setEnabled(selectedConnection());
+        bool isEnable = selectedConnection() != NULL;
+        acButton_->setEnabled(isEnable);
     }
 
     void ConnectionsDialog::add(const IConnectionSettingsBaseSPtr& con)
@@ -208,8 +209,7 @@ namespace fastoredis
     {
         IConnectionSettingsBaseSPtr res;
 
-        ConnectionListWidgetItem *currentItem =
-                    dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
         if (currentItem){
             res = currentItem->connection();
         }

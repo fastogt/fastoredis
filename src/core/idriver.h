@@ -108,5 +108,5 @@ namespace fastoredis
         common::file_system::File* log_file_;
     };
 
-    typedef boost::shared_ptr<IDriver> IDriverSPtr;
+    typedef shared_ptr_t<IDriver> IDriverSPtr;
 }

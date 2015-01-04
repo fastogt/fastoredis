@@ -1,11 +1,10 @@
 #pragma once
 
 #include <vector>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "common/log_levels.h"
 #include "common/types.h"
+#include "common/smart_ptr.h"
 
 namespace common 
 {
@@ -151,11 +150,10 @@ namespace common
         bool getList(size_t index, const ArrayValue** out_value) const;
         bool getList(size_t index, ArrayValue** out_value);
 
-        virtual bool remove(size_t index, boost::scoped_ptr<Value>* out_value);
+        virtual bool remove(size_t index, scoped_ptr_t<Value>* out_value);
+        iterator erase(iterator iter, scoped_ptr_t<Value>* out_value);
 
         bool remove(const Value& value, size_t* index);
-
-        iterator erase(iterator iter, boost::scoped_ptr<Value>* out_value);
 
         // Appends a Value to the end of the list.
         void append(Value* in_value);
@@ -214,7 +212,7 @@ namespace common
         common::logging::LEVEL_LOG level_;
     };
 
-    typedef boost::shared_ptr<ErrorValue> ErrorValueSPtr;
+    typedef shared_ptr_t<ErrorValue> ErrorValueSPtr;
 
     ErrorValueSPtr make_error_value(const std::string& in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
 

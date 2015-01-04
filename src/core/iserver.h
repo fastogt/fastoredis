@@ -123,5 +123,5 @@ namespace fastoredis
         bool isMaster_;
     };
 
-    typedef boost::shared_ptr<IServer> IServerSPtr;
+    typedef shared_ptr_t<IServer> IServerSPtr;
 }

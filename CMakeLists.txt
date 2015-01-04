@@ -40,6 +40,8 @@ IF(WIN32)
     OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
 ENDIF(WIN32)
 OPTION(BOOST_ENABLED "Enable boost system support" ON)
+OPTION(USE_CXX_STANDART "Enable tests for ${PROJECT_NAME} project" OFF)
+
 OPTION(PYTHON_ENABLED "Enable python suppotr" OFF)
 OPTION(QT_ENABLED "Enable Qt support" ON)
 OPTION(CPACK_SUPPORT "Enable package support" ON)

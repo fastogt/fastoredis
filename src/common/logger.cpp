@@ -1,13 +1,18 @@
 #include "common/logger.h"
 
 #include "common/file_system.h"
+
 #include <fstream>
+#ifdef HAVE_CXX_STANDART
+#include <string.h>
+#include <iostream>
+#endif
 
 namespace
 {
     const std::string &get_logger_path()
     {
-        static std::string result = common::file_system::prepare_path("~/"PROJECT_NAME_LOWERCASE".log");
+        static std::string result = common::file_system::prepare_path("~/" PROJECT_NAME_LOWERCASE ".log");
         return result;
     }
 }

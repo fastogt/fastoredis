@@ -1,5 +1,7 @@
 #include "core/connection_settings.h"
 
+#include <sstream>
+
 #include "core/settings_manager.h"
 
 #include "common/qt/convert_string.h"
