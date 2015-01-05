@@ -2,6 +2,15 @@
 
 #include <libmemcached/memcached.hpp>
 
+extern "C" {
+#include "third-party/redis/deps/hiredis/sds.h"
+}
+
+#include "common/utils.h"
+
+#include "core/logger.h"
+#include "core/command_logger.h"
+
 #include "core/memcached/memcached_config.h"
 #include "core/memcached/memcached_infos.h"
 
@@ -10,16 +19,173 @@ namespace fastoredis
     struct MemcachedDriver::pimpl
     {
         pimpl()
+            : memc_(NULL)
         {
+            memc_ = memcached(NULL, 0);
+        }
 
+        common::ErrorValueSPtr connect()
+        {
+            if(!memc_){
+                return common::make_error_value("Init error", common::ErrorValue::E_ERROR);
+            }
+
+            if(config_.shutdown){
+                return common::make_error_value("Interrupted connect.", common::ErrorValue::E_INTERRUPTED);
+            }
+
+            memcached_return rc;
+            char buff[1024] = {0};
+
+            rc = memcached_set_sasl_auth_data(memc_, config_.user_, config_.password_);
+            if (rc != MEMCACHED_SUCCESS){
+                sprintf(buff, "Couldn't setup SASL auth: %s", memcached_strerror(memc_, rc));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            rc = memcached_behavior_set(memc_, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL, 1);
+            if (rc != MEMCACHED_SUCCESS){
+                sprintf(buff, "Couldn't use the binary protocol: %s", memcached_strerror(memc_, rc));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            rc = memcached_behavior_set(memc_, MEMCACHED_BEHAVIOR_CONNECT_TIMEOUT, 10000);
+            if (rc != MEMCACHED_SUCCESS){
+                sprintf(buff, "Couldn't set the connect timeout: %s", memcached_strerror(memc_, rc));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            memcached_server_st *servers = NULL;
+            servers = memcached_server_list_append(servers, config_.hostip, config_.hostport, &rc);
+            if (rc != MEMCACHED_SUCCESS){
+                sprintf(buff, "Couldn't add server: %s", memcached_strerror(memc_, rc));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            rc = memcached_server_push(memc_, servers);
+            if (rc != MEMCACHED_SUCCESS){
+                sprintf(buff, "Couldn't add server: %s", memcached_strerror(memc_, rc));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr execute(const char *command, Command::CommandType type, FastoObject* out) WARN_UNUSED_RESULT
+        {
+            DCHECK(out);
+            if(!out){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
+            if(!command){
+                return common::make_error_value("Command empty", common::ErrorValue::E_ERROR);
+            }
+
+            LOG_COMMAND(Command(command, type));
+
+            common::ErrorValueSPtr er;
+            if (command[0] != '\0') {
+                int argc;
+                sds *argv = sdssplitargs(command,&argc);
+
+                if (argv == NULL) {
+                    common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                else if (argc > 0) {
+                    if (strcasecmp(argv[0], "quit") == 0 || strcasecmp(argv[0], "exit") || strcasecmp(argv[0], "shutdown") == 0){
+                        config_.shutdown = 1;
+                    }
+                    else {
+                        er = execute(out, argc, argv);
+                    }
+                }
+                sdsfreesplitres(argv,argc);
+            }
+
+            return er;
         }
 
         ~pimpl()
         {
+            if(memc_){
+                memcached_free(memc_);
+            }
         }
 
-        memcachedConfig config;
+        memcachedConfig config_;
         SSHInfo sinfo_;
+
+   private:
+        common::ErrorValueSPtr execute(FastoObject* out, int argc, char **argv)
+        {
+            if(strcasecmp(argv[0], "get") == 0){
+                if(argc != 1){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::string ret;
+                common::ErrorValueSPtr er = get(argv[1], ret);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue(ret);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "set") == 0){
+                if(argc != 2){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = set(argv[1], argv[2], 1, 0);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("OK");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+        }
+
+        common::ErrorValueSPtr get(const std::string& key, std::string& ret_val)
+        {
+            ret_val.clear();
+            uint32_t flags = 0;
+            memcached_return error;
+            size_t value_length = 0;
+
+            char *value = memcached_get(memc_, key.c_str(), key.length(), &value_length, &flags, &error);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Get function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            if (value != NULL){
+                ret_val.reserve(value_length +1); // Always provide null
+                ret_val.assign(value, value + value_length +1);
+                ret_val.resize(value_length);
+                free(value);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr set(const std::string& key, const std::string& value, time_t expiration, uint32_t flags)
+        {
+            memcached_return_t error = memcached_set(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Get function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        memcached_st* memc_;
    };
 
     MemcachedDriver::MemcachedDriver(const IConnectionSettingsBaseSPtr &settings)
@@ -39,12 +205,12 @@ namespace fastoredis
 
     void MemcachedDriver::interrupt()
     {
-
+        impl_->config_.shutdown = 1;
     }
 
     common::net::hostAndPort MemcachedDriver::address() const
     {
-        return common::net::hostAndPort(impl_->config.hostip, impl_->config.hostport);
+        return common::net::hostAndPort(impl_->config_.hostip, impl_->config_.hostport);
     }
 
     std::string MemcachedDriver::version() const
@@ -54,7 +220,7 @@ namespace fastoredis
 
     std::string MemcachedDriver::outputDelemitr() const
     {
-        return impl_->config.mb_delim;
+        return impl_->config_.mb_delim;
     }
 
     const char* MemcachedDriver::versionApi()
@@ -65,6 +231,7 @@ namespace fastoredis
     void MemcachedDriver::customEvent(QEvent *event)
     {
         IDriver::customEvent(event);
+        impl_->config_.shutdown = 0;
     }
 
     void MemcachedDriver::initImpl()
@@ -79,7 +246,23 @@ namespace fastoredis
 
     void MemcachedDriver::handleConnectEvent(Events::ConnectRequestEvent *ev)
     {
-
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::ConnectResponceEvent::value_type res(ev->value());
+            MemcachedConnectionSettings *set = dynamic_cast<MemcachedConnectionSettings*>(settings_.get());
+            if(set){
+                impl_->config_ = set->info();
+                impl_->sinfo_ = set->sshInfo();
+                common::ErrorValueSPtr er;
+        notifyProgress(sender, 25);
+                    er = impl_->connect();
+                    if(er){
+                        res.setErrorInfo(er);
+                    }
+        notifyProgress(sender, 75);
+            }
+            reply(sender, new Events::ConnectResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
     void MemcachedDriver::handleDisconnectEvent(Events::DisconnectRequestEvent* ev)
@@ -89,7 +272,50 @@ namespace fastoredis
 
     void MemcachedDriver::handleExecuteEvent(Events::ExecuteRequestEvent* ev)
     {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::ExecuteRequestEvent::value_type res(ev->value());
+            const char *inputLine = common::utils::c_strornull(res.text_);
 
+            common::ErrorValueSPtr er;
+            if(inputLine){
+                size_t length = strlen(inputLine);
+                int offset = 0;
+                RootLocker lock = make_locker(sender, inputLine);
+                FastoObjectIPtr outRoot = lock.root_;
+                double step = 100.0f/length;
+                for(size_t n = 0; n < length; ++n){
+                    if(impl_->config_.shutdown){
+                        er.reset(new common::ErrorValue("Interrupted exec.", common::ErrorValue::E_INTERRUPTED));
+                        res.setErrorInfo(er);
+                        break;
+                    }
+                    if(inputLine[n] == '\n' || n == length-1){
+        notifyProgress(sender, step * n);
+                        char command[128] = {0};
+                        if(n == length-1){
+                            strcpy(command, inputLine + offset);
+                        }
+                        else{
+                            strncpy(command, inputLine + offset, n - offset);
+                        }
+                        offset = n + 1;
+                        er = impl_->execute(command, Command::UserCommand, outRoot.get());
+                        if(er){
+                            res.setErrorInfo(er);
+                            break;
+                        }
+                    }
+                }
+            }
+            else{
+                er.reset(new common::ErrorValue("Empty command line.", common::ErrorValue::E_ERROR));
+            }
+
+            if(er){
+                LOG_ERROR(er);
+            }
+        notifyProgress(sender, 100);
     }
 
     void MemcachedDriver::handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev)

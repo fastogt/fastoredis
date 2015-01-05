@@ -14,12 +14,12 @@ namespace fastoredis
     class FastoEditorShell;
     class IconLabel;
 
-    class RedisShellWidget
+    class BaseShellWidget
             : public QWidget
     {
         Q_OBJECT
     public:
-        RedisShellWidget(IServerSPtr server, const QString& filePath = QString(), QWidget* parent = 0);
+        BaseShellWidget(IServerSPtr server, const QString& filePath = QString(), QWidget* parent = 0);
 
         IServerSPtr server() const;
         QString text() const;

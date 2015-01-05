@@ -21,6 +21,12 @@ namespace fastoredis
                 else if (!strcmp(argv[i],"-p") && !lastarg) {
                     cfg.hostport = atoi(argv[++i]);
                 }
+                else if (!strcmp(argv[i],"-u") && !lastarg) {
+                    cfg.user_ = strdup(argv[++i]);
+                }
+                else if (!strcmp(argv[i],"-a") && !lastarg) {
+                    cfg.password_ = strdup(argv[++i]);
+                }
                 else if (!strcmp(argv[i],"-d") && !lastarg) {
                     free(cfg.mb_delim);
                     cfg.mb_delim = strdup(argv[++i]);
@@ -67,8 +73,14 @@ namespace fastoredis
 
         hostport = other.hostport;
 
+        freeifnotnull(user_);
+        user_ = strdupornull(other.user_); //
+        freeifnotnull(password_);
+        password_ = strdupornull(other.password_); //
+
         freeifnotnull(mb_delim);
         mb_delim = strdupornull(other.mb_delim); //
+        shutdown = other.shutdown;
     }
 
     void memcachedConfig::init()
@@ -76,7 +88,11 @@ namespace fastoredis
         hostip = strdup("127.0.0.1");
         hostport = 11211;
 
+        user_ = NULL;
+        password_ = NULL;
+
         mb_delim = strdup("\n");
+        shutdown = 0;
     }
 
     memcachedConfig::~memcachedConfig()
@@ -84,6 +100,8 @@ namespace fastoredis
         using namespace common::utils;
         freeifnotnull(hostip);
         freeifnotnull(mb_delim);
+        freeifnotnull(user_);
+        freeifnotnull(password_);
     }
 }
 
@@ -101,6 +119,16 @@ namespace common
         if(conf.hostport){
             argv.push_back("-p");
             argv.push_back(convertToString(conf.hostport));
+        }
+
+        if(conf.user_){
+            argv.push_back("-u");
+            argv.push_back(conf.user_);
+        }
+
+        if(conf.password_){
+            argv.push_back("-a");
+            argv.push_back(conf.password_);
         }
 
         if (conf.mb_delim) {

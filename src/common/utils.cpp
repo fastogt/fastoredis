@@ -337,6 +337,11 @@ namespace common
             free(ptr);
         }
 
+        const char *c_strornull(const std::string &val)
+        {
+            return val.empty() ? NULL : val.c_str();
+        }
+
 #ifdef OS_POSIX
         namespace signal
         {

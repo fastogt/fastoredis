@@ -48,20 +48,18 @@ extern "C" {
 
 namespace
 {
-    const char *toCString(const std::string &val)
+    const char *redisGitSHA1(void)
     {
-        return val.empty() ? NULL : val.c_str();
-    }
-
-    const char *redisGitSHA1(void) {
         return REDIS_GIT_SHA1;
     }
 
-    const char *redisGitDirty(void) {
+    const char *redisGitDirty(void)
+    {
         return REDIS_GIT_DIRTY;
     }
 
-    sds cliVersion() {
+    sds cliVersion()
+    {
         sds version = sdscatprintf(sdsempty(), "%s", REDIS_VERSION);
 
         /* Add git commit and working tree status when available */
@@ -883,7 +881,7 @@ namespace fastoredis
                 common::utils::usleep(config.interval);
             }
 
-            return common::make_error_value("Interrupted.", common::ErrorValue::E_INTERRUPTED);;
+            return common::make_error_value("Interrupted.", common::ErrorValue::E_INTERRUPTED);
         }
 
         /*------------------------------------------------------------------------------
@@ -960,6 +958,8 @@ namespace fastoredis
 
         common::ErrorValueSPtr cliConnect(int force) WARN_UNUSED_RESULT
         {
+            using namespace common::utils;
+
             if (context == NULL || force) {
                 if (context != NULL){
                     redisFree(context);
@@ -967,14 +967,14 @@ namespace fastoredis
                 }
 
                 if (config.hostsocket == NULL) {
-                    const char *username = toCString(sinfo_.userName_);
-                    const char *password = toCString(sinfo_.password_);
-                    const char *ssh_address = toCString(sinfo_.hostName_);
+                    const char *username = c_strornull(sinfo_.userName_);
+                    const char *password = c_strornull(sinfo_.password_);
+                    const char *ssh_address = c_strornull(sinfo_.hostName_);
                     int ssh_port = sinfo_.port_;
                     int curM = sinfo_.currentMethod_;
-                    const char *publicKey = toCString(sinfo_.publicKey_);
-                    const char *privateKey = toCString(sinfo_.privateKey_);
-                    const char *passphrase = toCString(sinfo_.passphrase_);
+                    const char *publicKey = c_strornull(sinfo_.publicKey_);
+                    const char *privateKey = c_strornull(sinfo_.privateKey_);
+                    const char *passphrase = c_strornull(sinfo_.passphrase_);
 
                     context = redisConnect(config.hostip, config.hostport, ssh_address, ssh_port, username, password,
                                            publicKey, privateKey, passphrase, curM);
@@ -1021,7 +1021,7 @@ namespace fastoredis
         common::ErrorValueSPtr cliPrintContextError() WARN_UNUSED_RESULT
         {
             if (context == NULL){
-                return common::make_error_value("Not connected", common::Value::E_ERROR);;
+                return common::make_error_value("Not connected", common::Value::E_ERROR);
             }
 
             char buff[512] = {0};
@@ -1801,7 +1801,7 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             Events::ExecuteRequestEvent::value_type res(ev->value());
-            const char *inputLine = toCString(res.text_);
+            const char *inputLine = common::utils::c_strornull(res.text_);
 
             common::ErrorValueSPtr er;
             if(inputLine){

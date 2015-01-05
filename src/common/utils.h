@@ -212,6 +212,7 @@ namespace common
 
         char *strdupornull(const char *src);
         void freeifnotnull(void* ptr);
+        const char *c_strornull(const std::string &val);
 
 #ifdef OS_POSIX
         namespace signal

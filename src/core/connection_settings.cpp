@@ -189,7 +189,9 @@ namespace fastoredis
         else if(type == MEMCACHED){
             return "<b>Usage: [OPTIONS] [cmd [arg [arg ...]]]</b><br/>"
                                "<b>-h &lt;hostname&gt;</b>      Server hostname (default: 127.0.0.1).<br/>"
-                               "<b>-p &lt;port&gt;</b>          Server port (default: 6379).<br/>"
+                               "<b>-p &lt;port&gt;</b>          Server port (default: 11211).<br/>"
+                               "<b>-p &lt;username&gt;</b>      Username to use when connecting to the server.<br/>"
+                               "<b>-a &lt;password&gt;</b>      Password to use when connecting to the server.<br/>"
                                "<b>-d &lt;delimiter&gt;</b>     Multi-bulk delimiter in for raw formatting (default: \\n).<br/>";
         }
 

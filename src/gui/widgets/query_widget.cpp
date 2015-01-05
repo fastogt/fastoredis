@@ -3,7 +3,7 @@
 #include <QHBoxLayout>
 #include <QSplitter>
 
-#include "shell/redis_shell_widget.h"
+#include "shell/shell_widget.h"
 #include "gui/widgets/output_widget.h"
 
 namespace fastoredis
@@ -11,7 +11,7 @@ namespace fastoredis
     QueryWidget::QueryWidget(IServerSPtr server, QWidget* parent)
         : QWidget(parent)
     {
-        shellWidget_ = new RedisShellWidget(server);
+        shellWidget_ = new BaseShellWidget(server);
         const QString delemitr = server->outputDelemitr();
 
         outputWidget_ = new OutputWidget(delemitr);

@@ -256,6 +256,9 @@ namespace fastoredis
         if(type == REDIS){
             return redisConnectionIcon();
         }
+        else if(type == MEMCACHED){
+            return memcachedConnectionIcon();
+        }
         else{
             return serverIcon();
         }

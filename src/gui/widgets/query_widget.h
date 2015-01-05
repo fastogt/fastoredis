@@ -8,7 +8,7 @@ class QAction;
 
 namespace fastoredis
 {
-    class RedisShellWidget;
+    class BaseShellWidget;
     class OutputWidget;
 
     class QueryWidget
@@ -24,7 +24,7 @@ namespace fastoredis
         void reload();
 
     private:
-        RedisShellWidget* shellWidget_;
+        BaseShellWidget* shellWidget_;
         OutputWidget* outputWidget_;
     };
 }

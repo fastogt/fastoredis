@@ -127,17 +127,21 @@ SET(SOURCES_CORE
     core/scp_file_transfer.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
-    shell/redis_shell_widget.h
+    shell/shell_widget.h
     shell/redis_shell.h
     shell/redis_lexer.h
+    shell/memcached_shell.h
+    shell/memcached_lexer.h
     shell/python_shell.h
 )
 SET(HEADERS_SHELL
 )
 SET(SOURCES_SHELL
-    shell/redis_shell_widget.cpp
+    shell/shell_widget.cpp
     shell/redis_shell.cpp
     shell/redis_lexer.cpp
+    shell/memcached_shell.cpp
+    shell/memcached_lexer.cpp
     shell/python_shell.cpp
 )
 

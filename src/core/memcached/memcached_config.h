@@ -18,7 +18,12 @@ namespace fastoredis
 
         char *hostip;
         int hostport;
+
+        char* user_;
+        char* password_;
+
         char *mb_delim;
+        int shutdown;
 
     private:
         void copy(const memcachedConfig& other);
