@@ -21,7 +21,6 @@ namespace fastoredis
         const QIcon& mainWindowIcon() const;
         const QIcon& connectIcon() const;
         const QIcon& disConnectIcon() const;
-        const QIcon& redisConnectionIcon() const;
         const QIcon& serverIcon() const;
         const QIcon& addIcon() const;
         const QIcon& removeIcon() const;
@@ -50,5 +49,9 @@ namespace fastoredis
 
         const QIcon& commandIcon(connectionTypes type) const;
         const QIcon& typeIcon(connectionTypes type) const;
+
+    private:
+        const QIcon& redisConnectionIcon() const;
+        const QIcon& memcachedConnectionIcon() const;
     };
 }

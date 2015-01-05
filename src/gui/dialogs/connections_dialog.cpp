@@ -26,20 +26,15 @@ namespace fastoredis
             : public QTreeWidgetItem
     {
     public:
-        ConnectionListWidgetItem(const IConnectionSettingsBaseSPtr& connection): connection_(connection) { refreshFields(); }
+        ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection): connection_(connection) { refreshFields(); }
         IConnectionSettingsBaseSPtr connection() { return connection_; }
 
         void refreshFields()
         {
             setText(0, common::convertFromString<QString>(connection_->connectionName()));
             connectionTypes conType = connection_->connectionType();
-            if(conType == REDIS){
-                RedisConnectionSettings *red = dynamic_cast<RedisConnectionSettings*>(connection_.get());
-                VERIFY(red);
-
-                setText(1, common::convertFromString<QString>(red->fullAddress()));
-                setIcon(0, GuiFactory::instance().redisConnectionIcon());
-            }
+            setIcon(0, GuiFactory::instance().icon(conType));
+            setText(1, common::convertFromString<QString>(connection_->fullAddress()));
         }
 
     private:
@@ -150,11 +145,10 @@ namespace fastoredis
 
     void ConnectionsDialog::add()
     {
-        redisConfig conf;
-        IConnectionSettingsBaseSPtr p(new RedisConnectionSettings("New Connection", conf));
-        ConnectionDialog dlg(p,this);
+        ConnectionDialog dlg(this);
         int result = dlg.exec();
-        if(result == QDialog::Accepted){
+        IConnectionSettingsBaseSPtr p = dlg.connection();
+        if(result == QDialog::Accepted && p){
             SettingsManager::instance().addConnection(p);
             add(p);
         }
@@ -193,13 +187,13 @@ namespace fastoredis
             return;
 
         IConnectionSettingsBaseSPtr oldConnection = currentItem->connection();
-        IConnectionSettingsBaseSPtr newConnection(oldConnection->clone());
 
-        ConnectionDialog dlg(newConnection,this);
+        ConnectionDialog dlg(this, oldConnection->clone());
         int result = dlg.exec();
-        if(result == QDialog::Accepted){
+        IConnectionSettingsBaseSPtr newConnection = dlg.connection();
+        if(result == QDialog::Accepted && newConnection){
             delete currentItem;
-            SettingsManager::instance().removeConnection(oldConnection);
+            SettingsManager::instance().removeConnection(oldConnection);            
             SettingsManager::instance().addConnection(newConnection);
             add(newConnection);
         }

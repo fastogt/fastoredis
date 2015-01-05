@@ -1,27 +1,8 @@
 #include "core/redis/redis_config.h"
 
+#include "common/utils.h"
+
 #include "core/logger.h"
-
-namespace
-{
-    char *strdupornull(const char *src)
-    {
-        if(!src){
-            return NULL;
-        }
-
-        return strdup(src);
-    }
-
-    void freeifnotnull(void* ptr)
-    {
-        if(!ptr){
-            return;
-        }
-
-        free(ptr);
-    }
-}
 
 namespace fastoredis
 {
@@ -29,6 +10,7 @@ namespace fastoredis
     {
         int parseOptions(int argc, char **argv, redisConfig& cfg) {
             int i;
+            using namespace common::utils;
 
             for (i = 0; i < argc; i++) {
                 int lastarg = i==argc-1;
@@ -137,6 +119,8 @@ namespace fastoredis
 
     void redisConfig::copy(const redisConfig& other)
     {
+        using namespace common::utils;
+
         freeifnotnull(hostip);
         hostip = strdupornull(other.hostip); //
 
@@ -216,6 +200,8 @@ namespace fastoredis
 
     redisConfig::~redisConfig()
     {
+        using namespace common::utils;
+
         freeifnotnull(hostip);
         freeifnotnull(hostsocket);
         freeifnotnull(pattern);

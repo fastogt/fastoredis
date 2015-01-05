@@ -11,7 +11,7 @@ class QToolButton;
 
 namespace fastoredis
 {
-    class RedisShell;
+    class FastoEditorShell;
     class IconLabel;
 
     class RedisShellWidget
@@ -68,7 +68,7 @@ namespace fastoredis
 
         IconLabel* serverName_;
 
-        RedisShell* input_;
+        FastoEditorShell* input_;
 
         QProgressBar* workProgressBar_;
         IconLabel* connectionMode_;

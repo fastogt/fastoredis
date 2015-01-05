@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 #############################################################
-PROJECT("FastoRedis" VERSION 0.4.6.1 LANGUAGES CXX C)
+PROJECT("FastoRedis" VERSION 0.5.6.1 LANGUAGES CXX C)
 #################### Project Settings ####################
 #SET(PROJECT_NAME "FastoRedis" CACHE STRING "Project Name")
 SET(PROJECT_NAME_TITLE ${PROJECT_NAME} CACHE STRING "Title for ${PROJECT_NAME}")
@@ -39,9 +39,8 @@ OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
 IF(WIN32)
     OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
 ENDIF(WIN32)
-OPTION(BOOST_ENABLED "Enable boost system support" ON)
-OPTION(USE_CXX_STANDART "Enable tests for ${PROJECT_NAME} project" OFF)
-
+OPTION(BOOST_ENABLED "Enable boost system support" OFF)
+OPTION(USE_CXX_STANDART "Enable tests for ${PROJECT_NAME} project" ON)
 OPTION(PYTHON_ENABLED "Enable python suppotr" OFF)
 OPTION(QT_ENABLED "Enable Qt support" ON)
 OPTION(CPACK_SUPPORT "Enable package support" ON)

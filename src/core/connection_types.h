@@ -7,7 +7,8 @@ namespace fastoredis
     enum connectionTypes
     {
         DBUNKNOWN = 0,
-        REDIS
+        REDIS,
+        MEMCACHED
     };
 
     connectionTypes badConnectionType();

@@ -4,7 +4,7 @@
 
 namespace
 {
-    const char* connnectionType[fastoredis::REDIS + 1] = { "Unknown", "Redis" };
+    const char* connnectionType[fastoredis::MEMCACHED + 1] = { "Unknown", "Redis", "Memcached" };
     const char* connnectionMode[fastoredis::IntaractiveMode + 1] =
     {
         "Latency mode", "Slave mode", "Get RDB mode", "Pipe mode",  "Find big keys mode", "Stat mode", "Scan mode", "Intaractive mode"

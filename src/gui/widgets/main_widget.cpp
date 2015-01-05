@@ -97,9 +97,13 @@ namespace fastoredis
         }
     }
 
-    void MainWidget::addWidgetToTab(QWidget* wid, const QString& title)
+    void MainWidget::addWidgetToTab(QueryWidget *wid, const QString& title)
     {
-        addTab(wid, GuiFactory::instance().redisConnectionIcon(), title);
+        if(!wid){
+            return;
+        }
+
+        addTab(wid, GuiFactory::instance().icon(wid->connectionType()), title);
         setCurrentWidget(wid);
     }
 

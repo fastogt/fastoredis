@@ -19,11 +19,12 @@ namespace fastoredis
         QueryWidget(IServerSPtr server, QWidget* parent = 0);
 
         QueryWidget* clone(const QString &text);
+        connectionTypes connectionType() const;
         QString inputText() const;
         void reload();
 
     private:
-        RedisShellWidget* RedisShellWidget_;
+        RedisShellWidget* shellWidget_;
         OutputWidget* outputWidget_;
     };
 }

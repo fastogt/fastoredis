@@ -1,9 +1,11 @@
 #include "core/servers_manager.h"
 
 #include "core/settings_manager.h"
+
 #include "core/redis/redis_server.h"
 #include "core/redis/redis_driver.h"
-
+#include "core/memcached/memcached_server.h"
+#include "core/memcached/memcached_driver.h"
 namespace fastoredis
 {
     ServersManager::ServersManager()
@@ -60,6 +62,19 @@ namespace fastoredis
             result.reset(newRed);
             servers_.push_back(result);
         }
+        else if(conT == MEMCACHED){
+            MemcachedServer *newMem = NULL;
+            if(!ser){
+                IDriverSPtr dr(new MemcachedDriver(settings));
+                newMem = new MemcachedServer(dr, true);
+            }
+            else{
+                newMem = new MemcachedServer(ser->driver(), false);
+            }
+            result.reset(newMem);
+            servers_.push_back(result);
+        }
+
         DCHECK(result);
         if(ser && syncServers_){
             result->syncWithServer(ser.get());

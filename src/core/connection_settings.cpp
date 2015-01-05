@@ -9,19 +9,15 @@
 #include "common/net/net.h"
 #include "common/logger.h"
 
-#define LOGGING_FILE_EXTENSION ".red"
-
-namespace
-{
-    const std::string defaultNameConnection = "New Connection";
-}
+#define LOGGING_RESDIS_FILE_EXTENSION ".red"
+#define LOGGING_MEMCACHED_FILE_EXTENSION ".mem"
 
 namespace fastoredis
 {
-    IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName)
-        : connectionName_(), hash_(), logging_enabled_(false), sshInfo_()
+    IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName, connectionTypes type)
+        : connectionName_(), hash_(), logging_enabled_(false), sshInfo_(), type_(type)
     {
-        setConnectionName(connectionName.empty() ? defaultNameConnection : connectionName);
+        setConnectionName(connectionName);
     }
 
     IConnectionSettingsBase::~IConnectionSettingsBase()
@@ -31,16 +27,36 @@ namespace fastoredis
 
     connectionTypes IConnectionSettingsBase::connectionType() const
     {
-        return badConnectionType();
+        return type_;
     }
 
     std::string IConnectionSettingsBase::loggingPath() const
     {
         std::string logDir = common::convertToString(SettingsManager::instance().loggingDirectory());
-        return logDir + hash() + LOGGING_FILE_EXTENSION;
+        return logDir + hash() + (type_ == REDIS ? LOGGING_RESDIS_FILE_EXTENSION : LOGGING_MEMCACHED_FILE_EXTENSION);
     }
 
-    IConnectionSettingsBase *IConnectionSettingsBase::fromString(const std::string &val)
+    std::string IConnectionSettingsBase::fullAddress() const
+    {
+        common::net::hostAndPort h(host(), port());
+        return common::convertToString(h);
+    }
+
+    IConnectionSettingsBase* IConnectionSettingsBase::createFromType(connectionTypes type, const std::string& conName)
+    {
+        if(type == REDIS){
+            return new RedisConnectionSettings(conName);
+        }
+        else if(type == MEMCACHED){
+            return new MemcachedConnectionSettings(conName);
+        }
+        else{
+            NOTREACHED();
+            return NULL;
+        }
+    }
+
+    IConnectionSettingsBase* IConnectionSettingsBase::fromString(const std::string &val)
     {
         IConnectionSettingsBase *result = NULL;
         if(!val.empty()){
@@ -54,15 +70,9 @@ namespace fastoredis
                 if(ch == ','){
                     if(commaCount == 0){
                         int crT = elText[0] - 48;
-                        switch(crT){
-                            case REDIS:{
-                                result = new RedisConnectionSettings("", redisConfig());
-                                break;
-                            }
-                            default:{
-                                NOTREACHED();
-                                return result;
-                            }
+                        result = createFromType((connectionTypes)crT);
+                        if(!result){
+                            return NULL;
                         }
                     }
                     else if(commaCount == 1){
@@ -130,9 +140,9 @@ namespace fastoredis
     }
 
     void IConnectionSettingsBase::setConnectionName(const std::string& name)
-    {        
+    {
         connectionName_ = name;
-        using namespace common::utils;
+        using namespace common::utils;        
         common::buffer_type bcon = common::convertFromString<common::buffer_type>(connectionName_);
         uint64_t v = hash::crc64(0, bcon);
         hash_ = common::convertToString(v);
@@ -146,7 +156,6 @@ namespace fastoredis
     const char* useHelpText(connectionTypes type)
     {
         if(type == DBUNKNOWN){
-            NOTREACHED();
             return NULL;
         }
         else if(type == REDIS){
@@ -177,13 +186,36 @@ namespace fastoredis
                                "                   The test will run for the specified amount of seconds.<br/>"
                                "<b>--eval &lt;file&gt;</b>      Send an EVAL command using the Lua script at <b>&lt;file&gt;</b>.";
         }
+        else if(type == MEMCACHED){
+            return "<b>Usage: [OPTIONS] [cmd [arg [arg ...]]]</b><br/>"
+                               "<b>-h &lt;hostname&gt;</b>      Server hostname (default: 127.0.0.1).<br/>"
+                               "<b>-p &lt;port&gt;</b>          Server port (default: 6379).<br/>"
+                               "<b>-d &lt;delimiter&gt;</b>     Multi-bulk delimiter in for raw formatting (default: \\n).<br/>";
+        }
 
         NOTREACHED();
         return NULL;
     }
 
-    RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName, const redisConfig &info)
-        :IConnectionSettingsBase(connectionName), info_(info)
+    std::string defaultCommandLine(connectionTypes type)
+    {
+        if(type == DBUNKNOWN){
+            return std::string();
+        }
+        else if(type == REDIS){
+            redisConfig r;
+            return common::convertToString(r);
+        }
+        else if(type == MEMCACHED){
+            memcachedConfig r;
+            return common::convertToString(r);
+        }
+
+        return std::string();
+    }
+
+    RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName)
+        : IConnectionSettingsBase(connectionName, REDIS), info_()
     {
 
     }
@@ -224,12 +256,6 @@ namespace fastoredis
         return common::convertToString(info_);
     }
 
-    std::string RedisConnectionSettings::fullAddress() const
-    {
-        common::net::hostAndPort h(host(), port());
-        return common::convertToString(h);
-    }
-
     redisConfig RedisConnectionSettings::info() const
     {
         return info_;
@@ -240,14 +266,67 @@ namespace fastoredis
         info_ =  info;
     }
 
-    connectionTypes RedisConnectionSettings::connectionType() const
-    {
-        return REDIS;
-    }
-
     IConnectionSettingsBase *RedisConnectionSettings::clone() const
     {
         RedisConnectionSettings *red = new RedisConnectionSettings(*this);
         return red;
+    }
+
+    MemcachedConnectionSettings::MemcachedConnectionSettings(const std::string& connectionName)
+        : IConnectionSettingsBase(connectionName, MEMCACHED), info_()
+    {
+
+    }
+
+    std::string MemcachedConnectionSettings::commandLine() const
+    {
+        return common::convertToString(info_);
+    }
+
+    void MemcachedConnectionSettings::setCommandLine(const std::string& line)
+    {
+        info_ = common::convertFromString<memcachedConfig>(line);
+    }
+
+    std::string MemcachedConnectionSettings::host() const
+    {
+        return info_.hostip;
+    }
+
+    int MemcachedConnectionSettings::port() const
+    {
+        return info_.hostport;
+    }
+
+    void MemcachedConnectionSettings::setPort(int port)
+    {
+        info_.hostport = port;
+    }
+
+    memcachedConfig MemcachedConnectionSettings::info() const
+    {
+        return info_;
+    }
+
+    void MemcachedConnectionSettings::setInfo(const memcachedConfig& info)
+    {
+        info_ = info;
+    }
+
+    IConnectionSettingsBase* MemcachedConnectionSettings::clone() const
+    {
+        MemcachedConnectionSettings *red = new MemcachedConnectionSettings(*this);
+        return red;
+    }
+
+    std::string MemcachedConnectionSettings::toCommandLine() const
+    {
+        std::string result = common::convertToString(info_);
+        return result;
+    }
+
+    void MemcachedConnectionSettings::initFromCommandLine(const std::string& val)
+    {
+        info_ = common::convertFromString<memcachedConfig>(val);
     }
 }

@@ -11,15 +11,15 @@ namespace fastoredis
     QueryWidget::QueryWidget(IServerSPtr server, QWidget* parent)
         : QWidget(parent)
     {
-        RedisShellWidget_ = new RedisShellWidget(server);
+        shellWidget_ = new RedisShellWidget(server);
         const QString delemitr = server->outputDelemitr();
 
         outputWidget_ = new OutputWidget(delemitr);
-        VERIFY(connect(RedisShellWidget_, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&)), outputWidget_, SLOT(rootCreate(const EventsInfo::CommandRootCreatedInfo&))));
-        VERIFY(connect(RedisShellWidget_, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), outputWidget_, SLOT(rootCompleate(const EventsInfo::CommandRootCompleatedInfo&))));
+        VERIFY(connect(shellWidget_, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&)), outputWidget_, SLOT(rootCreate(const EventsInfo::CommandRootCreatedInfo&))));
+        VERIFY(connect(shellWidget_, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), outputWidget_, SLOT(rootCompleate(const EventsInfo::CommandRootCompleatedInfo&))));
 
-        VERIFY(connect(RedisShellWidget_, SIGNAL(addedChild(FastoObject *)), outputWidget_, SLOT(addChild(FastoObject *))));
-        VERIFY(connect(RedisShellWidget_, SIGNAL(itemUpdated(FastoObject*, const QString&)), outputWidget_, SLOT(itemUpdate(FastoObject*, const QString&))));
+        VERIFY(connect(shellWidget_, SIGNAL(addedChild(FastoObject *)), outputWidget_, SLOT(addChild(FastoObject *))));
+        VERIFY(connect(shellWidget_, SIGNAL(itemUpdated(FastoObject*, const QString&)), outputWidget_, SLOT(itemUpdate(FastoObject*, const QString&))));
 
         QSplitter *splitter = new QSplitter;
         splitter->setOrientation(Qt::Vertical);
@@ -27,7 +27,7 @@ namespace fastoredis
         splitter->setContentsMargins(0, 0, 0, 0);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
-        splitter->addWidget(RedisShellWidget_);
+        splitter->addWidget(shellWidget_);
         splitter->addWidget(outputWidget_);
         mainLayout->addWidget(splitter);
 
@@ -36,7 +36,7 @@ namespace fastoredis
 
     QString QueryWidget::inputText() const
     {
-        return RedisShellWidget_->text();
+        return shellWidget_->text();
     }
 
     void QueryWidget::reload()
@@ -46,8 +46,18 @@ namespace fastoredis
 
     QueryWidget* QueryWidget::clone(const QString &text)
     {
-        QueryWidget *result = new QueryWidget(RedisShellWidget_->server(), parentWidget());
-        result->RedisShellWidget_->setText(text);
+        QueryWidget *result = new QueryWidget(shellWidget_->server(), parentWidget());
+        result->shellWidget_->setText(text);
         return result;
+    }
+
+    connectionTypes QueryWidget::connectionType() const
+    {
+        IServerSPtr ser = shellWidget_->server();
+        if(!ser){
+            return badConnectionType();
+        }
+
+        return ser->connectionType();
     }
 }

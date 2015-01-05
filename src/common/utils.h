@@ -210,6 +210,9 @@ namespace common
         void msleep(unsigned int msec);
         void usleep(unsigned int usec);
 
+        char *strdupornull(const char *src);
+        void freeifnotnull(void* ptr);
+
 #ifdef OS_POSIX
         namespace signal
         {

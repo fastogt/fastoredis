@@ -23,6 +23,12 @@ namespace fastoredis
         return main;
     }
 
+    const QIcon& GuiFactory::memcachedConnectionIcon() const
+    {
+        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/memcached.png");
+        return main;
+    }
+
     const QIcon &GuiFactory::connectIcon() const
     {
         static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/connect.png");
@@ -112,6 +118,9 @@ namespace fastoredis
     {
         if(type == REDIS){
             return redisConnectionIcon();
+        }
+        else if(type == MEMCACHED){
+            return memcachedConnectionIcon();
         }
         else{
             return serverIcon();

@@ -1479,12 +1479,7 @@ namespace fastoredis
 
     common::net::hostAndPort RedisDriver::address() const
     {
-        if(impl_->context){
-            return common::net::hostAndPort(impl_->config.hostip, impl_->config.hostport);
-        }
-        else{
-            return common::net::hostAndPort();
-        }
+        return common::net::hostAndPort(impl_->config.hostip, impl_->config.hostport);
     }
 
     std::string RedisDriver::version() const

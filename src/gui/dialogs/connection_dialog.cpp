@@ -27,13 +27,14 @@ namespace
     {
         return input.replace("\\n", "\n");
     }
+
+    const QString defaultNameConnection = "New Connection";
 }
 
 namespace fastoredis
 {
-    ConnectionDialog::ConnectionDialog(const IConnectionSettingsBaseSPtr& connection, QWidget* parent)
-        : QDialog(parent),
-        connection_(connection)
+    ConnectionDialog::ConnectionDialog(QWidget *parent, IConnectionSettingsBase* connection)
+        : QDialog(parent), connection_(connection)
     {
         using namespace translations;
 
@@ -41,22 +42,37 @@ namespace fastoredis
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
         connectionName_ = new QLineEdit;
-        connectionName_->setText(common::convertFromString<QString>(connection_->connectionName()));
+        QString conName = defaultNameConnection;
+        if(connection_){
+            conName = common::convertFromString<QString>(connection_->connectionName());
+        }
+        connectionName_->setText(conName);
         typeConnection_ = new QComboBox;
 
         std::vector<std::string> supt = supportedConnectionTypes();
         for(std::vector<std::string>::const_iterator it = supt.begin(); it != supt.end(); ++it){
             typeConnection_->addItem(common::convertFromString<QString>(*it));
         }
-        typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(connection_->connectionType())));
+
+        if(connection_){
+            typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(connection_->connectionType())));
+        }
+
         VERIFY(connect(typeConnection_, SIGNAL(currentTextChanged(const QString&)), this, SLOT(typeConnectionChange(const QString&))));
 
         logging_ = new QCheckBox;
-        logging_->setChecked(connection_->loggingEnabled());
+        if(connection_){
+            logging_->setChecked(connection_->loggingEnabled());
+        }
+        else{
+            logging_->setChecked(false);
+        }
 
         commandLine_ = new QLineEdit;
         commandLine_->setMinimumWidth(240);
-        commandLine_->setText(stableCommandLine(common::convertFromString<QString>(connection_->commandLine())));
+        if(connection_){
+            commandLine_->setText(stableCommandLine(common::convertFromString<QString>(connection_->commandLine())));
+        }
 
         QVBoxLayout *inputLayout = new QVBoxLayout;
         inputLayout->addWidget(connectionName_);
@@ -64,7 +80,10 @@ namespace fastoredis
         inputLayout->addWidget(logging_);
         inputLayout->addWidget(commandLine_);
 
-        SSHInfo info = connection_->sshInfo();
+        SSHInfo info;
+        if(connection_){
+            info = connection_->sshInfo();
+        }
         useSsh_ = new QCheckBox;
         useSsh_->setChecked(info.isValid());
 
@@ -163,59 +182,44 @@ namespace fastoredis
         sshSupportStateChange(useSsh_->checkState());
         securityChange(security_->currentText());
         typeConnectionChange(typeConnection_->currentText());
-        //syncWithConnection();
         retranslateUi();
     }
 
-    void ConnectionDialog::syncWithConnection()
+    IConnectionSettingsBaseSPtr ConnectionDialog::connection() const
     {
-        using namespace translations;
-
-        connectionName_->setText(common::convertFromString<QString>(connection_->connectionName()));
-        typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(connection_->connectionType())));
-        commandLine_->setText(stableCommandLine(common::convertFromString<QString>(connection_->commandLine())));
-        logging_->setChecked(connection_->loggingEnabled());
-
-        SSHInfo info = connection_->sshInfo();
-        useSsh_->setChecked(info.isValid());
-        sshHostName_->setText(common::convertFromString<QString>(info.hostName_));
-        userName_->setText(common::convertFromString<QString>(info.userName_));
-        sshPort_->setText(QString::number(info.port_));
-
-        passwordBox_->setText(common::convertFromString<QString>(info.password_));
-        privateKeyBox_->setText(common::convertFromString<QString>(info.privateKey_));
-        passphraseBox_->setText(common::convertFromString<QString>(info.passphrase_));
-
-        if (info.authMethod() == SSHInfo::PUBLICKEY) {
-            security_->setCurrentText(trPrivateKey);
-        }
-        else {
-            security_->setCurrentText(trPassword);
-        }
+        return connection_;
     }
 
     void ConnectionDialog::accept()
     {
         if(validateAndApply()){
-            connection_->setConnectionName(common::convertToString(connectionName_->text()));
-            connection_->setCommandLine(common::convertToString(toRawCommandLine(commandLine_->text())));
-            connection_->setLoggingEnabled(logging_->isChecked());
+            connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(typeConnection_->currentText()));
+            bool isValidType = currentType != badConnectionType();
+            if(isValidType){
+                std::string conName = common::convertToString(connectionName_->text());
+                IConnectionSettingsBase* newConnection = IConnectionSettingsBase::createFromType(currentType, conName);
+                if(newConnection){
+                    connection_.reset(newConnection);
+                    connection_->setCommandLine(common::convertToString(toRawCommandLine(commandLine_->text())));
+                    connection_->setLoggingEnabled(logging_->isChecked());
 
-            SSHInfo info = connection_->sshInfo();
-            info.hostName_ = common::convertToString(sshHostName_->text());
-            info.userName_ = common::convertToString(userName_->text());
-            info.port_ = sshPort_->text().toInt();
-            info.password_ = common::convertToString(passwordBox_->text());
-            info.publicKey_ = "";
-            info.privateKey_ = common::convertToString(privateKeyBox_->text());
-            info.passphrase_ = common::convertToString(passphraseBox_->text());
-            if (useSsh_->isChecked()){
-                info.currentMethod_ = selectedAuthMethod();
+                    SSHInfo info = connection_->sshInfo();
+                    info.hostName_ = common::convertToString(sshHostName_->text());
+                    info.userName_ = common::convertToString(userName_->text());
+                    info.port_ = sshPort_->text().toInt();
+                    info.password_ = common::convertToString(passwordBox_->text());
+                    info.publicKey_ = "";
+                    info.privateKey_ = common::convertToString(privateKeyBox_->text());
+                    info.passphrase_ = common::convertToString(passphraseBox_->text());
+                    if (useSsh_->isChecked()){
+                        info.currentMethod_ = selectedAuthMethod();
+                    }
+                    else{
+                        info.currentMethod_ = SSHInfo::UNKNOWN;
+                    }
+                    connection_->setSshInfo(info);
+                }
             }
-            else{
-                info.currentMethod_ = SSHInfo::UNKNOWN;
-            }
-            connection_->setSshInfo(info);
 
             QDialog::accept();
         }
@@ -302,8 +306,16 @@ namespace fastoredis
         buttonBox_->button(QDialogButtonBox::Save)->setEnabled(isValidType);
 
         const char* helpText = useHelpText(currentType);
-        QString trHelp = tr(helpText);
-        commandLine_->setToolTip(trHelp);
+        if(helpText){
+            QString trHelp = tr(helpText);
+            commandLine_->setToolTip(trHelp);
+        }
+
+        QString text = commandLine_->text();
+        if(text.isEmpty()){
+            QString deft = stableCommandLine(common::convertFromString<QString>(defaultCommandLine(currentType)));
+            commandLine_->setText(deft);
+        }
 
         useSsh_->setEnabled(isValidType);
     }

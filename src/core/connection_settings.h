@@ -3,8 +3,11 @@
 #include "common/smart_ptr.h"
 
 #include "core/connection_types.h"
-#include "core/redis/redis_config.h"
 #include "core/ssh_info.h"
+
+#include "core/redis/redis_config.h"
+#include "core/memcached/memcached_config.h"
+
 
 namespace fastoredis
 {
@@ -19,17 +22,18 @@ namespace fastoredis
         virtual std::string commandLine() const = 0;
         virtual void setCommandLine(const std::string& line) = 0;
 
-        virtual std::string fullAddress() const = 0;
-
         virtual std::string host() const = 0;
         virtual int port() const = 0;
         virtual void setPort(int port) = 0;
 
+        std::string fullAddress() const;
+
         std::string connectionName() const;
         void setConnectionName(const std::string &name);
 
-        virtual connectionTypes connectionType() const;
-        static IConnectionSettingsBase *fromString(const std::string& val);
+        connectionTypes connectionType() const;
+        static IConnectionSettingsBase* createFromType(connectionTypes type, const std::string& conName = std::string());
+        static IConnectionSettingsBase* fromString(const std::string& val);
         std::string toString() const;
 
         virtual IConnectionSettingsBase* clone () const = 0;
@@ -45,16 +49,18 @@ namespace fastoredis
     protected:
         virtual std::string toCommandLine() const = 0;
         virtual void initFromCommandLine(const std::string& val) = 0;
-        IConnectionSettingsBase(const std::string& connectionName);
+        IConnectionSettingsBase(const std::string& connectionName, connectionTypes type);
 
     private:
         std::string connectionName_;
         std::string hash_;
         bool logging_enabled_;
         SSHInfo sshInfo_;
+        const connectionTypes type_;
     };
 
     const char *useHelpText(connectionTypes type);
+    std::string defaultCommandLine(connectionTypes type);
 
     typedef shared_ptr_t<IConnectionSettingsBase> IConnectionSettingsBaseSPtr;
 
@@ -62,18 +68,14 @@ namespace fastoredis
             : public IConnectionSettingsBase
     {
     public:
-        RedisConnectionSettings(const std::string& connectionName, const redisConfig& info);
+        RedisConnectionSettings(const std::string& connectionName);
 
         virtual std::string commandLine() const;
         virtual void setCommandLine(const std::string& line);
 
-        virtual std::string fullAddress() const;
-
         virtual std::string host() const;
         virtual int port() const;
         virtual void setPort(int port);
-
-        virtual connectionTypes connectionType() const;
 
         redisConfig info() const;
         void setInfo(const redisConfig& info);
@@ -84,5 +86,29 @@ namespace fastoredis
         virtual std::string toCommandLine() const;
         virtual void initFromCommandLine(const std::string& val);
         redisConfig info_;
+    };
+
+    class MemcachedConnectionSettings
+            : public IConnectionSettingsBase
+    {
+    public:
+        MemcachedConnectionSettings(const std::string& connectionName);
+
+        virtual std::string commandLine() const;
+        virtual void setCommandLine(const std::string& line);
+
+        virtual std::string host() const;
+        virtual int port() const;
+        virtual void setPort(int port);
+
+        memcachedConfig info() const;
+        void setInfo(const memcachedConfig& info);
+
+        virtual IConnectionSettingsBase* clone() const;
+
+    private:
+        virtual std::string toCommandLine() const;
+        virtual void initFromCommandLine(const std::string& val);
+        memcachedConfig info_;
     };
 }

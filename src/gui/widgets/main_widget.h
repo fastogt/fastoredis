@@ -33,7 +33,7 @@ namespace fastoredis
         void closedOtherTabs();
 
     private:
-        void addWidgetToTab(QWidget* wid, const QString& title);
+        void addWidgetToTab(QueryWidget* wid, const QString& title);
         void openNewTab(QueryWidget* src, const QString& title, const QString& text);
     };
 }

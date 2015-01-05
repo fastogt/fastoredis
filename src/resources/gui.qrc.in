@@ -6,6 +6,7 @@
     <file>icons/remove.png</file>
     <file>icons/edit.png</file>
     <file>icons/redis.png</file>
+    <file>icons/memcached.png</file>
     <file>icons/redistype.png</file>
     <file>icons/start.png</file>
     <file>icons/stop.png</file>

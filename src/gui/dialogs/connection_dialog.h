@@ -19,7 +19,8 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        ConnectionDialog(const IConnectionSettingsBaseSPtr& connection, QWidget* parent = 0);
+        ConnectionDialog(QWidget* parent, IConnectionSettingsBase* connection = NULL); //get ownerships connection
+        IConnectionSettingsBaseSPtr connection() const;
 
     public Q_SLOTS:
         virtual void accept();
@@ -36,12 +37,11 @@ namespace fastoredis
         virtual void changeEvent(QEvent* );
 
     private:
-        void syncWithConnection();
         void retranslateUi();
         bool validateAndApply();
         SSHInfo::SupportedAuthenticationMetods selectedAuthMethod() const;
 
-        const IConnectionSettingsBaseSPtr connection_;
+        IConnectionSettingsBaseSPtr connection_;
         QLineEdit* connectionName_;
         QComboBox* typeConnection_;
         QCheckBox* logging_;
