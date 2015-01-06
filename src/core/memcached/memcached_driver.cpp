@@ -1,6 +1,6 @@
 #include "core/memcached/memcached_driver.h"
 
-#include <libmemcached/memcached.h>
+#include <libmemcached/memcached.hpp>
 
 extern "C" {
 #include "third-party/redis/deps/hiredis/sds.h"
@@ -19,13 +19,22 @@ namespace fastoredis
     struct MemcachedDriver::pimpl
     {
         pimpl()
-            : memc_(NULL)
+            : memc_(NULL), isConnected_(false)
         {
             memc_ = memcached(NULL, 0);
         }
 
+        bool isConnected() const
+        {
+            return isConnected_;
+        }
+
         common::ErrorValueSPtr connect()
         {
+            if(isConnected_){
+                return common::ErrorValueSPtr();
+            }
+
             if(!memc_){
                 return common::make_error_value("Init error", common::ErrorValue::E_ERROR);
             }
@@ -68,6 +77,7 @@ namespace fastoredis
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
+            isConnected_ = true;
             return common::ErrorValueSPtr();
         }
 
@@ -263,6 +273,7 @@ namespace fastoredis
         }
 
         memcached_st* memc_;
+        bool isConnected_;
    };
 
     MemcachedDriver::MemcachedDriver(const IConnectionSettingsBaseSPtr &settings)
@@ -277,7 +288,7 @@ namespace fastoredis
 
     bool MemcachedDriver::isConnected() const
     {
-        return false;
+        return impl_->isConnected();
     }
 
     void MemcachedDriver::interrupt()
