@@ -170,27 +170,6 @@ MACRO(SETUP_COMPILER_SETTINGS IS_DYNAMIC)
 
     FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/makeRulesOwerride.cmake" "${makeRulesOwerrideContent}")
     SET(CMAKE_USER_MAKE_RULES_OVERRIDE ${CMAKE_CURRENT_BINARY_DIR}/makeRulesOwerride.cmake)
-
-    IF(APPLE)
-        #set(LIBCXX_DIR	${CMAKE_CURRENT_SOURCE_DIR}/imports/libc++10.7)
-        #set(CMAKE_OSX_ARCHITECTURES i386)
-        #set(CMAKE_OSX_ARCHITECTURES_DEBUG i368)
-        #set(CMAKE_CXX_FLAGS "-arch i386")
-        #set(LINK_FLAGS "-arch i386")
-        #set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
-        #set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
-        #set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
-        #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -nostdinc++ -I${LIBCXX_DIR}/include -g -Wall")
-        #set(LINK_FLAGS "${LINK_FLAGS} -L${LIBCXX_DIR}/lib -arch i386")
-        
-        # Detection target arch automaticly
-        #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
-        #set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
-        #set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
-        #set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
-    ELSEIF(UNIX)
-        #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
-    ENDIF()
 ENDMACRO(SETUP_COMPILER_SETTINGS IS_DYNAMIC)
 
 MACRO(INSTALL_RUNTIME_LIBRARIES)
