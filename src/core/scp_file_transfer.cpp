@@ -2,6 +2,7 @@
 
 #ifdef OS_WIN
 #else
+#include <unistd.h>
 #include <arpa/inet.h>
 #endif
 

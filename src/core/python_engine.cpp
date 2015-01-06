@@ -431,9 +431,14 @@ emit executeProgress(100);
     #else
             Py_SetProgramName(WCHAR_PROJECT_NAME);  /* optional but recommended */
     #endif
-        QString path = QCoreApplication::instance()->applicationDirPath();
+        QString path = QCoreApplication::instance()->applicationDirPath();        
+#ifndef PY3K
         std::string pySearchPath = common::convertToString(path);
         char* p = (char*)pySearchPath.c_str();
+#else
+        std::wstring pySearchPath = path.toStdWString();
+        wchar_t* p = (wchar_t*)pySearchPath.c_str();
+#endif
         Py_SetPythonHome(p);
         Py_Initialize();
 #endif

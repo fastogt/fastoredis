@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 extern "C" {
 #include "third-party/redis/src/release.h"
