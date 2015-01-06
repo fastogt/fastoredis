@@ -1,6 +1,6 @@
 #include "core/memcached/memcached_driver.h"
 
-#include <libmemcached/memcached.hpp>
+#include <libmemcached/memcached.h>
 
 extern "C" {
 #include "third-party/redis/deps/hiredis/sds.h"
