@@ -152,7 +152,7 @@ namespace fastoredis
 
     void PreferencesDialog::retranslateUi()
     {
-        setWindowTitle(tr("Preferences "PROJECT_NAME_TITLE));
+        setWindowTitle(tr("Preferences " PROJECT_NAME_TITLE));
 
         generalBox_->setTitle(tr("General settings"));
         autoCheckUpdates_->setText(tr("Automatically check for updates"));

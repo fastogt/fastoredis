@@ -7,61 +7,61 @@ namespace fastoredis
 {
     const QIcon &GuiFactory::openIcon() const
     {
-        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/open.png");
+        static QIcon open(":" PROJECT_NAME_LOWERCASE "/icons/open.png");
         return open;
     }
 
     const QIcon &GuiFactory::mainWindowIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/logo.png");
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/icons/logo.png");
         return main;
     }
 
     const QIcon &GuiFactory::redisConnectionIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/redis.png");
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/icons/redis.png");
         return main;
     }
 
     const QIcon& GuiFactory::memcachedConnectionIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/memcached.png");
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/icons/memcached.png");
         return main;
     }
 
     const QIcon &GuiFactory::connectIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/connect.png");
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/icons/connect.png");
         return main;
     }
 
     const QIcon &GuiFactory::disConnectIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/disconnect.png");
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/icons/disconnect.png");
         return main;
     }
 
     const QIcon &GuiFactory::serverIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/server.png");
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/icons/server.png");
         return main;
     }
 
     const QIcon &GuiFactory::addIcon() const
     {
-        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/add.png");
+        static QIcon open(":" PROJECT_NAME_LOWERCASE "/icons/add.png");
         return open;
     }
 
     const QIcon &GuiFactory::removeIcon() const
     {
-        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/remove.png");
+        static QIcon open(":" PROJECT_NAME_LOWERCASE "/icons/remove.png");
         return open;
     }
 
     const QIcon &GuiFactory::editIcon() const
     {
-        static QIcon open(":"PROJECT_NAME_LOWERCASE"/icons/edit.png");
+        static QIcon open(":" PROJECT_NAME_LOWERCASE "/icons/edit.png");
         return open;
     }
 
@@ -79,25 +79,25 @@ namespace fastoredis
 
     const QIcon &GuiFactory::executeIcon() const
     {
-        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/start.png");
+        static QIcon start(":" PROJECT_NAME_LOWERCASE "/icons/start.png");
         return start;
     }
 
     const QIcon &GuiFactory::timeIcon() const
     {
-        static QIcon time(":"PROJECT_NAME_LOWERCASE"/icons/time.png");
+        static QIcon time(":" PROJECT_NAME_LOWERCASE "/icons/time.png");
         return time;
     }
 
     const QIcon &GuiFactory::stopIcon() const
     {
-        static QIcon stop(":"PROJECT_NAME_LOWERCASE"/icons/stop.png");
+        static QIcon stop(":" PROJECT_NAME_LOWERCASE "/icons/stop.png");
         return stop;
     }
 
     const QIcon &GuiFactory::databaseIcon() const
     {
-        static QIcon db(":"PROJECT_NAME_LOWERCASE"/icons/database.png");
+        static QIcon db(":" PROJECT_NAME_LOWERCASE "/icons/database.png");
         return db;
     }
 
@@ -130,39 +130,39 @@ namespace fastoredis
     const QIcon& GuiFactory::modeIcon(ConnectionMode mode) const
     {
         if(mode == LatencyMode){
-            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/latency_mode.png");
+            static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/latency_mode.png");
             return i;
         }
         else if(mode == SlaveMode){
-            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/slave_mode.png");
+            static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/slave_mode.png");
             return i;
         }
         else if(mode == GetRDBMode){
-            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/rdb_mode.png");
+            static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/rdb_mode.png");
             return i;
         }
         else if(mode == PipeMode){
-            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/pipe_mode.png");
+            static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/pipe_mode.png");
             return i;
         }
         else if(mode == FindBigKeysMode){
-            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/bigkeys_mode.png");
+            static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/bigkeys_mode.png");
             return i;
         }
         else if(mode == StatMode){
-            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/stat_mode.png");
+            static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/stat_mode.png");
             return i;
         }
         else if(mode == ScanMode){
-            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/scan_mode.png");
+            static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/scan_mode.png");
             return i;
         }
         else if(mode == IntaractiveMode){
-            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/interactive_mode.png");
+            static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/interactive_mode.png");
             return i;
         }
         else{
-            static QIcon err(":"PROJECT_NAME_LOWERCASE"/icons/error.png");
+            static QIcon err(":" PROJECT_NAME_LOWERCASE "/icons/error.png");
             NOTREACHED();
             return err;
         }
@@ -173,25 +173,25 @@ namespace fastoredis
         switch(type)
         {
         case common::Value::TYPE_NULL:
-            static QIcon u(":"PROJECT_NAME_LOWERCASE"/icons/unknown.png");
+            static QIcon u(":" PROJECT_NAME_LOWERCASE "/icons/unknown.png");
             return u;
         case common::Value::TYPE_STRING:
-            static QIcon s(":"PROJECT_NAME_LOWERCASE"/icons/string.png");
+            static QIcon s(":" PROJECT_NAME_LOWERCASE "/icons/string.png");
             return s;
         case common::Value::TYPE_ARRAY:
-            static QIcon a(":"PROJECT_NAME_LOWERCASE"/icons/array.png");
+            static QIcon a(":" PROJECT_NAME_LOWERCASE "/icons/array.png");
             return a;
         case common::Value::TYPE_INTEGER:
-            static QIcon i(":"PROJECT_NAME_LOWERCASE"/icons/integer.png");
+            static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/integer.png");
             return i;
         case common::Value::TYPE_STATUS:
-            static QIcon st(":"PROJECT_NAME_LOWERCASE"/icons/status.png");
+            static QIcon st(":" PROJECT_NAME_LOWERCASE "/icons/status.png");
             return st;
         case common::Value::TYPE_ERROR:
-            static QIcon er(":"PROJECT_NAME_LOWERCASE"/icons/error.png");
+            static QIcon er(":" PROJECT_NAME_LOWERCASE "/icons/error.png");
             return er;
         default:
-            static QIcon err(":"PROJECT_NAME_LOWERCASE"/icons/error.png");
+            static QIcon err(":" PROJECT_NAME_LOWERCASE "/icons/error.png");
             NOTREACHED();
             return err;
         }
@@ -199,55 +199,55 @@ namespace fastoredis
 
     const QIcon &GuiFactory::loadIcon() const
     {
-        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/load.png");
+        static QIcon start(":" PROJECT_NAME_LOWERCASE "/icons/load.png");
         return start;
     }
 
     const QIcon &GuiFactory::saveIcon() const
     {
-        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/save.png");
+        static QIcon start(":" PROJECT_NAME_LOWERCASE "/icons/save.png");
         return start;
     }
 
     const QIcon &GuiFactory::saveAsIcon() const
     {
-        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/saveas.png");
+        static QIcon start(":" PROJECT_NAME_LOWERCASE "/icons/saveas.png");
         return start;
     }
 
     const QIcon &GuiFactory::textIcon() const
     {
-        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/text.png");
+        static QIcon start(":" PROJECT_NAME_LOWERCASE "/icons/text.png");
         return start;
     }
 
     const QIcon &GuiFactory::tableIcon() const
     {
-        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/table.png");
+        static QIcon start(":" PROJECT_NAME_LOWERCASE "/icons/table.png");
         return start;
     }
 
     const QIcon &GuiFactory::treeIcon() const
     {
-        static QIcon start(":"PROJECT_NAME_LOWERCASE"/icons/tree.png");
+        static QIcon start(":" PROJECT_NAME_LOWERCASE "/icons/tree.png");
         return start;
     }
 
     const QString &GuiFactory::loadingPathFilePath() const
     {
-        static QString path(":"PROJECT_NAME_LOWERCASE"/icons/loading.gif");
+        static QString path(":" PROJECT_NAME_LOWERCASE "/icons/loading.gif");
         return path;
     }
 
     const QIcon &GuiFactory::loggingIcon() const
     {
-        static QIcon logg(":"PROJECT_NAME_LOWERCASE"/icons/logging.png");
+        static QIcon logg(":" PROJECT_NAME_LOWERCASE "/icons/logging.png");
         return logg;
     }
 
     const QIcon &GuiFactory::commandIcon() const
     {
-        static QIcon comm(":"PROJECT_NAME_LOWERCASE"/icons/command.png");
+        static QIcon comm(":" PROJECT_NAME_LOWERCASE "/icons/command.png");
         return comm;
     }
 
@@ -266,24 +266,24 @@ namespace fastoredis
 
     const QIcon& GuiFactory::pythonIcon() const
     {
-        static QIcon main(":"PROJECT_NAME_LOWERCASE"/icons/python.png");
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/icons/python.png");
         return main;
     }
 
     const QIcon& GuiFactory::close16Icon() const
     {
-        static QIcon close(":"PROJECT_NAME_LOWERCASE"/icons/close16.png");
+        static QIcon close(":" PROJECT_NAME_LOWERCASE "/icons/close16.png");
         return close;
     }
 
     const QIcon& GuiFactory::typeIcon(connectionTypes type) const
     {
         if(type == REDIS){
-            static QIcon comm(":"PROJECT_NAME_LOWERCASE"/icons/redistype.png");
+            static QIcon comm(":" PROJECT_NAME_LOWERCASE "/icons/redistype.png");
             return comm;
         }
         else{
-            static QIcon comm(":"PROJECT_NAME_LOWERCASE"/icons/redistype.png");
+            static QIcon comm(":" PROJECT_NAME_LOWERCASE "/icons/redistype.png");
             return comm;
         }
     }

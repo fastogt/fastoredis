@@ -130,7 +130,7 @@ namespace fastoredis
         QString style = SettingsManager::instance().currentStyle();
         fastoredis::applyStyle(style);
 
-        setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
+        setWindowTitle(PROJECT_NAME_TITLE " " PROJECT_VERSION);
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
 
         openAction_ = new QAction(this);

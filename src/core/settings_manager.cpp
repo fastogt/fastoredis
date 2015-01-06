@@ -28,7 +28,7 @@
 
 namespace
 {
-    const std::string iniPath("~/.config/"PROJECT_NAME"/config.ini");
+    const std::string iniPath("~/.config/" PROJECT_NAME "/config.ini");
 
     std::string pythonExecPath()
     {
