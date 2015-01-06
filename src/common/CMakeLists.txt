@@ -9,34 +9,34 @@ ENDIF(BOOST_ENABLED)
 INCLUDE_DIRECTORIES(../)
 
 IF(DATABASE_SUPPORT)
-#INCLUDE_DIRECTORIES(/usr/include/oracle/11.2/client)#$ENV{oracle_HOME}
-STRING(REPLACE "lib" "include" ORACLE_HOME_INCLUDE $ENV{ORACLE_HOME} )
-INCLUDE_DIRECTORIES(${ORACLE_HOME_INCLUDE})
-INCLUDE_DIRECTORIES(database/postgresql)
-SET(DATABASE_SUPPORT_SOURCES
-        database/connection_info.h
-        database/connection_info.cpp
-        database/oracle_helper.h
-        database/oracle_helper.cpp
-        database/mysql_helper.h
-        database/mysql_helper.cpp
-        database/sqlite_helper.h
-        database/sqlite_helper.cpp
-        database/postgresql_helper.h
-        database/postgresql_helper.cpp
-        database/common_helper.h
-        database/common_helper.cpp
-)
-#find_path(GLIB_INCLUDE_DIR NAMES glib.h HINTS ${GSTREAMER_SDK_ROOT}/include PATH_SUFFIXES glib-2.0)
-FIND_LIBRARY(DATABASE_SUPPORT_LIBS_ORACLE_OCCI occi  PATHS $ENV{ORACLE_HOME} PATH_SUFFIXES lib)
-FIND_LIBRARY(DATABASE_SUPPORT_LIBS_ORACLE_CLNTSH clntsh PATHS $ENV{ORACLE_HOME} PATH_SUFFIXES lib)
-FIND_LIBRARY(DATABASE_SUPPORT_LIBS_MYSQL mysqlcppconn)
-FIND_LIBRARY(DATABASE_SUPPORT_LIBS_SQLITE sqlite3)
-FIND_LIBRARY(DATABASE_SUPPORT_LIBS_POSTGRESQL pq)
+    ADD_DEFINITIONS(-DDATABASE_SUPPORT)
+    #INCLUDE_DIRECTORIES(/usr/include/oracle/11.2/client)#$ENV{oracle_HOME}
+    STRING(REPLACE "lib" "include" ORACLE_HOME_INCLUDE $ENV{ORACLE_HOME} )
+    INCLUDE_DIRECTORIES(${ORACLE_HOME_INCLUDE})
+    INCLUDE_DIRECTORIES(database/postgresql)
+    SET(DATABASE_SUPPORT_SOURCES
+            database/connection_info.h
+            database/connection_info.cpp
+            database/oracle_helper.h
+            database/oracle_helper.cpp
+            database/mysql_helper.h
+            database/mysql_helper.cpp
+            database/sqlite_helper.h
+            database/sqlite_helper.cpp
+            database/postgresql_helper.h
+            database/postgresql_helper.cpp
+            database/common_helper.h
+            database/common_helper.cpp
+    )
+    #find_path(GLIB_INCLUDE_DIR NAMES glib.h HINTS ${GSTREAMER_SDK_ROOT}/include PATH_SUFFIXES glib-2.0)
+    FIND_LIBRARY(DATABASE_SUPPORT_LIBS_ORACLE_OCCI occi  PATHS $ENV{ORACLE_HOME} PATH_SUFFIXES lib)
+    FIND_LIBRARY(DATABASE_SUPPORT_LIBS_ORACLE_CLNTSH clntsh PATHS $ENV{ORACLE_HOME} PATH_SUFFIXES lib)
+    FIND_LIBRARY(DATABASE_SUPPORT_LIBS_MYSQL mysqlcppconn)
+    FIND_LIBRARY(DATABASE_SUPPORT_LIBS_SQLITE sqlite3)
+    FIND_LIBRARY(DATABASE_SUPPORT_LIBS_POSTGRESQL pq)
 
-SET(DATABASE_SUPPORT_LIBS ${DATABASE_SUPPORT_LIBS_ORACLE_OCCI} ${DATABASE_SUPPORT_LIBS_ORACLE_CLNTSH} ${DATABASE_SUPPORT_LIBS_MYSQL} ${DATABASE_SUPPORT_LIBS_SQLITE} ${DATABASE_SUPPORT_LIBS_POSTGRESQL})
-ADD_DEFINITIONS(-DDATABASE_SUPPORT)
-ENDIF()
+    SET(DATABASE_SUPPORT_LIBS ${DATABASE_SUPPORT_LIBS_ORACLE_OCCI} ${DATABASE_SUPPORT_LIBS_ORACLE_CLNTSH} ${DATABASE_SUPPORT_LIBS_MYSQL} ${DATABASE_SUPPORT_LIBS_SQLITE} ${DATABASE_SUPPORT_LIBS_POSTGRESQL})
+ENDIF(DATABASE_SUPPORT)
 
 IF(SETTINGS_SUPPORT)
     IF(NOT BOOST_ENABLED)
@@ -51,12 +51,14 @@ IF(SETTINGS_SUPPORT AND BOOST_ENABLED)
 ENDIF(SETTINGS_SUPPORT AND BOOST_ENABLED)
 
 IF(QT_ENABLED)
-SET(QT_UTILS_SOURCES
-        qt/utils_qt.h
-        qt/utils_qt.cpp
-        qt/convert_string.cpp
-        qt/convert_string.h)
-ENDIF()
+    SET(QT_UTILS_SOURCES
+            qt/utils_qt.h
+            qt/utils_qt.cpp
+            qt/convert_string.cpp
+            qt/convert_string.h
+    )
+ENDIF(QT_ENABLED)
+
 SET(PATTERNS_SOURCES
         patterns/crtp_pattern.h
         patterns/singleton_pattern.h

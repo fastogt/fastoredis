@@ -60,7 +60,7 @@ namespace common
                 for(uint16_t i = 0; i < threads; ++i){
 #ifdef BOOST_ENABLED
                     workers.push_back(thread_t(boost::bind(&std_thread_pool_impl::run_work, this)));
-#else
+#elif defined(HAVE_CXX_STANDART)
                     workers.push_back(thread_t(std::bind(&std_thread_pool_impl::run_work, this)));
 #endif
                 }

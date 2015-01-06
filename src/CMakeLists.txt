@@ -175,29 +175,23 @@ ADD_SUBDIRECTORY(third-party/libssh2)
 ADD_SUBDIRECTORY(third-party/redis)
 ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
 
-IF(BOOST_ENABLED)
-    INTEGRATE_BOOST(system)
-ENDIF(BOOST_ENABLED)
-
-IF(USE_CXX_STANDART)
-    FIND_PACKAGE(Libmemcached REQUIRED)
-    ADD_DEFINITIONS(-DHAVE_MEMCACHED)
-    INCLUDE_DIRECTORIES(${LIBMEMCACHED_INCLUDE_DIR})
-    SET(HEADERS_MEMCACHED_TO_MOC
-        core/memcached/memcached_server.h
-        core/memcached/memcached_driver.h
-    )
-    SET(HEADERS_MEMCACHED
-        core/memcached/memcached_infos.h
-        core/memcached/memcached_config.h
-    )
-    SET(SOURCES_MEMCACHED
-        core/memcached/memcached_config.cpp
-        core/memcached/memcached_infos.cpp
-        core/memcached/memcached_server.cpp
-        core/memcached/memcached_driver.cpp
-    )
-ENDIF(USE_CXX_STANDART)
+#memcached
+FIND_PACKAGE(Libmemcached REQUIRED)
+INCLUDE_DIRECTORIES(${LIBMEMCACHED_INCLUDE_DIR})
+SET(HEADERS_MEMCACHED_TO_MOC
+    core/memcached/memcached_server.h
+    core/memcached/memcached_driver.h
+)
+SET(HEADERS_MEMCACHED
+    core/memcached/memcached_infos.h
+    core/memcached/memcached_config.h
+)
+SET(SOURCES_MEMCACHED
+    core/memcached/memcached_config.cpp
+    core/memcached/memcached_infos.cpp
+    core/memcached/memcached_server.cpp
+    core/memcached/memcached_driver.cpp
+)
 
 IF(PYTHON_ENABLED)
     ADD_SUBDIRECTORY(third-party/pytonqt)
