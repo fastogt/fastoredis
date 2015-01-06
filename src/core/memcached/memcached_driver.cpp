@@ -136,13 +136,52 @@ namespace fastoredis
                 return er;
             }
             else if(strcasecmp(argv[0], "set") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = set(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "add") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = add(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "replace") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = replace(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "delete") == 0){
                 if(argc != 2){
                     return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
                 }
 
-                common::ErrorValueSPtr er = set(argv[1], argv[2], 1, 0);
+                common::ErrorValueSPtr er = del(argv[1]);
                 if(!er){
-                    common::StringValue *val = common::Value::createStringValue("OK");
+                    common::StringValue *val = common::Value::createStringValue("DELETED");
                     FastoObject* child = new FastoObject(out, val, config_.mb_delim);
                     out->addChildren(child);
                 }
@@ -178,7 +217,45 @@ namespace fastoredis
             memcached_return_t error = memcached_set(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Get function error: %s", memcached_strerror(memc_, error));
+                sprintf(buff, "Set function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr add(const std::string& key, const std::string& value, time_t expiration, uint32_t flags)
+        {
+            memcached_return_t error = memcached_add(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Add function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr replace(const std::string& key, const std::string& value, time_t expiration, uint32_t flags)
+        {
+            memcached_return_t error = memcached_replace(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Replace function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr del(const std::string& key)
+        {
+            time_t expiration = 0;
+
+            memcached_return_t error = memcached_delete(memc_, key.c_str(), key.length(), expiration);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Delete function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 

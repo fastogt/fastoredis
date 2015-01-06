@@ -8,6 +8,9 @@ namespace fastoredis
                                                             "verbosity", "version", "stats", "flush_all",
                                                             "delete", "decr", "incr", "prepend", "append", "replace",
                                                             "add", "set", "get"};
+    //get [key]
+    //set [key] [value] [time-to-live-seconds] [flags]
+    //add
 
     class MemcachedDriver
             : public IDriver
