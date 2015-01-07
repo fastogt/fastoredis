@@ -1,6 +1,6 @@
 #include "core/memcached/memcached_driver.h"
 
-#include <libmemcached/memcached.hpp>
+#include <libmemcached/memcached.h>
 
 extern "C" {
 #include "third-party/redis/deps/hiredis/sds.h"
@@ -21,8 +21,7 @@ namespace fastoredis
         pimpl()
             : memc_(NULL), isConnected_(false)
         {
-            memc_ = memcached(NULL, 0);
-            DCHECK(memc_);
+
         }
 
         bool isConnected() const
@@ -35,6 +34,9 @@ namespace fastoredis
             if(isConnected_){
                 return common::ErrorValueSPtr();
             }
+
+            clear();
+            init();
 
             if(!memc_){
                 return common::make_error_value("Init error", common::ErrorValue::E_ERROR);
@@ -53,14 +55,14 @@ namespace fastoredis
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
-            rc = memcached_behavior_set(memc_, MEMCACHED_BEHAVIOR_CONNECT_TIMEOUT, 10000);
+            /*rc = memcached_behavior_set(memc_, MEMCACHED_BEHAVIOR_CONNECT_TIMEOUT, 10000);
             if (rc != MEMCACHED_SUCCESS){
                 sprintf(buff, "Couldn't set the connect timeout: %s", memcached_strerror(memc_, rc));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
-            }
+            }*/
 
             memcached_server_st *servers = NULL;
-            servers = memcached_server_list_append(servers, config_.hostip, config_.hostport, &rc);
+            servers = memcached_server_list_append_with_weight(servers, config_.hostip, config_.hostport, 1, &rc);
             if (rc != MEMCACHED_SUCCESS){
                 sprintf(buff, "Couldn't add server: %s", memcached_strerror(memc_, rc));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
@@ -72,8 +74,6 @@ namespace fastoredis
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
-            memcached_server_list_free(servers);
-
             isConnected_ = true;
             return common::ErrorValueSPtr();
         }
@@ -83,6 +83,8 @@ namespace fastoredis
             if(!isConnected_){
                 return common::ErrorValueSPtr();
             }
+
+            clear();
 
             isConnected_ = false;
             return common::ErrorValueSPtr();
@@ -127,9 +129,7 @@ namespace fastoredis
 
         ~pimpl()
         {
-            if(memc_){
-                memcached_free(memc_);
-            }
+            clear();
         }
 
         memcachedConfig config_;
@@ -282,6 +282,21 @@ namespace fastoredis
             }
 
             return common::ErrorValueSPtr();
+        }
+
+        void init()
+        {
+            DCHECK(!memc_);
+            memc_ = memcached(NULL, 0);
+            DCHECK(memc_);
+        }
+
+        void clear()
+        {
+            if(memc_){
+                memcached_free(memc_);
+            }
+            memc_ = NULL;
         }
 
         memcached_st* memc_;
