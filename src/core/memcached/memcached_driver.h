@@ -4,7 +4,7 @@
 
 namespace fastoredis
 {
-    const std::vector<QString> memcachedCommandsKeywords = {"quit", "exit", "shutdown",
+    const std::vector<QString> memcachedCommandsKeywords = {"quit",
                                                             "verbosity", "version", "stats", "flush_all",
                                                             "delete", "decr", "incr", "prepend", "append", "replace",
                                                             "add", "set", "get"};

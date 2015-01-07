@@ -22,6 +22,7 @@ namespace fastoredis
             : memc_(NULL), isConnected_(false)
         {
             memc_ = memcached(NULL, 0);
+            DCHECK(memc_);
         }
 
         bool isConnected() const
@@ -52,12 +53,6 @@ namespace fastoredis
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
-            rc = memcached_behavior_set(memc_, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL, 1);
-            if (rc != MEMCACHED_SUCCESS){
-                sprintf(buff, "Couldn't use the binary protocol: %s", memcached_strerror(memc_, rc));
-                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
-            }
-
             rc = memcached_behavior_set(memc_, MEMCACHED_BEHAVIOR_CONNECT_TIMEOUT, 10000);
             if (rc != MEMCACHED_SUCCESS){
                 sprintf(buff, "Couldn't set the connect timeout: %s", memcached_strerror(memc_, rc));
@@ -77,7 +72,19 @@ namespace fastoredis
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
+            memcached_server_list_free(servers);
+
             isConnected_ = true;
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr disconnect()
+        {
+            if(!isConnected_){
+                return common::ErrorValueSPtr();
+            }
+
+            isConnected_ = false;
             return common::ErrorValueSPtr();
         }
 
@@ -105,7 +112,7 @@ namespace fastoredis
                     out->addChildren(child);
                 }
                 else if (argc > 0) {
-                    if (strcasecmp(argv[0], "quit") == 0 || strcasecmp(argv[0], "exit") || strcasecmp(argv[0], "shutdown") == 0){
+                    if (strcasecmp(argv[0], "quit") == 0){
                         config_.shutdown = 1;
                     }
                     else {
@@ -132,7 +139,7 @@ namespace fastoredis
         common::ErrorValueSPtr execute(FastoObject* out, int argc, char **argv)
         {
             if(strcasecmp(argv[0], "get") == 0){
-                if(argc != 1){
+                if(argc != 2){
                     return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
                 }
 
@@ -146,7 +153,7 @@ namespace fastoredis
                 return er;
             }
             else if(strcasecmp(argv[0], "set") == 0){
-                if(argc != 4){
+                if(argc != 5){
                     return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
                 }
 
@@ -196,6 +203,11 @@ namespace fastoredis
                     out->addChildren(child);
                 }
                 return er;
+            }
+            else{
+                char buff[1024] = {0};
+                sprintf(buff, "Not supported command: %s", argv[0]);
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
         }
 
@@ -355,7 +367,18 @@ namespace fastoredis
 
     void MemcachedDriver::handleDisconnectEvent(Events::DisconnectRequestEvent* ev)
     {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            Events::DisconnectResponceEvent::value_type res(ev->value());
+        notifyProgress(sender, 50);
 
+            common::ErrorValueSPtr er = impl_->disconnect();
+            if(er){
+                res.setErrorInfo(er);
+            }
+
+            reply(sender, new Events::DisconnectResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
     void MemcachedDriver::handleExecuteEvent(Events::ExecuteRequestEvent* ev)
