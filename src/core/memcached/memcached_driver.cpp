@@ -49,10 +49,12 @@ namespace fastoredis
             memcached_return rc;
             char buff[1024] = {0};
 
-            rc = memcached_set_sasl_auth_data(memc_, config_.user_, config_.password_);
-            if (rc != MEMCACHED_SUCCESS){
-                sprintf(buff, "Couldn't setup SASL auth: %s", memcached_strerror(memc_, rc));
-                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            if(config_.user_ && config_.password_){
+                rc = memcached_set_sasl_auth_data(memc_, config_.user_, config_.password_);
+                if (rc != MEMCACHED_SUCCESS){
+                    sprintf(buff, "Couldn't setup SASL auth: %s", memcached_strerror(memc_, rc));
+                    return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+                }
             }
 
             /*rc = memcached_behavior_set(memc_, MEMCACHED_BEHAVIOR_CONNECT_TIMEOUT, 10000);
