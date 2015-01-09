@@ -97,6 +97,10 @@
 #define SIZEOFMASS(type) sizeof(type)/sizeof(*type)
 #define arraysize(type) sizeof(type)/sizeof(*type)
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define LINE_TEXT __FILE__ ":" TOSTRING(__LINE__)
+
 template <bool>
 struct CompileAssert {
 };
