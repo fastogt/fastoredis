@@ -1,5 +1,9 @@
-0.4.6
+0.5.6
 [Alexandr Topilski]
+- Remove boost library dependence
+- Move to C++11 standart
+- Server history (only Redis)
+- Memcached support(only basic functions)
 - Shutdown functionality
 - Backup/Import rdb files only localhost version
 

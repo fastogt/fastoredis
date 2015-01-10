@@ -182,7 +182,7 @@
 #define HAVE_LIBPQ 0
 
 /* Define to 1 if LIBSASL is found */
-#define HAVE_LIBSASL 1
+//#define HAVE_LIBSASL 1 cmake now
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -835,7 +835,7 @@ typedef unsigned long int ulong;
 #define HAVE_LIBPQ 0
 
 /* Define to 1 if LIBSASL is found */
-#define HAVE_LIBSASL 1
+//#define HAVE_LIBSASL 1 cmake now
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -1488,7 +1488,7 @@ typedef unsigned long int ulong;
 #define HAVE_LIBPQ 0
 
 /* Define to 1 if LIBSASL is found */
-#define HAVE_LIBSASL 1
+//#define HAVE_LIBSASL 1 cmake now
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
