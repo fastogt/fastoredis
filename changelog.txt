@@ -4,6 +4,7 @@
 - Move to C++11 standart
 - Server history (only Redis)
 - Memcached support(only basic functions)
+- Memcached sasl connection
 - Shutdown functionality
 - Backup/Import rdb files only localhost version
 
