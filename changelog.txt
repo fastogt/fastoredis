@@ -1,4 +1,4 @@
-0.5.6
+0.5.6 / January 10, 2015
 [Alexandr Topilski]
 - Remove boost library dependence
 - Move to C++11 standart
