@@ -308,6 +308,7 @@ namespace fastoredis
     MemcachedDriver::MemcachedDriver(const IConnectionSettingsBaseSPtr &settings)
         : IDriver(settings), impl_(new pimpl)
     {
+
     }
 
     MemcachedDriver::~MemcachedDriver()

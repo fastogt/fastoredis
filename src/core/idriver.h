@@ -31,6 +31,7 @@ namespace fastoredis
         const IConnectionSettingsBaseSPtr& settings() const;
 
         //sync
+        void start();
         virtual void interrupt() = 0;
         virtual bool isConnected() const = 0;
         virtual common::net::hostAndPort address() const = 0;

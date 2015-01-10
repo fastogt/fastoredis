@@ -156,8 +156,15 @@ static memcached_return_t connect_poll(memcached_instance_st* server, const int 
       return memcached_set_errno(*server, err, MEMCACHED_AT, memcached_literal_param("getsockopt() found the error from poll() during connect."));
     }
     assert(fds[0].revents & POLLOUT);
-
+#ifdef FASTOREDIS
+    #ifdef __MINGW32__
+    if (fds[0].revents & POLLOUT and connection_error == EINPROGRESS or connection_error == WSAEWOULDBLOCK)
+    #else
     if (fds[0].revents & POLLOUT and connection_error == EINPROGRESS)
+    #endif
+#else
+    if (fds[0].revents & POLLOUT and connection_error == EINPROGRESS)
+#endif
     {
       int err;
       socklen_t len= sizeof(err);
@@ -585,6 +592,11 @@ static memcached_return_t network_connect(memcached_instance_st* server)
     case EAGAIN:
 #if EWOULDBLOCK != EAGAIN
     case EWOULDBLOCK:
+#endif
+#ifdef FASTOREDIS
+#ifdef __MINGW32__
+    case  WSAEWOULDBLOCK:
+#endif
 #endif
     case EINPROGRESS: // nonblocking mode - first return
     case EALREADY: // nonblocking mode - subsequent returns

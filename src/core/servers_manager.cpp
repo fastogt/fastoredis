@@ -54,6 +54,7 @@ namespace fastoredis
             RedisServer *newRed = NULL;
             if(!ser){
                 IDriverSPtr dr(new RedisDriver(settings));
+                dr->start();
                 newRed = new RedisServer(dr, true);
             }
             else{
@@ -66,6 +67,7 @@ namespace fastoredis
             MemcachedServer *newMem = NULL;
             if(!ser){
                 IDriverSPtr dr(new MemcachedDriver(settings));
+                dr->start();
                 newMem = new MemcachedServer(dr, true);
             }
             else{
