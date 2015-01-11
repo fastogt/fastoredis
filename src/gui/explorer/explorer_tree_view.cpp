@@ -16,11 +16,6 @@
 
 #include "translations/global.h"
 
-namespace
-{
-    const QString dumpPath("/var/lib/redis/");
-}
-
 namespace fastoredis
 {
     ExplorerTreeView::ExplorerTreeView(QWidget* parent)

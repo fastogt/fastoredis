@@ -30,7 +30,7 @@ namespace fastoredis
 
     void AppStyle::drawPrimitive(PrimitiveElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const
     {
-#ifdef Q_OS_WIN
+#ifdef OS_WIN
 
         if(element==QStyle::PE_FrameFocusRect)
             return;

@@ -8,10 +8,11 @@
 namespace fastoredis
 {
     FastoTreeView::FastoTreeView(QWidget* parent)
-        :QTreeView(parent)
+        : QTreeView(parent)
     {
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSelectionBehavior(QAbstractItemView::SelectRows);
+
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
     }

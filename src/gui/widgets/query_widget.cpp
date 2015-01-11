@@ -4,6 +4,7 @@
 #include <QSplitter>
 
 #include "shell/shell_widget.h"
+
 #include "gui/widgets/output_widget.h"
 
 namespace fastoredis

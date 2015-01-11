@@ -1,5 +1,6 @@
 #include "common/qt/utils_qt.h"
 
+#include <QApplication>
 #include <QDir>
 
 namespace common
@@ -13,6 +14,11 @@ namespace common
             QDir dir;
             dir.mkpath(path[0]);
             return path[0] + QDir::separator();
+        }
+
+        QString applicationDirPath()
+        {
+            return QApplication::applicationDirPath();
         }
     }
 }

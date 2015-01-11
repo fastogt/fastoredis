@@ -51,6 +51,7 @@ namespace fastoredis
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();
         }
+
         QWidget::changeEvent(e);
     }
 

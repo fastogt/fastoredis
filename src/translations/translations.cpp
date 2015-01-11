@@ -1,16 +1,17 @@
 #include "translations/translations.h"
 
 #include <QTranslator>
-#include <QApplication>
 #include <QDir>
+#include <QApplication>
 
 #include "common/qt/convert_string.h"
+#include "common/qt/utils_qt.h"
 
 namespace
 {
     QString trPath()
     {
-        return QApplication::applicationDirPath() + "/translations";
+        return common::utils_qt::applicationDirPath() + "/translations";
     }
 
     QStringList qmLanguages()
@@ -46,9 +47,7 @@ namespace
 namespace fastoredis
 {
     namespace translations
-    {        
-        const QString defLanguage = "System";
-
+    {
         QString applyLanguage(const QString &lang)
         {
             QString langres = lang;

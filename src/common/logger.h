@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #include "common/log_levels.h"
-#include "common/multi_threading/types.h"
+#include "common/types.h"
 #include "common/patterns/singleton_pattern.h"
 
 namespace common
@@ -17,75 +17,37 @@ namespace common
         public:
             void printTradeSafe(LEVEL_LOG level, const std::string& data);
 
-            template<uint16_t buff_size, typename T>
-            void printTradeSafe(LEVEL_LOG level, const char* fmt, T t1)
-            {                
-                char buff[buff_size] = {0};
-                int res = snprintf(buff, buff_size, fmt, t1);
-                DCHECK(res != -1 && res < buff_size);
-                printTradeSafe(level, buff);
-            }            
-
-            template<uint16_t buff_size, typename T1, typename T2>
-            void printTradeSafe(LEVEL_LOG level, const char* fmt, T1 t1, T2 t2)
-            {
-                char buff[buff_size] = {0};
-                int res = snprintf(buff, buff_size, fmt, t1, t2);
-                DCHECK(res != -1 && res < buff_size);
-                printTradeSafe(level, buff);
-            }
-
-            template<uint16_t buff_size, typename T1, typename T2, typename T3>
-            void printTradeSafe(LEVEL_LOG level, const char* fmt, T1 t1, T2 t2, T3 t3)
-            {
-                char buff[buff_size] = {0};
-                int res = snprintf(buff, fmt, t1, t2, t3);
-                DCHECK(res != -1 && res < buff_size);
-                printTradeSafe(level, buff);
-            }
-
-            template<uint16_t buff_size, typename T1, typename T2, typename T3, typename T4>
-            void printTradeSafe(LEVEL_LOG level, const char* fmt, T1 t1, T2 t2, T3 t3, T4 t4)
-            {
-                char buff[buff_size] = {0};
-                int res = snprintf(buff, fmt, t1, t2, t3, t4);
-                DCHECK(res != -1 && res < buff_size);
-                printTradeSafe(level, buff);
-            }
-
         private:
             Logger();
             ~Logger();
 
-            typedef multi_threading::mutex_t locker_type;
-
-            locker_type lock_;
             std::ostream* outStream_;
         };        
     }
 
-    template<uint16_t buff_size, typename T>
-    inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const char* fmt, T t)
+    template<typename T>
+    inline T normalize(T t)
     {
-        return logging::Logger::instance().printTradeSafe<buff_size>(level, fmt, t);
+        return t;
     }
 
-    template<uint16_t buff_size, typename T1, typename T2>
-    inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const char* fmt, T1 t1, T2 t2)
+    inline const char* normalize(const std::string& text)
     {
-        return logging::Logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2);
+        return text.c_str();
     }
 
-    template<uint16_t buff_size, typename T1, typename T2, typename T3>
-    inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const char* fmt, T1 t1, T2 t2, T3 t3)
+    inline const char* normalize(const buffer_type& buffer)
     {
-        return logging::Logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2, t3);
+        return (const char*)buffer.c_str();
     }
 
-    template<uint16_t buff_size, typename T1, typename T2, typename T3, typename T4>
-    inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const char* fmt, T1 t1, T2 t2, T3 t3, T4 t4)
+    template<uint16_t buff_size, typename... Args>
+    inline void DEBUG_MSG_FORMAT(logging::LEVEL_LOG level, const char* fmt, Args... args)
     {
-        return logging::Logger::instance().printTradeSafe<buff_size>(level, fmt, t1, t2, t3, t4);
+        char buff[buff_size] = {0};
+        int res = snprintf(buff, buff_size, fmt, normalize(args)...);
+        DCHECK(res != -1 && res < buff_size);
+        logging::Logger::instance().printTradeSafe(level, buff);
     }
 
     void DEBUG_MSG_PERROR(const char* function, int err);

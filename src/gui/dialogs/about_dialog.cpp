@@ -10,7 +10,11 @@
 namespace
 {
     const QString description = QObject::tr(
+#ifdef RELEASE_CANDIDATE
         "<h3>" PROJECT_NAME_TITLE " " PROJECT_VERSION "<br/>Revision:" PROJECT_GIT_VERSION "</h3>"
+#else
+        "<h3>" PROJECT_NAME_TITLE " " PROJECT_VERSION " beta" STRINGIZE(PROJECT_VERSION_TWEAK) "<br/>Revision:" PROJECT_GIT_VERSION "</h3>"
+#endif
         "Shell-centric Redis management tool."
         "<br/>"
         "<br/>"

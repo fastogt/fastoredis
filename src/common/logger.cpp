@@ -1,12 +1,11 @@
 #include "common/logger.h"
 
-#include "common/file_system.h"
-
 #include <fstream>
-#ifdef HAVE_CXX_STANDART
 #include <string.h>
 #include <iostream>
-#endif
+
+#include "common/file_system.h"
+#include "common/multi_threading/types.h"
 
 namespace
 {
@@ -15,6 +14,8 @@ namespace
         static std::string result = common::file_system::prepare_path("~/" PROJECT_NAME_LOWERCASE ".log");
         return result;
     }
+
+    common::multi_threading::mutex_t lock_;
 }
 
 namespace common
@@ -52,7 +53,7 @@ namespace common
 
         void Logger::printTradeSafe(LEVEL_LOG level, const std::string &data)
         {
-            multi_threading::unique_lock<locker_type> lock(lock_);
+            multi_threading::unique_lock<multi_threading::mutex_t> lock(lock_);
             *outStream_ << log_level_to_text(level) << " " << data;
         }
     }

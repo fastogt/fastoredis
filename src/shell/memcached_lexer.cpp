@@ -44,7 +44,7 @@ namespace fastoredis
 
     const char *MemcachedLexer::language() const
     {
-        return "Redis";
+        return "Memcached";
     }
 
     const char* MemcachedLexer::version()

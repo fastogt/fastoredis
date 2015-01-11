@@ -1531,7 +1531,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er;
         notifyProgress(sender, 25);
                     if(impl_->config.shutdown){
-                        common::ErrorValueSPtr er(new common::ErrorValue("Interrupted connect.", common::ErrorValue::E_INTERRUPTED));
+                        common::ErrorValueSPtr er = common::make_error_value("Interrupted connect.", common::ErrorValue::E_INTERRUPTED);
                         res.setErrorInfo(er);
                     }
                     else{

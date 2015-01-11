@@ -19,10 +19,8 @@ namespace fastoredis
             : public QWidget
     {
         Q_OBJECT
-
     public:
         OutputWidget(const QString &delemitr, QWidget* parent = 0);
-
 
     private Q_SLOTS:
         void setTreeView();

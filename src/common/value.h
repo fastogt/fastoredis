@@ -40,7 +40,7 @@ namespace common
         static FundamentalValue* createDoubleValue(double in_value);
         static StringValue* createStringValue(const std::string& in_value);
         static ArrayValue* createArrayValue();
-        static ErrorValue* createErrorValue(const std::string &in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
+        static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
         static std::string toString(Type t);
         virtual std::string toString() const;
@@ -197,6 +197,7 @@ namespace common
     public:
         ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
         ErrorValue();
+
         bool isError() const;
         common::logging::LEVEL_LOG level() const;
         std::string description() const;
@@ -218,15 +219,18 @@ namespace common
 
     std::ostream& operator<<(std::ostream& out, const Value& value);
 
-    inline std::ostream& operator<<(std::ostream& out, const FundamentalValue& value) {
+    inline std::ostream& operator<<(std::ostream& out, const FundamentalValue& value)
+    {
         return out << static_cast<const Value&>(value);
     }
 
-    inline std::ostream& operator<<(std::ostream& out, const StringValue& value) {
+    inline std::ostream& operator<<(std::ostream& out, const StringValue& value)
+    {
         return out << static_cast<const Value&>(value);
     }
 
-    inline std::ostream& operator<<(std::ostream& out, const ArrayValue& value) {
+    inline std::ostream& operator<<(std::ostream& out, const ArrayValue& value)
+    {
         return out << static_cast<const Value&>(value);
     }
 }

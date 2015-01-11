@@ -1,5 +1,7 @@
 #include "gui/explorer/explorer_tree_model.h"
 
+#include "translations/global.h"
+
 #include "gui/gui_factory.h"
 #include "common/qt/utils_qt.h"
 
@@ -128,7 +130,7 @@ namespace fastoredis
 
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
             if (section == ExplorerServerItem::eName) {
-                return tr("Name");
+                return translations::trName;
             }
         }
 

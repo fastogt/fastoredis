@@ -20,7 +20,7 @@
 
 #include "common/logger.h"
 
-#ifdef OS_WINDOWS
+#ifdef OS_WIN
 
 #define BUF_SIZE 8192
 

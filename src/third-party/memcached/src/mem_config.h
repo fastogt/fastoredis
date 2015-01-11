@@ -4,7 +4,7 @@
 
 #pragma once
 
-#if defined(OS_WINDOWS)
+#if defined(OS_WIN)
 /* _SYS_FEATURE_TESTS_H is Solaris, _FEATURES_H is GCC */
 #if defined( _SYS_FEATURE_TESTS_H) || defined(_FEATURES_H)
 #error "You should include mem_config.h as your first include file"

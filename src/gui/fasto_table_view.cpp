@@ -14,6 +14,7 @@ namespace fastoredis
         horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSelectionBehavior(QAbstractItemView::SelectItems);
+
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
     }
