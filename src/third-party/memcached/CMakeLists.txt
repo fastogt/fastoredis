@@ -43,6 +43,8 @@ SET(SOURCES_MEMCACHED
     src/libmemcached/udp.cc
     src/libmemcached/namespace.cc
     src/libmemcached/callback.cc
+    src/libmemcached/auto.cc
+    src/libmemcached/flush.cc
 
     src/libmemcached/csl/context.cc
     src/libmemcached/csl/scanner.cc

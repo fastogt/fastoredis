@@ -193,6 +193,58 @@ namespace fastoredis
                 }
                 return er;
             }
+            else if(strcasecmp(argv[0], "append") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = append(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "prepend") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = prepend(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "incr") == 0){
+                if(argc != 3){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = incr(argv[1], common::convertFromString<uint64_t>(argv[2]));
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "decr") == 0){
+                if(argc != 3){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = decr(argv[1], common::convertFromString<uint64_t>(argv[2]));
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
             else if(strcasecmp(argv[0], "delete") == 0){
                 if(argc != 2){
                     return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
@@ -205,6 +257,46 @@ namespace fastoredis
                     out->addChildren(child);
                 }
                 return er;
+            }
+            else if(strcasecmp(argv[0], "flush_all") == 0){
+                if(argc < 3){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = flush_all(argc == 2 ? common::convertFromString<time_t>(argv[1]) : 0);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "stats") == 0){
+                if(argc < 3){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = stats(argc == 2 ? argv[1] : 0);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "version") == 0){
+                if(argc != 1){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                return version_server();
+            }
+            else if(strcasecmp(argv[0], "verbosity") == 0){
+                if(argc != 1){
+                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                return verbosity();
             }
             else{
                 char buff[1024] = {0};
@@ -272,6 +364,54 @@ namespace fastoredis
             return common::ErrorValueSPtr();
         }
 
+        common::ErrorValueSPtr append(const std::string& key, const std::string& value, time_t expiration, uint32_t flags)
+        {
+            memcached_return_t error = memcached_append(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Append function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr prepend(const std::string& key, const std::string& value, time_t expiration, uint32_t flags)
+        {
+            memcached_return_t error = memcached_prepend(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Prepend function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr incr(const std::string& key, uint64_t value)
+        {
+            memcached_return_t error = memcached_increment(memc_, key.c_str(), key.length(), 0, &value);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Incr function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr decr(const std::string& key, uint64_t value)
+        {
+            memcached_return_t error = memcached_decrement(memc_, key.c_str(), key.length(), 0, &value);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Decr function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
         common::ErrorValueSPtr del(const std::string& key)
         {
             time_t expiration = 0;
@@ -284,6 +424,55 @@ namespace fastoredis
             }
 
             return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr flush_all(time_t expiration)
+        {
+            memcached_return_t error = memcached_flush(memc_, expiration);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Fluss all function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr stats(const char* args)
+        {
+            /*memcached_return_t error;
+            memcached_stat_st* st = memcached_stat(memc_, (char*)args, &error);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Fluss all function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }*/
+
+            return common::make_error_value("Not supported command", common::ErrorValue::E_ERROR);
+        }
+
+        common::ErrorValueSPtr version_server() const
+        {
+            memcached_return_t error = memcached_version(memc_);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Get server version error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr verbosity() const
+        {
+            /*memcached_return_t error = memcached_verbosity(memc_, 1);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Verbosity error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }*/
+
+            return common::make_error_value("Not supported command", common::ErrorValue::E_ERROR);
         }
 
         void init()

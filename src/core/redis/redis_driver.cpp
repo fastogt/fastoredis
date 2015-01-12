@@ -301,7 +301,7 @@ namespace fastoredis
             /* Discard the payload. */
             while(payload) {
                 ssize_t nread = 0;
-                int res = redisReadToBuffer(context, buf,(payload > sizeof(buf)) ? sizeof(buf) : payload, &nread);
+                int res = redisReadToBuffer(context, buf, (payload > sizeof(buf)) ? sizeof(buf) : payload, &nread);
                 if (res == REDIS_ERR) {
                     return common::make_error_value("Error reading RDB payload while SYNCing", common::ErrorValue::E_ERROR);
                 }
@@ -353,7 +353,7 @@ namespace fastoredis
                 out->addChildren(child);
             }
             else{
-                fd = open(config.rdb_filename, O_CREAT|O_WRONLY, 0644);
+                fd = open(config.rdb_filename, O_CREAT | O_WRONLY, 0644);
                 if (fd == INVALID_DESCRIPTOR) {
                     char bufeEr[2048];
                     sprintf(bufeEr, "Error opening '%s': %s", config.rdb_filename, strerror(errno));
