@@ -70,6 +70,8 @@ SET(SOURCES_MEMCACHED
     src/libhashkit/murmur.cc
     src/libhashkit/murmur3.cc
     src/libhashkit/murmur3_api.cc
+
+    src/libmemcachedutil/ping.cc
 )
 
 IF(OS_WIN)

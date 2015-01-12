@@ -1,6 +1,7 @@
 #include "core/memcached/memcached_driver.h"
 
 #include <libmemcached/memcached.h>
+#include <libmemcached/util.h>
 
 extern "C" {
 #include "third-party/redis/deps/hiredis/sds.h"
@@ -16,6 +17,29 @@ extern "C" {
 
 namespace fastoredis
 {
+    common::ErrorValueSPtr testConnection(const char* host, int hostport, const char* user, const char* passwd)
+    {
+        memcached_return rc;
+        char buff[1024] = {0};
+
+        if(user && passwd){
+            libmemcached_util_ping2(host, hostport, user, passwd, &rc);
+            if (rc != MEMCACHED_SUCCESS){
+                sprintf(buff, "Couldn't ping server: %s", memcached_strerror(NULL, rc));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+        }
+        else{
+            libmemcached_util_ping(host, hostport, &rc);
+            if (rc != MEMCACHED_SUCCESS){
+                sprintf(buff, "Couldn't ping server: %s", memcached_strerror(NULL, rc));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+        }
+
+        return common::ErrorValueSPtr();
+    }
+
     struct MemcachedDriver::pimpl
     {
         pimpl()
