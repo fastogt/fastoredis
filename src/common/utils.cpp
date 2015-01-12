@@ -1,5 +1,7 @@
 #include "common/utils.h"
 
+#include <errno.h>
+
 #ifdef OS_WIN
 #include <synchapi.h>
 #elif defined OS_LINUX

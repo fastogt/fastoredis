@@ -356,8 +356,7 @@ namespace fastoredis
                 fd = open(config.rdb_filename, O_CREAT|O_WRONLY, 0644);
                 if (fd == INVALID_DESCRIPTOR) {
                     char bufeEr[2048];
-                    sprintf(bufeEr, "Error opening '%s': %s", config.rdb_filename,
-                        strerror(errno));
+                    sprintf(bufeEr, "Error opening '%s': %s", config.rdb_filename, strerror(errno));
 
                     return common::make_error_value(bufeEr, common::ErrorValue::E_ERROR);
                 }
@@ -386,8 +385,7 @@ namespace fastoredis
 
                 if (nwritten != nread) {
                     char bufeEr[2048];
-                    sprintf(bufeEr, "Error writing data to file: %s",
-                            strerror(errno));
+                    sprintf(bufeEr, "Error writing data to file: %s", strerror(errno));
 
                     if(fd != INVALID_DESCRIPTOR){
                         close(fd);

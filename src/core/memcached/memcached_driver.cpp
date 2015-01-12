@@ -359,7 +359,7 @@ namespace fastoredis
 
     common::ErrorValueSPtr MemcachedDriver::currentLoggingInfo(FastoObject* out)
     {
-
+        return common::ErrorValueSPtr();
     }
 
     void MemcachedDriver::handleConnectEvent(Events::ConnectRequestEvent *ev)

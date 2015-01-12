@@ -22,7 +22,7 @@
 
 namespace fastoredis
 {
-    extern const QString defStyle;
+    const QString defStyle = "Native";
     void applyStyle(const QString& styleName);
     QStringList getSupportedStyles();
 
@@ -35,5 +35,4 @@ namespace fastoredis
         virtual void drawPrimitive(PrimitiveElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const;
         virtual QRect subElementRect(SubElement element, const QStyleOption* option, const QWidget* widget = 0) const;
     };
-
 }

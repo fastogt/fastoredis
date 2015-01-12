@@ -1,5 +1,7 @@
 #include "common/net/net.h"
 
+#include <errno.h>
+
 #ifdef OS_POSIX
 #include <netdb.h>
 #else

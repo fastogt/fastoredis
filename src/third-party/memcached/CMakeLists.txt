@@ -40,7 +40,6 @@ SET(SOURCES_MEMCACHED
     src/libmemcached/purge.cc
     src/libmemcached/byteorder.cc
     src/libmemcached/flag.cc
-    src/libmemcached/poll.cc
     src/libmemcached/udp.cc
     src/libmemcached/namespace.cc
     src/libmemcached/callback.cc
@@ -70,6 +69,12 @@ SET(SOURCES_MEMCACHED
     src/libhashkit/murmur3.cc
     src/libhashkit/murmur3_api.cc
 )
+
+IF(OS_WIN)
+    SET(SOURCES_MEMCACHED ${SOURCES_MEMCACHED}
+        src/libmemcached/poll.cc
+    )
+ENDIF(OS_WIN)
 
 SET(HEADERS ${HEADERS} ${HEADERS_MEMCACHED})
 SET(SOURCES ${SOURCES} ${SOURCES_MEMCACHED})

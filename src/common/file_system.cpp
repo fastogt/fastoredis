@@ -271,7 +271,7 @@ namespace common
 
             bool result = chdir(path.c_str()) != ERROR_RESULT_VALUE;
             if(!result){
-               DEBUG_MSG_PERROR("chdir", errno);
+                DEBUG_MSG_PERROR("chdir", errno);
             }
 
             return result;
@@ -292,7 +292,7 @@ namespace common
 
             bool result = (fd_desc = open(path.c_str(), oflags)) != ERROR_RESULT_VALUE;
             if(!result){
-               DEBUG_MSG_PERROR("open_descriptor", errno);
+                DEBUG_MSG_PERROR("open_descriptor", errno);
             }
 
             return result;
@@ -306,7 +306,7 @@ namespace common
 
             bool result = close(fd_desc) != ERROR_RESULT_VALUE;
             if(!result){
-               DEBUG_MSG_PERROR("close", errno);
+                DEBUG_MSG_PERROR("close", errno);
             }
             return result;
         }

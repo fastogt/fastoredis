@@ -214,7 +214,7 @@ namespace fastoredis
             if(!log_file_){
                 std::string path = settings_->loggingPath();
                 std::string dir = common::file_system::get_dir_path(path);
-                common::file_system::create_directory(dir, true);
+                bool created = common::file_system::create_directory(dir, true);
                 if(common::file_system::is_directory(dir) == SUCCESS){
                     common::file_system::Path p(path);
                     log_file_ = new common::file_system::File(p);
@@ -222,8 +222,9 @@ namespace fastoredis
             }
 
             if(log_file_ && !log_file_->isOpened()){
-                log_file_->open("ab+");
+                bool opened = log_file_->open("ab+");
             }
+
             if(log_file_ && log_file_->isOpened()){
                 long long time = common::time::current_mstime();
                 FastoObjectIPtr toFile = FastoObject::createRoot(createStamp(time));
