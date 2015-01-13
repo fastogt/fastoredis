@@ -75,7 +75,7 @@
 /* #undef HAVE_ATOMIC_H */
 
 /* Have clock_gettime */
-#define HAVE_CLOCK_GETTIME 1
+#define HAVE_CLOCK_GETTIME 0
 
 /* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
@@ -100,7 +100,7 @@
 #define HAVE_ERRNO_H 1
 
 /* Define to 1 if you have the <execinfo.h> header file. */
-#define HAVE_EXECINFO_H 1
+/* #undef HAVE_EXECINFO_H */
 
 /* Define to 1 if you have the `fcntl' function. */
 #define HAVE_FCNTL 1
@@ -124,10 +124,10 @@
 #define HAVE_FORK 1
 
 /* define if the compiler supports GCC C++ ABI name demangling */
-#define HAVE_GCC_ABI_DEMANGLE 1
+/* #undef HAVE_GCC_ABI_DEMANGLE */
 
 /* Define to 1 if compiler provides atomic builtins. */
-#define HAVE_GCC_ATOMIC_BUILTINS 1
+/* #undef HAVE_GCC_ATOMIC_BUILTINS */
 
 /* If Gearmand binary is available */
 #define HAVE_GEARMAND_BINARY 0
@@ -136,7 +136,7 @@
 #define HAVE_GETCWD 1
 
 /* Define to 1 if you have the `getline' function. */
-#define HAVE_GETLINE 1
+/* #undef HAVE_GETLINE */
 
 /* Define to 1 if you have the `gettimeofday' function. */
 #define HAVE_GETTIMEOFDAY 1
@@ -154,7 +154,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if the system has the type `in_port_t'. */
-#define HAVE_IN_PORT_T 1
+/* #undef HAVE_IN_PORT_T */
 
 /* Support for libcurl */
 #define HAVE_LIBCURL 0
@@ -163,13 +163,13 @@
 #define HAVE_LIBDRIZZLE 0
 
 /* Define if event_init is present in event.h. */
-#define HAVE_LIBEVENT 1
+#define HAVE_LIBEVENT 0
 
 /* Define to 1 to compile in libgearman support */
 #define HAVE_LIBGEARMAN 0
 
 /* Define to 1 if you have the <libintl.h> header file. */
-#define HAVE_LIBINTL_H 1
+/* #undef HAVE_LIBINTL_H */
 
 /* Enables libmemcached Support */
 #define HAVE_LIBMEMCACHED 1
@@ -181,7 +181,7 @@
 #define HAVE_LIBPQ 0
 
 /* Define to 1 if LIBSASL is found */
-//#define HAVE_LIBSASL 1
+/* #undef HAVE_LIBSASL */
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -256,10 +256,10 @@
 #define HAVE_PTHREAD_H 1
 
 /* Have PTHREAD_PRIO_INHERIT. */
-#define HAVE_PTHREAD_PRIO_INHERIT 1
+/* #undef HAVE_PTHREAD_PRIO_INHERIT */
 
 /* Define if pthread_timedjoin_np is present in pthread.h. */
-#define HAVE_PTHREAD_TIMEDJOIN_NP 1
+#define HAVE_PTHREAD_TIMEDJOIN_NP 0
 
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #define HAVE_PTRDIFF_T 1
@@ -280,7 +280,7 @@
 /* #undef HAVE_SETPPRIV */
 
 /* Define to 1 if you have the `sigignore' function. */
-#define HAVE_SIGIGNORE 1
+/* #undef HAVE_SIGIGNORE */
 
 /* Define to 1 if you have a working SO_SNDTIMEO */
 #define HAVE_SNDTIMEO 1
@@ -289,7 +289,7 @@
 #define HAVE_SOCKET 1
 
 /* Define to 1 if you have the <spawn.h> header file. */
-#define HAVE_SPAWN_H 1
+/* #undef HAVE_SPAWN_H */
 
 /* Define to 1 if you have the `sqrt' function. */
 /* #undef HAVE_SQRT */
@@ -358,7 +358,7 @@
 #define HAVE_SYS_STAT_H 1
 
 /* Define to 1 if you have the <sys/sysctl.h> header file. */
-#define HAVE_SYS_SYSCTL_H 1
+/* #undef HAVE_SYS_SYSCTL_H */
 
 /* Define to 1 if you have the <sys/time.h> header file. */
 #define HAVE_SYS_TIME_H 1
@@ -382,10 +382,10 @@
 #define HAVE_UNISTD_H 1
 
 /* Define if uuid_generate_time_safe is present in uuid/uuid.h. */
-#define HAVE_UUID_GENERATE_TIME_SAFE 1
+#define HAVE_UUID_GENERATE_TIME_SAFE 0
 
 /* Have uuid/uuid.h */
-#define HAVE_UUID_UUID_H 1
+#define HAVE_UUID_UUID_H 0
 
 /* Define to 1 if you have the `vfork' function. */
 #define HAVE_VFORK 1
@@ -486,7 +486,7 @@
 #define STDC_HEADERS 1
 
 /* Define to 1 if strerror_r returns char *. */
-#define STRERROR_R_CHAR_P 1
+/* #undef STRERROR_R_CHAR_P */
 
 /* Define to true if you want to use functions from atomic.h */
 /* #undef USE_ATOMIC_H */
