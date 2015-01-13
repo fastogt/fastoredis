@@ -181,7 +181,7 @@
 #define HAVE_LIBPQ 0
 
 /* Define to 1 if LIBSASL is found */
-//#define HAVE_LIBSASL 1 cmake now
+//#define HAVE_LIBSASL 1
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -477,9 +477,9 @@
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
    automatically deduced at runtime.
-   STACK_DIRECTION > 0 => grows toward higher addresses
-   STACK_DIRECTION < 0 => grows toward lower addresses
-   STACK_DIRECTION = 0 => direction of growth unknown */
+	STACK_DIRECTION > 0 => grows toward higher addresses
+	STACK_DIRECTION < 0 => grows toward lower addresses
+	STACK_DIRECTION = 0 => direction of growth unknown */
 /* #undef STACK_DIRECTION */
 
 /* Define to 1 if you have the ANSI C header files. */
@@ -653,4 +653,6 @@
 #if !defined(HAVE_ULONG) && !defined(__USE_MISC)
 # define HAVE_ULONG 1
 typedef unsigned long int ulong;
-#endif
+#endif 
+
+

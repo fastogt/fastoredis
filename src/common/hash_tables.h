@@ -33,7 +33,7 @@
 
 #elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)
 #if defined(OS_ANDROID)
-#define BASE_HASH_NAMESPACE std
+#define BASE_HASH_NAMESPACE __gnu_cxx
 #else
 #define BASE_HASH_NAMESPACE __gnu_cxx
 #endif

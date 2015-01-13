@@ -21,7 +21,9 @@
 #include "common/logger.h"
 #endif
 
-
+#if defined(OS_ANDROID)
+#define UINT64_C(val) val##ULL
+#endif
 
 namespace
 {

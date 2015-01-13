@@ -22,7 +22,7 @@
 
 #include "common/logger.h"
 
-#ifdef OS_WIN
+#if defined(OS_WIN) || defined(OS_ANDROID)
 
 #define BUF_SIZE 8192
 
