@@ -103,7 +103,14 @@ namespace fastoredis
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
-            return version_server();
+            memcached_return_t error = memcached_version(memc_);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Connect to server error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
         }
 
         common::ErrorValueSPtr disconnect()
