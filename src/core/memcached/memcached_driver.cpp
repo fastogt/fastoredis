@@ -43,19 +43,28 @@ namespace fastoredis
     struct MemcachedDriver::pimpl
     {
         pimpl()
-            : memc_(NULL), isConnected_(false)
+            : memc_(NULL)
         {
 
         }
 
         bool isConnected() const
         {
-            return isConnected_;
+            if(!memc_){
+                return false;
+            }
+
+            memcached_server_st *server = (memcached_server_st*)memc_->servers;
+            if(!server){
+                return false;
+            }
+
+            return server->state == MEMCACHED_SERVER_STATE_CONNECTED;
         }
 
         common::ErrorValueSPtr connect()
         {
-            if(isConnected_){
+            if(isConnected()){
                 return common::ErrorValueSPtr();
             }
 
@@ -87,32 +96,23 @@ namespace fastoredis
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }*/
 
-            memcached_server_st *servers = NULL;
-            servers = memcached_server_list_append_with_weight(servers, config_.hostip, config_.hostport, 1, &rc);
+            rc = memcached_server_add(memc_, config_.hostip, config_.hostport);
+
             if (rc != MEMCACHED_SUCCESS){
                 sprintf(buff, "Couldn't add server: %s", memcached_strerror(memc_, rc));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
-            rc = memcached_server_push(memc_, servers);
-            if (rc != MEMCACHED_SUCCESS){
-                sprintf(buff, "Couldn't add server: %s", memcached_strerror(memc_, rc));
-                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
-            }
-
-            isConnected_ = true;
-            return common::ErrorValueSPtr();
+            return version_server();
         }
 
         common::ErrorValueSPtr disconnect()
         {
-            if(!isConnected_){
+            if(!isConnected()){
                 return common::ErrorValueSPtr();
             }
 
             clear();
-
-            isConnected_ = false;
             return common::ErrorValueSPtr();
         }
 
@@ -515,7 +515,6 @@ namespace fastoredis
         }
 
         memcached_st* memc_;
-        bool isConnected_;
    };
 
     MemcachedDriver::MemcachedDriver(const IConnectionSettingsBaseSPtr &settings)
