@@ -57,6 +57,13 @@ typedef SOCKET memcached_socket_t;
 # include <sys/un.h>
 # include <netinet/tcp.h>
 
+#ifdef FASTOREDIS
+    #ifndef HAVE_IN_PORT_T
+    typedef int in_port_t;
+    # define HAVE_IN_PORT_T 1
+    #endif
+#endif
+
 typedef int memcached_socket_t;
 
 #endif /* _WIN32 */
