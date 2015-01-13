@@ -16,6 +16,9 @@
         #include <QCleanlooksStyle>
         typedef QCleanlooksStyle OsStyle;
     #endif
+#elif defined(OS_ANDROID)
+	#include <QProxyStyle>
+	typedef QProxyStyle OsStyle;
 #endif
 
 #include "common/types.h"

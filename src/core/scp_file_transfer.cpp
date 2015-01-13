@@ -4,6 +4,7 @@
 #else
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
 #endif
 
 #include "third-party/libssh2/include/libssh2.h"

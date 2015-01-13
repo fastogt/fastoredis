@@ -110,6 +110,8 @@ namespace fastoredis
         textFont.setFixedPitch(true);
 #elif defined(OS_WIN)
         static const QFont textFont = QFont("Courier",10);
+#elif defined(OS_ANDROID)
+	static const QFont textFont = QFont("Monospace");
 #endif
         return textFont;
     }
