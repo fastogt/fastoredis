@@ -39,12 +39,6 @@ namespace fastoredis
         SupportedAuthenticationMetods currentMethod_;
     };
 
-    /*inline std::ostream& operator<< (std::ostream& stream, const SSHInfo& info)
-    {
-        stream << info.toString();
-        return stream;
-    }*/
-
     inline bool operator == (const SSHInfo& r,const SSHInfo& l)
     {
         return r.hostName_ == l.hostName_ && r.password_ == l.password_ && r.port_ == l.port_ && r.publicKey_ == l.publicKey_ && r.privateKey_ == l.privateKey_ && r.passphrase_ == l.passphrase_ && r.userName_ == l.userName_;

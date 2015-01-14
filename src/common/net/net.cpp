@@ -130,7 +130,7 @@ namespace common
 
             struct addrinfo hints, *result, *rp;
             char _port[6];
-            snprintf(_port, 6, "%d", port);
+            SNPrintf(_port, sizeof(_port), "%d", port);
             memset(&hints, 0, sizeof(hints));
             hints.ai_family = AF_UNSPEC;
             hints.ai_socktype = SOCK_STREAM;
@@ -263,7 +263,7 @@ namespace common
 
         static const uint16_t size_buff = 512;
         char buff[size_buff] = {0};        
-        sprintf(buff, "%s:%d", host.host_.c_str(), host.port_);
+        SNPrintf(buff, size_buff, "%s:%d", host.host_, host.port_);
         return buff;
     }
 

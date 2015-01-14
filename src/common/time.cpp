@@ -1,6 +1,6 @@
 #include "common/time.h"
 
-#include "common/convert2string.h"
+#include <sys/time.h>
 
 namespace common
 {
@@ -23,7 +23,7 @@ namespace common
             return tv;
         }
 
-        long long current_mstime(void)
+        uint64_t current_mstime(void)
         {
             struct timeval tv = current_timeval();
             return timeval2mstime(&tv);
@@ -52,24 +52,24 @@ namespace common
             return tv;
         }
 
-        long long timeval2mstime(struct timeval* tv)
+        uint64_t timeval2mstime(struct timeval* tv)
         {
             if(!tv){
                 return 0;
             }
 
-            long long mst = ((long long)tv->tv_sec)*1000;
+            uint64_t mst = tv->tv_sec * 1000;
             mst += tv->tv_usec/1000;
             return mst;
         }
 
-        long long timespec2mstime(struct timespec* ts)
+        uint64_t timespec2mstime(struct timespec* ts)
         {
             if(!ts){
                 return 0;
             }
 
-            long long mst = ((long long)ts->tv_sec)*1000;
+            uint64_t mst = ts->tv_sec * 1000;
             mst += ts->tv_nsec/1000000;
 
             return mst;
@@ -97,24 +97,6 @@ namespace common
             ts.tv_sec = mst/1000;
             ts.tv_nsec = (mst % 1000) * 1000000;
             return ts;
-        }
-
-        std::string mstime2string(int64_t ms)
-        {
-            /*
-            char buff[64] = {0};
-            sprintf(buff, "%.3fs",(double)ms/1000.f);*/
-            return convertToString(ms);
-        }
-
-        time_t timegm(struct tm * time_tm)
-        {
-            using namespace std;
-#ifdef OS_ANDROID
-            return ::timegm64(time_tm);
-#else
-            return 1;//::timegm(time_tm);
-#endif
         }
     }
 }

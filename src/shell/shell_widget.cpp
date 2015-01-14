@@ -11,6 +11,7 @@
 #include <QFileDialog>
 
 #include "common/qt/convert_string.h"
+#include "common/sprintf.h"
 
 #include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
@@ -42,7 +43,7 @@ namespace
         }
         else {
             char buff[256] = {0};
-            sprintf(buff, PROJECT_NAME" can't read from %s:\n%s.", convertToString(filePath).c_str(),
+            SNPrintf(buff, sizeof(buff), PROJECT_NAME" can't read from %s:\n%s.", convertToString(filePath).c_str(),
                             convertToString(file.errorString()).c_str());
             ErrorValueSPtr er = common::make_error_value(buff, Value::E_ERROR);
             fastoredis::LOG_ERROR(er);

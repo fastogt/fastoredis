@@ -42,7 +42,7 @@ namespace common
             template<typename type, int size>
             inline type findTypeInArray(const char16 *(&arr)[size], const char16 *text)
             {
-                for (int i=0; i < size; ++i){
+                for (int i = 0; i < size; ++i){
                     const size_t len = c16len(text);
                     if (c16memcmp(text, arr[i], len) == 0){
                         return static_cast<type>(i);
@@ -64,7 +64,7 @@ namespace common
             template<typename type, int size>
             inline type findTypeInArray(const char *(&arr)[size], const char *text)
             {
-                for (int i=0; i < size; ++i){
+                for (int i = 0; i < size; ++i){
                     const size_t len = strlen(text);
                     if (memcmp(text, arr[i], len) == 0){
                         return static_cast<type>(i);
@@ -95,7 +95,7 @@ namespace common
 
             template <typename T>
             struct default_delete
-                    :public std::unary_function<T,void>
+                    : public std::unary_function<T,void>
             {
                 inline  void operator ()(T *ptr) const
                 {
@@ -105,7 +105,7 @@ namespace common
 
             template <typename T>
             struct default_delete<T*>
-                    :public std::unary_function<T*,void>
+                    : public std::unary_function<T*,void>
             {
                 inline  void operator ()(T *ptr) const
                 {
@@ -115,7 +115,7 @@ namespace common
 
             template<typename T,unsigned int N>
             struct default_delete<T[N]>
-                    :public std::unary_function<const T[N],void>
+                    : public std::unary_function<const T[N],void>
             {
                 inline void operator ()(const T ptr) const
                 {
@@ -138,7 +138,7 @@ namespace common
 
             template <typename T>
             struct RuntimeCmp<T*>
-                    :public std::binary_function<const T*,const T*,bool>
+                    : public std::binary_function<const T*,const T*,bool>
             {
                 inline bool operator()(const T* t1,const T* t2)const
                 {
@@ -148,7 +148,7 @@ namespace common
 
             template<typename T,typename U>
             struct RuntimeCmp<std::pair<T,U> >
-                :public std::binary_function<const std::pair<T,U>,const std::pair<T,U>,bool>
+                : public std::binary_function<const std::pair<T,U>,const std::pair<T,U>,bool>
             {
                 inline bool operator()(const std::pair<T,U> &t1,const std::pair<T,U> &t2)const
                 {

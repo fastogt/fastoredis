@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "common/utf_string_conversions.h"
+#include "common/sprintf.h"
 
 namespace common
 {
@@ -650,22 +651,22 @@ namespace common
     {
         char buffer[16];
         if(prec == 0){
-            snprintf(buffer, sizeof(buffer), "%.0f", value);
+            SNPrintf(buffer, sizeof(buffer), "%.0f", value);
         }
         else if(prec == 1){
-            snprintf(buffer, sizeof(buffer), "%.1f", value);
+            SNPrintf(buffer, sizeof(buffer), "%.1f", value);
         }
         else if(prec == 2){
-            snprintf(buffer, sizeof(buffer), "%.2f", value);
+            SNPrintf(buffer, sizeof(buffer), "%.2f", value);
         }
         else if(prec == 3){
-            snprintf(buffer, sizeof(buffer), "%.3f", value);
+            SNPrintf(buffer, sizeof(buffer), "%.3f", value);
         }
         else if(prec == 4){
-            snprintf(buffer, sizeof(buffer), "%.4f", value);
+            SNPrintf(buffer, sizeof(buffer), "%.4f", value);
         }
         else{
-            snprintf(buffer, sizeof(buffer), "%f", value);
+            SNPrintf(buffer, sizeof(buffer), "%f", value);
         }
         return buffer;
     }
@@ -674,22 +675,22 @@ namespace common
     {
         char buffer[32];
         if(prec == 0){
-            snprintf(buffer, sizeof(buffer), "%.0lf", value);
+            SNPrintf(buffer, sizeof(buffer), "%.0lf", value);
         }
         else if(prec == 1){
-            snprintf(buffer, sizeof(buffer), "%.1lf", value);
+            SNPrintf(buffer, sizeof(buffer), "%.1lf", value);
         }
         else if(prec == 2){
-            snprintf(buffer, sizeof(buffer), "%.2lf", value);
+            SNPrintf(buffer, sizeof(buffer), "%.2lf", value);
         }
         else if(prec == 3){
-            snprintf(buffer, sizeof(buffer), "%.3lf", value);
+            SNPrintf(buffer, sizeof(buffer), "%.3lf", value);
         }
         else if(prec == 4){
-            snprintf(buffer, sizeof(buffer), "%.4lf", value);
+            SNPrintf(buffer, sizeof(buffer), "%.4lf", value);
         }
         else{
-            snprintf(buffer, sizeof(buffer), "%lf", value);
+            SNPrintf(buffer, sizeof(buffer), "%lf", value);
         }
         return buffer;
     }

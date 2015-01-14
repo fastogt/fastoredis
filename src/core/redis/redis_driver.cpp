@@ -84,6 +84,7 @@ namespace
     } helpEntry;
 
     const int helpEntriesLen = sizeof(commandHelp)/sizeof(struct commandHelp) + sizeof(commandGroups)/sizeof(char*);
+
     struct RedisInit
     {
         helpEntry helpEntries[helpEntriesLen];
@@ -175,12 +176,12 @@ namespace fastoredis
             }
 
             redisReply *reply;
-            long long start, latency, min = 0, max = 0, tot = 0, count = 0;
-            long long history_interval =
+            uint64_t start, latency, min = 0, max = 0, tot = 0, count = 0;
+            uint64_t history_interval =
                     config.interval ? config.interval/1000 :
                                       LATENCY_HISTORY_DEFAULT_INTERVAL;
             double avg;
-            long long history_start = common::time::current_mstime();
+            uint64_t history_start = common::time::current_mstime();
 
             if (!context){
                 return common::make_error_value("Not connected", common::Value::E_ERROR);

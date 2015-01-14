@@ -175,6 +175,9 @@ namespace fastoredis
         case common::Value::TYPE_NULL:
             static QIcon u(":" PROJECT_NAME_LOWERCASE "/icons/unknown.png");
             return u;
+        case common::Value::TYPE_BOOLEAN:
+            static QIcon b(":" PROJECT_NAME_LOWERCASE "/icons/integer.png");
+            return b;
         case common::Value::TYPE_STRING:
             static QIcon s(":" PROJECT_NAME_LOWERCASE "/icons/string.png");
             return s;
@@ -182,6 +185,8 @@ namespace fastoredis
             static QIcon a(":" PROJECT_NAME_LOWERCASE "/icons/array.png");
             return a;
         case common::Value::TYPE_INTEGER:
+        case common::Value::TYPE_DOUBLE:
+        case common::Value::TYPE_UINTEGER:
             static QIcon i(":" PROJECT_NAME_LOWERCASE "/icons/integer.png");
             return i;
         case common::Value::TYPE_STATUS:

@@ -13,10 +13,10 @@ namespace fastoredis
             typedef common::utils_qt::EventInfo<common::ErrorValueSPtr > base_class;
             EventInfoBase(const error_type &er = error_type());
 
-            long long elapsedTime() const;
+            uint64_t elapsedTime() const;
 
         private:
-            const long long time_start_;
+            const uint64_t time_start_;
         };
 
         struct ConnectInfoRequest

@@ -9,12 +9,6 @@
 #include "common/qt/convert_string.h"
 #include "common/utils.h"
 
-#ifdef OS_WIN
-#define PYTHON_EXE "python.exe"
-#else
-#define PYTHON_EXE "python"
-#endif
-
 #define PREFIX "settings/"
 
 #define LANGUAGE PREFIX"language"
@@ -28,17 +22,6 @@
 namespace
 {
     const std::string iniPath("~/.config/" PROJECT_NAME "/config.ini");
-
-    std::string pythonExecPath()
-    {
-        std::string path;
-        bool res = common::file_system::findFileInPath(PYTHON_EXE, path);
-        if(res){
-            return common::file_system::prepare_path(path);
-        }
-
-        return std::string();
-    }
 }
 
 
@@ -76,7 +59,6 @@ namespace fastoredis
         }
 
         syncTabs_= settings.value(SYNCTABS, false).toBool();
-
         std::string dir = common::file_system::get_dir_path(iniPath);
         loggingDir_ = settings.value(LOGGINGDIR, common::convertFromString<QString>(dir)).toString();
         autoCheckUpdate_ = settings.value(CHECKUPDATES, true).toBool();

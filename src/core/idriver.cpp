@@ -33,7 +33,7 @@ struct WinsockInit {
 #endif
 
     const char magicNumber = 0x1E;
-    std::string createStamp(long long time)
+    std::string createStamp(uint64_t time)
     {
         return magicNumber + common::convertToString(time) + '\n';
     }
@@ -226,7 +226,7 @@ namespace fastoredis
             }
 
             if(log_file_ && log_file_->isOpened()){
-                long long time = common::time::current_mstime();
+                uint64_t time = common::time::current_mstime();
                 FastoObjectIPtr toFile = FastoObject::createRoot(createStamp(time));
                 FastoObject* ptr = toFile.get();
                 common::ErrorValueSPtr er = currentLoggingInfo(ptr);
