@@ -38,8 +38,10 @@ namespace fastoredis
 
         VERIFY(connect(serverInfoGroupsNames_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshInfoFields(int)) ));
         VERIFY(connect(serverInfoFields_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshGraph(int)) ));
-        for(int i = 0; i < SIZEOFMASS(redisHeaders); ++i){
-            serverInfoGroupsNames_->addItem(common::convertFromString<QString>(redisHeaders[i]));
+        if(type_ == REDIS){
+            for(int i = 0; i < SIZEOFMASS(redisHeaders); ++i){
+                serverInfoGroupsNames_->addItem(common::convertFromString<QString>(redisHeaders[i]));
+            }
         }
 
         QVBoxLayout *setingsLayout = new QVBoxLayout;
@@ -87,9 +89,11 @@ namespace fastoredis
         serverInfoFields_->clear();
         std::pair<FieldPropertyS,FieldPropertyU> field = redisFields[index];
         const int sizeMass = field.second.size_;
-        for(int i = 0; i < sizeMass; ++i){
-            const unsigned char indexInner = field.second.mass_[i];
-            serverInfoFields_->addItem(common::convertFromString<QString>(field.first.mass_[indexInner]), indexInner);
+        if(type_ == REDIS){
+            for(int i = 0; i < sizeMass; ++i){
+                const unsigned char indexInner = field.second.mass_[i];
+                serverInfoFields_->addItem(common::convertFromString<QString>(field.first.mass_[indexInner]), indexInner);
+            }
         }
     }
 

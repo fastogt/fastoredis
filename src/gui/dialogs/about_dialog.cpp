@@ -38,10 +38,10 @@ namespace fastoredis
 
         setWindowTitle(PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-        QGridLayout *layout = new QGridLayout(this);
+        QGridLayout* layout = new QGridLayout;
         layout->setSizeConstraint(QLayout::SetFixedSize);
 
-        QLabel *copyRightLabel = new QLabel(description);
+        QLabel* copyRightLabel = new QLabel(description);
         copyRightLabel->setWordWrap(true);
         copyRightLabel->setOpenExternalLinks(true);
         copyRightLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
@@ -49,15 +49,16 @@ namespace fastoredis
         QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
         QPushButton *closeButton = buttonBox->button(QDialogButtonBox::Close);
         buttonBox->addButton(closeButton, QDialogButtonBox::ButtonRole(QDialogButtonBox::RejectRole | QDialogButtonBox::AcceptRole));
-        VERIFY(connect(buttonBox , SIGNAL(rejected()), this, SLOT(reject())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QIcon icon = GuiFactory::instance().mainWindowIcon();
         QPixmap iconPixmap = icon.pixmap(48, 48);
 
-        QLabel *logoLabel = new QLabel;
+        QLabel* logoLabel = new QLabel;
         logoLabel->setPixmap(iconPixmap);
-        layout->addWidget(logoLabel , 0, 0, 1, 1);
+        layout->addWidget(logoLabel, 0, 0, 1, 1);
         layout->addWidget(copyRightLabel, 0, 1, 4, 4);
         layout->addWidget(buttonBox, 4, 0, 1, 5);
+        setLayout(layout);
     }
 }

@@ -56,7 +56,6 @@ namespace fastoredis
 
     public:
         static const char* version();
-        QString execPath() const;
         PythonWorker* createWorker() WARN_UNUSED_RESULT;
         bool hasModule(const std::string& name);
 

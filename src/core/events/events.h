@@ -4,7 +4,7 @@
 
 namespace fastoredis
 {
-    namespace Events
+    namespace events
     {
         typedef common::utils_qt::Event<EventsInfo::ConnectInfoRequest, QEvent::User + 1> ConnectRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::ConnectInfoResponce, QEvent::User + 2> ConnectResponceEvent;

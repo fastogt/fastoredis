@@ -118,7 +118,7 @@ namespace fastoredis
         return IServerSPtr();
     }
 
-    std::vector<QObject *> ServersManager::findAllListeners(const IDriverSPtr &drv)
+    std::vector<QObject *> ServersManager::findAllListeners(const IDriverSPtr &drv) const
     {
         std::vector<QObject *> result;
         for(size_t j = 0; j < servers_.size(); ++j){

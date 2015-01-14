@@ -581,11 +581,11 @@ namespace fastoredis
         return common::ErrorValueSPtr();
     }
 
-    void MemcachedDriver::handleConnectEvent(Events::ConnectRequestEvent *ev)
+    void MemcachedDriver::handleConnectEvent(events::ConnectRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::ConnectResponceEvent::value_type res(ev->value());
+            events::ConnectResponceEvent::value_type res(ev->value());
             MemcachedConnectionSettings *set = dynamic_cast<MemcachedConnectionSettings*>(settings_.get());
             if(set){
                 impl_->config_ = set->info();
@@ -598,15 +598,15 @@ namespace fastoredis
                     }
         notifyProgress(sender, 75);
             }
-            reply(sender, new Events::ConnectResponceEvent(this, res));
+            reply(sender, new events::ConnectResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void MemcachedDriver::handleDisconnectEvent(Events::DisconnectRequestEvent* ev)
+    void MemcachedDriver::handleDisconnectEvent(events::DisconnectRequestEvent* ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::DisconnectResponceEvent::value_type res(ev->value());
+            events::DisconnectResponceEvent::value_type res(ev->value());
         notifyProgress(sender, 50);
 
             common::ErrorValueSPtr er = impl_->disconnect();
@@ -614,15 +614,15 @@ namespace fastoredis
                 res.setErrorInfo(er);
             }
 
-            reply(sender, new Events::DisconnectResponceEvent(this, res));
+            reply(sender, new events::DisconnectResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void MemcachedDriver::handleExecuteEvent(Events::ExecuteRequestEvent* ev)
+    void MemcachedDriver::handleExecuteEvent(events::ExecuteRequestEvent* ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::ExecuteRequestEvent::value_type res(ev->value());
+            events::ExecuteRequestEvent::value_type res(ev->value());
             const char *inputLine = common::utils::c_strornull(res.text_);
 
             common::ErrorValueSPtr er;
@@ -666,47 +666,47 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void MemcachedDriver::handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev)
+    void MemcachedDriver::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoRequestEvent* ev)
     {
 
     }
 
-    void MemcachedDriver::handleLoadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent* ev)
+    void MemcachedDriver::handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev)
     {
 
     }
 
-    void MemcachedDriver::handleLoadServerInfoEvent(Events::ServerInfoRequestEvent* ev)
+    void MemcachedDriver::handleLoadServerInfoEvent(events::ServerInfoRequestEvent* ev)
     {
 
     }
 
-    void MemcachedDriver::handleLoadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev)
+    void MemcachedDriver::handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev)
     {
 
     }
 
-    void MemcachedDriver::handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev)
+    void MemcachedDriver::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev)
     {
 
     }
 
-    void MemcachedDriver::handleProcessCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev)
+    void MemcachedDriver::handleProcessCommandLineArgs(events::ProcessConfigArgsRequestEvent* ev)
     {
 
     }
 
-    void MemcachedDriver::handleShutdownEvent(Events::ShutDownRequestEvent* ev)
+    void MemcachedDriver::handleShutdownEvent(events::ShutDownRequestEvent* ev)
     {
 
     }
 
-    void MemcachedDriver::handleBackupEvent(Events::BackupRequestEvent* ev)
+    void MemcachedDriver::handleBackupEvent(events::BackupRequestEvent* ev)
     {
 
     }
 
-    void MemcachedDriver::handleExportEvent(Events::ExportRequestEvent* ev)
+    void MemcachedDriver::handleExportEvent(events::ExportRequestEvent* ev)
     {
 
     }

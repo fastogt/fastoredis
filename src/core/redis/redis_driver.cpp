@@ -1517,11 +1517,11 @@ namespace fastoredis
         return impl_->execute(INFO_REQUEST, Command::InnerCommand, out);
     }
 
-    void RedisDriver::handleConnectEvent(Events::ConnectRequestEvent *ev)
+    void RedisDriver::handleConnectEvent(events::ConnectRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::ConnectResponceEvent::value_type res(ev->value());
+            events::ConnectResponceEvent::value_type res(ev->value());
             RedisConnectionSettings *set = dynamic_cast<RedisConnectionSettings*>(settings_.get());
             if(set){
                 impl_->config = set->info();
@@ -1540,11 +1540,11 @@ namespace fastoredis
                     }
         notifyProgress(sender, 75);
             }
-            reply(sender, new Events::ConnectResponceEvent(this, res));
+            reply(sender, new events::ConnectResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::handleProcessCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev)
+    void RedisDriver::handleProcessCommandLineArgs(events::ProcessConfigArgsRequestEvent* ev)
     {
         /* Latency mode */
         if (impl_->config.latency_mode) {
@@ -1587,15 +1587,15 @@ namespace fastoredis
         interacteveMode(ev);
 
         QObject *sender = ev->sender();
-        Events::ProcessConfigArgsResponceEvent::value_type res(ev->value());
-        reply(sender, new Events::ProcessConfigArgsResponceEvent(this, res));
+        events::ProcessConfigArgsResponceEvent::value_type res(ev->value());
+        reply(sender, new events::ProcessConfigArgsResponceEvent(this, res));
     }
 
-    void RedisDriver::handleShutdownEvent(Events::ShutDownRequestEvent* ev)
+    void RedisDriver::handleShutdownEvent(events::ShutDownRequestEvent* ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::ShutDownResponceEvent::value_type res(ev->value());
+            events::ShutDownResponceEvent::value_type res(ev->value());
         notifyProgress(sender, 25);
             FastoObjectIPtr root = FastoObject::createRoot(SHUTDOWN);
             common::ErrorValueSPtr er = impl_->execute(SHUTDOWN, Command::InnerCommand, root.get());
@@ -1603,15 +1603,15 @@ namespace fastoredis
                 res.setErrorInfo(er);
             }
         notifyProgress(sender, 75);
-            reply(sender, new Events::ShutDownResponceEvent(this, res));
+            reply(sender, new events::ShutDownResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::handleBackupEvent(Events::BackupRequestEvent* ev)
+    void RedisDriver::handleBackupEvent(events::BackupRequestEvent* ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::BackupRequestEvent::value_type res(ev->value());
+            events::BackupRequestEvent::value_type res(ev->value());
         notifyProgress(sender, 25);
             FastoObjectIPtr root = FastoObject::createRoot(BACKUP);
             common::ErrorValueSPtr er = impl_->execute(BACKUP, Command::InnerCommand, root.get());
@@ -1625,44 +1625,44 @@ namespace fastoredis
                 }
             }
         notifyProgress(sender, 75);
-            reply(sender, new Events::BackupResponceEvent(this, res));
+            reply(sender, new events::BackupResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::handleExportEvent(Events::ExportRequestEvent* ev)
+    void RedisDriver::handleExportEvent(events::ExportRequestEvent* ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::ExportRequestEvent::value_type res(ev->value());
+            events::ExportRequestEvent::value_type res(ev->value());
         notifyProgress(sender, 25);
             bool rc = common::file_system::copy_file(res.path_, "/var/lib/redis/dump.rdb");
             if(!rc){
                 res.setErrorInfo(common::make_error_value("Copy failed.", common::ErrorValue::E_ERROR));
             }
         notifyProgress(sender, 75);
-            reply(sender, new Events::ExportResponceEvent(this, res));
+            reply(sender, new events::ExportResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    common::ErrorValueSPtr RedisDriver::interacteveMode(Events::ProcessConfigArgsRequestEvent *ev)
+    common::ErrorValueSPtr RedisDriver::interacteveMode(events::ProcessConfigArgsRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::EnterModeEvent::value_type res(IntaractiveMode);
-        reply(sender, new Events::EnterModeEvent(this, res));
+        events::EnterModeEvent::value_type res(IntaractiveMode);
+        reply(sender, new events::EnterModeEvent(this, res));
 
-        Events::LeaveModeEvent::value_type res2(IntaractiveMode);
-        reply(sender, new Events::LeaveModeEvent(this, res2));
+        events::LeaveModeEvent::value_type res2(IntaractiveMode);
+        reply(sender, new events::LeaveModeEvent(this, res2));
         notifyProgress(sender, 100);
         return common::ErrorValueSPtr();
     }
 
-    common::ErrorValueSPtr RedisDriver::latencyMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::latencyMode(events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::EnterModeEvent::value_type resEv(LatencyMode);
-        reply(sender, new Events::EnterModeEvent(this, resEv));
+        events::EnterModeEvent::value_type resEv(LatencyMode);
+        reply(sender, new events::EnterModeEvent(this, resEv));
 
         RootLocker lock = make_locker(sender, LATENCY_REQUEST);
 
@@ -1672,18 +1672,18 @@ namespace fastoredis
             LOG_ERROR(er);
         }
 
-        Events::LeaveModeEvent::value_type resEv2(LatencyMode);
-        reply(sender, new Events::LeaveModeEvent(this, resEv2));
+        events::LeaveModeEvent::value_type resEv2(LatencyMode);
+        reply(sender, new events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
         return er;
     }
 
-    common::ErrorValueSPtr RedisDriver::slaveMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::slaveMode(events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::EnterModeEvent::value_type resEv(SlaveMode);
-        reply(sender, new Events::EnterModeEvent(this, resEv));
+        events::EnterModeEvent::value_type resEv(SlaveMode);
+        reply(sender, new events::EnterModeEvent(this, resEv));
 
         RootLocker lock = make_locker(sender, SYNC_REQUEST);
 
@@ -1693,18 +1693,18 @@ namespace fastoredis
             LOG_ERROR(er);
         }
 
-        Events::LeaveModeEvent::value_type resEv2(SlaveMode);
-        reply(sender, new Events::LeaveModeEvent(this, resEv2));
+        events::LeaveModeEvent::value_type resEv2(SlaveMode);
+        reply(sender, new events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
         return er;
     }
 
-    common::ErrorValueSPtr RedisDriver::getRDBMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::getRDBMode(events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::EnterModeEvent::value_type resEv(GetRDBMode);
-        reply(sender, new Events::EnterModeEvent(this, resEv));
+        events::EnterModeEvent::value_type resEv(GetRDBMode);
+        reply(sender, new events::EnterModeEvent(this, resEv));
 
         RootLocker lock = make_locker(sender, RDM_REQUEST);
 
@@ -1714,30 +1714,30 @@ namespace fastoredis
             LOG_ERROR(er);
         }
 
-        Events::LeaveModeEvent::value_type resEv2(GetRDBMode);
-        reply(sender, new Events::LeaveModeEvent(this, resEv2));
+        events::LeaveModeEvent::value_type resEv2(GetRDBMode);
+        reply(sender, new events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
         return er;
     }
 
-    /*void RedisDriver::pipeMode(Events::ProcessConfigArgsRequestEvent* ev)
+    /*void RedisDriver::pipeMode(events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::EnterModeEvent::value_type res(PipeMode);
-        reply(sender, new Events::EnterModeEvent(this, res));
+        events::EnterModeEvent::value_type res(PipeMode);
+        reply(sender, new events::EnterModeEvent(this, res));
 
-        Events::LeaveModeEvent::value_type res2(PipeMode);
-        reply(sender, new Events::LeaveModeEvent(this, res2));
+        events::LeaveModeEvent::value_type res2(PipeMode);
+        reply(sender, new events::LeaveModeEvent(this, res2));
         notifyProgress(sender, 100);
     }*/
 
-    common::ErrorValueSPtr RedisDriver::findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::findBigKeysMode(events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::EnterModeEvent::value_type resEv(FindBigKeysMode);
-        reply(sender, new Events::EnterModeEvent(this, resEv));
+        events::EnterModeEvent::value_type resEv(FindBigKeysMode);
+        reply(sender, new events::EnterModeEvent(this, resEv));
 
         RootLocker lock = make_locker(sender, FIND_BIG_KEYS_REQUEST);
 
@@ -1747,18 +1747,18 @@ namespace fastoredis
             LOG_ERROR(er);
         }
 
-        Events::LeaveModeEvent::value_type resEv2(FindBigKeysMode);
-        reply(sender, new Events::LeaveModeEvent(this, resEv2));
+        events::LeaveModeEvent::value_type resEv2(FindBigKeysMode);
+        reply(sender, new events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
         return er;
     }
 
-    common::ErrorValueSPtr RedisDriver::statMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::statMode(events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::EnterModeEvent::value_type resEv(StatMode);
-        reply(sender, new Events::EnterModeEvent(this, resEv));
+        events::EnterModeEvent::value_type resEv(StatMode);
+        reply(sender, new events::EnterModeEvent(this, resEv));
 
         RootLocker lock = make_locker(sender, STAT_MODE_REQUEST);
 
@@ -1768,18 +1768,18 @@ namespace fastoredis
             LOG_ERROR(er);
         }
 
-        Events::LeaveModeEvent::value_type resEv2(StatMode);
-        reply(sender, new Events::LeaveModeEvent(this, resEv2));
+        events::LeaveModeEvent::value_type resEv2(StatMode);
+        reply(sender, new events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
         return er;
     }
 
-    common::ErrorValueSPtr RedisDriver::scanMode(Events::ProcessConfigArgsRequestEvent* ev)
+    common::ErrorValueSPtr RedisDriver::scanMode(events::ProcessConfigArgsRequestEvent* ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::EnterModeEvent::value_type resEv(ScanMode);
-        reply(sender, new Events::EnterModeEvent(this, resEv));
+        events::EnterModeEvent::value_type resEv(ScanMode);
+        reply(sender, new events::EnterModeEvent(this, resEv));
 
         RootLocker lock = make_locker(sender, SCAN_MODE_REQUEST);
 
@@ -1789,17 +1789,17 @@ namespace fastoredis
             LOG_ERROR(er);
         }
 
-        Events::LeaveModeEvent::value_type resEv2(ScanMode);
-        reply(sender, new Events::LeaveModeEvent(this, resEv2));
+        events::LeaveModeEvent::value_type resEv2(ScanMode);
+        reply(sender, new events::LeaveModeEvent(this, resEv2));
         notifyProgress(sender, 100);
         return er;
     }
 
-    void RedisDriver::handleExecuteEvent(Events::ExecuteRequestEvent *ev)
+    void RedisDriver::handleExecuteEvent(events::ExecuteRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::ExecuteRequestEvent::value_type res(ev->value());
+            events::ExecuteRequestEvent::value_type res(ev->value());
             const char *inputLine = common::utils::c_strornull(res.text_);
 
             common::ErrorValueSPtr er;
@@ -1843,11 +1843,11 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::handleDisconnectEvent(Events::DisconnectRequestEvent *ev)
+    void RedisDriver::handleDisconnectEvent(events::DisconnectRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::DisconnectResponceEvent::value_type res(ev->value());            
+            events::DisconnectResponceEvent::value_type res(ev->value());            
         notifyProgress(sender, 50);
 
         if(impl_->context){
@@ -1855,15 +1855,15 @@ namespace fastoredis
             impl_->context = NULL;
         }
 
-            reply(sender, new Events::DisconnectResponceEvent(this, res));
+            reply(sender, new events::DisconnectResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent *ev)
+    void RedisDriver::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoRequestEvent *ev)
     {
             QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
+            events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_DATABASES);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(GET_DATABASES, Command::InnerCommand, root.get());
@@ -1889,25 +1889,25 @@ namespace fastoredis
                 }
             }
         notifyProgress(sender, 75);
-            reply(sender, new Events::LoadDatabasesInfoResponceEvent(this, res));
+            reply(sender, new events::LoadDatabasesInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::handleLoadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent *ev)
+    void RedisDriver::handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
+            events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
         notifyProgress(sender, 50);
-            reply(sender, new Events::LoadDatabaseContentResponceEvent(this, res));
+            reply(sender, new events::LoadDatabaseContentResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::handleLoadServerInfoEvent(Events::ServerInfoRequestEvent *ev)
+    void RedisDriver::handleLoadServerInfoEvent(events::ServerInfoRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            Events::ServerInfoResponceEvent::value_type res(ev->value());
+            events::ServerInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(INFO_REQUEST);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(INFO_REQUEST, Command::InnerCommand, root.get());
@@ -1922,15 +1922,15 @@ namespace fastoredis
                 }
             }
         notifyProgress(sender, 75);
-            reply(sender, new Events::ServerInfoResponceEvent(this, res));
+            reply(sender, new events::ServerInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::handleLoadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent *ev)
+    void RedisDriver::handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent *ev)
     {
         QObject* sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
+        events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_PROPERTY_SERVER);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(GET_PROPERTY_SERVER, Command::InnerCommand, root.get());
@@ -1948,15 +1948,15 @@ namespace fastoredis
                 }
             }
         notifyProgress(sender, 75);
-            reply(sender, new Events::ServerPropertyInfoResponceEvent(this, res));
+            reply(sender, new events::ServerPropertyInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 
-    void RedisDriver::handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent *ev)
+    void RedisDriver::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent *ev)
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-        Events::ChangeServerPropertyInfoResponceEvent::value_type res(ev->value());
+        events::ChangeServerPropertyInfoResponceEvent::value_type res(ev->value());
 
         notifyProgress(sender, 50);
         const std::string changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
@@ -1969,7 +1969,7 @@ namespace fastoredis
             res.isChange_ = true;
         }
         notifyProgress(sender, 75);
-            reply(sender, new Events::ChangeServerPropertyInfoResponceEvent(this, res));
+            reply(sender, new events::ChangeServerPropertyInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 

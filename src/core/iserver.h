@@ -102,23 +102,23 @@ namespace fastoredis
         void notify(QEvent* ev);
         virtual void customEvent(QEvent* event);
 
-        virtual void handleConnectEvent(Events::ConnectResponceEvent* ev) = 0;
-        virtual void handleDisconnectEvent(Events::DisconnectResponceEvent* ev) = 0;
-        virtual void handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent* ev) = 0;
-        virtual void handleLoadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent* ev) = 0;
-        virtual void handleLoadServerInfoEvent(Events::ServerInfoResponceEvent* ev) = 0;
-        virtual void handleLoadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev) = 0;
-        virtual void handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
-        virtual void handleShutdownEvent(Events::ShutDownResponceEvent* ev) = 0;
-        virtual void handleBackupEvent(Events::BackupResponceEvent* ev) = 0;
-        virtual void handleExportEvent(Events::ExportResponceEvent* ev) = 0;
+        virtual void handleConnectEvent(events::ConnectResponceEvent* ev) = 0;
+        virtual void handleDisconnectEvent(events::DisconnectResponceEvent* ev) = 0;
+        virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev) = 0;
+        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev) = 0;
+        virtual void handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev) = 0;
+        virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev) = 0;
+        virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
+        virtual void handleShutdownEvent(events::ShutDownResponceEvent* ev) = 0;
+        virtual void handleBackupEvent(events::BackupResponceEvent* ev) = 0;
+        virtual void handleExportEvent(events::ExportResponceEvent* ev) = 0;
 
         IServer(const IDriverSPtr& drv, bool isMaster);
 
         const IDriverSPtr drv_;
 
     private:
-        void handleLoadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent* ev);
+        void handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryResponceEvent* ev);
         void processConfigArgs();
         bool isMaster_;
     };

@@ -20,9 +20,9 @@ namespace fastoredis
         IServer::unSyncServers(src, this);
     }
 
-    void RedisServer::handleConnectEvent(Events::ConnectResponceEvent* ev)
+    void RedisServer::handleConnectEvent(events::ConnectResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ConnectResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -31,9 +31,9 @@ namespace fastoredis
         emit finishedConnect(v);
     }
 
-    void RedisServer::handleDisconnectEvent(Events::DisconnectResponceEvent* ev)
+    void RedisServer::handleDisconnectEvent(events::DisconnectResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         DisconnectResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -42,9 +42,9 @@ namespace fastoredis
         emit finishedDisconnect(v);
     }
 
-    void RedisServer::handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent* ev)
+    void RedisServer::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         LoadDatabasesInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -53,9 +53,9 @@ namespace fastoredis
         emit finishedLoadDatabases(v);
     }
 
-    void RedisServer::handleLoadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent* ev)
+    void RedisServer::handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         LoadDatabaseContentResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -64,9 +64,9 @@ namespace fastoredis
         emit finishedLoadDataBaseContent(v);
     }
 
-    void RedisServer::handleLoadServerInfoEvent(Events::ServerInfoResponceEvent* ev)
+    void RedisServer::handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ServerInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -75,9 +75,9 @@ namespace fastoredis
         emit finishedLoadServerInfo(v);
     }
 
-    void RedisServer::handleLoadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev)
+    void RedisServer::handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ServerPropertyInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -86,9 +86,9 @@ namespace fastoredis
         emit finishedLoadServerProperty(v);
     }
 
-    void RedisServer::handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev)
+    void RedisServer::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ChangeServerPropertyInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -97,9 +97,9 @@ namespace fastoredis
         emit finishedChangeServerProperty(v);
     }
 
-    void RedisServer::handleShutdownEvent(Events::ShutDownResponceEvent* ev)
+    void RedisServer::handleShutdownEvent(events::ShutDownResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ShutDownResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -108,9 +108,9 @@ namespace fastoredis
         emit finishedShutdown(v);
     }
 
-    void RedisServer::handleBackupEvent(Events::BackupResponceEvent* ev)
+    void RedisServer::handleBackupEvent(events::BackupResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         BackupResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -119,9 +119,9 @@ namespace fastoredis
         emit finishedBackup(v);
     }
 
-    void RedisServer::handleExportEvent(Events::ExportResponceEvent* ev)
+    void RedisServer::handleExportEvent(events::ExportResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ExportResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){

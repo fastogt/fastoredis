@@ -68,7 +68,7 @@ namespace fastoredis
         virtual void updated(FastoObject* item, common::Value* val) = 0;
     };
 
-    typedef intrusive_ptr_t<FastoObject> FastoObjectIPtr;
+    typedef common::intrusive_ptr<FastoObject> FastoObjectIPtr;
 }
 
 namespace common

@@ -2,25 +2,15 @@
 
 #include "common/types.h"
 
-#ifdef BOOST_ENABLED
-#include <boost/intrusive_ptr.hpp>
-#define intrusive_ptr_t boost::intrusive_ptr
-namespace common
-{
-
-}
-#elif defined(HAVE_CXX_STANDART)
 namespace common
 {
     template<class T>
     class intrusive_ptr
     {
     private:
-
         typedef intrusive_ptr this_type;
 
     public:
-
         typedef T element_type;
 
         intrusive_ptr()
@@ -131,7 +121,6 @@ namespace common
         }
 
     private:
-
         T * px;
     };
 
@@ -199,15 +188,12 @@ namespace common
 
     // operator<<
 
-
     template<class Y> std::ostream & operator<< (std::ostream & os, intrusive_ptr<Y> const & p)
     {
         os << p.get();
         return os;
     }
-#define intrusive_ptr_t common::intrusive_ptr
 }
-#endif
 
 namespace common
 {

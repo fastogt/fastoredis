@@ -28,7 +28,7 @@ namespace fastoredis
         virtual ~IDriver();
 
         connectionTypes connectionType() const;
-        const IConnectionSettingsBaseSPtr& settings() const;
+        IConnectionSettingsBaseSPtr settings() const;
 
         //sync
         void start();
@@ -58,17 +58,17 @@ namespace fastoredis
         virtual void initImpl() = 0;
         virtual common::ErrorValueSPtr currentLoggingInfo(FastoObject* out) = 0;
 
-        virtual void handleConnectEvent(Events::ConnectRequestEvent* ev) = 0;
-        virtual void handleDisconnectEvent(Events::DisconnectRequestEvent* ev) = 0;
-        virtual void handleExecuteEvent(Events::ExecuteRequestEvent* ev) = 0;
-        virtual void handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev) = 0;
-        virtual void handleLoadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent* ev) = 0;
-        virtual void handleLoadServerInfoEvent(Events::ServerInfoRequestEvent* ev) = 0;
-        virtual void handleLoadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev) = 0;
-        virtual void handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
-        virtual void handleShutdownEvent(Events::ShutDownRequestEvent* ev) = 0;
-        virtual void handleBackupEvent(Events::BackupRequestEvent* ev) = 0;
-        virtual void handleExportEvent(Events::ExportRequestEvent* ev) = 0;
+        virtual void handleConnectEvent(events::ConnectRequestEvent* ev) = 0;
+        virtual void handleDisconnectEvent(events::DisconnectRequestEvent* ev) = 0;
+        virtual void handleExecuteEvent(events::ExecuteRequestEvent* ev) = 0;
+        virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoRequestEvent* ev) = 0;
+        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev) = 0;
+        virtual void handleLoadServerInfoEvent(events::ServerInfoRequestEvent* ev) = 0;
+        virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev) = 0;
+        virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
+        virtual void handleShutdownEvent(events::ShutDownRequestEvent* ev) = 0;
+        virtual void handleBackupEvent(events::BackupRequestEvent* ev) = 0;
+        virtual void handleExportEvent(events::ExportRequestEvent* ev) = 0;
 
         const IConnectionSettingsBaseSPtr settings_;
 
@@ -96,13 +96,13 @@ namespace fastoredis
         FastoObjectIPtr createRoot(QObject* reciver, const std::string& text);
         void compleateRoot(QObject* reciver, FastoObjectIPtr root);
 
-        void handleLoadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev);
+        void handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryRequestEvent *ev);
 
         virtual void addedChildren(FastoObject *child);
         virtual void updated(FastoObject* item, common::Value* val);
 
         virtual ServerInfoSPtr makeServerInfoFromString(const std::string& val) = 0;
-        virtual void handleProcessCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev) = 0;
+        virtual void handleProcessCommandLineArgs(events::ProcessConfigArgsRequestEvent* ev) = 0;
 
         QThread* thread_;
         int timer_info_id_;

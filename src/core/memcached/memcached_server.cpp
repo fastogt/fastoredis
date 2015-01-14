@@ -20,9 +20,9 @@ namespace fastoredis
         IServer::unSyncServers(src, this);
     }
 
-    void MemcachedServer::handleConnectEvent(Events::ConnectResponceEvent* ev)
+    void MemcachedServer::handleConnectEvent(events::ConnectResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ConnectResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -31,9 +31,9 @@ namespace fastoredis
         emit finishedConnect(v);
     }
 
-    void MemcachedServer::handleDisconnectEvent(Events::DisconnectResponceEvent* ev)
+    void MemcachedServer::handleDisconnectEvent(events::DisconnectResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         DisconnectResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -42,9 +42,9 @@ namespace fastoredis
         emit finishedDisconnect(v);
     }
 
-    void MemcachedServer::handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent* ev)
+    void MemcachedServer::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         LoadDatabasesInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -53,9 +53,9 @@ namespace fastoredis
         emit finishedLoadDatabases(v);
     }
 
-    void MemcachedServer::handleLoadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent* ev)
+    void MemcachedServer::handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         LoadDatabaseContentResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -64,9 +64,9 @@ namespace fastoredis
         emit finishedLoadDataBaseContent(v);
     }
 
-    void MemcachedServer::handleLoadServerInfoEvent(Events::ServerInfoResponceEvent* ev)
+    void MemcachedServer::handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ServerInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -75,9 +75,9 @@ namespace fastoredis
         emit finishedLoadServerInfo(v);
     }
 
-    void MemcachedServer::handleLoadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev)
+    void MemcachedServer::handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ServerPropertyInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -86,9 +86,9 @@ namespace fastoredis
         emit finishedLoadServerProperty(v);
     }
 
-    void MemcachedServer::handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev)
+    void MemcachedServer::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ChangeServerPropertyInfoResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -97,9 +97,9 @@ namespace fastoredis
         emit finishedChangeServerProperty(v);
     }
 
-    void MemcachedServer::handleShutdownEvent(Events::ShutDownResponceEvent* ev)
+    void MemcachedServer::handleShutdownEvent(events::ShutDownResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ShutDownResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -108,9 +108,9 @@ namespace fastoredis
         emit finishedShutdown(v);
     }
 
-    void MemcachedServer::handleBackupEvent(Events::BackupResponceEvent* ev)
+    void MemcachedServer::handleBackupEvent(events::BackupResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         BackupResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
@@ -119,9 +119,9 @@ namespace fastoredis
         emit finishedBackup(v);
     }
 
-    void MemcachedServer::handleExportEvent(Events::ExportResponceEvent* ev)
+    void MemcachedServer::handleExportEvent(events::ExportResponceEvent* ev)
     {
-        using namespace Events;
+        using namespace events;
         ExportResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){

@@ -26,9 +26,6 @@ namespace fastoredis
     public Q_SLOTS:
         virtual void accept();
 
-    private Q_SLOTS:
-        void setPythonExecFile();
-
     private:
         void syncWithSettings();
 
@@ -42,8 +39,6 @@ namespace fastoredis
         QCheckBox* autoCheckUpdates_;
         QLabel* langLabel_;
         QComboBox* languagesComboBox_;
-        QLineEdit* pythonExecPath_;
-        QLabel* pythonExecLabel_;
 
         QLabel* stylesLabel_;
         QComboBox* stylesComboBox_;

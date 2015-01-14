@@ -29,31 +29,31 @@ namespace fastoredis
         virtual void initImpl();
         virtual common::ErrorValueSPtr currentLoggingInfo(FastoObject *out);
 
-        virtual void handleConnectEvent(Events::ConnectRequestEvent* ev);
-        virtual void handleDisconnectEvent(Events::DisconnectRequestEvent* ev);
-        virtual void handleExecuteEvent(Events::ExecuteRequestEvent* ev);
-        virtual void handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoRequestEvent* ev);
-        virtual void handleLoadDatabaseContentEvent(Events::LoadDatabaseContentRequestEvent* ev);
-        virtual void handleLoadServerInfoEvent(Events::ServerInfoRequestEvent* ev);
-        virtual void handleLoadServerPropertyEvent(Events::ServerPropertyInfoRequestEvent* ev);
-        virtual void handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoRequestEvent* ev);
-        virtual void handleProcessCommandLineArgs(Events::ProcessConfigArgsRequestEvent* ev);
-        virtual void handleShutdownEvent(Events::ShutDownRequestEvent* ev);
-        virtual void handleBackupEvent(Events::BackupRequestEvent* ev);
-        virtual void handleExportEvent(Events::ExportRequestEvent* ev);
+        virtual void handleConnectEvent(events::ConnectRequestEvent* ev);
+        virtual void handleDisconnectEvent(events::DisconnectRequestEvent* ev);
+        virtual void handleExecuteEvent(events::ExecuteRequestEvent* ev);
+        virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoRequestEvent* ev);
+        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev);
+        virtual void handleLoadServerInfoEvent(events::ServerInfoRequestEvent* ev);
+        virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev);
+        virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev);
+        virtual void handleProcessCommandLineArgs(events::ProcessConfigArgsRequestEvent* ev);
+        virtual void handleShutdownEvent(events::ShutDownRequestEvent* ev);
+        virtual void handleBackupEvent(events::BackupRequestEvent* ev);
+        virtual void handleExportEvent(events::ExportRequestEvent* ev);
 
         ServerInfoSPtr makeServerInfoFromString(const std::string& val);
 
         struct pimpl;
         pimpl* const impl_;
 
-        common::ErrorValueSPtr interacteveMode(Events::ProcessConfigArgsRequestEvent* ev);
-        common::ErrorValueSPtr latencyMode(Events::ProcessConfigArgsRequestEvent* ev);
-        common::ErrorValueSPtr slaveMode(Events::ProcessConfigArgsRequestEvent* ev);
-        common::ErrorValueSPtr getRDBMode(Events::ProcessConfigArgsRequestEvent* ev);
-        //void pipeMode(Events::ProcessConfigArgsRequestEvent* ev);
-        common::ErrorValueSPtr findBigKeysMode(Events::ProcessConfigArgsRequestEvent* ev);
-        common::ErrorValueSPtr statMode(Events::ProcessConfigArgsRequestEvent* ev);
-        common::ErrorValueSPtr scanMode(Events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr interacteveMode(events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr latencyMode(events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr slaveMode(events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr getRDBMode(events::ProcessConfigArgsRequestEvent* ev);
+        //void pipeMode(events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr findBigKeysMode(events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr statMode(events::ProcessConfigArgsRequestEvent* ev);
+        common::ErrorValueSPtr scanMode(events::ProcessConfigArgsRequestEvent* ev);
     };
 }

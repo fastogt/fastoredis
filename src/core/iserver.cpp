@@ -106,7 +106,7 @@ namespace fastoredis
     {
         EventsInfo::ConnectInfoRequest req;
         emit startedConnect(req);
-        QEvent *ev = new Events::ConnectRequestEvent(this, req);
+        QEvent *ev = new events::ConnectRequestEvent(this, req);
         notify(ev);
     }
 
@@ -114,7 +114,7 @@ namespace fastoredis
     {
         EventsInfo::ShutDownInfoRequest req;
         emit startedShutdown(req);
-        QEvent *ev = new Events::ShutDownRequestEvent(this, req);
+        QEvent *ev = new events::ShutDownRequestEvent(this, req);
         notify(ev);
     }
 
@@ -122,7 +122,7 @@ namespace fastoredis
     {
         EventsInfo::BackupInfoRequest req(common::convertToString(path));
         emit startedBackup(req);
-        QEvent *ev = new Events::BackupRequestEvent(this, req);
+        QEvent *ev = new events::BackupRequestEvent(this, req);
         notify(ev);
     }
 
@@ -130,7 +130,7 @@ namespace fastoredis
     {
         EventsInfo::ExportInfoRequest req(common::convertToString(path));
         emit startedExport(req);
-        QEvent *ev = new Events::ExportRequestEvent(this, req);
+        QEvent *ev = new events::ExportRequestEvent(this, req);
         notify(ev);
     }
 
@@ -138,7 +138,7 @@ namespace fastoredis
     {
         EventsInfo::LoadDatabasesInfoRequest req;
         emit startedLoadDatabases(req);
-        QEvent *ev = new Events::LoadDatabasesInfoRequestEvent(this, req);
+        QEvent *ev = new events::LoadDatabasesInfoRequestEvent(this, req);
         notify(ev);
     }
 
@@ -146,7 +146,7 @@ namespace fastoredis
     {
         EventsInfo::LoadDatabasesContentRequest req(inf);
         emit startedLoadDataBaseContent(req);
-        QEvent *ev = new Events::LoadDatabaseContentRequestEvent(this, req);
+        QEvent *ev = new events::LoadDatabaseContentRequestEvent(this, req);
         notify(ev);
     }
 
@@ -154,7 +154,7 @@ namespace fastoredis
     {
         EventsInfo::DisonnectInfoRequest req;
         emit startedDisconnect(req);
-        QEvent *ev = new Events::DisconnectRequestEvent(this, req);
+        QEvent *ev = new events::DisconnectRequestEvent(this, req);
         notify(ev);
     }
 
@@ -162,7 +162,7 @@ namespace fastoredis
     {
         EventsInfo::ExecuteInfoRequest req(common::convertToString(script));
         emit startedExecute(req);
-        QEvent *ev = new Events::ExecuteRequestEvent(this, req);
+        QEvent *ev = new events::ExecuteRequestEvent(this, req);
         notify(ev);
     }
 
@@ -170,7 +170,7 @@ namespace fastoredis
     {
         EventsInfo::ServerInfoRequest req;
         emit startedLoadServerInfo(req);
-        QEvent *ev = new Events::ServerInfoRequestEvent(this, req);
+        QEvent *ev = new events::ServerInfoRequestEvent(this, req);
         notify(ev);
     }
 
@@ -178,7 +178,7 @@ namespace fastoredis
     {
         EventsInfo::ServerPropertyInfoRequest req;
         emit startedLoadServerProperty(req);
-        QEvent *ev = new Events::ServerPropertyInfoRequestEvent(this, req);
+        QEvent *ev = new events::ServerPropertyInfoRequestEvent(this, req);
         notify(ev);
     }
 
@@ -187,7 +187,7 @@ namespace fastoredis
         EventsInfo::ChangeServerPropertyInfoRequest req;
         req.newItem_ = newValue;
         emit startedChangeServerProperty(req);
-        QEvent *ev = new Events::ChangeServerPropertyInfoRequestEvent(this, req);
+        QEvent *ev = new events::ChangeServerPropertyInfoRequestEvent(this, req);
         notify(ev);
     }
 
@@ -195,13 +195,13 @@ namespace fastoredis
     {
         EventsInfo::ServerInfoHistoryRequest req;
         emit startedLoadServerHistoryInfo(req);
-        QEvent *ev = new Events::ServerInfoHistoryRequestEvent(this, req);
+        QEvent *ev = new events::ServerInfoHistoryRequestEvent(this, req);
         notify(ev);
     }
 
-    void IServer::handleLoadServerInfoHistoryEvent(Events::ServerInfoHistoryResponceEvent *ev)
+    void IServer::handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryResponceEvent *ev)
     {
-        using namespace Events;
+        using namespace events;
         ServerInfoHistoryResponceEvent::value_type v = ev->value();
         common::ErrorValueSPtr er = v.errorInfo();
         if(er && er->isError()){
@@ -213,7 +213,7 @@ namespace fastoredis
     void IServer::processConfigArgs()
     {
         EventsInfo::ProcessConfigArgsInfoRequest req;
-        QEvent *ev = new Events::ProcessConfigArgsRequestEvent(this, req);
+        QEvent *ev = new events::ProcessConfigArgsRequestEvent(this, req);
         notify(ev);
     }
 
@@ -254,7 +254,7 @@ namespace fastoredis
 
     void IServer::customEvent(QEvent *event)
     {
-        using namespace Events;
+        using namespace events;
         QEvent::Type type = event->type();
         if (type == static_cast<QEvent::Type>(ConnectResponceEvent::EventType)){
             ConnectResponceEvent *ev = static_cast<ConnectResponceEvent*>(event);

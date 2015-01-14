@@ -29,6 +29,7 @@ namespace fastoredis
 
     private:
         void retranslateUi();
+
         QAction* newShellAction_;
         QAction* nextTabAction_;
         QAction* prevTabAction_;

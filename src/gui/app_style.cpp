@@ -23,7 +23,7 @@ namespace fastoredis
 
     void AppStyle::drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const
     {
-        return OsStyle::drawControl(element, option, painter, widget);
+        OsStyle::drawControl(element, option, painter, widget);
     }
 
     void AppStyle::drawPrimitive(PrimitiveElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const

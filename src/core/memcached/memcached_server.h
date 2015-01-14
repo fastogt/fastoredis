@@ -14,16 +14,16 @@ namespace fastoredis
         virtual void unSyncFromServer(IServer* src);
 
     protected:
-        virtual void handleConnectEvent(Events::ConnectResponceEvent* ev);
-        virtual void handleDisconnectEvent(Events::DisconnectResponceEvent* ev);
-        virtual void handleLoadDatabaseInfosEvent(Events::LoadDatabasesInfoResponceEvent* ev);
-        virtual void handleLoadDatabaseContentEvent(Events::LoadDatabaseContentResponceEvent* ev);
-        virtual void handleLoadServerInfoEvent(Events::ServerInfoResponceEvent* ev);
-        virtual void handleLoadServerPropertyEvent(Events::ServerPropertyInfoResponceEvent* ev);
-        virtual void handleServerPropertyChangeEvent(Events::ChangeServerPropertyInfoResponceEvent* ev);
-        virtual void handleShutdownEvent(Events::ShutDownResponceEvent* ev);
-        virtual void handleBackupEvent(Events::BackupResponceEvent* ev);
-        virtual void handleExportEvent(Events::ExportResponceEvent* ev);
+        virtual void handleConnectEvent(events::ConnectResponceEvent* ev);
+        virtual void handleDisconnectEvent(events::DisconnectResponceEvent* ev);
+        virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev);
+        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev);
+        virtual void handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev);
+        virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev);
+        virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev);
+        virtual void handleShutdownEvent(events::ShutDownResponceEvent* ev);
+        virtual void handleBackupEvent(events::BackupResponceEvent* ev);
+        virtual void handleExportEvent(events::ExportResponceEvent* ev);
 
     private:
         MemcachedServer(const IDriverSPtr& drv, bool isMaster);

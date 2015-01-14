@@ -24,7 +24,6 @@
 #define SYNCTABS PREFIX"synctabs"
 #define LOGGINGDIR PREFIX"loggingdir"
 #define CHECKUPDATES PREFIX"checkupdates"
-#define PYTHONEXECPATH PREFIX"pythonexecpath"
 
 namespace
 {
@@ -46,7 +45,7 @@ namespace
 namespace fastoredis
 {
     SettingsManager::SettingsManager()
-        : views_(), curStyle_(), curLanguage_(), connections_(), syncTabs_(), loggingDir_(), autoCheckUpdate_(), pythonExecPath_()
+        : views_(), curStyle_(), curLanguage_(), connections_(), syncTabs_(), loggingDir_(), autoCheckUpdate_()
     {
        load();
     }
@@ -81,7 +80,6 @@ namespace fastoredis
         std::string dir = common::file_system::get_dir_path(iniPath);
         loggingDir_ = settings.value(LOGGINGDIR, common::convertFromString<QString>(dir)).toString();
         autoCheckUpdate_ = settings.value(CHECKUPDATES, true).toBool();
-        pythonExecPath_ = settings.value(PYTHONEXECPATH, common::convertFromString<QString>(::pythonExecPath())).toString();
     }
 
     void SettingsManager::save()
@@ -108,7 +106,6 @@ namespace fastoredis
         settings.setValue(SYNCTABS, syncTabs_);
         settings.setValue(LOGGINGDIR, loggingDir_);
         settings.setValue(CHECKUPDATES, autoCheckUpdate_);
-        settings.setValue(PYTHONEXECPATH, pythonExecPath_);
     }
 
     SettingsManager::~SettingsManager()
@@ -199,15 +196,5 @@ namespace fastoredis
     void SettingsManager::setAutoCheckUpdates(bool isCheck)
     {
         autoCheckUpdate_ = isCheck;
-    }
-
-    QString SettingsManager::pythonExecPath() const
-    {
-        return pythonExecPath_;
-    }
-
-    void SettingsManager::setPythonExecPath(const QString &path)
-    {
-        pythonExecPath_ = path;
     }
 }

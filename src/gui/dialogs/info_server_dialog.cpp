@@ -93,8 +93,8 @@ namespace
 
 namespace fastoredis
 {
-    InfoServerDialog::InfoServerDialog(const QString& title, QWidget* parent)
-        : QDialog(parent)
+    InfoServerDialog::InfoServerDialog(const QString& title, connectionTypes type, QWidget* parent)
+        : QDialog(parent), type_(type)
     {
         using namespace translations;
 
@@ -106,8 +106,15 @@ namespace fastoredis
         mainL->addWidget(hardwareTextInfo_);
         setLayout(mainL);
 
+        setMinimumSize(QSize(min_height, min_width));
+
         glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoading, 0.5, QColor(111, 111, 100), this);
-        updateText(RedisServerInfo());
+        if(type_ == REDIS){
+            updateText(RedisServerInfo());
+        }
+        else if(type_ == MEMCACHED){
+            updateText(MemcachedServerInfo());
+        }
     }
 
     void InfoServerDialog::startServerInfo(const EventsInfo::ServerInfoRequest &req)
@@ -128,8 +135,16 @@ namespace fastoredis
             return;
         }
 
-        if(inf->type() == REDIS){
+        DCHECK(type_ == inf->type());
+
+        if(type_ == REDIS){
             RedisServerInfo* infr = dynamic_cast<RedisServerInfo*>(inf.get());
+            if(infr){
+                updateText(*infr);
+            }
+        }
+        else if(type_ == MEMCACHED){
+            MemcachedServerInfo* infr = dynamic_cast<MemcachedServerInfo*>(inf.get());
             if(infr){
                 updateText(*infr);
             }
@@ -221,6 +236,11 @@ namespace fastoredis
 
         serverTextInfo_->setText(textServ + textMem + textCpu);
         hardwareTextInfo_->setText(textCl + textPer + textStat + textRepl);
+    }
+
+    void InfoServerDialog::updateText(const MemcachedServerInfo& serv)
+    {
+
     }
 
     void InfoServerDialog::showEvent(QShowEvent* e)

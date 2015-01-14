@@ -41,9 +41,6 @@ namespace fastoredis
         bool autoCheckUpdates() const;
         void setAutoCheckUpdates(bool isCheck);
 
-        QString pythonExecPath() const;
-        void setPythonExecPath(const QString& path);
-
     private:
         void load();
         void save();
@@ -58,6 +55,5 @@ namespace fastoredis
         bool syncTabs_;
         QString loggingDir_;
         bool autoCheckUpdate_;
-        QString pythonExecPath_;
     };
 }

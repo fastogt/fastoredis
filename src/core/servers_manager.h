@@ -23,7 +23,7 @@ namespace fastoredis
 
         void refreshSyncServers();
         IServerSPtr findServerBySetting(const IConnectionSettingsBaseSPtr& settings) const;
-        std::vector<QObject*> findAllListeners(const IDriverSPtr& drv);
+        std::vector<QObject*> findAllListeners(const IDriverSPtr& drv) const;
 
         ServersContainer servers_;
         bool syncServers_;

@@ -91,7 +91,7 @@ namespace fastoredis
 
     void IDriver::customEvent(QEvent *event)
     {
-        using namespace Events;
+        using namespace events;
         QEvent::Type type = event->type();
         if (type == static_cast<QEvent::Type>(ConnectRequestEvent::EventType)){            
             ConnectRequestEvent *ev = static_cast<ConnectRequestEvent*>(event);
@@ -163,15 +163,15 @@ namespace fastoredis
     FastoObjectIPtr IDriver::createRoot(QObject *reciver, const std::string& text)
     {
         FastoObjectIPtr root = FastoObject::createRoot(text, this);
-        Events::CommandRootCreatedEvent::value_type res(root);
-        reply(reciver, new Events::CommandRootCreatedEvent(this, res));
+        events::CommandRootCreatedEvent::value_type res(root);
+        reply(reciver, new events::CommandRootCreatedEvent(this, res));
         return root;
     }
 
     void IDriver::compleateRoot(QObject *reciver, FastoObjectIPtr root)
     {
-        Events::CommandRootCompleatedEvent::value_type res(root);
-        reply(reciver, new Events::CommandRootCompleatedEvent(this, res));
+        events::CommandRootCompleatedEvent::value_type res(root);
+        reply(reciver, new events::CommandRootCompleatedEvent(this, res));
     }
 
     void IDriver::addedChildren(FastoObject* child)
@@ -197,7 +197,7 @@ namespace fastoredis
 
     void IDriver::notifyProgress(QObject *reciver, int value)
     {
-        reply(reciver, new Events::ProgressResponceEvent(this, Events::ProgressResponceEvent::value_type(value)));
+        reply(reciver, new events::ProgressResponceEvent(this, events::ProgressResponceEvent::value_type(value)));
     }
 
     void IDriver::init()
@@ -256,22 +256,22 @@ namespace fastoredis
         return settings_->connectionType();
     }
 
-    const IConnectionSettingsBaseSPtr &IDriver::settings() const
+    IConnectionSettingsBaseSPtr IDriver::settings() const
     {
         return settings_;
     }
 
-    void IDriver::handleLoadServerInfoHistoryEvent(Events::ServerInfoHistoryRequestEvent *ev)
+    void IDriver::handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryRequestEvent *ev)
     {
         QObject *sender = ev->sender();
-        Events::ServerInfoHistoryResponceEvent::value_type res(ev->value());        
+        events::ServerInfoHistoryResponceEvent::value_type res(ev->value());        
 
         std::string path = settings_->loggingPath();
         common::file_system::Path p(path);
 
         common::file_system::File readFile(p);
         if(readFile.open("rb")){
-            Events::ServerInfoHistoryResponceEvent::value_type::infos_container_type tmpInfos;
+            events::ServerInfoHistoryResponceEvent::value_type::infos_container_type tmpInfos;
 
             long long curStamp = 0;
             common::buffer_type dataInfo;
@@ -306,6 +306,6 @@ namespace fastoredis
            res.setErrorInfo(er);
         }
 
-        reply(sender, new Events::ServerInfoHistoryResponceEvent(this, res));
+        reply(sender, new events::ServerInfoHistoryResponceEvent(this, res));
     }
 }

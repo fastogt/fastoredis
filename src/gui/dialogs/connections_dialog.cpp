@@ -27,7 +27,7 @@ namespace fastoredis
     {
     public:
         ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection): connection_(connection) { refreshFields(); }
-        IConnectionSettingsBaseSPtr connection() { return connection_; }
+        IConnectionSettingsBaseSPtr connection() const { return connection_; }
 
         void refreshFields()
         {
@@ -71,8 +71,8 @@ namespace fastoredis
         listWidget_->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
         listWidget_->setDragEnabled(true);
         listWidget_->setDragDropMode(QAbstractItemView::InternalMove);
-        listWidget_->setMinimumHeight(300);
-        listWidget_->setMinimumWidth(630);
+        listWidget_->setMinimumHeight(320);
+        listWidget_->setMinimumWidth(640);
         VERIFY(connect(listWidget_, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept())));
         VERIFY(connect(listWidget_, SIGNAL(itemSelectionChanged()), this, SLOT(connectionSelectChange())));
 
@@ -164,10 +164,8 @@ namespace fastoredis
             return;
 
         // Ask user
-        int answer = QMessageBox::question(this,
-            "Connections",
-            QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
-            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
+                                           QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
         if (answer != QMessageBox::Yes)
             return;
@@ -179,8 +177,7 @@ namespace fastoredis
 
     void ConnectionsDialog::edit()
     {
-        ConnectionListWidgetItem *currentItem =
-                    dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -201,14 +198,12 @@ namespace fastoredis
 
     IConnectionSettingsBaseSPtr ConnectionsDialog::selectedConnection() const
     {
-        IConnectionSettingsBaseSPtr res;
-
         ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
         if (currentItem){
-            res = currentItem->connection();
+            return currentItem->connection();
         }
 
-        return res;
+        return IConnectionSettingsBaseSPtr();
     }
 
     /**

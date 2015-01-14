@@ -168,7 +168,7 @@ namespace fastoredis
 
     void PythonWorker::customEvent(QEvent* event)
     {
-        using namespace Events;
+        using namespace events;
         QEvent::Type type = event->type();
         if (type == static_cast<QEvent::Type>(ExecuteRequestEvent::EventType)){
             ExecuteRequestEvent *ev = static_cast<ExecuteRequestEvent*>(event);
@@ -364,7 +364,7 @@ emit executeProgress(100);
         }
 
         EventsInfo::ExecuteInfoRequest req(common::convertToString(script), sargs);
-        QEvent *ev = new Events::ExecuteRequestEvent(this, req);
+        QEvent *ev = new events::ExecuteRequestEvent(this, req);
         qApp->postEvent(this, ev);
     }
 
@@ -377,7 +377,7 @@ emit executeProgress(100);
         }
 
         EventsInfo::ExecuteScriptInfoRequest req(common::convertToString(path), sargs);
-        QEvent *ev = new Events::ExecuteScriptRequestEvent(this, req);
+        QEvent *ev = new events::ExecuteScriptRequestEvent(this, req);
         qApp->postEvent(this, ev);
     }
 
@@ -444,11 +444,6 @@ emit executeProgress(100);
 #endif
     }
 
-    QString PythonEngine::execPath() const
-    {
-        return SettingsManager::instance().pythonExecPath();
-    }
-
     bool PythonEngine::hasModule(const std::string& name)
     {
         if(!isPythonEnabled()){
@@ -473,7 +468,7 @@ emit executeProgress(100);
     PythonEngine::~PythonEngine()
     {
 #ifdef PYTHON_ENABLED
-        //Py_Finalize();
+        Py_Finalize();
 #endif
     }
 }
