@@ -1,7 +1,5 @@
 #include "common/time.h"
 
-#include <sys/time.h>
-
 namespace common
 {
     namespace time
