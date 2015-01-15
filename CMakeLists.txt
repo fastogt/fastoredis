@@ -162,7 +162,7 @@ ELSEIF(OS_LINUX)
 ELSEIF(OS_ANDROID)
     SET(RESOURCE_OS "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME_LOWERCASE}.desktop")
     SET(RESOURCE_OS_IN "${CMAKE_SOURCE_DIR}/install/${PROJECT_NAME_LOWERCASE}.desktop.in")
-    SET(ICON_FILE      "${CMAKE_SOURCE_DIR}/install/linux/${PROJECT_NAME_LOWERCASE}.png")
+    SET(ICON_FILE      "${CMAKE_SOURCE_DIR}/install/android/${PROJECT_NAME_LOWERCASE}.png")
     SET(LIB_INSTALL_DESTINATION lib)
     SET(TARGET_INSTALL_DESTINATION bin)
 ENDIF(OS_WINDOWS)
@@ -179,8 +179,8 @@ ADD_SUBDIRECTORY(src)
 #cpack
 
 IF(CPACK_SUPPORT)
-    SET(CPACK_PACKAGE_DESCRIPTION "Shell-centric cross-platform Redis management tool.")
-    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_NAME_TITLE} cross-platform Redis management tool.")
+    SET(CPACK_PACKAGE_DESCRIPTION "Shell-centric cross-platform Redis and Memchached management tool.")
+    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_NAME_TITLE} cross-platform Redis and Memchached management tool.")
     #CPACK_DEBIAN_PACKAGE_DESCRIPTION CPACK_RPM_PACKAGE_SUMMARY
     SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")#CPACK_RPM_PACKAGE_DESCRIPTION
     SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
@@ -281,6 +281,96 @@ IF(CPACK_SUPPORT)
             SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${ARCH_TEXT_PACKAGE})#i386
             SET(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/postinst;${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/prerm")
         ENDIF(CPACK_GENERATOR STREQUAL "RPM")
+    ELSEIF(OS_ANDROID)
+        find_host_program(ANDROID_DEPLOY_QT NAMES androiddeployqt PATHS ${QT_BINS_DIR})
+
+        # Look for androiddeployqt program
+        IF(NOT ANDROID_DEPLOY_QT)
+            MESSAGE(FATAL_ERROR "Could not find androiddeployqt in ${QT_BINS_DIR} .")
+        ENDIF(NOT ANDROID_DEPLOY_QT)
+
+        # Set version
+        SET(ANDROID_VERSION_NAME ${PROJECT_VERSION})
+
+        # set android package source for androiddeployqt json file
+        SET(PACKAGE_SOURCE_ANDROID ${CMAKE_BINARY_DIR}/tmpAndroid)
+        CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/install/android/AndroidManifest.xml.cmake ${PACKAGE_SOURCE_ANDROID}/AndroidManifest.xml @ONLY)
+
+        # create json file parsed by the androiddeployqt
+        SET(ANDROID_SDK $ENV{ANDROID_SDK})
+
+        SET(ANDROID_TARGET_ARCH $ENV{ANDROID_TARGET_ARCH})
+
+        CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/install/android/configAndroid.json.cmake ${PACKAGE_SOURCE_ANDROID}/configAndroid.json @ONLY)
+
+        SET(ANDROID_PACKAGE_DEBUG_NAME ${CPACK_PACKAGE_VERSION_PATCH}_abi_${ANDROID_ABI}_debug.apk)
+
+        ADD_CUSTOM_COMMAND (
+          OUTPUT createApkFromAndroidDeployQtDebug
+          DEPENDS ${PACKAGE_SOURCE_ANDROID}/AndroidManifest.xml
+          #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${PACKAGE_SOURCE_ANDROID}
+          COMMAND ${ANDROID_DEPLOY_QT} --output ${CMAKE_CURRENT_BINARY_DIR}/ --input ${PACKAGE_SOURCE_ANDROID}/configAndroid.json --debug
+          COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/bin/QtApp-debug.apk ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_DEBUG_NAME}
+        )
+
+        SET(ANDROID_PACKAGE_RELEASE_NAME ${CPACK_PACKAGE_VERSION_PATCH}_abi_${ANDROID_ABI}_release.apk)
+
+        ADD_CUSTOM_COMMAND (
+          OUTPUT createApkFromAndroidDeployQtRelease
+          DEPENDS ${PACKAGE_SOURCE_ANDROID}/AndroidManifest.xml
+          #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${PACKAGE_SOURCE_ANDROID}
+          COMMAND ${ANDROID_DEPLOY_QT} --output ${CMAKE_CURRENT_BINARY_DIR}/ --input ${PACKAGE_SOURCE_ANDROID}/configAndroid.json --release
+          COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/bin/QtApp-release-unsigned.apk ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_NAME}
+        )
+
+        SET(ANDROID_PACKAGE_RELEASE_SIGNED_NAME ${CPACK_PACKAGE_VERSION_PATCH}_abi_${ANDROID_ABI}_release_signed.apk)
+
+        ADD_CUSTOM_COMMAND (
+          OUTPUT createApkSignedFromAndroidDeployQtRelease
+          DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_NAME}
+          COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME}
+          COMMAND jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $ENV{ANDROID_KEYSTORE} -storepass $ENV{ANDROID_KEYSTORE_PASSWD} ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME} gcompris
+        )
+
+        SET(ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME ${CPACK_PACKAGE_VERSION_PATCH}_abi_${ANDROID_ABI}_release_signed_aligned.apk)
+
+        ADD_CUSTOM_COMMAND (
+          OUTPUT createApkSignedAlignedFromAndroidDeployQtRelease
+          DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME}
+          COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME}
+          COMMAND ${ANDROID_SDK}/build-tools/20.0.0/zipalign -v 4 ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME}
+        )
+
+        ADD_CUSTOM_COMMAND (
+          OUTPUT apkInstall
+          DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME}
+          COMMAND ${ANDROID_SDK}/platform-tools/adb install -r ${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME}
+        )
+
+        # Command to create apk from Makefile
+        ADD_CUSTOM_TARGET (apk_debug
+           DEPENDS ${ALL_LOCALES} createApkFromAndroidDeployQtDebug
+        )
+
+        # Command to create apk from Makefile
+        ADD_CUSTOM_TARGET (apk_release
+           DEPENDS ${ALL_LOCALES} createApkFromAndroidDeployQtRelease
+        )
+
+        # Command to create signed apk from Makefile
+        ADD_CUSTOM_TARGET (apk_signed
+           DEPENDS ${ALL_LOCALES} createApkSignedFromAndroidDeployQtRelease
+        )
+
+        # Command to create signed aligned apk from Makefile
+        ADD_CUSTOM_TARGET (apk_signed_aligned
+           DEPENDS ${ALL_LOCALES} createApkSignedAlignedFromAndroidDeployQtRelease
+        )
+
+        # Command to install the signed aligned apk through adb from Makefile
+        ADD_CUSTOM_TARGET (apk_install
+           DEPENDS apkInstall
+        )
     ENDIF(OS_WINDOWS)
     INCLUDE(CPack)
 ENDIF(CPACK_SUPPORT)
