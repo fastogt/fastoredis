@@ -314,22 +314,23 @@ IF(CPACK_SUPPORT)
           COMMAND ${CMAKE_COMMAND} -E rename ${PACKAGE_OUTPUT_ANDROID}/bin/QtApp-release-unsigned.apk ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_NAME}
         )
 
-        SET(ANDROID_PACKAGE_RELEASE_SIGNED_NAME ${CPACK_PACKAGE_VERSION_PATCH}_abi_${ANDROID_ABI}_release_signed.apk)
+        SET(ANDROID_PACKAGE_RELEASE_SIGNED_NAME ${CPACK_PACKAGE_FILE_NAME}_signed.apk)
 
         ADD_CUSTOM_COMMAND (
           OUTPUT createApkSignedFromAndroidDeployQtRelease
           DEPENDS ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_NAME}
-          COMMAND ${CMAKE_COMMAND} -E copy ${v}/${ANDROID_PACKAGE_RELEASE_NAME} ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME}
-          COMMAND jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $ENV{ANDROID_KEYSTORE} -storepass $ENV{ANDROID_KEYSTORE_PASSWD} ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME} gcompris
+          COMMAND ${CMAKE_COMMAND} -E copy ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_NAME} ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME}
+          COMMAND jarsigner -keystore ~/$ENV{ANDROID_KEYSTORE} -storepass $ENV{ANDROID_KEYSTORE_PASSWD}
+          -keypass $ENV{ANDROID_KEY_PASSWD}  ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME} release gcompris
         )
 
-        SET(ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME ${CPACK_PACKAGE_VERSION_PATCH}_abi_${ANDROID_ABI}_release_signed_aligned.apk)
+        SET(ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME ${CPACK_PACKAGE_FILE_NAME}_signed_aligned.apk)
 
         ADD_CUSTOM_COMMAND (
           OUTPUT createApkSignedAlignedFromAndroidDeployQtRelease
           DEPENDS ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME}
           COMMAND ${CMAKE_COMMAND} -E remove ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME}
-          COMMAND ${ANDROID_SDK}/build-tools/20.0.0/zipalign -v 4 ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME} ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME}
+          COMMAND ${ANDROID_SDK}/build-tools/${ANDROID_BUILD_TOOLS_REVISION}/zipalign -v 4 ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME} ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME}
         )
 
         ADD_CUSTOM_COMMAND (
@@ -340,17 +341,17 @@ IF(CPACK_SUPPORT)
 
         # Command to create apk from Makefile
         ADD_CUSTOM_TARGET (apk_release
-           DEPENDS ${ALL_LOCALES} createApkFromAndroidDeployQtRelease
+           DEPENDS createApkFromAndroidDeployQtRelease
         )
 
         # Command to create signed apk from Makefile
         ADD_CUSTOM_TARGET (apk_signed
-           DEPENDS ${ALL_LOCALES} createApkSignedFromAndroidDeployQtRelease
+           DEPENDS createApkSignedFromAndroidDeployQtRelease
         )
 
         # Command to create signed aligned apk from Makefile
         ADD_CUSTOM_TARGET (apk_signed_aligned
-           DEPENDS ${ALL_LOCALES} createApkSignedAlignedFromAndroidDeployQtRelease
+           DEPENDS createApkSignedAlignedFromAndroidDeployQtRelease
         )
 
         # Command to install the signed aligned apk through adb from Makefile

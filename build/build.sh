@@ -15,6 +15,7 @@ createPackage() {
         cmake ../../ -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=../../cmake/android.toolchain.cmake -DCMAKE_BUILD_TYPE=RELEASE -DOS_ARCH=32 -DOPENSSL_USE_STATIC=1
         make install
         make apk_release
+        make apk_signed
     else
         cmake ../../ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DOS_ARCH=64 -DOPENSSL_USE_STATIC=1 -DZLIB_USE_STATIC=1 -DPYTHON_ENABLED=1 -DPYTHON_USE_STATIC=1 -DCPACK_GENERATOR="$cpack_generator"
         make install
