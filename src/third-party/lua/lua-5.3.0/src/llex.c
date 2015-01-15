@@ -220,9 +220,18 @@ static void buffreplace (LexState *ls, char from, char to) {
   }
 }
 
-
-#if !defined(l_getlocaledecpoint)
-#define l_getlocaledecpoint()	(localeconv()->decimal_point[0])
+#ifdef FASTOREDIS
+    #if !defined(l_getlocaledecpoint)
+    #if defined(OS_ANDROID)
+        #define l_getlocaledecpoint() ('.') //Code-monkey style
+    #else
+        #define l_getlocaledecpoint()     (localeconv()->decimal_point[0])
+    #endif
+    #endif
+#else
+    #if !defined(l_getlocaledecpoint)
+        #define l_getlocaledecpoint()     (localeconv()->decimal_point[0])
+    #endif
 #endif
 
 
