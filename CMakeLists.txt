@@ -294,6 +294,7 @@ IF(CPACK_SUPPORT)
         # set android package source for androiddeployqt json file
         SET(PACKAGE_SOURCE_ANDROID ${CMAKE_CURRENT_BINARY_DIR}/android)
         SET(PACKAGE_OUTPUT_ANDROID ${CMAKE_INSTALL_PREFIX})
+        CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/install/android/strings.xml.in ${PACKAGE_SOURCE_ANDROID}/strings.xml @ONLY)
         CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/install/android/AndroidManifest.xml.in ${PACKAGE_SOURCE_ANDROID}/AndroidManifest.xml @ONLY)
 
         # create json file parsed by the androiddeployqt
@@ -303,22 +304,12 @@ IF(CPACK_SUPPORT)
 
         CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/install/android/configAndroid.json.in ${PACKAGE_SOURCE_ANDROID}/configAndroid.json @ONLY)
 
-        SET(ANDROID_PACKAGE_DEBUG_NAME ${CPACK_PACKAGE_VERSION_PATCH}_abi_${ANDROID_ABI}_debug.apk)
-
-        ADD_CUSTOM_COMMAND (
-          OUTPUT createApkFromAndroidDeployQtDebug
-          DEPENDS ${PACKAGE_SOURCE_ANDROID}/AndroidManifest.xml
-          #COMMAND ${CMAKE_COMMAND} -E copy_directory ${QT_BINS_DIR}../src/android/java ${PACKAGE_SOURCE_ANDROID}
-          COMMAND ${ANDROID_DEPLOY_QT} --output ${PACKAGE_OUTPUT_ANDROID}/ --input ${PACKAGE_SOURCE_ANDROID}/configAndroid.json --debug
-          COMMAND ${CMAKE_COMMAND} -E rename ${PACKAGE_OUTPUT_ANDROID}/bin/QtApp-debug.apk ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_DEBUG_NAME}
-        )
-
-        SET(ANDROID_PACKAGE_RELEASE_NAME ${CPACK_PACKAGE_VERSION_PATCH}_abi_${ANDROID_ABI}_release.apk)
+        SET(ANDROID_PACKAGE_RELEASE_NAME ${CPACK_PACKAGE_FILE_NAME}.apk)
 
         ADD_CUSTOM_COMMAND (
           OUTPUT createApkFromAndroidDeployQtRelease
           DEPENDS ${PACKAGE_SOURCE_ANDROID}/AndroidManifest.xml
-          #COMMAND ${CMAKE_COMMAND} -E copy_directory ${QT_BINS_DIR}../src/android/java ${PACKAGE_SOURCE_ANDROID}
+          COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/install/android/res ${PACKAGE_SOURCE_ANDROID}/res
           COMMAND ${ANDROID_DEPLOY_QT} --output ${PACKAGE_OUTPUT_ANDROID}/ --input ${PACKAGE_SOURCE_ANDROID}/configAndroid.json --release
           COMMAND ${CMAKE_COMMAND} -E rename ${PACKAGE_OUTPUT_ANDROID}/bin/QtApp-release-unsigned.apk ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_NAME}
         )
@@ -345,11 +336,6 @@ IF(CPACK_SUPPORT)
           OUTPUT apkInstall
           DEPENDS ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME}
           COMMAND ${ANDROID_SDK}/platform-tools/adb install -r ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME}
-        )
-
-        # Command to create apk from Makefile
-        ADD_CUSTOM_TARGET (apk_debug
-           DEPENDS ${ALL_LOCALES} createApkFromAndroidDeployQtDebug
         )
 
         # Command to create apk from Makefile
