@@ -8,8 +8,8 @@ namespace fastoredis
 
     }
 
-    Command::Command(const std::string &mess, CommandType t)
-        : message_(mess), type_(t)
+    Command::Command(const std::string &mess, CommandType commandT)
+        : message_(mess), type_(commandT)
     {
 
     }

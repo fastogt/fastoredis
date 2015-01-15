@@ -3,6 +3,7 @@
 #include <QObject>
 
 #include "common/patterns/singleton_pattern.h"
+
 #include "global/types.h"
 
 namespace fastoredis

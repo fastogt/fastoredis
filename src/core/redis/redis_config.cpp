@@ -88,7 +88,7 @@ namespace fastoredis
                         const uint16_t size_buff = 256;
                         char buff[size_buff] = {0};
                         sprintf(buff, "Unrecognized option or bad number of args for: '%s'", argv[i]);
-                        LOG_MSG(buff, common::logging::L_WARNING);
+                        LOG_MSG(buff, common::logging::L_WARNING, true);
                         break;
                     } else {
                         /* Likely the command name, stop here. */

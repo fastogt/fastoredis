@@ -44,7 +44,7 @@ namespace fastoredis
             char buff[256] = {0};
             sprintf(buff, "libssh2 initialization failed (%d)", rc);
             common::ErrorValueSPtr er = common::make_error_value(buff, common::Value::E_ERROR);
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
             return ERROR_RESULT_VALUE;
         }
 
@@ -53,7 +53,7 @@ namespace fastoredis
             char buff[256] = {0};
             sprintf(buff, "Can't open local file %s", loclfile.c_str());
             common::ErrorValueSPtr er = common::make_error_value(buff, common::Value::E_ERROR);
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
             return ERROR_RESULT_VALUE;
         }
 
@@ -67,7 +67,7 @@ namespace fastoredis
         int sock = socket(AF_INET, SOCK_STREAM, 0);
         if(sock == INVALID_DESCRIPTOR) {
             common::ErrorValueSPtr er = common::make_error_value("failed to create socket!", common::Value::E_ERROR);
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
             return ERROR_RESULT_VALUE;
         }
 
@@ -79,7 +79,7 @@ namespace fastoredis
         sin.sin_addr.s_addr = hostaddr;
         if (connect(sock, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
             common::ErrorValueSPtr er = common::make_error_value("failed to connect!", common::Value::E_ERROR);
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
             return ERROR_RESULT_VALUE;
         }
 
@@ -100,7 +100,7 @@ namespace fastoredis
            char buff[256] = {0};
            sprintf(buff, "Failure establishing SSH session: %d\n", rc);
            common::ErrorValueSPtr er = common::make_error_value(buff, common::Value::E_ERROR);
-           LOG_ERROR(er);
+           LOG_ERROR(er, true);
            return ERROR_RESULT_VALUE;
        }
 
@@ -109,7 +109,7 @@ namespace fastoredis
        /* We could authenticate via password */
        if (libssh2_userauth_password(session, username.c_str(), password.c_str())) {
            common::ErrorValueSPtr er = common::make_error_value("Authentication by password failed.", common::Value::E_ERROR);
-           LOG_ERROR(er);
+           LOG_ERROR(er, true);
            goto shutdown;
        }
 
@@ -123,7 +123,7 @@ namespace fastoredis
            char buffc[256] = {0};
            sprintf(buffc, "Unable to open a session: (%d) %s\n", err, errmsg);
            common::ErrorValueSPtr er = common::make_error_value(buffc, common::Value::E_ERROR);
-           LOG_ERROR(er);
+           LOG_ERROR(er, true);
            goto shutdown;
        }
 
@@ -143,7 +143,7 @@ namespace fastoredis
                    char buff[256] = {0};
                    sprintf(buff, "ERROR %d\n", rc);
                    common::ErrorValueSPtr er = common::make_error_value(buff, common::Value::E_ERROR);
-                   LOG_ERROR(er);
+                   LOG_ERROR(er, true);
                    break;
                }
                else {

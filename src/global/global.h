@@ -73,6 +73,5 @@ namespace fastoredis
 
 namespace common
 {
-    string16 convertToString16(fastoredis::supportedViews v);
     std::string convertToString(fastoredis::FastoObject* obj);
 }

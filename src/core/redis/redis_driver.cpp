@@ -403,7 +403,7 @@ namespace fastoredis
                 close(fd);
             }
 
-            LOG_MSG("Transfer finished with success.", common::logging::L_INFO);
+            LOG_MSG("Transfer finished with success.", common::logging::L_INFO, true);
             return common::ErrorValueSPtr();
         }
 
@@ -556,7 +556,7 @@ namespace fastoredis
                     sprintf(buff,
                         "Warning:  %s on '%s' failed (may have changed type)",
                          sizecmds[types[i]], keys->element[i]->str);
-                    LOG_MSG(buff, common::logging::L_WARNING);
+                    LOG_MSG(buff, common::logging::L_WARNING, true);
                     sizes[i] = 0;
                 } else {
                     sizes[i] = reply->integer;
@@ -593,9 +593,9 @@ namespace fastoredis
             }
 
             /* Status message */
-            LOG_MSG("# Scanning the entire keyspace to find biggest keys as well as", common::logging::L_INFO);
-            LOG_MSG("# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec", common::logging::L_INFO);
-            LOG_MSG("# per 100 SCAN commands (not usually needed).", common::logging::L_INFO);
+            LOG_MSG("# Scanning the entire keyspace to find biggest keys as well as", common::logging::L_INFO, true);
+            LOG_MSG("# average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec", common::logging::L_INFO, true);
+            LOG_MSG("# per 100 SCAN commands (not usually needed).", common::logging::L_INFO, true);
 
             /* New up sds strings to keep track of overall biggest per type */
             for(i=0;i<TYPE_NONE; i++) {
@@ -658,7 +658,7 @@ namespace fastoredis
                            pct, typeName[type], keys->element[i]->str, sizes[i],
                            typeunit[type]);
 
-                        LOG_MSG(buff, common::logging::L_INFO);
+                        LOG_MSG(buff, common::logging::L_INFO, true);
 
                         /* Keep track of biggest key name for this type */
                         maxkeys[type] = sdscpy(maxkeys[type], keys->element[i]->str);
@@ -685,12 +685,12 @@ namespace fastoredis
             /* We're done */
             char buff[4096];
             sprintf(buff, "Sampled %llu keys in the keyspace!", sampled);
-            LOG_MSG(buff, common::logging::L_INFO);
+            LOG_MSG(buff, common::logging::L_INFO, true);
 
             memset(&buff, 0, sizeof(buff));
             sprintf(buff, "Total key length in bytes is %llu (avg len %.2f)",
                totlen, totlen ? (double)totlen/sampled : 0);
-            LOG_MSG(buff, common::logging::L_INFO);
+            LOG_MSG(buff, common::logging::L_INFO, true);
 
             /* Output the biggest keys we found, for types we did find */
             for(i=0;i<TYPE_NONE;i++) {
@@ -1671,7 +1671,7 @@ namespace fastoredis
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->latencyMode(obj.get());
         if(er){
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
         }
 
         events::LeaveModeEvent::value_type resEv2(LatencyMode);
@@ -1692,7 +1692,7 @@ namespace fastoredis
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->slaveMode(obj.get());
         if(er){
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
         }
 
         events::LeaveModeEvent::value_type resEv2(SlaveMode);
@@ -1713,7 +1713,7 @@ namespace fastoredis
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->getRDB(obj.get());
         if(er){
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
         }
 
         events::LeaveModeEvent::value_type resEv2(GetRDBMode);
@@ -1746,7 +1746,7 @@ namespace fastoredis
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->findBigKeys(obj.get());
         if(er){
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
         }
 
         events::LeaveModeEvent::value_type resEv2(FindBigKeysMode);
@@ -1767,7 +1767,7 @@ namespace fastoredis
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->statMode(obj.get());
         if(er){
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
         }
 
         events::LeaveModeEvent::value_type resEv2(StatMode);
@@ -1788,7 +1788,7 @@ namespace fastoredis
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->scanMode(obj.get());
         if(er){
-            LOG_ERROR(er);
+            LOG_ERROR(er, true);
         }
 
         events::LeaveModeEvent::value_type resEv2(ScanMode);
@@ -1840,7 +1840,7 @@ namespace fastoredis
             }
 
             if(er){
-                LOG_ERROR(er);
+                LOG_ERROR(er, true);
             }
         notifyProgress(sender, 100);
     }

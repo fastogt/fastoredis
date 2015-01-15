@@ -139,7 +139,7 @@ namespace fastoredis
             common::ErrorValueSPtr er;
             if (command[0] != '\0') {
                 int argc;
-                sds *argv = sdssplitargs(command,&argc);
+                sds *argv = sdssplitargs(command, &argc);
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
@@ -661,7 +661,7 @@ namespace fastoredis
             }
 
             if(er){
-                LOG_ERROR(er);
+                LOG_ERROR(er, true);
             }
         notifyProgress(sender, 100);
     }

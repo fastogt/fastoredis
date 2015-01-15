@@ -14,7 +14,7 @@ namespace fastoredis
         };
 
         Command();
-        Command(const std::string &mess, CommandType t = InnerCommand);
+        Command(const std::string &mess, CommandType commandT);
         const std::string& message() const;
         CommandType type() const;
 

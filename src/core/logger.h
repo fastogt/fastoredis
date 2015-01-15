@@ -28,12 +28,12 @@ namespace fastoredis
     };
 
     template<typename T>
-    inline void LOG_MSG(T mess, common::logging::LEVEL_LOG level, bool notify = true)
+    inline void LOG_MSG(T mess, common::logging::LEVEL_LOG level, bool notify)
     {
         return Logger::instance().print(mess, level, notify);
     }
 
-    inline void LOG_ERROR(const common::ErrorValueSPtr& er, bool notify = true)
+    inline void LOG_ERROR(const common::ErrorValueSPtr& er, bool notify)
     {
         return Logger::instance().print(er->description(), er->level(), notify);
     }

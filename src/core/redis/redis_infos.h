@@ -241,7 +241,7 @@ namespace fastoredis
     typedef FieldProperty<const std::string*> FieldPropertyS;
     typedef FieldProperty<const unsigned char*> FieldPropertyU;
 
-    static const std::pair<FieldPropertyS,FieldPropertyU> redisFields[] =
+    static const std::pair<FieldPropertyS, FieldPropertyU> redisFields[] =
     {
         std::make_pair(FieldPropertyS(redisServerFields, SIZEOFMASS(redisServerFields)),
             FieldPropertyU(redisServerFieldsIntIndexes, SIZEOFMASS(redisServerFieldsIntIndexes))),
