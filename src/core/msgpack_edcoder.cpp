@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <errno.h>
+#define __STDC_FORMAT_MACROS 1
 #include <inttypes.h>
 
 #include "third-party/cmp/cmp.h"
