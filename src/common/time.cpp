@@ -21,7 +21,7 @@ namespace common
             return tv;
         }
 
-        uint64_t current_mstime(void)
+        time64_t current_mstime()
         {
             struct timeval tv = current_timeval();
             return timeval2mstime(&tv);
@@ -50,7 +50,7 @@ namespace common
             return tv;
         }
 
-        uint64_t timeval2mstime(struct timeval* tv)
+        time64_t timeval2mstime(struct timeval* tv)
         {
             if(!tv){
                 return 0;
@@ -61,7 +61,7 @@ namespace common
             return mst;
         }
 
-        uint64_t timespec2mstime(struct timespec* ts)
+        time64_t timespec2mstime(struct timespec* ts)
         {
             if(!ts){
                 return 0;
@@ -73,7 +73,7 @@ namespace common
             return mst;
         }
 
-        struct timeval mstime2timeval(int64_t mst)
+        struct timeval mstime2timeval(time64_t mst)
         {
             if(mst < 0){
                 return timeval();
@@ -85,7 +85,7 @@ namespace common
             return tv;
         }
 
-        struct timespec mstime2timespec(int64_t mst)
+        struct timespec mstime2timespec(time64_t mst)
         {
             if(mst < 0){
                 return timespec();

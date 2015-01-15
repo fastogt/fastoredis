@@ -124,7 +124,7 @@ namespace fastoredis
         logging_enabled_ = isLogging;
     }
 
-    int IConnectionSettingsBase::loggingMsTimeInterval() const
+    uint32_t IConnectionSettingsBase::loggingMsTimeInterval() const
     {
         return 60000;
     }

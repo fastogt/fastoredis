@@ -176,12 +176,13 @@ namespace fastoredis
             }
 
             redisReply *reply;
-            uint64_t start, latency, min = 0, max = 0, tot = 0, count = 0;
+            common::time64_t start;
+            uint64_t latency, min = 0, max = 0, tot = 0, count = 0;
             uint64_t history_interval =
                     config.interval ? config.interval/1000 :
                                       LATENCY_HISTORY_DEFAULT_INTERVAL;
             double avg;
-            uint64_t history_start = common::time::current_mstime();
+            common::time64_t history_start = common::time::current_mstime();
 
             if (!context){
                 return common::make_error_value("Not connected", common::Value::E_ERROR);
@@ -196,7 +197,7 @@ namespace fastoredis
                     return common::make_error_value("I/O error", common::Value::E_ERROR);
                 }
 
-                long long curTime = common::time::current_mstime();
+                common::time64_t curTime = common::time::current_mstime();
 
                 latency = curTime - start;
                 freeReplyObject(reply);

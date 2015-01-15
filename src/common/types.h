@@ -24,8 +24,8 @@ namespace common
 #elif defined(HAVE_CXX_STANDART)
     typedef std::atomic_uchar atomic_uchar_t;
 #endif
-    typedef uint8_t byte_type;
 
+    typedef uint8_t byte_type;
     typedef std::basic_string<byte_type> buffer_type;
 
     typedef std::basic_ostream<char16, string16_char_traits> string16_ostream;
@@ -35,4 +35,6 @@ namespace common
 
     std::string escapedText(const std::string &str);
     std::string doubleEscapedText(std::string str);
+
+    typedef int64_t time64_t;
 }

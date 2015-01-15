@@ -1,6 +1,7 @@
 #pragma once
 
 #include "global/global.h"
+
 #include "core/connection_types.h"
 
 namespace fastoredis
@@ -30,7 +31,7 @@ namespace fastoredis
 
         }
 
-        ServerInfoSnapShoot(long long msec, ServerInfoSPtr info)
+        ServerInfoSnapShoot(common::time64_t msec, ServerInfoSPtr info)
             : msec_(msec), info_(info)
         {
 
@@ -41,7 +42,7 @@ namespace fastoredis
             return msec_ > 0 && info_;
         }
 
-        long long msec_;
+        common::time64_t msec_;
         ServerInfoSPtr info_;
     };
 

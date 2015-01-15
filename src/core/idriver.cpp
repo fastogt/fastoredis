@@ -33,12 +33,12 @@ struct WinsockInit {
 #endif
 
     const char magicNumber = 0x1E;
-    std::string createStamp(uint64_t time)
+    std::string createStamp(common::time64_t time)
     {
         return magicNumber + common::convertToString(time) + '\n';
     }
 
-    bool getStamp(const common::buffer_type& stamp, long long& timeOut)
+    bool getStamp(const common::buffer_type& stamp, common::time64_t& timeOut)
     {
         if(stamp.empty()){
             return false;
@@ -54,7 +54,7 @@ struct WinsockInit {
             cstamp.resize(cstamp.size()-1);
         }
 
-        timeOut = common::convertFromString<long long>((const char*)(cstamp.c_str() + 1));
+        timeOut = common::convertFromString<common::time64_t>((const char*)(cstamp.c_str() + 1));
 
         return timeOut != 0;
     }
@@ -67,7 +67,7 @@ namespace fastoredis
     {
         thread_ = new QThread(this);
         moveToThread(thread_);
-        VERIFY(connect( thread_, SIGNAL(started()), this, SLOT(init()) ));        
+        VERIFY(connect(thread_, SIGNAL(started()), this, SLOT(init())));
     }
 
     IDriver::~IDriver()
@@ -226,7 +226,7 @@ namespace fastoredis
             }
 
             if(log_file_ && log_file_->isOpened()){
-                uint64_t time = common::time::current_mstime();
+                common::time64_t time = common::time::current_mstime();
                 FastoObjectIPtr toFile = FastoObject::createRoot(createStamp(time));
                 FastoObject* ptr = toFile.get();
                 common::ErrorValueSPtr er = currentLoggingInfo(ptr);
@@ -273,7 +273,7 @@ namespace fastoredis
         if(readFile.open("rb")){
             events::ServerInfoHistoryResponceEvent::value_type::infos_container_type tmpInfos;
 
-            long long curStamp = 0;
+            common::time64_t curStamp = 0;
             common::buffer_type dataInfo;
 
             while(!readFile.isEof()){

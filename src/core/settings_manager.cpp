@@ -3,6 +3,7 @@
 #include <QSettings>
 
 #include "translations/translations.h"
+
 #include "gui/app_style.h"
 
 #include "common/file_system.h"

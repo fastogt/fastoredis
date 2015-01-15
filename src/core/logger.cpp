@@ -17,7 +17,7 @@ namespace fastoredis
         print(std::string(mess), level, notify);
     }
 
-    void Logger::print(const std::string &mess, common::logging::LEVEL_LOG level, bool notify)
+    void Logger::print(const std::string& mess, common::logging::LEVEL_LOG level, bool notify)
     {
         using namespace common;
         DEBUG_MSG_FORMAT<1024>(level, "%s", mess);
@@ -26,7 +26,7 @@ namespace fastoredis
         }
     }
 
-    void Logger::print(const QString &mess, common::logging::LEVEL_LOG level, bool notify)
+    void Logger::print(const QString& mess, common::logging::LEVEL_LOG level, bool notify)
     {
         print(common::convertToString(mess), level, notify);
     }

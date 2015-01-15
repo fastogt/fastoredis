@@ -4,8 +4,10 @@
 
 #include "core/redis/redis_server.h"
 #include "core/redis/redis_driver.h"
+
 #include "core/memcached/memcached_server.h"
 #include "core/memcached/memcached_driver.h"
+
 namespace fastoredis
 {
     ServersManager::ServersManager()
@@ -99,6 +101,7 @@ namespace fastoredis
                         }
                     }
                 }
+
                 servers_.erase(servers_.begin()+i);
                 refreshSyncServers();
                 break;

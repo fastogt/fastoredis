@@ -427,9 +427,9 @@ emit executeProgress(100);
     {
 #ifdef PYTHON_ENABLED
     #ifndef PY3K
-            Py_SetProgramName(PROJECT_NAME);  /* optional but recommended */
+            Py_SetProgramName((char*)PROJECT_NAME);  /* optional but recommended */
     #else
-            Py_SetProgramName(WCHAR_PROJECT_NAME);  /* optional but recommended */
+            Py_SetProgramName((wchar_t*)WCHAR_PROJECT_NAME);  /* optional but recommended */
     #endif
         QString path = QCoreApplication::instance()->applicationDirPath();        
 #ifndef PY3K

@@ -26,7 +26,6 @@ namespace fastoredis
 
 namespace common
 {
-
     template<>
     fastoredis::connectionTypes convertFromString(const std::string& text)
     {

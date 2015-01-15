@@ -12,7 +12,7 @@ namespace fastoredis
 
         }
 
-        uint64_t EventInfoBase::elapsedTime() const
+        common::time64_t EventInfoBase::elapsedTime() const
         {
             return common::time::current_mstime() - time_start_;
         }
