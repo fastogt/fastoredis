@@ -1481,7 +1481,7 @@ if( ANDROID_EXPLICIT_CRT_LINK )
 endif()
 
 # setup output directories
-set( CMAKE_INSTALL_PREFIX "${ANDROID_TOOLCHAIN_ROOT}/user" CACHE STRING "path for installing" )
+#set( CMAKE_INSTALL_PREFIX "${ANDROID_TOOLCHAIN_ROOT}/user" CACHE STRING "path for installing" )
 
 if( DEFINED LIBRARY_OUTPUT_PATH_ROOT
       OR EXISTS "${CMAKE_SOURCE_DIR}/AndroidManifest.xml"

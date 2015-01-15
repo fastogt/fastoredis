@@ -40,4 +40,4 @@ elif [ "$platform"='macosx' ]; then
 elif [ "$platform" = 'android' ]; then
     deleteDir build_apk
 fi
-echo "========= END CLEANING ===========\n"
+echo ========= END CLEANING ===========
