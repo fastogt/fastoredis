@@ -154,8 +154,12 @@ namespace fastoredis
         toolBarLayout->addWidget(workProgressBar_);
 
         mainLayout->addLayout(toolBarLayout);
-
-        shell_ = new RedisPyShell;
+        if(PythonEngine::instance().hasModule("redis-py")){
+            shell_ = new RedisPyShell;
+        }
+        else{
+            shell_ = new PythonShell;
+        }
 
         output_ = new FastoEditor;
         VERIFY(connect(worker_, SIGNAL(pythonStdOut(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));

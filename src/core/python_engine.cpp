@@ -446,11 +446,16 @@ emit executeProgress(100);
 
     bool PythonEngine::hasModule(const std::string& name)
     {
-        if(!isPythonEnabled()){
+#ifdef PYTHON_ENABLED
+        PyObject *pModule = PyImport_ImportModule(name.c_str());
+        if(!pModule){
             return false;
         }
-
+        Py_DECREF(pModule);
         return true;
+#else
+        return false;
+#endif
     }
 
     PythonWorker* PythonEngine::createWorker()
