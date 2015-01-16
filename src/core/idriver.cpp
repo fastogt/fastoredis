@@ -286,7 +286,7 @@ namespace fastoredis
                     break;
                 }
 
-                long long tmpStamp = 0;
+                common::time64_t tmpStamp = 0;
                 bool isSt = getStamp(data, tmpStamp);
                 if(isSt){
                     if(curStamp){
