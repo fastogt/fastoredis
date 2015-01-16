@@ -468,7 +468,7 @@ namespace common
     buffer_type convertFromString16(const string16& val)
     {
         std::string str = convertFromString16<std::string>(val);
-        return buffer_type((const byte_type*)str.c_str(), str.size());
+        return buffer_type((const byte_t*)str.c_str(), str.size());
     }
 
     template<>
@@ -698,7 +698,7 @@ namespace common
     template<>
     buffer_type convertFromString(const std::string& val)
     {
-        return buffer_type((const byte_type*)val.c_str(), val.length());
+        return buffer_type((const byte_t*)val.c_str(), val.length());
     }
 
 #if defined(WCHAR_T_IS_UTF16)

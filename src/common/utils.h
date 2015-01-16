@@ -19,7 +19,7 @@ namespace common
     {
         namespace hash
         {
-            uint64_t crc64(uint64_t crc, const byte_type *data, uint64_t lenght);
+            uint64_t crc64(uint64_t crc, const byte_t *data, uint64_t lenght);
             uint64_t crc64(uint64_t crc, const buffer_type& data);
         }
 

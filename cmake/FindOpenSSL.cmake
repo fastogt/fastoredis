@@ -110,25 +110,6 @@ if(OPENSSL_USE_STATIC)
     PATH_SUFFIXES
       lib
   )
-  
-#zlib 
-set(STATIC_ZLIB_SEARCHES)
-
-# Normal search.
-set(STATIC_ZLIB_SEARCH_NORMAL
-  PATHS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\Zlib;InstallPath]"
-        "$ENV{PROGRAMFILES}/zlib"
-		"$ENV{MSYS_ROOT}/usr"
-		"$ENV{MSYS_ROOT}/mingw64"
-  )
-list(APPEND STATIC_ZLIB_SEARCHES STATIC_ZLIB_SEARCH_NORMAL)
-
-set(STATIC_ZLIB_NAMES libz.a libzlib.a libzdll.a libzlib1.a libzlibd.a libzlibd1.a)
-
-# Try each search configuration.
-foreach(search ${STATIC_ZLIB_SEARCHES})
-  find_library(STATIC_ZLIB_LIBRARY  NAMES ${STATIC_ZLIB_NAMES} ${${search}} PATH_SUFFIXES lib)
-endforeach()
 
 mark_as_advanced(OPENSSL_CRYPTO_LIBRARY OPENSSL_SSL_LIBRARY)
 
@@ -138,12 +119,42 @@ set(OPENSSL_CRYPTO_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY})
 
 set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
 
+#zlib
+set(STATIC_ZLIB_SEARCHES)
+
+# Normal search.
+set(STATIC_ZLIB_SEARCH_NORMAL
+  PATHS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\Zlib;InstallPath]"
+        "$ENV{PROGRAMFILES}/zlib"
+        "$ENV{MSYS_ROOT}/usr"
+        "$ENV{MSYS_ROOT}/mingw64"
+  )
+list(APPEND STATIC_ZLIB_SEARCHES STATIC_ZLIB_SEARCH_NORMAL)
+
 if(ZLIB_USE_STATIC)
-IF(STATIC_ZLIB_LIBRARY)
-    SET(OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES} ${STATIC_ZLIB_LIBRARY})
-ELSE()
-	MESSAGE(SEND_ERROR "Not found static zlib")
-ENDIF(STATIC_ZLIB_LIBRARY)
+    set(STATIC_ZLIB_NAMES libz.a libzlib.a libzdll.a libzlib1.a libzlibd.a libzlibd1.a)
+
+    # Try each search configuration.
+    foreach(search ${STATIC_ZLIB_SEARCHES})
+      find_library(STATIC_ZLIB_LIBRARY  NAMES ${STATIC_ZLIB_NAMES} ${${search}} PATH_SUFFIXES lib)
+    endforeach()
+    IF(STATIC_ZLIB_LIBRARY)
+        SET(OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES} ${STATIC_ZLIB_LIBRARY})
+    ELSE()
+        MESSAGE(SEND_ERROR "Not found static zlib")
+    ENDIF(STATIC_ZLIB_LIBRARY)
+else()
+    set(DYNAMIC_ZLIB_NAMES z)
+
+    # Try each search configuration.
+    foreach(search ${DYNAMIC_ZLIB_NAMES})
+      find_library(DYNAMIC_ZLIB_LIBRARY  NAMES ${DYNAMIC_ZLIB_NAMES} ${${search}} PATH_SUFFIXES lib)
+    endforeach()
+    IF(DYNAMIC_ZLIB_LIBRARY)
+        SET(OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES} ${DYNAMIC_ZLIB_LIBRARY})
+    ELSE()
+        MESSAGE(SEND_ERROR "Not found dynamic zlib")
+    ENDIF(DYNAMIC_ZLIB_LIBRARY)
 endif(ZLIB_USE_STATIC)
 
 else()

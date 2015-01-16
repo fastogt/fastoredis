@@ -56,7 +56,7 @@ namespace common
                 return 0;
             }
 
-            uint64_t mst = tv->tv_sec * 1000;
+            time64_t mst = ((time64_t)tv->tv_sec * 1000);
             mst += tv->tv_usec/1000;
             return mst;
         }
@@ -67,7 +67,7 @@ namespace common
                 return 0;
             }
 
-            uint64_t mst = ts->tv_sec * 1000;
+            uint64_t mst = ((time64_t)ts->tv_sec * 1000);
             mst += ts->tv_nsec/1000000;
 
             return mst;

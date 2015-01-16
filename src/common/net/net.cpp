@@ -200,7 +200,7 @@ namespace common
                 return ERROR_RESULT_VALUE;
             }
 
-            byte_type* data = (byte_type*)calloc(maxSize, sizeof(byte_type));
+            byte_t* data = (byte_t*)calloc(maxSize, sizeof(byte_t));
             if(!data){
                 return ERROR_RESULT_VALUE;
             }

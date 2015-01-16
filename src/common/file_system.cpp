@@ -504,12 +504,12 @@ namespace common
                 return false;
             }
 
-            byte_type* data = (byte_type*)calloc(maxSize, sizeof(byte_type));
+            byte_t* data = (byte_t*)calloc(maxSize, sizeof(byte_t));
             if(!data){
                 return false;
             }
 
-            size_t res = fread(data, sizeof(byte_type), maxSize, file_);
+            size_t res = fread(data, sizeof(byte_t), maxSize, file_);
             if(res > 0){
                 outData = buffer_type(data, res);
             }
@@ -579,7 +579,7 @@ namespace common
                 return false;
             }
 
-            size_t res = fwrite(data.c_str(), sizeof(byte_type), data.length(), file_);
+            size_t res = fwrite(data.c_str(), sizeof(byte_t), data.length(), file_);
             if(res != data.length()){
                 DEBUG_MSG_PERROR("write", errno);
             }
@@ -597,7 +597,7 @@ namespace common
                 return false;
             }
 
-            size_t res = fwrite(data.c_str(), sizeof(byte_type), data.length(), file_);
+            size_t res = fwrite(data.c_str(), sizeof(byte_t), data.length(), file_);
             if(res != data.length()){
                 DEBUG_MSG_PERROR("write", errno);
             }

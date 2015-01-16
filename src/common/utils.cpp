@@ -269,11 +269,11 @@ namespace common
     {
         namespace hash
         {
-            uint64_t crc64(uint64_t crc, const byte_type *data, uint64_t lenght)
+            uint64_t crc64(uint64_t crc, const byte_t *data, uint64_t lenght)
             {
                 for (uint64_t j = 0; j < lenght; j++) {
-                    byte_type byte = data[j];
-                    crc = crc64_tab[(byte_type)crc ^ byte] ^ (crc >> 8);
+                    byte_t byte = data[j];
+                    crc = crc64_tab[(byte_t)crc ^ byte] ^ (crc >> 8);
                 }
                 return crc;
             }

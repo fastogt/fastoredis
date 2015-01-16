@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 PROJECT(redis_cli)
 
-IF(WIN32)
+IF(OS_WINDOWS)
 ADD_CUSTOM_TARGET(redis_version
             COMMAND ./mkreleasehdr.sh
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src
@@ -11,7 +11,7 @@ ADD_CUSTOM_TARGET(redis_version
             COMMAND sh ./mkreleasehdr.sh
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src
             COMMENT "Build redis-cli release.h")
-ENDIF()
+ENDIF(OS_WINDOWS)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/deps/hiredis ${CMAKE_CURRENT_LIST_DIR}/src)
 
@@ -36,8 +36,6 @@ SET(SOURCES_REDIS
     deps/hiredis/hiredis.c
 )
 
-SET(HEADERS ${HEADERS} ${HEADERS_REDIS})
-SET(SOURCES ${SOURCES} ${SOURCES_REDIS})
 ADD_LIBRARY(redis_cli OBJECT ${HEADERS_REDIS} ${SOURCES_REDIS})
 ADD_DEPENDENCIES(redis_cli redis_version)
 
