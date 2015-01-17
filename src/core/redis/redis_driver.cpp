@@ -1374,6 +1374,7 @@ namespace fastoredis
                     } else if (!strcasecmp(command,"auth") && argc == 2) {
                         er = cliSelect();
                         if(er){
+                            free(argvlen);
                             return er;
                         }
                     }
