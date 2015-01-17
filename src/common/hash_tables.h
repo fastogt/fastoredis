@@ -32,11 +32,7 @@
 #define BASE_HASH_NAMESPACE stdext
 
 #elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)
-#if defined(OS_ANDROID)
 #define BASE_HASH_NAMESPACE __gnu_cxx
-#else
-#define BASE_HASH_NAMESPACE __gnu_cxx
-#endif
 
 // This is a hack to disable the gcc 4.4 warning about hash_map and hash_set
 // being deprecated.  We can get rid of this when we upgrade to VS2008 and we

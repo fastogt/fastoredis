@@ -37,6 +37,9 @@
 
 #pragma once
 
+#ifdef FASTOREDIS
+#include <mem_config.h>
+#endif
 
 #if defined(_WIN32)
 # include <winsock2.h>
