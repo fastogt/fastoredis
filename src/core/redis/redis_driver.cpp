@@ -4,14 +4,16 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-extern "C" {
-#include "third-party/redis/src/release.h"
-#include "third-party/redis/src/version.h"
-#include "third-party/redis/src/help.h"
-#include "third-party/redis/deps/hiredis/hiredis.h"
-#include "third-party/redis/src/anet.h"
-#include "third-party/redis/deps/hiredis/sds.h"
+extern "C"
+{
+    #include "third-party/redis/src/release.h"
+    #include "third-party/redis/src/version.h"
+    #include "third-party/redis/deps/hiredis/hiredis.h"
+    #include "third-party/redis/src/anet.h"
+    #include "third-party/redis/deps/hiredis/sds.h"
 }
+
+#include "third-party/redis/src/help.h"
 
 #include "common/time.h"
 #include "common/utils.h"
@@ -88,8 +90,6 @@ namespace
     struct RedisInit
     {
         helpEntry helpEntries[helpEntriesLen];
-        std::vector<QString> redisTypesKeywords;
-        std::vector<QString> redisCommandsKeywords;
 
         static const RedisInit &instance()
         {
@@ -104,9 +104,7 @@ namespace
 
             for(int i = 0; i < sizeof(commandGroups)/sizeof(char*); ++i){
                 helpEntry tmp;
-                const char* command = commandGroups[i];
-                QString qcommand = common::convertFromString<QString>(std::string(command));
-                redisTypesKeywords.push_back(qcommand);
+
                 tmp.argc = 1;
                 tmp.argv = (sds*)malloc(sizeof(sds));
                 tmp.argv[0] = sdscatprintf(sdsempty(), "@%s", commandGroups[i]);
@@ -118,10 +116,6 @@ namespace
 
             for(int i = 0; i < sizeof(commandHelp)/sizeof(struct commandHelp); ++i){
                 helpEntry tmp;
-                struct commandHelp command = commandHelp[i];
-                std::string commandN = command.name;
-                QString qCommandN = common::convertFromString<QString>(commandN);
-                redisCommandsKeywords.push_back(qCommandN);
 
                 tmp.argv = sdssplitargs(commandHelp[i].name, &tmp.argc);
                 tmp.full = sdsnew(commandHelp[i].name);
@@ -140,8 +134,8 @@ namespace
 
 namespace fastoredis
 {
-    const std::vector<QString> redisTypesKeywords = RedisInit::instance().redisTypesKeywords;
-    const std::vector<QString> redisCommandsKeywords = RedisInit::instance().redisCommandsKeywords;
+    const std::vector<QString> redisTypesKeywords(commandGroups, commandGroups + sizeof(commandGroups)/sizeof(char*));
+    const std::vector<QString> redisCommandsKeywords(commandHelp, commandHelp + sizeof(commandHelp)/sizeof(struct commandHelp));
 
     struct RedisDriver::pimpl
     {
