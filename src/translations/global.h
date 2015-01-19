@@ -58,6 +58,7 @@ namespace fastoredis
         const QString trMatchCase = QObject::tr("Match case");
         const QString trRawText = QObject::tr("Raw text");
         const QString trPythonConsole = QObject::tr("Python console");
+        const QString trLuaConsole = QObject::tr("Lua console");
         const QString trSaveAs = QObject::tr("Save as");
         const QString trClearAll = QObject::tr("Clear All");
         const QString trPrivateKey = QObject::tr("Private Key");

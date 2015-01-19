@@ -7,7 +7,6 @@
 #include "common/file_system.h"
 #include "common/qt/convert_string.h"
 
-#include "core/settings_manager.h"
 #include "core/events/events.h"
 
 #ifdef PYTHON_ENABLED

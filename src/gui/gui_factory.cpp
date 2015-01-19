@@ -277,6 +277,12 @@ namespace fastoredis
         return main;
     }
 
+    const QIcon& GuiFactory::luaIcon() const
+    {
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/icons/python.png");
+        return main;
+    }
+
     const QIcon& GuiFactory::close16Icon() const
     {
         static QIcon close(":" PROJECT_NAME_LOWERCASE "/icons/close16.png");

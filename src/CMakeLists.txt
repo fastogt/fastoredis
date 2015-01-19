@@ -25,6 +25,8 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/connections_dialog.h
     gui/dialogs/connection_dialog.h
     gui/dialogs/python_console_dialog.h
+    gui/dialogs/lua_console_dialog.h
+    gui/dialogs/base_console_dialog.h
     gui/widgets/main_widget.h
     gui/main_tab_bar.h
     gui/fasto_editor.h
@@ -64,6 +66,8 @@ SET(SOURCES_GUI
     gui/dialogs/property_server_dialog.cpp
     gui/dialogs/history_server_dialog.cpp
     gui/dialogs/python_console_dialog.cpp
+    gui/dialogs/lua_console_dialog.cpp
+    gui/dialogs/base_console_dialog.cpp
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
     gui/fasto_editor.cpp
@@ -93,6 +97,7 @@ SET(HEADERS_CORE_TO_MOC
     core/redis/redis_server.h
     core/redis/redis_driver.h
     core/python_engine.h
+    core/lua_engine.h
 )
 SET(HEADERS_CORE
     core/connection_types.h
@@ -124,6 +129,7 @@ SET(SOURCES_CORE
     core/types.cpp
     core/ssh_info.cpp
     core/python_engine.cpp
+    core/lua_engine.cpp
     core/scp_file_transfer.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
@@ -199,6 +205,8 @@ SET(SOURCES_MEMCACHED
     core/memcached/memcached_driver.cpp
 )
 
+ADD_SUBDIRECTORY(third-party/lua)
+
 IF(PYTHON_ENABLED)
     ADD_SUBDIRECTORY(third-party/pytonqt)
     INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIR} third-party/pytonqt/src)
@@ -240,7 +248,7 @@ IF(SASL_FOUND)
     SET(ALL_LIBS ${ALL_LIBS} ${SASL_LIBRARIES})
 ENDIF(SASL_FOUND)
 
-SET(OBJECT_LIBS ${OBJECT_LIBS} $<TARGET_OBJECTS:redis_cli> $<TARGET_OBJECTS:libssh2> $<TARGET_OBJECTS:libmemcached>)
+SET(OBJECT_LIBS ${OBJECT_LIBS} $<TARGET_OBJECTS:redis_cli> $<TARGET_OBJECTS:libssh2> $<TARGET_OBJECTS:libmemcached> $<TARGET_OBJECTS:liblua>)
 
 IF(OS_LINUX)
     SET(ALL_LIBS ${ALL_LIBS} pthread)

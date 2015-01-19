@@ -1,8 +1,6 @@
 #pragma once
 
-#include <QDialog>
-
-class QProgressBar;
+#include "gui/dialogs/base_console_dialog.h"
 
 namespace fastoredis
 {
@@ -11,41 +9,20 @@ namespace fastoredis
     class FastoEditor;
 
     class PythonConsoleDialog
-            : public QDialog
+            : public BaseConsoleDialog
     {
         Q_OBJECT
     public:
-        enum
-        {
-            height = 480,
-            width = 640
-        };
-
         PythonConsoleDialog(const QString& filePath = QString(), QWidget* parent = 0);
         ~PythonConsoleDialog();
 
-    private Q_SLOTS:
-        void execute();
-        void executeWithArgs();
-        void stop();
-        void loadFromFile();
-        bool loadFromFile(const QString& path);
-        void saveToFileAs();
-        void saveToFile();
-        void executeProgressChanged(int val);
-        void execute(const QString& script, const QStringList &args);
-        void loadAndInstallFile();
-
-    protected:
-        virtual void changeEvent(QEvent* );
-
     private:
-        void retranslateUi();
+        virtual void loadAndInstallFileImpl(const QString& path);
+        virtual void executeImpl(const QString& script, const QStringList &args);
+        virtual void stopImpl();
 
-        PythonShell* shell_;
-        FastoEditor* output_;
-        QString filePath_;
-        QProgressBar* workProgressBar_;
+        virtual void retranslateUi();
+
         PythonWorker* worker_;
     };
 }

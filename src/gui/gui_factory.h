@@ -46,6 +46,7 @@ namespace fastoredis
         const QIcon& commandIcon() const;
         const QIcon& close16Icon() const;
         const QIcon& pythonIcon() const;
+        const QIcon& luaIcon() const;
 
         const QIcon& commandIcon(connectionTypes type) const;
         const QIcon& typeIcon(connectionTypes type) const;
