@@ -8,7 +8,6 @@
 #include "core/redis/redis_config.h"
 #include "core/memcached/memcached_config.h"
 
-
 namespace fastoredis
 {
     class IConnectionSettingsBase

@@ -67,7 +67,9 @@ namespace fastoredis
     {
         thread_ = new QThread(this);
         moveToThread(thread_);
+
         VERIFY(connect(thread_, SIGNAL(started()), this, SLOT(init())));
+        VERIFY(connect(thread_, SIGNAL(finished()), this, SLOT(clear())));
     }
 
     IDriver::~IDriver()
@@ -85,8 +87,20 @@ namespace fastoredis
     {
         killTimer(timer_info_id_);
         timer_info_id_ = 0;
+    }
+
+    void IDriver::stop()
+    {
         thread_->quit();
         thread_->wait();
+    }
+
+    void IDriver::init()
+    {
+        int interval = settings_->loggingMsTimeInterval();
+        timer_info_id_ = startTimer(interval);
+        DCHECK(timer_info_id_);
+        initImpl();
     }
 
     void IDriver::customEvent(QEvent *event)
@@ -198,14 +212,6 @@ namespace fastoredis
     void IDriver::notifyProgress(QObject *reciver, int value)
     {
         reply(reciver, new events::ProgressResponceEvent(this, events::ProgressResponceEvent::value_type(value)));
-    }
-
-    void IDriver::init()
-    {
-        int interval = settings_->loggingMsTimeInterval();
-        timer_info_id_ = startTimer(interval);
-        DCHECK(timer_info_id_);
-        initImpl();
     }
 
     void IDriver::timerEvent(QTimerEvent* event)

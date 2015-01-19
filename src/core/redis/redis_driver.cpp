@@ -4,13 +4,12 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-extern "C"
-{
-    #include "third-party/redis/src/release.h"
-    #include "third-party/redis/src/version.h"
-    #include "third-party/redis/deps/hiredis/hiredis.h"
-    #include "third-party/redis/src/anet.h"
-    #include "third-party/redis/deps/hiredis/sds.h"
+extern "C" {
+#include "third-party/redis/src/release.h"
+#include "third-party/redis/src/version.h"
+#include "third-party/redis/deps/hiredis/hiredis.h"
+#include "third-party/redis/src/anet.h"
+#include "third-party/redis/deps/hiredis/sds.h"
 }
 
 #include "third-party/redis/src/help.h"
@@ -87,17 +86,10 @@ namespace
 
     const int helpEntriesLen = sizeof(commandHelp)/sizeof(struct commandHelp) + sizeof(commandGroups)/sizeof(char*);
 
-    struct RedisInit
+    const struct RedisInit
     {
         helpEntry helpEntries[helpEntriesLen];
 
-        static const RedisInit &instance()
-        {
-            static RedisInit r;
-            return r;
-        }
-
-      private:
         RedisInit()
         {
             int pos = 0;
@@ -124,12 +116,7 @@ namespace
                 helpEntries[pos++] = tmp;
             }
         }
-
-        ~RedisInit()
-        {
-
-        }
-    };
+    } rInit;
 }
 
 namespace fastoredis
@@ -1192,7 +1179,7 @@ namespace fastoredis
 
             assert(argc > 0);
             for (i = 0; i < helpEntriesLen; i++) {
-                entry = &RedisInit::instance().helpEntries[i];
+                entry = &rInit.helpEntries[i];
                 if (entry->type != CLI_HELP_COMMAND) continue;
 
                 help = entry->org;
@@ -1469,7 +1456,7 @@ namespace fastoredis
     RedisDriver::~RedisDriver()
     {
         interrupt();
-        clear();
+        stop();
         delete impl_;
     }
 
@@ -1505,6 +1492,11 @@ namespace fastoredis
     }    
 
     void RedisDriver::initImpl()
+    {
+
+    }
+
+    void RedisDriver::clearImpl()
     {
 
     }

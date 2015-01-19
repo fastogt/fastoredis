@@ -32,6 +32,8 @@ namespace fastoredis
 
         //sync
         void start();
+        void stop();
+
         virtual void interrupt() = 0;
         virtual bool isConnected() const = 0;
         virtual common::net::hostAndPort address() const = 0;
@@ -45,6 +47,7 @@ namespace fastoredis
 
     private Q_SLOTS:
         void init();
+        void clear();
 
     protected:        
         virtual void timerEvent(QTimerEvent* event);
@@ -56,6 +59,7 @@ namespace fastoredis
 
     protected:
         virtual void initImpl() = 0;
+        virtual void clearImpl() = 0;
         virtual common::ErrorValueSPtr currentLoggingInfo(FastoObject* out) = 0;
 
         virtual void handleConnectEvent(events::ConnectRequestEvent* ev) = 0;
@@ -89,8 +93,6 @@ namespace fastoredis
         {
             return RootLocker(this, reciver, text);
         }
-
-        void clear();
 
     private:
         FastoObjectIPtr createRoot(QObject* reciver, const std::string& text);

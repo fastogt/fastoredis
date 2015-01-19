@@ -32,6 +32,7 @@ namespace fastoredis
     private:
         virtual void customEvent(QEvent *event);
         virtual void initImpl();
+        virtual void clearImpl();
         virtual common::ErrorValueSPtr currentLoggingInfo(FastoObject *out);
 
         virtual void handleConnectEvent(events::ConnectRequestEvent* ev);

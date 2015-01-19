@@ -576,6 +576,11 @@ namespace fastoredis
 
     }
 
+    void MemcachedDriver::clearImpl()
+    {
+
+    }
+
     common::ErrorValueSPtr MemcachedDriver::currentLoggingInfo(FastoObject* out)
     {
         return common::ErrorValueSPtr();

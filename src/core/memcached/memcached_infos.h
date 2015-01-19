@@ -12,7 +12,7 @@ namespace fastoredis
         virtual common::Value* valueByIndexes(unsigned char property, unsigned char field) const;
     };
 
-    std::ostream& operator<<(std::ostream& out, const MemcachedServerInfo& value);
+    std::ostream& operator << (std::ostream& out, const MemcachedServerInfo& value);
 
     ServerInfoSPtr makeMemcachedServerInfo(const std::string &content);
     ServerInfoSPtr makeMemcachedServerInfo(FastoObject *root);
