@@ -45,6 +45,7 @@ namespace fastoredis
     {
         using namespace translations;
         setWindowTitle(trPythonConsole);
+        BaseConsoleDialog::retranslateUi();
     }
 
     void PythonConsoleDialog::loadAndInstallFileImpl(const QString& path)

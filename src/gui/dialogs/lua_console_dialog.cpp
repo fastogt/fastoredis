@@ -5,16 +5,33 @@
 #include "gui/gui_factory.h"
 #include "translations/global.h"
 
-#include "shell/python_shell.h"
+#include "shell/lua_shell.h"
 #include "core/lua_engine.h"
 
 namespace fastoredis
 {
+    namespace
+    {
+        FastoEditorShell* shellCreate()
+        {
+            if(LuaEngine::instance().hasModule("redis")){
+                return new RedisLuaShell;
+            }
+            else{
+                return new LuaShell;
+            }
+        }
+    }
+
     LuaConsoleDialog::LuaConsoleDialog(const QString& filePath, QWidget* parent)
-        : BaseConsoleDialog(filePath, parent, GuiFactory::instance().luaIcon(), true, NULL), worker_(NULL)
+        : BaseConsoleDialog(filePath, parent, GuiFactory::instance().luaIcon(), true, shellCreate()), worker_(NULL)
     {
         using namespace translations;
         worker_ = LuaEngine::instance().createWorker();
+
+        VERIFY(connect(worker_, SIGNAL(luaStdOut(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));
+        VERIFY(connect(worker_, SIGNAL(luaStdErr(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));
+        VERIFY(connect(worker_, SIGNAL(executeProgress(int)), this, SLOT(executeProgressChanged(int))));
 
         retranslateUi();
     }
@@ -28,6 +45,7 @@ namespace fastoredis
     {
         using namespace translations;
         setWindowTitle(trLuaConsole);
+        BaseConsoleDialog::retranslateUi();
     }
 
     void LuaConsoleDialog::loadAndInstallFileImpl(const QString& path)

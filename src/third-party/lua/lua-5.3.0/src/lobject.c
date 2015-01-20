@@ -26,7 +26,9 @@
 #include "lstring.h"
 #include "lvm.h"
 
-
+#ifdef FASTOREDIS
+    #include "luaredir.h"
+#endif
 
 LUAI_DDEF const TValue luaO_nilobject_ = {NILCONSTANT};
 

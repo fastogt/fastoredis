@@ -31,6 +31,7 @@ namespace fastoredis
         void checkUpdate();
         void enterLeaveFullScreen();
         void openPythonConsole();
+        void openLuaConsole();
 
         void versionAvailible(bool succesResult, const QString& version);
 
@@ -51,6 +52,7 @@ namespace fastoredis
         QAction* checkUpdateAction_;
         QAction* toolsAction_;
         QAction* pythonConsoleAction_;
+        QAction* luaConsoleAction_;
         QAction* helpAction_;
         QAction* explorerAction_;
         QAction* logsAction_;

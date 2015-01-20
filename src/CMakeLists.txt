@@ -139,6 +139,7 @@ SET(HEADERS_SHELL_TO_MOC
     shell/memcached_shell.h
     shell/memcached_lexer.h
     shell/python_shell.h
+    shell/lua_shell.h
 )
 SET(HEADERS_SHELL
 )
@@ -149,6 +150,7 @@ SET(SOURCES_SHELL
     shell/memcached_shell.cpp
     shell/memcached_lexer.cpp
     shell/python_shell.cpp
+    shell/lua_shell.cpp
 )
 
 SET(HEADERS_TRANSLATIONS
@@ -206,6 +208,7 @@ SET(SOURCES_MEMCACHED
 )
 
 ADD_SUBDIRECTORY(third-party/lua)
+INCLUDE_DIRECTORIES(third-party/lua/lua-5.3.0/src)
 
 IF(PYTHON_ENABLED)
     ADD_SUBDIRECTORY(third-party/pytonqt)

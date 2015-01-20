@@ -88,7 +88,7 @@ namespace
 namespace fastoredis
 {
     BaseConsoleDialog::BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon &icon, bool isExecuteEnabled, FastoEditorShell *shell)
-        : QDialog(parent), filePath_(filePath)
+        : QDialog(parent), filePath_(filePath), shell_(NULL)
     {
         using namespace translations;
         setWindowIcon(icon);
@@ -100,7 +100,7 @@ namespace fastoredis
         toolBarLayout->setContentsMargins(0, 0, 0, 0);
 
         QToolButton* loadAndInstall = new QToolButton;
-        loadAndInstall->setIcon(GuiFactory::instance().pythonIcon());
+        loadAndInstall->setIcon(icon);
         VERIFY(connect(loadAndInstall, SIGNAL(clicked()), this, SLOT(loadAndInstallFile())));
         toolBarLayout->addWidget(loadAndInstall);
         loadAndInstall->setEnabled(isExecuteEnabled);
@@ -152,10 +152,12 @@ namespace fastoredis
 
         mainLayout->addLayout(toolBarLayout);
 
+        DCHECK(shell);
+        shell_ = shell;
         output_ = new FastoEditor;
         output_->setReadOnly(true);
 
-        mainLayout->addWidget(shell);
+        mainLayout->addWidget(shell_);
         mainLayout->addWidget(output_);
         setMinimumSize(QSize(width, height));
         setLayout(mainLayout);
@@ -175,8 +177,6 @@ namespace fastoredis
 
     void BaseConsoleDialog::retranslateUi()
     {
-        using namespace translations;
-        setWindowTitle(trPythonConsole);
     }
 
     void BaseConsoleDialog::loadFromFile()
@@ -265,5 +265,6 @@ namespace fastoredis
 
     void BaseConsoleDialog::stop()
     {
+        stopImpl();
     }
 }

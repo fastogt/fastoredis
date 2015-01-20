@@ -22,6 +22,9 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#ifdef FASTOREDIS
+    #include "luaredir.h"
+#endif
 
 #if !defined(l_checkmode)
 

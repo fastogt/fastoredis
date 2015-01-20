@@ -14,19 +14,13 @@ namespace fastoredis
         LuaConsoleDialog(const QString& filePath = QString(), QWidget* parent = 0);
         ~LuaConsoleDialog();
 
-    private Q_SLOTS:
-        void execute();
-        void executeWithArgs();
-        void stop();
-
-        void execute(const QString& script, const QStringList &args);
+    protected:
+        virtual void retranslateUi();
 
     private:
         virtual void loadAndInstallFileImpl(const QString &path);
         virtual void executeImpl(const QString& script, const QStringList &args);
         virtual void stopImpl();
-
-        virtual void retranslateUi();
 
         LuaWorker* worker_;
     };

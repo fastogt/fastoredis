@@ -21,7 +21,9 @@
 #include "lobject.h"
 #include "lstate.h"
 
-
+#ifdef FASTOREDIS
+    #include "luaredir.h"
+#endif
 
 /*
 ** About the realloc function:

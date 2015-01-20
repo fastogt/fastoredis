@@ -16,12 +16,13 @@ namespace fastoredis
         PythonConsoleDialog(const QString& filePath = QString(), QWidget* parent = 0);
         ~PythonConsoleDialog();
 
+    protected:
+        virtual void retranslateUi();
+
     private:
         virtual void loadAndInstallFileImpl(const QString& path);
         virtual void executeImpl(const QString& script, const QStringList &args);
         virtual void stopImpl();
-
-        virtual void retranslateUi();
 
         PythonWorker* worker_;
     };

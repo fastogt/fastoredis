@@ -22,6 +22,9 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#ifdef FASTOREDIS
+    #include "luaredir.h"
+#endif
 
 /*
 ** maximum number of captures that a pattern can do during

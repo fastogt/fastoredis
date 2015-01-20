@@ -22,14 +22,8 @@ namespace fastoredis
         ~LuaWorker();
 
     Q_SIGNALS:
-        //! emitted when python outputs something to stdout (and redirection is turned on)
-        void pythonStdOut(const QString& str);
-        //! emitted when python outputs something to stderr (and redirection is turned on)
-        void pythonStdErr(const QString& str);
-        //! emitted when both custom SystemExit exception handler is enabled and a SystemExit
-        //! exception is raised.
-        //! \sa setSystemExitExceptionHandlerEnabled(bool)
-        void systemExitExceptionRaised(int exitCode);
+        void luaStdOut(const QString& str);
+        void luaStdErr(const QString& str);
         void executeProgress(int val);
 
     private Q_SLOTS:
@@ -42,7 +36,6 @@ namespace fastoredis
         void executeImpl(const std::string& script, const std::vector<std::string>& args);
         void executeScriptImpl(const std::string& path, const std::vector<std::string>& args);
 
-        bool handleError();
         LuaWorker();
         volatile bool stop_;
     };

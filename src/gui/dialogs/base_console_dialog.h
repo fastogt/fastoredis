@@ -20,7 +20,6 @@ namespace fastoredis
             width = 640
         };
 
-        BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon& icon, bool isExecuteEnabled, FastoEditorShell* shell);
         ~BaseConsoleDialog();
 
     protected Q_SLOTS:
@@ -39,10 +38,12 @@ namespace fastoredis
         void loadAndInstallFile();
 
     protected:
-        virtual void changeEvent(QEvent* );
+        BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon& icon, bool isExecuteEnabled, FastoEditorShell* shell);
 
-    private:
+        virtual void changeEvent(QEvent* );
         virtual void retranslateUi();
+
+    private:        
         virtual void loadAndInstallFileImpl(const QString& path) = 0;
         virtual void executeImpl(const QString& script, const QStringList &args) = 0;
         virtual void stopImpl() = 0;

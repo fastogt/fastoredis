@@ -11,7 +11,9 @@
 #include <limits.h>
 #include <stddef.h>
 
-
+#ifdef FASTOREDIS
+    #include "luaredir.h"
+#endif
 /*
 ** ===================================================================
 ** Search for "@@" to find all configurable definitions.

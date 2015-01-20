@@ -4,7 +4,12 @@
 #include <QApplication>
 #include <QCoreApplication>
 
-#include "common/file_system.h"
+extern "C" {
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+}
+
 #include "common/qt/convert_string.h"
 
 #include "core/events/events.h"
@@ -57,12 +62,28 @@ namespace fastoredis
 
     void LuaWorker::executeImpl(const std::string& script, const std::vector<std::string>& args)
     {
+        lua_State *L = luaL_newstate();
 
+        // load the libs
+        luaL_openlibs(L);
+
+        //run a Lua scrip here
+        luaL_dostring(L, script.c_str());
+
+        lua_close(L);
     }
 
     void LuaWorker::executeScriptImpl(const std::string& path, const std::vector<std::string>& args)
     {
+        lua_State *L = luaL_newstate();
 
+        // load the libs
+        luaL_openlibs(L);
+
+        //run a Lua scrip here
+        luaL_dofile(L, path.c_str());
+
+        lua_close(L);
     }
 
     void LuaWorker::execute(const QString& script, const QStringList &args)
@@ -91,20 +112,77 @@ namespace fastoredis
         qApp->postEvent(this, ev);
     }
 
-    bool LuaWorker::handleError()
-    {
-        bool flag = false;
-        return flag;
-    }
-
     const char* LuaEngine::version()
     {
-        return "";
+        return LUA_VERSION;
+    }
+
+    namespace
+    {
+        int redirect_fprintf(FILE* stream, const char* msg, ...)
+        {
+            char buffer[1024];
+
+            va_list args;
+            va_start(args, msg);
+            vsprintf(buffer, msg, args);
+            va_end(args);
+
+            if (stream == stdout){
+                //stdout_buf.append(buffer);
+            }
+            else{
+                //stderr_buf.append(buffer);
+            }
+
+            return strlen(buffer);
+        }
+
+        // fputs hook for Lua output redirection
+        int redirect_fputs(const char* msg, FILE* stream)
+        {
+            return redirect_fprintf(stream, msg);
+        }
+
+        // fwrite hook for Lua output redirection
+        int redirect_fwrite(const void* ptr, size_t size, size_t count, FILE* stream)
+        {
+            char buffer[1024];
+            memset(buffer, 0, sizeof(buffer));
+            memcpy(buffer, ptr, size * count);
+
+            if (stream == stdout){
+                //stdout_buf.append(buffer);
+            }
+            else{
+                //stderr_buf.append(buffer);
+            }
+
+            return count;
+        }
+
+        // printf hook for Lua output redirection
+        int redirect_printf(const char* msg, ...)
+        {
+            char buffer[1024];
+
+            va_list args;
+            va_start(args, msg);
+            vsprintf(buffer, msg, args);
+            va_end(args);
+
+            //stdout_buf.append(buffer);
+
+            return strlen(buffer);
+        }
     }
 
     LuaEngine::LuaEngine()
     {
-
+        lua_fprintf = redirect_fprintf;
+        lua_fputs   = redirect_fputs;
+        lua_fwrite  = redirect_fwrite;
+        lua_printf  = redirect_printf;
     }
 
     bool LuaEngine::hasModule(const std::string& name)

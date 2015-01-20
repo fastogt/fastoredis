@@ -19,6 +19,7 @@
 #include "gui/widgets/main_widget.h"
 #include "gui/explorer/explorer_tree_view.h"
 #include "gui/dialogs/python_console_dialog.h"
+#include "gui/dialogs/lua_console_dialog.h"
 
 #include "core/servers_manager.h"
 #include "core/settings_manager.h"
@@ -180,6 +181,11 @@ namespace fastoredis
         VERIFY(connect(pythonConsoleAction_, SIGNAL(triggered()), this, SLOT(openPythonConsole())));
         tools->addAction(pythonConsoleAction_);
 
+        luaConsoleAction_ = new QAction(this);
+        luaConsoleAction_->setIcon(GuiFactory::instance().luaIcon());
+        VERIFY(connect(luaConsoleAction_, SIGNAL(triggered()), this, SLOT(openLuaConsole())));
+        tools->addAction(luaConsoleAction_);
+
         //window menu
         QMenu *window = new QMenu(this);
         windowAction_ = menuBar()->addMenu(window);
@@ -281,6 +287,7 @@ namespace fastoredis
         fileAction_->setText(trFile);
         toolsAction_->setText(trTools);
         pythonConsoleAction_->setText(trPythonConsole);
+        luaConsoleAction_->setText(trLuaConsole);
         preferencesAction_->setText(trPreferences);
         checkUpdateAction_->setText(trCheckUpdate);
         optionsAction_->setText(trOptions);
@@ -330,6 +337,12 @@ namespace fastoredis
     void MainWindow::openPythonConsole()
     {
         PythonConsoleDialog dlg(QString(), this);
+        dlg.exec();
+    }
+
+    void MainWindow::openLuaConsole()
+    {
+        LuaConsoleDialog dlg(QString(), this);
         dlg.exec();
     }
 
