@@ -321,7 +321,7 @@ IF(CPACK_SUPPORT)
           DEPENDS ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_NAME}
           COMMAND ${CMAKE_COMMAND} -E copy ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_NAME} ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME}
           COMMAND jarsigner -keystore ~/$ENV{ANDROID_KEYSTORE} -storepass $ENV{ANDROID_KEYSTORE_PASSWD}
-          -keypass $ENV{ANDROID_KEY_PASSWD}  ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME} release gcompris
+          -keypass $ENV{ANDROID_KEY_PASSWD} ${PACKAGE_OUTPUT_ANDROID}/${ANDROID_PACKAGE_RELEASE_SIGNED_NAME} release gcompris
         )
 
         SET(ANDROID_PACKAGE_RELEASE_SIGNED_ALIGNED_NAME ${CPACK_PACKAGE_FILE_NAME}_signed_aligned.apk)
@@ -340,22 +340,22 @@ IF(CPACK_SUPPORT)
         )
 
         # Command to create apk from Makefile
-        ADD_CUSTOM_TARGET (apk_release
+        ADD_CUSTOM_TARGET(apk_release
            DEPENDS createApkFromAndroidDeployQtRelease
         )
 
         # Command to create signed apk from Makefile
-        ADD_CUSTOM_TARGET (apk_signed
+        ADD_CUSTOM_TARGET(apk_signed
            DEPENDS createApkSignedFromAndroidDeployQtRelease
         )
 
         # Command to create signed aligned apk from Makefile
-        ADD_CUSTOM_TARGET (apk_signed_aligned
+        ADD_CUSTOM_TARGET(apk_signed_aligned
            DEPENDS createApkSignedAlignedFromAndroidDeployQtRelease
         )
 
         # Command to install the signed aligned apk through adb from Makefile
-        ADD_CUSTOM_TARGET (apk_install
+        ADD_CUSTOM_TARGET(apk_install
            DEPENDS apkInstall
         )
     ENDIF(OS_WINDOWS)

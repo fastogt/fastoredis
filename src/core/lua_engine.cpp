@@ -13,6 +13,7 @@ extern "C" {
 #include "common/qt/convert_string.h"
 
 #include "core/events/events.h"
+#include "core/logger.h"
 
 namespace fastoredis
 {
@@ -119,6 +120,58 @@ namespace fastoredis
 
     namespace
     {
+        class LuaQThread
+                : public QThread
+        {
+            LuaWorker* worker_;
+        public:
+            LuaQThread(LuaWorker* worker)
+                : worker_(worker)
+            {
+
+            }
+
+            LuaWorker* worker() const
+            {
+                return worker_;
+            }
+        };
+
+        LuaWorker* workerByThreadID()
+        {
+            QThread* thr = QThread::currentThread();
+            if(thr){
+                LuaQThread* lthr = dynamic_cast<LuaQThread*>(thr);
+                if(lthr){
+                    return lthr->worker();
+                }
+            }
+
+            return NULL;
+        }
+
+        void printStdOut(const std::string& data)
+        {
+            LuaWorker* worker = workerByThreadID();
+            if(worker){
+                Q_EMIT worker->luaStdOut(common::convertFromString<QString>(data));
+            }
+            else{
+                LOG_MSG(data, common::logging::L_WARNING, true);
+            }
+        }
+
+        void printStdErr(const std::string& data)
+        {
+            LuaWorker* worker = workerByThreadID();
+            if(worker){
+                Q_EMIT worker->luaStdErr(common::convertFromString<QString>(data));
+            }
+            else{
+                LOG_MSG(data, common::logging::L_WARNING, true);
+            }
+        }
+
         int redirect_fprintf(FILE* stream, const char* msg, ...)
         {
             char buffer[1024];
@@ -129,10 +182,10 @@ namespace fastoredis
             va_end(args);
 
             if (stream == stdout){
-                //stdout_buf.append(buffer);
+                printStdOut(buffer);
             }
             else{
-                //stderr_buf.append(buffer);
+                printStdErr(buffer);
             }
 
             return strlen(buffer);
@@ -152,10 +205,10 @@ namespace fastoredis
             memcpy(buffer, ptr, size * count);
 
             if (stream == stdout){
-                //stdout_buf.append(buffer);
+                printStdOut(buffer);
             }
             else{
-                //stderr_buf.append(buffer);
+                printStdErr(buffer);
             }
 
             return count;
@@ -171,7 +224,7 @@ namespace fastoredis
             vsprintf(buffer, msg, args);
             va_end(args);
 
-            //stdout_buf.append(buffer);
+            printStdOut(buffer);
 
             return strlen(buffer);
         }
@@ -193,7 +246,7 @@ namespace fastoredis
     LuaWorker* LuaEngine::createWorker()
     {
         LuaWorker* worker = new LuaWorker;
-        QThread* thread = new QThread;
+        QThread* thread = new LuaQThread(worker);
         worker->moveToThread(thread);
 
         VERIFY(QObject::connect(thread, SIGNAL(started()), worker, SLOT(init())));
