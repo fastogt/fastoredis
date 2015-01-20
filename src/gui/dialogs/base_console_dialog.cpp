@@ -52,7 +52,7 @@ namespace
         return result;
     }
 
-    bool saveToFileText(QString filePath, const QString& text, QWidget* parent)
+    bool saveToFileText(QString filePath, const QString& text, QWidget* parent, const QString& fileExtension)
     {
         if (filePath.isEmpty()){
             return false;
@@ -60,7 +60,7 @@ namespace
 
 #ifdef OS_LINUX
         if (QFileInfo(filePath).suffix().isEmpty()) {
-            filePath += ".py";
+            filePath += "." + fileExtension;
         }
 #endif
         bool result = false;
@@ -87,8 +87,8 @@ namespace
 
 namespace fastoredis
 {
-    BaseConsoleDialog::BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon &icon, bool isExecuteEnabled, FastoEditorShell *shell)
-        : QDialog(parent), filePath_(filePath), shell_(NULL)
+    BaseConsoleDialog::BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon &icon, bool isExecuteEnabled, FastoEditorShell *shell, const QString &fileExtension)
+        : QDialog(parent), filePath_(filePath), shell_(NULL), fileExtension_(fileExtension)
     {
         using namespace translations;
         setWindowIcon(icon);
@@ -192,7 +192,8 @@ namespace fastoredis
     bool BaseConsoleDialog::loadFromFile(const QString& path)
     {
         bool res = false;
-        QString filepath = QFileDialog::getOpenFileName(this, path, QString(), trfilterForPython);
+        QString filepath = QFileDialog::getOpenFileName(this, path, QString(),
+                                                        QObject::tr("Files (*.%1); All Files (*.*)").arg(fileExtension_));
         if (!filepath.isEmpty()) {
             QString out;
             if (loadFromFileText(filepath, out, this)) {
@@ -207,9 +208,9 @@ namespace fastoredis
     void BaseConsoleDialog::saveToFileAs()
     {
         QString filepath = QFileDialog::getSaveFileName(this,
-            trSaveAs, filePath_, trfilterForPython);
+            trSaveAs, filePath_, QObject::tr("Files (*.%1); All Files (*.*)").arg(fileExtension_));
 
-        if (saveToFileText(filepath, shell_->text(), this)) {
+        if (saveToFileText(filepath, shell_->text(), this, fileExtension_)) {
             filePath_ = filepath;
         }
     }
@@ -220,7 +221,7 @@ namespace fastoredis
             saveToFileAs();
         }
         else {
-            saveToFileText(filePath_, shell_->text(), this);
+            saveToFileText(filePath_, shell_->text(), this, fileExtension_);
         }
     }
 

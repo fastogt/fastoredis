@@ -99,6 +99,7 @@ namespace common
 
             std::string directory() const;
             std::string path() const;
+            std::string fileName() const;
 
         private:
             tribool is_dir_;

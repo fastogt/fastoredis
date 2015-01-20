@@ -6,6 +6,8 @@
 #include "global/global.h"
 #include "common/patterns/singleton_pattern.h"
 
+typedef struct lua_State lua_State;
+
 namespace fastoredis
 {
     class LuaWorker
@@ -38,6 +40,7 @@ namespace fastoredis
 
         LuaWorker();
         volatile bool stop_;
+        lua_State* lua_;
     };
 
     class LuaEngine

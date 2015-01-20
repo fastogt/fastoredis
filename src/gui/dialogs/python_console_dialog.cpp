@@ -24,7 +24,7 @@ namespace fastoredis
     }
 
     PythonConsoleDialog::PythonConsoleDialog(const QString& filePath, QWidget* parent)
-        : BaseConsoleDialog(filePath, parent, GuiFactory::instance().pythonIcon(), isPythonEnabled(), shellCreate()), worker_(NULL)
+        : BaseConsoleDialog(filePath, parent, GuiFactory::instance().pythonIcon(), isPythonEnabled(), shellCreate(), "py"), worker_(NULL)
     {
         using namespace translations;
         worker_ = PythonEngine::instance().createWorker();

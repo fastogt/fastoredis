@@ -14,7 +14,7 @@ namespace fastoredis
     {
         FastoEditorShell* shellCreate()
         {
-            if(LuaEngine::instance().hasModule("redis")){
+            if(LuaEngine::instance().hasModule("redis-lua")){
                 return new RedisLuaShell;
             }
             else{
@@ -24,7 +24,7 @@ namespace fastoredis
     }
 
     LuaConsoleDialog::LuaConsoleDialog(const QString& filePath, QWidget* parent)
-        : BaseConsoleDialog(filePath, parent, GuiFactory::instance().luaIcon(), true, shellCreate()), worker_(NULL)
+        : BaseConsoleDialog(filePath, parent, GuiFactory::instance().luaIcon(), true, shellCreate(), "lua"), worker_(NULL)
     {
         using namespace translations;
         worker_ = LuaEngine::instance().createWorker();

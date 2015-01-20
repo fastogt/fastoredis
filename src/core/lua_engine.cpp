@@ -11,6 +11,8 @@ extern "C" {
 }
 
 #include "common/qt/convert_string.h"
+#include "common/file_system.h"
+#include "common/sprintf.h"
 
 #include "core/events/events.h"
 #include "core/logger.h"
@@ -18,14 +20,20 @@ extern "C" {
 namespace fastoredis
 {
     LuaWorker::LuaWorker()
-        : stop_(false)
+        : stop_(false), lua_(NULL)
     {
-
+        lua_ = luaL_newstate();
+        DCHECK(lua_);
+        if(lua_){
+            luaL_openlibs(lua_);
+        }
     }
 
     LuaWorker::~LuaWorker()
     {
-
+        if(lua_){
+            lua_close(lua_);
+        }
     }
 
     void LuaWorker::stop()
@@ -63,28 +71,62 @@ namespace fastoredis
 
     void LuaWorker::executeImpl(const std::string& script, const std::vector<std::string>& args)
     {
-        lua_State *L = luaL_newstate();
-
-        // load the libs
-        luaL_openlibs(L);
-
-        //run a Lua scrip here
-        luaL_dostring(L, script.c_str());
-
-        lua_close(L);
+        emit executeProgress(0);
+        if(lua_){
+            emit executeProgress(50);
+            int res = luaL_dostring(lua_, script.c_str());
+            if(res != LUA_OK){
+                const char * s = lua_tostring(lua_, -1);
+                if (s == NULL){
+                    Q_EMIT luaStdErr("unrecognized Lua error");
+                }
+                else{
+                    Q_EMIT luaStdErr(common::convertFromString<QString>(s));
+                }
+            }
+        }
+        emit executeProgress(100);
     }
 
     void LuaWorker::executeScriptImpl(const std::string& path, const std::vector<std::string>& args)
     {
-        lua_State *L = luaL_newstate();
+        emit executeProgress(0);
+        if(args.size() == 1 && args[0] == "install"){
+            QString pathApp = QCoreApplication::instance()->applicationDirPath();
+            std::string pathAppS = common::convertToString(pathApp);
+            common::file_system::Path p2(pathAppS);
+            p2.append("lua");
+            p2.append(common::file_system::get_file_name(path));
+            std::string pathAppStable = p2.path();
+            bool res = common::file_system::copy_file(path, pathAppStable);
+            if (!res){
+                char buff[1024];
+                common::SNPrintf(buff, sizeof(buff), "Install module in path %s to %s failed!", path, pathAppStable);
+                Q_EMIT luaStdErr(common::convertFromString<QString>(buff));
+            }
+            else{
+                char buff[1024];
+                common::SNPrintf(buff, sizeof(buff), "Install module in path %s to %s successful!", path, pathAppStable);
+                Q_EMIT luaStdOut(common::convertFromString<QString>(buff));
+            }
+            emit executeProgress(100);
+            return;
+        }
 
-        // load the libs
-        luaL_openlibs(L);
-
-        //run a Lua scrip here
-        luaL_dofile(L, path.c_str());
-
-        lua_close(L);
+        if(lua_){
+            emit executeProgress(50);
+            int res = luaL_dofile(lua_, path.c_str());
+            if(res != LUA_OK){
+                const char * s = lua_tostring(lua_, -1);
+                if (s == NULL){
+                    Q_EMIT luaStdErr("unrecognized Lua error");
+                }
+                else{
+                    Q_EMIT luaStdOut(common::convertFromString<QString>(s));
+                }
+            }
+        }
+        emit executeProgress(100);
     }
 
     void LuaWorker::execute(const QString& script, const QStringList &args)

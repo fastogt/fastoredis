@@ -27,7 +27,7 @@ namespace
         return result;
     }
 
-    int cp(const char *to, const char *from)
+    int cp(const char *from, const char *to)
     {
         int fd_to, fd_from;
         char buf[4096];
@@ -447,6 +447,11 @@ namespace common
         std::string Path::path() const
         {
             return path_;
+        }
+
+        std::string Path::fileName() const
+        {
+            return get_file_name(path_);
         }
 
         bool Path::append(const std::string &path)

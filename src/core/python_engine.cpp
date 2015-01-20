@@ -235,6 +235,8 @@ emit executeProgress(25);
             dict = main;
         }
 
+emit executeProgress(50);
+
         if (dict) {
             int argc = args.size();
             if(argc){
@@ -309,7 +311,7 @@ emit executeProgress(0);
             for(int i = 0; i < args.size(); ++i){
                 argssc.push_back(args[i]);
             }
-
+emit executeProgress(25);
             std::string dir = common::file_system::get_dir_path(path);
             common::file_system::change_directory(dir);
 
@@ -317,7 +319,7 @@ emit executeProgress(0);
 
             PySys_SetArgv(argc, argv);
             PythonQtObjectPtr p;
-
+emit executeProgress(50);
             if (PyDict_GetItemString(dict, "__file__") == NULL) {
                 PyObject *f = PyString_FromString(ptrPath);
                 if (f == NULL) {
@@ -330,7 +332,7 @@ emit executeProgress(0);
             }
 
             p.setNewRef(PyRun_File(file, ptrPath, Py_file_input, dict, dict));
-
+emit executeProgress(75);
             if (p) {
                 //result = PythonQtConv::PyObjToQVariant(p);
             }

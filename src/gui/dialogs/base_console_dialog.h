@@ -38,7 +38,7 @@ namespace fastoredis
         void loadAndInstallFile();
 
     protected:
-        BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon& icon, bool isExecuteEnabled, FastoEditorShell* shell);
+        BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon& icon, bool isExecuteEnabled, FastoEditorShell* shell, const QString& fileExtension);
 
         virtual void changeEvent(QEvent* );
         virtual void retranslateUi();
@@ -54,5 +54,6 @@ namespace fastoredis
 
         QString filePath_;
         QProgressBar* workProgressBar_;
+        const QString fileExtension_;
     };
 }
