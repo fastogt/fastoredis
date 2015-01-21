@@ -8,6 +8,7 @@
 #include "common/qt/convert_string.h"
 
 #include "core/events/events.h"
+#include "core/logger.h"
 
 #ifdef PYTHON_ENABLED
 #include <iostream>
@@ -96,19 +97,55 @@ namespace fastoredis
 {
     namespace
     {
-        void stdOutRedirectCB(const QString& str, void* data)
+        class PythonQThread
+                : public QThread
         {
-            PythonWorker* worker = static_cast<PythonWorker*>(data);
+            PythonWorker* worker_;
+        public:
+            PythonQThread(PythonWorker* worker)
+                : worker_(worker)
+            {
+
+            }
+
+            PythonWorker* worker() const
+            {
+                return worker_;
+            }
+        };
+
+        PythonWorker* workerByThreadID()
+        {
+            QThread* thr = QThread::currentThread();
+            if(thr){
+                PythonQThread* lthr = dynamic_cast<PythonQThread*>(thr);
+                if(lthr){
+                    return lthr->worker();
+                }
+            }
+
+            return NULL;
+        }
+
+        void stdOutRedirectCB(const QString& str)
+        {
+            PythonWorker* worker = workerByThreadID();
             if(worker){
                 Q_EMIT worker->pythonStdOut(str);
             }
+            else{
+                LOG_MSG(str, common::logging::L_WARNING, true);
+            }
         }
 
-        void stdErrRedirectCB(const QString& str, void* data)
+        void stdErrRedirectCB(const QString& str)
         {
-            PythonWorker* worker = static_cast<PythonWorker*>(data);
+            PythonWorker* worker = workerByThreadID();
             if(worker){
                 Q_EMIT worker->pythonStdErr(str);
+            }
+            else{
+                LOG_MSG(str, common::logging::L_WARNING, true);
             }
         }
     }
@@ -140,29 +177,28 @@ namespace fastoredis
 
     void PythonWorker::init()
     {
-#ifdef PYTHON_ENABLED
-        // add our own python object types for redirection of stdout
-        if (PyType_Ready(&PythonQtStdOutRedirectType) < 0) {
-            std::cerr << "could not initialize PythonQtStdOutRedirectType" << ", in " << __FILE__ << ":" << __LINE__ << std::endl;
-        }
-        Py_INCREF(&PythonQtStdOutRedirectType);
+        #ifdef PYTHON_ENABLED
 
-        PythonQtObjectPtr sys;
-        sys.setNewRef(PyImport_ImportModule("sys"));
+            // add our own python object types for redirection of stdout
+            if (PyType_Ready(&PythonQtStdOutRedirectType) < 0) {
+                std::cerr << "could not initialize PythonQtStdOutRedirectType" << ", in " << __FILE__ << ":" << __LINE__ << std::endl;
+            }
+            Py_INCREF(&PythonQtStdOutRedirectType);
 
-        PythonQtObjectPtr out;
-        PythonQtObjectPtr err;
-        // create a redirection object for stdout and stderr
-        out = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
-        ((PythonQtStdOutRedirect*)out.object())->_cb = stdOutRedirectCB;
-        ((PythonQtStdOutRedirect*)out.object())->data = this;
-        err = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
-        ((PythonQtStdOutRedirect*)err.object())->_cb = stdErrRedirectCB;
-        ((PythonQtStdOutRedirect*)err.object())->data = this;
-        // replace the built in file objects with our own objects
-        PyModule_AddObject(sys, "stdout", out);
-        PyModule_AddObject(sys, "stderr", err);
-#endif
+            PythonQtObjectPtr sys;
+            sys.setNewRef(PyImport_ImportModule("sys"));
+
+            PythonQtObjectPtr out;
+            PythonQtObjectPtr err;
+            // create a redirection object for stdout and stderr
+            out = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
+            ((PythonQtStdOutRedirect*)out.object())->_cb = stdOutRedirectCB;
+            err = PythonQtStdOutRedirectType.tp_new(&PythonQtStdOutRedirectType,NULL, NULL);
+            ((PythonQtStdOutRedirect*)err.object())->_cb = stdErrRedirectCB;
+            // replace the built in file objects with our own objects
+            PyModule_AddObject(sys, "stdout", out);
+            PyModule_AddObject(sys, "stderr", err);
+        #endif
     }
 
     void PythonWorker::customEvent(QEvent* event)
@@ -433,13 +469,13 @@ emit executeProgress(100);
             Py_SetProgramName((wchar_t*)WCHAR_PROJECT_NAME);  /* optional but recommended */
     #endif
         QString path = QCoreApplication::instance()->applicationDirPath();        
-#ifndef PY3K
-        std::string pySearchPath = common::convertToString(path);
-        char* p = (char*)pySearchPath.c_str();
-#else
-        std::wstring pySearchPath = path.toStdWString();
-        wchar_t* p = (wchar_t*)pySearchPath.c_str();
-#endif
+    #ifndef PY3K
+            std::string pySearchPath = common::convertToString(path);
+            char* p = (char*)pySearchPath.c_str();
+    #else
+            std::wstring pySearchPath = path.toStdWString();
+            wchar_t* p = (wchar_t*)pySearchPath.c_str();
+    #endif
         Py_SetPythonHome(p);
         Py_Initialize();
 #endif
@@ -462,7 +498,7 @@ emit executeProgress(100);
     PythonWorker* PythonEngine::createWorker()
     {
         PythonWorker* worker = new PythonWorker;
-        QThread* thread = new QThread;
+        QThread* thread = new PythonQThread(worker);
         worker->moveToThread(thread);
 
         VERIFY(QObject::connect(thread, SIGNAL(started()), worker, SLOT(init())));
