@@ -270,7 +270,7 @@ namespace fastoredis
                 result += common::escapedText(hex);
             }
             else if(viewMethod_ == MSGPACK){
-                QString hex = toMsgPack(child);
+                QString hex = fromHexMsgPack(child);
                 result += common::escapedText(hex);
             }
         }

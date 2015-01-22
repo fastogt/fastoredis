@@ -346,6 +346,11 @@ namespace common
             return val.empty() ? NULL : val.c_str();
         }
 
+        std::string null2empty(const char* src)
+        {
+            return src ? src : std::string();
+        }
+
 #ifdef OS_POSIX
         namespace signal
         {

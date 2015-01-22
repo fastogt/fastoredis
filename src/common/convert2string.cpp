@@ -838,6 +838,23 @@ namespace common
         return HexEncode(data.c_str(), data.size());
     }
 
+    std::string HexDecode(const void* bytes, size_t size)
+    {
+        std::vector<uint8_t> vec;
+        const char* c = reinterpret_cast<const char*>(bytes);
+        bool res = HexStringToBytesT(StringPiece(c, size), &vec);
+        if(!res){
+            return std::string();
+        }
+
+        return std::string(vec.begin(), vec.end());
+    }
+
+    std::string HexDecode(const std::string& data)
+    {
+        return HexDecode(data.c_str(), data.size());
+    }
+
     bool HexStringToInt(const StringPiece& input, int* output)
     {
       return IteratorRangeToNumber<HexIteratorRangeToIntTraits>::Invoke(

@@ -14,6 +14,7 @@ extern "C" {
 #include "common/qt/convert_string.h"
 #include "common/file_system.h"
 #include "common/sprintf.h"
+#include "common/utils.h"
 
 #include "core/events/events.h"
 #include "core/logger.h"
@@ -303,48 +304,56 @@ namespace fastoredis
 
     std::string LuaEngine::mpPack(const std::string& input)
     {
+        if(input.empty()){
+            return std::string();
+        }
+
         lua_State* lua_ = luaL_newstate();
         DCHECK(lua_);
-        if(lua_){
-            luaL_openlibs(lua_);
+        if(!lua_){
+            return std::string();
         }
+
+        luaL_openlibs(lua_);
 
         luaopen_cmsgpack(lua_);
         int res = lua_getfield(lua_, -1, "pack");  /* function to be called */
-        lua_pushstring(lua_, input.c_str());
+        const char* sptr = input.c_str();
+        lua_pushlstring(lua_, sptr, input.size());
 
         res = lua_pcall(lua_, 1, 1, 0);
-        const char * s = lua_tostring(lua_, -1);
-        if (s != NULL){
-            lua_close(lua_);
-            return s;
-        }
+        sptr = lua_tostring(lua_, -1);
 
+        std::string ret = common::utils::null2empty(sptr);
         lua_close(lua_);
-        return std::string();
+        return common::HexEncode(ret);
     }
 
     std::string LuaEngine::mpUnPack(const std::string& input)
     {
+        if(input.empty()){
+            return std::string();
+        }
+
         lua_State* lua_ = luaL_newstate();
         DCHECK(lua_);
-        if(lua_){
-            luaL_openlibs(lua_);
+        if(!lua_){
+            return std::string();
         }
+
+        luaL_openlibs(lua_);
 
         luaopen_cmsgpack(lua_);
         int res = lua_getfield(lua_, -1, "unpack");  /* function to be called */
-        lua_pushstring(lua_, input.c_str());
+        const char* sptr = input.c_str();
+        lua_pushlstring(lua_, sptr, input.size());
 
         res = lua_pcall(lua_, 1, 1, 0);
-        const char * s = lua_tostring(lua_, -1);
-        if (s != NULL){
-            lua_close(lua_);
-            return s;
-        }
+        sptr = lua_tostring(lua_, -1);
 
+        std::string ret = common::utils::null2empty(sptr);
         lua_close(lua_);
-        return std::string();
+        return ret;
     }
 
     LuaWorker* LuaEngine::createWorker()

@@ -68,21 +68,21 @@ namespace fastoredis
         return value;
     }
 
-    QString toMsgPack(FastoCommonItem* item)
+    QString fromHexMsgPack(FastoCommonItem* item)
     {
         if(!item){
-            return "";
+            return QString();
         }
 
         if(!item->childrenCount()){
             std::string sval = common::convertToString(item->value());
-            std::string upack = LuaEngine::instance().mpUnPack(sval);
+            std::string upack = LuaEngine::instance().mpUnPack(common::HexDecode(sval));
             return common::convertFromString<QString>(upack);
         }
 
         QString value;
         for(int i = 0; i < item->childrenCount(); ++i){
-            value += toMsgPack(dynamic_cast<FastoCommonItem*>(item->child(i)));
+            value += fromHexMsgPack(dynamic_cast<FastoCommonItem*>(item->child(i)));
         }
 
         return value;

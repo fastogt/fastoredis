@@ -50,6 +50,8 @@ namespace common
 
     std::string HexEncode(const void* bytes, size_t size);
     std::string HexEncode(const std::string& data);
+    std::string HexDecode(const void *bytes, size_t size);
+    std::string HexDecode(const std::string& data);
 
     bool HexStringToInt(const StringPiece& input, int* output);
     bool HexStringToInt64(const StringPiece& input, int64_t* output);
