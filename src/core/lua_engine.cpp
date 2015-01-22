@@ -310,16 +310,14 @@ namespace fastoredis
         }
 
         luaopen_cmsgpack(lua_);
-        int res = lua_getglobal(lua_, "pack");  /* function to be called */
+        int res = lua_getfield(lua_, -1, "pack");  /* function to be called */
         lua_pushstring(lua_, input.c_str());
 
         res = lua_pcall(lua_, 1, 1, 0);
-        if(res != LUA_OK){
-            const char * s = lua_tostring(lua_, -1);
-            if (s != NULL){
-                lua_close(lua_);
-                return s;
-            }
+        const char * s = lua_tostring(lua_, -1);
+        if (s != NULL){
+            lua_close(lua_);
+            return s;
         }
 
         lua_close(lua_);
@@ -335,16 +333,14 @@ namespace fastoredis
         }
 
         luaopen_cmsgpack(lua_);
-        int res = lua_getglobal(lua_, "unpack");  /* function to be called */
+        int res = lua_getfield(lua_, -1, "unpack");  /* function to be called */
         lua_pushstring(lua_, input.c_str());
 
         res = lua_pcall(lua_, 1, 1, 0);
-        if(res != LUA_OK){
-            const char * s = lua_tostring(lua_, -1);
-            if (s != NULL){
-                lua_close(lua_);
-                return s;
-            }
+        const char * s = lua_tostring(lua_, -1);
+        if (s != NULL){
+            lua_close(lua_);
+            return s;
         }
 
         lua_close(lua_);

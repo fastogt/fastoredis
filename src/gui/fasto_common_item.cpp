@@ -76,8 +76,7 @@ namespace fastoredis
 
         if(!item->childrenCount()){
             std::string sval = common::convertToString(item->value());
-            std::string pack = LuaEngine::instance().mpPack(sval);
-            std::string upack = LuaEngine::instance().mpPack(pack);
+            std::string upack = LuaEngine::instance().mpUnPack(sval);
             return common::convertFromString<QString>(upack);
         }
 
