@@ -48,6 +48,7 @@ namespace fastoredis
         const QString trJson = QObject::tr("Json");
         const QString trCsv = QObject::tr("Csv");
         const QString trHex = QObject::tr("Hex");
+        const QString trMsgPack = QObject::tr("MsgPack");
         const QString trBackup = QObject::tr("Backup");
         const QString trImport = QObject::tr("Import");
         const QString trShutdown = QObject::tr("Shutdown");

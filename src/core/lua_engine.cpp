@@ -8,6 +8,7 @@ extern "C" {
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
+#include "third-party/lua/lua_cmsgpack.h"
 }
 
 #include "common/qt/convert_string.h"
@@ -74,6 +75,7 @@ namespace fastoredis
         emit executeProgress(0);
         if(lua_){
             emit executeProgress(50);
+            luaopen_cmsgpack(lua_);
             int res = luaL_dostring(lua_, script.c_str());
             if(res != LUA_OK){
                 const char * s = lua_tostring(lua_, -1);
@@ -115,7 +117,19 @@ namespace fastoredis
 
         if(lua_){
             emit executeProgress(50);
-            int res = luaL_dofile(lua_, path.c_str());
+            int res = luaL_loadfile(lua_, path.c_str());
+            if(res != LUA_OK){
+                const char * s = lua_tostring(lua_, -1);
+                if (s == NULL){
+                    Q_EMIT luaStdErr("unrecognized Lua error");
+                }
+                else{
+                    Q_EMIT luaStdOut(common::convertFromString<QString>(s));
+                }
+                goto done;
+            }
+
+            res = lua_pcall(lua_, 0, 0, 0);
             if(res != LUA_OK){
                 const char * s = lua_tostring(lua_, -1);
                 if (s == NULL){
@@ -126,6 +140,8 @@ namespace fastoredis
                 }
             }
         }
+
+    done:
         emit executeProgress(100);
     }
 
@@ -283,6 +299,56 @@ namespace fastoredis
     bool LuaEngine::hasModule(const std::string& name)
     {
         return false;
+    }
+
+    std::string LuaEngine::mpPack(const std::string& input)
+    {
+        lua_State* lua_ = luaL_newstate();
+        DCHECK(lua_);
+        if(lua_){
+            luaL_openlibs(lua_);
+        }
+
+        luaopen_cmsgpack(lua_);
+        int res = lua_getglobal(lua_, "pack");  /* function to be called */
+        lua_pushstring(lua_, input.c_str());
+
+        res = lua_pcall(lua_, 1, 1, 0);
+        if(res != LUA_OK){
+            const char * s = lua_tostring(lua_, -1);
+            if (s != NULL){
+                lua_close(lua_);
+                return s;
+            }
+        }
+
+        lua_close(lua_);
+        return std::string();
+    }
+
+    std::string LuaEngine::mpUnPack(const std::string& input)
+    {
+        lua_State* lua_ = luaL_newstate();
+        DCHECK(lua_);
+        if(lua_){
+            luaL_openlibs(lua_);
+        }
+
+        luaopen_cmsgpack(lua_);
+        int res = lua_getglobal(lua_, "unpack");  /* function to be called */
+        lua_pushstring(lua_, input.c_str());
+
+        res = lua_pcall(lua_, 1, 1, 0);
+        if(res != LUA_OK){
+            const char * s = lua_tostring(lua_, -1);
+            if (s != NULL){
+                lua_close(lua_);
+                return s;
+            }
+        }
+
+        lua_close(lua_);
+        return std::string();
     }
 
     LuaWorker* LuaEngine::createWorker()

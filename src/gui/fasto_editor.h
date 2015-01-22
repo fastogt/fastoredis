@@ -8,6 +8,7 @@
 #define CSV 1
 #define RAW 2
 #define HEX 3
+#define MSGPACK 4
 
 namespace fastoredis
 {

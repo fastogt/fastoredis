@@ -46,6 +46,7 @@ namespace fastoredis
         QRadioButton* csvRadioButton_;
         QRadioButton* rawRadioButton_;
         QRadioButton* hexRadioButton_;
+        QRadioButton* msgPackRadioButton_;
         FastoEditorOutput* editor_;
 
         QFrame* findPanel_;

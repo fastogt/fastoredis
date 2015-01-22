@@ -2,6 +2,8 @@
 
 #include "common/qt/convert_string.h"
 
+#include "core/lua_engine.h"
+
 namespace fastoredis
 {
     FastoCommonItem::FastoCommonItem(const QString& key, const QString& value, common::Value::Type type, TreeItem *parent, void* internalPointer)
@@ -61,6 +63,27 @@ namespace fastoredis
         QString value;
         for(int i = 0; i < item->childrenCount(); ++i){
             value += toRaw(dynamic_cast<FastoCommonItem*>(item->child(i)));
+        }
+
+        return value;
+    }
+
+    QString toMsgPack(FastoCommonItem* item)
+    {
+        if(!item){
+            return "";
+        }
+
+        if(!item->childrenCount()){
+            std::string sval = common::convertToString(item->value());
+            std::string pack = LuaEngine::instance().mpPack(sval);
+            std::string upack = LuaEngine::instance().mpPack(pack);
+            return common::convertFromString<QString>(upack);
+        }
+
+        QString value;
+        for(int i = 0; i < item->childrenCount(); ++i){
+            value += toMsgPack(dynamic_cast<FastoCommonItem*>(item->child(i)));
         }
 
         return value;

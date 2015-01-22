@@ -36,5 +36,6 @@ namespace fastoredis
     QString toRaw(FastoCommonItem* item);
     QString toHex(FastoCommonItem* item);
     QString toCsv(FastoCommonItem* item, const QString &delemitr);
+    QString toMsgPack(FastoCommonItem* item);
 }
 

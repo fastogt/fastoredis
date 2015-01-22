@@ -52,6 +52,8 @@ namespace fastoredis
         static const char* version();
         LuaWorker* createWorker() WARN_UNUSED_RESULT;
         bool hasModule(const std::string& name);
+        std::string mpPack(const std::string& input);
+        std::string mpUnPack(const std::string& input);
 
     private:
         LuaEngine();

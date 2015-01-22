@@ -269,6 +269,10 @@ namespace fastoredis
                 QString hex = toHex(child);
                 result += common::escapedText(hex);
             }
+            else if(viewMethod_ == MSGPACK){
+                QString hex = toMsgPack(child);
+                result += common::escapedText(hex);
+            }
         }
 
         setText(result);
