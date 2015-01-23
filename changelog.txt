@@ -1,3 +1,11 @@
+0.6.0 
+[Alexandr Topilski]
+- MsgPack visualization output
+- Lua console(without modules)
+- Beta android version
+- Memcached added (incr, decr, delete, flush_all, stats, version) functions
+- Not 64-bit on Win?(#44)
+
 0.5.6 / January 10, 2015
 [Alexandr Topilski]
 - Remove boost library dependence
