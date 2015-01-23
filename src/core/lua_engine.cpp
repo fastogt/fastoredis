@@ -302,6 +302,40 @@ namespace fastoredis
         return false;
     }
 
+    namespace
+    {
+        std::string printField(lua_State *L, int i);
+
+        std::string printTable(lua_State *L)
+        {
+            lua_pushnil(L);
+            std::string ret;
+            while(lua_next(L, -2) != 0) {
+                ret += printField(L, -1);
+                ret += printField(L, -2);
+                lua_pop(L, 1);
+            }
+
+            return ret;
+        }
+
+        std::string printField(lua_State *L, int i)
+        {
+            std::string ret;
+            if(lua_isstring(L, i)){
+                ret = lua_tostring(L, i);
+            }
+            else if(lua_isnumber(L, i)){
+                ret = common::convertToString(lua_tonumber(L, i));
+            }
+            else if(lua_istable(L, i)){
+                ret += printTable(L);
+            }
+
+            return ret;
+        }
+    }
+
     std::string LuaEngine::mpPack(const std::string& input)
     {
         if(input.empty()){
@@ -322,11 +356,19 @@ namespace fastoredis
         lua_pushlstring(lua_, sptr, input.size());
 
         res = lua_pcall(lua_, 1, 1, 0);
-        sptr = lua_tostring(lua_, -1);
+        int ltype = lua_type(lua_, -1);
+        if(ltype == LUA_TSTRING){
+            sptr = lua_tostring(lua_, -1);
+            lua_pop(lua_, 1);
+        }
+        else if(ltype == LUA_TTABLE){
+            std::string ret = printTable(lua_);
+            return ret;
+        }
 
         std::string ret = common::utils::null2empty(sptr);
         lua_close(lua_);
-        return common::HexEncode(ret);
+        return ret;
     }
 
     std::string LuaEngine::mpUnPack(const std::string& input)
@@ -349,7 +391,15 @@ namespace fastoredis
         lua_pushlstring(lua_, sptr, input.size());
 
         res = lua_pcall(lua_, 1, 1, 0);
-        sptr = lua_tostring(lua_, -1);
+        int ltype = lua_type(lua_, -1);
+        if(ltype == LUA_TSTRING){
+            sptr = lua_tostring(lua_, -1);
+            lua_pop(lua_, 1);
+        }
+        else if(ltype == LUA_TTABLE){
+            std::string rett = printTable(lua_);
+            return rett;
+        }
 
         std::string ret = common::utils::null2empty(sptr);
         lua_close(lua_);
