@@ -315,8 +315,8 @@ namespace fastoredis
             lua_pushnil(L);
             std::string tret;
             while(lua_next(L, -2)) {
-                std::string row = luaIndexToString(L, -2) + luaIndexToString(L, -1);
-                tret += row;
+                tret += luaIndexToString(L, -2);
+                tret += luaIndexToString(L, -1);
                 lua_pop(L, 1);
             }
             return tret;
@@ -329,22 +329,25 @@ namespace fastoredis
             }
 
             int ltype = lua_type(L, i);
-            std::string ret;
             if(ltype == LUA_TBOOLEAN){
-                ret = lua_toboolean(L, i) ? "true" : "false";
+                return lua_toboolean(L, i) ? "true" : "false";
             }
             else if(ltype == LUA_TSTRING){
-                const char* sptr = lua_tostring(L, i);
-                ret = common::utils::null2empty(sptr);
+                size_t len = 0;
+                const char* sptr = lua_tolstring(L, i, &len);
+                return common::utils::null2empty(sptr, len);
             }
             else if(ltype == LUA_TNUMBER){
-                ret = common::convertToString(lua_tonumber(L, i));
+                return common::convertToString(lua_tonumber(L, i));
             }
             else if(ltype == LUA_TTABLE){
-                ret = luaTableToString(L);
+                return luaTableToString(L);
+            }
+            else{
+                NOTREACHED();
             }
 
-            return ret;
+            return std::string();
         }
     }
 
@@ -365,7 +368,7 @@ namespace fastoredis
         const char* sptr = input.c_str();
         lua_pushlstring(lua_, sptr, input.size());
 
-        lua_call(lua_, 1, 1);
+        lua_pcall(lua_, 1, 1, 0);
         std::string ret = luaIndexToString(lua_, -1);
 
         lua_close(lua_);
@@ -389,7 +392,7 @@ namespace fastoredis
         const char* sptr = input.c_str();
         lua_pushlstring(lua_, sptr, input.size());
 
-        lua_call(lua_, 1, 1);
+        lua_pcall(lua_, 1, 1, 0);
         std::string ret = luaIndexToString(lua_, -1);
 
         lua_close(lua_);
