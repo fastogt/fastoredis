@@ -71,7 +71,7 @@ SET(MULTI_THREADING_SOURCES
 )
 
 SET(COMMON_SOURCES
-log_levels.h logger.h logger.cpp common_config.h basictypes.h
+log_levels.h logger.h logger.cpp common_config.h basictypes.h string_compress.h string_compress.cpp
 safe_sprintf.h safe_sprintf.cpp sprintf.h sprintf.cpp utf_string_conversions.h utf_string_conversions.cpp utf_string_conversion_utils.h utf_string_conversion_utils.cpp
 string_util.h string_util.cpp icu_utf.h icu_utf.cpp string_piece.h string_piece.cpp string16.h string16.cpp hash_tables.h
 convert2string.h convert2string.cpp types.h types.cpp lexical_cast.h lexical_cast.cpp smart_ptr.h
