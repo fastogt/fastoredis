@@ -226,7 +226,7 @@ namespace fastoredis
     {
         using namespace translations;
 
-        setWindowTitle(tr("Redis Connections"));
+        setWindowTitle(trConnections);
         acButton_->setText(trOpen);
     }
 }

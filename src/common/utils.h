@@ -213,7 +213,7 @@ namespace common
         char *strdupornull(const char *src);
         void freeifnotnull(void* ptr);
         const char *c_strornull(const std::string &val);
-        std::string null2empty(const char* src);
+        std::string null2empty(const char* src, size_t len);
 
 #ifdef OS_POSIX
         namespace signal

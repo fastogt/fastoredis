@@ -346,9 +346,13 @@ namespace common
             return val.empty() ? NULL : val.c_str();
         }
 
-        std::string null2empty(const char* src)
+        std::string null2empty(const char* src, size_t len)
         {
-            return src ? src : std::string();
+            if(!len){
+                return std::string();
+            }
+
+            return src ? std::string(src, len) : std::string();
         }
 
 #ifdef OS_POSIX

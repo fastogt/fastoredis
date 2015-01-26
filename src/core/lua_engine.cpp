@@ -304,35 +304,50 @@ namespace fastoredis
 
     namespace
     {
-        std::string printField(lua_State *L, int i);
+        std::string luaIndexToString(lua_State *L, int i);
 
-        std::string printTable(lua_State *L)
+        std::string luaTableToString(lua_State *L)
         {
+            if(!L){
+                return std::string();
+            }
+
             lua_pushnil(L);
-            std::string ret;
-            while(lua_next(L, -2) != 0) {
-                ret += printField(L, -1);
-                ret += printField(L, -2);
+            std::string tret;
+            while(lua_next(L, -2)) {
+                tret += luaIndexToString(L, -2);
+                tret += luaIndexToString(L, -1);
                 lua_pop(L, 1);
             }
-
-            return ret;
+            return tret;
         }
 
-        std::string printField(lua_State *L, int i)
+        std::string luaIndexToString(lua_State *L, int i)
         {
-            std::string ret;
-            if(lua_isstring(L, i)){
-                ret = lua_tostring(L, i);
-            }
-            else if(lua_isnumber(L, i)){
-                ret = common::convertToString(lua_tonumber(L, i));
-            }
-            else if(lua_istable(L, i)){
-                ret += printTable(L);
+            if(!L){
+                return std::string();
             }
 
-            return ret;
+            int ltype = lua_type(L, i);
+            if(ltype == LUA_TBOOLEAN){
+                return lua_toboolean(L, i) ? "true" : "false";
+            }
+            else if(ltype == LUA_TSTRING){
+                size_t len = 0;
+                const char* sptr = lua_tolstring(L, i, &len);
+                return common::utils::null2empty(sptr, len);
+            }
+            else if(ltype == LUA_TNUMBER){
+                return common::convertToString(lua_tonumber(L, i));
+            }
+            else if(ltype == LUA_TTABLE){
+                return luaTableToString(L);
+            }
+            else{
+                NOTREACHED();
+            }
+
+            return std::string();
         }
     }
 
@@ -348,25 +363,14 @@ namespace fastoredis
             return std::string();
         }
 
-        luaL_openlibs(lua_);
-
         luaopen_cmsgpack(lua_);
-        int res = lua_getfield(lua_, -1, "pack");  /* function to be called */
+        lua_getfield(lua_, -1, "pack");  /* function to be called */
         const char* sptr = input.c_str();
         lua_pushlstring(lua_, sptr, input.size());
 
-        res = lua_pcall(lua_, 1, 1, 0);
-        int ltype = lua_type(lua_, -1);
-        if(ltype == LUA_TSTRING){
-            sptr = lua_tostring(lua_, -1);
-            lua_pop(lua_, 1);
-        }
-        else if(ltype == LUA_TTABLE){
-            std::string ret = printTable(lua_);
-            return ret;
-        }
+        lua_pcall(lua_, 1, 1, 0);
+        std::string ret = luaIndexToString(lua_, -1);
 
-        std::string ret = common::utils::null2empty(sptr);
         lua_close(lua_);
         return ret;
     }
@@ -383,25 +387,14 @@ namespace fastoredis
             return std::string();
         }
 
-        luaL_openlibs(lua_);
-
         luaopen_cmsgpack(lua_);
-        int res = lua_getfield(lua_, -1, "unpack");  /* function to be called */
+        lua_getfield(lua_, -1, "unpack");  /* function to be called */
         const char* sptr = input.c_str();
         lua_pushlstring(lua_, sptr, input.size());
 
-        res = lua_pcall(lua_, 1, 1, 0);
-        int ltype = lua_type(lua_, -1);
-        if(ltype == LUA_TSTRING){
-            sptr = lua_tostring(lua_, -1);
-            lua_pop(lua_, 1);
-        }
-        else if(ltype == LUA_TTABLE){
-            std::string rett = printTable(lua_);
-            return rett;
-        }
+        lua_pcall(lua_, 1, 1, 0);
+        std::string ret = luaIndexToString(lua_, -1);
 
-        std::string ret = common::utils::null2empty(sptr);
         lua_close(lua_);
         return ret;
     }
