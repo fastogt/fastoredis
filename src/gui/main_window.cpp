@@ -5,6 +5,8 @@
 #include <QDockWidget>
 #include <QMessageBox>
 #include <QThread>
+#include <QApplication>
+#include <QGestureEvent>
 
 #include "common/net/socket_tcp.h"
 #include "common/qt/convert_string.h"
@@ -125,6 +127,12 @@ namespace fastoredis
         : QMainWindow(), isCheckedInSession_(false)
     {
         setAttribute(Qt::WA_AcceptTouchEvents);
+
+        grabGesture(Qt::TapGesture);
+        grabGesture(Qt::TapAndHoldGesture);
+        grabGesture(Qt::SwipeGesture);
+        grabGesture(Qt::PanGesture);
+        grabGesture(Qt::PinchGesture);
 
         using namespace common;
         QString lang = SettingsManager::instance().currentLanguage();
@@ -274,6 +282,44 @@ namespace fastoredis
             isCheckedInSession_ = true;
             checkUpdate();
         }
+    }
+
+    bool MainWindow::event(QEvent *event)
+    {
+        if (event->type() == QEvent::Gesture){
+            QGestureEvent *gest = static_cast<QGestureEvent*>(event);
+            if(gest){
+                return gestureEvent(gest);
+            }
+        }
+        return QMainWindow::event(event);
+    }
+
+    bool MainWindow::gestureEvent(QGestureEvent *event)
+    {
+        if (QGesture *qswipe = event->gesture(Qt::SwipeGesture)){
+            QSwipeGesture* swipe = static_cast<QSwipeGesture*>(qswipe);
+        }
+        if (QGesture *qpan = event->gesture(Qt::PanGesture)){
+            QPanGesture* pan = static_cast<QPanGesture*>(qpan);
+        }
+        if (QGesture *qpinch = event->gesture(Qt::PinchGesture)){
+            QPinchGesture* pinch = static_cast<QPinchGesture*>(qpinch);
+        }
+        if (QGesture *qtap = event->gesture(Qt::TapGesture)){
+            QTapGesture* tap = static_cast<QTapGesture*>(qtap);
+        }
+        if (QGesture *qtapandhold = event->gesture(Qt::TapAndHoldGesture)){
+            QTapAndHoldGesture* tapandhold = static_cast<QTapAndHoldGesture*>(qtapandhold);
+
+            /*QPoint pos = tapandhold->position().toPoint();
+            QContextMenuEvent* cont = new QContextMenuEvent(QContextMenuEvent::Mouse, pos);
+            QWidget * receiver = QApplication::widgetAt( mapToGlobal(pos) );
+
+            QApplication::postEvent( receiver, cont );*/
+        }
+
+        return true;
     }
 
     void MainWindow::changeEvent(QEvent *ev)

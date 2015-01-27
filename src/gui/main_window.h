@@ -4,6 +4,7 @@
 
 class QAction;
 class QDockWidget;
+class QGestureEvent;
 
 namespace fastoredis
 {
@@ -21,6 +22,7 @@ namespace fastoredis
     protected:
         virtual void changeEvent(QEvent* ev);
         virtual void showEvent(QShowEvent* ev);
+        virtual bool event(QEvent *event);
 
     private Q_SLOTS:
         void open();
@@ -37,6 +39,7 @@ namespace fastoredis
         void versionAvailible(bool succesResult, const QString& version);
 
     private:
+        bool gestureEvent(QGestureEvent *event);
         void createStatusBar();
         void retranslateUi();
 
