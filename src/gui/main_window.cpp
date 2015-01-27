@@ -6,7 +6,18 @@
 #include <QMessageBox>
 #include <QThread>
 #include <QApplication>
+
+#ifdef OS_ANDROID
+//http://www.math.spbu.ru/user/gran/Atom21/AtomBook_21_lab6.pdf
+//http://www.linux.org.ru/forum/development/11000751
+//http://doc.qt.io/qt-5/qtouchevent.html
+//http://www.math.spbu.ru/user/gran/AtomMG2/lec_04.pdf
+//http://qt-project.org/forums/viewthread/7253
+//http://blog.sbw.so/Article/index/title/QT%20for%20Android%20%E6%8D%95%E8%8E%B7%E5%A4%9A%E7%82%B9%E8%A7%A6%E6%8E%A7%E7%9A%84%E7%A4%BA%E4%BE%8B.html
+//http://developer.nokia.com/community/wiki/Enabling_pinch_zooming_in_QGraphicsWebView_with_QPinchGesture
+//http://habrahabr.ru/post/134289/
 #include <QGestureEvent>
+#endif
 
 #include "common/net/socket_tcp.h"
 #include "common/qt/convert_string.h"
@@ -127,23 +138,15 @@ namespace fastoredis
         : QMainWindow(), isCheckedInSession_(false)
     {
 #ifdef OS_ANDROID
-        //http://www.math.spbu.ru/user/gran/Atom21/AtomBook_21_lab6.pdf
-        //http://www.linux.org.ru/forum/development/11000751
-        //http://doc.qt.io/qt-5/qtouchevent.html
-        //http://www.math.spbu.ru/user/gran/AtomMG2/lec_04.pdf
-        //http://qt-project.org/forums/viewthread/7253
-        //http://blog.sbw.so/Article/index/title/QT%20for%20Android%20%E6%8D%95%E8%8E%B7%E5%A4%9A%E7%82%B9%E8%A7%A6%E6%8E%A7%E7%9A%84%E7%A4%BA%E4%BE%8B.html
-        //http://developer.nokia.com/community/wiki/Enabling_pinch_zooming_in_QGraphicsWebView_with_QPinchGesture
-        //http://habrahabr.ru/post/134289/
         setAttribute(Qt::WA_AcceptTouchEvents);
         //setAttribute(Qt::WA_StaticContents);
 
-        grabGesture(Qt::TapGesture); //click
+        //grabGesture(Qt::TapGesture); //click
         grabGesture(Qt::TapAndHoldGesture); //long tap
 
-        grabGesture(Qt::SwipeGesture); //swipe
-        grabGesture(Qt::PanGesture); // drag and drop
-        grabGesture(Qt::PinchGesture); //zoom
+        //grabGesture(Qt::SwipeGesture); //swipe
+        //grabGesture(Qt::PanGesture); // drag and drop
+        //grabGesture(Qt::PinchGesture); //zoom
 #endif
         using namespace common;
         QString lang = SettingsManager::instance().currentLanguage();
@@ -297,20 +300,18 @@ namespace fastoredis
         }
     }
 
+#ifdef OS_ANDROID
     bool MainWindow::event(QEvent *event)
     {
-#ifdef OS_ANDROID
         if (event->type() == QEvent::Gesture){
             QGestureEvent *gest = static_cast<QGestureEvent*>(event);
             if(gest){
                 return gestureEvent(gest);
             }
         }
-#endif
         return QMainWindow::event(event);
     }
 
-#ifdef OS_ANDROID
     bool MainWindow::gestureEvent(QGestureEvent *event)
     {
 
@@ -331,7 +332,9 @@ namespace fastoredis
         else if (QGesture *qtapandhold = event->gesture(Qt::TapAndHoldGesture)){
             QTapAndHoldGesture* tapandhold = static_cast<QTapAndHoldGesture*>(qtapandhold);
             tapAndHoldTriggered(tapandhold);
+            event->accept();
         }
+
         return true;
     }
 
@@ -342,11 +345,10 @@ namespace fastoredis
 
     void MainWindow::tapAndHoldTriggered(QTapAndHoldGesture* tapEvent)
     {
-        /*QPoint pos = tapandhold->position().toPoint();
-        QContextMenuEvent* cont = new QContextMenuEvent(QContextMenuEvent::Mouse, pos);
-        QWidget * receiver = QApplication::widgetAt( mapToGlobal(pos) );
-
-        QApplication::postEvent( receiver, cont );*/
+        QPoint pos = tapEvent->position().toPoint();
+        QContextMenuEvent* cont = new QContextMenuEvent(QContextMenuEvent::Mouse, pos, mapToGlobal(pos));
+        QWidget* rec = childAt(pos);
+        QApplication::postEvent(rec, cont);
     }
 #endif
 
