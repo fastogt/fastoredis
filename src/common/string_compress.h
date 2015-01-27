@@ -17,7 +17,7 @@
 #pragma once
 
 #include "common/basictypes.h"
-#include "common/string16.h"
+#include "common/value.h"
 
 #ifdef HAVE_ZLIB
 
@@ -25,8 +25,8 @@
 
 namespace common
 {
-    bool encodeZlib(const std::string& data, std::string& out, int compressionlevel = Z_BEST_COMPRESSION) WARN_UNUSED_RESULT;
-    bool decodeZlib(const std::string& data, std::string& out) WARN_UNUSED_RESULT;
+    ErrorValueSPtr encodeZlib(const std::string& data, std::string& out, int compressionlevel = Z_BEST_COMPRESSION) WARN_UNUSED_RESULT;
+    ErrorValueSPtr decodeZlib(const std::string& data, std::string& out) WARN_UNUSED_RESULT;
 }  // namesapce base_icu
 
 #endif

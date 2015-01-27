@@ -27,6 +27,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/python_console_dialog.h
     gui/dialogs/lua_console_dialog.h
     gui/dialogs/base_console_dialog.h
+    gui/dialogs/encode_decode_dialog.h
     gui/widgets/main_widget.h
     gui/main_tab_bar.h
     gui/fasto_editor.h
@@ -68,6 +69,7 @@ SET(SOURCES_GUI
     gui/dialogs/python_console_dialog.cpp
     gui/dialogs/lua_console_dialog.cpp
     gui/dialogs/base_console_dialog.cpp
+    gui/dialogs/encode_decode_dialog.cpp
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
     gui/fasto_editor.cpp
@@ -111,6 +113,11 @@ SET(HEADERS_CORE
     core/types.h
     core/ssh_info.h
     core/scp_file_transfer.h
+    core/iedcoder.h
+    core/base64_edcoder.h
+    core/hex_edcoder.h
+    core/compress_edcoder.h
+    core/msgpack_edcoder.h
 )
 SET(SOURCES_CORE
     core/events/events_info.cpp
@@ -131,6 +138,11 @@ SET(SOURCES_CORE
     core/python_engine.cpp
     core/lua_engine.cpp
     core/scp_file_transfer.cpp
+    core/iedcoder.cpp
+    core/base64_edcoder.cpp
+    core/hex_edcoder.cpp
+    core/compress_edcoder.cpp
+    core/msgpack_edcoder.cpp
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/shell_widget.h

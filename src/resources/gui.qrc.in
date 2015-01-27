@@ -43,5 +43,6 @@
     <file>icons/close16.png</file>
     <file>icons/python.png</file>
     <file>icons/lua.png</file>
+    <file>icons/encode_decode.png</file>
     </qresource>
 </RCC>

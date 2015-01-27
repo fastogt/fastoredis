@@ -123,7 +123,6 @@ pthread_mutex_t sasl_startup_state_LOCK= PTHREAD_MUTEX_INITIALIZER;
 static pthread_once_t sasl_startup_once= PTHREAD_ONCE_INIT;
 static void sasl_startup_function(void)
 {
-  //int ret = sasl_set_path(SASL_PATH_TYPE_PLUGIN, strdup("C:\\Users\\Sasha\\Desktop\\build\\sasl2"));
   sasl_startup_state= sasl_client_init(NULL);
 
   if (sasl_startup_state == SASL_OK)

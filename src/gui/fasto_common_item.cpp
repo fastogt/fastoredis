@@ -77,8 +77,14 @@ namespace fastoredis
 
         if(!item->childrenCount()){
             std::string sval = common::convertToString(item->value());
-            std::string upack = LuaEngine::instance().mpUnPack(common::HexDecode(sval));
-            return common::convertFromString<QString>(upack);
+            std::string upack;
+            common::ErrorValueSPtr er  = LuaEngine::instance().mpUnPack(common::HexDecode(sval), upack);
+            if(er){
+                return QString();
+            }
+            else{
+                return common::convertFromString<QString>(upack);
+            }
         }
 
         QString value;
@@ -141,8 +147,8 @@ namespace fastoredis
             QString val = item->value();
             std::string sval = common::convertToString(val);
             std::string out;
-            bool ok  = common::decodeZlib(sval, out);
-            if(!ok){
+            common::ErrorValueSPtr er  = common::decodeZlib(sval, out);
+            if(er){
                 return QString();
             }
             else{

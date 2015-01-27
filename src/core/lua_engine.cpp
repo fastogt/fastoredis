@@ -351,16 +351,18 @@ namespace fastoredis
         }
     }
 
-    std::string LuaEngine::mpPack(const std::string& input)
+    common::ErrorValueSPtr LuaEngine::mpPack(const std::string& input, std::string& out)
     {
         if(input.empty()){
-            return std::string();
+            return common::make_error_value("Invalid input", common::ErrorValue::E_ERROR);
         }
+
+        out.clear();
 
         lua_State* lua_ = luaL_newstate();
         DCHECK(lua_);
         if(!lua_){
-            return std::string();
+            return common::make_error_value("Invalid input", common::ErrorValue::E_ERROR);
         }
 
         luaopen_cmsgpack(lua_);
@@ -369,22 +371,24 @@ namespace fastoredis
         lua_pushlstring(lua_, sptr, input.size());
 
         lua_pcall(lua_, 1, 1, 0);
-        std::string ret = luaIndexToString(lua_, -1);
+        out = luaIndexToString(lua_, -1);
 
         lua_close(lua_);
-        return ret;
+        return common::ErrorValueSPtr();
     }
 
-    std::string LuaEngine::mpUnPack(const std::string& input)
+    common::ErrorValueSPtr LuaEngine::mpUnPack(const std::string& input, std::string& out)
     {
         if(input.empty()){
-            return std::string();
+            return common::make_error_value("Invalid input", common::ErrorValue::E_ERROR);
         }
+
+        out.clear();
 
         lua_State* lua_ = luaL_newstate();
         DCHECK(lua_);
         if(!lua_){
-            return std::string();
+            return common::make_error_value("Lua init error", common::ErrorValue::E_ERROR);
         }
 
         luaopen_cmsgpack(lua_);
@@ -393,10 +397,10 @@ namespace fastoredis
         lua_pushlstring(lua_, sptr, input.size());
 
         lua_pcall(lua_, 1, 1, 0);
-        std::string ret = luaIndexToString(lua_, -1);
+        out = luaIndexToString(lua_, -1);
 
         lua_close(lua_);
-        return ret;
+        return common::ErrorValueSPtr();
     }
 
     LuaWorker* LuaEngine::createWorker()

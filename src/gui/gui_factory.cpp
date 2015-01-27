@@ -283,6 +283,12 @@ namespace fastoredis
         return main;
     }
 
+    const QIcon& GuiFactory::encodeDecodeIcon() const
+    {
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/icons/encode_decode.png");
+        return main;
+    }
+
     const QIcon& GuiFactory::close16Icon() const
     {
         static QIcon close(":" PROJECT_NAME_LOWERCASE "/icons/close16.png");

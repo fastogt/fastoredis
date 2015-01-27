@@ -32,6 +32,7 @@ namespace fastoredis
         void enterLeaveFullScreen();
         void openPythonConsole();
         void openLuaConsole();
+        void openEncodeDecodeDialog();
 
         void versionAvailible(bool succesResult, const QString& version);
 
@@ -53,6 +54,7 @@ namespace fastoredis
         QAction* toolsAction_;
         QAction* pythonConsoleAction_;
         QAction* luaConsoleAction_;
+        QAction* encodeDecodeDialogAction_;
         QAction* helpAction_;
         QAction* explorerAction_;
         QAction* logsAction_;

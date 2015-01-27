@@ -20,6 +20,7 @@
 #include "gui/explorer/explorer_tree_view.h"
 #include "gui/dialogs/python_console_dialog.h"
 #include "gui/dialogs/lua_console_dialog.h"
+#include "gui/dialogs/encode_decode_dialog.h"
 
 #include "core/servers_manager.h"
 #include "core/settings_manager.h"
@@ -186,6 +187,11 @@ namespace fastoredis
         VERIFY(connect(luaConsoleAction_, SIGNAL(triggered()), this, SLOT(openLuaConsole())));
         tools->addAction(luaConsoleAction_);
 
+        encodeDecodeDialogAction_ = new QAction(this);
+        encodeDecodeDialogAction_->setIcon(GuiFactory::instance().encodeDecodeIcon());
+        VERIFY(connect(encodeDecodeDialogAction_, SIGNAL(triggered()), this, SLOT(openEncodeDecodeDialog())));
+        tools->addAction(encodeDecodeDialogAction_);
+
         //window menu
         QMenu *window = new QMenu(this);
         windowAction_ = menuBar()->addMenu(window);
@@ -288,6 +294,7 @@ namespace fastoredis
         toolsAction_->setText(trTools);
         pythonConsoleAction_->setText(trPythonConsole);
         luaConsoleAction_->setText(trLuaConsole);
+        encodeDecodeDialogAction_->setText(trEncodeDecodeDialog);
         preferencesAction_->setText(trPreferences);
         checkUpdateAction_->setText(trCheckUpdate);
         optionsAction_->setText(trOptions);
@@ -298,7 +305,7 @@ namespace fastoredis
         explorerAction_->setText(trExpTree);
         logsAction_->setText(trLogs);
         expDock_->setWindowTitle(trExpTree);
-        logDock_->setWindowTitle(trLogs);
+        logDock_->setWindowTitle(trLogs);        
     }
 
     void MainWindow::save()
@@ -343,6 +350,12 @@ namespace fastoredis
     void MainWindow::openLuaConsole()
     {
         LuaConsoleDialog dlg(QString(), this);
+        dlg.exec();
+    }
+
+    void MainWindow::openEncodeDecodeDialog()
+    {
+        EncodeDecodeDialog dlg(this);
         dlg.exec();
     }
 

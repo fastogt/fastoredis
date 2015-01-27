@@ -2,16 +2,18 @@
 
 #include <string.h>
 
+#include "common/sprintf.h"
+
 #ifdef HAVE_ZLIB
 
 #define BUFFER_SIZE 1024 * 32
 
 namespace common
 {
-    bool encodeZlib(const std::string& data, std::string& out, int compressionlevel)
+    ErrorValueSPtr encodeZlib(const std::string& data, std::string& out, int compressionlevel)
     {
         if(data.empty()){
-            return false;
+            return common::make_error_value("Invalid input", common::ErrorValue::E_ERROR);
         }
 
         out.clear();
@@ -20,7 +22,7 @@ namespace common
         memset(&zs, 0, sizeof(zs));
 
         if (deflateInit(&zs, compressionlevel) != Z_OK){
-            return false;
+            return common::make_error_value("Zlib init error", common::ErrorValue::E_ERROR);
         }
 
         zs.next_in = (Bytef*)data.c_str();
@@ -47,16 +49,18 @@ namespace common
         delete [] outbuffer;
 
         if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
-            return false;
+            char buffer[256];
+            SNPrintf(buffer, sizeof(buffer), "Zlib encode error returned code: %d", ret);
+            return common::make_error_value(buffer, common::ErrorValue::E_ERROR);
         }
 
-        return true;
+        return ErrorValueSPtr();
     }
 
-    bool decodeZlib(const std::string& data, std::string& out)
+    ErrorValueSPtr decodeZlib(const std::string& data, std::string& out)
     {
         if(data.empty()){
-            return false;
+            return common::make_error_value("Invalid input", common::ErrorValue::E_ERROR);
         }
 
         out.clear();
@@ -65,7 +69,7 @@ namespace common
         memset(&zs, 0, sizeof(zs));
 
         if (inflateInit(&zs) != Z_OK){
-            return false;
+            return common::make_error_value("Zlib init error", common::ErrorValue::E_ERROR);
         }
 
         zs.next_in = (Bytef*)data.data();
@@ -91,10 +95,12 @@ namespace common
         delete [] outbuffer;
 
         if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
-            return false;
+            char buffer[256];
+            SNPrintf(buffer, sizeof(buffer), "Zlib decode error returned code: %d", ret);
+            return common::make_error_value(buffer, common::ErrorValue::E_ERROR);
         }
 
-        return true;
+        return ErrorValueSPtr();
     }
 }  // namespace common
 
