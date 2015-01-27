@@ -9,6 +9,7 @@
 #define RAW 2
 #define HEX 3
 #define MSGPACK 4
+#define GZIP 5
 
 namespace fastoredis
 {

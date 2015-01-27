@@ -1,6 +1,7 @@
 #include "gui/fasto_common_item.h"
 
 #include "common/qt/convert_string.h"
+#include "common/string_compress.h"
 
 #include "core/lua_engine.h"
 
@@ -125,6 +126,33 @@ namespace fastoredis
             if(i != item->childrenCount() - 1){
                 value += ",";
             }
+        }
+
+        return value;
+    }
+
+    QString fromGzip(FastoCommonItem* item)
+    {
+        if(!item){
+            return QString();
+        }
+
+        if(!item->childrenCount()){
+            QString val = item->value();
+            std::string sval = common::convertToString(val);
+            std::string out;
+            bool ok = common::decodeZlib(sval, out);
+            if(!ok){
+                return QString();
+            }
+            else{
+                return common::convertFromString<QString>(out);
+            }
+        }
+
+        QString value;
+        for(int i = 0; i < item->childrenCount(); ++i){
+            value += fromGzip(dynamic_cast<FastoCommonItem*>(item->child(i)));
         }
 
         return value;

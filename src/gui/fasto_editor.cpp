@@ -273,6 +273,10 @@ namespace fastoredis
                 QString hex = fromHexMsgPack(child);
                 result += common::escapedText(hex);
             }
+            else if(viewMethod_ == GZIP){
+                QString gzip = fromGzip(child);
+                result += common::escapedText(gzip);
+            }
         }
 
         setText(result);

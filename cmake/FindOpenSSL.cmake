@@ -131,31 +131,10 @@ set(STATIC_ZLIB_SEARCH_NORMAL
   )
 list(APPEND STATIC_ZLIB_SEARCHES STATIC_ZLIB_SEARCH_NORMAL)
 
-if(ZLIB_USE_STATIC)
-    set(STATIC_ZLIB_NAMES libz.a libzlib.a libzdll.a libzlib1.a libzlibd.a libzlibd1.a)
-
-    # Try each search configuration.
-    foreach(search ${STATIC_ZLIB_SEARCHES})
-      find_library(STATIC_ZLIB_LIBRARY  NAMES ${STATIC_ZLIB_NAMES} ${${search}} PATH_SUFFIXES lib)
-    endforeach()
-    IF(STATIC_ZLIB_LIBRARY)
-        SET(OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES} ${STATIC_ZLIB_LIBRARY})
-    ELSE()
-        MESSAGE(WARNING "Not found static zlib")
-    ENDIF(STATIC_ZLIB_LIBRARY)
-else()
-    set(DYNAMIC_ZLIB_NAMES z)
-
-    # Try each search configuration.
-    foreach(search ${DYNAMIC_ZLIB_NAMES})
-      find_library(DYNAMIC_ZLIB_LIBRARY  NAMES ${DYNAMIC_ZLIB_NAMES} ${${search}} PATH_SUFFIXES lib)
-    endforeach()
-    IF(DYNAMIC_ZLIB_LIBRARY)
-        SET(OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES} ${DYNAMIC_ZLIB_LIBRARY})
-    ELSE()
-        MESSAGE(WARNING "Not found dynamic zlib")
-    ENDIF(DYNAMIC_ZLIB_LIBRARY)
-endif(ZLIB_USE_STATIC)
+FIND_PACKAGE(ZLIB)
+IF(ZLIB_FOUND)
+    SET(OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARY})
+ENDIF(ZLIB_FOUND)
 
 else()
 if(WIN32 AND NOT CYGWIN)

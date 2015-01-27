@@ -4,8 +4,6 @@
 
 #ifdef HAVE_ZLIB
 
-#include "zlib.h"
-
 #define BUFFER_SIZE 1024 * 32
 
 namespace common

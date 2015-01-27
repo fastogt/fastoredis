@@ -21,10 +21,12 @@
 
 #ifdef HAVE_ZLIB
 
+#include "zlib.h"
+
 namespace common
 {
-    bool encodeZlib(const std::string& data, std::string& out, int compressionlevel);
-    bool decodeZlib(const std::string& data, std::string& out);
+    bool encodeZlib(const std::string& data, std::string& out, int compressionlevel = Z_BEST_COMPRESSION) WARN_UNUSED_RESULT;
+    bool decodeZlib(const std::string& data, std::string& out) WARN_UNUSED_RESULT;
 }  // namesapce base_icu
 
 #endif
