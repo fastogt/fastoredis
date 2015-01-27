@@ -69,6 +69,7 @@ namespace fastoredis
         radLaout->addWidget(rawRadioButton_);
         radLaout->addWidget(hexRadioButton_);
         radLaout->addWidget(msgPackRadioButton_);
+        radLaout->addWidget(gzipRadioButton_);
 
         mainL->addLayout(radLaout);
         mainL->addWidget(editor_);

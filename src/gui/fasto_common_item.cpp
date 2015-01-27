@@ -141,7 +141,7 @@ namespace fastoredis
             QString val = item->value();
             std::string sval = common::convertToString(val);
             std::string out;
-            bool ok = common::decodeZlib(sval, out);
+            bool ok  = common::decodeZlib(sval, out);
             if(!ok){
                 return QString();
             }
