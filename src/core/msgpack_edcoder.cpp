@@ -10,12 +10,12 @@ namespace fastoredis
 
     }
 
-    common::ErrorValueSPtr encodeImpl(const std::string& data, std::string& out)
+    common::ErrorValueSPtr MsgPackEDcoder::encodeImpl(const std::string& data, std::string& out)
     {        
         return LuaEngine::instance().mpPack(data, out);
     }
 
-    common::ErrorValueSPtr decodeImpl(const std::string& data, std::string& out)
+    common::ErrorValueSPtr MsgPackEDcoder::decodeImpl(const std::string& data, std::string& out)
     {
         return LuaEngine::instance().mpUnPack(data, out);
     }

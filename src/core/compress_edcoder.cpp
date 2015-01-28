@@ -10,7 +10,7 @@ namespace fastoredis
 
     }
 
-    common::ErrorValueSPtr encodeImpl(const std::string& data, std::string& out)
+    common::ErrorValueSPtr CompressEDcoder::encodeImpl(const std::string& data, std::string& out)
     {
 #ifdef HAVE_ZLIB
         return common::encodeZlib(data, out);
@@ -19,7 +19,7 @@ namespace fastoredis
 #endif
     }
 
-    common::ErrorValueSPtr decodeImpl(const std::string& data, std::string& out)
+    common::ErrorValueSPtr CompressEDcoder::decodeImpl(const std::string& data, std::string& out)
     {
 #ifdef HAVE_ZLIB
         return common::decodeZlib(data, out);

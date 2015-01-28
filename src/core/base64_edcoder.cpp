@@ -10,13 +10,13 @@ namespace fastoredis
 
     }
 
-    common::ErrorValueSPtr encodeImpl(const std::string& data, std::string& out)
+    common::ErrorValueSPtr Base64EDcoder::encodeImpl(const std::string& data, std::string& out)
     {
         out = common::utils::base64::encode64(data);
         return common::ErrorValueSPtr();
     }
 
-    common::ErrorValueSPtr decodeImpl(const std::string& data, std::string& out)
+    common::ErrorValueSPtr Base64EDcoder::decodeImpl(const std::string& data, std::string& out)
     {
         out = common::utils::base64::decode64(data);
         return common::ErrorValueSPtr();

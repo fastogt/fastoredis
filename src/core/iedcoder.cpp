@@ -5,9 +5,46 @@
 #include "core/hex_edcoder.h"
 #include "core/msgpack_edcoder.h"
 
+namespace
+{
+    std::vector<std::string> EDcoderTypes = { "Base64", "GZip", "Hex", "MsgPack" };
+}
+
+namespace common
+{
+    std::string convertToString(fastoredis::EDTypes t)
+    {
+        const uint32_t count = EDcoderTypes.size();
+        if(t < count){
+            return EDcoderTypes[t];
+        }
+
+        return std::string();
+    }
+
+    template<>
+    fastoredis::EDTypes convertFromString(const std::string& text)
+    {
+        for (uint32_t i = 0; i < EDcoderTypes.size(); ++i){
+            if (text == EDcoderTypes[i]){
+                return static_cast<fastoredis::EDTypes>(i);
+            }
+        }
+
+        NOTREACHED();
+        return fastoredis::Base64;
+    }
+
+}
+
 namespace fastoredis
 {
-    IEDcoder::EDTypes IEDcoder::type() const
+    std::vector<std::string> supportedEDcoderTypes()
+    {
+        return EDcoderTypes;
+    }
+
+    EDTypes IEDcoder::type() const
     {
         return type_;
     }
@@ -55,4 +92,12 @@ namespace fastoredis
             return NULL;
         }
     }
+
+    IEDcoder* IEDcoder::createEDCoder(const std::string& name)
+    {
+        fastoredis::EDTypes t = common::convertFromString<fastoredis::EDTypes>(name);
+        return createEDCoder(t);
+    }
 }
+
+

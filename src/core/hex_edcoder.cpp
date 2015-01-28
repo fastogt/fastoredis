@@ -10,13 +10,13 @@ namespace fastoredis
 
     }
 
-    common::ErrorValueSPtr encodeImpl(const std::string& data, std::string& out)
+    common::ErrorValueSPtr HexEDcoder::encodeImpl(const std::string& data, std::string& out)
     {
         out = common::HexEncode(data);
         return common::ErrorValueSPtr();
     }
 
-    common::ErrorValueSPtr decodeImpl(const std::string& data, std::string& out)
+    common::ErrorValueSPtr HexEDcoder::decodeImpl(const std::string& data, std::string& out)
     {
         out = common::HexDecode(data);
         return common::ErrorValueSPtr();
