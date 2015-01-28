@@ -21,8 +21,6 @@ ENDIF()
 SET(HEADERS_LUA
     ${LUA_ROOT_SRC}/lua.h
     ${LUA_ROOT_SRC}/luaredir.h
-
-    lua_cmsgpack.h
 )
 
 SET(SOURCES_LUA
@@ -59,8 +57,6 @@ SET(SOURCES_LUA
     ${LUA_ROOT_SRC}/ltable.c
     ${LUA_ROOT_SRC}/lfunc.c
     ${LUA_ROOT_SRC}/lgc.c
-
-    lua_cmsgpack.c
 )
 
 ADD_LIBRARY(liblua OBJECT ${HEADERS_LUA} ${SOURCES_LUA})

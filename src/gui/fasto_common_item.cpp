@@ -3,7 +3,7 @@
 #include "common/qt/convert_string.h"
 #include "common/string_compress.h"
 
-#include "core/lua_engine.h"
+#include "core/msgpack_edcoder.h"
 
 namespace fastoredis
 {
@@ -78,7 +78,8 @@ namespace fastoredis
         if(!item->childrenCount()){
             std::string sval = common::convertToString(item->value());
             std::string upack;
-            common::ErrorValueSPtr er  = LuaEngine::instance().mpUnPack(common::HexDecode(sval), upack);
+            MsgPackEDcoder msg;
+            common::ErrorValueSPtr er  = msg.decode(common::HexDecode(sval), upack);
             if(er){
                 return QString();
             }

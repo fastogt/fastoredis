@@ -8,7 +8,6 @@ extern "C" {
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
-#include "third-party/lua/lua_cmsgpack.h"
 }
 
 #include "common/qt/convert_string.h"
@@ -76,7 +75,6 @@ namespace fastoredis
         emit executeProgress(0);
         if(lua_){
             emit executeProgress(50);
-            luaopen_cmsgpack(lua_);
             int res = luaL_dostring(lua_, script.c_str());
             if(res != LUA_OK){
                 const char * s = lua_tostring(lua_, -1);
@@ -349,58 +347,6 @@ namespace fastoredis
 
             return std::string();
         }
-    }
-
-    common::ErrorValueSPtr LuaEngine::mpPack(const std::string& input, std::string& out)
-    {
-        if(input.empty()){
-            return common::make_error_value("Invalid input", common::ErrorValue::E_ERROR);
-        }
-
-        out.clear();
-
-        lua_State* lua_ = luaL_newstate();
-        DCHECK(lua_);
-        if(!lua_){
-            return common::make_error_value("Invalid input", common::ErrorValue::E_ERROR);
-        }
-
-        luaopen_cmsgpack(lua_);
-        lua_getfield(lua_, -1, "pack");  /* function to be called */
-        const char* sptr = input.c_str();
-        lua_pushlstring(lua_, sptr, input.size());
-
-        lua_pcall(lua_, 1, 1, 0);
-        out = luaIndexToString(lua_, -1);
-
-        lua_close(lua_);
-        return common::ErrorValueSPtr();
-    }
-
-    common::ErrorValueSPtr LuaEngine::mpUnPack(const std::string& input, std::string& out)
-    {
-        if(input.empty()){
-            return common::make_error_value("Invalid input", common::ErrorValue::E_ERROR);
-        }
-
-        out.clear();
-
-        lua_State* lua_ = luaL_newstate();
-        DCHECK(lua_);
-        if(!lua_){
-            return common::make_error_value("Lua init error", common::ErrorValue::E_ERROR);
-        }
-
-        luaopen_cmsgpack(lua_);
-        lua_getfield(lua_, -1, "unpack");  /* function to be called */
-        const char* sptr = input.c_str();
-        lua_pushlstring(lua_, sptr, input.size());
-
-        lua_pcall(lua_, 1, 1, 0);
-        out = luaIndexToString(lua_, -1);
-
-        lua_close(lua_);
-        return common::ErrorValueSPtr();
     }
 
     LuaWorker* LuaEngine::createWorker()

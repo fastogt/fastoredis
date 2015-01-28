@@ -143,6 +143,7 @@ SET(SOURCES_CORE
     core/hex_edcoder.cpp
     core/compress_edcoder.cpp
     core/msgpack_edcoder.cpp
+    third-party/cmp/cmp.c
 )
 SET(HEADERS_SHELL_TO_MOC
     shell/shell_widget.h
