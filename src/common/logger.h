@@ -9,9 +9,9 @@ namespace common
     namespace logging
     {
         class Logger
-                : public patterns::lazy_singleton<Logger>
+                : public patterns::LazySingleton<Logger>
         {
-            friend class patterns::lazy_singleton<Logger>;
+            friend class patterns::LazySingleton<Logger>;
         public:
             void printTradeSafe(LEVEL_LOG level, const std::string& data);
 

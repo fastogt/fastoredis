@@ -11,11 +11,10 @@
 namespace fastoredis
 {
     class GuiFactory
-            : public common::patterns::lazy_singleton<GuiFactory>
+            : public common::patterns::LazySingleton<GuiFactory>
     {
     public:
-        typedef common::patterns::lazy_singleton<GuiFactory> base_class;
-        friend class common::patterns::lazy_singleton<GuiFactory>;
+        friend class common::patterns::LazySingleton<GuiFactory>;
 
         const QIcon& openIcon() const;
         const QIcon& mainWindowIcon() const;
@@ -41,7 +40,7 @@ namespace fastoredis
         const QIcon& textIcon() const;
         const QIcon& tableIcon() const;
         const QIcon& treeIcon() const;
-        const QString& loadingPathFilePath() const;
+        const QString& pathToLoadingGif() const;
         const QIcon& loggingIcon() const;
         const QIcon& commandIcon() const;
         const QIcon& close16Icon() const;

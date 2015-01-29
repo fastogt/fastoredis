@@ -52,7 +52,7 @@ namespace fastoredis
         splitter->addWidget(graphWidget_);
         setLayout(mainL);
 
-        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoading, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
     }
 
     void ServerHistoryDialog::startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest& req)

@@ -44,9 +44,9 @@ namespace fastoredis
     };
 
     class LuaEngine
-            : public common::patterns::lazy_singleton<LuaEngine>
+            : public common::patterns::LazySingleton<LuaEngine>
     {
-        friend class common::patterns::lazy_singleton<LuaEngine>;
+        friend class common::patterns::LazySingleton<LuaEngine>;
 
     public:
         static const char* version();

@@ -11,12 +11,11 @@
 namespace fastoredis
 {
     class SettingsManager
-            : public common::patterns::lazy_singleton<SettingsManager>
+            : public common::patterns::LazySingleton<SettingsManager>
     {
     public:
         typedef std::vector<IConnectionSettingsBaseSPtr> ConnectionSettingsContainerType;
-        typedef common::patterns::lazy_singleton<SettingsManager> base_class;
-        friend class common::patterns::lazy_singleton<SettingsManager>;
+        friend class common::patterns::LazySingleton<SettingsManager>;
 
         void setDefaultView(supportedViews view);
         supportedViews defaultView() const;

@@ -108,7 +108,7 @@ namespace fastoredis
 
         setMinimumSize(QSize(min_height, min_width));
 
-        glassWidget_ = new GlassWidget(GuiFactory::instance().loadingPathFilePath(), trLoading, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
         if(type_ == REDIS){
             updateText(RedisServerInfo());
         }

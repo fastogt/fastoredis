@@ -111,7 +111,7 @@ namespace fastoredis
 #elif defined(OS_WIN)
         static const QFont textFont = QFont("Courier",10);
 #elif defined(OS_ANDROID)
-	static const QFont textFont = QFont("Monospace");
+        static const QFont textFont = QFont("Monospace");
 #endif
         return textFont;
     }
@@ -240,7 +240,7 @@ namespace fastoredis
         return start;
     }
 
-    const QString &GuiFactory::loadingPathFilePath() const
+    const QString &GuiFactory::pathToLoadingGif() const
     {
         static QString path(":" PROJECT_NAME_LOWERCASE "/icons/loading.gif");
         return path;

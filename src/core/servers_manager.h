@@ -7,9 +7,9 @@
 namespace fastoredis
 {
     class ServersManager
-            : public common::patterns::lazy_singleton<ServersManager>
+            : public common::patterns::LazySingleton<ServersManager>
     {
-        friend class common::patterns::lazy_singleton<ServersManager>;
+        friend class common::patterns::LazySingleton<ServersManager>;
     public:
         typedef std::vector<IServerSPtr> ServersContainer;
 

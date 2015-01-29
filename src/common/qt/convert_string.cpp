@@ -37,18 +37,4 @@ namespace common
         }
         return str;
     }
-
-    QString doubleEscapedText(QString str)
-    {
-        if(!str.isEmpty()){
-            if(str[str.length()-1] != '\n'){
-                str += "\n";
-            }
-
-            if(str[0] != '\n'){
-                str = "\n" + str;
-            }
-        }
-        return str;
-    }
 }

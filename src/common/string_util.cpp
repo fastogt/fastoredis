@@ -37,7 +37,7 @@ struct EmptyStrings {
   const string16 s16;
 
   static EmptyStrings* GetInstance() {
-    return &patterns::lazy_singleton<EmptyStrings>::instance();
+    return &patterns::LazySingleton<EmptyStrings>::instance();
   }
 };
 

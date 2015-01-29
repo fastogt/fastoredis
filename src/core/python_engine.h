@@ -50,9 +50,9 @@ namespace fastoredis
     };
 
     class PythonEngine
-            : public common::patterns::lazy_singleton<PythonEngine>
+            : public common::patterns::LazySingleton<PythonEngine>
     {
-        friend class common::patterns::lazy_singleton<PythonEngine>;
+        friend class common::patterns::LazySingleton<PythonEngine>;
 
     public:
         static const char* version();

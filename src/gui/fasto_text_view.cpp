@@ -213,7 +213,7 @@ namespace fastoredis
                 editor_->ensureCursorVisible();
             }
             else {
-                QMessageBox::warning(this, tr("Search"), tr("The specified text was not found."));
+                QMessageBox::warning(this, translations::trSearch, tr("The specified text was not found."));
             }
         }
     }

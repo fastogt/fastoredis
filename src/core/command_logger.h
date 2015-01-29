@@ -9,9 +9,9 @@
 namespace fastoredis
 {
     class CommandLogger
-        : public QObject, public common::patterns::lazy_singleton<CommandLogger>
+        : public QObject, public common::patterns::LazySingleton<CommandLogger>
     {
-        friend class common::patterns::lazy_singleton<CommandLogger>;
+        friend class common::patterns::LazySingleton<CommandLogger>;
         Q_OBJECT
 
     public:

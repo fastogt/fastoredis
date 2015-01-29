@@ -1,32 +1,35 @@
 #pragma once
 
+#include "common/multi_threading/types.h"
+
 namespace common
 {
     namespace patterns
     {
         template <class T>
-        class singleton
+        class Singleton
         {
             static T* _self;
         public:
-            void free_instance();
+            void freeInstance();
             static T* instance();
 
         protected:
-            virtual ~singleton()
+            virtual ~Singleton()
             {
-                _self = 0;
+                _self = NULL;
             }
-            singleton()
+
+            Singleton()
             {
             }
         };
 
         template <class T>
-        T*  singleton<T>::_self = 0;
+        T*  Singleton<T>::_self = 0;
 
         template <class T>
-        T*  singleton<T>::instance()
+        T*  Singleton<T>::instance()
         {
             if(!_self){
                 _self=new T;
@@ -35,32 +38,77 @@ namespace common
         }
 
         template <class T>
-        void  singleton<T>::free_instance()
+        void  Singleton<T>::freeInstance()
         {
             delete this;
         }
 
         template <class T>
-        class lazy_singleton
+        class LazySingleton
         {
         public:
-            typedef lazy_singleton<T> class_type;
+            typedef LazySingleton<T> class_type;
             static T &instance();
         protected:
-            lazy_singleton()
+            LazySingleton()
             {
             }
-            ~lazy_singleton(){}
+
+            ~LazySingleton()
+            {
+            }
+
         private:
-            lazy_singleton(class_type const&);
-            lazy_singleton& operator=(class_type const& rhs);
+            LazySingleton(class_type const&);
+            LazySingleton& operator=(class_type const& rhs);
         };
 
         template <class T>
-        T &lazy_singleton<T>::instance()
+        T &LazySingleton<T>::instance()
         {
             static T _self;
             return _self;
         }
+
+        template <class T>
+        class TSSingleton
+        {
+        public:
+            static T* instance()
+            {
+                if(!self_){
+                    multi_threading::unique_lock<multi_threading::mutex_t> lock(mutex_);
+                    if(!self_){
+                        self_ = new T;
+                    }
+                }
+                return self_;
+            }
+
+        protected:
+            void freeInstance()
+            {
+                delete this;
+            }
+
+            virtual ~TSSingleton()
+            {
+                self_ = NULL;
+            }
+
+            TSSingleton()
+            {
+            }
+
+        private:
+            static T* self_;
+            static multi_threading::mutex_t mutex_;
+        };
+
+        template <class T>
+        T*  TSSingleton<T>::self_ = NULL;
+
+        template <class T>
+        multi_threading::mutex_t TSSingleton<T>::mutex_;
     }
 }
