@@ -10,6 +10,8 @@ namespace fastoredis
     MainWidget::MainWidget(QWidget *parent)
         : QTabWidget(parent)
     {
+        setAttribute(Qt::WA_AcceptTouchEvents);
+
         MainTabBar *tab = new MainTabBar(this);
 
         VERIFY(connect(tab, SIGNAL(createdNewTab()), this, SLOT(createNewTab())));

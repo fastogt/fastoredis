@@ -124,6 +124,8 @@ namespace fastoredis
     MainWindow::MainWindow()
         : QMainWindow(), isCheckedInSession_(false)
     {
+        setAttribute(Qt::WA_AcceptTouchEvents);
+
         using namespace common;
         QString lang = SettingsManager::instance().currentLanguage();
         QString newLang = fastoredis::translations::applyLanguage(lang);
