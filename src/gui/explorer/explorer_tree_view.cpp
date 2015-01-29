@@ -34,9 +34,6 @@ namespace fastoredis
         loadDatabaseAction_ = new QAction(this);
         VERIFY(connect(loadDatabaseAction_, SIGNAL(triggered()), SLOT(loadDatabases())));
 
-        loadContentAction_ = new QAction(this);
-        VERIFY(connect(loadContentAction_, SIGNAL(triggered()), SLOT(loadContentDb())));
-
         infoServerAction_ = new QAction(this);
         VERIFY(connect(infoServerAction_, SIGNAL(triggered()), SLOT(openInfoServerDialog())));
 
@@ -57,6 +54,12 @@ namespace fastoredis
 
         shutdownAction_ = new QAction(this);
         VERIFY(connect(shutdownAction_, SIGNAL(triggered()), SLOT(shutdownServer())));
+
+        loadContentAction_ = new QAction(this);
+        VERIFY(connect(loadContentAction_, SIGNAL(triggered()), SLOT(loadContentDb())));
+
+        setDefaultDbAction_ = new QAction(this);
+        VERIFY(connect(setDefaultDbAction_, SIGNAL(triggered()), SLOT(setDefaultDb())));
 
         retranslateUi();
     }
@@ -101,6 +104,7 @@ namespace fastoredis
             else if(node->type() == IExplorerTreeItem::Database){
                 QMenu menu(this);
                 menu.addAction(loadContentAction_);
+                menu.addAction(setDefaultDbAction_);
                 menu.exec(menuPoint);
             }
         }
@@ -156,6 +160,17 @@ namespace fastoredis
         }
     }
 
+    void ExplorerTreeView::setDefaultDb()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+            if(node){
+                node->setDefault();
+            }
+        }
+    }
+
     void ExplorerTreeView::addServer(IServerSPtr server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
@@ -163,6 +178,8 @@ namespace fastoredis
         VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
 //      VERIFY(connect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
 //      VERIFY(connect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
+        VERIFY(connect(server.get(), SIGNAL(startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &)), this, SLOT(startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &))));
+        VERIFY(connect(server.get(), SIGNAL(finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &)), this, SLOT(finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &))));
 
         mod->addServer(server);
     }
@@ -174,6 +191,8 @@ namespace fastoredis
         VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
 //      VERIFY(disconnect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
 //      VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
+        VERIFY(disconnect(server.get(), SIGNAL(startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::SetDefaultDatabaseRequest &))));
+        VERIFY(disconnect(server.get(), SIGNAL(finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::SetDefaultDatabaseResponce &))));
 
         mod->removeServer(server);
     }
@@ -202,8 +221,7 @@ namespace fastoredis
 
         connectAction_->setText(tr("Connect/Disconnect"));
         openConsoleAction_->setText(trOpenConsole);
-        loadDatabaseAction_->setText(trLoadDataBases);
-        loadContentAction_->setText(trLoadContOfDataBases);
+        loadDatabaseAction_->setText(trLoadDataBases);        
         infoServerAction_->setText(trInfo);
         propertyServerAction_->setText(trProperty);
         historyServerAction_->setText(trHistory);
@@ -211,6 +229,9 @@ namespace fastoredis
         backupAction_->setText(trBackup);
         importAction_->setText(trImport);
         shutdownAction_->setText(trShutdown);
+
+        loadContentAction_->setText(trLoadContOfDataBases);
+        setDefaultDbAction_->setText(trSetDefault);
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req)
@@ -234,6 +255,27 @@ namespace fastoredis
             DataBaseInfo db = dbs[i];
             mod->addDatabase(serv, db);
         }
+    }
+
+    void ExplorerTreeView::startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req)
+    {
+
+    }
+
+    void ExplorerTreeView::finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res)
+    {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        IServer *serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+
+        DataBaseInfo db = res.inf_;
+        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel *>(model());
+        DCHECK(mod);
+        mod->setDefaultDatabase(serv, db);
     }
 
     QModelIndexList ExplorerTreeView::selectedIndexes() const

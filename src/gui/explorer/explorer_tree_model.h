@@ -54,7 +54,12 @@ namespace fastoredis
         virtual IServerSPtr server() const;
         virtual eType type() const;
         void loadContent();
+        void setDefault();
+
+        bool isDefault() const;
+
         DataBaseInfo db() const;
+        void setDb(const DataBaseInfo& db);
 
     private:
         DataBaseInfo db_;
@@ -77,6 +82,7 @@ namespace fastoredis
         void removeServer(IServerSPtr server);
 
         void addDatabase(IServer *server, const DataBaseInfo& db);
+        void setDefaultDatabase(IServer* server, const DataBaseInfo& db);
 
     private:
         ExplorerServerItem *findServerItem(IServer* server) const;

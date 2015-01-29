@@ -66,6 +66,7 @@ namespace fastoredis
         const QString trClearAll = QObject::tr("Clear All");
         const QString trPrivateKey = QObject::tr("Private Key");
         const QString trOpenConsole = QObject::tr("Open console");
+        const QString trSetDefault = QObject::tr("Set default");
         const QString trLoadDataBases = QObject::tr("Load databases");
         const QString trExpTree = QObject::tr("Explorer tree");
         const QString trCheckVersion = QObject::tr("Check version");

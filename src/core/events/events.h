@@ -30,26 +30,31 @@ namespace fastoredis
         typedef common::utils_qt::Event<EventsInfo::LoadDatabasesInfoRequest, QEvent::User + 15> LoadDatabasesInfoRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::LoadDatabasesInfoResponce, QEvent::User + 16> LoadDatabasesInfoResponceEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::LoadDatabasesContentRequest, QEvent::User + 17> LoadDatabaseContentRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::LoadDatabasesContentResponce, QEvent::User + 18> LoadDatabaseContentResponceEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerInfoRequest, QEvent::User + 17> ServerInfoRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerInfoResponce, QEvent::User + 28> ServerInfoResponceEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::ServerInfoRequest, QEvent::User + 19> ServerInfoRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::ServerInfoResponce, QEvent::User + 20> ServerInfoResponceEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerInfoHistoryRequest, QEvent::User + 19> ServerInfoHistoryRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerInfoHistoryResponce, QEvent::User + 20> ServerInfoHistoryResponceEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::ServerInfoHistoryRequest, QEvent::User + 21> ServerInfoHistoryRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::ServerInfoHistoryResponce, QEvent::User + 22> ServerInfoHistoryResponceEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerPropertyInfoRequest, QEvent::User + 21> ServerPropertyInfoRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ServerPropertyInfoResponce, QEvent::User + 22> ServerPropertyInfoResponceEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::ServerPropertyInfoRequest, QEvent::User + 23> ServerPropertyInfoRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::ServerPropertyInfoResponce, QEvent::User + 24> ServerPropertyInfoResponceEvent;
+        typedef common::utils_qt::Event<EventsInfo::ChangeServerPropertyInfoRequest, QEvent::User + 23> ChangeServerPropertyInfoRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ChangeServerPropertyInfoResponce, QEvent::User + 24> ChangeServerPropertyInfoResponceEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::ChangeServerPropertyInfoRequest, QEvent::User + 25> ChangeServerPropertyInfoRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::ChangeServerPropertyInfoResponce, QEvent::User + 26> ChangeServerPropertyInfoResponceEvent;
+        typedef common::utils_qt::Event<EventsInfo::BackupInfoRequest, QEvent::User + 25> BackupRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::BackupInfoResponce, QEvent::User + 26> BackupResponceEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::BackupInfoRequest, QEvent::User + 27> BackupRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::BackupInfoResponce, QEvent::User + 28> BackupResponceEvent;
+        typedef common::utils_qt::Event<EventsInfo::ExportInfoRequest, QEvent::User + 27> ExportRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ExportInfoResponce, QEvent::User + 28> ExportResponceEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::ExportInfoRequest, QEvent::User + 29> ExportRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::ExportInfoResponce, QEvent::User + 30> ExportResponceEvent;
+    // ============== database events =============//
+            typedef common::utils_qt::Event<EventsInfo::LoadDatabasesContentRequest, QEvent::User + 29> LoadDatabaseContentRequestEvent;
+            typedef common::utils_qt::Event<EventsInfo::LoadDatabasesContentResponce, QEvent::User + 30> LoadDatabaseContentResponceEvent;
+
+            typedef common::utils_qt::Event<EventsInfo::SetDefaultDatabaseRequest, QEvent::User + 31> SetDefaultDatabaseRequestEvent;
+            typedef common::utils_qt::Event<EventsInfo::SetDefaultDatabaseResponce, QEvent::User + 32> SetDefaultDatabaseResponceEvent;
+    // ============== database events =============//
 
         typedef common::utils_qt::Event<EventsInfo::ProgressInfoResponce, QEvent::User + 100> ProgressResponceEvent;
     }

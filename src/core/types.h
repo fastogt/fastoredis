@@ -58,9 +58,11 @@ namespace fastoredis
 
     struct DataBaseInfo
     {
-        DataBaseInfo(const std::string& name, size_t size);
+        DataBaseInfo(const std::string& name, size_t size, bool isDefault);
+
         std::string name_;
         size_t size_;
+        bool isDefault_;
     };
 
     inline bool operator == (const DataBaseInfo& lhs, const DataBaseInfo& rhs)

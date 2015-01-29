@@ -64,6 +64,17 @@ namespace fastoredis
         emit finishedLoadDataBaseContent(v);
     }
 
+    void RedisServer::handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev)
+    {
+        using namespace events;
+        SetDefaultDatabaseResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedSetDefaultDatabase(v);
+    }
+
     void RedisServer::handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev)
     {
         using namespace events;

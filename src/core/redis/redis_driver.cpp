@@ -31,6 +31,8 @@ extern "C" {
 #define FIND_BIG_KEYS_REQUEST "FIND_BIG_KEYS"
 #define LATENCY_REQUEST "LATENCY"
 #define GET_DATABASES "CONFIG GET databases"
+#define GET_DATABASES_KEYS_INFO "INFO keyspace"
+#define SET_DEFAULT_DATABASE "SELECT "
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 #define STAT_MODE_REQUEST "STAT"
@@ -1867,11 +1869,18 @@ namespace fastoredis
                     if(array){
                         common::ArrayValue* ar = array->array();
                         if(ar){
-                            for(common::ArrayValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
-                                common::Value* val = *it;
-
-                                DataBaseInfo dbInf(val->toString(), 0);
-                                res.databases_.push_back(dbInf);
+                            if(ar->getSize() == 2){
+                                std::string scountDb;
+                                bool isok = ar->getString(1, &scountDb);
+                                if(isok){
+                                    int countDb = common::convertFromString<int>(scountDb);
+                                    if(countDb > 0){
+                                        for(int i = 0; i < countDb; ++i){
+                                            DataBaseInfo dbInf(common::convertToString(i), 0, false);
+                                            res.databases_.push_back(dbInf);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -1889,6 +1898,26 @@ namespace fastoredis
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
         notifyProgress(sender, 50);
             reply(sender, new events::LoadDatabaseContentResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::SetDefaultDatabaseResponceEvent::value_type res(ev->value());
+            const std::string setDefCommand = SET_DEFAULT_DATABASE + res.inf_.name_;
+            FastoObjectIPtr root = FastoObject::createRoot(setDefCommand);
+        notifyProgress(sender, 50);
+            common::ErrorValueSPtr er = impl_->execute(setDefCommand.c_str(), Command::InnerCommand, root.get());
+            if(er){
+                res.setErrorInfo(er);
+            }
+            else{
+                res.inf_.isDefault_ = true;
+            }
+        notifyProgress(sender, 75);
+            reply(sender, new events::SetDefaultDatabaseResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 

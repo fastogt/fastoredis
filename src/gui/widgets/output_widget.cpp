@@ -137,7 +137,7 @@ namespace fastoredis
 
     void OutputWidget::rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res)
     {
-
+        timeLabel_->setText(QString("%1 msec").arg(res.elapsedTime()));
     }
 
     void OutputWidget::addChild(FastoObject *child)

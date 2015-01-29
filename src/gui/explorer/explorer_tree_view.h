@@ -28,7 +28,6 @@ namespace fastoredis
         void connectDisconnectToServer();
         void openConsole();
         void loadDatabases();
-        void loadContentDb();
         void openInfoServerDialog();
         void openPropertyServerDialog();
         void openHistoryServerDialog();
@@ -38,8 +37,14 @@ namespace fastoredis
         void importServer();
         void shutdownServer();
 
+        void loadContentDb();
+        void setDefaultDb();
+
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req);
         void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res);
+
+        void startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req);
+        void finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res);
 
     protected:
         virtual void changeEvent(QEvent* );
@@ -53,6 +58,7 @@ namespace fastoredis
         QAction* openConsoleAction_;
         QAction* loadDatabaseAction_;
         QAction* loadContentAction_;
+        QAction* setDefaultDbAction_;
         QAction* infoServerAction_;
         QAction* propertyServerAction_;
         QAction* historyServerAction_;

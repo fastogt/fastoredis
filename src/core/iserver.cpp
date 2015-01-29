@@ -150,6 +150,14 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::setDefaultDb(const DataBaseInfo& inf)
+    {
+        EventsInfo::SetDefaultDatabaseRequest req(inf);
+        emit startedSetDefaultDatabase(req);
+        QEvent *ev = new events::SetDefaultDatabaseRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::disconnect()
     {
         EventsInfo::DisonnectInfoRequest req;
@@ -298,10 +306,6 @@ namespace fastoredis
             LoadDatabasesInfoResponceEvent *ev = static_cast<LoadDatabasesInfoResponceEvent*>(event);
             handleLoadDatabaseInfosEvent(ev);
         }
-        else if (type == static_cast<QEvent::Type>(LoadDatabaseContentResponceEvent::EventType)){
-            LoadDatabaseContentResponceEvent *ev = static_cast<LoadDatabaseContentResponceEvent*>(event);
-            handleLoadDatabaseContentEvent(ev);
-        }
         else if (type == static_cast<QEvent::Type>(ServerInfoResponceEvent::EventType)){
             ServerInfoResponceEvent *ev = static_cast<ServerInfoResponceEvent*>(event);
             handleLoadServerInfoEvent(ev);
@@ -325,6 +329,14 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(ExportResponceEvent::EventType)){
             ExportResponceEvent *ev = static_cast<ExportResponceEvent*>(event);
             handleExportEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(LoadDatabaseContentResponceEvent::EventType)){
+            LoadDatabaseContentResponceEvent *ev = static_cast<LoadDatabaseContentResponceEvent*>(event);
+            handleLoadDatabaseContentEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(SetDefaultDatabaseResponceEvent::EventType)){
+            SetDefaultDatabaseResponceEvent *ev = static_cast<SetDefaultDatabaseResponceEvent*>(event);
+            handleSetDefaultDatabaseEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
         {

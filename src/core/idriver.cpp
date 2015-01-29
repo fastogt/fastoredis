@@ -130,11 +130,7 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(LoadDatabasesInfoRequestEvent::EventType)){
             LoadDatabasesInfoRequestEvent *ev = static_cast<LoadDatabasesInfoRequestEvent*>(event);
             handleLoadDatabaseInfosEvent(ev);
-        }
-        else if (type == static_cast<QEvent::Type>(LoadDatabaseContentRequestEvent::EventType)){
-            LoadDatabaseContentRequestEvent *ev = static_cast<LoadDatabaseContentRequestEvent*>(event);
-            handleLoadDatabaseContentEvent(ev);
-        }
+        }        
         else if (type == static_cast<QEvent::Type>(ServerInfoRequestEvent::EventType)){
             ServerInfoRequestEvent *ev = static_cast<ServerInfoRequestEvent*>(event);
             handleLoadServerInfoEvent(ev);
@@ -159,6 +155,16 @@ namespace fastoredis
             ExportRequestEvent *ev = static_cast<ExportRequestEvent*>(event);
             handleExportEvent(ev);
         }
+// ============== database =============//
+        else if (type == static_cast<QEvent::Type>(LoadDatabaseContentRequestEvent::EventType)){
+            LoadDatabaseContentRequestEvent *ev = static_cast<LoadDatabaseContentRequestEvent*>(event);
+            handleLoadDatabaseContentEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(SetDefaultDatabaseRequestEvent::EventType)){
+            SetDefaultDatabaseRequestEvent *ev = static_cast<SetDefaultDatabaseRequestEvent*>(event);
+            handleSetDefaultDatabaseEvent(ev);
+        }
+// ============== database =============//
         return QObject::customEvent(event);
     }
 

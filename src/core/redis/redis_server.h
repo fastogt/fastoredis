@@ -17,7 +17,6 @@ namespace fastoredis
         virtual void handleConnectEvent(events::ConnectResponceEvent* ev);
         virtual void handleDisconnectEvent(events::DisconnectResponceEvent* ev);
         virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev);
-        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev);
         virtual void handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev);
         virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev);
         virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev);
@@ -25,6 +24,10 @@ namespace fastoredis
         virtual void handleBackupEvent(events::BackupResponceEvent* ev);
         virtual void handleExportEvent(events::ExportResponceEvent* ev);
 
+// ============== database =============//
+        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev);
+        virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev);
+// ============== database =============//
     private:
         RedisServer(const IDriverSPtr& drv, bool isMaster);
     };

@@ -176,6 +176,7 @@ namespace fastoredis
             database_info_cont_type databases_;
         };
 
+// ============== database =============//
         struct LoadDatabasesContentRequest
                 : public EventInfoBase
         {
@@ -191,6 +192,23 @@ namespace fastoredis
             typedef LoadDatabasesContentRequest base_class;
             LoadDatabasesContentResponce(const base_class &request, const error_type &er = error_type());
         };
+
+        struct SetDefaultDatabaseRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            SetDefaultDatabaseRequest(const DataBaseInfo &inf, const error_type &er = error_type());
+
+            DataBaseInfo inf_;
+        };
+
+        struct SetDefaultDatabaseResponce
+                : SetDefaultDatabaseRequest
+        {
+            typedef SetDefaultDatabaseRequest base_class;
+            SetDefaultDatabaseResponce(const base_class &request, const error_type &er = error_type());
+        };
+// ============== database =============//
 
         struct ServerInfoRequest
                 : public EventInfoBase

@@ -60,9 +60,24 @@ namespace fastoredis
         server()->loadDatabaseContent(db_);
     }
 
+    void ExplorerDatabaseItem::setDefault()
+    {
+        server()->setDefaultDb(db_);
+    }
+
+    bool ExplorerDatabaseItem::isDefault() const
+    {
+        return db_.isDefault_;
+    }
+
     DataBaseInfo ExplorerDatabaseItem::db() const
     {
         return db_;
+    }
+
+    void ExplorerDatabaseItem::setDb(const DataBaseInfo& db)
+    {
+        db_ = db;
     }
 
     IServerSPtr ExplorerDatabaseItem::server() const
@@ -104,8 +119,9 @@ namespace fastoredis
 
         int col = index.column();
 
-        if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){
-            IExplorerTreeItem::eType t = node->type();
+        IExplorerTreeItem::eType t = node->type();
+
+        if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){            
             if(t == IExplorerTreeItem::Server){
                 return GuiFactory::instance().icon(node->server()->connectionType());
             }
@@ -115,8 +131,17 @@ namespace fastoredis
         }
 
         if (role == Qt::DisplayRole) {
-            if (col == IExplorerTreeItem::eName) {
+            if (col == IExplorerTreeItem::eName) {                
                 return node->name();
+            }
+        }
+
+        if(role == Qt::ForegroundRole){
+            if(t == IExplorerTreeItem::Database){
+                ExplorerDatabaseItem* db = dynamic_cast<ExplorerDatabaseItem*>(node);
+                if(db && db->isDefault()){
+                    return QVariant( QColor( Qt::red ) );
+                }
             }
         }
 
@@ -195,6 +220,17 @@ namespace fastoredis
                 ExplorerDatabaseItem *item = new ExplorerDatabaseItem(db, parent);
                 parent->addChildren(item);
             endInsertRows();
+        }
+    }
+
+    void ExplorerTreeModel::setDefaultDatabase(IServer* server, const DataBaseInfo& db)
+    {
+        ExplorerServerItem *parent = findServerItem(server);
+        DCHECK(parent);
+        ExplorerDatabaseItem *dbs = findDatabaseItem(parent, db);
+        DCHECK(dbs);
+        if(dbs){
+            dbs->setDb(db);
         }
     }
 

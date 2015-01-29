@@ -676,9 +676,24 @@ namespace fastoredis
 
     }
 
-    void MemcachedDriver::handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev)
+    void MemcachedDriver::handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent *ev)
     {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
+        notifyProgress(sender, 50);
+            reply(sender, new events::LoadDatabaseContentResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
 
+    void MemcachedDriver::handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::SetDefaultDatabaseResponceEvent::value_type res(ev->value());
+        notifyProgress(sender, 50);
+            reply(sender, new events::SetDefaultDatabaseResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
     void MemcachedDriver::handleLoadServerInfoEvent(events::ServerInfoRequestEvent* ev)

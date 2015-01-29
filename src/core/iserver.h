@@ -23,6 +23,7 @@ namespace fastoredis
         void disconnect();
         void loadDatabases();
         void loadDatabaseContent(const DataBaseInfo& inf);
+        void setDefaultDb(const DataBaseInfo& inf);
         void execute(const QString& script);
         void shutDown();
         void backupToPath(const QString& path);
@@ -61,9 +62,6 @@ namespace fastoredis
         void startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req);
         void finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res);
 
-        void startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest& req);
-        void finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce& res);
-
         void startedLoadServerInfo(const EventsInfo::ServerInfoRequest& req);
         void finishedLoadServerInfo(const EventsInfo::ServerInfoResponce& res);
 
@@ -84,6 +82,13 @@ namespace fastoredis
         void rootCreated(const EventsInfo::CommandRootCreatedInfo& res);
         void rootCompleated(const EventsInfo::CommandRootCompleatedInfo& res);
 
+// ============== database =============//
+        void startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest& req);
+        void finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce& res);
+
+        void startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req);
+        void finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res);
+// ============== database =============//
    Q_SIGNALS:
         void addedChild(FastoObject *child);
         void itemUpdated(FastoObject* item, const QString& val);
@@ -105,13 +110,17 @@ namespace fastoredis
         virtual void handleConnectEvent(events::ConnectResponceEvent* ev) = 0;
         virtual void handleDisconnectEvent(events::DisconnectResponceEvent* ev) = 0;
         virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev) = 0;
-        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev) = 0;
         virtual void handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev) = 0;
         virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev) = 0;
         virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
         virtual void handleShutdownEvent(events::ShutDownResponceEvent* ev) = 0;
         virtual void handleBackupEvent(events::BackupResponceEvent* ev) = 0;
         virtual void handleExportEvent(events::ExportResponceEvent* ev) = 0;
+
+// ============== database =============//
+        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev) = 0;
+        virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev) = 0;
+// ============== database =============//
 
         IServer(const IDriverSPtr& drv, bool isMaster);
 

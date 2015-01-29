@@ -39,7 +39,6 @@ namespace fastoredis
         virtual void handleDisconnectEvent(events::DisconnectRequestEvent* ev);
         virtual void handleExecuteEvent(events::ExecuteRequestEvent* ev);
         virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoRequestEvent* ev);
-        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev);
         virtual void handleLoadServerInfoEvent(events::ServerInfoRequestEvent* ev);
         virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev);
         virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev);
@@ -47,6 +46,11 @@ namespace fastoredis
         virtual void handleShutdownEvent(events::ShutDownRequestEvent* ev);
         virtual void handleBackupEvent(events::BackupRequestEvent* ev);
         virtual void handleExportEvent(events::ExportRequestEvent* ev);
+
+// ============== database =============//
+        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev);
+        virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseRequestEvent* ev);
+// ============== database =============//
 
         ServerInfoSPtr makeServerInfoFromString(const std::string& val);
 
