@@ -126,14 +126,25 @@ namespace fastoredis
     MainWindow::MainWindow()
         : QMainWindow(), isCheckedInSession_(false)
     {
+#ifdef OS_ANDROID
+        //http://www.math.spbu.ru/user/gran/Atom21/AtomBook_21_lab6.pdf
+        //http://www.linux.org.ru/forum/development/11000751
+        //http://doc.qt.io/qt-5/qtouchevent.html
+        //http://www.math.spbu.ru/user/gran/AtomMG2/lec_04.pdf
+        //http://qt-project.org/forums/viewthread/7253
+        //http://blog.sbw.so/Article/index/title/QT%20for%20Android%20%E6%8D%95%E8%8E%B7%E5%A4%9A%E7%82%B9%E8%A7%A6%E6%8E%A7%E7%9A%84%E7%A4%BA%E4%BE%8B.html
+        //http://developer.nokia.com/community/wiki/Enabling_pinch_zooming_in_QGraphicsWebView_with_QPinchGesture
+        //http://habrahabr.ru/post/134289/
         setAttribute(Qt::WA_AcceptTouchEvents);
+        //setAttribute(Qt::WA_StaticContents);
 
-        grabGesture(Qt::TapGesture);
-        grabGesture(Qt::TapAndHoldGesture);
-        grabGesture(Qt::SwipeGesture);
-        grabGesture(Qt::PanGesture);
-        grabGesture(Qt::PinchGesture);
+        grabGesture(Qt::TapGesture); //click
+        grabGesture(Qt::TapAndHoldGesture); //long tap
 
+        grabGesture(Qt::SwipeGesture); //swipe
+        grabGesture(Qt::PanGesture); // drag and drop
+        grabGesture(Qt::PinchGesture); //zoom
+#endif
         using namespace common;
         QString lang = SettingsManager::instance().currentLanguage();
         QString newLang = fastoredis::translations::applyLanguage(lang);
@@ -286,21 +297,22 @@ namespace fastoredis
 
     bool MainWindow::event(QEvent *event)
     {
+#ifdef OS_ANDROID
         if (event->type() == QEvent::Gesture){
             QGestureEvent *gest = static_cast<QGestureEvent*>(event);
             if(gest){
                 return gestureEvent(gest);
             }
         }
+#endif
         return QMainWindow::event(event);
     }
 
+#ifdef OS_ANDROID
     bool MainWindow::gestureEvent(QGestureEvent *event)
     {
-        if (QGesture *qswipe = event->gesture(Qt::SwipeGesture)){
-            QSwipeGesture* swipe = static_cast<QSwipeGesture*>(qswipe);
-        }
-        if (QGesture *qpan = event->gesture(Qt::PanGesture)){
+
+        /*if (QGesture *qpan = event->gesture(Qt::PanGesture)){
             QPanGesture* pan = static_cast<QPanGesture*>(qpan);
         }
         if (QGesture *qpinch = event->gesture(Qt::PinchGesture)){
@@ -308,19 +320,33 @@ namespace fastoredis
         }
         if (QGesture *qtap = event->gesture(Qt::TapGesture)){
             QTapGesture* tap = static_cast<QTapGesture*>(qtap);
+        }*/
+
+        if (QGesture *qswipe = event->gesture(Qt::SwipeGesture)){
+            QSwipeGesture* swipe = static_cast<QSwipeGesture*>(qswipe);
+            swipeTriggered(swipe);
         }
-        if (QGesture *qtapandhold = event->gesture(Qt::TapAndHoldGesture)){
+        else if (QGesture *qtapandhold = event->gesture(Qt::TapAndHoldGesture)){
             QTapAndHoldGesture* tapandhold = static_cast<QTapAndHoldGesture*>(qtapandhold);
-
-            /*QPoint pos = tapandhold->position().toPoint();
-            QContextMenuEvent* cont = new QContextMenuEvent(QContextMenuEvent::Mouse, pos);
-            QWidget * receiver = QApplication::widgetAt( mapToGlobal(pos) );
-
-            QApplication::postEvent( receiver, cont );*/
+            tapAndHoldTriggered(tapandhold);
         }
-
         return true;
     }
+
+    void MainWindow::swipeTriggered(QSwipeGesture* swipeEvent)
+    {
+
+    }
+
+    void MainWindow::tapAndHoldTriggered(QTapAndHoldGesture* tapEvent)
+    {
+        /*QPoint pos = tapandhold->position().toPoint();
+        QContextMenuEvent* cont = new QContextMenuEvent(QContextMenuEvent::Mouse, pos);
+        QWidget * receiver = QApplication::widgetAt( mapToGlobal(pos) );
+
+        QApplication::postEvent( receiver, cont );*/
+    }
+#endif
 
     void MainWindow::changeEvent(QEvent *ev)
     {

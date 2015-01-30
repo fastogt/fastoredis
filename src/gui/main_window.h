@@ -39,7 +39,11 @@ namespace fastoredis
         void versionAvailible(bool succesResult, const QString& version);
 
     private:
+#ifdef OS_ANDROID
         bool gestureEvent(QGestureEvent *event);
+        void swipeTriggered(QSwipeGesture* swipeEvent);
+        void tapAndHoldTriggered(QTapAndHoldGesture* tapEvent);
+#endif
         void createStatusBar();
         void retranslateUi();
 
