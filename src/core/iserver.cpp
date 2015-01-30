@@ -142,7 +142,7 @@ namespace fastoredis
         notify(ev);
     }
 
-    void IServer::loadDatabaseContent(const DataBaseInfo &inf)
+    void IServer::loadDatabaseContent(DataBaseInfoSPtr inf)
     {
         EventsInfo::LoadDatabasesContentRequest req(inf);
         emit startedLoadDataBaseContent(req);
@@ -150,7 +150,7 @@ namespace fastoredis
         notify(ev);
     }
 
-    void IServer::setDefaultDb(const DataBaseInfo& inf)
+    void IServer::setDefaultDb(DataBaseInfoSPtr inf)
     {
         EventsInfo::SetDefaultDatabaseRequest req(inf);
         emit startedSetDefaultDatabase(req);

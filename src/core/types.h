@@ -56,17 +56,30 @@ namespace fastoredis
 
     ServerPropertyInfo makeServerProperty(FastoObjectArray* array);
 
-    struct DataBaseInfo
+    class DataBaseInfo
     {
-        DataBaseInfo(const std::string& name, size_t size, bool isDefault);
+    public:
+        connectionTypes type() const;
+        std::string name() const;
+        size_t size() const;
+        bool isDefault() const;
+        void setDefault(bool isDef);
 
+    protected:
+        DataBaseInfo(const std::string& name, size_t size, bool isDefault, connectionTypes type);
+
+    private:
         std::string name_;
         size_t size_;
         bool isDefault_;
+
+        const connectionTypes type_;
     };
+
+    typedef shared_ptr_t<DataBaseInfo> DataBaseInfoSPtr;
 
     inline bool operator == (const DataBaseInfo& lhs, const DataBaseInfo& rhs)
     {
-        return lhs.name_ == rhs.name_ && lhs.size_ == rhs.size_;
+        return lhs.name() == rhs.name() && lhs.size() == rhs.size() && lhs.isDefault() == rhs.isDefault() && lhs.type() == rhs.type();
     }
 }

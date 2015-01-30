@@ -44,7 +44,7 @@ namespace fastoredis
         return server_->name();
     }
 
-    ExplorerDatabaseItem::ExplorerDatabaseItem(const DataBaseInfo& db, ExplorerServerItem* parent)
+    ExplorerDatabaseItem::ExplorerDatabaseItem(DataBaseInfoSPtr db, ExplorerServerItem* parent)
         : IExplorerTreeItem(parent), db_(db)
     {
 
@@ -67,15 +67,15 @@ namespace fastoredis
 
     bool ExplorerDatabaseItem::isDefault() const
     {
-        return db_.isDefault_;
+        return db_->isDefault();
     }
 
-    DataBaseInfo ExplorerDatabaseItem::db() const
+    DataBaseInfoSPtr ExplorerDatabaseItem::db() const
     {
         return db_;
     }
 
-    void ExplorerDatabaseItem::setDb(const DataBaseInfo& db)
+    void ExplorerDatabaseItem::setDb(DataBaseInfoSPtr db)
     {
         db_ = db;
     }
@@ -92,7 +92,7 @@ namespace fastoredis
 
     QString ExplorerDatabaseItem::name() const
     {
-        return common::convertFromString<QString>(db_.name_);
+        return common::convertFromString<QString>(db_->name());
     }
 
     ExplorerServerItem *ExplorerDatabaseItem::parent() const
@@ -208,7 +208,7 @@ namespace fastoredis
         endRemoveRows();
     }
 
-    void ExplorerTreeModel::addDatabase(IServer* server, const DataBaseInfo& db)
+    void ExplorerTreeModel::addDatabase(IServer* server, DataBaseInfoSPtr db)
     {
         ExplorerServerItem *parent = findServerItem(server);
         DCHECK(parent);
@@ -223,7 +223,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeModel::setDefaultDatabase(IServer* server, const DataBaseInfo& db)
+    void ExplorerTreeModel::setDefaultDatabase(IServer* server, DataBaseInfoSPtr db)
     {
         ExplorerServerItem *parent = findServerItem(server);
         DCHECK(parent);
@@ -251,7 +251,7 @@ namespace fastoredis
         return NULL;
     }
 
-    ExplorerDatabaseItem *ExplorerTreeModel::findDatabaseItem(ExplorerServerItem* server, const DataBaseInfo& db) const
+    ExplorerDatabaseItem *ExplorerTreeModel::findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const
     {
         ExplorerDatabaseItem *result = NULL;
         if(server){

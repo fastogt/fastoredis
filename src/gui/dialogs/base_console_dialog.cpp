@@ -88,7 +88,7 @@ namespace
 namespace fastoredis
 {
     BaseConsoleDialog::BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon &icon, bool isExecuteEnabled, FastoEditorShell *shell, const QString &fileExtension)
-        : QDialog(parent), filePath_(filePath), shell_(NULL), fileExtension_(fileExtension)
+        : QDialog(parent), shell_(NULL), filePath_(filePath), fileExtension_(fileExtension)
     {
         using namespace translations;
         setWindowIcon(icon);

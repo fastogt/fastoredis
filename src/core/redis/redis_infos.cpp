@@ -802,4 +802,10 @@ namespace fastoredis
         const std::string content = common::convertToString(root);
         return makeRedisServerInfo(content);
     }
+
+    RedisDataBaseInfo::RedisDataBaseInfo(const std::string& name, size_t size, bool isDefault)
+        : DataBaseInfo(name, size, isDefault, REDIS)
+    {
+
+    }
 }

@@ -22,8 +22,8 @@ namespace fastoredis
         void connect();
         void disconnect();
         void loadDatabases();
-        void loadDatabaseContent(const DataBaseInfo& inf);
-        void setDefaultDb(const DataBaseInfo& inf);
+        void loadDatabaseContent(DataBaseInfoSPtr inf);
+        void setDefaultDb(DataBaseInfoSPtr inf);
         void execute(const QString& script);
         void shutDown();
         void backupToPath(const QString& path);

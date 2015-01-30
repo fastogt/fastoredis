@@ -170,7 +170,7 @@ namespace fastoredis
                 : LoadDatabasesInfoRequest
         {
             typedef LoadDatabasesInfoRequest base_class;
-            typedef std::vector<DataBaseInfo> database_info_cont_type;
+            typedef std::vector<DataBaseInfoSPtr> database_info_cont_type;
             LoadDatabasesInfoResponce(const base_class &request, const error_type &er = error_type());
 
             database_info_cont_type databases_;
@@ -181,9 +181,9 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            LoadDatabasesContentRequest(const DataBaseInfo &inf, const error_type &er = error_type());
+            LoadDatabasesContentRequest(DataBaseInfoSPtr inf, const error_type &er = error_type());
 
-            DataBaseInfo inf_;
+            DataBaseInfoSPtr inf_;
         };
 
         struct LoadDatabasesContentResponce
@@ -197,9 +197,9 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            SetDefaultDatabaseRequest(const DataBaseInfo &inf, const error_type &er = error_type());
+            SetDefaultDatabaseRequest(DataBaseInfoSPtr inf, const error_type &er = error_type());
 
-            DataBaseInfo inf_;
+            DataBaseInfoSPtr inf_;
         };
 
         struct SetDefaultDatabaseResponce

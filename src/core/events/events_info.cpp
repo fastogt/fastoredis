@@ -139,7 +139,7 @@ namespace fastoredis
 
 // ============== database =============//
 
-        LoadDatabasesContentRequest::LoadDatabasesContentRequest(const DataBaseInfo &inf, const error_type &er)
+        LoadDatabasesContentRequest::LoadDatabasesContentRequest(DataBaseInfoSPtr inf, const error_type &er)
             : base_class(er), inf_(inf)
         {
 
@@ -151,7 +151,7 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
-        SetDefaultDatabaseRequest::SetDefaultDatabaseRequest(const DataBaseInfo &inf, const error_type &er)
+        SetDefaultDatabaseRequest::SetDefaultDatabaseRequest(DataBaseInfoSPtr inf, const error_type &er)
             : base_class(er), inf_(inf)
         {
 

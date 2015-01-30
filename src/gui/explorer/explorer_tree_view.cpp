@@ -249,10 +249,10 @@ namespace fastoredis
         IServer *serv = qobject_cast<IServer *>(sender());
         DCHECK(serv);
         EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
-        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel *>(model());
+        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
         DCHECK(mod);
         for(int i = 0; i < dbs.size(); ++i){
-            DataBaseInfo db = dbs[i];
+            DataBaseInfoSPtr db = dbs[i];
             mod->addDatabase(serv, db);
         }
     }
@@ -272,8 +272,8 @@ namespace fastoredis
         IServer *serv = qobject_cast<IServer *>(sender());
         DCHECK(serv);
 
-        DataBaseInfo db = res.inf_;
-        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel *>(model());
+        DataBaseInfoSPtr db = res.inf_;
+        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
         DCHECK(mod);
         mod->setDefaultDatabase(serv, db);
     }

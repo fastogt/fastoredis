@@ -417,4 +417,11 @@ namespace fastoredis
 
     ServerInfoSPtr makeRedisServerInfo(const std::string &content);
     ServerInfoSPtr makeRedisServerInfo(FastoObject *root);
+
+    class RedisDataBaseInfo
+            : public DataBaseInfo
+    {
+    public:
+        RedisDataBaseInfo(const std::string& name, size_t size, bool isDefault);
+    };
 }

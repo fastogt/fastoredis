@@ -1866,26 +1866,30 @@ namespace fastoredis
                 if(rchildrens.size()){
                     DCHECK(rchildrens.size() == 1);
                     FastoObjectArray* array = dynamic_cast<FastoObjectArray*>(rchildrens[0]);
-                    if(array){
-                        common::ArrayValue* ar = array->array();
-                        if(ar){
-                            if(ar->getSize() == 2){
-                                std::string scountDb;
-                                bool isok = ar->getString(1, &scountDb);
-                                if(isok){
-                                    int countDb = common::convertFromString<int>(scountDb);
-                                    if(countDb > 0){
-                                        for(int i = 0; i < countDb; ++i){
-                                            DataBaseInfo dbInf(common::convertToString(i), 0, false);
-                                            res.databases_.push_back(dbInf);
-                                        }
-                                    }
+                    if(!array){
+                        goto done;
+                    }
+                    common::ArrayValue* ar = array->array();
+                    if(!ar){
+                        goto done;
+                    }
+
+                    if(ar->getSize() == 2){
+                        std::string scountDb;
+                        bool isok = ar->getString(1, &scountDb);
+                        if(isok){
+                            int countDb = common::convertFromString<int>(scountDb);
+                            if(countDb > 0){
+                                for(int i = 0; i < countDb; ++i){
+                                    DataBaseInfoSPtr dbInf(new RedisDataBaseInfo(common::convertToString(i), 0, false));
+                                    res.databases_.push_back(dbInf);
                                 }
                             }
                         }
                     }
                 }
             }
+    done:
         notifyProgress(sender, 75);
             reply(sender, new events::LoadDatabasesInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
@@ -1906,7 +1910,7 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::SetDefaultDatabaseResponceEvent::value_type res(ev->value());
-            const std::string setDefCommand = SET_DEFAULT_DATABASE + res.inf_.name_;
+            const std::string setDefCommand = SET_DEFAULT_DATABASE + res.inf_->name();
             FastoObjectIPtr root = FastoObject::createRoot(setDefCommand);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(setDefCommand.c_str(), Command::InnerCommand, root.get());
@@ -1914,7 +1918,7 @@ namespace fastoredis
                 res.setErrorInfo(er);
             }
             else{
-                res.inf_.isDefault_ = true;
+                res.inf_->setDefault(true);
             }
         notifyProgress(sender, 75);
             reply(sender, new events::SetDefaultDatabaseResponceEvent(this, res));

@@ -40,9 +40,34 @@ namespace fastoredis
         return inf;
     }
 
-    DataBaseInfo::DataBaseInfo(const std::string& name, size_t size, bool isDefault)
-        : name_(name), size_(size), isDefault_(isDefault)
+    DataBaseInfo::DataBaseInfo(const std::string& name, size_t size, bool isDefault, connectionTypes type)
+        : name_(name), size_(size), isDefault_(isDefault), type_(type)
     {
 
+    }
+
+    connectionTypes DataBaseInfo::type() const
+    {
+        return type_;
+    }
+
+    std::string DataBaseInfo::name() const
+    {
+        return name_;
+    }
+
+    size_t DataBaseInfo::size() const
+    {
+        return size_;
+    }
+
+    bool DataBaseInfo::isDefault() const
+    {
+        return isDefault_;
+    }
+
+    void DataBaseInfo::setDefault(bool isDef)
+    {
+        isDefault_ = isDef;
     }
 }

@@ -235,6 +235,7 @@ namespace fastoredis
 
             if(log_file_ && !log_file_->isOpened()){
                 bool opened = log_file_->open("ab+");
+                DCHECK(opened);
             }
 
             if(log_file_ && log_file_->isOpened()){

@@ -9,33 +9,6 @@ namespace common
 {
     namespace
     {
-        Value* copyWithoutEmptyChildren(const Value* node)
-        {
-            DCHECK(node);
-            switch (node->getType())
-            {
-                case Value::TYPE_ARRAY:
-                {
-                    const ArrayValue* list = static_cast<const ArrayValue*>(node);
-                    ArrayValue* copy = new ArrayValue;
-                    for (ArrayValue::const_iterator it = list->begin(); it != list->end(); ++it)
-                    {
-                        Value* child_copy = copyWithoutEmptyChildren(*it);
-                        if (child_copy)
-                            copy->append(child_copy);
-                    }
-                    if (!copy->empty())
-                        return copy;
-
-                    delete copy;
-                        return NULL;
-                }
-                default:
-                    // For everything else, just make a copy.
-                    return node->deepCopy();
-            }
-        }
-
         const char *stringTypes[] = { "TYPE_NULL",
                                       "TYPE_BOOLEAN",
                                       "TYPE_INTEGER",
