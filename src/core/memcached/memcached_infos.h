@@ -16,4 +16,11 @@ namespace fastoredis
 
     ServerInfoSPtr makeMemcachedServerInfo(const std::string &content);
     ServerInfoSPtr makeMemcachedServerInfo(FastoObject *root);
+
+    class MemcachedBaseInfo
+            : public DataBaseInfo
+    {
+    public:
+        MemcachedBaseInfo(const std::string& name, size_t size, bool isDefault);
+    };
 }

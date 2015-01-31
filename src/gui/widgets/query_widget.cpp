@@ -59,6 +59,6 @@ namespace fastoredis
             return badConnectionType();
         }
 
-        return ser->connectionType();
+        return ser->type();
     }
 }

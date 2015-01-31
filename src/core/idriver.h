@@ -114,6 +114,4 @@ namespace fastoredis
         int timer_info_id_;
         common::file_system::File* log_file_;
     };
-
-    typedef shared_ptr_t<IDriver> IDriverSPtr;
 }

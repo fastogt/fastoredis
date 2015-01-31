@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/types.h"
+#include "core/core_fwd.h"
 #include "common/qt/utils_qt.h"
 
 namespace fastoredis

@@ -3,6 +3,7 @@
 #include <QTabWidget>
 
 #include "core/iserver.h"
+#include "core/connection_settings.h"
 
 namespace fastoredis
 {

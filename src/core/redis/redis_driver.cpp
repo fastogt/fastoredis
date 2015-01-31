@@ -1917,9 +1917,6 @@ namespace fastoredis
             if(er){
                 res.setErrorInfo(er);
             }
-            else{
-                res.inf_->setDefault(true);
-            }
         notifyProgress(sender, 75);
             reply(sender, new events::SetDefaultDatabaseResponceEvent(this, res));
         notifyProgress(sender, 100);

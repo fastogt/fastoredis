@@ -44,10 +44,10 @@ namespace fastoredis
         return server_->name();
     }
 
-    ExplorerDatabaseItem::ExplorerDatabaseItem(DataBaseInfoSPtr db, ExplorerServerItem* parent)
+    ExplorerDatabaseItem::ExplorerDatabaseItem(IDatabaseSPtr db, ExplorerServerItem* parent)
         : IExplorerTreeItem(parent), db_(db)
     {
-
+        DCHECK(db_);
     }
 
     ExplorerDatabaseItem::~ExplorerDatabaseItem()
@@ -57,12 +57,12 @@ namespace fastoredis
 
     void ExplorerDatabaseItem::loadContent()
     {
-        server()->loadDatabaseContent(db_);
+        db_->loadContent();
     }
 
     void ExplorerDatabaseItem::setDefault()
     {
-        server()->setDefaultDb(db_);
+       db_->setDefault();
     }
 
     bool ExplorerDatabaseItem::isDefault() const
@@ -70,14 +70,9 @@ namespace fastoredis
         return db_->isDefault();
     }
 
-    DataBaseInfoSPtr ExplorerDatabaseItem::db() const
+    IDatabaseSPtr ExplorerDatabaseItem::db() const
     {
         return db_;
-    }
-
-    void ExplorerDatabaseItem::setDb(DataBaseInfoSPtr db)
-    {
-        db_ = db;
     }
 
     IServerSPtr ExplorerDatabaseItem::server() const
@@ -123,7 +118,7 @@ namespace fastoredis
 
         if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){            
             if(t == IExplorerTreeItem::Server){
-                return GuiFactory::instance().icon(node->server()->connectionType());
+                return GuiFactory::instance().icon(node->server()->type());
             }
             else{
                 return GuiFactory::instance().databaseIcon();
@@ -208,9 +203,9 @@ namespace fastoredis
         endRemoveRows();
     }
 
-    void ExplorerTreeModel::addDatabase(IServer* server, DataBaseInfoSPtr db)
+    void ExplorerTreeModel::addDatabase(IDatabaseSPtr db)
     {
-        ExplorerServerItem *parent = findServerItem(server);
+        ExplorerServerItem *parent = findServerItem(db->server().get());
         DCHECK(parent);
         ExplorerDatabaseItem *dbs = findDatabaseItem(parent, db);
         if(!dbs){
@@ -220,17 +215,6 @@ namespace fastoredis
                 ExplorerDatabaseItem *item = new ExplorerDatabaseItem(db, parent);
                 parent->addChildren(item);
             endInsertRows();
-        }
-    }
-
-    void ExplorerTreeModel::setDefaultDatabase(IServer* server, DataBaseInfoSPtr db)
-    {
-        ExplorerServerItem *parent = findServerItem(server);
-        DCHECK(parent);
-        ExplorerDatabaseItem *dbs = findDatabaseItem(parent, db);
-        DCHECK(dbs);
-        if(dbs){
-            dbs->setDb(db);
         }
     }
 
@@ -251,7 +235,7 @@ namespace fastoredis
         return NULL;
     }
 
-    ExplorerDatabaseItem *ExplorerTreeModel::findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const
+    ExplorerDatabaseItem *ExplorerTreeModel::findDatabaseItem(ExplorerServerItem* server, IDatabaseSPtr db) const
     {
         ExplorerDatabaseItem *result = NULL;
         if(server){

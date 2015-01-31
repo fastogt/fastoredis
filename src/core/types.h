@@ -63,7 +63,6 @@ namespace fastoredis
         std::string name() const;
         size_t size() const;
         bool isDefault() const;
-        void setDefault(bool isDef);
 
     protected:
         DataBaseInfo(const std::string& name, size_t size, bool isDefault, connectionTypes type);
@@ -75,8 +74,6 @@ namespace fastoredis
 
         const connectionTypes type_;
     };
-
-    typedef shared_ptr_t<DataBaseInfo> DataBaseInfoSPtr;
 
     inline bool operator == (const DataBaseInfo& lhs, const DataBaseInfo& rhs)
     {

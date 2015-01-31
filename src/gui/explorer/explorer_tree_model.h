@@ -3,6 +3,7 @@
 #include "gui/base/tree_model.h"
 
 #include "core/iserver.h"
+#include "core/idatabase.h"
 
 namespace fastoredis
 {
@@ -46,7 +47,7 @@ namespace fastoredis
     struct ExplorerDatabaseItem
             : public IExplorerTreeItem
     {
-        ExplorerDatabaseItem(DataBaseInfoSPtr db, ExplorerServerItem* parent);
+        ExplorerDatabaseItem(IDatabaseSPtr db, ExplorerServerItem* parent);
         virtual ~ExplorerDatabaseItem();
 
         ExplorerServerItem* parent() const;
@@ -58,11 +59,10 @@ namespace fastoredis
 
         bool isDefault() const;
 
-        DataBaseInfoSPtr db() const;
-        void setDb(DataBaseInfoSPtr db);
+        IDatabaseSPtr db() const;
 
     private:
-        DataBaseInfoSPtr db_;
+        IDatabaseSPtr db_;
     };
 
     class ExplorerTreeModel
@@ -81,12 +81,11 @@ namespace fastoredis
         void addServer(IServerSPtr server);
         void removeServer(IServerSPtr server);
 
-        void addDatabase(IServer *server, DataBaseInfoSPtr db);
-        void setDefaultDatabase(IServer* server, DataBaseInfoSPtr db);
+        void addDatabase(IDatabaseSPtr db);
 
     private:
         ExplorerServerItem *findServerItem(IServer* server) const;
-        ExplorerDatabaseItem *findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const;
+        ExplorerDatabaseItem *findDatabaseItem(ExplorerServerItem* server, IDatabaseSPtr db) const;
     };
 }
 

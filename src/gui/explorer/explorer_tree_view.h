@@ -18,6 +18,7 @@ namespace fastoredis
 
     Q_SIGNALS:
         void openedConsole(IServerSPtr server);
+        void closeServer(IServerSPtr server);
 
     public Q_SLOTS:
         void addServer(IServerSPtr server);
