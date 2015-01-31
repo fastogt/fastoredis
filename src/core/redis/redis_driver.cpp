@@ -933,6 +933,7 @@ namespace fastoredis
 
             redisReply *reply = static_cast<redisReply*>(redisCommand(context, "SELECT %d", config.dbnum));
             if (reply != NULL) {
+                parent_->currentDatabaseInfo_.reset(new RedisDataBaseInfo(common::convertToString(config.dbnum), 0, true));
                 freeReplyObject(reply);
                 return common::ErrorValueSPtr();
             }
@@ -1495,7 +1496,7 @@ namespace fastoredis
 
     void RedisDriver::initImpl()
     {
-
+        currentDatabaseInfo_.reset(new RedisDataBaseInfo("0", 0, true));
     }
 
     void RedisDriver::clearImpl()
@@ -1882,7 +1883,12 @@ namespace fastoredis
                             if(countDb > 0){
                                 for(int i = 0; i < countDb; ++i){
                                     DataBaseInfoSPtr dbInf(new RedisDataBaseInfo(common::convertToString(i), 0, false));
-                                    res.databases_.push_back(dbInf);
+                                    if(dbInf->name() == currentDatabaseInfo_->name()){
+                                        res.databases_.push_back(currentDatabaseInfo_);
+                                    }
+                                    else {
+                                        res.databases_.push_back(dbInf);
+                                    }
                                 }
                             }
                         }
@@ -1916,6 +1922,9 @@ namespace fastoredis
             common::ErrorValueSPtr er = impl_->execute(setDefCommand.c_str(), Command::InnerCommand, root.get());
             if(er){
                 res.setErrorInfo(er);
+            }
+            else{
+                currentDatabaseInfo_.reset(new RedisDataBaseInfo(res.inf_->name(), 0, true));
             }
         notifyProgress(sender, 75);
             reply(sender, new events::SetDefaultDatabaseResponceEvent(this, res));

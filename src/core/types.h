@@ -62,7 +62,9 @@ namespace fastoredis
         connectionTypes type() const;
         std::string name() const;
         size_t size() const;
+
         bool isDefault() const;
+        void setIsDefault(bool isDef);
 
     protected:
         DataBaseInfo(const std::string& name, size_t size, bool isDefault, connectionTypes type);

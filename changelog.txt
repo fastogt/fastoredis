@@ -1,4 +1,9 @@
-0.6.0 
+0.6.1 
+- Load databases for redis-cli
+- Conversion dialog
+- Set default redis database
+
+0.6.0 / January 25, 2015
 [Alexandr Topilski]
 - MsgPack visualization output
 - Lua console(without modules)

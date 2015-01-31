@@ -65,4 +65,9 @@ namespace fastoredis
     {
         return isDefault_;
     }
+
+    void DataBaseInfo::setIsDefault(bool isDef)
+    {
+        isDefault_ = isDef;
+    }
 }

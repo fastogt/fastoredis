@@ -395,6 +395,7 @@ namespace fastoredis
         common::ErrorValueSPtr er(v.errorInfo());
         if(er && er->isError()){
             LOG_ERROR(er, true);
+            databases_.clear();
         }
         else{
             EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = v.databases_;
@@ -434,6 +435,20 @@ namespace fastoredis
         if(er && er->isError()){
             LOG_ERROR(er, true);
         }
+        else{
+            DataBaseInfoSPtr inf = v.inf_;
+            for(int i = 0; i < databases_.size(); ++i){
+                IDatabaseSPtr db = databases_[i];
+                DataBaseInfoSPtr info = db->info();
+                if(info->name() == inf->name()){
+                    info->setIsDefault(true);
+                }
+                else{
+                    info->setIsDefault(false);
+                }
+            }
+        }
+
         emit finishedSetDefaultDatabase(v);
     }
 
