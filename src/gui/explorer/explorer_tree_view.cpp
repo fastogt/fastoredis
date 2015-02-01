@@ -61,6 +61,9 @@ namespace fastoredis
         setDefaultDbAction_ = new QAction(this);
         VERIFY(connect(setDefaultDbAction_, SIGNAL(triggered()), SLOT(setDefaultDb())));
 
+        getValueAction_ = new QAction(this);
+        VERIFY(connect(getValueAction_, SIGNAL(triggered()), SLOT(getValue())));
+
         retranslateUi();
     }
 
@@ -110,6 +113,11 @@ namespace fastoredis
 
                 menu.addAction(setDefaultDbAction_);
                 setDefaultDbAction_->setEnabled(!isDefault);
+                menu.exec(menuPoint);
+            }
+            else if(node->type() == IExplorerTreeItem::Key){
+                QMenu menu(this);
+                menu.addAction(getValueAction_);
                 menu.exec(menuPoint);
             }
         }
@@ -176,6 +184,17 @@ namespace fastoredis
         }
     }
 
+    void ExplorerTreeView::getValue()
+    {
+        QModelIndex sel = selectedIndex();
+        if(sel.isValid()){
+            ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
+            if(node){
+                emit executeText(node->server(), QString("GET %1").arg(node->name()));
+            }
+        }
+    }
+
     void ExplorerTreeView::addServer(IServerSPtr server)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
@@ -238,6 +257,7 @@ namespace fastoredis
 
         loadContentAction_->setText(trLoadContOfDataBases);
         setDefaultDbAction_->setText(trSetDefault);
+        getValueAction_->setText(trValue);
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req)

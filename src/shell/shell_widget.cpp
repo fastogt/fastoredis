@@ -240,6 +240,12 @@ namespace fastoredis
         input_->setText(text);
     }
 
+    void BaseShellWidget::execute(const QString& text)
+    {
+        input_->setText(text);
+        execute();
+    }
+
     void BaseShellWidget::syncConnectionActions()
     {
         connectAction_->setVisible(!server_->isConnected());

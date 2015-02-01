@@ -1894,6 +1894,9 @@ namespace fastoredis
                             }
                         }
                     }
+                    else{
+                        res.databases_.push_back(currentDatabaseInfo_);
+                    }
                 }
             }
     done:

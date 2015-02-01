@@ -36,6 +36,15 @@ namespace fastoredis
         }
     }
 
+    void MainWidget::executeText(IServerSPtr server, const QString& text)
+    {
+        if(server){
+            QueryWidget *queryWidget = new QueryWidget(server);
+            addWidgetToTab(queryWidget, server->name());
+            queryWidget->execute(text);
+        }
+    }
+
     QueryWidget *MainWidget::currentWidget() const
     {
         return qobject_cast<QueryWidget *>(QTabWidget::currentWidget());

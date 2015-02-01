@@ -21,6 +21,7 @@ namespace fastoredis
 
     public Q_SLOTS:
         void openConsole(IServerSPtr server);
+        void executeText(IServerSPtr server, const QString& text);
 
     private Q_SLOTS:
         void createNewTab();

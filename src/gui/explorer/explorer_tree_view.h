@@ -18,6 +18,7 @@ namespace fastoredis
 
     Q_SIGNALS:
         void openedConsole(IServerSPtr server);
+        void executeText(IServerSPtr server, const QString& text);
         void closeServer(IServerSPtr server);
 
     public Q_SLOTS:
@@ -40,6 +41,7 @@ namespace fastoredis
 
         void loadContentDb();
         void setDefaultDb();
+        void getValue();
 
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req);
         void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
@@ -63,6 +65,7 @@ namespace fastoredis
         QAction* loadDatabaseAction_;
         QAction* loadContentAction_;
         QAction* setDefaultDbAction_;
+        QAction* getValueAction_;
         QAction* infoServerAction_;
         QAction* propertyServerAction_;
         QAction* historyServerAction_;
