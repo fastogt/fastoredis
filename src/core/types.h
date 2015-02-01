@@ -66,6 +66,12 @@ namespace fastoredis
         bool isDefault() const;
         void setIsDefault(bool isDef);
 
+        virtual DataBaseInfo* clone() const = 0;
+        virtual ~DataBaseInfo();
+
+        std::vector<std::string> keys() const;
+        void setKeys(const std::vector<std::string>& keys);
+
     protected:
         DataBaseInfo(const std::string& name, size_t size, bool isDefault, connectionTypes type);
 
@@ -73,6 +79,7 @@ namespace fastoredis
         std::string name_;
         size_t size_;
         bool isDefault_;
+        std::vector<std::string> keys_;
 
         const connectionTypes type_;
     };

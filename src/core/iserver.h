@@ -19,10 +19,10 @@ namespace fastoredis
         connectionTypes type() const;
         QString name() const;
         IDriverSPtr driver() const;
-        databases_container_t databases() const;
         QString address() const;
         QString outputDelemitr() const;
         IDatabaseSPtr findDatabaseByInfo(DataBaseInfoSPtr inf) const;
+        IDatabaseSPtr findDatabaseByName(const std::string& name) const;
 
         //async
         void connect();
@@ -89,8 +89,8 @@ namespace fastoredis
         void rootCompleated(const EventsInfo::CommandRootCompleatedInfo& res);
 
 // ============== database =============//
-        void startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest& req);
-        void finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce& res);
+        void startedLoadDataBaseContent(const EventsInfo::LoadDatabaseContentRequest& req);
+        void finishedLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res);
 
         void startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req);
         void finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res);

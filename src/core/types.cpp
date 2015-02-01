@@ -46,6 +46,11 @@ namespace fastoredis
 
     }
 
+    DataBaseInfo::~DataBaseInfo()
+    {
+
+    }
+
     connectionTypes DataBaseInfo::type() const
     {
         return type_;
@@ -69,5 +74,15 @@ namespace fastoredis
     void DataBaseInfo::setIsDefault(bool isDef)
     {
         isDefault_ = isDef;
+    }
+
+    void DataBaseInfo::setKeys(const std::vector<std::string>& keys)
+    {
+        keys_ = keys;
+    }
+
+    std::vector<std::string> DataBaseInfo::keys() const
+    {
+        return keys_;
     }
 }

@@ -33,6 +33,7 @@ extern "C" {
 #define GET_DATABASES "CONFIG GET databases"
 #define GET_DATABASES_KEYS_INFO "INFO keyspace"
 #define SET_DEFAULT_DATABASE "SELECT "
+#define GET_KEYS "KEYS *"
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 #define STAT_MODE_REQUEST "STAT"
@@ -1906,7 +1907,37 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
+            FastoObjectIPtr root = FastoObject::createRoot(GET_KEYS);
         notifyProgress(sender, 50);
+            common::ErrorValueSPtr er = impl_->execute(GET_KEYS, Command::InnerCommand, root.get());
+            if(er){
+                res.setErrorInfo(er);
+            }
+            else{
+                FastoObject::child_container_type rchildrens = root->childrens();
+                if(rchildrens.size()){
+                    DCHECK(rchildrens.size() == 1);
+                    FastoObjectArray* array = dynamic_cast<FastoObjectArray*>(rchildrens[0]);
+                    if(!array){
+                        goto done;
+                    }
+                    common::ArrayValue* ar = array->array();
+                    if(!ar){
+                        goto done;
+                    }
+
+                    for(int i = 0; i < ar->getSize(); ++i)
+                    {
+                        std::string ress;
+                        bool isok = ar->getString(i, &ress);
+                        if(isok){
+                            res.keys_.push_back(ress);
+                        }
+                    }
+                }
+            }
+    done:
+        notifyProgress(sender, 75);
             reply(sender, new events::LoadDatabaseContentResponceEvent(this, res));
         notifyProgress(sender, 100);
     }

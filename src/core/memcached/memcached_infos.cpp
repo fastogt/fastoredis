@@ -43,4 +43,9 @@ namespace fastoredis
     {
 
     }
+
+    DataBaseInfo* MemcachedBaseInfo::clone() const
+    {
+        return new MemcachedBaseInfo(*this);
+    }
 }

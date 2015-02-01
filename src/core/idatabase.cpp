@@ -46,6 +46,11 @@ namespace fastoredis
         return info_;
     }
 
+    void IDatabase::setInfo(DataBaseInfoSPtr info)
+    {
+        info_ = info;
+    }
+
     IDatabase::~IDatabase()
     {
 

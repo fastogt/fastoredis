@@ -83,11 +83,6 @@ namespace fastoredis
         return drv_;
     }
 
-    IServer::databases_container_t IServer::databases() const
-    {
-        return databases_;
-    }
-
     QString IServer::name() const
     {
         return common::convertFromString<QString>(drv_->settings()->connectionName());
@@ -109,6 +104,18 @@ namespace fastoredis
         for(int i = 0; i < databases_.size(); ++i){
             DataBaseInfoSPtr db = databases_[i]->info();
             if(*db == *inf){
+                return databases_[i];
+            }
+        }
+
+        return IDatabaseSPtr();
+    }
+
+    IDatabaseSPtr IServer::findDatabaseByName(const std::string& name) const
+    {
+        for(int i = 0; i < databases_.size(); ++i){
+            DataBaseInfoSPtr db = databases_[i]->info();
+            if(db->name() == name){
                 return databases_[i];
             }
         }
@@ -163,7 +170,7 @@ namespace fastoredis
 
     void IServer::loadDatabaseContent(DataBaseInfoSPtr inf)
     {
-        EventsInfo::LoadDatabasesContentRequest req(inf);
+        EventsInfo::LoadDatabaseContentRequest req(inf);
         emit startedLoadDataBaseContent(req);
         QEvent *ev = new events::LoadDatabaseContentRequestEvent(this, req);
         notify(ev);
@@ -424,7 +431,16 @@ namespace fastoredis
         if(er && er->isError()){
             LOG_ERROR(er, true);
         }
-        emit finishedLoadDataBaseContent(v);
+        else{
+            IDatabaseSPtr db = findDatabaseByInfo(v.inf_);
+            if(db){
+                DataBaseInfoSPtr rdb = db->info();
+                if(rdb){
+                    rdb->setKeys(v.keys_);
+                }
+            }
+        }
+        emit finishedLoadDatabaseContent(v);
     }
 
     void IServer::handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev)

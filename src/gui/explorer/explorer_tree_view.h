@@ -42,10 +42,13 @@ namespace fastoredis
         void setDefaultDb();
 
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req);
-        void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res);
+        void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
 
         void startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req);
         void finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res);
+
+        void startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &req);
+        void finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &res);
 
     protected:
         virtual void changeEvent(QEvent* );

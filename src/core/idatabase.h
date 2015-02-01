@@ -20,11 +20,11 @@ namespace fastoredis
         void setDefault();
 
         DataBaseInfoSPtr info() const;
+        void setInfo(DataBaseInfoSPtr info);
 
     protected:
         IDatabase(IServerSPtr server, DataBaseInfoSPtr info);
 
-    private:
         DataBaseInfoSPtr info_;
         const IServerSPtr server_;
     };

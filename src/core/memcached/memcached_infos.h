@@ -22,5 +22,6 @@ namespace fastoredis
     {
     public:
         MemcachedBaseInfo(const std::string& name, size_t size, bool isDefault);
+        virtual DataBaseInfo* clone() const;
     };
 }

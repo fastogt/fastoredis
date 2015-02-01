@@ -422,6 +422,8 @@ namespace fastoredis
             : public DataBaseInfo
     {
     public:
-        RedisDataBaseInfo(const std::string& name, size_t size, bool isDefault);
+        RedisDataBaseInfo(const std::string& name, size_t size, bool isDefault, const std::vector<std::string>& keys = std::vector<std::string>());
+
+        virtual DataBaseInfo* clone() const;
     };
 }

@@ -102,9 +102,14 @@ namespace fastoredis
                 menu.exec(menuPoint);
             }
             else if(node->type() == IExplorerTreeItem::Database){
+                ExplorerDatabaseItem *db = dynamic_cast<ExplorerDatabaseItem*>(node);
                 QMenu menu(this);
                 menu.addAction(loadContentAction_);
+                bool isDefault = db && db->isDefault();
+                loadContentAction_->setEnabled(isDefault);
+
                 menu.addAction(setDefaultDbAction_);
+                setDefaultDbAction_->setEnabled(!isDefault);
                 menu.exec(menuPoint);
             }
         }
@@ -144,7 +149,7 @@ namespace fastoredis
         if(sel.isValid()){
             ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
             if(node){
-                node->server()->loadDatabases();
+                node->loadDatabases();
             }
         }
     }
@@ -176,10 +181,10 @@ namespace fastoredis
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(connect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
         VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
-//      VERIFY(connect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
-//      VERIFY(connect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
         VERIFY(connect(server.get(), SIGNAL(startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &)), this, SLOT(startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &))));
         VERIFY(connect(server.get(), SIGNAL(finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &)), this, SLOT(finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &))));
+        VERIFY(connect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabaseContentRequest &)), this, SLOT(startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &))));
+        VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &)), this, SLOT(finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &))));
 
         mod->addServer(server);
     }
@@ -189,10 +194,10 @@ namespace fastoredis
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         VERIFY(disconnect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
         VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
-//      VERIFY(disconnect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
-//      VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
         VERIFY(disconnect(server.get(), SIGNAL(startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &)), this, SLOT(startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &))));
         VERIFY(disconnect(server.get(), SIGNAL(finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &)), this, SLOT(finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &))));
+        VERIFY(disconnect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabaseContentRequest &)), this, SLOT(startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &))));
+        VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &)), this, SLOT(finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &))));
 
         mod->removeServer(server);
         emit closeServer(server);
@@ -259,11 +264,11 @@ namespace fastoredis
             return;
         }
 
-        IServer::databases_container_t dbs = serv->databases();
+        EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
 
         for(int i = 0; i < dbs.size(); ++i){
-            IDatabaseSPtr db = dbs[i];
-            mod->addDatabase(db);
+            DataBaseInfoSPtr db = dbs[i];
+            mod->addDatabase(serv, db);
         }
     }
 
@@ -281,10 +286,50 @@ namespace fastoredis
 
         IServer *serv = qobject_cast<IServer *>(sender());
         DCHECK(serv);
+        if(!serv){
+            return;
+        }
 
         DataBaseInfoSPtr db = res.inf_;
         ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
         DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        mod->setDefaultDb(serv, db);
+    }
+
+    void ExplorerTreeView::startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &req)
+    {
+
+    }
+
+    void ExplorerTreeView::finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &res)
+    {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        IServer *serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+        if(!serv){
+            return;
+        }
+
+        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        EventsInfo::LoadDatabaseContentResponce::keys_cont_type keys = res.keys_;
+
+        for(int i = 0; i < keys.size(); ++i){
+            std::string key = keys[i];
+            mod->addKey(serv, res.inf_, key);
+        }
     }
 
     QModelIndexList ExplorerTreeView::selectedIndexes() const
