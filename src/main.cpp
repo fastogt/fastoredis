@@ -15,9 +15,12 @@ int main(int argc, char *argv[])
     app.setApplicationName(PROJECT_NAME);
 
     fastoredis::MainWindow win;
-#ifndef OS_ANDROID
     QRect screenGeometry = app.desktop()->availableGeometry();
     QSize screenSize(screenGeometry.width(), screenGeometry.height());
+
+#ifdef OS_ANDROID
+    win.resize(screenSize);
+#else
     QSize size(screenGeometry.width()/2, screenGeometry.height()/2);
     if(preferedSize.height() < screenSize.height() && preferedSize.width() < screenSize.width()){
         win.resize(preferedSize);

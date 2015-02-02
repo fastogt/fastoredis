@@ -27,7 +27,6 @@ namespace fastoredis
     {
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-        setFixedSize(height, width);
 
 //      ui settings
         generalBox_ = new QGroupBox;
@@ -91,6 +90,7 @@ namespace fastoredis
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
         layout->addWidget(buttonBox);
+        setMinimumSize(QSize(min_width, min_height));
         setLayout(layout);
 
         syncWithSettings();

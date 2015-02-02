@@ -21,6 +21,11 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
+        enum
+        {
+            min_height = 480,
+            min_width = 640
+        };
         MainWindow();
         ~MainWindow();
 

@@ -268,6 +268,7 @@ namespace fastoredis
         logDock_->setVisible(false);
         addDockWidget(Qt::BottomDockWidgetArea, logDock_);
 
+        setMinimumSize(QSize(min_width, min_height));
         createStatusBar();
         retranslateUi();
     }
@@ -397,6 +398,9 @@ namespace fastoredis
     void MainWindow::about()
     {
         AboutDialog dlg(this);
+#ifdef OS_ANDROID
+        dlg.setWindowModality(Qt::WindowModal);
+#endif
         dlg.exec();
     }
 

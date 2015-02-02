@@ -16,8 +16,8 @@ namespace fastoredis
     public:
         enum
         {
-            height = 480,
-            width = 640
+            min_height = 480,
+            min_width = 640
         };
 
         ~BaseConsoleDialog();

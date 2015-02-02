@@ -36,10 +36,9 @@ namespace fastoredis
     {
         setWindowIcon(GuiFactory::instance().mainWindowIcon());
 
-        setWindowTitle(PROJECT_NAME_TITLE);
+        setWindowTitle("About " PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-        QGridLayout* layout = new QGridLayout;
-        layout->setSizeConstraint(QLayout::SetFixedSize);
+        QGridLayout* glayout = new QGridLayout;
 
         QLabel* copyRightLabel = new QLabel(description);
         copyRightLabel->setWordWrap(true);
@@ -56,9 +55,10 @@ namespace fastoredis
 
         QLabel* logoLabel = new QLabel;
         logoLabel->setPixmap(iconPixmap);
-        layout->addWidget(logoLabel, 0, 0, 1, 1);
-        layout->addWidget(copyRightLabel, 0, 1, 4, 4);
-        layout->addWidget(buttonBox, 4, 0, 1, 5);
-        setLayout(layout);
+        glayout->addWidget(logoLabel, 0, 0, 1, 1);
+        glayout->addWidget(copyRightLabel, 0, 1, 4, 4);
+        glayout->addWidget(buttonBox, 4, 0, 1, 5);
+        setLayout(glayout);
+        glayout->setSizeConstraint(QLayout::SetFixedSize);
     }
 }

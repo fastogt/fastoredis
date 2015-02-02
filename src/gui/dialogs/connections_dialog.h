@@ -16,6 +16,12 @@ namespace fastoredis
         Q_OBJECT
 
     public:
+        enum
+        {
+            min_height = 320,
+            min_width = 480
+        };
+
         ConnectionsDialog(QWidget* parent = 0);
         IConnectionSettingsBaseSPtr selectedConnection() const;
         virtual void accept();

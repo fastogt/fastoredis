@@ -159,7 +159,7 @@ namespace fastoredis
 
         mainLayout->addWidget(shell_);
         mainLayout->addWidget(output_);
-        setMinimumSize(QSize(width, height));
+        setMinimumSize(QSize(min_width, min_height));
         setLayout(mainLayout);
     }
 

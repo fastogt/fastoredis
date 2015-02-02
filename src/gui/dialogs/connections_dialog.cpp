@@ -58,21 +58,19 @@ namespace fastoredis
         listWidget_->setIndentation(5);
 
         QStringList colums;
-        colums << trName << trAddress << trAuthDbUser;
+        colums << trName << trAddress;
         listWidget_->setHeaderLabels(colums);
 
-        listWidget_->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-        listWidget_->header()->setSectionResizeMode(1, QHeaderView::Stretch);
-        listWidget_->header()->setSectionResizeMode(2, QHeaderView::Stretch);
+        //listWidget_->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+        //listWidget_->header()->setSectionResizeMode(1, QHeaderView::Stretch);
 
         //listWidget_->setViewMode(QListView::ListMode);
         listWidget_->setContextMenuPolicy(Qt::ActionsContextMenu);
         listWidget_->setIndentation(15);
         listWidget_->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
-        listWidget_->setDragEnabled(true);
-        listWidget_->setDragDropMode(QAbstractItemView::InternalMove);
-        listWidget_->setMinimumHeight(320);
-        listWidget_->setMinimumWidth(640);
+        //listWidget_->setDragEnabled(true);
+        //listWidget_->setDragDropMode(QAbstractItemView::InternalMove);
+        setMinimumSize(QSize(min_width, min_height));
         VERIFY(connect(listWidget_, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept())));
         VERIFY(connect(listWidget_, SIGNAL(itemSelectionChanged()), this, SLOT(connectionSelectChange())));
 
