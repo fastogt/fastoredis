@@ -72,7 +72,7 @@ namespace fastoredis
 
     void PropertyTableModel::changeProperty(const PropertyType &pr)
     {
-        const QString &key = common::convertFromString<QString>(pr.first);
+        const QString key = common::convertFromString<QString>(pr.first);
         for(int i = 0; i < data_.size(); ++i)
         {
             PropertyTableItem *it = dynamic_cast<PropertyTableItem*>(data_[i]);

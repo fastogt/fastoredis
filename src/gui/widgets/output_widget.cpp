@@ -14,6 +14,7 @@
 #include "gui/icon_label.h"
 
 #include "core/settings_manager.h"
+#include "core/iserver.h"
 
 #include "common/qt/convert_string.h"
 #include "common/utf_string_conversions.h"
@@ -33,11 +34,14 @@ namespace
 
 namespace fastoredis
 {
-    OutputWidget::OutputWidget(const QString& delemitr, QWidget* parent)
+    OutputWidget::OutputWidget(IServerSPtr server, QWidget* parent)
         : QWidget(parent)
     {
         commonModel_ = new FastoCommonModel(this);
-        VERIFY(connect(commonModel_, SIGNAL(changeValue(DbValue)), this, SIGNAL(changeValue(DbValue))));
+        VERIFY(connect(commonModel_, SIGNAL(changedValue(const DbValue&)), server.get(), SLOT(changeValue(const DbValue&)), Qt::DirectConnection));
+        VERIFY(connect(server.get(), SIGNAL(startedChangeDbValue(const EventsInfo::ChangeDbValueRequest&)), this, SLOT(startChangeDbValue(const EventsInfo::ChangeDbValueRequest&)), Qt::DirectConnection));
+        VERIFY(connect(server.get(), SIGNAL(finishedChangeDbValue(const EventsInfo::ChangeDbValueResponce&)), this, SLOT(finishChangeDbValue(const EventsInfo::ChangeDbValueResponce&)), Qt::DirectConnection));
+
 
         treeView_ = new FastoTreeView;
         treeView_->setModel(commonModel_);
@@ -45,7 +49,7 @@ namespace fastoredis
         tableView_ = new FastoTableView;
         tableView_->setModel(commonModel_);
 
-        textView_ = new FastoTextView(delemitr);
+        textView_ = new FastoTextView(server->outputDelemitr());
         textView_->setModel(commonModel_);
         textView_->setReadOnly(true);
 
@@ -80,6 +84,21 @@ namespace fastoredis
         mainL->addWidget(textView_);
         setLayout(mainL);
         syncWithSettings();
+    }
+
+    void OutputWidget::startChangeDbValue(const EventsInfo::ChangeDbValueRequest& req)
+    {
+
+    }
+
+    void OutputWidget::finishChangeDbValue(const EventsInfo::ChangeDbValueResponce& res)
+    {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        commonModel_->changeValue(res.newItem_);
     }
 
     void OutputWidget::syncWithSettings()

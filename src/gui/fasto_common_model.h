@@ -23,8 +23,10 @@ namespace fastoredis
 
         virtual int columnCount(const QModelIndex& parent) const;
 
-    Q_SIGNALS:
         void changeValue(const DbValue& value);
+
+    Q_SIGNALS:
+        void changedValue(const DbValue& value);
     };
 }
 

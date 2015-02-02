@@ -20,10 +20,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        OutputWidget(const QString &delemitr, QWidget* parent = 0);
-
-    Q_SIGNALS:
-        void changeValue(const DbValue& value);
+        OutputWidget(IServerSPtr server, QWidget* parent = 0);
 
     private Q_SLOTS:
         void setTreeView();
@@ -32,6 +29,8 @@ namespace fastoredis
 
         void rootCreate(const EventsInfo::CommandRootCreatedInfo& res);
         void rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res);
+        void startChangeDbValue(const EventsInfo::ChangeDbValueRequest& req);
+        void finishChangeDbValue(const EventsInfo::ChangeDbValueResponce& res);
 
         void addChild(FastoObject* child);
         void itemUpdate(FastoObject*, const QString& newValue);

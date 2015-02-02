@@ -74,7 +74,7 @@ namespace fastoredis
                 if(newValue != node->value()){
                     const std::string key = common::convertToString(node->key());
                     const std::string value = common::convertToString(newValue);
-                    emit changeValue(DbValue(key, value));
+                    emit changedValue(DbValue(key, value));
                 }
             }
         }
@@ -120,5 +120,39 @@ namespace fastoredis
             }
         }
         return result;
+    }
+
+    void FastoCommonModel::changeValue(const DbValue& value)
+    {
+        const QString key = common::convertFromString<QString>(value.key_);
+        const QString val = common::convertFromString<QString>(value.value_);
+
+        QModelIndex ind= index(0, 0);
+        if(!ind.isValid()){
+            return;
+        }
+
+        FastoCommonItem* child = common::utils_qt::item<FastoCommonItem*>(ind);
+        if(!child){
+            return;
+        }
+
+        FastoCommonItem* root = dynamic_cast<FastoCommonItem*>(child->parent());
+        if(!root){
+            return;
+        }
+
+        for(int i = 0; i < root->childrenCount(); ++i){
+            FastoCommonItem* child = dynamic_cast<FastoCommonItem*>(root->child(i));
+            if(!child){
+                continue;
+            }
+
+            if(child->key() == key){
+                child->setValue(val);
+                emit dataChanged(index(i, FastoCommonItem::eValue), index(i, FastoCommonItem::eType));
+                break;
+            }
+        }
     }
 }
