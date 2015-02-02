@@ -41,6 +41,11 @@ namespace fastoredis
         return shellWidget_->text();
     }
 
+    void QueryWidget::execute(const QString& text)
+    {
+        shellWidget_->execute(text);
+    }
+
     void QueryWidget::reload()
     {
 
@@ -60,6 +65,6 @@ namespace fastoredis
             return badConnectionType();
         }
 
-        return ser->connectionType();
+        return ser->type();
     }
 }

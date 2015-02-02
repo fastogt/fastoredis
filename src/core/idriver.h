@@ -39,6 +39,7 @@ namespace fastoredis
         virtual common::net::hostAndPort address() const = 0;
         virtual std::string version() const = 0;
         virtual std::string outputDelemitr() const = 0;
+        DataBaseInfoSPtr currentDatabaseInfo() const;
 
     Q_SIGNALS:
         void addedChild(FastoObject* child);
@@ -111,10 +112,12 @@ namespace fastoredis
         virtual ServerInfoSPtr makeServerInfoFromString(const std::string& val) = 0;
         virtual void handleProcessCommandLineArgs(events::ProcessConfigArgsRequestEvent* ev) = 0;
 
+    protected:
+        DataBaseInfoSPtr currentDatabaseInfo_;
+
+    private:
         QThread* thread_;
         int timer_info_id_;
         common::file_system::File* log_file_;
     };
-
-    typedef shared_ptr_t<IDriver> IDriverSPtr;
 }

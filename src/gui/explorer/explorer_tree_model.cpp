@@ -39,15 +39,25 @@ namespace fastoredis
         return server_;
     }
 
+    void ExplorerServerItem::loadDatabases()
+    {
+         return server_->loadDatabases();
+    }
+
     QString ExplorerServerItem::name() const
     {
         return server_->name();
     }
 
     ExplorerDatabaseItem::ExplorerDatabaseItem(DataBaseInfoSPtr db, ExplorerServerItem* parent)
-        : IExplorerTreeItem(parent), db_(db)
+        : IExplorerTreeItem(parent)
     {
+        DCHECK(db);
+        if(!db){
+            return;
+        }
 
+        inf_.reset(db->clone());
     }
 
     ExplorerDatabaseItem::~ExplorerDatabaseItem()
@@ -57,32 +67,51 @@ namespace fastoredis
 
     void ExplorerDatabaseItem::loadContent()
     {
-        server()->loadDatabaseContent(db_);
+        IDatabaseSPtr dbs = db();
+        if(dbs){
+            dbs->loadContent();
+        }
+    }
+
+    IDatabaseSPtr ExplorerDatabaseItem::db() const
+    {
+        IServerSPtr serv = server();
+        DCHECK(serv);
+        if(!serv){
+            return IDatabaseSPtr();
+        }
+
+        IDatabaseSPtr db = serv->findDatabaseByName(inf_->name());
+        DCHECK(db);
+        return db;
     }
 
     void ExplorerDatabaseItem::setDefault()
     {
-        server()->setDefaultDb(db_);
+        IDatabaseSPtr dbs = db();
+        if(dbs){
+            dbs->setDefault();
+        }
+    }
+
+    DataBaseInfoSPtr ExplorerDatabaseItem::info() const
+    {
+        return inf_;
     }
 
     bool ExplorerDatabaseItem::isDefault() const
     {
-        return db_->isDefault();
-    }
-
-    DataBaseInfoSPtr ExplorerDatabaseItem::db() const
-    {
-        return db_;
-    }
-
-    void ExplorerDatabaseItem::setDb(DataBaseInfoSPtr db)
-    {
-        db_ = db;
+        return inf_->isDefault();
     }
 
     IServerSPtr ExplorerDatabaseItem::server() const
     {
-        return dynamic_cast<ExplorerServerItem*>(parent_)->server();
+        ExplorerServerItem* serv = dynamic_cast<ExplorerServerItem*>(parent_);
+        if(!serv){
+            return IServerSPtr();
+        }
+
+        return serv->server();
     }
 
     ExplorerDatabaseItem::eType ExplorerDatabaseItem::type() const
@@ -92,12 +121,53 @@ namespace fastoredis
 
     QString ExplorerDatabaseItem::name() const
     {
-        return common::convertFromString<QString>(db_->name());
+        return common::convertFromString<QString>(inf_->name());
     }
 
     ExplorerServerItem *ExplorerDatabaseItem::parent() const
     {
         return dynamic_cast<ExplorerServerItem*>(IExplorerTreeItem::parent());
+    }
+
+    ExplorerKeyItem::ExplorerKeyItem(const std::string& name, ExplorerDatabaseItem* parent)
+        : IExplorerTreeItem(parent), name_(name)
+    {
+
+    }
+
+    ExplorerKeyItem::~ExplorerKeyItem()
+    {
+
+    }
+
+    QString ExplorerKeyItem::name() const
+    {
+        return common::convertFromString<QString>(name_);
+    }
+
+    std::string ExplorerKeyItem::sname() const
+    {
+        return name_;
+    }
+
+    IServerSPtr ExplorerKeyItem::server() const
+    {
+        ExplorerDatabaseItem* db = dynamic_cast<ExplorerDatabaseItem*>(parent_);
+        if(!db){
+            return IServerSPtr();
+        }
+
+        return db->server();
+    }
+
+    IExplorerTreeItem::eType ExplorerKeyItem::type() const
+    {
+        return Key;
+    }
+
+    ExplorerDatabaseItem* ExplorerKeyItem::parent() const
+    {
+        return dynamic_cast<ExplorerDatabaseItem*>(parent_);
     }
 
     ExplorerTreeModel::ExplorerTreeModel(QObject *parent)
@@ -123,7 +193,7 @@ namespace fastoredis
 
         if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){            
             if(t == IExplorerTreeItem::Server){
-                return GuiFactory::instance().icon(node->server()->connectionType());
+                return GuiFactory::instance().icon(node->server()->type());
             }
             else{
                 return GuiFactory::instance().databaseIcon();
@@ -131,8 +201,13 @@ namespace fastoredis
         }
 
         if (role == Qt::DisplayRole) {
-            if (col == IExplorerTreeItem::eName) {                
-                return node->name();
+            if (col == IExplorerTreeItem::eName) {
+                if(t == IExplorerTreeItem::Key){
+                    return node->name();
+                }
+                else{
+                    return QString("%1 (%2)").arg(node->name()).arg(node->childrenCount());
+                }
             }
         }
 
@@ -185,11 +260,9 @@ namespace fastoredis
             if(!parent){
                 return;
             }
-            int child_count = parent->childrenCount();
-            beginInsertRows(QModelIndex(), child_count, child_count);
-                ExplorerServerItem *item = new ExplorerServerItem(server, parent);
-                parent->addChildren(item);
-            endInsertRows();
+
+            ExplorerServerItem *item = new ExplorerServerItem(server, parent);
+            insertItem(QModelIndex(), item);
         }
     }
 
@@ -200,37 +273,92 @@ namespace fastoredis
         if(!par){
             return;
         }
+
         ExplorerServerItem *serverItem = findServerItem(server.get());
-        int row = par->indexOf(serverItem);
-        beginRemoveRows(QModelIndex(), row, row);
-            par->removeChildren(serverItem);
-            delete serverItem;
-        endRemoveRows();
+        removeItem(QModelIndex(), serverItem);
     }
 
     void ExplorerTreeModel::addDatabase(IServer* server, DataBaseInfoSPtr db)
     {
         ExplorerServerItem *parent = findServerItem(server);
         DCHECK(parent);
+        if(!parent){
+            return;
+        }
+
         ExplorerDatabaseItem *dbs = findDatabaseItem(parent, db);
         if(!dbs){
-            int child_count = parent->childrenCount();
             QModelIndex index = createIndex(0,0,parent);
-            beginInsertRows(index,child_count,child_count);
-                ExplorerDatabaseItem *item = new ExplorerDatabaseItem(db, parent);
-                parent->addChildren(item);
-            endInsertRows();
+            ExplorerDatabaseItem *item = new ExplorerDatabaseItem(db, parent);
+            insertItem(index, item);
         }
     }
 
-    void ExplorerTreeModel::setDefaultDatabase(IServer* server, DataBaseInfoSPtr db)
+    void ExplorerTreeModel::removeDatabase(IServer* server, DataBaseInfoSPtr db)
     {
         ExplorerServerItem *parent = findServerItem(server);
         DCHECK(parent);
+        if(!parent){
+            return;
+        }
+
+        ExplorerDatabaseItem *dbs = findDatabaseItem(parent, db);
+        if(!dbs){
+            removeItem(createIndex(0,0,parent), dbs);
+        }
+    }
+
+    void ExplorerTreeModel::setDefaultDb(IServer* server, DataBaseInfoSPtr db)
+    {
+        ExplorerServerItem *parent = findServerItem(server);
+        DCHECK(parent);
+        if(!parent){
+            return;
+        }
+
+        int child_count = parent->childrenCount();
+        for(int i = 0; i < child_count ; ++i){
+            ExplorerDatabaseItem *item = dynamic_cast<ExplorerDatabaseItem*>(parent->child(i));
+            DCHECK(item);
+            if(!item){
+                continue;
+            }
+
+            DataBaseInfoSPtr info = item->info();
+            if(info->isDefault()){
+                if(info->name() != db->name()){
+                    info->setIsDefault(false);
+                    updateItem(createIndex(i,0,parent), createIndex(i,0,parent));
+                }
+            }
+            else{
+                if(info->name() == db->name()){
+                    info->setIsDefault(true);
+                    updateItem(createIndex(i,0,parent), createIndex(i,0,parent));
+                }
+            }
+        }
+    }
+
+    void ExplorerTreeModel::addKey(IServer* server, DataBaseInfoSPtr db, const std::string& key)
+    {
+        ExplorerServerItem *parent = findServerItem(server);
+        DCHECK(parent);
+        if(!parent){
+            return;
+        }
+
         ExplorerDatabaseItem *dbs = findDatabaseItem(parent, db);
         DCHECK(dbs);
-        if(dbs){
-            dbs->setDb(db);
+        if(!dbs){
+            return;
+        }
+
+        ExplorerKeyItem *keyit = findKeyItem(dbs, key);
+        if(!keyit){
+            QModelIndex parentdb = createIndex(parent->indexOf(dbs), 0, dbs);
+            ExplorerKeyItem *item = new ExplorerKeyItem(key, dbs);
+            insertItem(parentdb, item);
         }
     }
 
@@ -253,18 +381,39 @@ namespace fastoredis
 
     ExplorerDatabaseItem *ExplorerTreeModel::findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const
     {
-        ExplorerDatabaseItem *result = NULL;
         if(server){
             for(int i = 0; i < server->childrenCount() ; ++i){
                 ExplorerDatabaseItem *item = dynamic_cast<ExplorerDatabaseItem*>(server->child(i));
                 DCHECK(item);
-                if(item->db() == db){
-                    result = item;
-                    break;
+                if(!item){
+                    continue;
+                }
+
+                IDatabaseSPtr inf = item->db();
+                if(inf && inf->name() == db->name()){
+                    return item;
                 }
             }
         }
-        return result;
+        return NULL;
+    }
+
+    ExplorerKeyItem *ExplorerTreeModel::findKeyItem(ExplorerDatabaseItem* db, const std::string& key) const
+    {
+        if(db){
+            for(int i = 0; i < db->childrenCount() ; ++i){
+                ExplorerKeyItem *item = dynamic_cast<ExplorerKeyItem*>(db->child(i));
+                DCHECK(item);
+                if(!item){
+                    continue;
+                }
+
+                if(item->sname() == key){
+                    return item;
+                }
+            }
+        }
+        return NULL;
     }
 
     ExplorerTreeModel::~ExplorerTreeModel()

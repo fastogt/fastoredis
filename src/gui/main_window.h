@@ -4,7 +4,12 @@
 
 class QAction;
 class QDockWidget;
+
+#ifdef OS_ANDROID
 class QGestureEvent;
+class QSwipeGesture;
+class QTapAndHoldGesture;
+#endif
 
 namespace fastoredis
 {
@@ -22,7 +27,6 @@ namespace fastoredis
     protected:
         virtual void changeEvent(QEvent* ev);
         virtual void showEvent(QShowEvent* ev);
-        virtual bool event(QEvent *event);
 
     private Q_SLOTS:
         void open();
@@ -38,12 +42,15 @@ namespace fastoredis
 
         void versionAvailible(bool succesResult, const QString& version);
 
-    private:
+    protected:
 #ifdef OS_ANDROID
+        virtual bool event(QEvent *event);
         bool gestureEvent(QGestureEvent *event);
         void swipeTriggered(QSwipeGesture* swipeEvent);
         void tapAndHoldTriggered(QTapAndHoldGesture* tapEvent);
 #endif
+
+    private:
         void createStatusBar();
         void retranslateUi();
 

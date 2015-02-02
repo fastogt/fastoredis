@@ -37,4 +37,15 @@ namespace fastoredis
         const std::string content = common::convertToString(root);
         return makeMemcachedServerInfo(content);
     }
+
+    MemcachedBaseInfo::MemcachedBaseInfo(const std::string& name, size_t size, bool isDefault)
+        : DataBaseInfo(name, size, isDefault, MEMCACHED)
+    {
+
+    }
+
+    DataBaseInfo* MemcachedBaseInfo::clone() const
+    {
+        return new MemcachedBaseInfo(*this);
+    }
 }

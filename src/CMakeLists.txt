@@ -96,6 +96,7 @@ SET(HEADERS_CORE_TO_MOC
     core/logger.h
     core/idriver.h
     core/iserver.h
+    core/servers_manager.h
     core/redis/redis_server.h
     core/redis/redis_driver.h
     core/python_engine.h
@@ -103,13 +104,15 @@ SET(HEADERS_CORE_TO_MOC
 )
 SET(HEADERS_CORE
     core/connection_types.h
+    core/core_fwd.h
+    core/idatabase.h
+    core/redis/redis_database.h
     core/settings_manager.h
     core/connection_settings.h
     core/redis/redis_infos.h
     core/events/events.h
     core/events/events_info.h
     core/redis/redis_config.h
-    core/servers_manager.h
     core/types.h
     core/ssh_info.h
     core/scp_file_transfer.h
@@ -130,7 +133,9 @@ SET(SOURCES_CORE
     core/redis/redis_driver.cpp
     core/idriver.cpp
     core/iserver.cpp
+    core/idatabase.cpp
     core/redis/redis_server.cpp
+    core/redis/redis_database.cpp
     core/servers_manager.cpp
     core/redis/redis_config.cpp
     core/types.cpp
@@ -212,12 +217,14 @@ SET(HEADERS_MEMCACHED_TO_MOC
 SET(HEADERS_MEMCACHED
     core/memcached/memcached_infos.h
     core/memcached/memcached_config.h
+    core/memcached/memcached_database.h
 )
 SET(SOURCES_MEMCACHED
     core/memcached/memcached_config.cpp
     core/memcached/memcached_infos.cpp
     core/memcached/memcached_server.cpp
     core/memcached/memcached_driver.cpp
+    core/memcached/memcached_database.cpp
 )
 
 ADD_SUBDIRECTORY(third-party/lua)

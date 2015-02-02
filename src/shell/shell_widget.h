@@ -34,6 +34,7 @@ namespace fastoredis
 
     public Q_SLOTS:
         void setText(const QString& text);
+        void execute(const QString& text);
 
     private Q_SLOTS:
         void execute();

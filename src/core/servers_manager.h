@@ -3,19 +3,24 @@
 #include "common/patterns/singleton_pattern.h"
 
 #include "core/iserver.h"
+#include "core/connection_settings.h"
 
 namespace fastoredis
 {
     class ServersManager
-            : public common::patterns::LazySingleton<ServersManager>
+            : public QObject, public common::patterns::LazySingleton<ServersManager>
     {
         friend class common::patterns::LazySingleton<ServersManager>;
+        Q_OBJECT
+
     public:
         typedef std::vector<IServerSPtr> ServersContainer;
 
-        IServerSPtr createServer(const IConnectionSettingsBaseSPtr& settings);
-        void closeServer(IServerSPtr server);
+        IServerSPtr createServer(const IConnectionSettingsBaseSPtr& settings);        
         void setSyncServers(bool isSync);        
+
+    public Q_SLOTS:
+        void closeServer(IServerSPtr server);
 
     private:
         ServersManager();

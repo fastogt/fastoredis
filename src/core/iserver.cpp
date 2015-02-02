@@ -5,6 +5,8 @@
 #include "common/qt/convert_string.h"
 #include "common/net/net.h"
 
+#include "core/idatabase.h"
+#include "core/idriver.h"
 #include "core/logger.h"
 
 namespace
@@ -97,7 +99,31 @@ namespace fastoredis
         return common::convertFromString<QString>(drv_->outputDelemitr());
     }
 
-    connectionTypes IServer::connectionType() const
+    IDatabaseSPtr IServer::findDatabaseByInfo(DataBaseInfoSPtr inf) const
+    {
+        for(int i = 0; i < databases_.size(); ++i){
+            DataBaseInfoSPtr db = databases_[i]->info();
+            if(*db == *inf){
+                return databases_[i];
+            }
+        }
+
+        return IDatabaseSPtr();
+    }
+
+    IDatabaseSPtr IServer::findDatabaseByName(const std::string& name) const
+    {
+        for(int i = 0; i < databases_.size(); ++i){
+            DataBaseInfoSPtr db = databases_[i]->info();
+            if(db->name() == name){
+                return databases_[i];
+            }
+        }
+
+        return IDatabaseSPtr();
+    }
+
+    connectionTypes IServer::type() const
     {
         return drv_->connectionType();
     }
@@ -144,7 +170,7 @@ namespace fastoredis
 
     void IServer::loadDatabaseContent(DataBaseInfoSPtr inf)
     {
-        EventsInfo::LoadDatabasesContentRequest req(inf);
+        EventsInfo::LoadDatabaseContentRequest req(inf);
         emit startedLoadDataBaseContent(req);
         QEvent *ev = new events::LoadDatabaseContentRequestEvent(this, req);
         notify(ev);
@@ -331,6 +357,10 @@ namespace fastoredis
             ChangeServerPropertyInfoResponceEvent *ev = static_cast<ChangeServerPropertyInfoResponceEvent*>(event);
             handleServerPropertyChangeEvent(ev);
         }
+        else if (type == static_cast<QEvent::Type>(ChangeDbValueResponceEvent::EventType)){
+            ChangeDbValueResponceEvent *ev = static_cast<ChangeDbValueResponceEvent*>(event);
+            handleChangeDbValueEvent(ev);
+        }
         else if (type == static_cast<QEvent::Type>(BackupResponceEvent::EventType)){
             BackupResponceEvent *ev = static_cast<BackupResponceEvent*>(event);
             handleBackupEvent(ev);
@@ -354,5 +384,177 @@ namespace fastoredis
             emit progressChanged(v);
         }
         return QObject::customEvent(event);
+    }
+
+    void IServer::handleConnectEvent(events::ConnectResponceEvent* ev)
+    {
+        using namespace events;
+        ConnectResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedConnect(v);
+    }
+
+    void IServer::handleDisconnectEvent(events::DisconnectResponceEvent* ev)
+    {
+        using namespace events;
+        DisconnectResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedDisconnect(v);
+    }
+
+    void IServer::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev)
+    {
+        using namespace events;
+        LoadDatabasesInfoResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+            databases_.clear();
+        }
+        else{
+            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = v.databases_;
+            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type tmp;
+            for(int j = 0; j < dbs.size(); ++j){
+                DataBaseInfoSPtr db = dbs[j];
+                IDatabaseSPtr datab = findDatabaseByInfo(db);
+                if(!datab){
+                    databases_.push_back(createDatabaseImpl(db));
+                    tmp.push_back(db);
+                }
+                else{
+                    tmp.push_back(datab->info());
+                }
+            }
+            v.databases_ = tmp;
+        }
+        emit finishedLoadDatabases(v);
+    }
+
+    void IServer::handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev)
+    {
+        using namespace events;
+        LoadDatabaseContentResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        else{
+            IDatabaseSPtr db = findDatabaseByInfo(v.inf_);
+            if(db){
+                DataBaseInfoSPtr rdb = db->info();
+                if(rdb){
+                    rdb->setKeys(v.keys_);
+                }
+            }
+        }
+        emit finishedLoadDatabaseContent(v);
+    }
+
+    void IServer::handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev)
+    {
+        using namespace events;
+        SetDefaultDatabaseResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        else{
+            DataBaseInfoSPtr inf = v.inf_;
+            for(int i = 0; i < databases_.size(); ++i){
+                IDatabaseSPtr db = databases_[i];
+                DataBaseInfoSPtr info = db->info();
+                if(info->name() == inf->name()){
+                    info->setIsDefault(true);
+                }
+                else{
+                    info->setIsDefault(false);
+                }
+            }
+        }
+
+        emit finishedSetDefaultDatabase(v);
+    }
+
+    void IServer::handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev)
+    {
+        using namespace events;
+        ServerInfoResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedLoadServerInfo(v);
+    }
+
+    void IServer::handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev)
+    {
+        using namespace events;
+        ServerPropertyInfoResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedLoadServerProperty(v);
+    }
+
+    void IServer::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev)
+    {
+        using namespace events;
+        ChangeServerPropertyInfoResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedChangeServerProperty(v);
+    }
+
+    void IServer::handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev)
+    {
+        using namespace events;
+        ChangeDbValueResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedChangeDbValue(v);
+    }
+
+    void IServer::handleShutdownEvent(events::ShutDownResponceEvent* ev)
+    {
+        using namespace events;
+        ShutDownResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedShutdown(v);
+    }
+
+    void IServer::handleBackupEvent(events::BackupResponceEvent* ev)
+    {
+        using namespace events;
+        BackupResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedBackup(v);
+    }
+
+    void IServer::handleExportEvent(events::ExportResponceEvent* ev)
+    {
+        using namespace events;
+        ExportResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedExport(v);
     }
 }

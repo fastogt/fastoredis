@@ -95,6 +95,11 @@ namespace fastoredis
         thread_->wait();
     }
 
+    DataBaseInfoSPtr IDriver::currentDatabaseInfo() const
+    {
+        return currentDatabaseInfo_;
+    }
+
     void IDriver::init()
     {
         int interval = settings_->loggingMsTimeInterval();

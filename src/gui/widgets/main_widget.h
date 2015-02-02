@@ -3,6 +3,7 @@
 #include <QTabWidget>
 
 #include "core/iserver.h"
+#include "core/connection_settings.h"
 
 namespace fastoredis
 {
@@ -20,6 +21,7 @@ namespace fastoredis
 
     public Q_SLOTS:
         void openConsole(IServerSPtr server);
+        void executeText(IServerSPtr server, const QString& text);
 
     private Q_SLOTS:
         void createNewTab();

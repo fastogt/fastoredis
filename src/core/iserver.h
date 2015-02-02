@@ -1,22 +1,28 @@
 #pragma once
 
-#include "core/idriver.h"
+#include "core/core_fwd.h"
+
+#include "core/events/events.h"
 
 namespace fastoredis
 {
     class IServer
-            : public QObject
+            : public QObject, public std::enable_shared_from_this<IServer>
     {
         Q_OBJECT
 
     public:
+        typedef std::vector<IDatabaseSPtr> databases_container_t;
+
         virtual ~IServer();
 
-        connectionTypes connectionType() const;
+        connectionTypes type() const;
         QString name() const;
         IDriverSPtr driver() const;
         QString address() const;
         QString outputDelemitr() const;
+        IDatabaseSPtr findDatabaseByInfo(DataBaseInfoSPtr inf) const;
+        IDatabaseSPtr findDatabaseByName(const std::string& name) const;
 
         //async
         void connect();
@@ -88,8 +94,8 @@ namespace fastoredis
         void rootCompleated(const EventsInfo::CommandRootCompleatedInfo& res);
 
 // ============== database =============//
-        void startedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentRequest& req);
-        void finishedLoadDataBaseContent(const EventsInfo::LoadDatabasesContentResponce& res);
+        void startedLoadDataBaseContent(const EventsInfo::LoadDatabaseContentRequest& req);
+        void finishedLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res);
 
         void startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req);
         void finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res);
@@ -108,36 +114,36 @@ namespace fastoredis
         void changeValue(const DbValue& newValue);
 
     protected:
+        virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info) = 0;
         static void syncServers(IServer* src, IServer* dsc);
         static void unSyncServers(IServer* src, IServer* dsc);
         void notify(QEvent* ev);
         virtual void customEvent(QEvent* event);
 
-        virtual void handleConnectEvent(events::ConnectResponceEvent* ev) = 0;
-        virtual void handleDisconnectEvent(events::DisconnectResponceEvent* ev) = 0;
-        virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev) = 0;
-        virtual void handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev) = 0;
-        virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev) = 0;
-        virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
-        virtual void handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev) = 0;
-        virtual void handleShutdownEvent(events::ShutDownResponceEvent* ev) = 0;
-        virtual void handleBackupEvent(events::BackupResponceEvent* ev) = 0;
-        virtual void handleExportEvent(events::ExportResponceEvent* ev) = 0;
+        virtual void handleConnectEvent(events::ConnectResponceEvent* ev);
+        virtual void handleDisconnectEvent(events::DisconnectResponceEvent* ev);
+        virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev);
+        virtual void handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev);
+        virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev);
+        virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev);
+        virtual void handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev);
+        virtual void handleShutdownEvent(events::ShutDownResponceEvent* ev);
+        virtual void handleBackupEvent(events::BackupResponceEvent* ev);
+        virtual void handleExportEvent(events::ExportResponceEvent* ev);
 
 // ============== database =============//
-        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev) = 0;
-        virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev) = 0;
+        virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev);
+        virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev);
 // ============== database =============//
 
         IServer(const IDriverSPtr& drv, bool isMaster);
 
         const IDriverSPtr drv_;
+        databases_container_t databases_;
 
     private:
         void handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryResponceEvent* ev);
         void processConfigArgs();
         bool isMaster_;
     };
-
-    typedef shared_ptr_t<IServer> IServerSPtr;
 }

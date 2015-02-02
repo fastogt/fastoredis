@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/types.h"
+#include "core/core_fwd.h"
 #include "common/qt/utils_qt.h"
 
 namespace fastoredis
@@ -178,20 +178,23 @@ namespace fastoredis
         };
 
 // ============== database =============//
-        struct LoadDatabasesContentRequest
+        struct LoadDatabaseContentRequest
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            LoadDatabasesContentRequest(DataBaseInfoSPtr inf, const error_type &er = error_type());
+            LoadDatabaseContentRequest(DataBaseInfoSPtr inf, const error_type &er = error_type());
 
             DataBaseInfoSPtr inf_;
         };
 
-        struct LoadDatabasesContentResponce
-                : LoadDatabasesContentRequest
+        struct LoadDatabaseContentResponce
+                : LoadDatabaseContentRequest
         {
-            typedef LoadDatabasesContentRequest base_class;
-            LoadDatabasesContentResponce(const base_class &request, const error_type &er = error_type());
+            typedef LoadDatabaseContentRequest base_class;
+            typedef std::vector<std::string> keys_cont_type;
+            LoadDatabaseContentResponce(const base_class &request, const error_type &er = error_type());
+
+            keys_cont_type keys_;
         };
 
         struct SetDefaultDatabaseRequest

@@ -8,8 +8,8 @@ SET(PROJECT_DOMAIN "www.fastoredis.com" CACHE STRING "Internet domain name for $
 SET(PROJECT_COMPANYNAME "Fasto" CACHE STRING "Company name for ${PROJECT_NAME}")
 SET(PROJECT_COPYRIGHT "Copyright (C) 2014 ${PROJECT_COMPANYNAME} All Rights Reserved.")
 SET(PROJECT_COMPANYNAME_DOMAIN "www.fastoinprogress.com" CACHE STRING "Internet domain name for ${PROJECT_NAME}")
-SET(PROJECT_MAINTAINER_MAIL "fastoredis@gmail.com" CACHE STRING "Internet mail address for ${PROJECT_NAME} mainteiner")
-SET(PROJECT_MAINTAINER_NAME "Fasto Redis" CACHE STRING "Name of ${PROJECT_NAME} mainteiner")
+SET(PROJECT_MAINTAINER_MAIL "atopilski@fastoredis.com" CACHE STRING "Internet mail address for ${PROJECT_NAME} mainteiner")
+SET(PROJECT_MAINTAINER_NAME "Alexandr Topilski" CACHE STRING "Name of ${PROJECT_NAME} mainteiner")
 SET(PROJECT_GITHUB_FORK "www.github.com/fasto/fastoredis" CACHE STRING "Git fork of ${PROJECT_NAME}")
 SET(PROJECT_GITHUB_ISSUES "www.github.com/fasto/fastoredis/issues" CACHE STRING "Git issue link for ${PROJECT_NAME}")
 SET(PROJECT_BUILD_TYPE "alfa") #alfa, beta, rc, release

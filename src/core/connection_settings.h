@@ -35,7 +35,7 @@ namespace fastoredis
         static IConnectionSettingsBase* fromString(const std::string& val);
         std::string toString() const;
 
-        virtual IConnectionSettingsBase* clone () const = 0;
+        virtual IConnectionSettingsBase* clone() const = 0;
 
         bool loggingEnabled() const;
         void setLoggingEnabled(bool isLogging);

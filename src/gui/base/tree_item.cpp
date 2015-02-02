@@ -12,10 +12,7 @@ namespace fastoredis
 
     TreeItem::~TreeItem()
     {
-        for(unsigned i = 0; i < childrens_.size(); ++i){
-            delete childrens_[i];
-        }
-        childrens_.clear();
+        clear();
     }
 
     void TreeItem::addChildren(TreeItem *child)
@@ -33,6 +30,14 @@ namespace fastoredis
                 childrens_.erase(childrens_.begin() + i);
             }
         }
+    }
+
+    void TreeItem::clear()
+    {
+        for(unsigned i = 0; i < childrens_.size(); ++i){
+            delete childrens_[i];
+        }
+        childrens_.clear();
     }
 
     int TreeItem::childrenCount() const

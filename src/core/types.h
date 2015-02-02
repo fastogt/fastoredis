@@ -79,8 +79,15 @@ namespace fastoredis
         connectionTypes type() const;
         std::string name() const;
         size_t size() const;
+
         bool isDefault() const;
-        void setDefault(bool isDef);
+        void setIsDefault(bool isDef);
+
+        virtual DataBaseInfo* clone() const = 0;
+        virtual ~DataBaseInfo();
+
+        std::vector<std::string> keys() const;
+        void setKeys(const std::vector<std::string>& keys);
 
     protected:
         DataBaseInfo(const std::string& name, size_t size, bool isDefault, connectionTypes type);
@@ -89,11 +96,10 @@ namespace fastoredis
         std::string name_;
         size_t size_;
         bool isDefault_;
+        std::vector<std::string> keys_;
 
         const connectionTypes type_;
     };
-
-    typedef shared_ptr_t<DataBaseInfo> DataBaseInfoSPtr;
 
     inline bool operator == (const DataBaseInfo& lhs, const DataBaseInfo& rhs)
     {

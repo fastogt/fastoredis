@@ -3,6 +3,7 @@
 #include "gui/base/tree_model.h"
 
 #include "core/iserver.h"
+#include "core/idatabase.h"
 
 namespace fastoredis
 {
@@ -18,7 +19,8 @@ namespace fastoredis
         enum eType
         {
             Server,
-            Database
+            Database,
+            Key
         };
 
         IExplorerTreeItem(TreeItem* parent);
@@ -39,6 +41,8 @@ namespace fastoredis
         virtual IServerSPtr server() const;
         virtual eType type() const;
 
+        void loadDatabases();
+
     private:
         const IServerSPtr server_;
     };
@@ -50,19 +54,36 @@ namespace fastoredis
         virtual ~ExplorerDatabaseItem();
 
         ExplorerServerItem* parent() const;
+
         virtual QString name() const;
+        virtual eType type() const;       
+        bool isDefault() const;
+
         virtual IServerSPtr server() const;
-        virtual eType type() const;
+        IDatabaseSPtr db() const;
+
         void loadContent();
         void setDefault();
 
-        bool isDefault() const;
+        DataBaseInfoSPtr info() const;
+    private:
+        DataBaseInfoSPtr inf_;
+    };
 
-        DataBaseInfoSPtr db() const;
-        void setDb(DataBaseInfoSPtr db);
+    struct ExplorerKeyItem
+            : public IExplorerTreeItem
+    {
+        ExplorerKeyItem(const std::string& name, ExplorerDatabaseItem* parent);
+        virtual ~ExplorerKeyItem();
+
+        ExplorerDatabaseItem* parent() const;
+        virtual QString name() const;
+        std::string sname() const;
+        virtual IServerSPtr server() const;
+        virtual eType type() const;
 
     private:
-        DataBaseInfoSPtr db_;
+        std::string name_;
     };
 
     class ExplorerTreeModel
@@ -81,12 +102,15 @@ namespace fastoredis
         void addServer(IServerSPtr server);
         void removeServer(IServerSPtr server);
 
-        void addDatabase(IServer *server, DataBaseInfoSPtr db);
-        void setDefaultDatabase(IServer* server, DataBaseInfoSPtr db);
+        void addDatabase(IServer* server, DataBaseInfoSPtr db);
+        void removeDatabase(IServer* server, DataBaseInfoSPtr db);
+        void setDefaultDb(IServer* server, DataBaseInfoSPtr db);
 
+        void addKey(IServer* server, DataBaseInfoSPtr db, const std::string& key);
     private:
         ExplorerServerItem *findServerItem(IServer* server) const;
         ExplorerDatabaseItem *findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const;
+        ExplorerKeyItem *findKeyItem(ExplorerDatabaseItem* db, const std::string& key) const;
     };
 }
 

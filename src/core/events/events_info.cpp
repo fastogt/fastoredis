@@ -139,13 +139,13 @@ namespace fastoredis
 
 // ============== database =============//
 
-        LoadDatabasesContentRequest::LoadDatabasesContentRequest(DataBaseInfoSPtr inf, const error_type &er)
+        LoadDatabaseContentRequest::LoadDatabaseContentRequest(DataBaseInfoSPtr inf, const error_type &er)
             : base_class(er), inf_(inf)
         {
 
         }
 
-        LoadDatabasesContentResponce::LoadDatabasesContentResponce(const base_class &request, const error_type &er)
+        LoadDatabaseContentResponce::LoadDatabaseContentResponce(const base_class &request, const error_type &er)
             : base_class(request)
         {
             base_class::errorInfo_ = er;

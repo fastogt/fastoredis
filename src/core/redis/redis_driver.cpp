@@ -33,6 +33,7 @@ extern "C" {
 #define GET_DATABASES "CONFIG GET databases"
 #define GET_DATABASES_KEYS_INFO "INFO keyspace"
 #define SET_DEFAULT_DATABASE "SELECT "
+#define GET_KEYS "KEYS *"
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 #define STAT_MODE_REQUEST "STAT"
@@ -947,6 +948,7 @@ namespace fastoredis
 
             redisReply *reply = static_cast<redisReply*>(redisCommand(context, "SELECT %d", config.dbnum));
             if (reply != NULL) {
+                parent_->currentDatabaseInfo_.reset(new RedisDataBaseInfo(common::convertToString(config.dbnum), 0, true));
                 freeReplyObject(reply);
                 return common::ErrorValueSPtr();
             }
@@ -1509,7 +1511,7 @@ namespace fastoredis
 
     void RedisDriver::initImpl()
     {
-
+        currentDatabaseInfo_.reset(new RedisDataBaseInfo("0", 0, true));
     }
 
     void RedisDriver::clearImpl()
@@ -1896,10 +1898,18 @@ namespace fastoredis
                             if(countDb > 0){
                                 for(int i = 0; i < countDb; ++i){
                                     DataBaseInfoSPtr dbInf(new RedisDataBaseInfo(common::convertToString(i), 0, false));
-                                    res.databases_.push_back(dbInf);
+                                    if(dbInf->name() == currentDatabaseInfo_->name()){
+                                        res.databases_.push_back(currentDatabaseInfo_);
+                                    }
+                                    else {
+                                        res.databases_.push_back(dbInf);
+                                    }
                                 }
                             }
                         }
+                    }
+                    else{
+                        res.databases_.push_back(currentDatabaseInfo_);
                     }
                 }
             }
@@ -1914,7 +1924,37 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
+            FastoObjectIPtr root = FastoObject::createRoot(GET_KEYS);
         notifyProgress(sender, 50);
+            common::ErrorValueSPtr er = impl_->execute(GET_KEYS, Command::InnerCommand, root.get());
+            if(er){
+                res.setErrorInfo(er);
+            }
+            else{
+                FastoObject::child_container_type rchildrens = root->childrens();
+                if(rchildrens.size()){
+                    DCHECK(rchildrens.size() == 1);
+                    FastoObjectArray* array = dynamic_cast<FastoObjectArray*>(rchildrens[0]);
+                    if(!array){
+                        goto done;
+                    }
+                    common::ArrayValue* ar = array->array();
+                    if(!ar){
+                        goto done;
+                    }
+
+                    for(int i = 0; i < ar->getSize(); ++i)
+                    {
+                        std::string ress;
+                        bool isok = ar->getString(i, &ress);
+                        if(isok){
+                            res.keys_.push_back(ress);
+                        }
+                    }
+                }
+            }
+    done:
+        notifyProgress(sender, 75);
             reply(sender, new events::LoadDatabaseContentResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
@@ -1932,7 +1972,7 @@ namespace fastoredis
                 res.setErrorInfo(er);
             }
             else{
-                res.inf_->setDefault(true);
+                currentDatabaseInfo_.reset(new RedisDataBaseInfo(res.inf_->name(), 0, true));
             }
         notifyProgress(sender, 75);
             reply(sender, new events::SetDefaultDatabaseResponceEvent(this, res));

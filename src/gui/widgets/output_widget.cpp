@@ -148,7 +148,7 @@ namespace fastoredis
         }
 
         fastoredis::FastoCommonItem* comChild = createItem(par, child, par->key());
-        commonModel_->inserItem(parent, comChild);
+        commonModel_->insertItem(parent, comChild);
     }
 
     void OutputWidget::itemUpdate(FastoObject* item, const QString &newValue)

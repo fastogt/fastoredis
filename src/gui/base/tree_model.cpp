@@ -76,7 +76,7 @@ namespace fastoredis
         endResetModel();
     }
 
-    void TreeModel::inserItem(const QModelIndex& parent, TreeItem* child)
+    void TreeModel::insertItem(const QModelIndex& parent, TreeItem* child)
     {
         TreeItem* item = NULL;
         if(!parent.isValid()){
@@ -91,6 +91,24 @@ namespace fastoredis
         beginInsertRows(parent, child_count, child_count);
             item->addChildren(child);
         endInsertRows();
+    }
+
+    void TreeModel::removeItem(const QModelIndex& parent, TreeItem* child)
+    {
+        TreeItem* item = NULL;
+        if(!parent.isValid()){
+            item = root_;
+        }
+
+        if(!item){
+            item = common::utils_qt::item<TreeItem*>(parent);
+        }
+
+        int child_count = item->childrenCount();
+        beginRemoveRows(parent, child_count, child_count);
+            item->removeChildren(child);
+            delete child;
+        endRemoveRows();
     }
 
     void TreeModel::updateItem(const QModelIndex &topLeft, const QModelIndex &bottomRight)

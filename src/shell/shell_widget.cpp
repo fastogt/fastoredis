@@ -164,7 +164,7 @@ namespace fastoredis
         workProgressBar_ = new QProgressBar;
         hlayout->addWidget(workProgressBar_);
 
-        connectionTypes type = server->connectionType();
+        connectionTypes type = server->type();
         if(type == REDIS){
             input_ = new RedisShell;
             setToolTip(tr("Based on redis-cli version: %1").arg(input_->version()));
@@ -238,6 +238,12 @@ namespace fastoredis
     void BaseShellWidget::setText(const QString& text)
     {
         input_->setText(text);
+    }
+
+    void BaseShellWidget::execute(const QString& text)
+    {
+        input_->setText(text);
+        execute();
     }
 
     void BaseShellWidget::syncConnectionActions()

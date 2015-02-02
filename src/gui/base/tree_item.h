@@ -20,6 +20,7 @@ namespace fastoredis
         TreeItem *parent() const;
 
         void* const internalPointer() const;
+        void clear();
 
     protected:
         TreeItem *const parent_;

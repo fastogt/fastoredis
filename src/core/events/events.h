@@ -54,8 +54,8 @@ namespace fastoredis
         typedef common::utils_qt::Event<EventsInfo::ExportInfoResponce, QEvent::User + 30> ExportResponceEvent;
 
 // ============== database events =============//
-        typedef common::utils_qt::Event<EventsInfo::LoadDatabasesContentRequest, QEvent::User + 31> LoadDatabaseContentRequestEvent;
-        typedef common::utils_qt::Event<EventsInfo::LoadDatabasesContentResponce, QEvent::User + 32> LoadDatabaseContentResponceEvent;
+        typedef common::utils_qt::Event<EventsInfo::LoadDatabaseContentRequest, QEvent::User + 31> LoadDatabaseContentRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::LoadDatabaseContentResponce, QEvent::User + 32> LoadDatabaseContentResponceEvent;
 
         typedef common::utils_qt::Event<EventsInfo::SetDefaultDatabaseRequest, QEvent::User + 33> SetDefaultDatabaseRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::SetDefaultDatabaseResponce, QEvent::User + 34> SetDefaultDatabaseResponceEvent;
