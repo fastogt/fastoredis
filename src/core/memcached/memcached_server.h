@@ -20,6 +20,7 @@ namespace fastoredis
         virtual void handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev);
         virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev);
         virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev);
+        virtual void handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev);
         virtual void handleShutdownEvent(events::ShutDownResponceEvent* ev);
         virtual void handleBackupEvent(events::BackupResponceEvent* ev);
         virtual void handleExportEvent(events::ExportResponceEvent* ev);

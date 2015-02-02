@@ -108,6 +108,18 @@ namespace fastoredis
         emit finishedChangeServerProperty(v);
     }
 
+    void RedisServer::handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev)
+    {
+        using namespace events;
+        ChangeDbValueResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+
+        emit finishedChangeDbValue(v);
+    }
+
     void RedisServer::handleShutdownEvent(events::ShutDownResponceEvent* ev)
     {
         using namespace events;

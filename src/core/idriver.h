@@ -69,6 +69,7 @@ namespace fastoredis
         virtual void handleLoadServerInfoEvent(events::ServerInfoRequestEvent* ev) = 0;
         virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev) = 0;
         virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
+        virtual void handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev) = 0;
         virtual void handleShutdownEvent(events::ShutDownRequestEvent* ev) = 0;
         virtual void handleBackupEvent(events::BackupRequestEvent* ev) = 0;
         virtual void handleExportEvent(events::ExportRequestEvent* ev) = 0;
@@ -83,7 +84,7 @@ namespace fastoredis
         class RootLocker
         {
         public:
-            RootLocker(IDriver* parent, QObject* reciver, const std::string& text);
+            RootLocker(IDriver* parent, QObject* reciver, const std::string& text, const std::string &key);
             ~RootLocker();
 
             FastoObjectIPtr root_;
@@ -93,13 +94,13 @@ namespace fastoredis
             QObject *reciver_;
         };
 
-        RootLocker make_locker(QObject* reciver, const std::string& text)
+        RootLocker make_locker(QObject* reciver, const std::string& text, const std::string& key)
         {
-            return RootLocker(this, reciver, text);
+            return RootLocker(this, reciver, text, key);
         }
 
     private:
-        FastoObjectIPtr createRoot(QObject* reciver, const std::string& text);
+        FastoObjectIPtr createRoot(QObject* reciver, const std::string& text, const std::string &key);
         void compleateRoot(QObject* reciver, FastoObjectIPtr root);
 
         void handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryRequestEvent *ev);

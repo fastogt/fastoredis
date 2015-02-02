@@ -22,6 +22,9 @@ namespace fastoredis
     public:
         OutputWidget(const QString &delemitr, QWidget* parent = 0);
 
+    Q_SIGNALS:
+        void changeValue(const DbValue& value);
+
     private Q_SLOTS:
         void setTreeView();
         void setTableView();

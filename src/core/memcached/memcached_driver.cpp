@@ -634,7 +634,7 @@ namespace fastoredis
             if(inputLine){
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                RootLocker lock = make_locker(sender, inputLine);
+                RootLocker lock = make_locker(sender, inputLine, inputLine);
                 FastoObjectIPtr outRoot = lock.root_;
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
@@ -707,6 +707,11 @@ namespace fastoredis
     }
 
     void MemcachedDriver::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev)
+    {
+
+    }
+
+    void MemcachedDriver::handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev)
     {
 
     }

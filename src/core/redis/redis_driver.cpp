@@ -119,6 +119,20 @@ namespace
             }
         }
     } rInit;
+
+    std::string getKeyFromLine(const std::string& input)
+    {
+        if(input.empty()){
+            return std::string();
+        }
+
+        size_t pos = input.find_first_of(' ');
+        if(pos != std::string::npos){
+            return input.substr(pos+1);
+        }
+
+        return input;
+    }
 }
 
 namespace fastoredis
@@ -1655,7 +1669,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(LatencyMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, LATENCY_REQUEST);
+        RootLocker lock = make_locker(sender, LATENCY_REQUEST, LATENCY_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->latencyMode(obj.get());
@@ -1676,7 +1690,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(SlaveMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, SYNC_REQUEST);
+        RootLocker lock = make_locker(sender, SYNC_REQUEST, SYNC_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->slaveMode(obj.get());
@@ -1697,7 +1711,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(GetRDBMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, RDM_REQUEST);
+        RootLocker lock = make_locker(sender, RDM_REQUEST, RDM_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->getRDB(obj.get());
@@ -1730,7 +1744,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(FindBigKeysMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, FIND_BIG_KEYS_REQUEST);
+        RootLocker lock = make_locker(sender, FIND_BIG_KEYS_REQUEST, FIND_BIG_KEYS_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->findBigKeys(obj.get());
@@ -1751,7 +1765,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(StatMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, STAT_MODE_REQUEST);
+        RootLocker lock = make_locker(sender, STAT_MODE_REQUEST, STAT_MODE_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->statMode(obj.get());
@@ -1772,7 +1786,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(ScanMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, SCAN_MODE_REQUEST);
+        RootLocker lock = make_locker(sender, SCAN_MODE_REQUEST, SCAN_MODE_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->scanMode(obj.get());
@@ -1797,7 +1811,7 @@ namespace fastoredis
             if(inputLine){
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                RootLocker lock = make_locker(sender, inputLine);
+                RootLocker lock = make_locker(sender, inputLine, getKeyFromLine(inputLine));
                 FastoObjectIPtr outRoot = lock.root_;
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
@@ -1992,6 +2006,28 @@ namespace fastoredis
         }
         notifyProgress(sender, 75);
             reply(sender, new events::ChangeServerPropertyInfoResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::ChangeDbValueResponceEvent::value_type res(ev->value());
+
+        notifyProgress(sender, 50);
+        const std::string changeRequest = "SET " + res.newItem_.key_ + " " + res.newItem_.value_;
+        FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
+        common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), Command::InnerCommand, root.get());
+        if(er){
+            res.setErrorInfo(er);
+        }
+        else{
+            res.isChange_ = true;
+        }
+
+        notifyProgress(sender, 75);
+            reply(sender, new events::ChangeDbValueResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 

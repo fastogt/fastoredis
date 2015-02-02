@@ -199,6 +199,15 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::changeValue(const DbValue& newValue)
+    {
+        EventsInfo::ChangeDbValueRequest req;
+        req.newItem_ = newValue;
+        emit startedChangeDbValue(req);
+        QEvent *ev = new events::ChangeDbValueRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::requestHistoryInfo()
     {
         EventsInfo::ServerInfoHistoryRequest req;

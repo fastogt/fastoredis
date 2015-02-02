@@ -226,6 +226,7 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
+// ============== change =============//
         ChangeServerPropertyInfoRequest::ChangeServerPropertyInfoRequest(const error_type &er)
             : base_class(er)
         {
@@ -237,6 +238,19 @@ namespace fastoredis
         {
             base_class::errorInfo_ = er;
         }
+
+        ChangeDbValueRequest::ChangeDbValueRequest(const error_type &er)
+            : base_class(er)
+        {
+
+        }
+
+        ChangeDbValueResponce::ChangeDbValueResponce(const base_class &request, const error_type &er)
+            : base_class(request)
+        {
+            base_class::errorInfo_ = er;
+        }
+// ============== change =============//
 
         ProgressInfoResponce::ProgressInfoResponce(uint8_t pr)
             : progress_(pr)

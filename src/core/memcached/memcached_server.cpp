@@ -108,6 +108,11 @@ namespace fastoredis
         emit finishedChangeServerProperty(v);
     }
 
+    void MemcachedServer::handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev)
+    {
+
+    }
+
     void MemcachedServer::handleShutdownEvent(events::ShutDownResponceEvent* ev)
     {
         using namespace events;

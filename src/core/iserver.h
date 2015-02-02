@@ -71,8 +71,13 @@ namespace fastoredis
         void startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest& req);
         void finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce& res);
 
+// ============== change =============//
+        void startedChangeDbValue(const EventsInfo::ChangeDbValueRequest& req);
+        void finishedChangeDbValue(const EventsInfo::ChangeDbValueResponce& res);
+
         void startedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoRequest& req);
         void finishedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoResponce& res);
+// ============== change =============//
 
         void progressChanged(const EventsInfo::ProgressInfoResponce& res);
 
@@ -100,6 +105,7 @@ namespace fastoredis
         void serverProperty();
         void requestHistoryInfo();
         void changeProperty(const PropertyType& newValue);
+        void changeValue(const DbValue& newValue);
 
     protected:
         static void syncServers(IServer* src, IServer* dsc);
@@ -113,6 +119,7 @@ namespace fastoredis
         virtual void handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev) = 0;
         virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev) = 0;
         virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev) = 0;
+        virtual void handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev) = 0;
         virtual void handleShutdownEvent(events::ShutDownResponceEvent* ev) = 0;
         virtual void handleBackupEvent(events::BackupResponceEvent* ev) = 0;
         virtual void handleExportEvent(events::ExportResponceEvent* ev) = 0;

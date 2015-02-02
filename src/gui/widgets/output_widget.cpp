@@ -21,25 +21,13 @@
 
 namespace
 {
-    fastoredis::FastoCommonItem *createItem(fastoredis::TreeItem* parent, fastoredis::FastoObject* item)
+    fastoredis::FastoCommonItem *createItem(fastoredis::TreeItem* parent, fastoredis::FastoObject* item, const QString& key)
     {
         fastoredis::FastoCommonItem *result = NULL;
         fastoredis::FastoObject::child_container_type cont = item->childrens();
         size_t contSize = cont.size();
-        const std::string itemData = item->toString();
-        if(contSize){
-            char size[128] = {0};
-            sprintf(size, "{%zu}", contSize);
-            result = new fastoredis::FastoCommonItem(common::convertFromString<QString>(itemData), size, item->type(), parent, item);
-        }
-        else{
-            QString varName;
-            if(parent){
-                varName = QString("%1)").arg(parent->childrenCount() + 1);
-            }
-            result = new fastoredis::FastoCommonItem(varName, common::convertFromString<QString>(itemData), item->type(), parent, item);
-        }
-        return result;
+        const std::string value = item->toString();
+        return new fastoredis::FastoCommonItem(key, common::convertFromString<QString>(value), item->type(), parent, item);
     }
 }
 
@@ -49,6 +37,7 @@ namespace fastoredis
         : QWidget(parent)
     {
         commonModel_ = new FastoCommonModel(this);
+        VERIFY(connect(commonModel_, SIGNAL(changeValue(DbValue)), this, SIGNAL(changeValue(DbValue))));
 
         treeView_ = new FastoTreeView;
         treeView_->setModel(commonModel_);
@@ -131,7 +120,7 @@ namespace fastoredis
     void OutputWidget::rootCreate(const EventsInfo::CommandRootCreatedInfo& res)
     {
         FastoObject* rootObj = res.root_.get();
-        fastoredis::FastoCommonItem* root = createItem(NULL, rootObj);
+        fastoredis::FastoCommonItem* root = createItem(NULL, rootObj, common::convertFromString<QString>(res.key_));
         commonModel_->setRoot(root);
     }
 
@@ -150,15 +139,15 @@ namespace fastoredis
             return;
         }
 
-        fastoredis::TreeItem* par = NULL;
+        fastoredis::FastoCommonItem* par = NULL;
         if(!parent.isValid()){
-            par = commonModel_->root();
+            par = static_cast<fastoredis::FastoCommonItem*>(commonModel_->root());
         }
         else{
-            par = common::utils_qt::item<fastoredis::TreeItem*>(parent);
+            par = common::utils_qt::item<fastoredis::FastoCommonItem*>(parent);
         }
 
-        fastoredis::FastoCommonItem* comChild = createItem(par, child);
+        fastoredis::FastoCommonItem* comChild = createItem(par, child, par->key());
         commonModel_->inserItem(parent, comChild);
     }
 

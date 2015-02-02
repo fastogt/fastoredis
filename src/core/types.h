@@ -6,6 +6,23 @@
 
 namespace fastoredis
 {
+    struct DbValue
+    {
+        DbValue()
+        {
+
+        }
+
+        DbValue(const std::string& key, const std::string& value)
+            : key_(key), value_(value)
+        {
+
+        }
+
+        std::string key_;
+        std::string value_;
+    };
+
     struct ServerInfo
     {
         connectionTypes type() const;

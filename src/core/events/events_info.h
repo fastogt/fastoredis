@@ -115,6 +115,7 @@ namespace fastoredis
             CommandRootCreatedInfo(FastoObjectIPtr root, const error_type &er = error_type());
 
             FastoObjectIPtr root_;
+            std::string key_;
         };
 
         struct CommandRootCompleatedInfo
@@ -268,6 +269,7 @@ namespace fastoredis
             ServerPropertyInfo info_;
         };
 
+// ============== change =============//
         struct ChangeServerPropertyInfoRequest
                 : public EventInfoBase
         {
@@ -285,6 +287,25 @@ namespace fastoredis
 
             bool isChange_;
         };
+
+        struct ChangeDbValueRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ChangeDbValueRequest(const error_type &er = error_type());
+
+            DbValue newItem_;
+        };
+
+        struct ChangeDbValueResponce
+                : ChangeDbValueRequest
+        {
+            typedef ChangeDbValueRequest base_class;
+            ChangeDbValueResponce(const base_class &request, const error_type &er = error_type());
+
+            bool isChange_;
+        };
+// ============== change =============//
 
         struct ProgressInfoResponce
         {

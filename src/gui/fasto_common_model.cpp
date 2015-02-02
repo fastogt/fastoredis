@@ -4,6 +4,7 @@
 #include "gui/gui_factory.h"
 
 #include "common/qt/utils_qt.h"
+#include "common/qt/convert_string.h"
 #include "translations/global.h"
 
 namespace fastoredis
@@ -56,6 +57,31 @@ namespace fastoredis
         return result;
     }
 
+    bool FastoCommonModel::setData(const QModelIndex &index, const QVariant &value, int role)
+    {
+        if (index.isValid() && role == Qt::EditRole) {
+            int column = index.column();
+            FastoCommonItem *node = common::utils_qt::item<FastoCommonItem*>(index);
+
+            if (!node)
+                return false;
+
+            if (column == FastoCommonItem::eKey) {
+
+            }
+            else if (column == FastoCommonItem::eValue) {
+                const QString newValue = value.toString();
+                if(newValue != node->value()){
+                    const std::string key = common::convertToString(node->key());
+                    const std::string value = common::convertToString(newValue);
+                    emit changeValue(DbValue(key, value));
+                }
+            }
+        }
+
+        return false;
+    }
+
     QVariant FastoCommonModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
         using namespace translations;
@@ -87,6 +113,11 @@ namespace fastoredis
         Qt::ItemFlags result = 0;
         if (index.isValid()) {
             result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+            int col = index.column();
+            FastoCommonItem *node = common::utils_qt::item<FastoCommonItem*>(index);
+            if(node && col == FastoCommonItem::eValue){
+                result |= Qt::ItemIsEditable;
+            }
         }
         return result;
     }

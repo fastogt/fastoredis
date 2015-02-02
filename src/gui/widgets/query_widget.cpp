@@ -16,6 +16,7 @@ namespace fastoredis
         const QString delemitr = server->outputDelemitr();
 
         outputWidget_ = new OutputWidget(delemitr);
+        VERIFY(connect(outputWidget_, SIGNAL(changeValue(const DbValue&)), server.get(), SLOT(changeValue(const DbValue&)), Qt::DirectConnection));
         VERIFY(connect(shellWidget_, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&)), outputWidget_, SLOT(rootCreate(const EventsInfo::CommandRootCreatedInfo&))));
         VERIFY(connect(shellWidget_, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), outputWidget_, SLOT(rootCompleate(const EventsInfo::CommandRootCompleatedInfo&))));
 

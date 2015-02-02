@@ -147,6 +147,10 @@ namespace fastoredis
             ChangeServerPropertyInfoRequestEvent *ev = static_cast<ChangeServerPropertyInfoRequestEvent*>(event);
             handleServerPropertyChangeEvent(ev);
         }
+        else if (type == static_cast<QEvent::Type>(ChangeDbValueRequestEvent::EventType)){
+            ChangeDbValueRequestEvent *ev = static_cast<ChangeDbValueRequestEvent*>(event);
+            handleDbValueChangeEvent(ev);
+        }
         else if (type == static_cast<QEvent::Type>(BackupRequestEvent::EventType)){
             BackupRequestEvent *ev = static_cast<BackupRequestEvent*>(event);
             handleBackupEvent(ev);
@@ -168,11 +172,11 @@ namespace fastoredis
         return QObject::customEvent(event);
     }
 
-    IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text)
+    IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text, const std::string &key)
         : parent_(parent), reciver_(reciver)
     {
         DCHECK(parent_);
-        root_ = parent_->createRoot(reciver, text);
+        root_ = parent_->createRoot(reciver, text, key);
     }
 
     IDriver::RootLocker::~RootLocker()
@@ -180,10 +184,11 @@ namespace fastoredis
         parent_->compleateRoot(reciver_, root_);
     }
 
-    FastoObjectIPtr IDriver::createRoot(QObject *reciver, const std::string& text)
+    FastoObjectIPtr IDriver::createRoot(QObject *reciver, const std::string& text, const std::string& key)
     {
         FastoObjectIPtr root = FastoObject::createRoot(text, this);
         events::CommandRootCreatedEvent::value_type res(root);
+        res.key_ = key;
         reply(reciver, new events::CommandRootCreatedEvent(this, res));
         return root;
     }
