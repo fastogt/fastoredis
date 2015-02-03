@@ -85,9 +85,9 @@ namespace common
         return new ArrayValue;
     }
 
-    CommandValue* Value::createCommand(const std::string& src, CommandType type)
+    CommandValue* Value::createCommand(const std::string& src, const std::string &oppositeCommand, CommandType type)
     {
-        return new CommandValue(src, type);
+        return new CommandValue(src, oppositeCommand, type);
     }
 
     PairValue* Value::createPairValue(Value* key, Value* value)
@@ -625,8 +625,8 @@ namespace common
 		return result;
     }
 
-    CommandValue::CommandValue(const std::string& src, CommandType ctype)
-        : Value(TYPE_COMMAND), inputCommand_(src), ctype_(ctype)
+    CommandValue::CommandValue(const std::string& src, const std::string& oppositeCommand, CommandType ctype)
+        : Value(TYPE_COMMAND), inputCommand_(src), oppositeCommand_(oppositeCommand), ctype_(ctype)
     {
 
     }
@@ -634,6 +634,11 @@ namespace common
     std::string CommandValue::inputCommand() const
     {
         return inputCommand_;
+    }
+
+    std::string CommandValue::oppositeCommand() const
+    {
+        return oppositeCommand_;
     }
 
     CommandValue::CommandType CommandValue::commandType() const
@@ -659,7 +664,7 @@ namespace common
 
     CommandValue* CommandValue::deepCopy() const
     {
-        return createCommand(inputCommand_, ctype_);
+        return createCommand(inputCommand_, oppositeCommand_, ctype_);
     }
 
     PairValue::PairValue(Value* key, Value* value)

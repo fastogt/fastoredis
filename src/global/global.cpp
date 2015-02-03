@@ -91,6 +91,22 @@ namespace fastoredis
         return childrens_;
     }
 
+    FastoObjectCommand::FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string& delemitr)
+        : FastoObject(parent, cmd, delemitr)
+    {
+
+    }
+
+    common::CommandValue* FastoObjectCommand::cmd() const
+    {
+        return dynamic_cast<common::CommandValue*>(value_.get());
+    }
+
+    std::string FastoObjectCommand::toString() const
+    {
+        return std::string();
+    }
+
     FastoObjectArray::FastoObjectArray(FastoObject* parent, common::ArrayValue* ar, const std::string& delemitr)
         : FastoObject(parent, ar, delemitr)
     {
@@ -134,6 +150,22 @@ namespace fastoredis
     common::ArrayValue* FastoObjectArray::array() const
     {
         return dynamic_cast<common::ArrayValue*>(value_.get());
+    }
+
+    FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input,
+                                               const std::string& opposite, common::Value::CommandType ct)
+    {
+        DCHECK(parent);
+        common::CommandValue* cmd = common::Value::createCommand(input, opposite, ct);
+        FastoObjectCommand* fs = new FastoObjectCommand(parent, cmd, "");
+        parent->addChildren(fs);
+        return fs;
+    }
+
+    FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input,
+                                               const std::string& opposite, common::Value::CommandType ct)
+    {
+        return createCommand(parent.get(), input, opposite, ct);
     }
 }
 

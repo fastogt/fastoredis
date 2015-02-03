@@ -44,7 +44,7 @@ namespace common
         static FundamentalValue* createDoubleValue(double in_value);
         static StringValue* createStringValue(const std::string& in_value);
         static ArrayValue* createArrayValue();
-        static CommandValue* createCommand(const std::string& src, CommandType type);
+        static CommandValue* createCommand(const std::string& src, const std::string& oppositeCommand, CommandType type);
         static PairValue* createPairValue(Value* key, Value* value);
         static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
@@ -203,9 +203,10 @@ namespace common
             : public Value
     {
     public:
-        CommandValue(const std::string& src, CommandType ctype);
+        CommandValue(const std::string& src, const std::string& oppositeCommand, CommandType ctype);
 
         std::string inputCommand() const;
+        std::string oppositeCommand() const;
         CommandType commandType() const;
         virtual std::string toString() const;
         virtual bool getAsCommand(CommandValue* out_value) const;
@@ -213,6 +214,7 @@ namespace common
 
     private:
         std::string inputCommand_;
+        std::string oppositeCommand_;
         CommandType ctype_;
     };
 

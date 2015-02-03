@@ -123,12 +123,15 @@ namespace fastoredis
             return common::ErrorValueSPtr();
         }
 
-        common::ErrorValueSPtr execute(const std::string& command, common::Value::CommandType type, FastoObject* out) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr execute(FastoObjectCommand* cmd) WARN_UNUSED_RESULT
         {
-            DCHECK(out);
-            if(!out){
+            DCHECK(cmd);
+            if(!cmd){
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
+
+            const std::string command = cmd->cmd()->inputCommand();
+            common::Value::CommandType type = cmd->cmd()->commandType();
 
             if(command.empty()){
                 return common::make_error_value("Command empty", common::ErrorValue::E_ERROR);
@@ -143,15 +146,15 @@ namespace fastoredis
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
-                    out->addChildren(child);
+                    FastoObject* child = new FastoObject(cmd, val, config_.mb_delim);
+                    cmd->addChildren(child);
                 }
                 else if (argc > 0) {
                     if (strcasecmp(argv[0], "quit") == 0){
                         config_.shutdown = 1;
                     }
                     else {
-                        er = execute(out, argc, argv);
+                        er = execute(cmd, argc, argv);
                     }
                 }
                 sdsfreesplitres(argv,argc);
@@ -653,7 +656,8 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        er = impl_->execute(command, common::Value::C_USER, outRoot.get());
+                        FastoObjectCommand* cmd = createCommand(outRoot, command, command, common::Value::C_USER);
+                        er = impl_->execute(cmd);
                         if(er){
                             res.setErrorInfo(er);
                             break;
