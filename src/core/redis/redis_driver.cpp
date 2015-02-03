@@ -228,7 +228,7 @@ namespace fastoredis
                     min = max = tot = count = 0;
                 }
                 else{
-                    child->changeValue(val);
+                    child->setValue(val);
                 }
 
                 common::utils::msleep(LATENCY_SAMPLE_RATE);

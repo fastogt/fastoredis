@@ -73,7 +73,12 @@ namespace fastoredis
         return delemitr_;
     }
 
-    void FastoObject::changeValue(common::Value* val)
+    common::Value* FastoObject::value() const
+    {
+        return value_.get();
+    }
+
+    void FastoObject::setValue(common::Value* val)
     {
         value_.reset(val);
         if(observer_){
@@ -84,17 +89,6 @@ namespace fastoredis
     FastoObject::child_container_type FastoObject::childrens() const
     {
         return childrens_;
-    }
-
-    FastoObjectCommand::FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string& delemitr)
-        : FastoObject(parent, cmd, delemitr)
-    {
-
-    }
-
-    common::CommandValue* FastoObjectCommand::command() const
-    {
-        return dynamic_cast<common::CommandValue*>(value_.get());
     }
 
     FastoObjectArray::FastoObjectArray(FastoObject* parent, common::ArrayValue* ar, const std::string& delemitr)

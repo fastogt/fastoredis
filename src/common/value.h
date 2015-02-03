@@ -13,6 +13,7 @@ namespace common
     class StringValue;
     class ErrorValue;
     class CommandValue;
+    class PairValue;
 
     class Value
     {
@@ -27,6 +28,7 @@ namespace common
             TYPE_ARRAY,
             TYPE_STATUS,
             TYPE_COMMAND,
+            TYPE_PAIR,
 			TYPE_ERROR
         };
 
@@ -43,6 +45,7 @@ namespace common
         static StringValue* createStringValue(const std::string& in_value);
         static ArrayValue* createArrayValue();
         static CommandValue* createCommand(const std::string& src, CommandType type);
+        static PairValue* createPairValue(Value* key, Value* value);
         static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
         static std::string toString(Type t);
@@ -57,6 +60,7 @@ namespace common
         virtual bool getAsDouble(double* out_value) const;
         virtual bool getAsString(std::string* out_value) const;
         virtual bool getAsCommand(CommandValue* command) const;
+        virtual bool getAsPair(PairValue* pair) const;
         virtual bool getAsError(ErrorValue* out_value) const;
         virtual bool getAsList(ArrayValue** out_value);
         virtual bool getAsList(const ArrayValue** out_value) const;
@@ -205,10 +209,28 @@ namespace common
         CommandType commandType() const;
         virtual std::string toString() const;
         virtual bool getAsCommand(CommandValue* out_value) const;
+        virtual CommandValue* deepCopy() const;
 
     private:
         std::string inputCommand_;
         CommandType ctype_;
+    };
+
+    class PairValue
+            : public Value
+    {
+    public:
+        PairValue(Value* key, Value* value);
+        Value* key() const;
+        Value* value() const;
+
+        virtual std::string toString() const;
+        virtual bool getAsPair(PairValue* out_value) const;
+        virtual PairValue *deepCopy() const;
+
+    private:
+        scoped_ptr_t<Value> key_;
+        scoped_ptr_t<Value> value_;
     };
 
     class ErrorValue
@@ -224,6 +246,7 @@ namespace common
         virtual std::string toString() const;
 
         virtual bool getAsError(ErrorValue* out_value) const;
+        virtual ErrorValue *deepCopy() const;
         virtual ~ErrorValue();
 
     private:

@@ -22,10 +22,10 @@
 
 namespace
 {
-    fastoredis::FastoCommonItem *createItem(fastoredis::TreeItem* parent, fastoredis::FastoObject* item, const QString& key)
+    fastoredis::FastoCommonItem *createItem(fastoredis::TreeItem* parent, fastoredis::FastoObject* item)
     {
         const std::string value = item->toString();
-        return new fastoredis::FastoCommonItem(key, common::convertFromString<QString>(value), item->type(), parent, item);
+        return new fastoredis::FastoCommonItem("", common::convertFromString<QString>(value), item->type(), parent, item);
     }
 }
 
@@ -136,7 +136,7 @@ namespace fastoredis
     void OutputWidget::rootCreate(const EventsInfo::CommandRootCreatedInfo& res)
     {
         FastoObject* rootObj = res.root_.get();
-        fastoredis::FastoCommonItem* root = createItem(NULL, rootObj, "");
+        fastoredis::FastoCommonItem* root = createItem(NULL, rootObj);
         commonModel_->setRoot(root);
     }
 
@@ -163,7 +163,7 @@ namespace fastoredis
             par = common::utils_qt::item<fastoredis::FastoCommonItem*>(parent);
         }
 
-        fastoredis::FastoCommonItem* comChild = createItem(par, child, par->key());
+        fastoredis::FastoCommonItem* comChild = createItem(par, child);
         commonModel_->insertItem(parent, comChild);
     }
 

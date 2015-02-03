@@ -34,7 +34,8 @@ namespace fastoredis
         void clear();
         std::string delemitr() const;
 
-        void changeValue(common::Value* val);
+        common::Value* value() const;
+        void setValue(common::Value* val);
 
     protected:
         IFastoObjectObserver* observer_;
@@ -46,15 +47,6 @@ namespace fastoredis
         FastoObject* const parent_;
 		child_container_type childrens_;
         const std::string delemitr_;
-    };
-
-    class FastoObjectCommand
-            : public FastoObject
-    {
-    public:
-        FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string& delemitr);
-
-        common::CommandValue* command() const;
     };
 
     class FastoObjectArray
