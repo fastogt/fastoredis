@@ -123,14 +123,14 @@ namespace fastoredis
             return common::ErrorValueSPtr();
         }
 
-        common::ErrorValueSPtr execute(const char *command, Command::CommandType type, FastoObject* out) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr execute(const std::string& command, common::Value::CommandType type, FastoObject* out) WARN_UNUSED_RESULT
         {
             DCHECK(out);
             if(!out){
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
-            if(!command){
+            if(command.empty()){
                 return common::make_error_value("Command empty", common::ErrorValue::E_ERROR);
             }
 
@@ -139,7 +139,7 @@ namespace fastoredis
             common::ErrorValueSPtr er;
             if (command[0] != '\0') {
                 int argc;
-                sds *argv = sdssplitargs(command, &argc);
+                sds *argv = sdssplitargs(command.c_str(), &argc);
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
@@ -653,7 +653,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        er = impl_->execute(command, Command::UserCommand, outRoot.get());
+                        er = impl_->execute(command, common::Value::C_USER, outRoot.get());
                         if(er){
                             res.setErrorInfo(er);
                             break;

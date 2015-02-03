@@ -8,16 +8,8 @@ namespace fastoredis
 {
     struct DbValue
     {
-        DbValue()
-        {
-
-        }
-
-        DbValue(const std::string& key, const std::string& value)
-            : key_(key), value_(value)
-        {
-
-        }
+        DbValue();
+        DbValue(const std::string& key, const std::string& value);
 
         std::string key_;
         std::string value_;
@@ -42,22 +34,9 @@ namespace fastoredis
 
     struct ServerInfoSnapShoot
     {
-        ServerInfoSnapShoot()
-            : msec_(0), info_()
-        {
-
-        }
-
-        ServerInfoSnapShoot(common::time64_t msec, ServerInfoSPtr info)
-            : msec_(msec), info_(info)
-        {
-
-        }
-
-        bool isValid() const
-        {
-            return msec_ > 0 && info_;
-        }
+        ServerInfoSnapShoot();
+        ServerInfoSnapShoot(common::time64_t msec, ServerInfoSPtr info);
+        bool isValid() const;
 
         common::time64_t msec_;
         ServerInfoSPtr info_;

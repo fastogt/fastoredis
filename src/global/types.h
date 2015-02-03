@@ -1,25 +1,19 @@
 #pragma once
 
-#include "common/types.h"
+#include "common/value.h"
 
 namespace fastoredis
 {
     class Command
     {
     public:
-        enum CommandType
-        {
-            UserCommand,
-            InnerCommand
-        };
-
         Command();
-        Command(const std::string &mess, CommandType commandT);
+        Command(const std::string &mess, common::Value::CommandType commandT);
         const std::string& message() const;
-        CommandType type() const;
+        common::Value::CommandType type() const;
 
     private:
         const std::string message_;
-        const CommandType type_;
+        const common::Value::CommandType type_;
     };
 }

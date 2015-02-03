@@ -6,9 +6,8 @@
 
 namespace fastoredis
 {
-    class plot_settings
+    struct plot_settings
     {
-    public:
         plot_settings(qreal min_x, qreal max_x, qreal min_y, qreal max_y, unsigned num_x_ticks = 0,unsigned num_y_ticks = 0);
 
         void scroll(int dx, int dy);
@@ -23,10 +22,7 @@ namespace fastoredis
         unsigned num_x_ticks_;
         unsigned num_y_ticks_;
 
-        plot_settings create_child(qreal dx,qreal dy,QRect rect)const;
-        static bool is_valid_setting(const plot_settings &);
-    private:
-        static void adjust_axis(qreal &min, qreal &max, unsigned &numTicks);
+        plot_settings create_child(qreal dx,qreal dy,QRect rect) const;
     };
 
     class GraphWidget

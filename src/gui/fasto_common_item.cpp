@@ -1,9 +1,10 @@
 #include "gui/fasto_common_item.h"
 
 #include "common/qt/convert_string.h"
-#include "common/string_compress.h"
 
+#include "core/compress_edcoder.h"
 #include "core/msgpack_edcoder.h"
+#include "core/hex_edcoder.h"
 
 namespace fastoredis
 {
@@ -77,15 +78,21 @@ namespace fastoredis
 
         if(!item->childrenCount()){
             std::string sval = common::convertToString(item->value());
-            std::string upack;
-            MsgPackEDcoder msg;
-            common::ErrorValueSPtr er  = msg.decode(common::HexDecode(sval), upack);
+
+            HexEDcoder hex;
+            std::string hexstr;
+            common::ErrorValueSPtr er = hex.decode(sval, hexstr);
             if(er){
                 return QString();
             }
-            else{
-                return common::convertFromString<QString>(upack);
+
+            MsgPackEDcoder msg;
+            std::string upack;
+            er = msg.decode(hexstr, upack);
+            if(er){
+                return QString();
             }
+            return common::convertFromString<QString>(upack);
         }
 
         QString value;
@@ -105,8 +112,14 @@ namespace fastoredis
         if(!item->childrenCount()){
             QString val = item->value();
             std::string sval = common::convertToString(val);
-            std::string hex = common::HexEncode(sval);
-            return common::convertFromString<QString>(hex);
+
+            std::string hexstr;
+            HexEDcoder hex;
+            common::ErrorValueSPtr er = hex.encode(sval, hexstr);
+            if(er){
+                return QString();
+            }
+            return common::convertFromString<QString>(hexstr);
         }
 
         QString value;
@@ -148,7 +161,8 @@ namespace fastoredis
             QString val = item->value();
             std::string sval = common::convertToString(val);
             std::string out;
-            common::ErrorValueSPtr er  = common::decodeZlib(sval, out);
+            CompressEDcoder enc;
+            common::ErrorValueSPtr er = enc.decode(sval, out);
             if(er){
                 return QString();
             }

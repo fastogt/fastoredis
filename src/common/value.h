@@ -12,7 +12,7 @@ namespace common
     class ArrayValue;
     class StringValue;
     class ErrorValue;
-    class Value;
+    class CommandValue;
 
     class Value
     {
@@ -26,10 +26,12 @@ namespace common
             TYPE_STRING,
             TYPE_ARRAY,
             TYPE_STATUS,
+            TYPE_COMMAND,
 			TYPE_ERROR
         };
 
         enum ErrorsType { E_NONE, E_EXCEPTION, E_ERROR, E_INTERRUPTED };
+        enum CommandType { C_UNKNOWN, C_USER, C_INNER };
 
         virtual ~Value();
 
@@ -40,6 +42,7 @@ namespace common
         static FundamentalValue* createDoubleValue(double in_value);
         static StringValue* createStringValue(const std::string& in_value);
         static ArrayValue* createArrayValue();
+        static CommandValue* createCommand(const std::string& src, CommandType type);
         static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
         static std::string toString(Type t);
@@ -53,6 +56,7 @@ namespace common
         virtual bool getAsUInteger(unsigned int* out_value) const;
         virtual bool getAsDouble(double* out_value) const;
         virtual bool getAsString(std::string* out_value) const;
+        virtual bool getAsCommand(CommandValue* command) const;
         virtual bool getAsError(ErrorValue* out_value) const;
         virtual bool getAsList(ArrayValue** out_value);
         virtual bool getAsList(const ArrayValue** out_value) const;
@@ -189,6 +193,22 @@ namespace common
     private:
 		DISALLOW_COPY_AND_ASSIGN(ArrayValue);
         ValueVector list_;
+    };
+
+    class CommandValue
+            : public Value
+    {
+    public:
+        CommandValue(const std::string& src, CommandType ctype);
+
+        std::string inputCommand() const;
+        CommandType commandType() const;
+        virtual std::string toString() const;
+        virtual bool getAsCommand(CommandValue* out_value) const;
+
+    private:
+        std::string inputCommand_;
+        CommandType ctype_;
     };
 
     class ErrorValue

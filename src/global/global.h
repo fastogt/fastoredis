@@ -48,6 +48,15 @@ namespace fastoredis
         const std::string delemitr_;
     };
 
+    class FastoObjectCommand
+            : public FastoObject
+    {
+    public:
+        FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string& delemitr);
+
+        common::CommandValue* command() const;
+    };
+
     class FastoObjectArray
             : public FastoObject
     {

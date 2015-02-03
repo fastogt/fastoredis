@@ -17,6 +17,7 @@ namespace common
                                       "TYPE_STRING",
                                       "TYPE_ARRAY",
                                       "TYPE_STATUS",
+                                      "TYPE_COMMAND",
                                       "TYPE_ERROR"
                                     };
     }
@@ -83,6 +84,11 @@ namespace common
         return new ArrayValue;
     }
 
+    CommandValue* Value::createCommand(const std::string& src, CommandType type)
+    {
+        return new CommandValue(src, type);
+    }
+
     ErrorValue* Value::createErrorValue(const std::string &in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
     {
         return new ErrorValue(in_value, errorType, level);
@@ -122,6 +128,11 @@ namespace common
     {
         return false;
 	}
+
+    bool Value::getAsCommand(CommandValue* command) const
+    {
+        return false;
+    }
 
     bool Value::getAsError(ErrorValue* out_value) const
     {
@@ -603,6 +614,37 @@ namespace common
 		return result;
     }
 
+    CommandValue::CommandValue(const std::string& src, CommandType ctype)
+        : Value(TYPE_COMMAND), inputCommand_(src), ctype_(ctype)
+    {
+
+    }
+
+    std::string CommandValue::inputCommand() const
+    {
+        return inputCommand_;
+    }
+
+    CommandValue::CommandType CommandValue::commandType() const
+    {
+        return ctype_;
+    }
+
+    std::string CommandValue::toString() const
+    {
+        return inputCommand_;
+    }
+
+    bool CommandValue::getAsCommand(CommandValue* out_value) const
+    {
+        if (out_value){
+            (*out_value).inputCommand_ = inputCommand_;
+            (*out_value).ctype_ = ctype_;
+            return true;
+        }
+        return false;
+    }
+
     ErrorValue::ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
         : Value(TYPE_ERROR), description_(in_value), errorType_(errorType), level_(level)
     {
@@ -646,8 +688,9 @@ namespace common
             (*out_value).description_ = description_;
             (*out_value).errorType_ = errorType_;
             (*out_value).level_ = level_;
+            return true;
         }
-        return true;
+        return false;
     }
 
     ErrorValueSPtr make_error_value(const std::string& in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)

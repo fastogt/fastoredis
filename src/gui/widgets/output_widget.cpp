@@ -24,9 +24,6 @@ namespace
 {
     fastoredis::FastoCommonItem *createItem(fastoredis::TreeItem* parent, fastoredis::FastoObject* item, const QString& key)
     {
-        fastoredis::FastoCommonItem *result = NULL;
-        fastoredis::FastoObject::child_container_type cont = item->childrens();
-        size_t contSize = cont.size();
         const std::string value = item->toString();
         return new fastoredis::FastoCommonItem(key, common::convertFromString<QString>(value), item->type(), parent, item);
     }

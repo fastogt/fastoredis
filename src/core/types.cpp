@@ -2,6 +2,17 @@
 
 namespace fastoredis
 {
+    DbValue::DbValue()
+    {
+
+    }
+
+    DbValue::DbValue(const std::string& key, const std::string& value)
+        : key_(key), value_(value)
+    {
+
+    }
+
     ServerInfo::~ServerInfo()
     {
 
@@ -16,6 +27,23 @@ namespace fastoredis
         : type_(type)
     {
 
+    }
+
+    ServerInfoSnapShoot::ServerInfoSnapShoot()
+        : msec_(0), info_()
+    {
+
+    }
+
+    ServerInfoSnapShoot::ServerInfoSnapShoot(common::time64_t msec, ServerInfoSPtr info)
+        : msec_(msec), info_(info)
+    {
+
+    }
+
+    bool ServerInfoSnapShoot::isValid() const
+    {
+        return msec_ > 0 && info_;
     }
 
     ServerPropertyInfo::ServerPropertyInfo()

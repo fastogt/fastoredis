@@ -1387,14 +1387,14 @@ namespace fastoredis
             return common::ErrorValueSPtr();
         }
 
-        common::ErrorValueSPtr execute(const char *command, Command::CommandType type, FastoObject* out) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr execute(const std::string& command, common::Value::CommandType type, FastoObject* out) WARN_UNUSED_RESULT
         {
             DCHECK(out);
             if(!out){
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
-            if(!command){
+            if(command.empty()){
                 return common::make_error_value("Command empty", common::ErrorValue::E_ERROR);
             }
 
@@ -1403,7 +1403,7 @@ namespace fastoredis
             common::ErrorValueSPtr er;
             if (command[0] != '\0') {
                 int argc;
-                sds *argv = sdssplitargs(command,&argc);
+                sds *argv = sdssplitargs(command.c_str(), &argc);
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
@@ -1521,7 +1521,7 @@ namespace fastoredis
 
     common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObject* out)
     {
-        return impl_->execute(INFO_REQUEST, Command::InnerCommand, out);
+        return impl_->execute(INFO_REQUEST, common::Value::C_INNER, out);
     }
 
     void RedisDriver::handleConnectEvent(events::ConnectRequestEvent *ev)
@@ -1605,7 +1605,7 @@ namespace fastoredis
             events::ShutDownResponceEvent::value_type res(ev->value());
         notifyProgress(sender, 25);
             FastoObjectIPtr root = FastoObject::createRoot(SHUTDOWN);
-            common::ErrorValueSPtr er = impl_->execute(SHUTDOWN, Command::InnerCommand, root.get());
+            common::ErrorValueSPtr er = impl_->execute(SHUTDOWN, common::Value::C_INNER, root.get());
             if(er){
                 res.setErrorInfo(er);
             }
@@ -1621,7 +1621,7 @@ namespace fastoredis
             events::BackupRequestEvent::value_type res(ev->value());
         notifyProgress(sender, 25);
             FastoObjectIPtr root = FastoObject::createRoot(BACKUP);
-            common::ErrorValueSPtr er = impl_->execute(BACKUP, Command::InnerCommand, root.get());
+            common::ErrorValueSPtr er = impl_->execute(BACKUP, common::Value::C_INNER, root.get());
             if(er){
                 res.setErrorInfo(er);
             }
@@ -1832,7 +1832,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;                        
-                        er = impl_->execute(command, Command::UserCommand, outRoot.get());
+                        er = impl_->execute(command, common::Value::C_INNER, outRoot.get());
                         if(er){
                             res.setErrorInfo(er);
                             break;
@@ -1873,7 +1873,7 @@ namespace fastoredis
             events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_DATABASES);
         notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(GET_DATABASES, Command::InnerCommand, root.get());
+            common::ErrorValueSPtr er = impl_->execute(GET_DATABASES, common::Value::C_INNER, root.get());
             if(er){
                 res.setErrorInfo(er);
             }
@@ -1926,7 +1926,7 @@ namespace fastoredis
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_KEYS);
         notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(GET_KEYS, Command::InnerCommand, root.get());
+            common::ErrorValueSPtr er = impl_->execute(GET_KEYS, common::Value::C_INNER, root.get());
             if(er){
                 res.setErrorInfo(er);
             }
@@ -1967,7 +1967,7 @@ namespace fastoredis
             const std::string setDefCommand = SET_DEFAULT_DATABASE + res.inf_->name();
             FastoObjectIPtr root = FastoObject::createRoot(setDefCommand);
         notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(setDefCommand.c_str(), Command::InnerCommand, root.get());
+            common::ErrorValueSPtr er = impl_->execute(setDefCommand.c_str(), common::Value::C_INNER, root.get());
             if(er){
                 res.setErrorInfo(er);
             }
@@ -1986,7 +1986,7 @@ namespace fastoredis
             events::ServerInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(INFO_REQUEST);
         notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(INFO_REQUEST, Command::InnerCommand, root.get());
+            common::ErrorValueSPtr er = impl_->execute(INFO_REQUEST, common::Value::C_INNER, root.get());
             if(er){
                 res.setErrorInfo(er);
             }
@@ -2009,7 +2009,7 @@ namespace fastoredis
         events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_PROPERTY_SERVER);
         notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(GET_PROPERTY_SERVER, Command::InnerCommand, root.get());
+            common::ErrorValueSPtr er = impl_->execute(GET_PROPERTY_SERVER, common::Value::C_INNER, root.get());
             if(er){
                 res.setErrorInfo(er);
             }
@@ -2037,7 +2037,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
         const std::string changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
-        common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), Command::InnerCommand, root.get());
+        common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), common::Value::C_INNER, root.get());
         if(er){
             res.setErrorInfo(er);
         }
@@ -2058,7 +2058,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
         const std::string changeRequest = "SET " + res.newItem_.key_ + " " + res.newItem_.value_;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
-        common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), Command::InnerCommand, root.get());
+        common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), common::Value::C_INNER, root.get());
         if(er){
             res.setErrorInfo(er);
         }

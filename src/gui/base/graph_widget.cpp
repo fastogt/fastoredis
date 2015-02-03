@@ -10,6 +10,35 @@
 
 namespace fastoredis
 {
+    namespace
+    {
+        bool is_valid_setting(const plot_settings& settings)
+        {
+            return settings.min_x_ >= 0 && settings.min_y_ >=0;
+        }
+
+        void adjust_axis(qreal &min, qreal &max, unsigned &numTicks)
+        {
+            static const unsigned MinTicks = 4;
+            qreal grossStep = (max - min) / MinTicks;
+            qreal step = pow(10.0, floor(log10(grossStep)));
+
+            if (5 * step < grossStep){
+                step *= 5;
+            }
+            else if (2 * step < grossStep){
+                step *= 2;
+            }
+
+            numTicks = int(ceil(max / step) - floor(min / step));
+            if (numTicks < MinTicks){
+                numTicks = MinTicks;
+            }
+            min = floor(min / step) * step;
+            max = ceil(max / step) * step;
+        }
+    }
+
     plot_settings::plot_settings(qreal min_x, qreal max_x, qreal min_y, qreal max_y, unsigned num_x_ticks, unsigned num_y_ticks)
         :min_x_(min_x), max_x_(max_x),
         min_y_(min_y), max_y_(max_y),
@@ -34,8 +63,7 @@ namespace fastoredis
         qreal stepX = span_x() / num_x_ticks_;
         qreal stepY = span_y() / num_y_ticks_;
         plot_settings tmp(min_x_ + dx * stepX, max_x_ + dx * stepX, min_y_ +dy * stepY, max_y_ + dy * stepY);
-        if(is_valid_setting(tmp))
-        {
+        if(is_valid_setting(tmp)){
             min_x_ += dx * stepX;
             max_x_ += dx * stepX;
             min_y_ += dy * stepY;
@@ -47,32 +75,6 @@ namespace fastoredis
     {
         adjust_axis(min_x_, max_x_, num_x_ticks_);
         adjust_axis(min_y_, max_y_, num_y_ticks_);
-    }
-
-    bool plot_settings::is_valid_setting(const plot_settings& settings)
-    {
-        return settings.min_x_ >= 0 && settings.min_y_ >=0;
-    }
-
-    void plot_settings::adjust_axis(qreal &min, qreal &max, unsigned &numTicks)
-    {
-        static const unsigned MinTicks = 4;
-        qreal grossStep = (max - min) / MinTicks;
-        qreal step = pow(10.0, floor(log10(grossStep)));
-
-        if (5 * step < grossStep){
-            step *= 5;
-        }
-        else if (2 * step < grossStep){
-            step *= 2;
-        }
-
-        numTicks = int(ceil(max / step) - floor(min / step));
-        if (numTicks < MinTicks){
-            numTicks = MinTicks;
-        }
-        min = floor(min / step) * step;
-        max = ceil(max / step) * step;
     }
 
     GraphWidget::GraphWidget(QWidget *parent)
@@ -272,7 +274,7 @@ namespace fastoredis
                 qreal dx = prevSettings.span_x() / qreal(width() - 2 * margin);
                 qreal dy = prevSettings.span_y() / qreal(height() - 2 * margin);
                 plot_settings settings = prevSettings.create_child(dx,dy,rect);
-                if(plot_settings::is_valid_setting(settings)){
+                if(is_valid_setting(settings)){
                     zoomStack.push_back(settings);
                     zoom_in();
                     update();

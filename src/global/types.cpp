@@ -3,12 +3,12 @@
 namespace fastoredis
 {
     Command::Command()
-        : message_(), type_(InnerCommand)
+        : message_(), type_(common::Value::C_INNER)
     {
 
     }
 
-    Command::Command(const std::string &mess, CommandType commandT)
+    Command::Command(const std::string &mess, common::Value::CommandType commandT)
         : message_(mess), type_(commandT)
     {
 
@@ -19,7 +19,7 @@ namespace fastoredis
         return message_;
     }
 
-    Command::CommandType Command::type() const
+    common::Value::CommandType Command::type() const
     {
         return type_;
     }

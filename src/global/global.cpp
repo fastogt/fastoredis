@@ -86,6 +86,17 @@ namespace fastoredis
         return childrens_;
     }
 
+    FastoObjectCommand::FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string& delemitr)
+        : FastoObject(parent, cmd, delemitr)
+    {
+
+    }
+
+    common::CommandValue* FastoObjectCommand::command() const
+    {
+        return dynamic_cast<common::CommandValue*>(value_.get());
+    }
+
     FastoObjectArray::FastoObjectArray(FastoObject* parent, common::ArrayValue* ar, const std::string& delemitr)
         : FastoObject(parent, ar, delemitr)
     {
