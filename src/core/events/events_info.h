@@ -115,7 +115,6 @@ namespace fastoredis
             CommandRootCreatedInfo(FastoObjectIPtr root, const error_type &er = error_type());
 
             FastoObjectIPtr root_;
-            std::string key_;
         };
 
         struct CommandRootCompleatedInfo

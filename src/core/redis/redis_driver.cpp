@@ -1671,7 +1671,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(LatencyMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, LATENCY_REQUEST, LATENCY_REQUEST);
+        RootLocker lock = make_locker(sender, LATENCY_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->latencyMode(obj.get());
@@ -1692,7 +1692,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(SlaveMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, SYNC_REQUEST, SYNC_REQUEST);
+        RootLocker lock = make_locker(sender, SYNC_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->slaveMode(obj.get());
@@ -1713,7 +1713,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(GetRDBMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, RDM_REQUEST, RDM_REQUEST);
+        RootLocker lock = make_locker(sender, RDM_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->getRDB(obj.get());
@@ -1746,7 +1746,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(FindBigKeysMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, FIND_BIG_KEYS_REQUEST, FIND_BIG_KEYS_REQUEST);
+        RootLocker lock = make_locker(sender, FIND_BIG_KEYS_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->findBigKeys(obj.get());
@@ -1767,7 +1767,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(StatMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, STAT_MODE_REQUEST, STAT_MODE_REQUEST);
+        RootLocker lock = make_locker(sender, STAT_MODE_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->statMode(obj.get());
@@ -1788,7 +1788,7 @@ namespace fastoredis
         events::EnterModeEvent::value_type resEv(ScanMode);
         reply(sender, new events::EnterModeEvent(this, resEv));
 
-        RootLocker lock = make_locker(sender, SCAN_MODE_REQUEST, SCAN_MODE_REQUEST);
+        RootLocker lock = make_locker(sender, SCAN_MODE_REQUEST);
 
         FastoObjectIPtr obj = lock.root_;
         common::ErrorValueSPtr er = impl_->scanMode(obj.get());
@@ -1813,7 +1813,7 @@ namespace fastoredis
             if(inputLine){
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                RootLocker lock = make_locker(sender, inputLine, getKeyFromLine(inputLine));
+                RootLocker lock = make_locker(sender, inputLine);
                 FastoObjectIPtr outRoot = lock.root_;
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
@@ -1822,6 +1822,7 @@ namespace fastoredis
                         res.setErrorInfo(er);
                         break;
                     }
+
                     if(inputLine[n] == '\n' || n == length-1){
         notifyProgress(sender, step * n);
                         char command[128] = {0};
@@ -1967,7 +1968,7 @@ namespace fastoredis
             const std::string setDefCommand = SET_DEFAULT_DATABASE + res.inf_->name();
             FastoObjectIPtr root = FastoObject::createRoot(setDefCommand);
         notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(setDefCommand.c_str(), common::Value::C_INNER, root.get());
+            common::ErrorValueSPtr er = impl_->execute(setDefCommand, common::Value::C_INNER, root.get());
             if(er){
                 res.setErrorInfo(er);
             }
@@ -2037,7 +2038,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
         const std::string changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
-        common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), common::Value::C_INNER, root.get());
+        common::ErrorValueSPtr er = impl_->execute(changeRequest, common::Value::C_INNER, root.get());
         if(er){
             res.setErrorInfo(er);
         }
@@ -2058,7 +2059,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
         const std::string changeRequest = "SET " + res.newItem_.key_ + " " + res.newItem_.value_;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
-        common::ErrorValueSPtr er = impl_->execute(changeRequest.c_str(), common::Value::C_INNER, root.get());
+        common::ErrorValueSPtr er = impl_->execute(changeRequest, common::Value::C_INNER, root.get());
         if(er){
             res.setErrorInfo(er);
         }

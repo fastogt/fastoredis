@@ -634,7 +634,7 @@ namespace fastoredis
             if(inputLine){
                 size_t length = strlen(inputLine);
                 int offset = 0;
-                RootLocker lock = make_locker(sender, inputLine, inputLine);
+                RootLocker lock = make_locker(sender, inputLine);
                 FastoObjectIPtr outRoot = lock.root_;
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){

@@ -177,31 +177,25 @@ namespace fastoredis
         return QObject::customEvent(event);
     }
 
-    IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text, const std::string &key)
+    IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text)
         : parent_(parent), reciver_(reciver)
     {
         DCHECK(parent_);
-        root_ = parent_->createRoot(reciver, text, key);
+        root_ = createRoot(reciver, text);
     }
 
     IDriver::RootLocker::~RootLocker()
     {
-        parent_->compleateRoot(reciver_, root_);
+        events::CommandRootCompleatedEvent::value_type res(root_);
+        parent_->reply(reciver_, new events::CommandRootCompleatedEvent(parent_, res));
     }
 
-    FastoObjectIPtr IDriver::createRoot(QObject *reciver, const std::string& text, const std::string& key)
+    FastoObjectIPtr IDriver::RootLocker::createRoot(QObject *reciver, const std::string& text)
     {
-        FastoObjectIPtr root = FastoObject::createRoot(text, this);
+        FastoObjectIPtr root = FastoObject::createRoot(text, parent_);
         events::CommandRootCreatedEvent::value_type res(root);
-        res.key_ = key;
-        reply(reciver, new events::CommandRootCreatedEvent(this, res));
+        parent_->reply(reciver, new events::CommandRootCreatedEvent(parent_, res));
         return root;
-    }
-
-    void IDriver::compleateRoot(QObject *reciver, FastoObjectIPtr root)
-    {
-        events::CommandRootCompleatedEvent::value_type res(root);
-        reply(reciver, new events::CommandRootCompleatedEvent(this, res));
     }
 
     void IDriver::addedChildren(FastoObject* child)

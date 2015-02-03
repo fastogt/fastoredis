@@ -136,7 +136,7 @@ namespace fastoredis
     void OutputWidget::rootCreate(const EventsInfo::CommandRootCreatedInfo& res)
     {
         FastoObject* rootObj = res.root_.get();
-        fastoredis::FastoCommonItem* root = createItem(NULL, rootObj, common::convertFromString<QString>(res.key_));
+        fastoredis::FastoCommonItem* root = createItem(NULL, rootObj, "");
         commonModel_->setRoot(root);
     }
 

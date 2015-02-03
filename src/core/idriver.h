@@ -85,25 +85,24 @@ namespace fastoredis
         class RootLocker
         {
         public:
-            RootLocker(IDriver* parent, QObject* reciver, const std::string& text, const std::string &key);
+            RootLocker(IDriver* parent, QObject* reciver, const std::string& text);
             ~RootLocker();
 
             FastoObjectIPtr root_;
 
         private:
+            FastoObjectIPtr createRoot(QObject* reciver, const std::string& text);
+
             IDriver* parent_;
-            QObject *reciver_;
+            QObject* reciver_;
         };
 
-        RootLocker make_locker(QObject* reciver, const std::string& text, const std::string& key)
+        RootLocker make_locker(QObject* reciver, const std::string& text)
         {
-            return RootLocker(this, reciver, text, key);
+            return RootLocker(this, reciver, text);
         }
 
     private:
-        FastoObjectIPtr createRoot(QObject* reciver, const std::string& text, const std::string &key);
-        void compleateRoot(QObject* reciver, FastoObjectIPtr root);
-
         void handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryRequestEvent *ev);
 
         virtual void addedChildren(FastoObject *child);
