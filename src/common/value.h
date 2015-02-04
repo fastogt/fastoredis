@@ -207,6 +207,7 @@ namespace common
 
         std::string inputCommand() const;
         std::string oppositeCommand() const;
+
         CommandType commandType() const;
         virtual std::string toString() const;
         virtual bool getAsCommand(CommandValue* out_value) const;

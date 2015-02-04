@@ -57,10 +57,11 @@ namespace fastoredis
         common::CommandValue* cmd() const;
         virtual std::string toString() const;
 
+        virtual std::string key() const = 0;
+
         std::string inputCommand() const;
         std::string oppositeCommand() const;
         common::Value::CommandType commandType() const;
-        virtual std::string key() const = 0;
 
     protected:
         FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string &delemitr);

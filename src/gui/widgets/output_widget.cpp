@@ -35,7 +35,7 @@ namespace fastoredis
         : QWidget(parent)
     {
         commonModel_ = new FastoCommonModel(this);
-        VERIFY(connect(commonModel_, SIGNAL(changedValue(const DbValue&)), server.get(), SLOT(changeValue(const DbValue&)), Qt::DirectConnection));
+        VERIFY(connect(commonModel_, SIGNAL(changedValue(const DbValue&, const std::string&)), server.get(), SLOT(changeValue(const DbValue&, const std::string&)), Qt::DirectConnection));
         VERIFY(connect(server.get(), SIGNAL(startedChangeDbValue(const EventsInfo::ChangeDbValueRequest&)), this, SLOT(startChangeDbValue(const EventsInfo::ChangeDbValueRequest&)), Qt::DirectConnection));
         VERIFY(connect(server.get(), SIGNAL(finishedChangeDbValue(const EventsInfo::ChangeDbValueResponce&)), this, SLOT(finishChangeDbValue(const EventsInfo::ChangeDbValueResponce&)), Qt::DirectConnection));
 
@@ -95,7 +95,7 @@ namespace fastoredis
             return;
         }
 
-        commonModel_->changeValue(res.newItem_);
+        commonModel_->changeValue(res.newItem_, res.command_);
     }
 
     void OutputWidget::syncWithSettings()
@@ -176,6 +176,7 @@ namespace fastoredis
         const QString key = common::convertFromString<QString>(command->key());
 
         fastoredis::FastoCommonItem* comChild = createItem(par, key, child);
+        comChild->setChangeCommand(command->oppositeCommand());
         commonModel_->insertItem(parent, comChild);
     }
 

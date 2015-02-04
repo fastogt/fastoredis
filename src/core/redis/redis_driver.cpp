@@ -137,6 +137,43 @@ namespace
         common::TrimWhitespaceASCII(input, common::TRIM_ALL, &trimed);
         return trimed;
     }
+
+    std::string getCommandFromLine(std::string input)
+    {
+        if(input.empty()){
+            return std::string();
+        }
+
+        size_t pos = input.find_first_of(' ');
+        if(pos != std::string::npos){
+            return input.substr(0, pos);
+        }
+
+        return input;
+    }
+
+    std::vector<std::pair<std::string, std::string > > oppositeCommands = { {"GET", "SET"}, {"HSET", "HGET"} };
+
+    std::string getOppositeCommand(const std::string& command)
+    {
+        DCHECK(!command.empty());
+        if(command.empty()){
+            return std::string();
+        }
+
+        std::string uppercmd = StringToUpperASCII(command);
+        for(int i = 0; i < oppositeCommands.size(); ++i){
+            std::pair<std::string, std::string > p = oppositeCommands[i];
+            if(p.first == uppercmd){
+                return p.second;
+            }
+            else if(p.second == uppercmd){
+                return p.first;
+            }
+        }
+
+        return std::string();
+    }
 }
 
 namespace fastoredis
@@ -164,20 +201,23 @@ namespace fastoredis
             }
         };
 
-        FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input,
-                                                   const std::string& opposite, common::Value::CommandType ct)
+        FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
         {
             DCHECK(parent);
+            std::string command = getCommandFromLine(input);
+            std::string opposite = getOppositeCommand(command);
+            if(!opposite.empty()){
+                opposite += " " + getKeyFromLine(input);
+            }
             common::CommandValue* cmd = common::Value::createCommand(input, opposite, ct);
             FastoObjectCommand* fs = new RedisCommand(parent, cmd, "");
             parent->addChildren(fs);
             return fs;
         }
 
-        FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input,
-                                                   const std::string& opposite, common::Value::CommandType ct)
+        FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input, common::Value::CommandType ct)
         {
-            return createCommand(parent.get(), input, opposite, ct);
+            return createCommand(parent.get(), input, ct);
         }
     }
 
@@ -216,7 +256,7 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
-            FastoObjectCommand* cmd = createCommand(out, "PING", "PING", common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(out, "PING", common::Value::C_INNER);
 
             redisReply *reply;
             common::time64_t start;
@@ -343,7 +383,7 @@ namespace fastoredis
                 return er;
             }
 
-            FastoObjectCommand* cmd = createCommand(out, SYNC_REQUEST, SYNC_REQUEST, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(out, SYNC_REQUEST, common::Value::C_INNER);
 
             char buf[1024];
             /* Discard the payload. */
@@ -392,7 +432,7 @@ namespace fastoredis
 
             FastoObject* child = NULL;
             common::ArrayValue* val = NULL;
-            FastoObjectCommand* cmd = createCommand(out, RDM_REQUEST, RDM_REQUEST, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(out, RDM_REQUEST, common::Value::C_INNER);
 
             int fd = INVALID_DESCRIPTOR;
             /* Write to file. */
@@ -622,7 +662,7 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
-            FastoObjectCommand* cmd = createCommand(out, FIND_BIG_KEYS_REQUEST, FIND_BIG_KEYS_REQUEST, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(out, FIND_BIG_KEYS_REQUEST, common::Value::C_INNER);
 
             unsigned long long biggest[5] = {0}, counts[5] = {0}, totalsize[5] = {0};
             unsigned long long sampled = 0, totlen=0, *sizes=NULL, it=0;
@@ -841,7 +881,7 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
-            FastoObjectCommand* cmd = createCommand(out, INFO_REQUEST, INFO_REQUEST, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(out, INFO_REQUEST, common::Value::C_INNER);
             const std::string command = cmd->inputCommand();
             long aux, requests = 0;
 
@@ -947,7 +987,7 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
-            FastoObjectCommand* cmd = createCommand(out, SCAN_MODE_REQUEST, SCAN_MODE_REQUEST, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(out, SCAN_MODE_REQUEST, common::Value::C_INNER);
 
             redisReply *reply;
             unsigned long long cur = 0;
@@ -1579,7 +1619,7 @@ namespace fastoredis
 
     common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObject* out)
     {
-        FastoObjectCommand* cmd = createCommand(out, INFO_REQUEST, INFO_REQUEST, common::Value::C_INNER);
+        FastoObjectCommand* cmd = createCommand(out, INFO_REQUEST, common::Value::C_INNER);
         return impl_->execute(cmd);
     }
 
@@ -1664,7 +1704,7 @@ namespace fastoredis
             events::ShutDownResponceEvent::value_type res(ev->value());
         notifyProgress(sender, 25);
             FastoObjectIPtr root = FastoObject::createRoot(SHUTDOWN);
-            FastoObjectCommand* cmd = createCommand(root, SHUTDOWN, SHUTDOWN, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, SHUTDOWN, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -1681,7 +1721,7 @@ namespace fastoredis
             events::BackupRequestEvent::value_type res(ev->value());
         notifyProgress(sender, 25);
             FastoObjectIPtr root = FastoObject::createRoot(BACKUP);
-            FastoObjectCommand* cmd = createCommand(root, BACKUP, BACKUP, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, BACKUP, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -1894,7 +1934,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        FastoObjectCommand* cmd = createCommand(outRoot, command, command, common::Value::C_USER);
+                        FastoObjectCommand* cmd = createCommand(outRoot, command, common::Value::C_USER);
                         er = impl_->execute(cmd);
                         if(er){
                             res.setErrorInfo(er);
@@ -1936,7 +1976,7 @@ namespace fastoredis
             events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_DATABASES);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, GET_DATABASES, GET_DATABASES, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, GET_DATABASES, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -1990,7 +2030,7 @@ namespace fastoredis
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_KEYS);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, GET_KEYS, GET_KEYS, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, GET_KEYS, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2032,7 +2072,7 @@ namespace fastoredis
             const std::string setDefCommand = SET_DEFAULT_DATABASE + res.inf_->name();
             FastoObjectIPtr root = FastoObject::createRoot(setDefCommand);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, setDefCommand, setDefCommand, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, setDefCommand, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2052,7 +2092,7 @@ namespace fastoredis
             events::ServerInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(INFO_REQUEST);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, INFO_REQUEST, INFO_REQUEST, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, INFO_REQUEST, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2076,7 +2116,7 @@ namespace fastoredis
         events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_PROPERTY_SERVER);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, GET_PROPERTY_SERVER, GET_PROPERTY_SERVER, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, GET_PROPERTY_SERVER, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2105,7 +2145,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
         const std::string changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
-        FastoObjectCommand* cmd = createCommand(root, changeRequest, changeRequest, common::Value::C_INNER);
+        FastoObjectCommand* cmd = createCommand(root, changeRequest, common::Value::C_INNER);
         common::ErrorValueSPtr er = impl_->execute(cmd);
         if(er){
             res.setErrorInfo(er);
@@ -2122,13 +2162,12 @@ namespace fastoredis
     {
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
-            events::ChangeDbValueResponceEvent::value_type res(ev->value());
+        events::ChangeDbValueResponceEvent::value_type res(ev->value());
 
         notifyProgress(sender, 50);
-#pragma message("remove hardcode")
-        const std::string changeRequest = "SET " + res.newItem_.key_ + " " + res.newItem_.value_;
+        const std::string changeRequest = res.command_ + " " + res.newItem_.value_;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
-        FastoObjectCommand* cmd = createCommand(root, changeRequest, changeRequest, common::Value::C_INNER);
+        FastoObjectCommand* cmd = createCommand(root, changeRequest, common::Value::C_INNER);
         common::ErrorValueSPtr er = impl_->execute(cmd);
         if(er){
             res.setErrorInfo(er);

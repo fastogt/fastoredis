@@ -111,7 +111,7 @@ namespace fastoredis
         void serverProperty();
         void requestHistoryInfo();
         void changeProperty(const PropertyType& newValue);
-        void changeValue(const DbValue& newValue);
+        void changeValue(const DbValue& newValue, const std::string &command);
 
     protected:
         virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info) = 0;

@@ -26,9 +26,14 @@ namespace fastoredis
         void setValue(const QString& val);
         common::Value::Type type() const;
 
+        void setChangeCommand(const std::string& cmd);
+        std::string changeCommand() const;
+        bool isReadOnly() const;
+
     private:
         QString key_;
         QString value_;
+        std::string changeCommand_;
         common::Value::Type type_;
     };
 

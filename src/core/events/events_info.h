@@ -297,6 +297,7 @@ namespace fastoredis
             ChangeDbValueRequest(const error_type &er = error_type());
 
             DbValue newItem_;
+            std::string command_;
         };
 
         struct ChangeDbValueResponce

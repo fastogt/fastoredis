@@ -74,7 +74,7 @@ namespace fastoredis
                 if(newValue != node->value()){
                     const std::string key = common::convertToString(node->key());
                     const std::string value = common::convertToString(newValue);
-                    emit changedValue(DbValue(key, value));
+                    emit changedValue(DbValue(key, value), node->changeCommand());
                 }
             }
         }
@@ -115,14 +115,14 @@ namespace fastoredis
             result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
             int col = index.column();
             FastoCommonItem *node = common::utils_qt::item<FastoCommonItem*>(index);
-            if(node && col == FastoCommonItem::eValue){
+            if(node && col == FastoCommonItem::eValue && !node->isReadOnly()){
                 result |= Qt::ItemIsEditable;
             }
         }
         return result;
     }
 
-    void FastoCommonModel::changeValue(const DbValue& value)
+    void FastoCommonModel::changeValue(const DbValue& value, const std::string &command)
     {
         const QString key = common::convertFromString<QString>(value.key_);
         const QString val = common::convertFromString<QString>(value.value_);
