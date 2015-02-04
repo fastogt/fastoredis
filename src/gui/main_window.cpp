@@ -164,14 +164,6 @@ namespace fastoredis
         openAction_->setShortcut(openKey);
         VERIFY(connect(openAction_, SIGNAL(triggered()), this, SLOT(open())));
 
-        saveAction_ = new QAction(this);
-        saveAction_->setShortcut(saveKey);
-        VERIFY(connect(saveAction_, SIGNAL(triggered()), this, SLOT(save())));
-
-        saveAsAction_ = new QAction(this);
-        saveAsAction_->setShortcut(saveAsKey);
-        VERIFY(connect(saveAsAction_, SIGNAL(triggered()), this, SLOT(saveAs())));
-
         // Exit action
         exitAction_ = new QAction(this);
         exitAction_->setShortcut(quitKey);
@@ -181,8 +173,6 @@ namespace fastoredis
         QMenu *fileMenu = new QMenu(this);
         fileAction_ = menuBar()->addMenu(fileMenu);
         fileMenu->addAction(openAction_);
-        fileMenu->addAction(saveAction_);
-        fileMenu->addAction(saveAsAction_);
         fileMenu->addSeparator();
         fileMenu->addAction(exitAction_);
 
@@ -366,8 +356,6 @@ namespace fastoredis
     {
         using namespace translations;
         openAction_->setText(trOpen);
-        saveAction_->setText(trSave);
-        saveAsAction_->setText(trSaveAs);
         exitAction_->setText(trExit);
         fileAction_->setText(trFile);
         toolsAction_->setText(trTools);
@@ -387,20 +375,9 @@ namespace fastoredis
         logDock_->setWindowTitle(trLogs);        
     }
 
-    void MainWindow::save()
-    {
-    }
-
-    void MainWindow::saveAs()
-    {
-    }
-
     void MainWindow::about()
     {
         AboutDialog dlg(this);
-#ifdef OS_ANDROID
-        dlg.setWindowModality(Qt::WindowModal);
-#endif
         dlg.exec();
     }
 

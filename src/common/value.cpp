@@ -18,7 +18,6 @@ namespace common
                                       "TYPE_ARRAY",
                                       "TYPE_STATUS",
                                       "TYPE_COMMAND",
-                                      "TYPE_PAIR",
                                       "TYPE_ERROR"
                                     };
     }
@@ -90,11 +89,6 @@ namespace common
         return new CommandValue(src, oppositeCommand, type);
     }
 
-    PairValue* Value::createPairValue(Value* key, Value* value)
-    {
-        return new PairValue(key->deepCopy(), value->deepCopy());
-    }
-
     ErrorValue* Value::createErrorValue(const std::string &in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
     {
         return new ErrorValue(in_value, errorType, level);
@@ -136,11 +130,6 @@ namespace common
 	}
 
     bool Value::getAsCommand(CommandValue* command) const
-    {
-        return false;
-    }
-
-    bool Value::getAsPair(PairValue* pair) const
     {
         return false;
     }
@@ -665,44 +654,6 @@ namespace common
     CommandValue* CommandValue::deepCopy() const
     {
         return createCommand(inputCommand_, oppositeCommand_, ctype_);
-    }
-
-    PairValue::PairValue(Value* key, Value* value)
-        : Value(TYPE_PAIR), key_(key), value_(value)
-    {
-
-    }
-
-    Value* PairValue::key() const
-    {
-        return key_.get();
-    }
-
-    Value* PairValue::value() const
-    {
-        return value_.get();
-    }
-
-    std::string PairValue::toString() const
-    {
-        NOTREACHED();
-        return std::string();
-    }
-
-    bool PairValue::getAsPair(PairValue* out_value) const
-    {
-        if (out_value){
-            (*out_value).value_.reset(value_->deepCopy());
-            (*out_value).key_.reset(key_->deepCopy());
-            return true;
-        }
-
-        return false;
-    }
-
-    PairValue* PairValue::deepCopy() const
-    {
-        return createPairValue(key_.get(), value_.get());
     }
 
     ErrorValue::ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)

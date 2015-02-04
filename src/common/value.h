@@ -13,7 +13,6 @@ namespace common
     class StringValue;
     class ErrorValue;
     class CommandValue;
-    class PairValue;
 
     class Value
     {
@@ -28,7 +27,6 @@ namespace common
             TYPE_ARRAY,
             TYPE_STATUS,
             TYPE_COMMAND,
-            TYPE_PAIR,
 			TYPE_ERROR
         };
 
@@ -45,7 +43,6 @@ namespace common
         static StringValue* createStringValue(const std::string& in_value);
         static ArrayValue* createArrayValue();
         static CommandValue* createCommand(const std::string& src, const std::string& oppositeCommand, CommandType type);
-        static PairValue* createPairValue(Value* key, Value* value);
         static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
         static std::string toString(Type t);
@@ -54,16 +51,15 @@ namespace common
 
         bool isType(Type type) const { return type == type_; }
 
-        virtual bool getAsBoolean(bool* out_value) const;        
-        virtual bool getAsInteger(int* out_value) const;
-        virtual bool getAsUInteger(unsigned int* out_value) const;
-        virtual bool getAsDouble(double* out_value) const;
-        virtual bool getAsString(std::string* out_value) const;
-        virtual bool getAsCommand(CommandValue* command) const;
-        virtual bool getAsPair(PairValue* pair) const;
-        virtual bool getAsError(ErrorValue* out_value) const;
-        virtual bool getAsList(ArrayValue** out_value);
-        virtual bool getAsList(const ArrayValue** out_value) const;
+        virtual bool getAsBoolean(bool* out_value) const WARN_UNUSED_RESULT;
+        virtual bool getAsInteger(int* out_value) const WARN_UNUSED_RESULT;
+        virtual bool getAsUInteger(unsigned int* out_value) const WARN_UNUSED_RESULT;
+        virtual bool getAsDouble(double* out_value) const WARN_UNUSED_RESULT;
+        virtual bool getAsString(std::string* out_value) const WARN_UNUSED_RESULT;
+        virtual bool getAsCommand(CommandValue* command) const WARN_UNUSED_RESULT;
+        virtual bool getAsError(ErrorValue* out_value) const WARN_UNUSED_RESULT;
+        virtual bool getAsList(ArrayValue** out_value) WARN_UNUSED_RESULT;
+        virtual bool getAsList(const ArrayValue** out_value) const WARN_UNUSED_RESULT;
 
         virtual Value* deepCopy() const;
 
@@ -92,10 +88,10 @@ namespace common
         virtual ~FundamentalValue();
 
         virtual std::string toString() const;
-        virtual bool getAsBoolean(bool* out_value) const;
-        virtual bool getAsInteger(int* out_value) const;
-        virtual bool getAsUInteger(unsigned int* out_value) const;
-        virtual bool getAsDouble(double* out_value) const;
+        virtual bool getAsBoolean(bool* out_value) const WARN_UNUSED_RESULT;
+        virtual bool getAsInteger(int* out_value) const WARN_UNUSED_RESULT;
+        virtual bool getAsUInteger(unsigned int* out_value) const WARN_UNUSED_RESULT;
+        virtual bool getAsDouble(double* out_value) const WARN_UNUSED_RESULT;
         virtual FundamentalValue* deepCopy() const;
         virtual bool equals(const Value* other) const;
 
@@ -117,7 +113,7 @@ namespace common
             virtual ~StringValue();
 
             virtual std::string toString() const;
-            virtual bool getAsString(std::string *out_value) const;
+            virtual bool getAsString(std::string *out_value) const WARN_UNUSED_RESULT;
             virtual StringValue* deepCopy() const;
             virtual bool equals(const Value* other) const;
 
@@ -148,15 +144,15 @@ namespace common
 
         bool set(size_t index, Value* in_value);
 
-        bool get(size_t index, const Value** out_value) const;
-        bool get(size_t index, Value** out_value);
+        bool get(size_t index, const Value** out_value) const WARN_UNUSED_RESULT;
+        bool get(size_t index, Value** out_value) WARN_UNUSED_RESULT;
 
-        bool getBoolean(size_t index, bool* out_value) const;
-        bool getInteger(size_t index, int* out_value) const;
-        bool getDouble(size_t index, double* out_value) const;
-        bool getString(size_t index, std::string *out_value) const;
-        bool getList(size_t index, const ArrayValue** out_value) const;
-        bool getList(size_t index, ArrayValue** out_value);
+        bool getBoolean(size_t index, bool* out_value) const WARN_UNUSED_RESULT;
+        bool getInteger(size_t index, int* out_value) const WARN_UNUSED_RESULT;
+        bool getDouble(size_t index, double* out_value) const WARN_UNUSED_RESULT;
+        bool getString(size_t index, std::string *out_value) const WARN_UNUSED_RESULT;
+        bool getList(size_t index, const ArrayValue** out_value) const WARN_UNUSED_RESULT;
+        bool getList(size_t index, ArrayValue** out_value) WARN_UNUSED_RESULT;
 
         virtual bool remove(size_t index, scoped_ptr_t<Value>* out_value);
         iterator erase(iterator iter, scoped_ptr_t<Value>* out_value);
@@ -189,8 +185,8 @@ namespace common
         const_iterator begin() const { return list_.begin(); }
         const_iterator end() const { return list_.end(); }
 
-        virtual bool getAsList(ArrayValue** out_value);
-        virtual bool getAsList(const ArrayValue** out_value) const;
+        virtual bool getAsList(ArrayValue** out_value) WARN_UNUSED_RESULT;
+        virtual bool getAsList(const ArrayValue** out_value) const WARN_UNUSED_RESULT;
         virtual ArrayValue* deepCopy() const;
         virtual bool equals(const Value* other) const;
 
@@ -210,30 +206,13 @@ namespace common
 
         CommandType commandType() const;
         virtual std::string toString() const;
-        virtual bool getAsCommand(CommandValue* out_value) const;
+        virtual bool getAsCommand(CommandValue* out_value) const WARN_UNUSED_RESULT;
         virtual CommandValue* deepCopy() const;
 
     private:
         std::string inputCommand_;
         std::string oppositeCommand_;
         CommandType ctype_;
-    };
-
-    class PairValue
-            : public Value
-    {
-    public:
-        PairValue(Value* key, Value* value);
-        Value* key() const;
-        Value* value() const;
-
-        virtual std::string toString() const;
-        virtual bool getAsPair(PairValue* out_value) const;
-        virtual PairValue *deepCopy() const;
-
-    private:
-        scoped_ptr_t<Value> key_;
-        scoped_ptr_t<Value> value_;
     };
 
     class ErrorValue
@@ -248,7 +227,7 @@ namespace common
         std::string description() const;
         virtual std::string toString() const;
 
-        virtual bool getAsError(ErrorValue* out_value) const;
+        virtual bool getAsError(ErrorValue* out_value) const WARN_UNUSED_RESULT;
         virtual ErrorValue *deepCopy() const;
         virtual ~ErrorValue();
 

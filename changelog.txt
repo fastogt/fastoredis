@@ -1,6 +1,6 @@
 0.6.1 
-- In place change value
-- Load databases for redis-cli
+- In place edit value
+- Load databases for redis
 - Conversion dialog
 - Set default redis database
 - Load Redis database/keys in explorer tree

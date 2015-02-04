@@ -35,8 +35,6 @@ namespace fastoredis
 
     private Q_SLOTS:
         void open();
-        void save();
-        void saveAs();
         void about();
         void openPreferences();
         void checkUpdate();
@@ -60,8 +58,6 @@ namespace fastoredis
         void retranslateUi();
 
         QAction* openAction_;
-        QAction* saveAction_;
-        QAction* saveAsAction_;
         QAction* exitAction_;
         QAction* preferencesAction_;
         QAction* fullScreanAction_;

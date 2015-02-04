@@ -60,8 +60,10 @@ namespace fastoredis
             for(int i = 0; i < ar->getSize(); i+=2){
                 std::string c1;
                 std::string c2;
-                ar->getString(i, &c1);
-                ar->getString(i+1, &c2);
+                bool res = ar->getString(i, &c1);
+                DCHECK(res);
+                res = ar->getString(i+1, &c2);
+                DCHECK(res);
                 inf.propertyes_.push_back(std::make_pair(c1, c2));
             }
         }

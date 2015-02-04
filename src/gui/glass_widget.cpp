@@ -49,7 +49,10 @@ namespace fastoredis
 
     void GlassWidget::stop()
     {
-        wGlass_->parentWidget()->removeEventFilter(this);
+        QWidget* parent = wGlass_->parentWidget();
+        if(parent){
+            parent->removeEventFilter(this);
+        }
         wGlass_->hide();
         wGlass_->setParent(0);
         wAnimationContainer_->hide();
