@@ -17,6 +17,7 @@ extern "C" {
 #include "common/time.h"
 #include "common/utils.h"
 #include "common/file_system.h"
+#include "common/string_util.h"
 
 #include "core/logger.h"
 #include "core/command_logger.h"
@@ -121,7 +122,7 @@ namespace
         }
     } rInit;
 
-    std::string getKeyFromLine(const std::string& input)
+    std::string getKeyFromLine(std::string input)
     {
         if(input.empty()){
             return std::string();
@@ -129,15 +130,57 @@ namespace
 
         size_t pos = input.find_first_of(' ');
         if(pos != std::string::npos){
-            return input.substr(pos+1);
+            input = input.substr(pos+1);
         }
 
-        return input;
+        std::string trimed;
+        common::TrimWhitespaceASCII(input, common::TRIM_ALL, &trimed);
+        return trimed;
     }
 }
 
 namespace fastoredis
 {
+    namespace
+    {
+        class RedisCommand
+                : public FastoObjectCommand
+        {
+        public:
+            RedisCommand(FastoObject* parent, common::CommandValue* cmd, const std::string &delemitr)
+                : FastoObjectCommand(parent, cmd, delemitr)
+            {
+
+            }
+
+            virtual std::string key() const
+            {
+                common::CommandValue* command = cmd();
+                if(command){
+                    return getKeyFromLine(command->inputCommand());
+                }
+
+                return std::string();
+            }
+        };
+
+        FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input,
+                                                   const std::string& opposite, common::Value::CommandType ct)
+        {
+            DCHECK(parent);
+            common::CommandValue* cmd = common::Value::createCommand(input, opposite, ct);
+            FastoObjectCommand* fs = new RedisCommand(parent, cmd, "");
+            parent->addChildren(fs);
+            return fs;
+        }
+
+        FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input,
+                                                   const std::string& opposite, common::Value::CommandType ct)
+        {
+            return createCommand(parent.get(), input, opposite, ct);
+        }
+    }
+
     const std::vector<QString> redisTypesKeywords(commandGroups, commandGroups + sizeof(commandGroups)/sizeof(char*));
     const std::vector<QString> redisCommandsKeywords(commandHelp, commandHelp + sizeof(commandHelp)/sizeof(struct commandHelp));
 
@@ -173,6 +216,8 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
+            FastoObjectCommand* cmd = createCommand(out, "PING", "PING", common::Value::C_INNER);
+
             redisReply *reply;
             common::time64_t start;
             uint64_t latency, min = 0, max = 0, tot = 0, count = 0;
@@ -187,10 +232,11 @@ namespace fastoredis
             }
 
             FastoObject* child = NULL;
+            const std::string command = cmd->inputCommand();
 
             while(!config.shutdown) {
-                start = common::time::current_mstime();
-                reply = (redisReply*)redisCommand(context, "PING");
+                start = common::time::current_mstime();                
+                reply = (redisReply*)redisCommand(context, command.c_str());
                 if (reply == NULL) {
                     return common::make_error_value("I/O error", common::Value::E_ERROR);
                 }
@@ -216,14 +262,14 @@ namespace fastoredis
                 common::Value *val = common::Value::createStringValue(buff);
 
                 if(!child){
-                    child = new FastoObject(out, val, config.mb_delim);
-                    out->addChildren(child);
+                    child = new FastoObject(cmd, val, config.mb_delim);
+                    cmd->addChildren(child);
                     continue;
                 }
 
                 if(config.latency_history && curTime - history_start > history_interval){
-                    child = new FastoObject(out, val, config.mb_delim);
-                    out->addChildren(child);
+                    child = new FastoObject(cmd, val, config.mb_delim);
+                    cmd->addChildren(child);
                     history_start = curTime;
                     min = max = tot = count = 0;
                 }
@@ -297,6 +343,8 @@ namespace fastoredis
                 return er;
             }
 
+            FastoObjectCommand* cmd = createCommand(out, SYNC_REQUEST, SYNC_REQUEST, common::Value::C_INNER);
+
             char buf[1024];
             /* Discard the payload. */
             while(payload) {
@@ -310,7 +358,7 @@ namespace fastoredis
 
             /* Now we can use hiredis to read the incoming protocol. */
             while (1){
-                er = cliReadReply(out);
+                er = cliReadReply(cmd);
                 if(er){
                     break;
                 }
@@ -344,13 +392,14 @@ namespace fastoredis
 
             FastoObject* child = NULL;
             common::ArrayValue* val = NULL;
+            FastoObjectCommand* cmd = createCommand(out, RDM_REQUEST, RDM_REQUEST, common::Value::C_INNER);
 
             int fd = INVALID_DESCRIPTOR;
             /* Write to file. */
             if (!strcmp(config.rdb_filename,"-")) {
                 val = new common::ArrayValue;
-                child = new FastoObject(out, val, config.mb_delim);
-                out->addChildren(child);
+                child = new FastoObject(cmd, val, config.mb_delim);
+                cmd->addChildren(child);
             }
             else{
                 fd = open(config.rdb_filename, O_CREAT | O_WRONLY, 0644);
@@ -573,6 +622,8 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
+            FastoObjectCommand* cmd = createCommand(out, FIND_BIG_KEYS_REQUEST, FIND_BIG_KEYS_REQUEST, common::Value::C_INNER);
+
             unsigned long long biggest[5] = {0}, counts[5] = {0}, totalsize[5] = {0};
             unsigned long long sampled = 0, totlen=0, *sizes=NULL, it=0;
             long long total_keys;
@@ -697,8 +748,8 @@ namespace fastoredis
                     sprintf(buff, "Biggest %6s found '%s' has %llu %s", typeName[i], maxkeys[i],
                        biggest[i], typeunit[i]);
                     common::StringValue *val = common::Value::createStringValue(buff);
-                    FastoObject* obj = new FastoObject(out, val, config.mb_delim);
-                    out->addChildren(obj);
+                    FastoObject* obj = new FastoObject(cmd, val, config.mb_delim);
+                    cmd->addChildren(obj);
                 }
             }
 
@@ -709,8 +760,8 @@ namespace fastoredis
                    sampled ? 100 * (double)counts[i]/sampled : 0,
                    counts[i] ? (double)totalsize[i]/counts[i] : 0);
                 common::StringValue *val = common::Value::createStringValue(buff);
-                FastoObject* obj = new FastoObject(out, val, config.mb_delim);
-                out->addChildren(obj);
+                FastoObject* obj = new FastoObject(cmd, val, config.mb_delim);
+                cmd->addChildren(obj);
             }
 
             /* Free sds strings containing max keys */
@@ -790,6 +841,8 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
+            FastoObjectCommand* cmd = createCommand(out, INFO_REQUEST, INFO_REQUEST, common::Value::C_INNER);
+            const std::string command = cmd->inputCommand();
             long aux, requests = 0;
 
             while(!config.shutdown) {
@@ -798,7 +851,7 @@ namespace fastoredis
 
                 redisReply *reply = NULL;
                 while(reply == NULL) {
-                    reply = (redisReply*)redisCommand(context,"INFO");
+                    reply = (redisReply*)redisCommand(context, command.c_str());
                     if (context->err && !(context->err & (REDIS_ERR_IO | REDIS_ERR_EOF))) {
                         char buff[2048];
                         sprintf(buff, "ERROR: %s", context->errstr);
@@ -872,8 +925,8 @@ namespace fastoredis
                 }
 
                 common::StringValue *val = common::Value::createStringValue(result);
-                FastoObject* obj = new FastoObject(out, val, config.mb_delim);
-                out->addChildren(obj);
+                FastoObject* obj = new FastoObject(cmd, val, config.mb_delim);
+                cmd->addChildren(obj);
 
                 freeReplyObject(reply);
 
@@ -893,6 +946,8 @@ namespace fastoredis
             if(!out){
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
+
+            FastoObjectCommand* cmd = createCommand(out, SCAN_MODE_REQUEST, SCAN_MODE_REQUEST, common::Value::C_INNER);
 
             redisReply *reply;
             unsigned long long cur = 0;
@@ -915,8 +970,8 @@ namespace fastoredis
                     cur = strtoull(reply->element[0]->str,NULL,10);
                     for (j = 0; j < reply->element[1]->elements; j++){
                         common::StringValue *val = common::Value::createStringValue(reply->element[1]->element[j]->str);
-                        FastoObject* obj = new FastoObject(out, val, config.mb_delim);
-                        out->addChildren(obj);
+                        FastoObject* obj = new FastoObject(cmd, val, config.mb_delim);
+                        cmd->addChildren(obj);
                     }
                 }
                 freeReplyObject(reply);
@@ -2070,6 +2125,7 @@ namespace fastoredis
             events::ChangeDbValueResponceEvent::value_type res(ev->value());
 
         notifyProgress(sender, 50);
+#pragma message("remove hardcode")
         const std::string changeRequest = "SET " + res.newItem_.key_ + " " + res.newItem_.value_;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
         FastoObjectCommand* cmd = createCommand(root, changeRequest, changeRequest, common::Value::C_INNER);

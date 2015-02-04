@@ -8,6 +8,7 @@ extern "C" {
 }
 
 #include "common/utils.h"
+#include "common/string_util.h"
 
 #include "core/logger.h"
 #include "core/command_logger.h"
@@ -15,8 +16,67 @@ extern "C" {
 #include "core/memcached/memcached_config.h"
 #include "core/memcached/memcached_infos.h"
 
+namespace
+{
+    std::string getKeyFromLine(std::string input)
+    {
+        if(input.empty()){
+            return std::string();
+        }
+
+        size_t pos = input.find_first_of(' ');
+        if(pos != std::string::npos){
+            input = input.substr(pos+1);
+        }
+
+        std::string trimed;
+        common::TrimWhitespaceASCII(input, common::TRIM_ALL, &trimed);
+        return trimed;
+    }
+}
+
 namespace fastoredis
 {
+    namespace
+    {
+        class MemcachedCommand
+                : public FastoObjectCommand
+        {
+        public:
+            MemcachedCommand(FastoObject* parent, common::CommandValue* cmd, const std::string &delemitr)
+                : FastoObjectCommand(parent, cmd, delemitr)
+            {
+
+            }
+
+            virtual std::string key() const
+            {
+                common::CommandValue* command = cmd();
+                if(command){
+                    return getKeyFromLine(command->inputCommand());
+                }
+
+                return std::string();
+            }
+        };
+
+        FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input,
+                                                   const std::string& opposite, common::Value::CommandType ct)
+        {
+            DCHECK(parent);
+            common::CommandValue* cmd = common::Value::createCommand(input, opposite, ct);
+            FastoObjectCommand* fs = new MemcachedCommand(parent, cmd, "");
+            parent->addChildren(fs);
+            return fs;
+        }
+
+        FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input,
+                                                   const std::string& opposite, common::Value::CommandType ct)
+        {
+            return createCommand(parent.get(), input, opposite, ct);
+        }
+    }
+
     common::ErrorValueSPtr testConnection(const char* host, int hostport, const char* user, const char* passwd)
     {
         memcached_return rc;

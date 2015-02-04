@@ -173,7 +173,7 @@ namespace fastoredis
             par = common::utils_qt::item<fastoredis::FastoCommonItem*>(parent);
         }
 
-        const QString key = common::convertFromString<QString>(command->cmd()->inputCommand());
+        const QString key = common::convertFromString<QString>(command->key());
 
         fastoredis::FastoCommonItem* comChild = createItem(par, key, child);
         commonModel_->insertItem(parent, comChild);

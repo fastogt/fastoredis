@@ -23,7 +23,7 @@ namespace fastoredis
         red->setPaper(paperColor);
 
         setAutoCompletionThreshold(1);
-        setAutoCompletionSource(QsciScintilla::AcsAll);
+        setAutoCompletionSource(QsciScintilla::AcsAPIs);
         setAutoCompletionCaseSensitivity(false);
 
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));

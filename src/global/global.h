@@ -53,9 +53,17 @@ namespace fastoredis
             : public FastoObject
     {
     public:
-        FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string &delemitr);
+        virtual ~FastoObjectCommand();
         common::CommandValue* cmd() const;
         virtual std::string toString() const;
+
+        std::string inputCommand() const;
+        std::string oppositeCommand() const;
+        common::Value::CommandType commandType() const;
+        virtual std::string key() const = 0;
+
+    protected:
+        FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string &delemitr);
     };
 
     class FastoObjectArray
@@ -79,11 +87,6 @@ namespace fastoredis
     };
 
     typedef common::intrusive_ptr<FastoObject> FastoObjectIPtr;
-
-    FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input,
-                                               const std::string& opposite, common::Value::CommandType ct);
-    FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input,
-                                               const std::string& opposite, common::Value::CommandType ct);
 }
 
 namespace common
