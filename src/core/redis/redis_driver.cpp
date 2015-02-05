@@ -1081,10 +1081,10 @@ namespace fastoredis
                 if (context->err) {
                     char buff[512] = {0};
                     if (!config.hostsocket){
-                        sprintf(buff, "Could not connect to Redis at %s:%d: %s", config.hostip, config.hostport, context->errstr);
+                        sprintf(buff, "Could not connect to Redis at %s:%d : %s", config.hostip, config.hostport, context->errstr);
                     }
                     else{
-                        sprintf(buff, "Could not connect to Redis at %s: %s", config.hostsocket, context->errstr);
+                        sprintf(buff, "Could not connect to Redis at %s : %s", config.hostsocket, context->errstr);
                     }
 
                     redisFree(context);

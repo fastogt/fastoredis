@@ -18,24 +18,11 @@ namespace common
             L_CRITICAL
         };
 
-        inline std::string log_level_to_text(LEVEL_LOG lev)
+        static const char* level_names[] = { "NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL" };
+
+        inline const char* log_level_to_text(LEVEL_LOG lev)
         {
-            switch(lev)
-            {
-            case L_CRITICAL:
-                return "Critical";
-            case L_ERROR:
-                return "Error";
-            case L_WARNING:
-                return "Warning";
-            case L_INFO:
-                return "Info";
-            case L_DEBUG:
-                return "Debug";
-            default:
-                NOTREACHED();
-                return std::string();
-            }
+            return level_names[lev];
         }
     }
 }
