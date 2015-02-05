@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 #############################################################
-PROJECT("FastoRedis" VERSION 0.6.1.0 LANGUAGES CXX C)
+PROJECT("FastoRedis" VERSION 0.6.1.1 LANGUAGES CXX C)
 #################### Project Settings ####################
 #SET(PROJECT_NAME "FastoRedis" CACHE STRING "Project Name")
 SET(PROJECT_NAME_TITLE ${PROJECT_NAME} CACHE STRING "Title for ${PROJECT_NAME}")

@@ -30,6 +30,7 @@ namespace fastoredis
         const QIcon& stopIcon() const;
         const QIcon& timeIcon() const;
         const QIcon& databaseIcon() const;
+        const QIcon& keyIcon() const;
         QFont font() const;
         const QIcon& icon(connectionTypes type) const;
         const QIcon& modeIcon(ConnectionMode mode) const;

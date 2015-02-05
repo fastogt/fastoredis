@@ -195,8 +195,14 @@ namespace fastoredis
             if(t == IExplorerTreeItem::Server){
                 return GuiFactory::instance().icon(node->server()->type());
             }
-            else{
+            else if(t == IExplorerTreeItem::Key){
+                return GuiFactory::instance().keyIcon();
+            }
+            else if(t == IExplorerTreeItem::Database){
                 return GuiFactory::instance().databaseIcon();
+            }
+            else{
+                NOTREACHED();
             }
         }
 
