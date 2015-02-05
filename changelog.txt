@@ -1,8 +1,8 @@
 0.6.1 
 - In place edit value
-- Load databases for redis
+- Load databases for Redis
 - Conversion dialog
-- Set default redis database
+- Set default Redis database
 - Load Redis database/keys in explorer tree
 
 0.6.0 / January 25, 2015

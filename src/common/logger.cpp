@@ -1,6 +1,7 @@
 #include "common/logger.h"
 
 #include <inttypes.h>
+#include <string.h>
 
 #include "common/file_system.h"
 #include "common/multi_threading/types.h"
