@@ -47,29 +47,29 @@
 
 namespace
 {
-    bool isNeededUpdate(const std::string& serverVersion)
+    bool isNeededUpdate(const QString& serverVersion)
     {
-        if(serverVersion.empty()){
+        if(serverVersion.isEmpty()){
             return false;
         }
 
-        std::string curVer;
+        QString curVer;
         int pos = 0;
-        uint16_t serMaj = 0;
-        uint16_t serMin = 0;
-        uint16_t serPatch = 0;
+        uint serMaj = 0;
+        uint serMin = 0;
+        uint serPatch = 0;
 
         for(int i = 0; i < serverVersion.length(); ++i){
-            char ch = serverVersion[i];
+            QChar ch = serverVersion[i];
             if(ch == '.'){
                 if(pos == 0){
-                    serMaj = common::convertFromString<uint16_t>(curVer);
+                    serMaj = curVer.toUInt();
                 }
                 else if(pos == 1){
-                    serMin = common::convertFromString<uint16_t>(curVer);
+                    serMin = curVer.toUInt();
                 }
                 else if(pos == 2){
-                    serPatch = common::convertFromString<uint16_t>(curVer);
+                    serPatch = curVer.toUInt();
                 }
 
                 ++pos;
@@ -439,7 +439,7 @@ namespace fastoredis
             checkUpdateAction_->setEnabled(true);
         }
         else{
-            bool isn = isNeededUpdate(common::convertToString(version));
+            bool isn = isNeededUpdate(version);
             if(isn){
                 QMessageBox::information(this, trCheckVersion,
                     QObject::tr("Availible new version: %1")
@@ -447,8 +447,7 @@ namespace fastoredis
             }
             else{
                 QMessageBox::information(this, trCheckVersion,
-                    QObject::tr("<h3>You're' up-to-date!</h3>"
-                                PROJECT_NAME" %1 is currently the newest version available.")
+                    QObject::tr("<h3>You're' up-to-date!</h3>" PROJECT_NAME_TITLE " %1 is currently the newest version available.")
                         .arg(version));
             }
 

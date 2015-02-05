@@ -7,7 +7,7 @@ namespace common
 {
     namespace logging
     {
-        void printTradeSafe(LEVEL_LOG level, const std::string& data);
+        void printTradeSafe(LEVEL_LOG level, const char* data);
     }
 
     template<uint16_t buff_size, typename... Args>

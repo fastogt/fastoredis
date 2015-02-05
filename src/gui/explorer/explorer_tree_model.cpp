@@ -253,6 +253,10 @@ namespace fastoredis
 
     void ExplorerTreeModel::addServer(IServerSPtr server)
     {
+        if(!server){
+            return;
+        }
+
         ExplorerServerItem *serv = findServerItem(server.get());
         if(!serv){
             TreeItem *parent = dynamic_cast<TreeItem*>(root_);

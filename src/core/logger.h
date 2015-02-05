@@ -33,7 +33,7 @@ namespace fastoredis
         return Logger::instance().print(mess, level, notify);
     }
 
-    inline void LOG_ERROR(const common::ErrorValueSPtr& er, bool notify)
+    inline void LOG_ERROR(common::ErrorValueSPtr er, bool notify)
     {
         return Logger::instance().print(er->description(), er->level(), notify);
     }

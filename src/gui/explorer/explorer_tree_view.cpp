@@ -126,78 +126,106 @@ namespace fastoredis
     void ExplorerTreeView::connectDisconnectToServer()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-            if(node){
-                IServerSPtr server = node->server();
-                if(server->isConnected()){
-                    server->disconnect();
-                }
-                else{
-                    server->connect();
-                }
-            }
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(!node){
+            return;
+        }
+
+        IServerSPtr server = node->server();
+        if(!server){
+            return;
+        }
+
+        if(server->isConnected()){
+            server->disconnect();
+        }
+        else{
+            server->connect();
         }
     }
 
     void ExplorerTreeView::openConsole()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-            if(node){
-                emit openedConsole(node->server());
-            }
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(node){
+            emit openedConsole(node->server());
         }
     }
 
     void ExplorerTreeView::loadDatabases()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-            if(node){
-                node->loadDatabases();
-            }
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(node){
+            node->loadDatabases();
         }
     }
 
     void ExplorerTreeView::loadContentDb()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
-            if(node){
-                node->loadContent();
-            }
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+        if(node){
+            node->loadContent();
         }
     }
 
     void ExplorerTreeView::setDefaultDb()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
-            if(node){
-                node->setDefault();
-            }
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+        if(node){
+            node->setDefault();
         }
     }
 
     void ExplorerTreeView::getValue()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
-            if(node){
-                emit executeText(node->server(), QString("GET %1").arg(node->name()));
-            }
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
+        if(node){
+            emit executeText(node->server(), QString("GET %1").arg(node->name()));
         }
     }
 
     void ExplorerTreeView::addServer(IServerSPtr server)
     {
+        DCHECK(server);
+        if(!server){
+            return;
+        }
+
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
         VERIFY(connect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
         VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
         VERIFY(connect(server.get(), SIGNAL(startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &)), this, SLOT(startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &))));
@@ -210,7 +238,17 @@ namespace fastoredis
 
     void ExplorerTreeView::removeServer(IServerSPtr server)
     {
+        DCHECK(server);
+        if(!server){
+            return;
+        }
+
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
         VERIFY(disconnect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
         VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
         VERIFY(disconnect(server.get(), SIGNAL(startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &)), this, SLOT(startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &))));
@@ -226,8 +264,9 @@ namespace fastoredis
     {
         QModelIndexList indexses = selectionModel()->selectedRows();
 
-        if (indexses.count() != 1)
+        if (indexses.count() != 1){
             return QModelIndex();
+        }
 
         return indexses[0];
     }
@@ -237,6 +276,7 @@ namespace fastoredis
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();
         }
+
         QTreeView::changeEvent(e);
     }
 
@@ -360,98 +400,134 @@ namespace fastoredis
     void ExplorerTreeView::openInfoServerDialog()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-            if(node){
-                IServerSPtr server = node->server();
-                InfoServerDialog infDialog(server->name() + " info", server->type(), this);
-                VERIFY(connect(server.get(), SIGNAL(startedLoadServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
-                VERIFY(connect(server.get(), SIGNAL(finishedLoadServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
-                VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverInfo())));
-                infDialog.exec();
-            }
+        if(!sel.isValid()){
+            return;
         }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(!node){
+            return;
+        }
+
+        IServerSPtr server = node->server();
+        if(!server){
+            return;
+        }
+
+        InfoServerDialog infDialog(server->name() + " info", server->type(), this);
+        VERIFY(connect(server.get(), SIGNAL(startedLoadServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
+        VERIFY(connect(server.get(), SIGNAL(finishedLoadServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
+        VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverInfo())));
+        infDialog.exec();
     }
 
     void ExplorerTreeView::openPropertyServerDialog()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-            if(node){
-                IServerSPtr server = node->server();
-                PropertyServerDialog infDialog(server->name() + " properties", server->type(), this);
-                VERIFY(connect(server.get(), SIGNAL(startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest &)), &infDialog, SLOT(startServerProperty(const EventsInfo::ServerPropertyInfoRequest &))));
-                VERIFY(connect(server.get(), SIGNAL(finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &))));
-                VERIFY(connect(server.get(), SIGNAL(startedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoRequest &)), &infDialog, SLOT(startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest &))));
-                VERIFY(connect(server.get(), SIGNAL(finishedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &))));
-                VERIFY(connect(&infDialog, SIGNAL(changedProperty(const PropertyType&)), server.get(), SLOT(changeProperty(const PropertyType&))));
-                VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverProperty())));
-                infDialog.exec();
-            }
+        if(!sel.isValid()){
+            return;
         }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(!node){
+            return;
+        }
+
+        IServerSPtr server = node->server();
+        if(!server){
+            return;
+        }
+
+        PropertyServerDialog infDialog(server->name() + " properties", server->type(), this);
+        VERIFY(connect(server.get(), SIGNAL(startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest &)), &infDialog, SLOT(startServerProperty(const EventsInfo::ServerPropertyInfoRequest &))));
+        VERIFY(connect(server.get(), SIGNAL(finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &))));
+        VERIFY(connect(server.get(), SIGNAL(startedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoRequest &)), &infDialog, SLOT(startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest &))));
+        VERIFY(connect(server.get(), SIGNAL(finishedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &))));
+        VERIFY(connect(&infDialog, SIGNAL(changedProperty(const PropertyType&)), server.get(), SLOT(changeProperty(const PropertyType&))));
+        VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverProperty())));
+        infDialog.exec();
     }
 
     void ExplorerTreeView::openHistoryServerDialog()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-            if(node){
-                IServerSPtr server = node->server();
-                ServerHistoryDialog histDialog(server->name() + " history", server->type(), this);
-                VERIFY(connect(server.get(), SIGNAL(startedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &)), &histDialog, SLOT(startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &))));
-                VERIFY(connect(server.get(), SIGNAL(finishedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &)), &histDialog, SLOT(finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &))));
-                VERIFY(connect(server.get(), SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), &histDialog, SLOT(snapShotAdd(ServerInfoSnapShoot ))));
-                VERIFY(connect(&histDialog, SIGNAL(showed()), server.get(), SLOT(requestHistoryInfo())));
-                histDialog.exec();
-            }
+        if(!sel.isValid()){
+            return;
         }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(!node){
+            return;
+        }
+
+        IServerSPtr server = node->server();
+        if(!server){
+            return;
+        }
+
+        ServerHistoryDialog histDialog(server->name() + " history", server->type(), this);
+        VERIFY(connect(server.get(), SIGNAL(startedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &)), &histDialog, SLOT(startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &))));
+        VERIFY(connect(server.get(), SIGNAL(finishedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &)), &histDialog, SLOT(finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &))));
+        VERIFY(connect(server.get(), SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), &histDialog, SLOT(snapShotAdd(ServerInfoSnapShoot ))));
+        VERIFY(connect(&histDialog, SIGNAL(showed()), server.get(), SLOT(requestHistoryInfo())));
+        histDialog.exec();
     }
 
     void ExplorerTreeView::closeConnection()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-            if(node){
-                IServerSPtr server = node->server();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(node){
+            IServerSPtr server = node->server();
+            if(server){
                 removeServer(server);
             }
-        }        
+        }
     }
 
     void ExplorerTreeView::backupServer()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-            if(node){
-                IServerSPtr server = node->server();
+        if(!sel.isValid()){
+            return;
+        }
 
-                using namespace translations;
-                QString filepath = QFileDialog::getOpenFileName(this, trBackup, QString(), trfilterForRdb);
-                if (!filepath.isEmpty()) {
-                    server->backupToPath(filepath);
-                }
-            }
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(!node){
+            return;
+        }
+
+        IServerSPtr server = node->server();
+
+        using namespace translations;
+        QString filepath = QFileDialog::getOpenFileName(this, trBackup, QString(), trfilterForRdb);
+        if (!filepath.isEmpty() && server) {
+            server->backupToPath(filepath);
         }
     }
 
     void ExplorerTreeView::importServer()
     {
         QModelIndex sel = selectedIndex();
-        if(sel.isValid()){
-            ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-            if(node){
-                IServerSPtr server = node->server();
+        if(!sel.isValid()){
+            return;
+        }
 
-                using namespace translations;
-                QString filepath = QFileDialog::getOpenFileName(this, trImport, QString(), trfilterForRdb);
-                if (filepath.isEmpty()) {
-                    server->exportFromPath(filepath);
-                }
-            }
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(!node){
+            return;
+        }
+
+        IServerSPtr server = node->server();
+
+        using namespace translations;
+        QString filepath = QFileDialog::getOpenFileName(this, trImport, QString(), trfilterForRdb);
+        if (filepath.isEmpty() && server) {
+            server->exportFromPath(filepath);
         }
     }
 
@@ -468,14 +544,13 @@ namespace fastoredis
         }
 
         IServerSPtr server = node->server();
-        if(server->isConnected()){
+        if(server && server->isConnected()){
             // Ask user
-            int answer = QMessageBox::question(this,
-                "Shutdown", QString("Really shutdown \"%1\" server?").arg(server->name()),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+            int answer = QMessageBox::question(this, "Shutdown", QString("Really shutdown \"%1\" server?").arg(server->name()), QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
-            if (answer != QMessageBox::Yes)
+            if (answer != QMessageBox::Yes){
                 return;
+            }
 
             server->shutDown();
         }

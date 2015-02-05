@@ -16,15 +16,15 @@ namespace fastoredis
     {
         using namespace translations;
 
-        QTabBar *tab = new QTabBar(this);
+        QTabBar *tab = new QTabBar;
         setTabBar(tab);
         setTabsClosable(false);
         setElideMode(Qt::ElideRight);
         setMovable(true);
         setDocumentMode(true);
-        log_ = new LogWidget(this);
+        log_ = new LogWidget;
         addTab(log_, GuiFactory::instance().loggingIcon(), trLogs);
-        commands_ = new CommandsWidget(this);
+        commands_ = new CommandsWidget;
         addTab(commands_, GuiFactory::instance().commandIcon(), trCommands);
         retranslateUi();
     }

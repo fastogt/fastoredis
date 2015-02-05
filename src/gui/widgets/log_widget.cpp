@@ -13,16 +13,16 @@
 namespace fastoredis
 {
     LogWidget::LogWidget(QWidget* parent) 
-        : QWidget(parent), logTextEdit_(new QTextEdit(this))
+        : QWidget(parent), logTextEdit_(new QTextEdit)
     {
         logTextEdit_->setReadOnly(true);
         logTextEdit_->setContextMenuPolicy(Qt::CustomContextMenu);
-        VERIFY(connect(logTextEdit_,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(showContextMenu(const QPoint &))));
+        VERIFY(connect(logTextEdit_, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0,0,0,0);
         hlayout->addWidget(logTextEdit_);
         clear_ = new QAction(this);
-        VERIFY(connect(clear_, SIGNAL(triggered()),logTextEdit_, SLOT(clear())));
+        VERIFY(connect(clear_, SIGNAL(triggered()), logTextEdit_, SLOT(clear())));
         setLayout(hlayout);
         retranslateUi();
     }

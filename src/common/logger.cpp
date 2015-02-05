@@ -30,13 +30,13 @@ namespace common
 {
     namespace logging
     {
-        typedef void LogHandler(LEVEL_LOG level, const std::string& message);
+        typedef void LogHandler(LEVEL_LOG level, const char* message);
 
-        void DefaultLogHandler(LEVEL_LOG level, const std::string& message)
+        void DefaultLogHandler(LEVEL_LOG level, const char* message)
         {
             // We use fprintf() instead of cerr because we want this to work at static
             // initialization time.
-            fprintf(logger_fd, PROJECT_NAME_TITLE " [%s] %s\n", log_level_to_text(level), message.c_str());
+            fprintf(logger_fd, PROJECT_NAME_TITLE " [%s] %s\n", log_level_to_text(level), message);
             fflush(logger_fd);  // Needed on MSVC.
         }
 
@@ -47,7 +47,7 @@ namespace common
 
         static LogHandler* log_handler_ = &DefaultLogHandler;
 
-        void printTradeSafe(LEVEL_LOG level, const std::string &data)
+        void printTradeSafe(LEVEL_LOG level, const char *data)
         {
             std::call_once(logger_startup_once, logger_startup_function);
 
