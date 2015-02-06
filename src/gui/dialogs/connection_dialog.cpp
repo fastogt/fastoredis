@@ -194,7 +194,7 @@ namespace fastoredis
     {
         if(validateAndApply()){
             connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(typeConnection_->currentText()));
-            bool isValidType = currentType != badConnectionType();
+            bool isValidType = currentType != DBUNKNOWN;
             if(isValidType){
                 std::string conName = common::convertToString(connectionName_->text());
                 IConnectionSettingsBase* newConnection = IConnectionSettingsBase::createFromType(currentType, conName);
@@ -300,7 +300,7 @@ namespace fastoredis
     void ConnectionDialog::typeConnectionChange(const QString& value)
     {
         connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(value));
-        bool isValidType = currentType != badConnectionType();
+        bool isValidType = currentType != DBUNKNOWN;
         connectionName_->setEnabled(isValidType);
         commandLine_->setEnabled(isValidType);
         buttonBox_->button(QDialogButtonBox::Save)->setEnabled(isValidType);

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <QString>
-
 #include "core/core_fwd.h"
 
 namespace fastoredis

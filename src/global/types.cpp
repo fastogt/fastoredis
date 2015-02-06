@@ -1,7 +1,17 @@
 #include "global/types.h"
 
+namespace
+{
+    const std::vector<std::string> viewsText = { "Tree", "Table", "Text" };
+}
+
 namespace fastoredis
 {
+    std::vector<std::string> allSupportedViews()
+    {
+        return viewsText;
+    }
+
     Command::Command()
         : message_(), type_(common::Value::C_INNER)
     {
@@ -29,14 +39,14 @@ namespace common
 {
     std::string convertToString(fastoredis::supportedViews v)
     {
-        return fastoredis::viewsText[v];
+        return viewsText[v];
     }
 
     template<>
     fastoredis::supportedViews convertFromString(const std::string& from)
     {
-        for(int i = 0; i < fastoredis::viewsText.size(); ++i){
-            if(from == fastoredis::viewsText[i]){
+        for(int i = 0; i < viewsText.size(); ++i){
+            if(from == viewsText[i]){
                 return static_cast<fastoredis::supportedViews>(i);
             }
         }

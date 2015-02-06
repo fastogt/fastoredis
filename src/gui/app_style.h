@@ -30,7 +30,7 @@ namespace fastoredis
     QStringList getSupportedStyles();
 
     class AppStyle 
-        :public OsStyle
+        : public OsStyle
     {
         Q_OBJECT
     public:        

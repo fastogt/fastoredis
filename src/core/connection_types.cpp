@@ -8,11 +8,6 @@ namespace
 
 namespace fastoredis
 {
-    connectionTypes badConnectionType()
-    {
-        return DBUNKNOWN;
-    }
-
     std::vector<std::string> supportedConnectionTypes()
     {
         return connnectionType;
@@ -35,26 +30,16 @@ namespace common
             }
         }
 
-        return fastoredis::badConnectionType();
+        return fastoredis::DBUNKNOWN;
     }
 
     std::string convertToString(fastoredis::connectionTypes t)
     {
-        const uint32_t count = connnectionType.size();
-        if(t < count){
-            return connnectionType[t];
-        }
-
-        return std::string();
+        return connnectionType[t];
     }
 
     std::string convertToString(fastoredis::ConnectionMode t)
     {
-        const uint32_t count = connnectionMode.size();
-        if(t < count){
-            return connnectionMode[t];
-        }
-
-        return std::string();
+        return connnectionMode[t];
     }
 }

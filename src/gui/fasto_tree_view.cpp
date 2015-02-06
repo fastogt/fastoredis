@@ -24,5 +24,4 @@ namespace fastoredis
         QMenu menu(this);
         menu.exec(menuPoint);
     }
-
 }

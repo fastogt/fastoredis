@@ -11,8 +11,6 @@ namespace fastoredis
         MEMCACHED
     };
 
-    connectionTypes badConnectionType();
-
     std::vector<std::string> supportedConnectionTypes();
 
     enum ConnectionMode

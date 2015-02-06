@@ -9,12 +9,12 @@
 namespace fastoredis
 {
     GlassWidget::GlassWidget(const QString& path, const QString& text, qreal opacity, const QColor& color, QObject *parent)
-        : QObject(parent), movie_(0), glassColor_(color), text_(text)
+        : QObject(parent), movie_(NULL), text_(text)
     {
         wGlass_ = new QLabel;
 
-        wGlass_->setStyleSheet(QString("background-color: %1;").arg(glassColor_.name()));
-        QGraphicsOpacityEffect * tmpEffect = new QGraphicsOpacityEffect;
+        wGlass_->setStyleSheet(QString("background-color: %1;").arg(color.name()));
+        QGraphicsOpacityEffect* tmpEffect = new QGraphicsOpacityEffect;
         tmpEffect->setOpacity(opacity);
         wGlass_->setGraphicsEffect(tmpEffect);
 
@@ -53,6 +53,7 @@ namespace fastoredis
         if(parent){
             parent->removeEventFilter(this);
         }
+
         wGlass_->hide();
         wGlass_->setParent(0);
         wAnimationContainer_->hide();
@@ -70,9 +71,6 @@ namespace fastoredis
             return true;
         }
 
-        if (event->type() ==  QEvent::Shortcut || event->type() ==  QEvent::ShortcutOverride){
-
-        }
         wGlass_->setFocus();
         event->accept();
         return false;

@@ -30,7 +30,6 @@ namespace fastoredis
         QLabel* wAnimationContainer_;
         QLabel* wInfoTextContaiter_;
         QMovie* movie_;
-        const QColor glassColor_;
         const QString text_;
     };
 }

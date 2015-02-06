@@ -60,7 +60,7 @@ namespace fastoredis
     {
         IServerSPtr ser = shellWidget_->server();
         if(!ser){
-            return badConnectionType();
+            return DBUNKNOWN;
         }
 
         return ser->type();

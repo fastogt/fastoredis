@@ -101,7 +101,7 @@ namespace fastoredis
     {
         std::string res;
         connectionTypes crT = connectionType();
-        if(crT != badConnectionType()){
+        if(crT != DBUNKNOWN){
             std::stringstream str;
             str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',' << toCommandLine() << ',' << sshInfo_.toString();
             res = str.str();
