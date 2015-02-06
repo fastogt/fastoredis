@@ -45,5 +45,6 @@
     <file>icons/python.png</file>
     <file>icons/lua.png</file>
     <file>icons/encode_decode.png</file>
+    <file>icons/preferences.png</file>
     </qresource>
 </RCC>

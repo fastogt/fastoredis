@@ -264,6 +264,12 @@ namespace fastoredis
         return comm;
     }
 
+    const QIcon& GuiFactory::preferencesIcon() const
+    {
+        static QIcon pref(":" PROJECT_NAME_LOWERCASE "/icons/preferences.png");
+        return pref;
+    }
+
     const QIcon& GuiFactory::commandIcon(connectionTypes type) const
     {
         if(type == REDIS){

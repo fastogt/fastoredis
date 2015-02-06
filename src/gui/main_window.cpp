@@ -177,6 +177,7 @@ namespace fastoredis
         fileMenu->addAction(exitAction_);
 
         preferencesAction_ = new QAction(this);
+        preferencesAction_->setIcon(GuiFactory::instance().preferencesIcon());
         VERIFY(connect(preferencesAction_, SIGNAL(triggered()), this, SLOT(openPreferences())));
 
         QMenu *optionsMenu = new QMenu(this);
