@@ -5,15 +5,6 @@
 
 namespace fastoredis
 {
-    enum supportedViews
-    {
-        Tree = 0,
-        Table,
-        Text
-    };
-
-    std::vector<std::string> allSupportedViews();
-
     class IFastoObjectObserver;
     class FastoObject
             : public common::intrusive_ptr_base<FastoObject>

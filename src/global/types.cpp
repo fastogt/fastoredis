@@ -24,3 +24,23 @@ namespace fastoredis
         return type_;
     }
 }
+
+namespace common
+{
+    std::string convertToString(fastoredis::supportedViews v)
+    {
+        return fastoredis::viewsText[v];
+    }
+
+    template<>
+    fastoredis::supportedViews convertFromString(const std::string& from)
+    {
+        for(int i = 0; i < fastoredis::viewsText.size(); ++i){
+            if(from == fastoredis::viewsText[i]){
+                return static_cast<fastoredis::supportedViews>(i);
+            }
+        }
+
+        return fastoredis::Tree;
+    }
+}

@@ -1,9 +1,24 @@
 #pragma once
 
 #include "common/value.h"
+#include "common/convert2string.h"
 
 namespace fastoredis
 {
+    enum supportedViews
+    {
+        Tree = 0,
+        Table,
+        Text
+    };
+
+    static const std::vector<std::string> viewsText = { "Tree", "Table", "Text" };
+
+    inline std::vector<std::string> allSupportedViews()
+    {
+        return viewsText;
+    }
+
     class Command
     {
     public:
@@ -16,4 +31,9 @@ namespace fastoredis
         const std::string message_;
         const common::Value::CommandType type_;
     };
+}
+
+namespace common
+{
+    std::string convertToString(fastoredis::supportedViews v);
 }

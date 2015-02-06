@@ -1,12 +1,5 @@
 #include "global/global.h"
 
-#include "common/utils.h"
-
-namespace
-{
-    const char *supportedViewsM[] = { "Tree", "Table", "Text" };
-}
-
 namespace fastoredis
 {
     FastoObject::FastoObject(FastoObject *parent, common::Value *val, const std::string& delemitr)
@@ -177,11 +170,6 @@ namespace fastoredis
         return result;
     }
 
-    std::vector<std::string> allSupportedViews()
-    {
-        return common::utils::enums::convertToVector(supportedViewsM);
-    }
-
     common::ArrayValue* FastoObjectArray::array() const
     {
         return dynamic_cast<common::ArrayValue*>(value_.get());
@@ -190,21 +178,6 @@ namespace fastoredis
 
 namespace common
 {
-    std::string convertToString(fastoredis::supportedViews v)
-    {
-        if(v < SIZEOFMASS(supportedViewsM)){
-            return supportedViewsM[v];
-        }
-        return std::string();
-    }
-
-    template<>
-    fastoredis::supportedViews convertFromString(const std::string& from)
-    {
-        const char* fromPtr = from.c_str();
-        return common::utils::enums::findTypeInArray<fastoredis::supportedViews>(supportedViewsM, fromPtr);
-    }
-
     std::string convertToString(fastoredis::FastoObject* obj)
     {
         using namespace fastoredis;

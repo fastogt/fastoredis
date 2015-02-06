@@ -2,7 +2,7 @@
 
 #include <QString>
 
-#include "global/global.h"
+#include "global/types.h"
 
 #include "common/patterns/singleton_pattern.h"
 
