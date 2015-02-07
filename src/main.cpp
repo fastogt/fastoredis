@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setOrganizationName(PROJECT_COMPANYNAME);
     app.setApplicationName(PROJECT_NAME);
+    app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     fastoredis::MainWindow win;
     QRect screenGeometry = app.desktop()->availableGeometry();
