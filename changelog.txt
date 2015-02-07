@@ -1,10 +1,10 @@
-0.6.1
-[Alexandr Topilski]
+0.6.1 
 - In place edit value
 - Load databases for Redis
 - Conversion dialog
 - Set default Redis database
 - Load Redis database/keys in explorer tree
+- Context menu for Android
 
 0.6.0 / January 25, 2015
 [Alexandr Topilski]
