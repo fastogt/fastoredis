@@ -1,4 +1,4 @@
-0.6.1 
+0.6.1 / February 7, 2015
 - In place edit value
 - Load databases for Redis
 - Conversion dialog
