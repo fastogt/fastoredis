@@ -45,6 +45,8 @@ namespace common
         static CommandValue* createCommand(const std::string& src, const std::string& oppositeCommand, CommandType type);
         static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
+        static bool isIntegral(Type type) { return type == TYPE_BOOLEAN || type == TYPE_INTEGER || type == TYPE_UINTEGER || type == TYPE_DOUBLE; }
+
         static std::string toString(Type t);
         virtual std::string toString() const;
         Type getType() const { return type_; }

@@ -126,7 +126,7 @@ namespace fastoredis
 
     uint32_t IConnectionSettingsBase::loggingMsTimeInterval() const
     {
-        return 60000;
+        return 6000;
     }
 
     SSHInfo IConnectionSettingsBase::sshInfo() const

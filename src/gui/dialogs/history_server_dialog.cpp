@@ -39,7 +39,7 @@ namespace fastoredis
         VERIFY(connect(serverInfoGroupsNames_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshInfoFields(int)) ));
         VERIFY(connect(serverInfoFields_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshGraph(int)) ));
         if(type_ == REDIS){
-            for(int i = 0; i < SIZEOFMASS(redisHeaders); ++i){
+            for(int i = 0; i < redisHeaders.size(); ++i){
                 serverInfoGroupsNames_->addItem(common::convertFromString<QString>(redisHeaders[i]));
             }
         }
@@ -87,12 +87,13 @@ namespace fastoredis
         }
 
         serverInfoFields_->clear();
-        std::pair<FieldPropertyS,FieldPropertyU> field = redisFields[index];
-        const int sizeMass = field.second.size_;
+        std::vector<Field> field = redisFields[index];
         if(type_ == REDIS){
-            for(int i = 0; i < sizeMass; ++i){
-                const unsigned char indexInner = field.second.mass_[i];
-                serverInfoFields_->addItem(common::convertFromString<QString>(field.first.mass_[indexInner]), indexInner);
+            for(int i = 0; i < field.size(); ++i){
+                Field fl = field[i];
+                if(fl.isIntegral()){
+                    serverInfoFields_->addItem(common::convertFromString<QString>(fl.name_), i);
+                }
             }
         }
     }

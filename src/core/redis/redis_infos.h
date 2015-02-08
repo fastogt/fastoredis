@@ -98,7 +98,7 @@
 
 namespace fastoredis
 {
-    static const std::string redisHeaders[] =
+    static const std::vector<std::string> redisHeaders =
     {
         REDIS_SERVER_LABEL,
         REDIS_CLIENTS_LABEL,
@@ -110,168 +110,123 @@ namespace fastoredis
         REDIS_KEYSPACE_LABEL
     };
 
-    static const std::string redisServerFields[] =
+    static const std::vector<Field> redisServerFields =
     {
-        REDIS_VERSION_LABEL,
-        REDIS_GIT_SHA1_LABEL,
-        REDIS_GIT_DIRTY_LABEL,
-        REDIS_BUILD_ID_LABEL,
-        REDIS_MODE_LABEL,
-        REDIS_OS_LABEL,
-        REDIS_ARCH_BITS_LABEL,
-        REDIS_MULTIPLEXING_API_LABEL,
-        REDIS_GCC_VERSION_LABEL,
-        REDIS_PROCESS_ID_LABEL,
-        REDIS_RUN_ID_LABEL,
-        REDIS_TCP_PORT_LABEL,
-        REDIS_UPTIME_IN_SECONDS_LABEL,
-        REDIS_UPTIME_IN_DAYS_LABEL,
-        REDIS_HZ_LABEL,
-        REDIS_LRU_CLOCK_LABEL
+        Field(REDIS_VERSION_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_GIT_SHA1_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_GIT_DIRTY_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_BUILD_ID_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_MODE_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_OS_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_ARCH_BITS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_MULTIPLEXING_API_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_GCC_VERSION_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_PROCESS_ID_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_RUN_ID_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_TCP_PORT_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_UPTIME_IN_SECONDS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_UPTIME_IN_DAYS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_HZ_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_LRU_CLOCK_LABEL, common::Value::TYPE_UINTEGER)
     };
 
-    static const unsigned char redisServerFieldsIntIndexes[] = { 6,9,11,12,13,14,15 };
-
-    static const std::string redisClientFields[] =
+    static const std::vector<Field> redisClientFields =
     {
-        REDIS_CONNECTED_CLIENTS_LABEL,
-        REDIS_CLIENT_LONGEST_OUTPUT_LIST_LABEL,
-        REDIS_CLIENT_BIGGEST_INPUT_BUF_LABEL,
-        REDIS_BLOCKED_CLIENTS_LABEL
+        Field(REDIS_CONNECTED_CLIENTS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_CLIENT_LONGEST_OUTPUT_LIST_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_CLIENT_BIGGEST_INPUT_BUF_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_BLOCKED_CLIENTS_LABEL, common::Value::TYPE_UINTEGER)
     };
 
-    static const unsigned char redisClientFieldsIntIndexes[] = { 0,1,2,3 };
-
-    static const std::string redisMemoryFields[] =
+    static const std::vector<Field> redisMemoryFields =
     {
-        REDIS_USED_MEMORY_LABEL,
-        REDIS_USED_MEMORY_HUMAN_LABEL,
-        REDIS_USED_MEMORY_RSS_LABEL,
-        REDIS_USED_MEMORY_PEAK_LABEL,
-        REDIS_USED_MEMORY_PEAK_HUMAN_LABEL,
-        REDIS_USED_MEMORY_LUA_LABEL,
-        REDIS_MEM_FRAGMENTATION_RATIO_LABEL,
-        REDIS_MEM_ALLOCATOR_LABEL
+        Field(REDIS_USED_MEMORY_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_MEMORY_HUMAN_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_USED_MEMORY_RSS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_MEMORY_PEAK_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_MEMORY_PEAK_HUMAN_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_USED_MEMORY_LUA_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_MEM_FRAGMENTATION_RATIO_LABEL, common::Value::TYPE_DOUBLE),
+        Field(REDIS_MEM_ALLOCATOR_LABEL, common::Value::TYPE_STRING)
     };
 
-    static const unsigned char redisMemoryFieldsIntIndexes[] = { 0,2,3,5,6 };
-
-    static const std::string redisPersistenceFields[] =
+    static const std::vector<Field> redisPersistenceFields =
     {
-        REDIS_LOADING_LABEL,
-        REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL,
-        REDIS_RDB_DGSAVE_IN_PROGRESS_LABEL,
-        REDIS_RDB_LAST_SAVE_TIME_LABEL,
-        REDIS_RDB_LAST_DGSAVE_STATUS_LABEL,
-        REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL,
-        REDIS_RDB_CURRENT_DGSAVE_TIME_SEC_LABEL,
-        REDIS_AOF_ENABLED_LABEL,
-        REDIS_AOF_REWRITE_IN_PROGRESS_LABEL,
-        REDIS_AOF_REWRITE_SHEDULED_LABEL,
-        REDIS_AOF_LAST_REWRITE_TIME_SEC_LABEL,
-        REDIS_AOF_CURRENT_REWRITE_TIME_SEC_LABEL,
-        REDIS_AOF_LAST_DGREWRITE_STATUS_LABEL,
-        REDIS_AOF_LAST_WRITE_STATUS_LABEL
+       Field(REDIS_LOADING_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_RDB_DGSAVE_IN_PROGRESS_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_RDB_LAST_SAVE_TIME_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_RDB_LAST_DGSAVE_STATUS_LABEL, common::Value::TYPE_STRING),
+       Field(REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL, common::Value::TYPE_INTEGER),
+       Field(REDIS_RDB_CURRENT_DGSAVE_TIME_SEC_LABEL, common::Value::TYPE_INTEGER),
+       Field(REDIS_AOF_ENABLED_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_AOF_REWRITE_IN_PROGRESS_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_AOF_REWRITE_SHEDULED_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_AOF_LAST_REWRITE_TIME_SEC_LABEL, common::Value::TYPE_INTEGER),
+       Field(REDIS_AOF_CURRENT_REWRITE_TIME_SEC_LABEL, common::Value::TYPE_INTEGER),
+       Field(REDIS_AOF_LAST_DGREWRITE_STATUS_LABEL, common::Value::TYPE_STRING),
+       Field(REDIS_AOF_LAST_WRITE_STATUS_LABEL, common::Value::TYPE_STRING)
     };
 
-    static const unsigned char redisPersistenceFieldsIntIndexes[] = { 0,1,2,3,5,6,7,8,9,10,11 };
-
-    static const std::string redisStatsFields[] =
+    static const std::vector<Field> redisStatsFields =
     {
-        REDIS_TOTAL_CONNECTIONS_RECEIVED_LABEL,
-        REDIS_TOTAL_COMMANDS_PROCESSED_LABEL,
-        REDIS_INSTANTANEOUS_OPS_PER_SEC_LABEL,
-        REDIS_REJECTED_CONNECTIONS_LABEL,
-        REDIS_SYNC_FULL_LABEL,
-        REDIS_SYNC_PARTIAL_OK_LABEL,
-        REDIS_SYNC_PARTIAL_ERR_LABEL,
-        REDIS_EXPIRED_KEYS_LABEL,
-        REDIS_EVICTED_KEYS_LABEL,
-        REDIS_KEYSPACE_HITS_LABEL,
-        REDIS_KEYSPACE_MISSES_LABEL,
-        REDIS_PUBSUB_CHANNELS_LABEL,
-        REDIS_PUBSUB_PATTERNS_LABEL,
-        REDIS_LATEST_FORK_USEC_LABEL
+        Field(REDIS_TOTAL_CONNECTIONS_RECEIVED_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_TOTAL_COMMANDS_PROCESSED_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_INSTANTANEOUS_OPS_PER_SEC_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_REJECTED_CONNECTIONS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_SYNC_FULL_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_SYNC_PARTIAL_OK_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_SYNC_PARTIAL_ERR_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_EXPIRED_KEYS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_EVICTED_KEYS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_KEYSPACE_HITS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_KEYSPACE_MISSES_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_PUBSUB_CHANNELS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_PUBSUB_PATTERNS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_LATEST_FORK_USEC_LABEL, common::Value::TYPE_UINTEGER)
     };
 
-    static const unsigned char redisStatsFieldsIntIndexes[] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13 };
-
-    static const std::string redisReplicationFields[] =
+    static const std::vector<Field> redisReplicationFields =
     {
-        REDIS_ROLE_LABEL,
-        REDIS_CONNECTED_SLAVES_LABEL,
-        REDIS_MASTER_REPL_OFFSET_LABEL,
-        REDIS_BACKLOG_ACTIVE_LABEL,
-        REDIS_BACKLOG_SIZE_LABEL,
-        REDIS_BACKLOG_FIRST_BYTE_OFFSET_LABEL,
-        REDIS_BACKLOG_HISTEN_LABEL
+       Field(REDIS_ROLE_LABEL, common::Value::TYPE_STRING),
+       Field(REDIS_CONNECTED_SLAVES_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_MASTER_REPL_OFFSET_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_BACKLOG_ACTIVE_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_BACKLOG_SIZE_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_BACKLOG_FIRST_BYTE_OFFSET_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_BACKLOG_HISTEN_LABEL, common::Value::TYPE_UINTEGER)
     };
 
-    static const unsigned char redisReplicationFieldsIntIndexes[] = { 1,2,3,4,5,6 };
-
-    static const std::string redisCpuFields[] =
+    static const std::vector<Field> redisCpuFields =
     {
-        REDIS_USED_CPU_SYS_LABEL,
-        REDIS_USED_CPU_USER_LABEL,
-        REDIS_USED_CPU_SYS_CHILDREN_LABEL,
-        REDIS_USED_CPU_USER_CHILDREN_LABEL
+        Field(REDIS_USED_CPU_SYS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_CPU_USER_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_CPU_SYS_CHILDREN_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_CPU_USER_CHILDREN_LABEL, common::Value::TYPE_UINTEGER)
     };
 
-    static const unsigned char redisCpuFieldsIntIndexes[] = { 0,1,2,3 };
-
-    static const std::string redisKeySpaceFields[] =
+    static const std::vector<Field> redisKeySpaceFields =
     {
 
     };
 
-    static const unsigned char redisKeySpaceFieldsIntIndexes[] = {};
-
-    template<typename T>
-    struct FieldProperty
+    static const std::vector< std::vector<Field> > redisFields =
     {
-        FieldProperty(T mass, unsigned char size)
-            : mass_(mass), size_(size)
-        {
-
-        }
-        const T mass_;
-        const unsigned char size_;
-    };
-
-    typedef FieldProperty<const std::string*> FieldPropertyS;
-    typedef FieldProperty<const unsigned char*> FieldPropertyU;
-
-    static const std::pair<FieldPropertyS, FieldPropertyU> redisFields[] =
-    {
-        std::make_pair(FieldPropertyS(redisServerFields, SIZEOFMASS(redisServerFields)),
-            FieldPropertyU(redisServerFieldsIntIndexes, SIZEOFMASS(redisServerFieldsIntIndexes))),
-        std::make_pair(FieldPropertyS(redisClientFields, SIZEOFMASS(redisClientFields)),
-            FieldPropertyU(redisClientFieldsIntIndexes, SIZEOFMASS(redisClientFieldsIntIndexes))),
-        std::make_pair(FieldPropertyS(redisMemoryFields, SIZEOFMASS(redisMemoryFields)),
-            FieldPropertyU(redisMemoryFieldsIntIndexes, SIZEOFMASS(redisMemoryFieldsIntIndexes))),
-        std::make_pair(FieldPropertyS(redisPersistenceFields, SIZEOFMASS(redisPersistenceFields)),
-            FieldPropertyU(redisPersistenceFieldsIntIndexes, SIZEOFMASS(redisPersistenceFieldsIntIndexes))),
-        std::make_pair(FieldPropertyS(redisStatsFields, SIZEOFMASS(redisStatsFields)),
-            FieldPropertyU(redisStatsFieldsIntIndexes, SIZEOFMASS(redisStatsFieldsIntIndexes))),
-        std::make_pair(FieldPropertyS(redisReplicationFields, SIZEOFMASS(redisReplicationFields)),
-            FieldPropertyU(redisReplicationFieldsIntIndexes, SIZEOFMASS(redisReplicationFieldsIntIndexes))),
-        std::make_pair(FieldPropertyS(redisCpuFields, SIZEOFMASS(redisCpuFields)),
-            FieldPropertyU(redisCpuFieldsIntIndexes, SIZEOFMASS(redisCpuFieldsIntIndexes))),
-        std::make_pair(FieldPropertyS(redisKeySpaceFields, SIZEOFMASS(redisKeySpaceFields)),
-            FieldPropertyU(redisKeySpaceFieldsIntIndexes, SIZEOFMASS(redisKeySpaceFieldsIntIndexes)))
-    };
-
-    template<typename T>
-    struct FiledByIdex
-    {
-        common::Value* valueByIndex(unsigned char index) const;
+        redisServerFields,
+        redisClientFields,
+        redisMemoryFields,
+        redisPersistenceFields,
+        redisStatsFields,
+        redisReplicationFields,
+        redisCpuFields,
+        redisKeySpaceFields
     };
 
     struct RedisServerInfo
             : public ServerInfo
     {
         struct Server
-                : FiledByIdex<Server>
+                : FieldByIndex
         {
             Server();
             explicit Server(const std::string& server_text);
@@ -296,7 +251,7 @@ namespace fastoredis
         } server_;
 
         struct Clients
-                : FiledByIdex<Clients>
+                : FieldByIndex
         {
             Clients();
             explicit Clients(const std::string& client_text);
@@ -309,7 +264,7 @@ namespace fastoredis
         } clients_;
 
         struct Memory
-                : FiledByIdex<Server>
+                : FieldByIndex
         {
             Memory();
             explicit Memory(const std::string& memory_text);
@@ -326,7 +281,7 @@ namespace fastoredis
         } memory_;
 
         struct Persistence
-                : FiledByIdex<Server>
+                : FieldByIndex
         {
             Persistence();
             explicit Persistence(const std::string& persistence_text);
@@ -349,7 +304,7 @@ namespace fastoredis
         } persistence_;
 
         struct Stats
-                : FiledByIdex<Stats>
+                : FieldByIndex
         {
             Stats();
             explicit Stats(const std::string& stats_text);
@@ -372,7 +327,7 @@ namespace fastoredis
         } stats_;
 
         struct Replication
-                : FiledByIdex<Server>
+                : FieldByIndex
         {
             Replication();
             explicit Replication(const std::string& replication_text);
@@ -388,7 +343,7 @@ namespace fastoredis
         } replication_;
 
         struct Cpu
-                : FiledByIdex<Cpu>
+                : FieldByIndex
         {
             Cpu();
             explicit Cpu(const std::string& cpu_text);
@@ -401,7 +356,7 @@ namespace fastoredis
         } cpu_;
 
         struct Keyspace
-                : FiledByIdex<Keyspace>
+                : FieldByIndex
         {
             common::Value* valueByIndex(unsigned char index) const;
         } keySp_;
@@ -411,12 +366,13 @@ namespace fastoredis
         RedisServerInfo();
         RedisServerInfo(const Server &serv, const Clients &clients, const Memory &memory,
                    const Persistence &pers, const Stats &stats, const Replication &repl, const Cpu &cpu, const Keyspace &key);
+        virtual std::string toString() const;
     };
 
     std::ostream& operator<<(std::ostream& out, const RedisServerInfo& value);
 
-    ServerInfoSPtr makeRedisServerInfo(const std::string &content);
-    ServerInfoSPtr makeRedisServerInfo(FastoObject *root);
+    RedisServerInfo* makeRedisServerInfo(const std::string &content);
+    RedisServerInfo* makeRedisServerInfo(FastoObject *root);
 
     class RedisDataBaseInfo
             : public DataBaseInfo

@@ -18,6 +18,7 @@ namespace fastoredis
     struct ServerInfo
     {
         connectionTypes type() const;
+        virtual std::string toString() const = 0;
         virtual common::Value* valueByIndexes(unsigned char property, unsigned char field) const = 0;
         virtual ~ServerInfo();
 
@@ -28,6 +29,20 @@ namespace fastoredis
 
     private:
         const connectionTypes type_;
+    };
+
+    struct FieldByIndex
+    {
+        virtual common::Value* valueByIndex(unsigned char index) const = 0;
+    };
+
+    struct Field
+    {
+        Field(const std::string& name, common::Value::Type type);
+
+        bool isIntegral() const;
+        std::string name_;
+        common::Value::Type type_;
     };
 
     typedef shared_ptr_t<ServerInfo> ServerInfoSPtr;

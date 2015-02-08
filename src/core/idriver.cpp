@@ -244,24 +244,19 @@ namespace fastoredis
 
             if(log_file_ && log_file_->isOpened()){
                 common::time64_t time = common::time::current_mstime();
-                FastoObjectIPtr toFile = FastoObject::createRoot(createStamp(time));
-                FastoObject* ptr = toFile.get();
-                common::ErrorValueSPtr er = currentLoggingInfo(ptr);
+                std::string stamp = createStamp(time);
+                ServerInfo* info = NULL;
+                common::ErrorValueSPtr er = currentLoggingInfo(&info);
                 if(er && er->isError()){
                     QObject::timerEvent(event);
                     return;
                 }
 
-                std::string data = common::convertToString(ptr);
+                ServerInfoSnapShoot shot(time, ServerInfoSPtr(info));
+                emit serverInfoSnapShoot(shot);
 
-                FastoObject::child_container_type ch = toFile->childrens();
-                if(ch.size()){
-                    std::string info = common::convertToString(ch[0]);
-                    ServerInfoSnapShoot shot(time, makeServerInfoFromString(info));
-                    emit serverInfoSnapShoot(shot);
-                }
-
-                log_file_->write(data);
+                log_file_->write(stamp);
+                log_file_->write(info->toString());
                 log_file_->flush();
             }
         }

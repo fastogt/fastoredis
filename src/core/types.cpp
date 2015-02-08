@@ -29,6 +29,17 @@ namespace fastoredis
 
     }
 
+    Field::Field(const std::string& name, common::Value::Type type)
+        : name_(name), type_(type)
+    {
+
+    }
+
+    bool Field::isIntegral() const
+    {
+        return common::Value::isIntegral(type_);
+    }
+
     ServerInfoSnapShoot::ServerInfoSnapShoot()
         : msec_(0), info_()
     {

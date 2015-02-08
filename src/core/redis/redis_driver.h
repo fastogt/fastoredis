@@ -28,7 +28,7 @@ namespace fastoredis
         virtual void initImpl();
         virtual void clearImpl();
 
-        virtual common::ErrorValueSPtr currentLoggingInfo(FastoObject *out);
+        virtual common::ErrorValueSPtr currentLoggingInfo(ServerInfo** info);
 
         virtual void handleConnectEvent(events::ConnectRequestEvent* ev);
         virtual void handleDisconnectEvent(events::DisconnectRequestEvent* ev);

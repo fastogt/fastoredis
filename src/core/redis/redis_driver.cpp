@@ -1617,10 +1617,19 @@ namespace fastoredis
 
     }
 
-    common::ErrorValueSPtr RedisDriver::currentLoggingInfo(FastoObject* out)
+    common::ErrorValueSPtr RedisDriver::currentLoggingInfo(ServerInfo** info)
     {
-        FastoObjectCommand* cmd = createCommand(out, INFO_REQUEST, common::Value::C_INNER);
-        return impl_->execute(cmd);
+        *info = NULL;
+        FastoObjectIPtr root = FastoObject::createRoot(INFO_REQUEST);
+        FastoObjectCommand* cmd = createCommand(root, INFO_REQUEST, common::Value::C_INNER);
+        common::ErrorValueSPtr res = impl_->execute(cmd);
+        if(!res){
+            FastoObject::child_container_type ch = root->childrens();
+            if(ch.size()){
+                *info = makeRedisServerInfo(ch[0]);
+            }
+        }
+        return res;
     }
 
     void RedisDriver::handleConnectEvent(events::ConnectRequestEvent *ev)
@@ -2101,7 +2110,8 @@ namespace fastoredis
                 FastoObject::child_container_type ch = cmd->childrens();
                 if(ch.size()){
                     DCHECK(ch.size() == 1);
-                    res.setInfo(makeRedisServerInfo(ch[0]));
+                    ServerInfoSPtr red(makeRedisServerInfo(ch[0]));
+                    res.setInfo(red);
                 }
             }
         notifyProgress(sender, 75);
@@ -2183,7 +2193,8 @@ namespace fastoredis
 
     ServerInfoSPtr RedisDriver::makeServerInfoFromString(const std::string& val)
     {
-        return makeRedisServerInfo(val);
+        ServerInfoSPtr res(makeRedisServerInfo(val));
+        return res;
     }
 
     void RedisDriver::interrupt()

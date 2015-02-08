@@ -16,6 +16,8 @@ extern "C" {
 #include "core/memcached/memcached_config.h"
 #include "core/memcached/memcached_infos.h"
 
+#define INFO_REQUEST "stats"
+
 namespace
 {
     std::string getKeyFromLine(std::string input)
@@ -180,6 +182,42 @@ namespace fastoredis
             }
 
             clear();
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr stats(const char* args, MemcachedServerInfo::Common& statsout)
+        {
+            memcached_return_t error;
+            memcached_stat_st* st = memcached_stat(memc_, (char*)args, &error);
+            if (error != MEMCACHED_SUCCESS){
+                char buff[1024] = {0};
+                sprintf(buff, "Stats function error: %s", memcached_strerror(memc_, error));
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            statsout.pid_ = st->pid;
+            statsout.uptime_ = st->uptime;
+            statsout.time_ = st->time;
+            statsout.version_ = st->version;
+            statsout.pointer_size_ = st->pointer_size;
+            statsout.rusage_user_ = st->rusage_user_seconds;
+            statsout.rusage_system_ = st->rusage_system_seconds;
+            statsout.curr_items_ = st->curr_items;
+            statsout.total_items_ = st->total_items;
+            statsout.bytes_ = st->bytes;
+            statsout.curr_connections_ = st->curr_connections;
+            statsout.total_connections_ = st->total_connections;
+            statsout.connection_structures_ = st->connection_structures;
+            statsout.cmd_get_ = st->cmd_get;
+            statsout.cmd_set_ = st->cmd_set;
+            statsout.get_hits_ = st->get_hits;
+            statsout.get_misses_ = st->get_misses;
+            statsout.evictions_ = st->evictions;
+            statsout.bytes_read_ = st->bytes_read;
+            statsout.bytes_written_ = st->bytes_written;
+            statsout.limit_maxbytes_ = st->limit_maxbytes;
+            statsout.threads_ = st->threads;
+
             return common::ErrorValueSPtr();
         }
 
@@ -370,9 +408,10 @@ namespace fastoredis
                     return common::make_error_value("Invalid stats input argument", common::ErrorValue::E_ERROR);
                 }
 
-                common::ErrorValueSPtr er = stats(argc == 2 ? argv[1] : 0);
+                MemcachedServerInfo::Common statsout;
+                common::ErrorValueSPtr er = stats(argc == 2 ? argv[1] : 0, statsout);
                 if(!er){
-                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    common::StringValue *val = common::Value::createStringValue(MemcachedServerInfo(statsout).toString());
                     FastoObject* child = new FastoObject(out, val, config_.mb_delim);
                     out->addChildren(child);
                 }
@@ -532,19 +571,6 @@ namespace fastoredis
             return common::ErrorValueSPtr();
         }
 
-        common::ErrorValueSPtr stats(const char* args)
-        {
-            memcached_return_t error;
-            memcached_stat_st* st = memcached_stat(memc_, (char*)args, &error);
-            if (error != MEMCACHED_SUCCESS){
-                char buff[1024] = {0};
-                sprintf(buff, "Stats function error: %s", memcached_strerror(memc_, error));
-                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
-            }
-
-            return common::make_error_value("Not supported command", common::ErrorValue::E_ERROR);
-        }
-
         common::ErrorValueSPtr version_server() const
         {
             memcached_return_t error = memcached_version(memc_);
@@ -644,9 +670,17 @@ namespace fastoredis
 
     }
 
-    common::ErrorValueSPtr MemcachedDriver::currentLoggingInfo(FastoObject* out)
+    common::ErrorValueSPtr MemcachedDriver::currentLoggingInfo(ServerInfo **info)
     {
-        return common::ErrorValueSPtr();
+        *info = NULL;
+        LOG_COMMAND(Command(INFO_REQUEST, common::Value::C_INNER));
+        MemcachedServerInfo::Common cm;
+        common::ErrorValueSPtr err = impl_->stats(NULL, cm);
+        if(!err){
+            *info = new MemcachedServerInfo(cm);
+        }
+
+        return err;
     }
 
     void MemcachedDriver::handleConnectEvent(events::ConnectRequestEvent *ev)

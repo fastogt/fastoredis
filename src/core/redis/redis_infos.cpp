@@ -1,6 +1,7 @@
 #include "core/redis/redis_infos.h"
 
 #include <ostream>
+#include <sstream>
 
 namespace fastoredis
 {
@@ -489,7 +490,7 @@ namespace fastoredis
             size_t delem = line.find_first_of(':');
             std::string field = line.substr(0, delem);
             std::string value = line.substr(delem + 1);
-            if(field == (REDIS_ROLE_LABEL)){
+            if(field == REDIS_ROLE_LABEL){
                 role_ = value;
             }
             else if(field == REDIS_CONNECTED_SLAVES_LABEL){
@@ -727,22 +728,28 @@ namespace fastoredis
                    << REDIS_USED_CPU_USER_CHILDREN_LABEL":" << value.used_cpu_user_children_ << ("\r\n");
     }
 
+    std::string RedisServerInfo::toString() const
+    {
+        std::stringstream str;
+        str << REDIS_SERVER_LABEL"\r\n" << server_ << REDIS_CLIENTS_LABEL"\r\n" << clients_ << REDIS_MEMORY_LABEL"\r\n" << memory_
+                           << REDIS_PERSISTENCE_LABEL"\r\n" << persistence_ << REDIS_STATS_LABEL"\r\n" << stats_
+                           << REDIS_REPLICATION_LABEL"\r\n" << replication_ << REDIS_CPU_LABEL"\r\n" << cpu_ << REDIS_KEYSPACE_LABEL"\r\n";
+        return str.str();
+    }
+
     std::ostream& operator<<(std::ostream& out, const RedisServerInfo& value)
     {
         //"# Server", "# Clients", "# Memory", "# Persistence", "# Stats", "# Replication", "# CPU", "# Keyspace"
-        return out << REDIS_SERVER_LABEL"\r\n" << value.server_ << (REDIS_CLIENTS_LABEL"\r\n") << value.clients_ << (REDIS_MEMORY_LABEL"\r\n") << value.memory_
-                   << REDIS_PERSISTENCE_LABEL"\r\n" << value.persistence_ << (REDIS_STATS_LABEL"\r\n") << value.stats_
-                   << REDIS_REPLICATION_LABEL"\r\n" << value.replication_ << (REDIS_CPU_LABEL"\r\n") << value.cpu_ << (REDIS_KEYSPACE_LABEL"\r\n");
+        return out << value.toString();
     }
 
-    ServerInfoSPtr makeRedisServerInfo(const std::string &content)
+    RedisServerInfo* makeRedisServerInfo(const std::string &content)
     {
         if(content.empty()){
-            return ServerInfoSPtr();
+            return NULL;
         }
 
         RedisServerInfo* result = new RedisServerInfo;
-        ServerInfoSPtr sresult(result);
         int j = 0;
         std::string word;
         size_t pos = 0;
@@ -751,7 +758,7 @@ namespace fastoredis
             char ch = content[i];
             word += ch;
             if(word == redisHeaders[j]){
-                if(j+1 != sizeof(redisHeaders)/sizeof(*redisHeaders)){
+                if(j+1 != redisHeaders.size()){
                     pos = content.find(redisHeaders[j+1], pos);
                 }
                 else{
@@ -794,10 +801,10 @@ namespace fastoredis
             }
         }
 
-        return sresult;
+        return result;
     }
 
-    ServerInfoSPtr makeRedisServerInfo(FastoObject* root)
+    RedisServerInfo* makeRedisServerInfo(FastoObject* root)
     {
         const std::string content = common::convertToString(root);
         return makeRedisServerInfo(content);
