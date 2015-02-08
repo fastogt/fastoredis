@@ -366,8 +366,8 @@ namespace fastoredis
                 return er;
             }
             else if(strcasecmp(argv[0], "stats") == 0){
-                if(argc < 3){
-                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                if(argc > 2){
+                    return common::make_error_value("Invalid stats input argument", common::ErrorValue::E_ERROR);
                 }
 
                 common::ErrorValueSPtr er = stats(argc == 2 ? argv[1] : 0);
@@ -534,13 +534,13 @@ namespace fastoredis
 
         common::ErrorValueSPtr stats(const char* args)
         {
-            /*memcached_return_t error;
+            memcached_return_t error;
             memcached_stat_st* st = memcached_stat(memc_, (char*)args, &error);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Fluss all function error: %s", memcached_strerror(memc_, error));
+                sprintf(buff, "Stats function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
-            }*/
+            }
 
             return common::make_error_value("Not supported command", common::ErrorValue::E_ERROR);
         }
