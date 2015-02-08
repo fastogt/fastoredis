@@ -796,7 +796,23 @@ namespace fastoredis
 
     void MemcachedDriver::handleLoadServerInfoEvent(events::ServerInfoRequestEvent* ev)
     {
-
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::ServerInfoResponceEvent::value_type res(ev->value());
+        notifyProgress(sender, 50);
+            LOG_COMMAND(Command(INFO_REQUEST, common::Value::C_INNER));
+            MemcachedServerInfo::Common cm;
+            common::ErrorValueSPtr err = impl_->stats(NULL, cm);
+            if(err){
+                res.setErrorInfo(err);
+            }
+            else{
+                ServerInfoSPtr mem(new MemcachedServerInfo(cm));
+                res.setInfo(mem);
+            }
+        notifyProgress(sender, 75);
+            reply(sender, new events::ServerInfoResponceEvent(this, res));
+        notifyProgress(sender, 100);
     }
 
     void MemcachedDriver::handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev)
@@ -836,6 +852,7 @@ namespace fastoredis
 
     ServerInfoSPtr MemcachedDriver::makeServerInfoFromString(const std::string& val)
     {
-        return makeMemcachedServerInfo(val);
+        ServerInfoSPtr res(makeMemcachedServerInfo(val));
+        return res;
     }
 }

@@ -34,7 +34,7 @@ namespace fastoredis
         MEMCACHED_COMMON_LABEL
     };
 
-    static const std::vector<Field> memcachedAllFields =
+    static const std::vector<Field> memcachedCommonFields =
     {
         Field(MEMCACHED_PID_LABEL, common::Value::TYPE_UINTEGER),
         Field(MEMCACHED_UPTIME_LABEL, common::Value::TYPE_UINTEGER),
@@ -58,6 +58,11 @@ namespace fastoredis
         Field(MEMCACHED_BYTES_WRITTEN_LABEL, common::Value::TYPE_UINTEGER),
         Field(MEMCACHED_LIMIT_MAXBYTES_LABEL, common::Value::TYPE_UINTEGER),
         Field(MEMCACHED_THREADS_LABEL, common::Value::TYPE_UINTEGER)
+    };
+
+    static const std::vector<std::vector<Field> > memcachedFields =
+    {
+        memcachedCommonFields
     };
 
     class MemcachedServerInfo
@@ -103,8 +108,8 @@ namespace fastoredis
 
     std::ostream& operator << (std::ostream& out, const MemcachedServerInfo& value);
 
-    ServerInfoSPtr makeMemcachedServerInfo(const std::string &content);
-    ServerInfoSPtr makeMemcachedServerInfo(FastoObject *root);
+    MemcachedServerInfo* makeMemcachedServerInfo(const std::string &content);
+    MemcachedServerInfo* makeMemcachedServerInfo(FastoObject *root);
 
     class MemcachedBaseInfo
             : public DataBaseInfo

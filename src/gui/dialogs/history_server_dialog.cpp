@@ -5,6 +5,7 @@
 #include <QComboBox>
 
 #include "core/redis/redis_infos.h"
+#include "core/memcached/memcached_infos.h"
 
 #include "gui/base/graph_widget.h"
 #include "gui/gui_factory.h"
@@ -43,6 +44,11 @@ namespace fastoredis
                 serverInfoGroupsNames_->addItem(common::convertFromString<QString>(redisHeaders[i]));
             }
         }
+        else if(type_ == MEMCACHED){
+            for(int i = 0; i < memcachedHeaders.size(); ++i){
+                serverInfoGroupsNames_->addItem(common::convertFromString<QString>(memcachedHeaders[i]));
+            }
+        }
 
         QVBoxLayout *setingsLayout = new QVBoxLayout;
         setingsLayout->addWidget(serverInfoGroupsNames_);
@@ -68,7 +74,7 @@ namespace fastoredis
             return;
         }
 
-        if(type_ == REDIS){
+        if(type_ == REDIS || type_ == MEMCACHED){
             infos_ = res.infos();
         }
         reset();
@@ -87,13 +93,19 @@ namespace fastoredis
         }
 
         serverInfoFields_->clear();
-        std::vector<Field> field = redisFields[index];
+
+        std::vector<Field> field;
         if(type_ == REDIS){
-            for(int i = 0; i < field.size(); ++i){
-                Field fl = field[i];
-                if(fl.isIntegral()){
-                    serverInfoFields_->addItem(common::convertFromString<QString>(fl.name_), i);
-                }
+            field = redisFields[index];
+        }
+        else if(type_ == MEMCACHED){
+            field = memcachedFields[index];
+        }
+
+        for(int i = 0; i < field.size(); ++i){
+            Field fl = field[i];
+            if(fl.isIntegral()){
+                serverInfoFields_->addItem(common::convertFromString<QString>(fl.name_), i);
             }
         }
     }

@@ -159,6 +159,13 @@ namespace fastoredis
 
     common::Value* MemcachedServerInfo::valueByIndexes(unsigned char property, unsigned char field) const
     {
+        switch (property) {
+        case 0:
+            return common_.valueByIndex(field);
+        default:
+            NOTREACHED();
+            break;
+        }
         return NULL;
     }
 
@@ -193,14 +200,13 @@ namespace fastoredis
         return out << value.toString();
     }
 
-    ServerInfoSPtr makeMemcachedServerInfo(const std::string &content)
+    MemcachedServerInfo* makeMemcachedServerInfo(const std::string &content)
     {
         if(content.empty()){
-            return ServerInfoSPtr();
+            return NULL;
         }
 
         MemcachedServerInfo* result = new MemcachedServerInfo;
-        ServerInfoSPtr sresult(result);
 
         int j = 0;
         std::string word;
@@ -234,7 +240,7 @@ namespace fastoredis
             }
         }
 
-        return sresult;
+        return result;
     }
 
 
@@ -245,7 +251,7 @@ namespace fastoredis
         return str.str();
     }
 
-    ServerInfoSPtr makeMemcachedServerInfo(FastoObject* root)
+    MemcachedServerInfo* makeMemcachedServerInfo(FastoObject* root)
     {
         const std::string content = common::convertToString(root);
         return makeMemcachedServerInfo(content);

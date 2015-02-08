@@ -89,6 +89,30 @@ namespace
                                                          "Used cpu user: %2<br/>"
                                                          "Used cpu sys children: %3<br/>"
                                                          "Used cpu user children: %4");
+
+    const QString memcachedTextServerTemplate = QObject::tr("<h2>Common:</h2><br/>"
+                                                            "Pid: %1<br/>"
+                                                            "Update time: %2<br/>"
+                                                            "Time: %3<br/>"
+                                                            "Version: %4<br/>"
+                                                            "Pointer size: %5<br/>"
+                                                            "Usage user: %6<br/>"
+                                                            "Usage system: %7<br/>"
+                                                            "Current items: %8<br/>"
+                                                            "Total items: %9<br/>"
+                                                            "Bytes: %10<br/>"
+                                                            "Current connections: %11<br/>"
+                                                            "Total connections: %12<br/>"
+                                                            "Connection structures: %13<br/>"
+                                                            "Cmd get: %14<br/>"
+                                                            "Cmd set: %15<br/>"
+                                                            "Get hits: %16<br/>"
+                                                            "Get misses: %17<br/>"
+                                                            "Evictions: %18<br/>"
+                                                            "Bytes read: %19<br/>"
+                                                            "Bytes written: %20<br/>"
+                                                            "Limit max bytes: %21<br/>"
+                                                            "Threads: %22");
 }
 
 namespace fastoredis
@@ -240,7 +264,35 @@ namespace fastoredis
 
     void InfoServerDialog::updateText(const MemcachedServerInfo& serv)
     {
+        using namespace common;
+        MemcachedServerInfo::Common com = serv.common_;
 
+        QString textServ = memcachedTextServerTemplate.arg(com.pid_)
+                .arg(com.uptime_)
+                .arg(com.time_)
+                .arg(convertFromString<QString>(com.version_))
+                .arg(com.pointer_size_)
+                .arg(com.rusage_user_)
+                .arg(com.rusage_system_)
+                .arg(com.curr_items_)
+                .arg(com.total_items_)
+                .arg(com.bytes_)
+                .arg(com.curr_connections_)
+                .arg(com.total_connections_)
+                .arg(com.connection_structures_)
+                .arg(com.cmd_get_)
+                .arg(com.cmd_set_)
+                .arg(com.get_hits_)
+                .arg(com.get_misses_)
+                .arg(com.evictions_)
+                .arg(com.bytes_read_)
+                .arg(com.bytes_written_)
+                .arg(com.limit_maxbytes_)
+                .arg(com.threads_);
+
+        //QString textHard = memcachedTextHardwareTemplate;
+        serverTextInfo_->setText(textServ);
+        //hardwareTextInfo_->setText(textHard);
     }
 
     void InfoServerDialog::showEvent(QShowEvent* e)
