@@ -20,6 +20,9 @@ namespace fastoredis
         DataBaseInfoSPtr info() const;
         void setInfo(DataBaseInfoSPtr info);
 
+        void removeKey(const std::string& key);
+        void loadValue(const std::string& key);
+
     protected:
         IDatabase(IServerSPtr server, DataBaseInfoSPtr info);
 

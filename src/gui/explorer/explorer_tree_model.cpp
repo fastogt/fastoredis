@@ -3,7 +3,9 @@
 #include "translations/global.h"
 
 #include "gui/gui_factory.h"
+
 #include "common/qt/utils_qt.h"
+#include "common/qt/convert_string.h"
 
 namespace fastoredis
 {
@@ -94,6 +96,22 @@ namespace fastoredis
         }
     }
 
+    void ExplorerDatabaseItem::removeKey(const std::string& key)
+    {
+        IDatabaseSPtr dbs = db();
+        if(dbs){
+            dbs->removeKey(key);
+        }
+    }
+
+    void ExplorerDatabaseItem::loadValue(const QString& key)
+    {
+        IDatabaseSPtr dbs = db();
+        if(dbs){
+            dbs->loadValue(common::convertToString(key));
+        }
+    }
+
     DataBaseInfoSPtr ExplorerDatabaseItem::info() const
     {
         return inf_;
@@ -163,6 +181,14 @@ namespace fastoredis
     IExplorerTreeItem::eType ExplorerKeyItem::type() const
     {
         return Key;
+    }
+
+    void ExplorerKeyItem::remove()
+    {
+        ExplorerDatabaseItem* par = parent();
+        if(par){
+            par->removeKey(name_);
+        }
     }
 
     ExplorerDatabaseItem* ExplorerKeyItem::parent() const
@@ -369,6 +395,27 @@ namespace fastoredis
             QModelIndex parentdb = createIndex(parent->indexOf(dbs), 0, dbs);
             ExplorerKeyItem *item = new ExplorerKeyItem(key, dbs);
             insertItem(parentdb, item);
+        }
+    }
+
+    void ExplorerTreeModel::removeKey(IServer* server, DataBaseInfoSPtr db, const std::string& key)
+    {
+        ExplorerServerItem *parent = findServerItem(server);
+        DCHECK(parent);
+        if(!parent){
+            return;
+        }
+
+        ExplorerDatabaseItem *dbs = findDatabaseItem(parent, db);
+        DCHECK(dbs);
+        if(!dbs){
+            return;
+        }
+
+        ExplorerKeyItem *keyit = findKeyItem(dbs, key);
+        if(keyit){
+            dbs->removeChildren(keyit);
+            //removeItem(createIndex(0, 0, dbs), keyit);
         }
     }
 

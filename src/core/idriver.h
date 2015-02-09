@@ -80,6 +80,10 @@ namespace fastoredis
         virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseRequestEvent* ev) = 0;
 // ============== database =============//
 
+// ============== command =============//
+        virtual void handleCommandRequestEvent(events::CommandRequestEvent* ev) = 0;
+// ============== command =============//
+
         const IConnectionSettingsBaseSPtr settings_;
 
         class RootLocker

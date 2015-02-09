@@ -31,6 +31,7 @@ namespace fastoredis
         void loadDatabaseContent(DataBaseInfoSPtr inf);
         void setDefaultDb(DataBaseInfoSPtr inf);
         void execute(const QString& script);
+        void executeCommand(DataBaseInfoSPtr inf, const CommandKey& cmd);
         void shutDown();
         void backupToPath(const QString& path);
         void exportFromPath(const QString& path);
@@ -100,6 +101,12 @@ namespace fastoredis
         void startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req);
         void finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res);
 // ============== database =============//
+
+// ============== command =============//
+        void startedExecuteCommand(const EventsInfo::CommandRequest& req);
+        void finishedExecuteCommand(const EventsInfo::CommandResponce& res);
+// ============== command =============//
+
    Q_SIGNALS:
         void addedChild(FastoObject *child);
         void itemUpdated(FastoObject* item, const QString& val);
@@ -135,7 +142,9 @@ namespace fastoredis
         virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev);
         virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev);
 // ============== database =============//
-
+// ============== command =============//
+        virtual void handleCommandResponceEvent(events::CommandResponceEvent* ev);
+// ============== command =============//
         IServer(const IDriverSPtr& drv, bool isMaster);
 
         const IDriverSPtr drv_;

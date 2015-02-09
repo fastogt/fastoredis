@@ -52,7 +52,9 @@ namespace fastoredis
         virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev);
         virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseRequestEvent* ev);
 // ============== database =============//
-
+// ============== command =============//
+        virtual void handleCommandRequestEvent(events::CommandRequestEvent* ev);
+// ============== command =============//
         ServerInfoSPtr makeServerInfoFromString(const std::string& val);
 
         struct pimpl;

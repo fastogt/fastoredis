@@ -34,6 +34,7 @@ extern "C" {
 #define GET_DATABASES "CONFIG GET databases"
 #define GET_DATABASES_KEYS_INFO "INFO keyspace"
 #define SET_DEFAULT_DATABASE "SELECT "
+#define DELETE_KEY "DEL "
 #define GET_KEYS "KEYS *"
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
@@ -2188,6 +2189,26 @@ namespace fastoredis
 
         notifyProgress(sender, 75);
             reply(sender, new events::ChangeDbValueResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::handleCommandRequestEvent(events::CommandRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::CommandResponceEvent::value_type res(ev->value());
+            std::string cmdtext;
+            if(res.cmd_.type() == CommandKey::DELETE){
+                cmdtext = DELETE_KEY + res.cmd_.key();
+            }
+            FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
+            FastoObjectCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
+        notifyProgress(sender, 50);
+            common::ErrorValueSPtr er = impl_->execute(cmd);
+            if(er){
+                res.setErrorInfo(er);
+            }
+            reply(sender, new events::CommandResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 

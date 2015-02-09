@@ -99,4 +99,22 @@ namespace fastoredis
     {
         return lhs.name() == rhs.name() && lhs.size() == rhs.size() && lhs.isDefault() == rhs.isDefault() && lhs.type() == rhs.type();
     }
+
+    class CommandKey
+    {
+    public:
+        enum cmdtype
+        {
+            DELETE,
+            LOAD
+        };
+
+        CommandKey(const std::string& key, cmdtype type);
+        cmdtype type() const;
+        std::string key() const;
+
+    private:
+        cmdtype type_;
+        std::string key_;
+    };
 }

@@ -889,6 +889,16 @@ namespace fastoredis
 
     }
 
+    void MemcachedDriver::handleCommandRequestEvent(events::CommandRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::CommandResponceEvent::value_type res(ev->value());
+        notifyProgress(sender, 50);
+            reply(sender, new events::CommandResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
     ServerInfoSPtr MemcachedDriver::makeServerInfoFromString(const std::string& val)
     {
         ServerInfoSPtr res(makeMemcachedServerInfo(val));

@@ -64,6 +64,9 @@ namespace fastoredis
         getValueAction_ = new QAction(this);
         VERIFY(connect(getValueAction_, SIGNAL(triggered()), SLOT(getValue())));
 
+        deleteKeyAction_ = new QAction(this);
+        VERIFY(connect(deleteKeyAction_, SIGNAL(triggered()), SLOT(deleteKey())));
+
         retranslateUi();
     }
 
@@ -118,6 +121,7 @@ namespace fastoredis
             else if(node->type() == IExplorerTreeItem::Key){
                 QMenu menu(this);
                 menu.addAction(getValueAction_);
+                menu.addAction(deleteKeyAction_);
                 menu.exec(menuPoint);
             }
         }
@@ -213,6 +217,19 @@ namespace fastoredis
         }
     }
 
+    void ExplorerTreeView::deleteKey()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
+        if(node){
+            node->remove();
+        }
+    }
+
     void ExplorerTreeView::addServer(IServerSPtr server)
     {
         DCHECK(server);
@@ -232,6 +249,8 @@ namespace fastoredis
         VERIFY(connect(server.get(), SIGNAL(finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &)), this, SLOT(finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &))));
         VERIFY(connect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabaseContentRequest &)), this, SLOT(startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &))));
         VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &)), this, SLOT(finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &))));
+        VERIFY(connect(server.get(), SIGNAL(startedExecuteCommand(const EventsInfo::CommandRequest &)), this, SLOT(startExecuteCommand(const EventsInfo::CommandRequest &))));
+        VERIFY(connect(server.get(), SIGNAL(finishedExecuteCommand(const EventsInfo::CommandResponce &)), this, SLOT(finishExecuteCommand(const EventsInfo::CommandResponce &))));
 
         mod->addServer(server);
     }
@@ -255,6 +274,8 @@ namespace fastoredis
         VERIFY(disconnect(server.get(), SIGNAL(finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &)), this, SLOT(finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &))));
         VERIFY(disconnect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabaseContentRequest &)), this, SLOT(startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &))));
         VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &)), this, SLOT(finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &))));
+        VERIFY(disconnect(server.get(), SIGNAL(startedExecuteCommand(const EventsInfo::CommandRequest &)), this, SLOT(startExecuteCommand(const EventsInfo::CommandRequest &))));
+        VERIFY(disconnect(server.get(), SIGNAL(finishedExecuteCommand(const EventsInfo::CommandResponce &)), this, SLOT(finishExecuteCommand(const EventsInfo::CommandResponce &))));
 
         mod->removeServer(server);
         emit closeServer(server);
@@ -298,6 +319,7 @@ namespace fastoredis
         loadContentAction_->setText(trLoadContOfDataBases);
         setDefaultDbAction_->setText(trSetDefault);
         getValueAction_->setText(trValue);
+        deleteKeyAction_->setText(trDelete);
     }
 
     void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req)
@@ -390,6 +412,34 @@ namespace fastoredis
             std::string key = keys[i];
             mod->addKey(serv, res.inf_, key);
         }
+    }
+
+    void ExplorerTreeView::startExecuteCommand(const EventsInfo::CommandRequest &req)
+    {
+
+    }
+
+    void ExplorerTreeView::finishExecuteCommand(const EventsInfo::CommandResponce &res)
+    {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        IServer* serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+        if(!serv){
+            return;
+        }
+
+        ExplorerTreeModel* mod = qobject_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        CommandKey key = res.cmd_;
+        mod->removeKey(serv, res.inf_, key.key());
     }
 
     QModelIndexList ExplorerTreeView::selectedIndexes() const

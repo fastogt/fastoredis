@@ -310,6 +310,25 @@ namespace fastoredis
         };
 // ============== change =============//
 
+// ============== command =============//
+        struct CommandRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            CommandRequest(DataBaseInfoSPtr inf, const CommandKey& cmd, const error_type &er = error_type());
+
+            DataBaseInfoSPtr inf_;
+            CommandKey cmd_;
+        };
+
+        struct CommandResponce
+                : CommandRequest
+        {
+            typedef CommandRequest base_class;
+            CommandResponce(const base_class &request, const error_type &er = error_type());
+        };
+// ============== command =============//
+
         struct ProgressInfoResponce
         {
             ProgressInfoResponce(uint8_t pr);

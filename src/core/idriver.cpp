@@ -174,6 +174,12 @@ namespace fastoredis
             handleSetDefaultDatabaseEvent(ev);
         }
 // ============== database =============//
+// ============== command =============//
+        else if(type == static_cast<QEvent::Type>(CommandRequestEvent::EventType)){
+            events::CommandRequestEvent* ev = static_cast<events::CommandRequestEvent*>(event);
+            handleCommandRequestEvent(ev);
+        }
+// ============== command =============//
         return QObject::customEvent(event);
     }
 

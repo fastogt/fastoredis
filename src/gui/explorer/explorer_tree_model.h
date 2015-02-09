@@ -64,6 +64,8 @@ namespace fastoredis
 
         void loadContent();
         void setDefault();
+        void removeKey(const std::string &key);
+        void loadValue(const QString& key);
 
         DataBaseInfoSPtr info() const;
     private:
@@ -81,6 +83,8 @@ namespace fastoredis
         std::string sname() const;
         virtual IServerSPtr server() const;
         virtual eType type() const;
+
+        void remove();
 
     private:
         std::string name_;
@@ -107,6 +111,7 @@ namespace fastoredis
         void setDefaultDb(IServer* server, DataBaseInfoSPtr db);
 
         void addKey(IServer* server, DataBaseInfoSPtr db, const std::string& key);
+        void removeKey(IServer* server, DataBaseInfoSPtr db, const std::string& key);
     private:
         ExplorerServerItem *findServerItem(IServer* server) const;
         ExplorerDatabaseItem *findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const;

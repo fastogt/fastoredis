@@ -126,4 +126,20 @@ namespace fastoredis
     {
         return keys_;
     }
+
+    CommandKey::CommandKey(const std::string& key, cmdtype type)
+        : key_(key), type_(type)
+    {
+
+    }
+
+    CommandKey::cmdtype CommandKey::type() const
+    {
+        return type_;
+    }
+
+    std::string CommandKey::key() const
+    {
+        return key_;
+    }
 }

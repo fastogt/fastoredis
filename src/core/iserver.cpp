@@ -200,6 +200,14 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::executeCommand(DataBaseInfoSPtr inf, const CommandKey& cmd)
+    {
+        EventsInfo::CommandRequest req(inf, cmd);
+        emit startedExecuteCommand(req);
+        QEvent *ev = new events::CommandRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::serverInfo()
     {
         EventsInfo::ServerInfoRequest req;
@@ -377,6 +385,10 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(SetDefaultDatabaseResponceEvent::EventType)){
             SetDefaultDatabaseResponceEvent *ev = static_cast<SetDefaultDatabaseResponceEvent*>(event);
             handleSetDefaultDatabaseEvent(ev);
+        }
+        else if(type == static_cast<QEvent::Type>(CommandResponceEvent::EventType)){
+            CommandResponceEvent *ev = static_cast<CommandResponceEvent*>(event);
+            handleCommandResponceEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
         {
@@ -557,5 +569,16 @@ namespace fastoredis
             LOG_ERROR(er, true);
         }
         emit finishedExport(v);
+    }
+
+    void IServer::handleCommandResponceEvent(events::CommandResponceEvent* ev)
+    {
+        using namespace events;
+        CommandResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedExecuteCommand(v);
     }
 }

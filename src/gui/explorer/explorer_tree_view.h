@@ -42,6 +42,7 @@ namespace fastoredis
         void loadContentDb();
         void setDefaultDb();
         void getValue();
+        void deleteKey();
 
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req);
         void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
@@ -52,6 +53,8 @@ namespace fastoredis
         void startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &req);
         void finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &res);
 
+        void startExecuteCommand(const EventsInfo::CommandRequest &req);
+        void finishExecuteCommand(const EventsInfo::CommandResponce &res);
     protected:
         virtual void changeEvent(QEvent* );
 
@@ -66,6 +69,7 @@ namespace fastoredis
         QAction* loadContentAction_;
         QAction* setDefaultDbAction_;
         QAction* getValueAction_;
+        QAction* deleteKeyAction_;
         QAction* infoServerAction_;
         QAction* propertyServerAction_;
         QAction* historyServerAction_;
