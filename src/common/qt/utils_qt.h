@@ -11,7 +11,7 @@ namespace common
         template<typename Type>
         inline Type item(const QModelIndex &index)
         {
-            return static_cast<Type>(index.internalPointer());
+            return dynamic_cast<Type>(static_cast<Type>(index.internalPointer()));
         }
 
         template<typename Type>

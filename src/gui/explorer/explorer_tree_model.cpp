@@ -311,7 +311,9 @@ namespace fastoredis
         }
 
         ExplorerServerItem *serverItem = findServerItem(server.get());
-        removeItem(QModelIndex(), serverItem);
+        if(serverItem){
+            removeItem(QModelIndex(), serverItem);
+        }
     }
 
     void ExplorerTreeModel::addDatabase(IServer* server, DataBaseInfoSPtr db)
@@ -324,7 +326,7 @@ namespace fastoredis
 
         ExplorerDatabaseItem *dbs = findDatabaseItem(parent, db);
         if(!dbs){
-            QModelIndex index = createIndex(0,0,parent);
+            QModelIndex index = createIndex(0, 0, parent);
             ExplorerDatabaseItem *item = new ExplorerDatabaseItem(db, parent);
             insertItem(index, item);
         }
@@ -339,7 +341,7 @@ namespace fastoredis
         }
 
         ExplorerDatabaseItem *dbs = findDatabaseItem(parent, db);
-        if(!dbs){
+        if(dbs){
             removeItem(createIndex(0,0,parent), dbs);
         }
     }
@@ -414,9 +416,8 @@ namespace fastoredis
 
         ExplorerKeyItem *keyit = findKeyItem(dbs, key);
         if(keyit){
-            //QModelIndex parentdb = createIndex(parent->indexOf(dbs), 0, dbs);
-            //removeItem(parentdb, keyit);
-            dbs->removeChildren(keyit);
+            QModelIndex parentdb = createIndex(parent->indexOf(dbs), 0, dbs);
+            removeItem(parentdb, keyit);
         }
     }
 

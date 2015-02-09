@@ -78,6 +78,11 @@ namespace fastoredis
         QModelIndex sel = selectedIndex();
         if(sel.isValid()){            
             IExplorerTreeItem *node = common::utils_qt::item<IExplorerTreeItem*>(sel);
+            DCHECK(node);
+            if(!node){
+                return;
+            }
+
             if(node->type() == IExplorerTreeItem::Server){
                 QMenu menu(this);                
                 menu.addAction(connectAction_);

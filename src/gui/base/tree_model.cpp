@@ -1,5 +1,7 @@
 #include "gui/base/tree_model.h"
 
+#include "common/macros.h"
+
 #include "common/qt/utils_qt.h"
 
 namespace fastoredis
@@ -18,6 +20,11 @@ namespace fastoredis
             }
             else{
                 par = common::utils_qt::item<TreeItem*>(parent);
+            }
+
+            DCHECK(par);
+            if(!par){
+                return false;
             }
 
             if(par->internalPointer() == internalPointer){
@@ -87,6 +94,11 @@ namespace fastoredis
             item = common::utils_qt::item<TreeItem*>(parent);
         }
 
+        DCHECK(item);
+        if(!item){
+            return;
+        }
+
         int child_count = item->childrenCount();
         beginInsertRows(parent, child_count, child_count);
             item->addChildren(child);
@@ -104,8 +116,13 @@ namespace fastoredis
             item = common::utils_qt::item<TreeItem*>(parent);
         }
 
+        DCHECK(item);
+        if(!item){
+            return;
+        }
+
         int child_count = item->childrenCount();
-        beginRemoveRows(parent, child_count, child_count);
+        beginRemoveRows(parent, item->indexOf(child), child_count);
             item->removeChildren(child);
             delete child;
         endRemoveRows();
@@ -156,8 +173,10 @@ namespace fastoredis
             TreeItem* parentItem = childItem->parent();
             if (parentItem && parentItem != root_) {
                 TreeItem* grandParent = parentItem->parent();
-                int row = grandParent->indexOf(parentItem);
-                return createIndex(row, 0, parentItem);
+                if(grandParent){
+                    int row = grandParent->indexOf(parentItem);
+                    return createIndex(row, 0, parentItem);
+                }
             }
         }
 
