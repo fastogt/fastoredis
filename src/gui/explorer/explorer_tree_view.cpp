@@ -439,7 +439,9 @@ namespace fastoredis
         }
 
         CommandKey key = res.cmd_;
-        mod->removeKey(serv, res.inf_, key.key());
+        if(key.type() == CommandKey::DELETE){
+            mod->removeKey(serv, res.inf_, key.key());
+        }
     }
 
     QModelIndexList ExplorerTreeView::selectedIndexes() const
@@ -464,7 +466,7 @@ namespace fastoredis
             return;
         }
 
-        InfoServerDialog infDialog(server->name() + " info", server->type(), this);
+        InfoServerDialog infDialog(QString("%1 info").arg(server->name()), server->type(), this);
         VERIFY(connect(server.get(), SIGNAL(startedLoadServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
         VERIFY(connect(server.get(), SIGNAL(finishedLoadServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
         VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverInfo())));
@@ -488,7 +490,7 @@ namespace fastoredis
             return;
         }
 
-        PropertyServerDialog infDialog(server->name() + " properties", server->type(), this);
+        PropertyServerDialog infDialog(QString("%1 properties").arg(server->name()), server->type(), this);
         VERIFY(connect(server.get(), SIGNAL(startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest &)), &infDialog, SLOT(startServerProperty(const EventsInfo::ServerPropertyInfoRequest &))));
         VERIFY(connect(server.get(), SIGNAL(finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &))));
         VERIFY(connect(server.get(), SIGNAL(startedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoRequest &)), &infDialog, SLOT(startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest &))));
@@ -515,7 +517,7 @@ namespace fastoredis
             return;
         }
 
-        ServerHistoryDialog histDialog(server->name() + " history", server->type(), this);
+        ServerHistoryDialog histDialog(QString("%1 history").arg(server->name()), server->type(), this);
         VERIFY(connect(server.get(), SIGNAL(startedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &)), &histDialog, SLOT(startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &))));
         VERIFY(connect(server.get(), SIGNAL(finishedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &)), &histDialog, SLOT(finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &))));
         VERIFY(connect(server.get(), SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), &histDialog, SLOT(snapShotAdd(ServerInfoSnapShoot ))));

@@ -151,11 +151,11 @@ namespace fastoredis
             return QModelIndex();
         }
 
-        TreeItem * childItem = common::utils_qt::item<TreeItem*>(index);
+        TreeItem* childItem = common::utils_qt::item<TreeItem*>(index);
         if(childItem){
             TreeItem* parentItem = childItem->parent();
             if (parentItem && parentItem != root_) {
-                TreeItem * grandParent = parentItem->parent();
+                TreeItem* grandParent = parentItem->parent();
                 int row = grandParent->indexOf(parentItem);
                 return createIndex(row, 0, parentItem);
             }

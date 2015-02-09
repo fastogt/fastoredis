@@ -414,8 +414,9 @@ namespace fastoredis
 
         ExplorerKeyItem *keyit = findKeyItem(dbs, key);
         if(keyit){
+            //QModelIndex parentdb = createIndex(parent->indexOf(dbs), 0, dbs);
+            //removeItem(parentdb, keyit);
             dbs->removeChildren(keyit);
-            //removeItem(createIndex(0, 0, dbs), keyit);
         }
     }
 
