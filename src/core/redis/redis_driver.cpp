@@ -2133,7 +2133,7 @@ namespace fastoredis
                 res.setErrorInfo(er);
             }
             else{
-                FastoObject::child_container_type ch = root->childrens();
+                FastoObject::child_container_type ch = cmd->childrens();
                 if(ch.size()){
                     DCHECK(ch.size() == 1);
                     FastoObjectArray* array = dynamic_cast<FastoObjectArray*>(ch[0]);
@@ -2198,7 +2198,7 @@ namespace fastoredis
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
             std::string cmdtext;
-            if(res.cmd_.type() == CommandKey::DELETE){
+            if(res.cmd_.type() == CommandKey::C_DELETE){
                 cmdtext = DELETE_KEY + res.cmd_.key();
             }
             FastoObjectIPtr root = FastoObject::createRoot(cmdtext);

@@ -15,8 +15,9 @@ namespace fastoredis
         : QDialog(parent), type_(type)
     {
         using namespace translations;
-
+        setWindowIcon(GuiFactory::instance().icon(type_));
         setWindowTitle(title);
+
         propertyes_table_ = new QTableView;
         PropertyTableModel *mod = new PropertyTableModel(propertyes_table_);
         VERIFY(connect(mod, SIGNAL(changedProperty(const PropertyType &)), this, SIGNAL(changedProperty(const PropertyType &))));

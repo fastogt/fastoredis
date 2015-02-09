@@ -105,8 +105,8 @@ namespace fastoredis
     public:
         enum cmdtype
         {
-            DELETE,
-            LOAD
+            C_DELETE,
+            C_LOAD
         };
 
         CommandKey(const std::string& key, cmdtype type);

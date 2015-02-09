@@ -444,7 +444,7 @@ namespace fastoredis
         }
 
         CommandKey key = res.cmd_;
-        if(key.type() == CommandKey::DELETE){
+        if(key.type() == CommandKey::C_DELETE){
             mod->removeKey(serv, res.inf_, key.key());
         }
     }

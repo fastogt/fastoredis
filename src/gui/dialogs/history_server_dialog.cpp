@@ -20,6 +20,7 @@ namespace fastoredis
     {
         using namespace translations;
 
+        setWindowIcon(GuiFactory::instance().icon(type_));
         setWindowTitle(title);
 
         graphWidget_ = new GraphWidget;

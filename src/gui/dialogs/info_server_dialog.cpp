@@ -121,8 +121,9 @@ namespace fastoredis
         : QDialog(parent), type_(type)
     {
         using namespace translations;
-
+        setWindowIcon(GuiFactory::instance().icon(type_));
         setWindowTitle(title);
+
         serverTextInfo_ = new QLabel;
         hardwareTextInfo_ = new QLabel;
         QHBoxLayout *mainL = new QHBoxLayout;
