@@ -17,6 +17,7 @@ extern "C" {
 #include "core/memcached/memcached_infos.h"
 
 #define INFO_REQUEST "stats"
+#define GET_KEYS "stats items"
 
 namespace
 {
@@ -218,6 +219,7 @@ namespace fastoredis
             statsout.limit_maxbytes_ = st->limit_maxbytes;
             statsout.threads_ = st->threads;
 
+            memcached_stat_free(NULL, st);
             return common::ErrorValueSPtr();
         }
 
@@ -662,7 +664,7 @@ namespace fastoredis
 
     void MemcachedDriver::initImpl()
     {
-
+        currentDatabaseInfo_.reset(new MemcachedDataBaseInfo("0", 0, true));
     }
 
     void MemcachedDriver::clearImpl()
@@ -771,7 +773,13 @@ namespace fastoredis
 
     void MemcachedDriver::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoRequestEvent* ev)
     {
-
+        QObject *sender = ev->sender();
+    notifyProgress(sender, 0);
+        events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
+    notifyProgress(sender, 50);
+        res.databases_.push_back(currentDatabaseInfo_);
+        reply(sender, new events::LoadDatabasesInfoResponceEvent(this, res));
+    notifyProgress(sender, 100);
     }
 
     void MemcachedDriver::handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent *ev)
@@ -779,7 +787,38 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
+            FastoObjectIPtr root = FastoObject::createRoot(GET_KEYS);
         notifyProgress(sender, 50);
+            FastoObjectCommand* cmd = createCommand(root, GET_KEYS, "", common::Value::C_INNER);
+            common::ErrorValueSPtr er = impl_->execute(cmd);
+            if(er){
+                res.setErrorInfo(er);
+            }
+            else{
+                FastoObject::child_container_type rchildrens = cmd->childrens();
+                if(rchildrens.size()){
+                    DCHECK(rchildrens.size() == 1);
+                    FastoObjectArray* array = dynamic_cast<FastoObjectArray*>(rchildrens[0]);
+                    if(!array){
+                        goto done;
+                    }
+                    common::ArrayValue* ar = array->array();
+                    if(!ar){
+                        goto done;
+                    }
+
+                    for(int i = 0; i < ar->getSize(); ++i)
+                    {
+                        std::string ress;
+                        bool isok = ar->getString(i, &ress);
+                        if(isok){
+                            res.keys_.push_back(ress);
+                        }
+                    }
+                }
+            }
+    done:
+        notifyProgress(sender, 75);
             reply(sender, new events::LoadDatabaseContentResponceEvent(this, res));
         notifyProgress(sender, 100);
     }

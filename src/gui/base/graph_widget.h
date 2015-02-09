@@ -30,10 +30,14 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
+        enum
+        {
+            min_height = 480,
+            min_width = 640
+        };
+
         typedef std::vector<std::pair<qreal, qreal> > nodes_container_type;
         GraphWidget(QWidget *parent = 0);
-        QSize minimumSizeHint() const;
-        QSize sizeHint() const;
 
         void setNodes(const nodes_container_type& nodes);
 

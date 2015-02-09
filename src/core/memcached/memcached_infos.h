@@ -111,11 +111,11 @@ namespace fastoredis
     MemcachedServerInfo* makeMemcachedServerInfo(const std::string &content);
     MemcachedServerInfo* makeMemcachedServerInfo(FastoObject *root);
 
-    class MemcachedBaseInfo
+    class MemcachedDataBaseInfo
             : public DataBaseInfo
     {
     public:
-        MemcachedBaseInfo(const std::string& name, size_t size, bool isDefault);
+        MemcachedDataBaseInfo(const std::string& name, size_t size, bool isDefault);
         virtual DataBaseInfo* clone() const;
     };
 }

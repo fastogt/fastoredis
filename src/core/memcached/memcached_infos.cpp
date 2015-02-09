@@ -257,14 +257,14 @@ namespace fastoredis
         return makeMemcachedServerInfo(content);
     }
 
-    MemcachedBaseInfo::MemcachedBaseInfo(const std::string& name, size_t size, bool isDefault)
+    MemcachedDataBaseInfo::MemcachedDataBaseInfo(const std::string& name, size_t size, bool isDefault)
         : DataBaseInfo(name, size, isDefault, MEMCACHED)
     {
 
     }
 
-    DataBaseInfo* MemcachedBaseInfo::clone() const
+    DataBaseInfo* MemcachedDataBaseInfo::clone() const
     {
-        return new MemcachedBaseInfo(*this);
+        return new MemcachedDataBaseInfo(*this);
     }
 }

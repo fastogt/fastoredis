@@ -60,6 +60,7 @@ SET(SOURCES_MEMCACHED
     src/libmemcached/auto.cc
     src/libmemcached/flush.cc
     src/libmemcached/stats.cc
+    src/libmemcached/dump.cc
 
     src/libmemcached/csl/context.cc
     src/libmemcached/csl/scanner.cc

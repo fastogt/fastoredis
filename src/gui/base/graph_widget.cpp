@@ -83,6 +83,7 @@ namespace fastoredis
         setBackgroundRole(QPalette::Light);
         setAutoFillBackground(true);
         setFocusPolicy(Qt::StrongFocus);
+        setMinimumSize(QSize(min_width, min_height));
     }
 
     void GraphWidget::setNodes(const nodes_container_type& nodes)
@@ -327,15 +328,5 @@ namespace fastoredis
     QRect GraphWidget::paintRect()const
     {
         return QRect(margin, margin, width() - 2 * margin, height() - 2 * margin);
-    }
-
-    QSize GraphWidget::sizeHint() const
-    {
-        return QSize(12 * margin, 8 * margin);
-    }
-
-    QSize GraphWidget::minimumSizeHint() const
-    {
-        return QSize(6 * margin, 4 * margin);
     }
 }
