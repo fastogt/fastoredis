@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <manifest android:versionName="@PROJECT_VERSION@" package="net.@PROJECT_NAME_LOWERCASE@" android:installLocation="auto" xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="61">
-    <application android:label="@PROJECT_NAME@" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:icon="@drawable/icon">
+    <application android:label="@PROJECT_NAME@" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:icon="@drawable/icon" android:theme="@android:style/Theme.Holo">
         <activity android:label="@string/app_name"
         android:name="org.qtproject.qt5.android.bindings.QtActivity"
         android:screenOrientation="unspecified"
