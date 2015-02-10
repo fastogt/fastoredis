@@ -34,8 +34,8 @@ extern "C" {
 #define GET_DATABASES "CONFIG GET databases"
 #define GET_DATABASES_KEYS_INFO "INFO keyspace"
 #define SET_DEFAULT_DATABASE "SELECT "
-#define DELETE_KEY "DEL "
-#define LOAD_KEY "GET "
+#define DELETE_KEY "DEL"
+#define LOAD_KEY "GET"
 #define GET_KEYS "KEYS *"
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
@@ -1596,10 +1596,10 @@ namespace fastoredis
     std::string RedisDriver::commandByType(CommandKey::cmdtype type)
     {
         if(type == CommandKey::C_LOAD){
-            return "GET";
+            return LOAD_KEY;
         }
         else if(type == CommandKey::C_DELETE){
-            return "DEL";
+            return DELETE_KEY;
         }
         else{
             return std::string();
@@ -2212,11 +2212,12 @@ namespace fastoredis
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
             std::string cmdtext;
-            if(res.cmd_.type() == CommandKey::C_DELETE){
-                cmdtext = DELETE_KEY + res.cmd_.key();
+            CommandKey::cmdtype t =  res.cmd_.type();
+            if( t == CommandKey::C_DELETE){
+                cmdtext = std::string(DELETE_KEY) + " " + res.cmd_.key();
             }
-            else if(res.cmd_.type() == CommandKey::C_LOAD){
-                cmdtext = LOAD_KEY + res.cmd_.key();
+            else if(t == CommandKey::C_LOAD){
+                cmdtext = std::string(LOAD_KEY) + " " + res.cmd_.key();
             }
             FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
             FastoObjectCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);

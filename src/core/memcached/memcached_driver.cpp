@@ -16,8 +16,10 @@ extern "C" {
 #include "core/memcached/memcached_config.h"
 #include "core/memcached/memcached_infos.h"
 
-#define INFO_REQUEST "stats"
-#define GET_KEYS "stats items"
+#define INFO_REQUEST "STATS"
+#define GET_KEYS "STATS ITEMS"
+#define DELETE_KEY "DELETE"
+#define LOAD_KEY "GET"
 
 namespace
 {
@@ -639,10 +641,10 @@ namespace fastoredis
     std::string MemcachedDriver::commandByType(CommandKey::cmdtype type)
     {
         if(type == CommandKey::C_LOAD){
-            return "GET";
+            return LOAD_KEY;
         }
         else if(type == CommandKey::C_DELETE){
-            return "DELETE";
+            return DELETE_KEY;
         }
         else{
             return std::string();
@@ -707,9 +709,8 @@ namespace fastoredis
             if(set){
                 impl_->config_ = set->info();
                 impl_->sinfo_ = set->sshInfo();
-                common::ErrorValueSPtr er;
         notifyProgress(sender, 25);
-                    er = impl_->connect();
+                    common::ErrorValueSPtr er = impl_->connect();
                     if(er){
                         res.setErrorInfo(er);
                     }
@@ -907,7 +908,24 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
+            std::string cmdtext;
+            CommandKey::cmdtype t =  res.cmd_.type();
+            if( t == CommandKey::C_DELETE){
+                cmdtext = std::string(DELETE_KEY) + " " + res.cmd_.key();
+            }
+            else if(t == CommandKey::C_LOAD){
+                cmdtext = std::string(LOAD_KEY) + " " + res.cmd_.key();
+            }
+            FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
+            FastoObjectCommand* cmd = createCommand(root, cmdtext, cmdtext, common::Value::C_INNER);
         notifyProgress(sender, 50);
+            common::ErrorValueSPtr er = impl_->execute(cmd);
+            if(er){
+                res.setErrorInfo(er);
+            }
+            else{
+                res.cmd_.setExecCommand(cmdtext);
+            }
             reply(sender, new events::CommandResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
