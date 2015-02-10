@@ -8,7 +8,7 @@
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/redis.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/memcached.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/redistype.png</file>
-    <file>@PROJECT_NAME_LOWERCASE@/images/64x64/start.png</file>
+    <file>@PROJECT_NAME_LOWERCASE@/images/64x64/execute.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/stop.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/connect.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/disconnect.png</file>

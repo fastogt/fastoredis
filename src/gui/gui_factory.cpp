@@ -79,7 +79,7 @@ namespace fastoredis
 
     const QIcon &GuiFactory::executeIcon() const
     {
-        static QIcon start(":" PROJECT_NAME_LOWERCASE "/images/64x64/start.png");
+        static QIcon start(":" PROJECT_NAME_LOWERCASE "/images/64x64/execute.png");
         return start;
     }
 
