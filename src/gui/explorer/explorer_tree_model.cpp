@@ -104,11 +104,11 @@ namespace fastoredis
         }
     }
 
-    void ExplorerDatabaseItem::loadValue(const QString& key)
+    void ExplorerDatabaseItem::loadValue(const std::string& key)
     {
         IDatabaseSPtr dbs = db();
         if(dbs){
-            dbs->loadValue(common::convertToString(key));
+            dbs->loadValue(key);
         }
     }
 
@@ -188,6 +188,14 @@ namespace fastoredis
         ExplorerDatabaseItem* par = parent();
         if(par){
             par->removeKey(name_);
+        }
+    }
+
+    void ExplorerKeyItem::loadValue()
+    {
+        ExplorerDatabaseItem* par = parent();
+        if(par){
+            par->loadValue(name_);
         }
     }
 

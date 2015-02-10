@@ -229,7 +229,7 @@ namespace fastoredis
         setCentralWidget(mainW);
 
         exp_ = new ExplorerTreeView(this);
-        VERIFY(connect(exp_, SIGNAL(openedConsole(IServerSPtr)), mainW, SLOT(openConsole(IServerSPtr))));
+        VERIFY(connect(exp_, SIGNAL(openedConsole(IServerSPtr, const QString&)), mainW, SLOT(openConsole(IServerSPtr, const QString&))));
         VERIFY(connect(exp_, SIGNAL(executeText(IServerSPtr, const QString&)), mainW, SLOT(executeText(IServerSPtr, const QString&))));
         VERIFY(connect(exp_, SIGNAL(closeServer(IServerSPtr)), &ServersManager::instance(), SLOT(closeServer(IServerSPtr))));
         expDock_ = new QDockWidget(this);

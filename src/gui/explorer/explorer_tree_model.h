@@ -65,7 +65,7 @@ namespace fastoredis
         void loadContent();
         void setDefault();
         void removeKey(const std::string &key);
-        void loadValue(const QString& key);
+        void loadValue(const std::string &key);
 
         DataBaseInfoSPtr info() const;
     private:
@@ -85,6 +85,7 @@ namespace fastoredis
         virtual eType type() const;
 
         void remove();
+        void loadValue();
 
     private:
         std::string name_;

@@ -58,7 +58,7 @@ namespace fastoredis
 
     void IDatabase::loadValue(const std::string& key)
     {
-
+        server_->executeCommand(info_, CommandKey(key, CommandKey::C_LOAD));
     }
 
     IDatabase::~IDatabase()

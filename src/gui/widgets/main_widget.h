@@ -20,7 +20,7 @@ namespace fastoredis
         QueryWidget* widget(int index) const;
 
     public Q_SLOTS:
-        void openConsole(IServerSPtr server);
+        void openConsole(IServerSPtr server, const QString& text);
         void executeText(IServerSPtr server, const QString& text);
 
     private Q_SLOTS:

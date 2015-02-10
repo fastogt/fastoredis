@@ -39,6 +39,11 @@ namespace fastoredis
         return shellWidget_->text();
     }
 
+    void QueryWidget::setInputText(const QString& text)
+    {
+        shellWidget_->setText(text);
+    }
+
     void QueryWidget::execute(const QString& text)
     {
         shellWidget_->execute(text);

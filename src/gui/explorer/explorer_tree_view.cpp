@@ -166,7 +166,7 @@ namespace fastoredis
 
         ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
         if(node){
-            emit openedConsole(node->server());
+            emit openedConsole(node->server(), QString());
         }
     }
 
@@ -218,7 +218,9 @@ namespace fastoredis
 
         ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
         if(node){
-            emit executeText(node->server(), QString("GET %1").arg(node->name()));
+            IServerSPtr server = node->server();
+            QString cmd = server->commandByType(CommandKey::C_LOAD);
+            emit executeText(server, QString("%1 %2").arg(cmd).arg(node->name()));
         }
     }
 

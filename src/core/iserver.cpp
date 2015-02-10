@@ -123,6 +123,11 @@ namespace fastoredis
         return IDatabaseSPtr();
     }
 
+    QString IServer::commandByType(CommandKey::cmdtype type)
+    {
+        return common::convertFromString<QString>(drv_->commandByType(type));
+    }
+
     connectionTypes IServer::type() const
     {
         return drv_->connectionType();

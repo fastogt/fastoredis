@@ -35,6 +35,7 @@ extern "C" {
 #define GET_DATABASES_KEYS_INFO "INFO keyspace"
 #define SET_DEFAULT_DATABASE "SELECT "
 #define DELETE_KEY "DEL "
+#define LOAD_KEY "GET "
 #define GET_KEYS "KEYS *"
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
@@ -1592,6 +1593,19 @@ namespace fastoredis
         return impl_->config.mb_delim;
     }
 
+    std::string RedisDriver::commandByType(CommandKey::cmdtype type)
+    {
+        if(type == CommandKey::C_LOAD){
+            return "GET";
+        }
+        else if(type == CommandKey::C_DELETE){
+            return "DEL";
+        }
+        else{
+            return std::string();
+        }
+    }
+
     const char* RedisDriver::versionApi()
     {
         return REDIS_VERSION;
@@ -2201,12 +2215,18 @@ namespace fastoredis
             if(res.cmd_.type() == CommandKey::C_DELETE){
                 cmdtext = DELETE_KEY + res.cmd_.key();
             }
+            else if(res.cmd_.type() == CommandKey::C_LOAD){
+                cmdtext = LOAD_KEY + res.cmd_.key();
+            }
             FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
             FastoObjectCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
+            }
+            else{
+                res.cmd_.setExecCommand(cmdtext);
             }
             reply(sender, new events::CommandResponceEvent(this, res));
         notifyProgress(sender, 100);

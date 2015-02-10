@@ -112,9 +112,12 @@ namespace fastoredis
         CommandKey(const std::string& key, cmdtype type);
         cmdtype type() const;
         std::string key() const;
+        std::string execCommand() const;
+        void setExecCommand(const std::string& execCommand);
 
     private:
         cmdtype type_;
         std::string key_;
+        std::string execCommand_;
     };
 }

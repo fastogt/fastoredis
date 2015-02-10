@@ -128,7 +128,7 @@ namespace fastoredis
     }
 
     CommandKey::CommandKey(const std::string& key, cmdtype type)
-        : key_(key), type_(type)
+        : key_(key), type_(type), execCommand_()
     {
 
     }
@@ -141,5 +141,15 @@ namespace fastoredis
     std::string CommandKey::key() const
     {
         return key_;
+    }
+
+    std::string CommandKey::execCommand() const
+    {
+        return execCommand_;
+    }
+
+    void CommandKey::setExecCommand(const std::string& execCommand)
+    {
+        execCommand_ = execCommand;
     }
 }

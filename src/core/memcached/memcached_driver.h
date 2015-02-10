@@ -26,6 +26,7 @@ namespace fastoredis
         common::net::hostAndPort address() const;
         std::string version() const;
         virtual std::string outputDelemitr() const;
+        std::string commandByType(CommandKey::cmdtype type);
 
         static const char* versionApi();
 

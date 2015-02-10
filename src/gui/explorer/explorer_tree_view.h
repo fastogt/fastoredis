@@ -17,7 +17,7 @@ namespace fastoredis
         ExplorerTreeView(QWidget* parent);
 
     Q_SIGNALS:
-        void openedConsole(IServerSPtr server);
+        void openedConsole(IServerSPtr server, const QString& text);
         void executeText(IServerSPtr server, const QString& text);
         void closeServer(IServerSPtr server);
 

@@ -33,6 +33,7 @@ namespace fastoredis
         //sync
         void start();
         void stop();
+        virtual std::string commandByType(CommandKey::cmdtype type) = 0;
 
         virtual void interrupt() = 0;
         virtual bool isConnected() const = 0;

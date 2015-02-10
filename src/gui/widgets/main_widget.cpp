@@ -28,11 +28,12 @@ namespace fastoredis
         setDocumentMode(true);
     }
 
-    void MainWidget::openConsole(IServerSPtr server)
+    void MainWidget::openConsole(IServerSPtr server, const QString& text)
     {
         if(server){
             QueryWidget *queryWidget = new QueryWidget(server);
             addWidgetToTab(queryWidget, server->name());
+            queryWidget->setInputText(text);
         }
     }
 

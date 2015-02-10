@@ -21,6 +21,7 @@ namespace fastoredis
         QueryWidget* clone(const QString &text);
         connectionTypes connectionType() const;
         QString inputText() const;
+        void setInputText(const QString& text);
         void execute(const QString& text);
         void reload();
 

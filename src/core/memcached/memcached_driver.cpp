@@ -636,6 +636,19 @@ namespace fastoredis
         impl_->config_.shutdown = 1;
     }
 
+    std::string MemcachedDriver::commandByType(CommandKey::cmdtype type)
+    {
+        if(type == CommandKey::C_LOAD){
+            return "GET";
+        }
+        else if(type == CommandKey::C_DELETE){
+            return "DELETE";
+        }
+        else{
+            return std::string();
+        }
+    }
+
     common::net::hostAndPort MemcachedDriver::address() const
     {
         return common::net::hostAndPort(impl_->config_.hostip, impl_->config_.hostport);
