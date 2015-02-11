@@ -6,9 +6,10 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QToolButton>
 #include <QMessageBox>
 #include <QEvent>
+#include <QToolBar>
+#include <QAction>
 
 #include "common/qt/convert_string.h"
 
@@ -52,7 +53,7 @@ namespace fastoredis
         setWindowIcon(GuiFactory::instance().connectIcon());
 
         // Remove help button (?)
-        setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);;
+        setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
         listWidget_ = new QTreeWidget;
         listWidget_->setIndentation(5);
@@ -79,7 +80,6 @@ namespace fastoredis
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
         buttonBox->button(QDialogButtonBox::Ok)->setIcon(GuiFactory::instance().serverIcon());
         acButton_ = buttonBox->button(QDialogButtonBox::Ok);
-
         acButton_->setEnabled(false);
 
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
@@ -90,26 +90,27 @@ namespace fastoredis
 
         QHBoxLayout *toolBarLayout = new QHBoxLayout;
 
-        QToolButton *addB = new QToolButton;
-        addB->setIcon(GuiFactory::instance().addIcon());
-        VERIFY(connect(addB, SIGNAL(clicked()), this, SLOT(add())));
-        toolBarLayout->addWidget(addB);
+        QToolBar *savebar = new QToolBar;
+        savebar->setStyleSheet("QToolBar { border: 0px; }");
+        toolBarLayout->addWidget(savebar);
 
-        QToolButton *rmB = new QToolButton;
-        rmB->setIcon(GuiFactory::instance().removeIcon());
-        VERIFY(connect(rmB, SIGNAL(clicked()), this, SLOT(remove())));
-        toolBarLayout->addWidget(rmB);
+        QAction *addB = new QAction(GuiFactory::instance().loadIcon(), trAddConnection, savebar);
+        VERIFY(connect(addB, SIGNAL(triggered()), this, SLOT(add())));
+        savebar->addAction(addB);
 
-        QToolButton *editB = new QToolButton;
-        editB->setIcon(GuiFactory::instance().editIcon());
-        VERIFY(connect(editB, SIGNAL(clicked()), this, SLOT(edit())));
-        toolBarLayout->addWidget(editB);
+        QAction *rmB = new QAction(GuiFactory::instance().removeIcon(), trRemoveConnection, savebar);
+        VERIFY(connect(rmB, SIGNAL(triggered()), this, SLOT(remove())));
+        savebar->addAction(rmB);
+
+        QAction *editB = new QAction(GuiFactory::instance().editIcon(), trEditConnection, savebar);
+        VERIFY(connect(editB, SIGNAL(triggered()), this, SLOT(edit())));
+        savebar->addAction(editB);
 
         QSpacerItem *hSpacer = new QSpacerItem(300, 0, QSizePolicy::Expanding);
         toolBarLayout->addSpacerItem(hSpacer);
 
         QVBoxLayout *firstColumnLayout = new QVBoxLayout;
-        firstColumnLayout->addLayout(toolBarLayout);
+        firstColumnLayout->addWidget(savebar);
         firstColumnLayout->addWidget(listWidget_);
         firstColumnLayout->addLayout(bottomLayout);
 

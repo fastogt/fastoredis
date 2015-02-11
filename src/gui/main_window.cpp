@@ -162,7 +162,7 @@ namespace fastoredis
         openAction_ = new QAction(this);
         openAction_->setIcon(GuiFactory::instance().openIcon());
         openAction_->setShortcut(openKey);
-        VERIFY(connect(openAction_, SIGNAL(triggered()), this, SLOT(open())));
+        VERIFY(connect(openAction_, &QAction::triggered, this, &MainWindow::open));
 
         // Exit action
         exitAction_ = new QAction(this);

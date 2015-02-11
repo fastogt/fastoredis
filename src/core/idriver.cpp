@@ -68,8 +68,8 @@ namespace fastoredis
         thread_ = new QThread(this);
         moveToThread(thread_);
 
-        VERIFY(connect(thread_, SIGNAL(started()), this, SLOT(init())));
-        VERIFY(connect(thread_, SIGNAL(finished()), this, SLOT(clear())));
+        VERIFY(connect(thread_, &QThread::started, this, &IDriver::init));
+        VERIFY(connect(thread_, &QThread::finished, this, &IDriver::clear));
     }
 
     IDriver::~IDriver()

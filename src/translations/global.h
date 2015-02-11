@@ -12,7 +12,11 @@ namespace fastoredis
         const QString trfilterForRdb = QObject::tr("Redis database files (*.rdb)");
 
         const QString trLoad = QObject::tr("Load");
+        const QString trAddConnection = QObject::tr("Add connnection");
+        const QString trRemoveConnection = QObject::tr("Remove connnection");
+        const QString trEditConnection = QObject::tr("Edit connection");
         const QString trOpen = QObject::tr("Open");
+        const QString trMenu = QObject::tr("Menu");
         const QString trClose = QObject::tr("Close");
         const QString trSave = QObject::tr("Save");
         const QString trExit = QObject::tr("Exit");

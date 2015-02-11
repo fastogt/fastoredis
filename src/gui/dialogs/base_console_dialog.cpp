@@ -124,7 +124,7 @@ namespace fastoredis
         executeButton->setIcon(GuiFactory::instance().executeIcon());
         executeButton->setEnabled(isExecuteEnabled);
         executeButton->setPopupMode(QToolButton::MenuButtonPopup);
-        QMenu *menu = new QMenu(tr("Menu"), this);
+        QMenu* menu = new QMenu(trMenu, this);
         QAction* execArgs = menu->addAction(trExecuteWithArgs);
         VERIFY(connect(execArgs, SIGNAL(triggered()), SLOT(executeWithArgs())));
         executeButton->setMenu(menu);

@@ -86,7 +86,7 @@ namespace
         return result;
     }
 
-    const QSize iconSize = QSize(16, 16);
+    const QSize iconSize = QSize(24, 24);
 }
 
 namespace fastoredis
@@ -147,11 +147,8 @@ namespace fastoredis
         VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
         savebar->addAction(stopAction);
 
-        serverName_ = new IconLabel(GuiFactory::instance().serverIcon(), server_->address(), QSize(16, 16));
         const ConnectionMode mode = IntaractiveMode;
         connectionMode_ = new IconLabel(GuiFactory::instance().modeIcon(mode), common::convertFromString<QString>(common::convertToString(mode)), iconSize);
-        savebar->addWidget(serverName_);
-        savebar->addWidget(connectionMode_);
 
         hlayout->addWidget(savebar);
 
@@ -161,6 +158,7 @@ namespace fastoredis
         splitter->setContentsMargins(0, 0, 0, 0);
         hlayout->addWidget(splitter);
 
+        hlayout->addWidget(connectionMode_);
         workProgressBar_ = new QProgressBar;
         hlayout->addWidget(workProgressBar_);
 
@@ -260,7 +258,6 @@ namespace fastoredis
 
     void BaseShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce& res)
     {
-        serverName_->setText(server_->address());
         syncConnectionActions();
     }
 

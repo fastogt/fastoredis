@@ -67,8 +67,6 @@ namespace fastoredis
         QAction* saveAction_;
         QAction* saveAsAction_;
 
-        IconLabel* serverName_;
-
         FastoEditorShell* input_;
 
         QProgressBar* workProgressBar_;
