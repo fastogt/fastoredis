@@ -167,7 +167,7 @@ namespace fastoredis
         // Exit action
         exitAction_ = new QAction(this);
         exitAction_->setShortcut(quitKey);
-        VERIFY(connect(exitAction_, SIGNAL(triggered()), this, SLOT(close())));
+        VERIFY(connect(exitAction_, &QAction::triggered, this, &MainWindow::close));
 
         // File menu
         QMenu *fileMenu = new QMenu(this);
@@ -178,13 +178,13 @@ namespace fastoredis
 
         preferencesAction_ = new QAction(this);
         preferencesAction_->setIcon(GuiFactory::instance().preferencesIcon());
-        VERIFY(connect(preferencesAction_, SIGNAL(triggered()), this, SLOT(openPreferences())));
+        VERIFY(connect(preferencesAction_, &QAction::triggered, this, &MainWindow::openPreferences));
 
         QMenu *optionsMenu = new QMenu(this);
         optionsAction_ = menuBar()->addMenu(optionsMenu);
 
         checkUpdateAction_ = new QAction(this);
-        VERIFY(connect(checkUpdateAction_, SIGNAL(triggered()), this, SLOT(checkUpdate())));
+        VERIFY(connect(checkUpdateAction_, &QAction::triggered, this, &MainWindow::checkUpdate));
 
         optionsMenu->addAction(checkUpdateAction_);
         optionsMenu->addAction(preferencesAction_);
@@ -194,17 +194,17 @@ namespace fastoredis
         toolsAction_ = menuBar()->addMenu(tools);
         pythonConsoleAction_ = new QAction(this);
         pythonConsoleAction_->setIcon(GuiFactory::instance().pythonIcon());
-        VERIFY(connect(pythonConsoleAction_, SIGNAL(triggered()), this, SLOT(openPythonConsole())));
+        VERIFY(connect(pythonConsoleAction_, &QAction::triggered, this, &MainWindow::openPythonConsole));
         tools->addAction(pythonConsoleAction_);
 
         luaConsoleAction_ = new QAction(this);
         luaConsoleAction_->setIcon(GuiFactory::instance().luaIcon());
-        VERIFY(connect(luaConsoleAction_, SIGNAL(triggered()), this, SLOT(openLuaConsole())));
+        VERIFY(connect(luaConsoleAction_, &QAction::triggered, this, &MainWindow::openLuaConsole));
         tools->addAction(luaConsoleAction_);
 
         encodeDecodeDialogAction_ = new QAction(this);
         encodeDecodeDialogAction_->setIcon(GuiFactory::instance().encodeDecodeIcon());
-        VERIFY(connect(encodeDecodeDialogAction_, SIGNAL(triggered()), this, SLOT(openEncodeDecodeDialog())));
+        VERIFY(connect(encodeDecodeDialogAction_, &QAction::triggered, this, &MainWindow::openEncodeDecodeDialog));
         tools->addAction(encodeDecodeDialogAction_);
 
         //window menu
@@ -212,7 +212,7 @@ namespace fastoredis
         windowAction_ = menuBar()->addMenu(window);
         fullScreanAction_ = new QAction(this);
         fullScreanAction_->setShortcut(fullScreenKey);
-        VERIFY(connect(fullScreanAction_, SIGNAL(triggered()), this, SLOT(enterLeaveFullScreen())));
+        VERIFY(connect(fullScreanAction_, &QAction::triggered, this, &MainWindow::enterLeaveFullScreen));
         window->addAction(fullScreanAction_);
 
         QMenu *views = new QMenu(translations::trViews, this);
@@ -220,7 +220,7 @@ namespace fastoredis
 
         QMenu *helpMenu = new QMenu(this);
         aboutAction_ = new QAction(this);
-        VERIFY(connect(aboutAction_, SIGNAL(triggered()), this, SLOT(about())));
+        VERIFY(connect(aboutAction_, &QAction::triggered, this, &MainWindow::about));
 
         helpAction_ = menuBar()->addMenu(helpMenu);
         helpMenu->addAction(aboutAction_);
@@ -229,9 +229,9 @@ namespace fastoredis
         setCentralWidget(mainW);
 
         exp_ = new ExplorerTreeView(this);
-        VERIFY(connect(exp_, SIGNAL(openedConsole(IServerSPtr, const QString&)), mainW, SLOT(openConsole(IServerSPtr, const QString&))));
-        VERIFY(connect(exp_, SIGNAL(executeText(IServerSPtr, const QString&)), mainW, SLOT(executeText(IServerSPtr, const QString&))));
-        VERIFY(connect(exp_, SIGNAL(closeServer(IServerSPtr)), &ServersManager::instance(), SLOT(closeServer(IServerSPtr))));
+        VERIFY(connect(exp_, &ExplorerTreeView::openedConsole, mainW, &MainWidget::openConsole));
+        VERIFY(connect(exp_, &ExplorerTreeView::executeText, mainW, &MainWidget::executeText));
+        VERIFY(connect(exp_, &ExplorerTreeView::closeServer, &ServersManager::instance(), &ServersManager::closeServer));
         expDock_ = new QDockWidget(this);
         explorerAction_ = expDock_->toggleViewAction();
         explorerAction_->setShortcut(explorerKeySequence);
@@ -245,8 +245,8 @@ namespace fastoredis
         addDockWidget(Qt::LeftDockWidgetArea, expDock_);
 
         LogTabWidget *log = new LogTabWidget(this);
-        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, common::logging::LEVEL_LOG)), log, SLOT(addLogMessage(const QString&, common::logging::LEVEL_LOG))));
-        VERIFY(connect(&CommandLogger::instance(), SIGNAL(printed(const Command&)), log, SLOT(addCommand(const Command&))));
+        VERIFY(connect(&Logger::instance(), &Logger::printed, log, &LogTabWidget::addLogMessage));
+        VERIFY(connect(&CommandLogger::instance(), &CommandLogger::printed, log, &LogTabWidget::addCommand));
         logDock_ = new QDockWidget(this);
         logsAction_ = logDock_->toggleViewAction();
         logsAction_->setShortcut(logsKeySequence);
@@ -393,11 +393,11 @@ namespace fastoredis
         QThread* th = new QThread;
         UpdateChecker* cheker = new UpdateChecker;
         cheker->moveToThread(th);
-        VERIFY(connect(th, SIGNAL(started()), cheker, SLOT(routine())));
-        VERIFY(connect(cheker, SIGNAL(versionAvailibled(bool, const QString&)), this, SLOT(versionAvailible(bool, const QString&))));
-        VERIFY(connect(cheker, SIGNAL(versionAvailibled(bool, const QString&)), th, SLOT(quit())));
-        VERIFY(connect(th, SIGNAL(finished()), cheker, SLOT(deleteLater())));
-        VERIFY(connect(th, SIGNAL(finished()), th, SLOT(deleteLater())));
+        VERIFY(connect(th, &QThread::started, cheker, &UpdateChecker::routine));
+        VERIFY(connect(cheker, &UpdateChecker::versionAvailibled, this, &MainWindow::versionAvailible));
+        VERIFY(connect(cheker, &UpdateChecker::versionAvailibled, th, &QThread::quit));
+        VERIFY(connect(th, &QThread::finished, cheker, &UpdateChecker::deleteLater));
+        VERIFY(connect(th, &QThread::finished, th, &QThread::deleteLater));
         th->start();
     }
 

@@ -12,15 +12,15 @@ namespace fastoredis
     {
         MainTabBar *tab = new MainTabBar(this);
 
-        VERIFY(connect(tab, SIGNAL(createdNewTab()), this, SLOT(createNewTab())));
-        VERIFY(connect(tab, SIGNAL(nextTab()), this, SLOT(nextTab())));
-        VERIFY(connect(tab, SIGNAL(prevTab()), this, SLOT(previousTab())));
+        VERIFY(connect(tab, &MainTabBar::createdNewTab, this, &MainWidget::createNewTab));
+        VERIFY(connect(tab, &MainTabBar::nextTab, this, &MainWidget::nextTab));
+        VERIFY(connect(tab, &MainTabBar::prevTab, this, &MainWidget::previousTab));
 
-        VERIFY(connect(tab, SIGNAL(reloadedTab()), this, SLOT(reloadeCurrentTab())));
-        VERIFY(connect(tab, SIGNAL(duplicatedTab()), this, SLOT(duplicateCurrentTab())));
-        VERIFY(connect(tab, SIGNAL(closedOtherTabs()), this, SLOT(closedOtherTabs())));
-        VERIFY(connect(tab, SIGNAL(closedTab()), this, SLOT(closeCurrentTab())));
-        VERIFY(connect(tab, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int))));
+        VERIFY(connect(tab, &MainTabBar::reloadedTab, this, &MainWidget::reloadeCurrentTab));
+        VERIFY(connect(tab, &MainTabBar::duplicatedTab, this, &MainWidget::duplicateCurrentTab));
+        VERIFY(connect(tab, &MainTabBar::closedOtherTabs, this, &MainWidget::closedOtherTabs));
+        VERIFY(connect(tab, &MainTabBar::closedTab, this, &MainWidget::closeCurrentTab));
+        VERIFY(connect(tab, &MainTabBar::tabCloseRequested, this, &MainWidget::closeTab));
         setTabBar(tab);
         setTabsClosable(true);
         setElideMode(Qt::ElideRight);

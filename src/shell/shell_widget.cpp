@@ -94,21 +94,21 @@ namespace fastoredis
     BaseShellWidget::BaseShellWidget(IServerSPtr server, const QString& filePath, QWidget* parent)
         : QWidget(parent), server_(server), filePath_(filePath)
     {
-        VERIFY(connect(server_.get(), SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), this, SLOT(startConnect(const EventsInfo::ConnectInfoRequest &))));
-        VERIFY(connect(server_.get(), SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)), this, SLOT(finishConnect(const EventsInfo::ConnectInfoResponce &))));
-        VERIFY(connect(server_.get(), SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)), this, SLOT(startDisconnect(const EventsInfo::DisonnectInfoRequest &))));
-        VERIFY(connect(server_.get(), SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)), this, SLOT(finishDisconnect(const EventsInfo::DisConnectInfoResponce &))));
-        VERIFY(connect(server_.get(), SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), this, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &))));
-        VERIFY(connect(server_.get(), SIGNAL(progressChanged(const EventsInfo::ProgressInfoResponce &)), this, SLOT(progressChange(const EventsInfo::ProgressInfoResponce &))));
+        VERIFY(connect(server_.get(), &IServer::startedConnect, this, &BaseShellWidget::startConnect));
+        VERIFY(connect(server_.get(), &IServer::finishedConnect, this, &BaseShellWidget::finishConnect));
+        VERIFY(connect(server_.get(), &IServer::startedDisconnect, this, &BaseShellWidget::startDisconnect));
+        VERIFY(connect(server_.get(), &IServer::finishedDisconnect, this, &BaseShellWidget::finishDisconnect));
+        VERIFY(connect(server_.get(), &IServer::startedExecute, this, &BaseShellWidget::startedExecute));
+        VERIFY(connect(server_.get(), &IServer::progressChanged, this, &BaseShellWidget::progressChange));
 
-        VERIFY(connect(server_.get(), SIGNAL(enteredMode(const EventsInfo::EnterModeInfo&)), this, SLOT(enterMode(const EventsInfo::EnterModeInfo&))));
-        VERIFY(connect(server_.get(), SIGNAL(leavedMode(const EventsInfo::LeaveModeInfo&)), this, SLOT(leaveMode(const EventsInfo::LeaveModeInfo&))));
+        VERIFY(connect(server_.get(), &IServer::enteredMode, this, &BaseShellWidget::enterMode));
+        VERIFY(connect(server_.get(), &IServer::leavedMode, this, &BaseShellWidget::leaveMode));
 
-        VERIFY(connect(server_.get(), SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&)), this, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo&))));
-        VERIFY(connect(server_.get(), SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), this, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo&))));
+        VERIFY(connect(server_.get(), &IServer::rootCreated, this, &BaseShellWidget::rootCreated));
+        VERIFY(connect(server_.get(), &IServer::rootCompleated, this, &BaseShellWidget::rootCompleated));
 
-        VERIFY(connect(server_.get(), SIGNAL(addedChild(FastoObject *)), this, SIGNAL(addedChild(FastoObject *))));
-        VERIFY(connect(server_.get(), SIGNAL(itemUpdated(FastoObject*, const QString&)), this, SIGNAL(itemUpdated(FastoObject*, const QString&)), Qt::UniqueConnection));
+        VERIFY(connect(server_.get(), &IServer::addedChild, this, &BaseShellWidget::addedChild));
+        VERIFY(connect(server_.get(), &IServer::itemUpdated, this, &BaseShellWidget::itemUpdated, Qt::UniqueConnection));
 
         QVBoxLayout* mainlayout = new QVBoxLayout;
         QHBoxLayout* hlayout = new QHBoxLayout;
@@ -119,32 +119,33 @@ namespace fastoredis
         savebar->setStyleSheet("QToolBar { border: 0px; }");
 
         loadAction_ = new QAction(GuiFactory::instance().loadIcon(), trLoad, savebar);
-        VERIFY(connect(loadAction_, SIGNAL(triggered()), this, SLOT(loadFromFile())));
+        typedef void (BaseShellWidget::*lf)();
+        VERIFY(connect(loadAction_, &QAction::triggered, this, static_cast<lf>(&BaseShellWidget::loadFromFile)));
         savebar->addAction(loadAction_);
 
         saveAction_ = new QAction(GuiFactory::instance().saveIcon(), trSave, savebar);
-        VERIFY(connect(saveAction_, SIGNAL(triggered()), this, SLOT(saveToFile())));
+        VERIFY(connect(saveAction_, &QAction::triggered, this, &BaseShellWidget::saveToFile));
         savebar->addAction(saveAction_);
 
         saveAsAction_ = new QAction(GuiFactory::instance().saveAsIcon(), trSaveAs, savebar);
-        VERIFY(connect(saveAsAction_, SIGNAL(triggered()), this, SLOT(saveToFileAs())));
+        VERIFY(connect(saveAsAction_, &QAction::triggered, this, &BaseShellWidget::saveToFileAs));
         savebar->addAction(saveAsAction_);
 
         connectAction_ = new QAction(GuiFactory::instance().connectIcon(), trConnect, savebar);
-        VERIFY(connect(connectAction_, SIGNAL(triggered()), this, SLOT(connectToServer())));
+        VERIFY(connect(connectAction_, &QAction::triggered, this, &BaseShellWidget::connectToServer));
         savebar->addAction(connectAction_);
 
         disConnectAction_ = new QAction(GuiFactory::instance().disConnectIcon(), trDisconnect, savebar);
-        VERIFY(connect(disConnectAction_, SIGNAL(triggered()), this, SLOT(disconnectFromServer())));
+        VERIFY(connect(disConnectAction_, &QAction::triggered, this, &BaseShellWidget::disconnectFromServer));
         savebar->addAction(disConnectAction_);
 
         executeAction_ = new QAction(GuiFactory::instance().executeIcon(), trExecute, savebar);
         executeAction_->setShortcut(executeKey);
-        VERIFY(connect(executeAction_, SIGNAL(triggered()), this, SLOT(execute())));
+        VERIFY(connect(executeAction_, &QAction::triggered, this, &BaseShellWidget::execute));
         savebar->addAction(executeAction_);
 
         QAction *stopAction = new QAction(GuiFactory::instance().stopIcon(), trStop, savebar);
-        VERIFY(connect(stopAction, SIGNAL(triggered()), this, SLOT(stop())));
+        VERIFY(connect(stopAction, &QAction::triggered, this, &BaseShellWidget::stop));
         savebar->addAction(stopAction);
 
         const ConnectionMode mode = IntaractiveMode;
@@ -238,7 +239,7 @@ namespace fastoredis
         input_->setText(text);
     }
 
-    void BaseShellWidget::execute(const QString& text)
+    void BaseShellWidget::executeText(const QString& text)
     {
         input_->setText(text);
         execute();

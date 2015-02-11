@@ -101,23 +101,24 @@ namespace fastoredis
 
         QToolButton* loadAndInstall = new QToolButton;
         loadAndInstall->setIcon(icon);
-        VERIFY(connect(loadAndInstall, SIGNAL(clicked()), this, SLOT(loadAndInstallFile())));
+        VERIFY(connect(loadAndInstall, &QToolButton::clicked, this, &BaseConsoleDialog::loadAndInstallFile));
         toolBarLayout->addWidget(loadAndInstall);
         loadAndInstall->setEnabled(isExecuteEnabled);
 
         QToolButton* loadButton = new QToolButton;
         loadButton->setIcon(GuiFactory::instance().loadIcon());
-        VERIFY(connect(loadButton, SIGNAL(clicked()), this, SLOT(loadFromFile())));
+        typedef void (BaseConsoleDialog::*load)();
+        VERIFY(connect(loadButton, &QToolButton::clicked, this, static_cast<load>(&BaseConsoleDialog::loadFromFile)));
         toolBarLayout->addWidget(loadButton);
 
         QToolButton* saveButton = new QToolButton;
         saveButton->setIcon(GuiFactory::instance().saveIcon());
-        VERIFY(connect(saveButton, SIGNAL(clicked()), this, SLOT(saveToFile())));
+        VERIFY(connect(saveButton, &QToolButton::clicked, this, &BaseConsoleDialog::saveToFile));
         toolBarLayout->addWidget(saveButton);
 
         QToolButton* saveAsButton = new QToolButton;
         saveAsButton->setIcon(GuiFactory::instance().saveAsIcon());
-        VERIFY(connect(saveAsButton, SIGNAL(clicked()), this, SLOT(saveToFileAs())));
+        VERIFY(connect(saveAsButton, &QToolButton::clicked, this, &BaseConsoleDialog::saveToFileAs));
         toolBarLayout->addWidget(saveAsButton);
 
         QToolButton* executeButton = new QToolButton;
@@ -126,17 +127,17 @@ namespace fastoredis
         executeButton->setPopupMode(QToolButton::MenuButtonPopup);
         QMenu* menu = new QMenu(trMenu, this);
         QAction* execArgs = menu->addAction(trExecuteWithArgs);
-        VERIFY(connect(execArgs, SIGNAL(triggered()), SLOT(executeWithArgs())));
+        VERIFY(connect(execArgs, &QAction::triggered, this, &BaseConsoleDialog::executeWithArgs));
         executeButton->setMenu(menu);
 
-        VERIFY(connect(executeButton, SIGNAL(clicked()), this, SLOT(execute())));
+        VERIFY(connect(executeButton, &QToolButton::clicked, this, static_cast<load>(&BaseConsoleDialog::execute)));
         toolBarLayout->addWidget(executeButton);
 
         QToolButton *stopButton = new QToolButton;
         stopButton->setIcon(GuiFactory::instance().stopIcon());
         stopButton->setEnabled(isExecuteEnabled);
 
-        VERIFY(connect(stopButton, SIGNAL(clicked()), this, SLOT(stop())));
+        VERIFY(connect(stopButton, &QToolButton::clicked, this, &BaseConsoleDialog::stop));
         toolBarLayout->addWidget(stopButton);
 
         QSplitter *splitter = new QSplitter;

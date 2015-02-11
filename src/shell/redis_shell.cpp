@@ -27,7 +27,7 @@ namespace fastoredis
         setAutoCompletionSource(QsciScintilla::AcsAPIs);
         setAutoCompletionCaseSensitivity(false);
 
-        VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
+        VERIFY(connect(this, &RedisShell::customContextMenuRequested, this, &RedisShell::showContextMenu));
     }
 
     void RedisShell::showAutocompletion()

@@ -16,32 +16,32 @@ namespace fastoredis
     {
         newShellAction_ = new QAction(this);
         newShellAction_->setShortcut(newTabKey);
-        VERIFY(connect(newShellAction_, SIGNAL(triggered()), this , SIGNAL(createdNewTab())));
+        VERIFY(connect(newShellAction_, &QAction::triggered, this , &MainTabBar::createdNewTab));
 
         nextTabAction_ = new QAction(this);
         nextTabAction_->setShortcut(nextTabKey);
-        VERIFY(connect(nextTabAction_, SIGNAL(triggered()), this , SIGNAL(nextTab())));
+        VERIFY(connect(nextTabAction_, &QAction::triggered, this , &MainTabBar::nextTab));
 
         prevTabAction_ = new QAction(this);
         prevTabAction_->setShortcut(prevTabKey);
-        VERIFY(connect(prevTabAction_, SIGNAL(triggered()), this , SIGNAL(prevTab())));
+        VERIFY(connect(prevTabAction_, &QAction::triggered, this , &MainTabBar::prevTab));
 
         reloadShellAction_ = new QAction(this);
         reloadShellAction_->setShortcut(refreshKey);
-        VERIFY(connect(reloadShellAction_, SIGNAL(triggered()), this , SIGNAL(reloadedTab())));
+        VERIFY(connect(reloadShellAction_, &QAction::triggered, this , &MainTabBar::reloadedTab));
 
         duplicateShellAction_ = new QAction(this);
-        VERIFY(connect(duplicateShellAction_, SIGNAL(triggered()), this , SIGNAL(duplicatedTab())));
+        VERIFY(connect(duplicateShellAction_, &QAction::triggered, this , &MainTabBar::duplicatedTab));
 
         closeShellAction_ = new QAction(this);
         closeShellAction_->setShortcut(closeKey);
-        VERIFY(connect(closeShellAction_, SIGNAL(triggered()), this , SIGNAL(closedTab())));
+        VERIFY(connect(closeShellAction_, &QAction::triggered, this , &MainTabBar::closedTab));
 
         closeOtherShellsAction_ = new QAction(this);
-        VERIFY(connect(closeOtherShellsAction_, SIGNAL(triggered()), this , SIGNAL(closedOtherTabs())));
+        VERIFY(connect(closeOtherShellsAction_, &QAction::triggered, this , &MainTabBar::closedOtherTabs));
 
         setContextMenuPolicy(Qt::CustomContextMenu);
-        VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
+        VERIFY(connect(this, &MainTabBar::customContextMenuRequested, this, &MainTabBar::showContextMenu));
 
         retranslateUi();
     }

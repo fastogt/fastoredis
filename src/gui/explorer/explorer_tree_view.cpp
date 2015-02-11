@@ -28,44 +28,44 @@ namespace fastoredis
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
         connectAction_ = new QAction(this);
-        VERIFY(connect(connectAction_, SIGNAL(triggered()), SLOT(connectDisconnectToServer())));
+        VERIFY(connect(connectAction_, &QAction::triggered, this, &ExplorerTreeView::connectDisconnectToServer));
         openConsoleAction_ = new QAction(this);
-        VERIFY(connect(openConsoleAction_, SIGNAL(triggered()), SLOT(openConsole())));
+        VERIFY(connect(openConsoleAction_, &QAction::triggered, this, &ExplorerTreeView::openConsole));
         loadDatabaseAction_ = new QAction(this);
-        VERIFY(connect(loadDatabaseAction_, SIGNAL(triggered()), SLOT(loadDatabases())));
+        VERIFY(connect(loadDatabaseAction_, &QAction::triggered, this, &ExplorerTreeView::loadDatabases));
 
         infoServerAction_ = new QAction(this);
-        VERIFY(connect(infoServerAction_, SIGNAL(triggered()), SLOT(openInfoServerDialog())));
+        VERIFY(connect(infoServerAction_, &QAction::triggered, this, &ExplorerTreeView::openInfoServerDialog));
 
         propertyServerAction_ = new QAction(this);
-        VERIFY(connect(propertyServerAction_, SIGNAL(triggered()), SLOT(openPropertyServerDialog())));
+        VERIFY(connect(propertyServerAction_, &QAction::triggered, this, &ExplorerTreeView::openPropertyServerDialog));
 
         historyServerAction_ = new QAction(this);
-        VERIFY(connect(historyServerAction_, SIGNAL(triggered()), SLOT(openHistoryServerDialog())));
+        VERIFY(connect(historyServerAction_, &QAction::triggered, this, &ExplorerTreeView::openHistoryServerDialog));
 
         closeAction_ = new QAction(this);
-        VERIFY(connect(closeAction_, SIGNAL(triggered()), SLOT(closeConnection())));
+        VERIFY(connect(closeAction_, &QAction::triggered, this, &ExplorerTreeView::closeConnection));
 
         importAction_ = new QAction(this);
-        VERIFY(connect(importAction_, SIGNAL(triggered()), SLOT(importServer())));
+        VERIFY(connect(importAction_, &QAction::triggered, this, &ExplorerTreeView::importServer));
 
         backupAction_ = new QAction(this);
-        VERIFY(connect(backupAction_, SIGNAL(triggered()), SLOT(backupServer())));
+        VERIFY(connect(backupAction_, &QAction::triggered, this, &ExplorerTreeView::backupServer));
 
         shutdownAction_ = new QAction(this);
-        VERIFY(connect(shutdownAction_, SIGNAL(triggered()), SLOT(shutdownServer())));
+        VERIFY(connect(shutdownAction_, &QAction::triggered, this, &ExplorerTreeView::shutdownServer));
 
         loadContentAction_ = new QAction(this);
-        VERIFY(connect(loadContentAction_, SIGNAL(triggered()), SLOT(loadContentDb())));
+        VERIFY(connect(loadContentAction_, &QAction::triggered, this, &ExplorerTreeView::loadContentDb));
 
         setDefaultDbAction_ = new QAction(this);
-        VERIFY(connect(setDefaultDbAction_, SIGNAL(triggered()), SLOT(setDefaultDb())));
+        VERIFY(connect(setDefaultDbAction_, &QAction::triggered, this, &ExplorerTreeView::setDefaultDb));
 
         getValueAction_ = new QAction(this);
-        VERIFY(connect(getValueAction_, SIGNAL(triggered()), SLOT(getValue())));
+        VERIFY(connect(getValueAction_, &QAction::triggered, this, &ExplorerTreeView::getValue));
 
         deleteKeyAction_ = new QAction(this);
-        VERIFY(connect(deleteKeyAction_, SIGNAL(triggered()), SLOT(deleteKey())));
+        VERIFY(connect(deleteKeyAction_, &QAction::triggered, this, &ExplorerTreeView::deleteKey));
 
         retranslateUi();
     }
@@ -250,14 +250,14 @@ namespace fastoredis
             return;
         }
 
-        VERIFY(connect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
-        VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
-        VERIFY(connect(server.get(), SIGNAL(startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &)), this, SLOT(startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &))));
-        VERIFY(connect(server.get(), SIGNAL(finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &)), this, SLOT(finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &))));
-        VERIFY(connect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabaseContentRequest &)), this, SLOT(startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &))));
-        VERIFY(connect(server.get(), SIGNAL(finishedLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &)), this, SLOT(finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &))));
-        VERIFY(connect(server.get(), SIGNAL(startedExecuteCommand(const EventsInfo::CommandRequest &)), this, SLOT(startExecuteCommand(const EventsInfo::CommandRequest &))));
-        VERIFY(connect(server.get(), SIGNAL(finishedExecuteCommand(const EventsInfo::CommandResponce &)), this, SLOT(finishExecuteCommand(const EventsInfo::CommandResponce &))));
+        VERIFY(connect(server.get(), &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
+        VERIFY(connect(server.get(), &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
+        VERIFY(connect(server.get(), &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
+        VERIFY(connect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
+        VERIFY(connect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
+        VERIFY(connect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
+        VERIFY(connect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
+        VERIFY(connect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
 
         mod->addServer(server);
     }
@@ -275,14 +275,14 @@ namespace fastoredis
             return;
         }
 
-        VERIFY(disconnect(server.get(), SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest &))));
-        VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &)), this, SLOT(finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &))));
-        VERIFY(disconnect(server.get(), SIGNAL(startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &)), this, SLOT(startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest &))));
-        VERIFY(disconnect(server.get(), SIGNAL(finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &)), this, SLOT(finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce &))));
-        VERIFY(disconnect(server.get(), SIGNAL(startedLoadDataBaseContent(const EventsInfo::LoadDatabaseContentRequest &)), this, SLOT(startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &))));
-        VERIFY(disconnect(server.get(), SIGNAL(finishedLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &)), this, SLOT(finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &))));
-        VERIFY(disconnect(server.get(), SIGNAL(startedExecuteCommand(const EventsInfo::CommandRequest &)), this, SLOT(startExecuteCommand(const EventsInfo::CommandRequest &))));
-        VERIFY(disconnect(server.get(), SIGNAL(finishedExecuteCommand(const EventsInfo::CommandResponce &)), this, SLOT(finishExecuteCommand(const EventsInfo::CommandResponce &))));
+        VERIFY(disconnect(server.get(), &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
+        VERIFY(disconnect(server.get(), &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
+        VERIFY(disconnect(server.get(), &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
+        VERIFY(disconnect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
+        VERIFY(disconnect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
+        VERIFY(disconnect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
+        VERIFY(disconnect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
+        VERIFY(disconnect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
 
         mod->removeServer(server);
         emit closeServer(server);
@@ -474,9 +474,9 @@ namespace fastoredis
         }
 
         InfoServerDialog infDialog(QString("%1 info").arg(server->name()), server->type(), this);
-        VERIFY(connect(server.get(), SIGNAL(startedLoadServerInfo(const EventsInfo::ServerInfoRequest &)), &infDialog, SLOT(startServerInfo(const EventsInfo::ServerInfoRequest &))));
-        VERIFY(connect(server.get(), SIGNAL(finishedLoadServerInfo(const EventsInfo::ServerInfoResponce &)), &infDialog, SLOT(finishServerInfo(const EventsInfo::ServerInfoResponce &))));
-        VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverInfo())));
+        VERIFY(connect(server.get(), &IServer::startedLoadServerInfo, &infDialog, &InfoServerDialog::startServerInfo));
+        VERIFY(connect(server.get(), &IServer::finishedLoadServerInfo, &infDialog, &InfoServerDialog::finishServerInfo));
+        VERIFY(connect(&infDialog, &InfoServerDialog::showed, server.get(), &IServer::serverInfo));
         infDialog.exec();
     }
 
@@ -498,12 +498,12 @@ namespace fastoredis
         }
 
         PropertyServerDialog infDialog(QString("%1 properties").arg(server->name()), server->type(), this);
-        VERIFY(connect(server.get(), SIGNAL(startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest &)), &infDialog, SLOT(startServerProperty(const EventsInfo::ServerPropertyInfoRequest &))));
-        VERIFY(connect(server.get(), SIGNAL(finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerProperty(const EventsInfo::ServerPropertyInfoResponce &))));
-        VERIFY(connect(server.get(), SIGNAL(startedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoRequest &)), &infDialog, SLOT(startServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoRequest &))));
-        VERIFY(connect(server.get(), SIGNAL(finishedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoResponce &)), &infDialog, SLOT(finishServerChangeProperty(const EventsInfo::ChangeServerPropertyInfoResponce &))));
-        VERIFY(connect(&infDialog, SIGNAL(changedProperty(const PropertyType&)), server.get(), SLOT(changeProperty(const PropertyType&))));
-        VERIFY(connect(&infDialog, SIGNAL(showed()), server.get(), SLOT(serverProperty())));
+        VERIFY(connect(server.get(), &IServer::startedLoadServerProperty, &infDialog, &PropertyServerDialog::startServerProperty));
+        VERIFY(connect(server.get(), &IServer::finishedLoadServerProperty, &infDialog, &PropertyServerDialog::finishServerProperty));
+        VERIFY(connect(server.get(), &IServer::startedChangeServerProperty, &infDialog, &PropertyServerDialog::startServerChangeProperty));
+        VERIFY(connect(server.get(), &IServer::finishedChangeServerProperty, &infDialog, &PropertyServerDialog::finishServerChangeProperty));
+        VERIFY(connect(&infDialog, &PropertyServerDialog::changedProperty, server.get(), &IServer::changeProperty));
+        VERIFY(connect(&infDialog, &PropertyServerDialog::showed, server.get(), &IServer::serverProperty));
         infDialog.exec();
     }
 
@@ -525,10 +525,10 @@ namespace fastoredis
         }
 
         ServerHistoryDialog histDialog(QString("%1 history").arg(server->name()), server->type(), this);
-        VERIFY(connect(server.get(), SIGNAL(startedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &)), &histDialog, SLOT(startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest &))));
-        VERIFY(connect(server.get(), SIGNAL(finishedLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &)), &histDialog, SLOT(finishLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryResponce &))));
-        VERIFY(connect(server.get(), SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), &histDialog, SLOT(snapShotAdd(ServerInfoSnapShoot ))));
-        VERIFY(connect(&histDialog, SIGNAL(showed()), server.get(), SLOT(requestHistoryInfo())));
+        VERIFY(connect(server.get(), &IServer::startedLoadServerHistoryInfo, &histDialog, &ServerHistoryDialog::startLoadServerHistoryInfo));
+        VERIFY(connect(server.get(), &IServer::finishedLoadServerHistoryInfo, &histDialog, &ServerHistoryDialog::finishLoadServerHistoryInfo));
+        VERIFY(connect(server.get(), &IServer::serverInfoSnapShoot, &histDialog, &ServerHistoryDialog::snapShotAdd));
+        VERIFY(connect(&histDialog, &ServerHistoryDialog::showed, server.get(), &IServer::requestHistoryInfo));
         histDialog.exec();
     }
 

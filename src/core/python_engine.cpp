@@ -501,7 +501,7 @@ emit executeProgress(100);
         QThread* thread = new PythonQThread(worker);
         worker->moveToThread(thread);
 
-        VERIFY(QObject::connect(thread, SIGNAL(started()), worker, SLOT(init())));
+        VERIFY(QObject::connect(thread, &QThread::started, worker, &PythonWorker::init));
         thread->start();
 
         return worker;

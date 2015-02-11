@@ -48,7 +48,7 @@ namespace fastoredis
         QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
         QPushButton *closeButton = buttonBox->button(QDialogButtonBox::Close);
         buttonBox->addButton(closeButton, QDialogButtonBox::ButtonRole(QDialogButtonBox::RejectRole | QDialogButtonBox::AcceptRole));
-        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
+        VERIFY(connect(buttonBox, &QDialogButtonBox::rejected, this, &AboutDialog::reject));
 
         QIcon icon = GuiFactory::instance().mainWindowIcon();
         QPixmap iconPixmap = icon.pixmap(48, 48);

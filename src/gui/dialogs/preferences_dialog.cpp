@@ -87,8 +87,8 @@ namespace fastoredis
         QDialogButtonBox *buttonBox = new QDialogButtonBox;
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
-        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
+        VERIFY(connect(buttonBox, &QDialogButtonBox::accepted, this, &PreferencesDialog::accept));
+        VERIFY(connect(buttonBox, &QDialogButtonBox::rejected, this, &PreferencesDialog::reject));
         layout->addWidget(buttonBox);
         setMinimumSize(QSize(min_width, min_height));
         setLayout(layout);

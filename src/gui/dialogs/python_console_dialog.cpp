@@ -29,9 +29,9 @@ namespace fastoredis
         using namespace translations;
         worker_ = PythonEngine::instance().createWorker();
 
-        VERIFY(connect(worker_, SIGNAL(pythonStdOut(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));
-        VERIFY(connect(worker_, SIGNAL(pythonStdErr(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));
-        VERIFY(connect(worker_, SIGNAL(executeProgress(int)), this, SLOT(executeProgressChanged(int))));
+        VERIFY(connect(worker_, &PythonWorker::pythonStdOut, output_, &FastoEditor::append, Qt::QueuedConnection));
+        VERIFY(connect(worker_, &PythonWorker::pythonStdErr, output_, &FastoEditor::append, Qt::QueuedConnection));
+        VERIFY(connect(worker_, &PythonWorker::executeProgress, this, &PythonConsoleDialog::executeProgressChanged));
 
         retranslateUi();
     }

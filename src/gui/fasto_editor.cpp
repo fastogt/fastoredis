@@ -64,7 +64,7 @@ namespace fastoredis
         setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        VERIFY(connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineNumbersMarginWidth())));
+        VERIFY(connect(this, &FastoEditor::linesChanged, this, &FastoEditor::updateLineNumbersMarginWidth));
     }
 
     void FastoEditor::updateLineNumbersMarginWidth()
@@ -127,17 +127,17 @@ namespace fastoredis
         }
 
         if(model_){
-            VERIFY(disconnect(model_, SIGNAL(destroyed()), this, SLOT(modelDestroyed())));
-            VERIFY(disconnect(model_, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex))));
-            VERIFY(disconnect(model_, SIGNAL(headerDataChanged(Qt::Orientation,int,int)), this, SLOT(headerDataChanged())));
-            VERIFY(disconnect(model_, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int))));
-            VERIFY(disconnect(model_, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int))));
-            VERIFY(disconnect(model_, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(rowsRemoved(QModelIndex,int,int))));
-            VERIFY(disconnect(model_, SIGNAL(columnsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(columnsAboutToBeRemoved(QModelIndex,int,int))));
-            VERIFY(disconnect(model_, SIGNAL(columnsRemoved(QModelIndex,int,int)), this, SLOT(columnsRemoved(QModelIndex,int,int))));
-            VERIFY(disconnect(model_, SIGNAL(columnsInserted(QModelIndex,int,int)), this, SLOT(columnsInserted(QModelIndex,int,int))));
-            VERIFY(disconnect(model_, SIGNAL(modelReset()), this, SLOT(reset())));
-            VERIFY(disconnect(model_, SIGNAL(layoutChanged()), this, SLOT(layoutChanged())));
+            VERIFY(disconnect(model_, &QAbstractItemModel::destroyed, this, &FastoEditorOutput::modelDestroyed));
+            VERIFY(disconnect(model_, &QAbstractItemModel::dataChanged, this, &FastoEditorOutput::dataChanged));
+            VERIFY(disconnect(model_, &QAbstractItemModel::headerDataChanged, this, &FastoEditorOutput::headerDataChanged));
+            VERIFY(disconnect(model_, &QAbstractItemModel::rowsInserted, this, &FastoEditorOutput::rowsInserted));
+            VERIFY(disconnect(model_, &QAbstractItemModel::rowsAboutToBeRemoved, this, &FastoEditorOutput::rowsAboutToBeRemoved));
+            VERIFY(disconnect(model_, &QAbstractItemModel::rowsRemoved, this, &FastoEditorOutput::rowsRemoved));
+            VERIFY(disconnect(model_, &QAbstractItemModel::columnsAboutToBeRemoved, this, &FastoEditorOutput::columnsAboutToBeRemoved));
+            VERIFY(disconnect(model_, &QAbstractItemModel::columnsRemoved, this, &FastoEditorOutput::columnsRemoved));
+            VERIFY(disconnect(model_, &QAbstractItemModel::columnsInserted, this, &FastoEditorOutput::columnsInserted));
+            VERIFY(disconnect(model_, &QAbstractItemModel::modelReset, this, &FastoEditorOutput::reset));
+            VERIFY(disconnect(model_, &QAbstractItemModel::layoutChanged, this, &FastoEditorOutput::layoutChanged));
         }
 
         model_ = model;
@@ -152,17 +152,17 @@ namespace fastoredis
                    "The parent of a top level index should be invalid");
 
         if (model_) {
-            VERIFY(connect(model_, SIGNAL(destroyed()), this, SLOT(modelDestroyed())));
-            VERIFY(connect(model_, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex))));
-            VERIFY(connect(model_, SIGNAL(headerDataChanged(Qt::Orientation,int,int)), this, SLOT(headerDataChanged())));
-            VERIFY(connect(model_, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int))));
-            VERIFY(connect(model_, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int))));
-            VERIFY(connect(model_, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(rowsRemoved(QModelIndex,int,int))));
-            VERIFY(connect(model_, SIGNAL(columnsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(columnsAboutToBeRemoved(QModelIndex,int,int))));
-            VERIFY(connect(model_, SIGNAL(columnsRemoved(QModelIndex,int,int)), this, SLOT(columnsRemoved(QModelIndex,int,int))));
-            VERIFY(connect(model_, SIGNAL(columnsInserted(QModelIndex,int,int)),this, SLOT(columnsInserted(QModelIndex,int,int))));
-            VERIFY(connect(model_, SIGNAL(modelReset()), this, SLOT(reset())));
-            VERIFY(connect(model_, SIGNAL(layoutChanged()), this, SLOT(layoutChanged())));
+            VERIFY(connect(model_, &QAbstractItemModel::destroyed, this, &FastoEditorOutput::modelDestroyed));
+            VERIFY(connect(model_, &QAbstractItemModel::dataChanged, this, &FastoEditorOutput::dataChanged));
+            VERIFY(connect(model_, &QAbstractItemModel::headerDataChanged, this, &FastoEditorOutput::headerDataChanged));
+            VERIFY(connect(model_, &QAbstractItemModel::rowsInserted, this, &FastoEditorOutput::rowsInserted));
+            VERIFY(connect(model_, &QAbstractItemModel::rowsAboutToBeRemoved, this, &FastoEditorOutput::rowsAboutToBeRemoved));
+            VERIFY(connect(model_, &QAbstractItemModel::rowsRemoved, this, &FastoEditorOutput::rowsRemoved));
+            VERIFY(connect(model_, &QAbstractItemModel::columnsAboutToBeRemoved, this, &FastoEditorOutput::columnsAboutToBeRemoved));
+            VERIFY(connect(model_, &QAbstractItemModel::columnsRemoved, this, &FastoEditorOutput::columnsRemoved));
+            VERIFY(connect(model_, &QAbstractItemModel::columnsInserted, this, &FastoEditorOutput::columnsInserted));
+            VERIFY(connect(model_, &QAbstractItemModel::modelReset, this, &FastoEditorOutput::reset));
+            VERIFY(connect(model_, &QAbstractItemModel::layoutChanged, this, &FastoEditorOutput::layoutChanged));
         }
 
         reset();
@@ -285,7 +285,7 @@ namespace fastoredis
     FastoEditorShell::FastoEditorShell(const QString &version, QWidget *parent)
         : FastoEditor(parent), version_(version)
     {
-        VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
+        VERIFY(connect(this, &FastoEditorShell::customContextMenuRequested, this, &FastoEditorShell::showContextMenu));
     }
 
     QString FastoEditorShell::version() const

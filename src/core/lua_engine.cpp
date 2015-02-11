@@ -355,7 +355,7 @@ namespace fastoredis
         QThread* thread = new LuaQThread(worker);
         worker->moveToThread(thread);
 
-        VERIFY(QObject::connect(thread, SIGNAL(started()), worker, SLOT(init())));
+        VERIFY(QObject::connect(thread, &QThread::started, worker, &LuaWorker::init));
         thread->start();
 
         return worker;

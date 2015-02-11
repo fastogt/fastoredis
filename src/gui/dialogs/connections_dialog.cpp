@@ -72,8 +72,8 @@ namespace fastoredis
         //listWidget_->setDragEnabled(true);
         //listWidget_->setDragDropMode(QAbstractItemView::InternalMove);
         setMinimumSize(QSize(min_width, min_height));
-        VERIFY(connect(listWidget_, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept())));
-        VERIFY(connect(listWidget_, SIGNAL(itemSelectionChanged()), this, SLOT(connectionSelectChange())));
+        VERIFY(connect(listWidget_, &QTreeWidget::itemDoubleClicked, this, &ConnectionsDialog::accept));
+        VERIFY(connect(listWidget_, &QTreeWidget::itemSelectionChanged, this, &ConnectionsDialog::connectionSelectChange));
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
@@ -82,8 +82,8 @@ namespace fastoredis
         acButton_ = buttonBox->button(QDialogButtonBox::Ok);
         acButton_->setEnabled(false);
 
-        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
-        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
+        VERIFY(connect(buttonBox, &QDialogButtonBox::accepted, this, &ConnectionsDialog::accept));
+        VERIFY(connect(buttonBox, &QDialogButtonBox::rejected, this, &ConnectionsDialog::reject));
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
         bottomLayout->addWidget(buttonBox);
@@ -95,15 +95,16 @@ namespace fastoredis
         toolBarLayout->addWidget(savebar);
 
         QAction *addB = new QAction(GuiFactory::instance().loadIcon(), trAddConnection, savebar);
-        VERIFY(connect(addB, SIGNAL(triggered()), this, SLOT(add())));
+        typedef void(QAction::*trig)(bool);
+        VERIFY(connect(addB, static_cast<trig>(&QAction::triggered), this, &ConnectionsDialog::add));
         savebar->addAction(addB);
 
         QAction *rmB = new QAction(GuiFactory::instance().removeIcon(), trRemoveConnection, savebar);
-        VERIFY(connect(rmB, SIGNAL(triggered()), this, SLOT(remove())));
+        VERIFY(connect(rmB, static_cast<trig>(&QAction::triggered), this, &ConnectionsDialog::remove));
         savebar->addAction(rmB);
 
         QAction *editB = new QAction(GuiFactory::instance().editIcon(), trEditConnection, savebar);
-        VERIFY(connect(editB, SIGNAL(triggered()), this, SLOT(edit())));
+        VERIFY(connect(editB, static_cast<trig>(&QAction::triggered), this, &ConnectionsDialog::edit));
         savebar->addAction(editB);
 
         QSpacerItem *hSpacer = new QSpacerItem(300, 0, QSizePolicy::Expanding);
@@ -121,7 +122,7 @@ namespace fastoredis
         SettingsManager::ConnectionSettingsContainerType connections = SettingsManager::instance().connections();
         for (SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
             IConnectionSettingsBaseSPtr connectionModel = (*it);
-            add(connectionModel);
+            addConnection(connectionModel);
         }
 
         // Highlight first item
@@ -136,7 +137,7 @@ namespace fastoredis
         acButton_->setEnabled(isEnable);
     }
 
-    void ConnectionsDialog::add(const IConnectionSettingsBaseSPtr& con)
+    void ConnectionsDialog::addConnection(const IConnectionSettingsBaseSPtr& con)
     {
         ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
         listWidget_->addTopLevelItem(item);
@@ -149,7 +150,7 @@ namespace fastoredis
         IConnectionSettingsBaseSPtr p = dlg.connection();
         if(result == QDialog::Accepted && p){
             SettingsManager::instance().addConnection(p);
-            add(p);
+            addConnection(p);
         }
     }
 
@@ -191,7 +192,7 @@ namespace fastoredis
             delete currentItem;
             SettingsManager::instance().removeConnection(oldConnection);            
             SettingsManager::instance().addConnection(newConnection);
-            add(newConnection);
+            addConnection(newConnection);
         }
     }
 

@@ -22,18 +22,18 @@ namespace fastoredis
     public:
         OutputWidget(IServerSPtr server, QWidget* parent = 0);
 
-    private Q_SLOTS:
-        void setTreeView();
-        void setTableView();
-        void setTextView();
-
+    public Q_SLOTS:
         void rootCreate(const EventsInfo::CommandRootCreatedInfo& res);
         void rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res);
         void startChangeDbValue(const EventsInfo::ChangeDbValueRequest& req);
         void finishChangeDbValue(const EventsInfo::ChangeDbValueResponce& res);
-
         void addChild(FastoObject* child);
         void itemUpdate(FastoObject*, const QString& newValue);
+
+    private Q_SLOTS:
+        void setTreeView();
+        void setTableView();
+        void setTextView();
 
     private:
         void syncWithSettings();

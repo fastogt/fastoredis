@@ -56,12 +56,12 @@ namespace fastoredis
         msgPackRadioButton_ = new QRadioButton;
         gzipRadioButton_ = new QRadioButton;
 
-        VERIFY(connect(jsonRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
-        VERIFY(connect(csvRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
-        VERIFY(connect(rawRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
-        VERIFY(connect(hexRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
-        VERIFY(connect(msgPackRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
-        VERIFY(connect(gzipRadioButton_, SIGNAL(toggled(bool)), this, SLOT(viewChanged(bool))));
+        VERIFY(connect(jsonRadioButton_, &QRadioButton::toggled, this, &FastoTextView::viewChanged));
+        VERIFY(connect(csvRadioButton_, &QRadioButton::toggled, this, &FastoTextView::viewChanged));
+        VERIFY(connect(rawRadioButton_, &QRadioButton::toggled, this, &FastoTextView::viewChanged));
+        VERIFY(connect(hexRadioButton_, &QRadioButton::toggled, this, &FastoTextView::viewChanged));
+        VERIFY(connect(msgPackRadioButton_, &QRadioButton::toggled, this, &FastoTextView::viewChanged));
+        VERIFY(connect(gzipRadioButton_, &QRadioButton::toggled, this, &FastoTextView::viewChanged));
 
         QHBoxLayout* radLaout = new QHBoxLayout;
         radLaout->addWidget(jsonRadioButton_);
@@ -78,9 +78,9 @@ namespace fastoredis
 
         findPanel_->hide();
 
-        VERIFY(connect(close_, SIGNAL(clicked()), findPanel_, SLOT(hide())));
-        VERIFY(connect(next_, SIGNAL(clicked()), this, SLOT(goToNextElement())));
-        VERIFY(connect(prev_, SIGNAL(clicked()), this, SLOT(goToPrevElement())));
+        VERIFY(connect(close_, &QToolButton::clicked, findPanel_, &QFrame::hide));
+        VERIFY(connect(next_, &QPushButton::clicked, this, &FastoTextView::goToNextElement));
+        VERIFY(connect(prev_, &QPushButton::clicked, this, &FastoTextView::goToPrevElement));
 
         jsonRadioButton_->setChecked(true);
         retranslateUi();

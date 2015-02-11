@@ -14,7 +14,7 @@ namespace fastoredis
         setSelectionBehavior(QAbstractItemView::SelectRows);
 
         setContextMenuPolicy(Qt::CustomContextMenu);
-        VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
+        VERIFY(connect(this, &FastoTreeView::customContextMenuRequested, this, &FastoTreeView::showContextMenu));
     }
 
     void FastoTreeView::showContextMenu(const QPoint& point)

@@ -20,7 +20,7 @@ namespace fastoredis
 
         propertyes_table_ = new QTableView;
         PropertyTableModel *mod = new PropertyTableModel(propertyes_table_);
-        VERIFY(connect(mod, SIGNAL(changedProperty(const PropertyType &)), this, SIGNAL(changedProperty(const PropertyType &))));
+        VERIFY(connect(mod, &PropertyTableModel::changedProperty, this, &PropertyServerDialog::changedProperty));
         propertyes_table_->setModel(mod);
 
         QHBoxLayout *mainL = new QHBoxLayout;

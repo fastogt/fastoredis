@@ -38,8 +38,9 @@ namespace fastoredis
         serverInfoGroupsNames_ = new QComboBox;
         serverInfoFields_ = new QComboBox;
 
-        VERIFY(connect(serverInfoGroupsNames_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshInfoFields(int)) ));
-        VERIFY(connect(serverInfoFields_, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshGraph(int)) ));
+        typedef void (QComboBox::*curc)(int);
+        VERIFY(connect(serverInfoGroupsNames_, static_cast<curc>(&QComboBox::currentIndexChanged), this, &ServerHistoryDialog::refreshInfoFields ));
+        VERIFY(connect(serverInfoFields_, static_cast<curc>(&QComboBox::currentIndexChanged), this, &ServerHistoryDialog::refreshGraph ));
         if(type_ == REDIS){
             for(int i = 0; i < redisHeaders.size(); ++i){
                 serverInfoGroupsNames_->addItem(common::convertFromString<QString>(redisHeaders[i]));

@@ -37,11 +37,11 @@ namespace fastoredis
         QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
         QPushButton *closeButton = buttonBox->button(QDialogButtonBox::Close);
         buttonBox->addButton(closeButton, QDialogButtonBox::ButtonRole(QDialogButtonBox::RejectRole | QDialogButtonBox::AcceptRole));
-        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
+        VERIFY(connect(buttonBox, &QDialogButtonBox::rejected, this, &EncodeDecodeDialog::reject));
 
         QToolButton* decode = new QToolButton;
         decode->setIcon(GuiFactory::instance().executeIcon());
-        VERIFY(connect(decode, SIGNAL(clicked()), this, SLOT(decode())));
+        VERIFY(connect(decode, &QToolButton::clicked, this, &EncodeDecodeDialog::decode));
 
         decoders_ = new QComboBox;
         std::vector<std::string> sup = supportedEDcoderTypes();

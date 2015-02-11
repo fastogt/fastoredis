@@ -29,9 +29,9 @@ namespace fastoredis
         using namespace translations;
         worker_ = LuaEngine::instance().createWorker();
 
-        VERIFY(connect(worker_, SIGNAL(luaStdOut(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));
-        VERIFY(connect(worker_, SIGNAL(luaStdErr(const QString&)), output_, SLOT(append(const QString&)), Qt::QueuedConnection));
-        VERIFY(connect(worker_, SIGNAL(executeProgress(int)), this, SLOT(executeProgressChanged(int))));
+        VERIFY(connect(worker_, &LuaWorker::luaStdOut, output_, &FastoEditor::append, Qt::QueuedConnection));
+        VERIFY(connect(worker_, &LuaWorker::luaStdErr, output_, &FastoEditor::append, Qt::QueuedConnection));
+        VERIFY(connect(worker_, &LuaWorker::executeProgress, this, &LuaConsoleDialog::executeProgressChanged));
 
         retranslateUi();
     }

@@ -35,9 +35,9 @@ namespace fastoredis
         : QWidget(parent)
     {
         commonModel_ = new FastoCommonModel(this);
-        VERIFY(connect(commonModel_, SIGNAL(changedValue(const DbValue&, const std::string&)), server.get(), SLOT(changeValue(const DbValue&, const std::string&)), Qt::DirectConnection));
-        VERIFY(connect(server.get(), SIGNAL(startedChangeDbValue(const EventsInfo::ChangeDbValueRequest&)), this, SLOT(startChangeDbValue(const EventsInfo::ChangeDbValueRequest&)), Qt::DirectConnection));
-        VERIFY(connect(server.get(), SIGNAL(finishedChangeDbValue(const EventsInfo::ChangeDbValueResponce&)), this, SLOT(finishChangeDbValue(const EventsInfo::ChangeDbValueResponce&)), Qt::DirectConnection));
+        VERIFY(connect(commonModel_, &FastoCommonModel::changedValue, server.get(), &IServer::changeValue, Qt::DirectConnection));
+        VERIFY(connect(server.get(), &IServer::startedChangeDbValue, this, &OutputWidget::startChangeDbValue, Qt::DirectConnection));
+        VERIFY(connect(server.get(), &IServer::finishedChangeDbValue, this, &OutputWidget::finishChangeDbValue, Qt::DirectConnection));
 
 
         treeView_ = new FastoTreeView;

@@ -84,7 +84,7 @@ namespace fastoredis
         virtual void showAutocompletion();
         virtual void hideAutocompletion();
 
-    private Q_SLOTS:
+    protected Q_SLOTS:
         void showContextMenu(const QPoint& pt);
 
     protected:

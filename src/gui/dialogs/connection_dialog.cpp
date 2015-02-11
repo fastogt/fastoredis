@@ -58,7 +58,7 @@ namespace fastoredis
             typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(connection_->connectionType())));
         }
 
-        VERIFY(connect(typeConnection_, SIGNAL(currentTextChanged(const QString&)), this, SLOT(typeConnectionChange(const QString&))));
+        VERIFY(connect(typeConnection_, &QComboBox::currentTextChanged, this, &ConnectionDialog::typeConnectionChange));
 
         logging_ = new QCheckBox;
         if(connection_){
@@ -114,13 +114,15 @@ namespace fastoredis
         else {
             security_->setCurrentText(trPassword);
         }
-        VERIFY(connect(security_, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(securityChange(const QString&))));
+
+        typedef void (QComboBox::*ind)(const QString&);
+        VERIFY(connect(security_, static_cast<ind>(&QComboBox::currentIndexChanged), this, &ConnectionDialog::securityChange));
 
         passwordBox_ = new QLineEdit;
         passwordBox_->setText(common::convertFromString<QString>(info.password_));
         passwordBox_->setEchoMode(QLineEdit::Password);
         passwordEchoModeButton_ = new QPushButton(trShow);
-        VERIFY(connect(passwordEchoModeButton_, SIGNAL(clicked()), this, SLOT(togglePasswordEchoMode())));
+        VERIFY(connect(passwordEchoModeButton_, &QPushButton::clicked, this, &ConnectionDialog::togglePasswordEchoMode));
 
         privateKeyBox_ = new QLineEdit;
         privateKeyBox_->setText(common::convertFromString<QString>(info.privateKey_));
@@ -129,7 +131,7 @@ namespace fastoredis
         passphraseBox_->setText(common::convertFromString<QString>(info.passphrase_));
         passphraseBox_->setEchoMode(QLineEdit::Password);
         passphraseEchoModeButton_ = new QPushButton(trShow);
-        VERIFY(connect(passphraseEchoModeButton_, SIGNAL(clicked()), this, SLOT(togglePassphraseEchoMode())));
+        VERIFY(connect(passphraseEchoModeButton_, &QPushButton::clicked, this, &ConnectionDialog::togglePassphraseEchoMode));
 
         useSshWidget_ = new QWidget;
 
@@ -162,14 +164,14 @@ namespace fastoredis
 
         inputLayout->addWidget(useSsh_);
 
-        VERIFY(connect(selectPrivateFileButton_, SIGNAL(clicked()), this, SLOT(setPrivateFile())));
-        VERIFY(connect(useSsh_, SIGNAL(stateChanged(int)), this, SLOT(sshSupportStateChange(int))));
+        VERIFY(connect(selectPrivateFileButton_, &QPushButton::clicked, this, &ConnectionDialog::setPrivateFile));
+        VERIFY(connect(useSsh_, &QCheckBox::stateChanged, this, &ConnectionDialog::sshSupportStateChange));
 
         buttonBox_ = new QDialogButtonBox(this);
         buttonBox_->setOrientation(Qt::Horizontal);
         buttonBox_->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        VERIFY(connect(buttonBox_, SIGNAL(accepted()), this, SLOT(accept())));
-        VERIFY(connect(buttonBox_, SIGNAL(rejected()), this, SLOT(reject())));
+        VERIFY(connect(buttonBox_, &QDialogButtonBox::accepted, this, &ConnectionDialog::accept));
+        VERIFY(connect(buttonBox_, &QDialogButtonBox::rejected, this, &ConnectionDialog::reject));
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addLayout(inputLayout);
