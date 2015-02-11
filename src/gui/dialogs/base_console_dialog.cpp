@@ -81,8 +81,6 @@ namespace
 
         return result;
     }
-
-    const QSize iconSize = QSize(16, 16);
 }
 
 namespace fastoredis

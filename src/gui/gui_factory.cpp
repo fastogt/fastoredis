@@ -181,7 +181,7 @@ namespace fastoredis
         switch(type)
         {
         case common::Value::TYPE_NULL:
-            static QIcon u(":" PROJECT_NAME_LOWERCASE "/images/64x64/unknown.png");
+            static QIcon u(":" PROJECT_NAME_LOWERCASE "/images/64x64/null.png");
             return u;
         case common::Value::TYPE_BOOLEAN:
             static QIcon b(":" PROJECT_NAME_LOWERCASE "/images/64x64/integer.png");

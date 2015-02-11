@@ -1259,7 +1259,7 @@ namespace fastoredis
                 "      \"quit\" to exit",
                 version
             );
-            common::StringValue *val =common::Value::createStringValue(buff);
+            common::StringValue *val = common::Value::createStringValue(buff);
             FastoObject* child = new FastoObject(out, val, config.mb_delim);
             out->addChildren(child);
             sdsfree(version);

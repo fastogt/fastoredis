@@ -12,14 +12,16 @@
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/stop.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/connect.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/disconnect.png</file>
+
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/status.png</file>
-    <file>@PROJECT_NAME_LOWERCASE@/images/64x64/root.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/error.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/string.png</file>
-    <file>@PROJECT_NAME_LOWERCASE@/images/64x64/unknown.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/null.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/array.png</file>
+    <file>@PROJECT_NAME_LOWERCASE@/images/64x64/double.png</file>
+    <file>@PROJECT_NAME_LOWERCASE@/images/64x64/bool.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/integer.png</file>
+
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/time.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/server.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/load.png</file>
