@@ -13,42 +13,44 @@ namespace
 {
     using namespace fastoredis;
 
+    template<bool isConnect>
     struct connectFunct
     {
-        explicit connectFunct(bool isConnect)
-            : isConnect_(isConnect)
+        template<typename t1, typename t2>
+        bool operator()(const IServer *sender, t1 signal, const IServer *receiver, t2 member, Qt::ConnectionType type) const
         {
-
+            return QObject::disconnect(sender, signal, receiver, member);
         }
-
-        bool operator()(const QObject *sender, const char *signal, const QObject *receiver, const char *member, Qt::ConnectionType type) const
-        {
-            if(isConnect_){
-                return QObject::connect(sender, signal, receiver, member, type);
-            }
-            else{
-                return QObject::disconnect(sender, signal, receiver, member);
-            }
-        }
-
-        const bool isConnect_;
     };
 
-    void syncServersFunct(IServer *src, IServer *dsc, const connectFunct &func)
+    template<>
+    struct connectFunct<true>
     {
-        VERIFY(func(src, SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), dsc, SIGNAL(startedConnect(const EventsInfo::ConnectInfoRequest &)), Qt::UniqueConnection));
-        VERIFY(func(src, SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)), dsc, SIGNAL(finishedConnect(const EventsInfo::ConnectInfoResponce &)), Qt::UniqueConnection));
-        VERIFY(func(src, SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)), dsc, SIGNAL(startedDisconnect(const EventsInfo::DisonnectInfoRequest &)), Qt::UniqueConnection));
-        VERIFY(func(src, SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)), dsc, SIGNAL(finishedDisconnect(const EventsInfo::DisConnectInfoResponce &)), Qt::UniqueConnection));
-        VERIFY(func(src, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), dsc, SIGNAL(startedExecute(const EventsInfo::ExecuteInfoRequest &)), Qt::UniqueConnection));
-        VERIFY(func(src, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), dsc, SIGNAL(finishedExecute(const EventsInfo::ExecuteInfoResponce &)), Qt::UniqueConnection));
+        template<typename t1, typename t2>
+        bool operator()(const IServer *sender, t1 signal, const IServer *receiver, t2 member, Qt::ConnectionType type) const
+        {
+            return QObject::connect(sender, signal, receiver, member, type);
+        }
+    };
 
-        VERIFY(func(src, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo& )), dsc, SIGNAL(rootCreated(const EventsInfo::CommandRootCreatedInfo& )), Qt::UniqueConnection));
-        VERIFY(func(src, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), dsc, SIGNAL(rootCompleated(const EventsInfo::CommandRootCompleatedInfo& )), Qt::UniqueConnection));
+    template<bool con>
+    void syncServersFunct(IServer *src, IServer *dsc)
+    {
+        connectFunct<con> func;
+        VERIFY(func(src, &IServer::startedConnect, dsc, &IServer::startedConnect, Qt::UniqueConnection));
+        VERIFY(func(src, &IServer::finishedConnect, dsc, &IServer::finishedConnect, Qt::UniqueConnection));
 
-        VERIFY(func(src, SIGNAL(addedChild(FastoObject *)), dsc, SIGNAL(addedChild(FastoObject *)), Qt::UniqueConnection));
-        VERIFY(func(src, SIGNAL(itemUpdated(FastoObject*, const QString&)), dsc, SIGNAL(itemUpdated(FastoObject*, const QString&)), Qt::UniqueConnection));
-        VERIFY(func(src, SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), dsc, SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), Qt::UniqueConnection));
+        VERIFY(func(src, &IServer::startedDisconnect, dsc, &IServer::startedDisconnect, Qt::UniqueConnection));
+        VERIFY(func(src, &IServer::finishedDisconnect, dsc, &IServer::finishedDisconnect, Qt::UniqueConnection));
+
+        VERIFY(func(src, &IServer::startedExecute, dsc, &IServer::startedExecute, Qt::UniqueConnection));
+
+        VERIFY(func(src, &IServer::rootCreated, dsc, &IServer::rootCreated, Qt::UniqueConnection));
+        VERIFY(func(src, &IServer::rootCompleated, dsc, &IServer::rootCompleated, Qt::UniqueConnection));
+
+        VERIFY(func(src, &IServer::addedChild, dsc, &IServer::addedChild, Qt::UniqueConnection));
+        VERIFY(func(src, &IServer::itemUpdated, dsc, &IServer::itemUpdated, Qt::UniqueConnection));
+        VERIFY(func(src, &IServer::serverInfoSnapShoot, dsc, &IServer::serverInfoSnapShoot, Qt::UniqueConnection));
    }
 }
 
@@ -58,24 +60,24 @@ namespace fastoredis
         : drv_(drv), isMaster_(isMaster)
     {
         if(isMaster_){
-            VERIFY(QObject::connect(drv_.get(), SIGNAL(addedChild(FastoObject *)), this, SIGNAL(addedChild(FastoObject *))));
-            VERIFY(QObject::connect(drv_.get(), SIGNAL(itemUpdated(FastoObject*, const QString&)), this, SIGNAL(itemUpdated(FastoObject*, const QString&))));
-            VERIFY(QObject::connect(drv_.get(), SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot )), this, SIGNAL(serverInfoSnapShoot(ServerInfoSnapShoot ))));
+            VERIFY(QObject::connect(drv_.get(), &IDriver::addedChild, this, &IServer::addedChild));
+            VERIFY(QObject::connect(drv_.get(), &IDriver::itemUpdated, this, &IServer::itemUpdated));
+            VERIFY(QObject::connect(drv_.get(), &IDriver::serverInfoSnapShoot, this, &IServer::serverInfoSnapShoot));
         }
     }
 
-    void IServer::unSyncServers(IServer *src, IServer *dsc)
+    void IServer::syncWithServer(IServer *src)
     {
-        static const connectFunct f(false);
-        syncServersFunct(src, dsc, f);
-        syncServersFunct(dsc, src, f);
+        DCHECK(src != this);
+        syncServersFunct<true>(src, this);
+        //syncServersFunct<true>(this, src);
     }
 
-    void IServer::syncServers(IServer *src, IServer *dsc)
+    void IServer::unSyncFromServer(IServer *src)
     {
-        static const connectFunct f(true);
-        syncServersFunct(src, dsc, f);
-        syncServersFunct(dsc, src, f);
+        DCHECK(src != this);
+        syncServersFunct<false>(src, this);
+        //syncServersFunct<false>(this, src);
     }
 
     IDriverSPtr IServer::driver() const

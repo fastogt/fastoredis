@@ -10,8 +10,6 @@ namespace fastoredis
         friend class ServersManager;
         Q_OBJECT
     public:
-        virtual void syncWithServer(IServer* src);
-        virtual void unSyncFromServer(IServer* src);
 
     private:
         virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info);

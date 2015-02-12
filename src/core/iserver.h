@@ -46,8 +46,8 @@ namespace fastoredis
 
         bool isLocalHost() const;
 
-        virtual void syncWithServer(IServer* src) = 0;
-        virtual void unSyncFromServer(IServer* src) = 0;
+        virtual void syncWithServer(IServer* src);
+        virtual void unSyncFromServer(IServer* src);
 
     Q_SIGNALS: //only direct connections
         void startedConnect(const EventsInfo::ConnectInfoRequest& req);
@@ -123,8 +123,6 @@ namespace fastoredis
 
     protected:
         virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info) = 0;
-        static void syncServers(IServer* src, IServer* dsc);
-        static void unSyncServers(IServer* src, IServer* dsc);
         void notify(QEvent* ev);
         virtual void customEvent(QEvent* event);
 

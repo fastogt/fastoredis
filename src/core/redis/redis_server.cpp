@@ -11,16 +11,6 @@ namespace fastoredis
 
     }
 
-    void RedisServer::syncWithServer(IServer *src)
-    {
-        IServer::syncServers(src, this);
-    }
-
-    void RedisServer::unSyncFromServer(IServer *src)
-    {
-        IServer::unSyncServers(src, this);
-    }
-
     IDatabaseSPtr RedisServer::createDatabaseImpl(DataBaseInfoSPtr info)
     {
         return IDatabaseSPtr(new RedisDatabase(shared_from_this(), info));
