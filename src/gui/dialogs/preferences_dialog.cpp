@@ -59,9 +59,8 @@ namespace fastoredis
         QHBoxLayout* defaultViewLayaut = new QHBoxLayout;
         defaultViewLabel_ = new QLabel;
         defaultViewComboBox_ = new QComboBox;
-        std::vector<std::string> allV = allSupportedViews();
-        for(int i = 0; i < allV.size(); ++i){
-            defaultViewComboBox_->addItem(common::convertFromString<QString>(allV[i]));
+        for(int i = 0; i < viewsText.size(); ++i){
+            defaultViewComboBox_->addItem(common::convertFromString<QString>(viewsText[i]));
         }
         defaultViewLayaut->addWidget(defaultViewLabel_);
         defaultViewLayaut->addWidget(defaultViewComboBox_);

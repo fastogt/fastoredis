@@ -2146,7 +2146,7 @@ namespace fastoredis
 
     void RedisDriver::handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev)
     {
-        QObject *sender = ev->sender();
+        QObject* sender = ev->sender();
         notifyProgress(sender, 0);
         events::ChangeDbValueResponceEvent::value_type res(ev->value());
 

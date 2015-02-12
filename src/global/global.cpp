@@ -4,7 +4,7 @@
 
 namespace fastoredis
 {
-    FastoObject::FastoObject(FastoObject *parent, common::Value *val, const std::string& delemitr)
+    FastoObject::FastoObject(FastoObject* parent, common::Value* val, const std::string& delemitr)
         : observer_(NULL), value_(val), parent_(parent), childrens_(), delemitr_(delemitr)
     {
         DCHECK(val);
@@ -190,7 +190,7 @@ namespace fastoredis
             return;
         }
 
-       ar->append(in_value);
+        ar->append(in_value);
     }
 
     std::string FastoObjectArray::toString() const

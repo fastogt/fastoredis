@@ -11,7 +11,7 @@ namespace fastoredis
         MEMCACHED
     };
 
-    std::vector<std::string> supportedConnectionTypes();
+    static const std::vector<std::string> connnectionType = { "Unknown", "Redis", "Memcached" };
 
     enum ConnectionMode
     {
@@ -40,7 +40,7 @@ namespace fastoredis
         IntaractiveMode
     };
 
-    std::vector<std::string> supportedConnectionMode();
+    static const std::vector<std::string> connnectionMode = { "Latency mode", "Slave mode", "Get RDB mode", "Pipe mode",  "Find big keys mode", "Stat mode", "Scan mode", "Intaractive mode" };
 }
 
 namespace common

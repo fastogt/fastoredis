@@ -49,9 +49,8 @@ namespace fastoredis
         connectionName_->setText(conName);
         typeConnection_ = new QComboBox;
 
-        std::vector<std::string> supt = supportedConnectionTypes();
-        for(std::vector<std::string>::const_iterator it = supt.begin(); it != supt.end(); ++it){
-            typeConnection_->addItem(common::convertFromString<QString>(*it));
+        for(int i = 0; i < connnectionType.size(); ++i){
+            typeConnection_->addItem(common::convertFromString<QString>(connnectionType[i]));
         }
 
         if(connection_){

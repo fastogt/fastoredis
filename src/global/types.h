@@ -12,7 +12,7 @@ namespace fastoredis
         Text
     };
 
-    std::vector<std::string> allSupportedViews();
+    static const std::vector<std::string> viewsText = { "Tree", "Table", "Text" };
 
     class Command
     {

@@ -22,7 +22,6 @@ namespace fastoredis
         {
             HeightFindPanel = 40
         };
-
         FastoTextView(const QString& delemitr, QWidget* parent = 0);
 
         void setModel(QAbstractItemModel* model);

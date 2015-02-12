@@ -12,7 +12,7 @@ SET(PROJECT_MAINTAINER_MAIL "atopilski@fastoredis.com" CACHE STRING "Internet ma
 SET(PROJECT_MAINTAINER_NAME "Alexandr Topilski" CACHE STRING "Name of ${PROJECT_NAME} mainteiner")
 SET(PROJECT_GITHUB_FORK "www.github.com/fasto/fastoredis" CACHE STRING "Git fork of ${PROJECT_NAME}")
 SET(PROJECT_GITHUB_ISSUES "www.github.com/fasto/fastoredis/issues" CACHE STRING "Git issue link for ${PROJECT_NAME}")
-SET(PROJECT_BUILD_TYPE "alfa") #alfa, beta, rc, release
+SET(PROJECT_BUILD_TYPE "beta") #alfa, beta, rc, release
 ##########################################################
 
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
@@ -33,7 +33,7 @@ IF(APPLE AND CMAKE_OSX_SYSROOT)
         SET(CMAKE_CXX_FLAGS "--sysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
         MESSAGE("Setting MACOSX_DEPLOYMENT_TARGET to '${MACOSX_DEPLOYMENT_TARGET}'.")
     ENDIF()
-ENDIF()
+ENDIF(APPLE AND CMAKE_OSX_SYSROOT)
 
 ########################## Options #########################
 OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
@@ -51,7 +51,7 @@ IF(MSVC)
     ELSE()
         OPTION(BUILD_64X "Build 64bit project" OFF)
     ENDIF()
-ELSE()
+ELSE(MSVC)
     IF("${OS_ARCH}" STREQUAL "64")
         OPTION(BUILD_64X "Build 64bit project" ON)
     ELSEIF("${OS_ARCH}" STREQUAL "32")
@@ -70,11 +70,11 @@ MESSAGE(STATUS "BUILD_64X: ${BUILD_64X}")
 ##################################DEFAULT VALUES##########################################
 IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE DEBUG)
-ENDIF()
+ENDIF(NOT CMAKE_BUILD_TYPE)
 
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
-ENDIF()
+ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 IF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
     MESSAGE(SEND_ERROR "In-source builds are not allowed.")

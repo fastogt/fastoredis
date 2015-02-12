@@ -299,8 +299,7 @@ namespace fastoredis
 
     void BaseShellWidget::saveToFileAs()
     {
-        QString filepath = QFileDialog::getSaveFileName(this,
-            trSaveAs, filePath_, trfilterForScripts);
+        QString filepath = QFileDialog::getSaveFileName(this, trSaveAs, filePath_, trfilterForScripts);
 
         if (saveToFileText(filepath,text(), this)) {
             filePath_ = filepath;
