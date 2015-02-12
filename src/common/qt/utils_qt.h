@@ -77,7 +77,6 @@ namespace common
             error_type errorInfo_;
         };
 
-        QString get_folder_path_by_type(QStandardPaths::StandardLocation loc);
         QString applicationDirPath();
     }
 }

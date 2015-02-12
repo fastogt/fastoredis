@@ -100,10 +100,10 @@ namespace common
     private:
 		DISALLOW_COPY_AND_ASSIGN(FundamentalValue);
         union {
-        bool boolean_value_;
-        int integer_value_;
-        unsigned int uinteger_value_;
-        double double_value_;
+            bool boolean_value_;
+            int integer_value_;
+            unsigned int uinteger_value_;
+            double double_value_;
         };
     };
 
@@ -212,6 +212,7 @@ namespace common
         virtual CommandValue* deepCopy() const;
 
     private:
+        DISALLOW_COPY_AND_ASSIGN(CommandValue);
         std::string inputCommand_;
         std::string oppositeCommand_;
         CommandType ctype_;

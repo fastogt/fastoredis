@@ -91,7 +91,7 @@ namespace fastoredis
 
         const QString trLoadAndExecuteFile = QObject::tr("Load and execute file");
         const QString trLoadContOfDataBases = QObject::tr("Load content of database");
-        const QString trEncodeDecodeDialog = QObject::tr("Encode/Decode dialog");
+        const QString trEncodeDecode = QObject::tr("Encode/Decode");
         const QString trEncode = QObject::tr("Encode");
         const QString trDecode = QObject::tr("Decode");
     }

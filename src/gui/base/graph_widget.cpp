@@ -40,8 +40,7 @@ namespace fastoredis
     }
 
     plot_settings::plot_settings(qreal min_x, qreal max_x, qreal min_y, qreal max_y, unsigned num_x_ticks, unsigned num_y_ticks)
-        :min_x_(min_x), max_x_(max_x),
-        min_y_(min_y), max_y_(max_y),
+        : min_x_(min_x), max_x_(max_x), min_y_(min_y), max_y_(max_y),
         num_x_ticks_(num_x_ticks), num_y_ticks_(num_y_ticks)
     {
     }

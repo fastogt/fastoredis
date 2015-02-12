@@ -1,24 +1,22 @@
 #include "common/value.h"
 
-#include <algorithm>
-
 #include "common/convert2string.h"
-#include "common/utf_string_conversions.h"
 
 namespace common 
 {
     namespace
     {
-        const char *stringTypes[] = { "TYPE_NULL",
-                                      "TYPE_BOOLEAN",
-                                      "TYPE_INTEGER",
-                                      "TYPE_UINTEGER",
-                                      "TYPE_DOUBLE",
-                                      "TYPE_STRING",
-                                      "TYPE_ARRAY",
-                                      "TYPE_STATUS",
-                                      "TYPE_COMMAND",
-                                      "TYPE_ERROR"
+        const char *stringTypes[] = {
+                                        "TYPE_NULL",
+                                        "TYPE_BOOLEAN",
+                                        "TYPE_INTEGER",
+                                        "TYPE_UINTEGER",
+                                        "TYPE_DOUBLE",
+                                        "TYPE_STRING",
+                                        "TYPE_ARRAY",
+                                        "TYPE_STATUS",
+                                        "TYPE_COMMAND",
+                                        "TYPE_ERROR"
                                     };
     }
 
@@ -97,11 +95,7 @@ namespace common
     // static
     std::string Value::toString(Type t)
     {
-        static const int count = SIZEOFMASS(stringTypes);
-        if(t < count){
-            return stringTypes[t];
-        }
-        return std::string();
+        return stringTypes[t];
     }
 
     bool Value::getAsBoolean(bool* out_value) const
@@ -208,7 +202,8 @@ namespace common
 
     std::string FundamentalValue::toString() const
     {
-        switch (getType()) {
+        switch (getType())
+        {
             case TYPE_BOOLEAN:
             {
                 return common::convertToString(boolean_value_);
@@ -266,50 +261,52 @@ namespace common
         return (isType(TYPE_DOUBLE) || isType(TYPE_INTEGER) || isType(TYPE_UINTEGER));
     }
 
-    FundamentalValue* FundamentalValue::deepCopy() const {
-      switch (getType()) {
-		case TYPE_BOOLEAN:
-          return createBooleanValue(boolean_value_);
-
-		case TYPE_INTEGER:
-          return createIntegerValue(integer_value_);
-
-		case TYPE_DOUBLE:
-          return createDoubleValue(double_value_);
-
-        default:
-		  return NULL;
-	  }
-	}
+    FundamentalValue* FundamentalValue::deepCopy() const
+    {
+        switch (getType())
+        {
+            case TYPE_BOOLEAN:
+                return createBooleanValue(boolean_value_);
+            case TYPE_INTEGER:
+                return createIntegerValue(integer_value_);
+            case TYPE_DOUBLE:
+                return createDoubleValue(double_value_);
+            default:
+                return NULL;
+        }
+    }
 
     bool FundamentalValue::equals(const Value* other) const
     {
         if (other->getType() != getType())
             return false;
 
-        switch (getType()) {
-            case TYPE_BOOLEAN: {
-            bool lhs, rhs;
+        switch (getType())
+        {
+            case TYPE_BOOLEAN:
+            {
+                bool lhs, rhs;
                 return getAsBoolean(&lhs) && other->getAsBoolean(&rhs) && lhs == rhs;
             }
-            case TYPE_INTEGER: {
-            int lhs, rhs;
+            case TYPE_INTEGER:
+            {
+                int lhs, rhs;
                 return getAsInteger(&lhs) && other->getAsInteger(&rhs) && lhs == rhs;
             }
-            case TYPE_DOUBLE: {
-            double lhs, rhs;
+            case TYPE_DOUBLE:
+            {
+                double lhs, rhs;
                 return getAsDouble(&lhs) && other->getAsDouble(&rhs) && lhs == rhs;
             }
-            default:
-                return false;
+        default:
+            return false;
         }
 	}
 
 	///////////////////// StringValue ////////////////////
 
     StringValue::StringValue(const std::string& in_value)
-        : Value(TYPE_STRING),
-          value_(in_value)
+        : Value(TYPE_STRING), value_(in_value)
     {
 
     }
@@ -383,16 +380,14 @@ namespace common
             return false;
 
         if (out_value)
-        *out_value = list_[index];
+            *out_value = list_[index];
 
         return true;
 	}
 
     bool ArrayValue::get(size_t index, Value** out_value)
     {
-        return static_cast<const ArrayValue&>(*this).get(
-            index,
-            const_cast<const Value**>(out_value));
+        return static_cast<const ArrayValue&>(*this).get(index, const_cast<const Value**>(out_value));
 	}
 
     bool ArrayValue::getBoolean(size_t index, bool* bool_value) const

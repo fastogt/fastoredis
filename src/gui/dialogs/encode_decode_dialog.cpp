@@ -30,7 +30,7 @@ namespace fastoredis
     {
         setWindowIcon(GuiFactory::instance().encodeDecodeIcon());
 
-        setWindowTitle(translations::trEncodeDecodeDialog);
+        setWindowTitle(translations::trEncodeDecode);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         QVBoxLayout* layout = new QVBoxLayout;
 

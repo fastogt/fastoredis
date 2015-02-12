@@ -362,7 +362,7 @@ namespace fastoredis
         toolsAction_->setText(trTools);
         pythonConsoleAction_->setText(trPythonConsole);
         luaConsoleAction_->setText(trLuaConsole);
-        encodeDecodeDialogAction_->setText(trEncodeDecodeDialog);
+        encodeDecodeDialogAction_->setText(trEncodeDecode);
         preferencesAction_->setText(trPreferences);
         checkUpdateAction_->setText(trCheckUpdate);
         optionsAction_->setText(trOptions);

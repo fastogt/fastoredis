@@ -216,7 +216,7 @@ namespace common
         std::string null2empty(const char* src, size_t len);
 
 #ifdef OS_POSIX
-        namespace signal
+        namespace system
         {
             bool signal(int sig, void (*handler)(int));
 #ifdef OS_LINUX

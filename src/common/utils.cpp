@@ -356,7 +356,7 @@ namespace common
         }
 
 #ifdef OS_POSIX
-        namespace signal
+        namespace system
         {
             bool signal(int sig, void (*handler)(int))
             {

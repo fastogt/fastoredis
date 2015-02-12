@@ -124,58 +124,7 @@ namespace
         }
     } rInit;
 
-    std::string getKeyFromLine(std::string input)
-    {
-        if(input.empty()){
-            return std::string();
-        }
-
-        size_t pos = input.find_first_of(' ');
-        if(pos != std::string::npos){
-            input = input.substr(pos+1);
-        }
-
-        std::string trimed;
-        common::TrimWhitespaceASCII(input, common::TRIM_ALL, &trimed);
-        return trimed;
-    }
-
-    std::string getCommandFromLine(std::string input)
-    {
-        if(input.empty()){
-            return std::string();
-        }
-
-        size_t pos = input.find_first_of(' ');
-        if(pos != std::string::npos){
-            return input.substr(0, pos);
-        }
-
-        return input;
-    }
-
     std::vector<std::pair<std::string, std::string > > oppositeCommands = { {"GET", "SET"}, {"HSET", "HGET"} };
-
-    std::string getOppositeCommand(const std::string& command)
-    {
-        DCHECK(!command.empty());
-        if(command.empty()){
-            return std::string();
-        }
-
-        std::string uppercmd = StringToUpperASCII(command);
-        for(int i = 0; i < oppositeCommands.size(); ++i){
-            std::pair<std::string, std::string > p = oppositeCommands[i];
-            if(p.first == uppercmd){
-                return p.second;
-            }
-            else if(p.second == uppercmd){
-                return p.first;
-            }
-        }
-
-        return std::string();
-    }
 }
 
 namespace fastoredis
@@ -192,11 +141,23 @@ namespace fastoredis
 
             }
 
-            virtual std::string key() const
+            virtual std::string inputCmd() const
             {
                 common::CommandValue* command = cmd();
                 if(command){
-                    return getKeyFromLine(command->inputCommand());
+                    std::pair<std::string, std::string> kv = getKeyValueFromLine(command->inputCommand());
+                    return kv.first;
+                }
+
+                return std::string();
+            }
+
+            virtual std::string inputArgs() const
+            {
+                common::CommandValue* command = cmd();
+                if(command){
+                    std::pair<std::string, std::string> kv = getKeyValueFromLine(command->inputCommand());
+                    return kv.second;
                 }
 
                 return std::string();
@@ -206,10 +167,10 @@ namespace fastoredis
         FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
         {
             DCHECK(parent);
-            std::string command = getCommandFromLine(input);
-            std::string opposite = getOppositeCommand(command);
+            std::pair<std::string, std::string> kv = getKeyValueFromLine(input);
+            std::string opposite = getOppositeCommand(kv.first, oppositeCommands);
             if(!opposite.empty()){
-                opposite += " " + getKeyFromLine(input);
+                opposite += " " + kv.second;
             }
             common::CommandValue* cmd = common::Value::createCommand(input, opposite, ct);
             FastoObjectCommand* fs = new RedisCommand(parent, cmd, "");

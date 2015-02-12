@@ -1,4 +1,13 @@
+0.6.2
+[Alexandr Topilski]
+- Update design
+- Info and history for memcached
+- Delete key from explorer tree(#48)
+- Android holo theme
+- In place edit memcached
+
 0.6.1 / February 7, 2015
+[Alexandr Topilski]
 - In place edit value
 - Load databases for Redis
 - Conversion dialog

@@ -1,5 +1,7 @@
 #include "global/global.h"
 
+#include "common/string_util.h"
+
 namespace fastoredis
 {
     FastoObject::FastoObject(FastoObject *parent, common::Value *val, const std::string& delemitr)
@@ -133,6 +135,46 @@ namespace fastoredis
     FastoObjectCommand::~FastoObjectCommand()
     {
 
+    }
+
+    std::pair<std::string, std::string> getKeyValueFromLine(const std::string& input)
+    {
+        if(input.empty()){
+            return std::pair<std::string, std::string>();
+        }
+
+        size_t pos = input.find_first_of(' ');
+        std::string key;
+        std::string value;
+        if(pos != std::string::npos){
+            key = input.substr(0, pos);
+            value = input.substr(pos + 1);
+        }
+
+        std::string trimed;
+        common::TrimWhitespaceASCII(value, common::TRIM_ALL, &trimed);
+        return std::make_pair(key, value);
+    }
+
+    std::string getOppositeCommand(const std::string& command, const std::vector<std::pair<std::string, std::string > >& srcOppositeCommands)
+    {
+        DCHECK(!command.empty());
+        if(command.empty()){
+            return std::string();
+        }
+
+        std::string uppercmd = StringToUpperASCII(command);
+        for(int i = 0; i < srcOppositeCommands.size(); ++i){
+            std::pair<std::string, std::string > p = srcOppositeCommands[i];
+            if(p.first == uppercmd){
+                return p.second;
+            }
+            else if(p.second == uppercmd){
+                return p.first;
+            }
+        }
+
+        return std::string();
     }
 
     FastoObjectArray::FastoObjectArray(FastoObject* parent, common::ArrayValue* ar, const std::string& delemitr)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/multi_threading/common_headers.h"
+#include "common/multi_threading/types.h"
 
 #include <vector>
 
@@ -62,6 +62,8 @@ namespace common
                     workers.push_back(thread_t(boost::bind(&std_thread_pool_impl::run_work, this)));
 #elif defined(HAVE_CXX_STANDART)
                     workers.push_back(thread_t(std::bind(&std_thread_pool_impl::run_work, this)));
+#else
+    #error implement bind functionality
 #endif
                 }
             }

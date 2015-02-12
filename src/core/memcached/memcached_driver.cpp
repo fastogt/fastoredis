@@ -8,7 +8,6 @@ extern "C" {
 }
 
 #include "common/utils.h"
-#include "common/string_util.h"
 
 #include "core/logger.h"
 #include "core/command_logger.h"
@@ -23,21 +22,7 @@ extern "C" {
 
 namespace
 {
-    std::string getKeyFromLine(std::string input)
-    {
-        if(input.empty()){
-            return std::string();
-        }
-
-        size_t pos = input.find_first_of(' ');
-        if(pos != std::string::npos){
-            input = input.substr(pos+1);
-        }
-
-        std::string trimed;
-        common::TrimWhitespaceASCII(input, common::TRIM_ALL, &trimed);
-        return trimed;
-    }
+    std::vector<std::pair<std::string, std::string > > oppositeCommands = { {"GET", "SET"} };
 }
 
 namespace fastoredis
@@ -54,31 +39,46 @@ namespace fastoredis
 
             }
 
-            virtual std::string key() const
+            virtual std::string inputCmd() const
             {
                 common::CommandValue* command = cmd();
                 if(command){
-                    return getKeyFromLine(command->inputCommand());
+                    std::pair<std::string, std::string> kv = getKeyValueFromLine(command->inputCommand());
+                    return kv.first;
+                }
+
+                return std::string();
+            }
+
+            virtual std::string inputArgs() const
+            {
+                common::CommandValue* command = cmd();
+                if(command){
+                    std::pair<std::string, std::string> kv = getKeyValueFromLine(command->inputCommand());
+                    return kv.second;
                 }
 
                 return std::string();
             }
         };
 
-        FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input,
-                                                   const std::string& opposite, common::Value::CommandType ct)
+        FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
         {
             DCHECK(parent);
+            std::pair<std::string, std::string> kv = getKeyValueFromLine(input);
+            std::string opposite = getOppositeCommand(kv.first, oppositeCommands);
+            if(!opposite.empty()){
+                opposite += " " + kv.second;
+            }
             common::CommandValue* cmd = common::Value::createCommand(input, opposite, ct);
             FastoObjectCommand* fs = new MemcachedCommand(parent, cmd, "");
             parent->addChildren(fs);
             return fs;
         }
 
-        FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input,
-                                                   const std::string& opposite, common::Value::CommandType ct)
+        FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input, common::Value::CommandType ct)
         {
-            return createCommand(parent.get(), input, opposite, ct);
+            return createCommand(parent.get(), input, ct);
         }
     }
 
@@ -766,7 +766,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        FastoObjectCommand* cmd = createCommand(outRoot, command, command, common::Value::C_USER);
+                        FastoObjectCommand* cmd = createCommand(outRoot, command, common::Value::C_USER);
                         er = impl_->execute(cmd);
                         if(er){
                             res.setErrorInfo(er);
@@ -803,7 +803,7 @@ namespace fastoredis
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_KEYS);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, GET_KEYS, "", common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, GET_KEYS, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -917,7 +917,7 @@ namespace fastoredis
                 cmdtext = std::string(LOAD_KEY) + " " + res.cmd_.key();
             }
             FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
-            FastoObjectCommand* cmd = createCommand(root, cmdtext, cmdtext, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){

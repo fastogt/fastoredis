@@ -178,7 +178,7 @@ namespace fastoredis
             return;
         }
 
-        const QString key = common::convertFromString<QString>(command->key());
+        const QString key = common::convertFromString<QString>(command->inputArgs());
 
         fastoredis::FastoCommonItem* comChild = createItem(par, key, child);
         comChild->setChangeCommand(command->oppositeCommand());

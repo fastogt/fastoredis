@@ -48,7 +48,8 @@ namespace fastoredis
         common::CommandValue* cmd() const;
         virtual std::string toString() const;
 
-        virtual std::string key() const = 0;
+        virtual std::string inputCmd() const = 0;
+        virtual std::string inputArgs() const = 0;
 
         std::string inputCommand() const;
         std::string oppositeCommand() const;
@@ -57,6 +58,9 @@ namespace fastoredis
     protected:
         FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string &delemitr);
     };
+
+    std::pair<std::string, std::string> getKeyValueFromLine(const std::string& input);
+    std::string getOppositeCommand(const std::string& command, const std::vector<std::pair<std::string, std::string > >& srcOppositeCommands);
 
     class FastoObjectArray
             : public FastoObject
