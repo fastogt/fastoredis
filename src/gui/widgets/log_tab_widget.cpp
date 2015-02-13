@@ -22,6 +22,7 @@ namespace fastoredis
         setElideMode(Qt::ElideRight);
         setMovable(true);
         setDocumentMode(true);
+
         log_ = new LogWidget;
         addTab(log_, GuiFactory::instance().loggingIcon(), trLogs);
         commands_ = new CommandsWidget;
@@ -44,6 +45,7 @@ namespace fastoredis
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();
         }
+
         QTabWidget::changeEvent(e);
     }
 

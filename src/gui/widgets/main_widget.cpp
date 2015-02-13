@@ -21,6 +21,7 @@ namespace fastoredis
         VERIFY(connect(tab, &MainTabBar::closedOtherTabs, this, &MainWidget::closedOtherTabs));
         VERIFY(connect(tab, &MainTabBar::closedTab, this, &MainWidget::closeCurrentTab));
         VERIFY(connect(tab, &MainTabBar::tabCloseRequested, this, &MainWidget::closeTab));
+
         setTabBar(tab);
         setTabsClosable(true);
         setElideMode(Qt::ElideRight);
@@ -128,7 +129,7 @@ namespace fastoredis
     {
         int index = currentIndex();
         int tabsCount = count();
-        if (index == tabsCount - 1){
+        if(index == tabsCount - 1){
             setCurrentIndex(0);
             return;
         }

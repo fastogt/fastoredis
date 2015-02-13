@@ -6,8 +6,6 @@
 
 namespace fastoredis
 {
-    class FastoCommonItem;
-
     class FastoCommonModel
             : public TreeModel
     {

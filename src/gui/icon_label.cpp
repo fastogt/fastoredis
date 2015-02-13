@@ -27,7 +27,7 @@ namespace fastoredis
 
     void IconLabel::setIcon(const QIcon &icon, const QSize& size)
     {
-        QPixmap pm = icon.pixmap(size);
+        const QPixmap pm = icon.pixmap(size);
         icon_->setPixmap(pm);
     }
 }

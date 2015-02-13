@@ -6,7 +6,7 @@
 
 namespace
 {
-    const QColor paperColor = QColor(166, 190, 233);
+    const QColor paperColor(166, 190, 233);
 }
 
 namespace fastoredis

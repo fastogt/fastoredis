@@ -8,14 +8,6 @@
 #include <QApplication>
 
 #ifdef OS_ANDROID
-//http://www.math.spbu.ru/user/gran/Atom21/AtomBook_21_lab6.pdf
-//http://www.linux.org.ru/forum/development/11000751
-//http://doc.qt.io/qt-5/qtouchevent.html
-//http://www.math.spbu.ru/user/gran/AtomMG2/lec_04.pdf
-//http://qt-project.org/forums/viewthread/7253
-//http://blog.sbw.so/Article/index/title/QT%20for%20Android%20%E6%8D%95%E8%8E%B7%E5%A4%9A%E7%82%B9%E8%A7%A6%E6%8E%A7%E7%9A%84%E7%A4%BA%E4%BE%8B.html
-//http://developer.nokia.com/community/wiki/Enabling_pinch_zooming_in_QGraphicsWebView_with_QPinchGesture
-//http://habrahabr.ru/post/134289/
 #include <QGestureEvent>
 #endif
 

@@ -5,7 +5,7 @@
 
 namespace
 {
-    const QSize preferedSize = QSize(1024, 768);
+    const QSize preferedSize(1024, 768);
 }
 
 int main(int argc, char *argv[])

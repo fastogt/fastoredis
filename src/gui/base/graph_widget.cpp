@@ -147,6 +147,10 @@ namespace fastoredis
             return;
         }
 
+        QFont font = painter->font();
+        font.setPointSize(7);
+        painter->setFont(font);
+
         plot_settings settings = zoomStack[cur_zoom_];
         painter->setPen(QColor(grid_color));
         for (unsigned i = 0; i <= settings.num_x_ticks_; ++i){
@@ -157,6 +161,7 @@ namespace fastoredis
              QDateTime t = QDateTime::fromMSecsSinceEpoch((qint64)label);
              painter->drawText(x - 50, rect.bottom() + 5, 120, 20, Qt::AlignHCenter | Qt::AlignTop, t.toString(Qt::ISODate));
         }
+
         for (unsigned j = 0; j <= settings.num_y_ticks_; ++j){
             int y = rect.bottom() - (j * (rect.height() - 1) / settings.num_y_ticks_);
             qreal label = settings.min_y_ + (j * settings.span_y() / settings.num_y_ticks_);
@@ -167,6 +172,7 @@ namespace fastoredis
             QString numb = common::convertFromString<QString>(slabel);
             painter->drawText(rect.left() - margin, y - 10, margin - 5, 20, Qt::AlignRight | Qt::AlignVCenter, numb);
         }
+
         painter->drawRect(rect.adjusted(0, 0, -1, -1));
     }
 

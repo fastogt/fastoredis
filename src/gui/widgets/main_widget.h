@@ -15,7 +15,6 @@ namespace fastoredis
         Q_OBJECT
     public:
         explicit MainWidget(QWidget *parent = 0);
-        void addWidgetBySetting(const IConnectionSettingsBaseSPtr& setting);
         QueryWidget* currentWidget() const;
         QueryWidget* widget(int index) const;
 

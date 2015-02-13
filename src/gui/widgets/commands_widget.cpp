@@ -20,6 +20,7 @@ namespace fastoredis
         logTextEdit_->setReadOnly(true);
         logTextEdit_->setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(logTextEdit_, &QTextEdit::customContextMenuRequested, this, &CommandsWidget::showContextMenu));
+
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0, 0, 0, 0);
         hlayout->addWidget(logTextEdit_);
