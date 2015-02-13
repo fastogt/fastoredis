@@ -9,13 +9,13 @@ namespace common
     namespace utils_qt
     {
         template<typename Type>
-        inline Type item(const QModelIndex &index)
+        inline Type item(const QModelIndex& index)
         {
             return dynamic_cast<Type>(static_cast<Type>(index.internalPointer()));
         }
 
         template<typename Type>
-        inline Type get_item(const QModelIndex &index,Type root)
+        inline Type get_item(const QModelIndex& index,Type root)
         {
             Type result = root;
             if (index.isValid())
@@ -33,10 +33,10 @@ namespace common
         public:
             typedef value_t value_type;
             typedef QEvent base_class;
-            typedef QObject *const senders_type;
+            typedef QObject* const senders_type;
             enum { EventType = event_t };
 
-            Event(senders_type sender, const value_t &initValue)
+            Event(senders_type sender, const value_t& initValue)
                 : base_class((base_class::Type)EventType), _value(initValue), _sender(sender){}
 
             const value_t &value() const
@@ -60,7 +60,7 @@ namespace common
         public:
             typedef error_t error_type;
 
-            EventInfo(const error_type &er)
+            EventInfo(const error_type& er)
                 : errorInfo_(er){}
 
             error_type errorInfo() const

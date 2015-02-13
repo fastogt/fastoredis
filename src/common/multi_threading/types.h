@@ -45,7 +45,7 @@ namespace common
         struct unique_lock
                 : public std::unique_lock<T>
         {
-            unique_lock(T &t)
+            unique_lock(T& t)
                 : std::unique_lock<T>(t)
             {
 

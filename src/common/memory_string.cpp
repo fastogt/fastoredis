@@ -20,7 +20,7 @@ namespace common
         memcpy(memory_,memory,size_);
     }
 
-    memory_string::memory_string(const memory_string &other)
+    memory_string::memory_string(const memory_string& other)
         :alloc_size_(other.alloc_size_),size_(other.size_),
           memory_((char*)calloc(alloc_size_,sizeof(char)))
     {
@@ -28,7 +28,7 @@ namespace common
         memcpy(memory_,other.memory_,size_);
     }
 
-    memory_string& memory_string::operator=(const memory_string &other)
+    memory_string& memory_string::operator=(const memory_string& other)
     {
         alloc_size_ = other.size_;
         size_ = other.size_;
@@ -54,7 +54,7 @@ namespace common
         DCHECK(size_<=alloc_size_);
     }
 
-    void memory_string::append(const memory_string &src)
+    void memory_string::append(const memory_string& src)
     {
         return append(src.memory_,src.size_);
     }
@@ -64,7 +64,7 @@ namespace common
         return append(ptr, strlen(ptr));
     }
 
-    void memory_string::append(const void *ptr, uint32_t size)
+    void memory_string::append(const void* ptr, uint32_t size)
     {
         alloc(size_ + size);
         if (memory_&&ptr)

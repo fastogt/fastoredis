@@ -20,12 +20,12 @@ namespace fastoredis
         setLayout(mainL);
     }
 
-    void IconLabel::setText(const QString &text)
+    void IconLabel::setText(const QString& text)
     {
         text_->setText(text);
     }
 
-    void IconLabel::setIcon(const QIcon &icon, const QSize& size)
+    void IconLabel::setIcon(const QIcon& icon, const QSize& size)
     {
         const QPixmap pm = icon.pixmap(size);
         icon_->setPixmap(pm);

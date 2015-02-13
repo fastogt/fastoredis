@@ -15,7 +15,7 @@ namespace common
             void close();
 
             bool write(const buffer_type& data) WARN_UNUSED_RESULT;
-            bool read(buffer_type &outData, uint16_t max_size) WARN_UNUSED_RESULT;
+            bool read(buffer_type& outData, uint16_t max_size) WARN_UNUSED_RESULT;
 
         private:
             const hostAndPort host_;

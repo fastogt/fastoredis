@@ -14,7 +14,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        explicit MainWidget(QWidget *parent = 0);
+        explicit MainWidget(QWidget* parent = 0);
         QueryWidget* currentWidget() const;
         QueryWidget* widget(int index) const;
 

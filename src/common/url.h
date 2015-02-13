@@ -16,9 +16,9 @@ namespace common
                     file = 2
                 };
                 url();
-                explicit url(const char *url_s);
-                url(const url &other);
-                url& operator=(const url &other);
+                explicit url(const char* url_s);
+                url(const url& other);
+                url& operator=(const url& other);
                 bool is_valid()const;
                 const memory_string& protocol()const;
                 const memory_string& host()const;
@@ -34,8 +34,8 @@ namespace common
                     path_size = 256,
                     query_size = 512
                 };
-                void init(const url &other);
-                void parse(const char *url_s);
+                void init(const url& other);
+                void parse(const char* url_s);
                 supported_protocols protocol_;
                 memory_string host_;
                 memory_string path_;

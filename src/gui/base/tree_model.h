@@ -11,10 +11,10 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        TreeModel(QObject *parent = 0);
+        TreeModel(QObject* parent = 0);
 
-        virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-        virtual QModelIndex index(int row, int column, const QModelIndex &parent= QModelIndex()) const;
+        virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+        virtual QModelIndex index(int row, int column, const QModelIndex& parent= QModelIndex()) const;
         virtual QModelIndex parent(const QModelIndex& index) const;
         TreeItem* root() const;
 

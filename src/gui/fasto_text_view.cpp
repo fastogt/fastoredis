@@ -18,7 +18,7 @@
 
 namespace fastoredis
 {
-    FastoTextView::FastoTextView(const QString &delemitr, QWidget* parent)
+    FastoTextView::FastoTextView(const QString& delemitr, QWidget* parent)
         : QWidget(parent)
     {
         findPanel_ = new QFrame(this);
@@ -133,7 +133,7 @@ namespace fastoredis
         editor_->setReadOnly(readOnly);
     }
 
-    void FastoTextView::changeEvent(QEvent *e)
+    void FastoTextView::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();
@@ -160,7 +160,7 @@ namespace fastoredis
         return QWidget::eventFilter(object, event);
     }
 
-    void FastoTextView::keyPressEvent(QKeyEvent *keyEvent)
+    void FastoTextView::keyPressEvent(QKeyEvent* keyEvent)
     {
         bool isFocusScin = editor_->isActiveWindow();
         bool isShowFind = findPanel_->isVisible();

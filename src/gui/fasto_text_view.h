@@ -34,7 +34,7 @@ namespace fastoredis
 
     protected:
         virtual void changeEvent(QEvent *);
-        virtual void keyPressEvent(QKeyEvent *e);
+        virtual void keyPressEvent(QKeyEvent* e);
         virtual bool eventFilter(QObject* object, QEvent* event);
 
     private:

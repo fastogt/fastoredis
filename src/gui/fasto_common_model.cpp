@@ -9,7 +9,7 @@
 
 namespace fastoredis
 {
-    FastoCommonModel::FastoCommonModel(QObject *parent)
+    FastoCommonModel::FastoCommonModel(QObject* parent)
         : TreeModel(parent)
     {
 
@@ -20,7 +20,7 @@ namespace fastoredis
 
     }
 
-    QVariant FastoCommonModel::data(const QModelIndex &index, int role) const
+    QVariant FastoCommonModel::data(const QModelIndex& index, int role) const
     {
         QVariant result;
 
@@ -57,7 +57,7 @@ namespace fastoredis
         return result;
     }
 
-    bool FastoCommonModel::setData(const QModelIndex &index, const QVariant &value, int role)
+    bool FastoCommonModel::setData(const QModelIndex& index, const QVariant& value, int role)
     {
         if (index.isValid() && role == Qt::EditRole) {
             int column = index.column();
@@ -108,7 +108,7 @@ namespace fastoredis
         return FastoCommonItem::eCountColumns;
     }
 
-    Qt::ItemFlags FastoCommonModel::flags(const QModelIndex &index) const
+    Qt::ItemFlags FastoCommonModel::flags(const QModelIndex& index) const
     {
         Qt::ItemFlags result = 0;
         if (index.isValid()) {
@@ -122,7 +122,7 @@ namespace fastoredis
         return result;
     }
 
-    void FastoCommonModel::changeValue(const DbValue& value, const std::string &command)
+    void FastoCommonModel::changeValue(const DbValue& value, const std::string& command)
     {
         const QString key = common::convertFromString<QString>(value.key_);
         const QString val = common::convertFromString<QString>(value.value_);

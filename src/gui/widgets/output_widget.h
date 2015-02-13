@@ -28,7 +28,7 @@ namespace fastoredis
         void startChangeDbValue(const EventsInfo::ChangeDbValueRequest& req);
         void finishChangeDbValue(const EventsInfo::ChangeDbValueResponce& res);
         void addChild(FastoObject* child);
-        void itemUpdate(FastoObject*, const QString& newValue);
+        void itemUpdate(FastoObject* item, const QString& newValue);
 
     private Q_SLOTS:
         void setTreeView();
@@ -37,14 +37,14 @@ namespace fastoredis
 
     private:
         void syncWithSettings();
-        IconLabel *timeLabel_;
-        QPushButton *treeButton_;
-        QPushButton *tableButton_;
-        QPushButton *textButton_;
+        IconLabel* timeLabel_;
+        QPushButton* treeButton_;
+        QPushButton* tableButton_;
+        QPushButton* textButton_;
 
-        FastoCommonModel *commonModel_;
-        FastoTreeView *treeView_;
-        FastoTableView *tableView_;
-        FastoTextView *textView_;
+        FastoCommonModel* commonModel_;
+        FastoTreeView* treeView_;
+        FastoTableView* tableView_;
+        FastoTextView* textView_;
     };
 }

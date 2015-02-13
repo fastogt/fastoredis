@@ -94,7 +94,7 @@ namespace
 namespace fastoredis
 {
 
-    UpdateChecker::UpdateChecker(QObject *parent)
+    UpdateChecker::UpdateChecker(QObject* parent)
         : QObject(parent)
     {
 
@@ -336,7 +336,7 @@ namespace fastoredis
     }
 #endif
 
-    void MainWindow::changeEvent(QEvent *ev)
+    void MainWindow::changeEvent(QEvent* ev)
     {
         if(ev->type() == QEvent::LanguageChange){
             retranslateUi();

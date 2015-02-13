@@ -20,7 +20,7 @@ namespace
         return trd.entryList(QStringList(PROJECT_NAME_LOWERCASE"_*.qm"));
     }
 
-    QPair<QString, QLocale> convertToLocale(const QString &fileName)
+    QPair<QString, QLocale> convertToLocale(const QString& fileName)
     {
         QString langCode = fileName;
         langCode.remove(0, fileName.indexOf('_') + 1);
@@ -28,7 +28,7 @@ namespace
         return QPair<QString, QLocale>(fileName, langCode);
     }
 
-    QString pathToQm(const QString &l)
+    QString pathToQm(const QString& l)
     {
         const QStringList languages = qmLanguages();
         for(int i = 0; i < languages.size(); ++i){
@@ -48,7 +48,7 @@ namespace fastoredis
 {
     namespace translations
     {
-        QString applyLanguage(const QString &lang)
+        QString applyLanguage(const QString& lang)
         {
             QString langres = lang;
 

@@ -9,7 +9,7 @@ namespace
 
 namespace fastoredis
 {
-    RedisApi::RedisApi(QsciLexer *lexer)
+    RedisApi::RedisApi(QsciLexer* lexer)
         : QsciAbstractAPIs(lexer)
     {
     }
@@ -49,7 +49,7 @@ namespace fastoredis
         setAPIs(new RedisApi(this));
     }
 
-    const char *RedisLexer::language() const
+    const char* RedisLexer::language() const
     {
         return "Redis";
     }

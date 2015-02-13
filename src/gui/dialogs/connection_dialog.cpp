@@ -33,7 +33,7 @@ namespace
 
 namespace fastoredis
 {
-    ConnectionDialog::ConnectionDialog(QWidget *parent, IConnectionSettingsBase* connection)
+    ConnectionDialog::ConnectionDialog(QWidget* parent, IConnectionSettingsBase* connection)
         : QDialog(parent), connection_(connection)
     {
         using namespace translations;

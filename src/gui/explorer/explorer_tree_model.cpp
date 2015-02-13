@@ -215,7 +215,7 @@ namespace fastoredis
             return QVariant();
         }
 
-        IExplorerTreeItem *node = common::utils_qt::item<IExplorerTreeItem*>(index);
+        IExplorerTreeItem* node = common::utils_qt::item<IExplorerTreeItem*>(index);
 
         if (!node){
             return QVariant();

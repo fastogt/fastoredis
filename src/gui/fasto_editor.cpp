@@ -44,7 +44,7 @@ namespace
 
 namespace fastoredis
 {
-    FastoEditor::FastoEditor(QWidget *parent)
+    FastoEditor::FastoEditor(QWidget* parent)
         : QsciScintilla(parent), lineNumberMarginWidth_(0)
     {
         setAutoIndent(true);
@@ -91,7 +91,7 @@ namespace fastoredis
         }
     }
 
-    void FastoEditor::keyPressEvent(QKeyEvent *keyEvent)
+    void FastoEditor::keyPressEvent(QKeyEvent* keyEvent)
     {
         if (keyEvent->key() == Qt::Key_F11) {
             keyEvent->ignore();
@@ -107,7 +107,7 @@ namespace fastoredis
         return marginWidth(0);
     }
 
-    int FastoEditor::textWidth(int style, const QString &text)
+    int FastoEditor::textWidth(int style, const QString& text)
     {
         const QByteArray utf8 = text.toUtf8();
         const char *byteArray = utf8.constData();
@@ -120,7 +120,7 @@ namespace fastoredis
 
     }
 
-    void FastoEditorOutput::setModel(QAbstractItemModel *model)
+    void FastoEditorOutput::setModel(QAbstractItemModel* model)
     {
         if (model == model_){
             return;
@@ -282,7 +282,7 @@ namespace fastoredis
         setText(result);
     }
 
-    FastoEditorShell::FastoEditorShell(const QString &version, QWidget *parent)
+    FastoEditorShell::FastoEditorShell(const QString& version, QWidget* parent)
         : FastoEditor(parent), version_(version)
     {
         VERIFY(connect(this, &FastoEditorShell::customContextMenuRequested, this, &FastoEditorShell::showContextMenu));

@@ -79,7 +79,7 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void EncodeDecodeDialog::changeEvent(QEvent *e)
+    void EncodeDecodeDialog::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();

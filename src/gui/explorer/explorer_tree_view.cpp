@@ -389,12 +389,12 @@ namespace fastoredis
         mod->setDefaultDb(serv, db);
     }
 
-    void ExplorerTreeView::startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &req)
+    void ExplorerTreeView::startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest& req)
     {
 
     }
 
-    void ExplorerTreeView::finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &res)
+    void ExplorerTreeView::finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res)
     {
         common::ErrorValueSPtr er = res.errorInfo();
         if(er && er->isError()){
@@ -421,12 +421,12 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeView::startExecuteCommand(const EventsInfo::CommandRequest &req)
+    void ExplorerTreeView::startExecuteCommand(const EventsInfo::CommandRequest& req)
     {
 
     }
 
-    void ExplorerTreeView::finishExecuteCommand(const EventsInfo::CommandResponce &res)
+    void ExplorerTreeView::finishExecuteCommand(const EventsInfo::CommandResponce& res)
     {
         common::ErrorValueSPtr er = res.errorInfo();
         if(er && er->isError()){

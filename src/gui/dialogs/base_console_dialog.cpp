@@ -85,7 +85,7 @@ namespace
 
 namespace fastoredis
 {
-    BaseConsoleDialog::BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon &icon, bool isExecuteEnabled, FastoEditorShell *shell, const QString &fileExtension)
+    BaseConsoleDialog::BaseConsoleDialog(const QString& filePath, QWidget* parent, const QIcon& icon, bool isExecuteEnabled, FastoEditorShell* shell, const QString& fileExtension)
         : QDialog(parent), shell_(NULL), filePath_(filePath), fileExtension_(fileExtension)
     {
         using namespace translations;
@@ -258,7 +258,7 @@ namespace fastoredis
         }
     }
 
-    void BaseConsoleDialog::execute(const QString& script, const QStringList &args)
+    void BaseConsoleDialog::execute(const QString& script, const QStringList& args)
     {
         executeImpl(script, args);
     }

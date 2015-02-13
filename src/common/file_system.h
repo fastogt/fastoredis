@@ -77,8 +77,8 @@ namespace common
         bool change_directory(const std::string &path) WARN_UNUSED_RESULT;
         std::string pwd();
 
-        bool write_to_descriptor(int fd_desc, const void *buf, unsigned int len) WARN_UNUSED_RESULT;
-        bool read_from_descriptor(int fd_desc, void *buf, unsigned int len, int &readlen) WARN_UNUSED_RESULT;
+        bool write_to_descriptor(int fd_desc, const void* buf, unsigned int len) WARN_UNUSED_RESULT;
+        bool read_from_descriptor(int fd_desc, void* buf, unsigned int len, int& readlen) WARN_UNUSED_RESULT;
 
         bool findFileInPath(const char* fileName, std::string &outPath) WARN_UNUSED_RESULT;
 
@@ -88,10 +88,10 @@ namespace common
         {
         public:
             Path();
-            explicit Path(const std::string &path);
-            Path(const Path &other);
+            explicit Path(const std::string& path);
+            Path(const Path& other);
 
-            bool append(const std::string &path);
+            bool append(const std::string& path);
             std::string extension()const;
             bool isValid()const;
             bool isFile()const;
@@ -106,15 +106,15 @@ namespace common
             std::string path_;
         };
 
-        Path make_path(const Path& p, const std::string &file_path);
-        Path make_path_from_uri(const Path& p, const std::string &uri);
+        Path make_path(const Path& p, const std::string& file_path);
+        Path make_path_from_uri(const Path& p, const std::string& uri);
 
-        inline bool operator <(const Path &lhs,const Path &rhs)
+        inline bool operator <(const Path& lhs,const Path& rhs)
         {
             return lhs.path() < rhs.path();
         }
 
-        inline bool operator ==(const Path &lhs,const Path &rhs)
+        inline bool operator ==(const Path& lhs,const Path& rhs)
         {
             return lhs.path() == rhs.path();
         }

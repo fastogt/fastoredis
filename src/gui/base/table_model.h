@@ -11,10 +11,10 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        TableModel(QObject *parent = 0);
+        TableModel(QObject* parent = 0);
 
-        virtual int rowCount(const QModelIndex &parent) const;
-        virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+        virtual int rowCount(const QModelIndex& parent) const;
+        virtual QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
 
         virtual ~TableModel();
 

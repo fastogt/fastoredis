@@ -51,7 +51,7 @@ namespace fastoredis
         }
     }
 
-    TreeModel::TreeModel(QObject *parent)
+    TreeModel::TreeModel(QObject* parent)
         : QAbstractItemModel(parent), root_(new TreeItem(NULL))
     {
 
@@ -62,7 +62,7 @@ namespace fastoredis
         return root_;
     }
 
-    int TreeModel::rowCount(const QModelIndex &parent) const
+    int TreeModel::rowCount(const QModelIndex& parent) const
     {
         const TreeItem *parentItem=NULL;
         if (parent.isValid()){
@@ -128,17 +128,17 @@ namespace fastoredis
         endRemoveRows();
     }
 
-    void TreeModel::updateItem(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+    void TreeModel::updateItem(const QModelIndex& topLeft, const QModelIndex& bottomRight)
     {
         emit dataChanged(topLeft, bottomRight);
     }
 
-    bool TreeModel::findItem(void *internalPointer, QModelIndex& index)
+    bool TreeModel::findItem(void* internalPointer, QModelIndex& index)
     {
         return findChildInModel(QModelIndex(), internalPointer, index, root_, this);
     }
 
-    QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
+    QModelIndex TreeModel::index(int row, int column, const QModelIndex& parent) const
     {
         if (hasIndex(row, column, parent)) {
             const TreeItem * parentItem = NULL;

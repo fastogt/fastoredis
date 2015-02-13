@@ -40,7 +40,7 @@ namespace fastoredis
         commands_->addCommand(command);
     }
 
-    void LogTabWidget::changeEvent(QEvent *e)
+    void LogTabWidget::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();

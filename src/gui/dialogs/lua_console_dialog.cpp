@@ -55,7 +55,7 @@ namespace fastoredis
         }
     }
 
-    void LuaConsoleDialog::executeImpl(const QString& script, const QStringList &args)
+    void LuaConsoleDialog::executeImpl(const QString& script, const QStringList& args)
     {
         worker_->execute(script, args);
     }

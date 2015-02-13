@@ -19,7 +19,7 @@ namespace common
     {
         namespace hash
         {
-            uint64_t crc64(uint64_t crc, const byte_t *data, uint64_t lenght);
+            uint64_t crc64(uint64_t crc, const byte_t* data, uint64_t lenght);
             uint64_t crc64(uint64_t crc, const buffer_type& data);
         }
 
@@ -150,7 +150,7 @@ namespace common
             struct RuntimeCmp<std::pair<T,U> >
                 : public std::binary_function<const std::pair<T,U>,const std::pair<T,U>,bool>
             {
-                inline bool operator()(const std::pair<T,U> &t1,const std::pair<T,U> &t2)const
+                inline bool operator()(const std::pair<T,U>& t1,const std::pair<T,U>& t2)const
                 {
                         if(t1.first==t2.first)
                         {
@@ -163,7 +163,7 @@ namespace common
             struct run_time_type
             {
                 template <typename type>
-                inline bool operator()(const type &t)const
+                inline bool operator()(const type& t)const
                 {
                     return typeid(t)==typeid(is_type);
                 }
@@ -210,9 +210,9 @@ namespace common
         void msleep(unsigned int msec);
         void usleep(unsigned int usec);
 
-        char *strdupornull(const char *src);
+        char* strdupornull(const char* src);
         void freeifnotnull(void* ptr);
-        const char *c_strornull(const std::string &val);
+        const char* c_strornull(const std::string& val);
         std::string null2empty(const char* src, size_t len);
 
 #ifdef OS_POSIX

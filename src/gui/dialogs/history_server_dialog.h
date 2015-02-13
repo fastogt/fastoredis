@@ -16,7 +16,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        explicit ServerHistoryDialog(const QString& title, connectionTypes type, QWidget *parent = 0);
+        explicit ServerHistoryDialog(const QString& title, connectionTypes type, QWidget* parent = 0);
 
     Q_SIGNALS:
         void showed();

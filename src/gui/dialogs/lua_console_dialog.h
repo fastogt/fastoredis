@@ -18,8 +18,8 @@ namespace fastoredis
         virtual void retranslateUi();
 
     private:
-        virtual void loadAndInstallFileImpl(const QString &path);
-        virtual void executeImpl(const QString& script, const QStringList &args);
+        virtual void loadAndInstallFileImpl(const QString& path);
+        virtual void executeImpl(const QString& script, const QStringList& args);
         virtual void stopImpl();
 
         LuaWorker* worker_;

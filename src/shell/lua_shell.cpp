@@ -46,7 +46,7 @@ namespace fastoredis
             : public QsciLexerLua
     {
     public:
-        RedisLuaLexer(QObject *parent = 0)
+        RedisLuaLexer(QObject* parent = 0)
             : QsciLexerLua(parent)
         {
             QsciAPIs* api = new QsciAPIs(this);

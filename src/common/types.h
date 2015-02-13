@@ -33,7 +33,7 @@ namespace common
     typedef std::basic_ofstream<char16, string16_char_traits> string16_ofstream;
     typedef std::basic_ifstream<char16, string16_char_traits> string16_ifstream;
 
-    std::string escapedText(const std::string &str);
+    std::string escapedText(const std::string& str);
 
     typedef int64_t time64_t;
 }

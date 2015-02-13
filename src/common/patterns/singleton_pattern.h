@@ -106,7 +106,7 @@ namespace common
         };
 
         template <class T>
-        T*  TSSingleton<T>::self_ = NULL;
+        T* TSSingleton<T>::self_ = NULL;
 
         template <class T>
         multi_threading::mutex_t TSSingleton<T>::mutex_;

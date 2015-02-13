@@ -27,7 +27,7 @@ namespace fastoredis
             : public QTreeWidgetItem
     {
     public:
-        ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection): connection_(connection) { refreshFields(); }
+        ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection) : connection_(connection) { refreshFields(); }
         IConnectionSettingsBaseSPtr connection() const { return connection_; }
 
         void refreshFields()

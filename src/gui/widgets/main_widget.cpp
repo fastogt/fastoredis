@@ -7,7 +7,7 @@
 
 namespace fastoredis
 {
-    MainWidget::MainWidget(QWidget *parent)
+    MainWidget::MainWidget(QWidget* parent)
         : QTabWidget(parent)
     {
         MainTabBar *tab = new MainTabBar(this);
@@ -108,7 +108,7 @@ namespace fastoredis
         }
     }
 
-    void MainWidget::addWidgetToTab(QueryWidget *wid, const QString& title)
+    void MainWidget::addWidgetToTab(QueryWidget* wid, const QString& title)
     {
         if(!wid){
             return;

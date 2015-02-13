@@ -30,7 +30,7 @@ namespace fastoredis
         return result;
     }
 
-    FastoObject *FastoObject::createRoot(const std::string &text, IFastoObjectObserver* observer)
+    FastoObject* FastoObject::createRoot(const std::string &text, IFastoObjectObserver* observer)
     {
         FastoObject* root =  new FastoObject(NULL, common::Value::createStringValue(text), "");
         root->observer_ = observer;

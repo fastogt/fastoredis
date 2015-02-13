@@ -4,7 +4,7 @@
 
 namespace fastoredis
 {
-    TreeItem::TreeItem(TreeItem *parent, void* internalPointer)
+    TreeItem::TreeItem(TreeItem* parent, void* internalPointer)
         : parent_(parent), internalPointer_(internalPointer)
     {
 
@@ -15,7 +15,7 @@ namespace fastoredis
         clear();
     }
 
-    void TreeItem::addChildren(TreeItem *child)
+    void TreeItem::addChildren(TreeItem* child)
     {
         if(child){
             DCHECK(child->parent_ == this);
@@ -23,7 +23,7 @@ namespace fastoredis
         }
     }
 
-    void TreeItem::removeChildren(TreeItem *child)
+    void TreeItem::removeChildren(TreeItem* child)
     {
         for(unsigned i = 0; i < childrens_.size(); ++i){
             if(child == childrens_[i]){
@@ -54,7 +54,7 @@ namespace fastoredis
         return 0;
     }
 
-    int TreeItem::indexOf(TreeItem *item) const
+    int TreeItem::indexOf(TreeItem* item) const
     {
         for (unsigned i = 0; i < childrens_.size(); ++i) {
             if (item == childrens_[i]) {
@@ -64,7 +64,7 @@ namespace fastoredis
         return -1;
     }
 
-    TreeItem *TreeItem::parent() const
+    TreeItem* TreeItem::parent() const
     {
         return parent_;
     }

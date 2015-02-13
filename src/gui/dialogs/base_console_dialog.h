@@ -35,7 +35,7 @@ namespace fastoredis
         void executeWithArgs();
         void stop();
 
-        void execute(const QString& script, const QStringList &args);
+        void execute(const QString& script, const QStringList& args);
         void loadAndInstallFile();
 
     protected:
@@ -46,7 +46,7 @@ namespace fastoredis
 
     private:        
         virtual void loadAndInstallFileImpl(const QString& path) = 0;
-        virtual void executeImpl(const QString& script, const QStringList &args) = 0;
+        virtual void executeImpl(const QString& script, const QStringList& args) = 0;
         virtual void stopImpl() = 0;
 
     protected:

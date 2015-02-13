@@ -30,7 +30,7 @@ namespace common
         return QString::fromUtf8((const char*)value.c_str(), value.size());
     }
 
-    QString escapedText(const QString &str)
+    QString escapedText(const QString& str)
     {
         if(!str.isEmpty() && str[str.length()-1] != '\n'){
             return str + "\n";

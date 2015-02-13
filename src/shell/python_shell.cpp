@@ -46,7 +46,7 @@ namespace fastoredis
             : public QsciLexerPython
     {
     public:
-        RedisPythonLexer(QObject *parent = 0)
+        RedisPythonLexer(QObject* parent = 0)
             : QsciLexerPython(parent)
         {
             QsciAPIs* api = new QsciAPIs(this);

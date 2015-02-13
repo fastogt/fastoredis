@@ -54,12 +54,12 @@ namespace common
                 return buf;
             }
 
-            char *url_encode(const char *str)
+            char* url_encode(const char* str)
             {
                 return url_encode(str, strlen(str));
             }
 
-            char *url_decode(const char *str, size_t len)
+            char* url_decode(const char *str, size_t len)
             {
                 const char *pstr = str;
                 char *buf = (char*)malloc(len + 1);
@@ -84,12 +84,12 @@ namespace common
                 return buf;
             }
 
-            char *url_decode(const char *str)
+            char* url_decode(const char* str)
             {
                 return url_decode(str, strlen(str));
             }
 
-            bool get_protocol(const char *url_s, size_t len, url::supported_protocols &prot)
+            bool get_protocol(const char* url_s, size_t len, url::supported_protocols& prot)
             {
                 bool result=false;
                 if(url_s&&5<len)
@@ -120,7 +120,7 @@ namespace common
                 return result;
             }
 
-            bool get_protocol(const char *url_s, url::supported_protocols &prot)
+            bool get_protocol(const char* url_s, url::supported_protocols& prot)
             {
                 return get_protocol(url_s, strlen(url_s),prot);
             }
@@ -153,7 +153,8 @@ namespace common
                     start = 7;
                 }
             }
-            memory_string *cur_member = &host_;
+
+            memory_string* cur_member = &host_;
             for(size_t i = start; i < len; ++i)
             {
                 if(url_s[i]=='/'||url_s[i]=='?')
@@ -176,22 +177,22 @@ namespace common
             return host_.c_str()!=NULL;
         }
 
-        const memory_string &url::protocol()const
+        const memory_string& url::protocol()const
         {
             return protocols_array[protocol_];
         }
 
-        const memory_string &url::host()const
+        const memory_string& url::host()const
         {
             return host_;
         }
 
-        const memory_string &url::path()const
+        const memory_string& url::path()const
         {
             return path_;
         }
 
-        const memory_string &url::query()const
+        const memory_string& url::query()const
         {
             return query_;
         }

@@ -22,7 +22,7 @@
 
 namespace fastoredis
 {
-    PreferencesDialog::PreferencesDialog(QWidget *parent)
+    PreferencesDialog::PreferencesDialog(QWidget* parent)
         : QDialog(parent)
     {
         setWindowIcon(GuiFactory::instance().mainWindowIcon());

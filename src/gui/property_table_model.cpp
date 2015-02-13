@@ -7,19 +7,19 @@
 
 namespace fastoredis
 {
-    PropertyTableItem::PropertyTableItem(const QString &key, const QString &value)
+    PropertyTableItem::PropertyTableItem(const QString& key, const QString& value)
         : key_(key), value_(value)
     {
 
     }
 
-    PropertyTableModel::PropertyTableModel(QObject *parent)
+    PropertyTableModel::PropertyTableModel(QObject* parent)
         : TableModel(parent)
     {
 
     }
 
-    QVariant PropertyTableModel::data(const QModelIndex &index, int role) const
+    QVariant PropertyTableModel::data(const QModelIndex& index, int role) const
     {
         QVariant result;
 
@@ -44,7 +44,7 @@ namespace fastoredis
         return result;
     }
 
-    bool PropertyTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+    bool PropertyTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
     {
         if (index.isValid() && role == Qt::EditRole) {
             int column = index.column();
@@ -70,7 +70,7 @@ namespace fastoredis
         return false;
     }
 
-    void PropertyTableModel::changeProperty(const PropertyType &pr)
+    void PropertyTableModel::changeProperty(const PropertyType& pr)
     {
         const QString key = common::convertFromString<QString>(pr.first);
         for(int i = 0; i < data_.size(); ++i)
@@ -102,7 +102,7 @@ namespace fastoredis
         return TableModel::headerData(section,orientation,role);
     }
 
-    int PropertyTableModel::columnCount(const QModelIndex &parent) const
+    int PropertyTableModel::columnCount(const QModelIndex& parent) const
     {
         return PropertyTableItem::eCountColumns;
     }
@@ -120,7 +120,7 @@ namespace fastoredis
         return result;
     }
 
-    void PropertyTableModel::addItem(PropertyTableItem *item)
+    void PropertyTableModel::addItem(PropertyTableItem* item)
     {
         beginInsertRows(QModelIndex(), data_.size(), data_.size()+1 );
         data_.push_back(item);

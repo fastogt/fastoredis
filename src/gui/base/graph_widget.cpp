@@ -76,7 +76,7 @@ namespace fastoredis
         adjust_axis(min_y_, max_y_, num_y_ticks_);
     }
 
-    GraphWidget::GraphWidget(QWidget *parent)
+    GraphWidget::GraphWidget(QWidget* parent)
         : QWidget(parent),cur_zoom_(0),rubber_band_is_shown_(false), nodes_()
     {
         setBackgroundRole(QPalette::Light);
@@ -136,7 +136,7 @@ namespace fastoredis
         }
     }
 
-    void GraphWidget::drawGrid(QPainter *painter)
+    void GraphWidget::drawGrid(QPainter* painter)
     {
         if(zoomStack.empty()){
             return;
@@ -176,7 +176,7 @@ namespace fastoredis
         painter->drawRect(rect.adjusted(0, 0, -1, -1));
     }
 
-    void GraphWidget::drawCurves(QPainter *painter)
+    void GraphWidget::drawCurves(QPainter* painter)
     {
         if(zoomStack.empty()){
             return;
@@ -228,7 +228,7 @@ namespace fastoredis
         update();
     }
 
-    void GraphWidget::keyPressEvent(QKeyEvent *event)
+    void GraphWidget::keyPressEvent(QKeyEvent* event)
     {
         switch (event->key())
         {
@@ -261,7 +261,7 @@ namespace fastoredis
         QWidget::keyPressEvent(event);
     }
 
-    void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
+    void GraphWidget::mouseReleaseEvent(QMouseEvent* event)
     {
         if(zoomStack.empty()){
             return;
@@ -289,7 +289,7 @@ namespace fastoredis
         }
     }
 
-    void GraphWidget::mouseMoveEvent(QMouseEvent *event)
+    void GraphWidget::mouseMoveEvent(QMouseEvent* event)
     {
         if (rubber_band_is_shown_){
             updateRubberBandRegion();
@@ -300,7 +300,7 @@ namespace fastoredis
         //QWidget::mouseMoveEvent(event);
     }
 
-    void GraphWidget::mousePressEvent(QMouseEvent *event)
+    void GraphWidget::mousePressEvent(QMouseEvent* event)
     {
         if(zoomStack.empty()){
             return;
@@ -330,7 +330,7 @@ namespace fastoredis
         drawCurves(&painter);
     }
 
-    QRect GraphWidget::paintRect()const
+    QRect GraphWidget::paintRect() const
     {
         return QRect(margin, margin, width() - 2 * margin, height() - 2 * margin);
     }

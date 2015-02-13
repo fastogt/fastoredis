@@ -114,9 +114,9 @@ namespace fastoredis
         void addKey(IServer* server, DataBaseInfoSPtr db, const std::string& key);
         void removeKey(IServer* server, DataBaseInfoSPtr db, const std::string& key);
     private:
-        ExplorerServerItem *findServerItem(IServer* server) const;
-        ExplorerDatabaseItem *findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const;
-        ExplorerKeyItem *findKeyItem(ExplorerDatabaseItem* db, const std::string& key) const;
+        ExplorerServerItem* findServerItem(IServer* server) const;
+        ExplorerDatabaseItem* findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const;
+        ExplorerKeyItem* findKeyItem(ExplorerDatabaseItem* db, const std::string& key) const;
     };
 }
 

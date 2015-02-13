@@ -45,16 +45,16 @@ namespace fastoredis
         void deleteKey();
 
         void startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req);
-        void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce &res);
+        void finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res);
 
         void startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req);
         void finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res);
 
-        void startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest &req);
-        void finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce &res);
+        void startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest& req);
+        void finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res);
 
-        void startExecuteCommand(const EventsInfo::CommandRequest &req);
-        void finishExecuteCommand(const EventsInfo::CommandResponce &res);
+        void startExecuteCommand(const EventsInfo::CommandRequest& req);
+        void finishExecuteCommand(const EventsInfo::CommandResponce& res);
     protected:
         virtual void changeEvent(QEvent* );
 

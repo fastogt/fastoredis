@@ -142,12 +142,12 @@ namespace fastoredis
         }
     }
 
-    void InfoServerDialog::startServerInfo(const EventsInfo::ServerInfoRequest &req)
+    void InfoServerDialog::startServerInfo(const EventsInfo::ServerInfoRequest& req)
     {
         glassWidget_->start();
     }
 
-    void InfoServerDialog::finishServerInfo(const EventsInfo::ServerInfoResponce &res)
+    void InfoServerDialog::finishServerInfo(const EventsInfo::ServerInfoResponce& res)
     {
         glassWidget_->stop();
         common::ErrorValueSPtr er = res.errorInfo();

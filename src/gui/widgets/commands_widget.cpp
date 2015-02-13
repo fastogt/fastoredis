@@ -30,7 +30,7 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void CommandsWidget::showContextMenu(const QPoint &pt)
+    void CommandsWidget::showContextMenu(const QPoint& pt)
     {
         QMenu *menu = logTextEdit_->createStandardContextMenu();
         menu->addAction(clear_);
@@ -40,7 +40,7 @@ namespace fastoredis
         delete menu;
     }
 
-    void CommandsWidget::addCommand(const Command &command)
+    void CommandsWidget::addCommand(const Command& command)
     {
         QTime time = QTime::currentTime();
         logTextEdit_->setTextColor(command.type() == common::Value::C_INNER ? QColor(Qt::gray):QColor(Qt::black));
@@ -49,7 +49,7 @@ namespace fastoredis
         sb->setValue(sb->maximum());
     }
 
-    void CommandsWidget::changeEvent(QEvent *e)
+    void CommandsWidget::changeEvent(QEvent* e)
     {
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();

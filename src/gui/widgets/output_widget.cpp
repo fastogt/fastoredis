@@ -22,7 +22,7 @@
 
 namespace
 {
-    fastoredis::FastoCommonItem *createItem(fastoredis::TreeItem* parent, const QString& key, fastoredis::FastoObject* item)
+    fastoredis::FastoCommonItem* createItem(fastoredis::TreeItem* parent, const QString& key, fastoredis::FastoObject* item)
     {
         const std::string value = item->toString();
         return new fastoredis::FastoCommonItem(key, common::convertFromString<QString>(value), item->type(), parent, item);
@@ -52,9 +52,9 @@ namespace fastoredis
 
         timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(), "0", QSize(32, 32));
 
-        QVBoxLayout *mainL = new QVBoxLayout;
-        QHBoxLayout *topL = new QHBoxLayout;
-        QSplitter *splitter = new QSplitter;
+        QVBoxLayout* mainL = new QVBoxLayout;
+        QHBoxLayout* topL = new QHBoxLayout;
+        QSplitter* splitter = new QSplitter;
         splitter->setOrientation(Qt::Horizontal);
         splitter->setHandleWidth(1);
         splitter->setContentsMargins(0, 0, 0, 0);
@@ -145,7 +145,7 @@ namespace fastoredis
         timeLabel_->setText(QString("%1 msec").arg(res.elapsedTime()));
     }
 
-    void OutputWidget::addChild(FastoObject *child)
+    void OutputWidget::addChild(FastoObject* child)
     {
         DCHECK(child->parent());
 
@@ -185,7 +185,7 @@ namespace fastoredis
         commonModel_->insertItem(parent, comChild);
     }
 
-    void OutputWidget::itemUpdate(FastoObject* item, const QString &newValue)
+    void OutputWidget::itemUpdate(FastoObject* item, const QString& newValue)
     {
         QModelIndex index;
         bool isFound = commonModel_->findItem(item, index);

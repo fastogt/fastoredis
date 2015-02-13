@@ -18,7 +18,7 @@ namespace fastoredis
 
     Q_SIGNALS:
         void showed();
-        void changedProperty(const PropertyType &prop);
+        void changedProperty(const PropertyType& prop);
 
     public Q_SLOTS:
         void startServerProperty(const EventsInfo::ServerPropertyInfoRequest& req);

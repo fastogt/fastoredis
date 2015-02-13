@@ -18,7 +18,7 @@ namespace fastoredis
     {
     public:
         Command();
-        Command(const std::string &mess, common::Value::CommandType commandT);
+        Command(const std::string& mess, common::Value::CommandType commandT);
         const std::string& message() const;
         common::Value::CommandType type() const;
 

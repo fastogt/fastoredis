@@ -27,7 +27,7 @@ namespace
         return result;
     }
 
-    int cp(const char *from, const char *to)
+    int cp(const char* from, const char* to)
     {
         int fd_to, fd_from;
         char buf[4096];
@@ -114,7 +114,7 @@ namespace common
              return path;
         }
 
-        tribool is_directory(const std::string &path)
+        tribool is_directory(const std::string& path)
         {
             if(path.empty()){
                 return INDETERMINATE;
@@ -145,12 +145,12 @@ namespace common
         }
 
 #ifdef OS_POSIX
-        bool create_node(const std::string &path)
+        bool create_node(const std::string& path)
         {
             return create_node(path, S_IRWXU|S_IRWXG|S_IRWXO);
         }
 
-        bool create_node(const std::string &path, size_t permissions)
+        bool create_node(const std::string& path, size_t permissions)
         {
             if(path.empty()){
                 return false;
@@ -263,7 +263,7 @@ namespace common
             return create_directory_impl(prPathPtr);
         }
 
-        bool change_directory(const std::string &path)
+        bool change_directory(const std::string& path)
         {
             if(path.empty()){
                 NOTREACHED();
@@ -285,7 +285,7 @@ namespace common
             return cwd;
         }
 
-        bool open_descriptor(const std::string& path, int &fd_desc, int oflags)
+        bool open_descriptor(const std::string& path, int& fd_desc, int oflags)
         {
             if(path.empty()){
                 return false;
@@ -312,7 +312,7 @@ namespace common
             return result;
         }
 
-        bool write_to_descriptor(int fd_desc, const void *buf, unsigned int len)
+        bool write_to_descriptor(int fd_desc, const void* buf, unsigned int len)
         {
             if(fd_desc == INVALID_DESCRIPTOR){
                 return false;
@@ -325,7 +325,7 @@ namespace common
             return result;
         }
 
-        bool read_from_descriptor(int fd_desc, void *buf, unsigned int len, int &readlen)
+        bool read_from_descriptor(int fd_desc, void* buf, unsigned int len, int& readlen)
         {
             if(fd_desc == INVALID_DESCRIPTOR){
                 return false;
@@ -351,7 +351,7 @@ namespace common
             return stat_buf.st_size;
         }
 
-        bool findFileInPath(const char* fileName, std::string &outPath)
+        bool findFileInPath(const char* fileName, std::string& outPath)
         {
             if(!fileName){
                 return false;
@@ -383,14 +383,14 @@ namespace common
 {
     namespace file_system
     {
-        Path make_path(const Path& p, const std::string &file_path)
+        Path make_path(const Path& p, const std::string& file_path)
         {
             Path result(p);
             result.append(file_path);
             return result;
         }
 
-        Path make_path_from_uri(const Path& p, const std::string &uri)
+        Path make_path_from_uri(const Path& p, const std::string& uri)
         {
             Path result;
             char *dec = url::detail::url_decode(uri.c_str());
@@ -408,12 +408,12 @@ namespace common
 
         }
 
-        Path::Path(const std::string &path)
+        Path::Path(const std::string& path)
             : is_dir_(file_system::is_directory(path)), path_(isDirectory() ? stable_dir_path(path) : path)
         {
         }
 
-        Path::Path(const Path &other)
+        Path::Path(const Path& other)
             : is_dir_(other.is_dir_), path_(other.path_)
         {
 
@@ -454,7 +454,7 @@ namespace common
             return get_file_name(path_);
         }
 
-        bool Path::append(const std::string &path)
+        bool Path::append(const std::string& path)
         {
             bool is_change=false;
             if(!path.empty()){

@@ -37,7 +37,7 @@ namespace fastoredis
         };
 
         typedef std::vector<std::pair<qreal, qreal> > nodes_container_type;
-        GraphWidget(QWidget *parent = 0);
+        GraphWidget(QWidget* parent = 0);
 
         void setNodes(const nodes_container_type& nodes);
 
@@ -46,17 +46,17 @@ namespace fastoredis
         void zoom_out();
 
     protected:
-        void paintEvent(QPaintEvent *event);
-        void mousePressEvent(QMouseEvent *event);
-        void mouseMoveEvent(QMouseEvent *event);
-        void mouseReleaseEvent(QMouseEvent *event);
-        void keyPressEvent(QKeyEvent *event);
-        void wheelEvent(QWheelEvent *event);
+        void paintEvent(QPaintEvent* event);
+        void mousePressEvent(QMouseEvent* event);
+        void mouseMoveEvent(QMouseEvent* event);
+        void mouseReleaseEvent(QMouseEvent* event);
+        void keyPressEvent(QKeyEvent* event);
+        void wheelEvent(QWheelEvent* event);
 
     private:
         void updateRubberBandRegion();
-        void drawGrid(QPainter *painter);
-        void drawCurves(QPainter *painter);
+        void drawGrid(QPainter* painter);
+        void drawCurves(QPainter* painter);
         QRect paintRect()const;
 
         enum

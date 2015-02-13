@@ -18,7 +18,7 @@ namespace fastoredis
     public:
         QueryWidget(IServerSPtr server, QWidget* parent = 0);
 
-        QueryWidget* clone(const QString &text);
+        QueryWidget* clone(const QString& text);
         connectionTypes connectionType() const;
         QString inputText() const;
         void setInputText(const QString& text);

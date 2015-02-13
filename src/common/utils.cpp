@@ -323,7 +323,7 @@ namespace common
             usleep(msec*1000);
         }
 
-        char *strdupornull(const char *src)
+        char *strdupornull(const char* src)
         {
             if(!src){
                 return NULL;
@@ -341,7 +341,7 @@ namespace common
             free(ptr);
         }
 
-        const char *c_strornull(const std::string &val)
+        const char *c_strornull(const std::string& val)
         {
             return val.empty() ? NULL : val.c_str();
         }

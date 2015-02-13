@@ -26,11 +26,11 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        PropertyTableModel(QObject *parent = 0);
+        PropertyTableModel(QObject* parent = 0);
         ~PropertyTableModel();
 
         virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-        virtual bool setData(const QModelIndex& index, const QVariant &value, int role = Qt::EditRole);
+        virtual bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
         virtual Qt::ItemFlags flags(const QModelIndex& index) const;
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 

@@ -4,20 +4,20 @@
 
 namespace fastoredis
 {
-    TableModel::TableModel(QObject *parent)
+    TableModel::TableModel(QObject* parent)
         : QAbstractTableModel(parent)
     {
 
     }
 
-    int TableModel::rowCount(const QModelIndex &parent) const
+    int TableModel::rowCount(const QModelIndex& parent) const
     {
         int sz = data_.size();
         return sz;
     }
 
 
-    QModelIndex TableModel::index(int row, int column, const QModelIndex &parent) const
+    QModelIndex TableModel::index(int row, int column, const QModelIndex& parent) const
     {
         QModelIndex index;
         if (hasIndex(row, column, parent)) {
