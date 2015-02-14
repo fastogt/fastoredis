@@ -155,34 +155,64 @@ namespace fastoredis
         }
 
         command = dynamic_cast<FastoObjectCommand*>(child->parent());
-        DCHECK(command);
+        if(command){
 
-        void* parentinner = command->parent();
+            void* parentinner = command->parent();
 
-        QModelIndex parent;
-        bool isFound = commonModel_->findItem(parentinner, parent);
-        if(!isFound){
-            return;
-        }
+            QModelIndex parent;
+            bool isFound = commonModel_->findItem(parentinner, parent);
+            if(!isFound){
+                return;
+            }
 
-        fastoredis::FastoCommonItem* par = NULL;
-        if(!parent.isValid()){
-            par = static_cast<fastoredis::FastoCommonItem*>(commonModel_->root());
+            fastoredis::FastoCommonItem* par = NULL;
+            if(!parent.isValid()){
+                par = static_cast<fastoredis::FastoCommonItem*>(commonModel_->root());
+            }
+            else{
+                par = common::utils_qt::item<fastoredis::FastoCommonItem*>(parent);
+            }
+
+            DCHECK(par);
+            if(!par){
+                return;
+            }
+
+            const QString key = common::convertFromString<QString>(command->inputArgs());
+
+            fastoredis::FastoCommonItem* comChild = createItem(par, key, child);
+            comChild->setChangeCommand(command->oppositeCommand());
+            commonModel_->insertItem(parent, comChild);
         }
         else{
-            par = common::utils_qt::item<fastoredis::FastoCommonItem*>(parent);
+            FastoObjectArray* arr = dynamic_cast<FastoObjectArray*>(child->parent());
+            if(arr){
+                QModelIndex parent;
+                bool isFound = commonModel_->findItem(arr, parent);
+                if(!isFound){
+                    return;
+                }
+
+                fastoredis::FastoCommonItem* par = NULL;
+                if(!parent.isValid()){
+                    par = static_cast<fastoredis::FastoCommonItem*>(commonModel_->root());
+                }
+                else{
+                    par = common::utils_qt::item<fastoredis::FastoCommonItem*>(parent);
+                }
+
+                DCHECK(par);
+                if(!par){
+                    return;
+                }
+
+                fastoredis::FastoCommonItem* comChild = createItem(par, QString(), child);
+                commonModel_->insertItem(parent, comChild);
+            }
+            else{
+                NOTREACHED();
+            }
         }
-
-        DCHECK(par);
-        if(!par){
-            return;
-        }
-
-        const QString key = common::convertFromString<QString>(command->inputArgs());
-
-        fastoredis::FastoCommonItem* comChild = createItem(par, key, child);
-        comChild->setChangeCommand(command->oppositeCommand());
-        commonModel_->insertItem(parent, comChild);
     }
 
     void OutputWidget::itemUpdate(FastoObject* item, const QString& newValue)

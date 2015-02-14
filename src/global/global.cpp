@@ -144,7 +144,7 @@ namespace fastoredis
         }
 
         size_t pos = input.find_first_of(' ');
-        std::string key;
+        std::string key = input;
         std::string value;
         if(pos != std::string::npos){
             key = input.substr(0, pos);
