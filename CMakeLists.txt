@@ -12,7 +12,7 @@ SET(PROJECT_MAINTAINER_MAIL "atopilski@fastoredis.com" CACHE STRING "Internet ma
 SET(PROJECT_MAINTAINER_NAME "Alexandr Topilski" CACHE STRING "Name of ${PROJECT_NAME} mainteiner")
 SET(PROJECT_GITHUB_FORK "www.github.com/fasto/fastoredis" CACHE STRING "Git fork of ${PROJECT_NAME}")
 SET(PROJECT_GITHUB_ISSUES "www.github.com/fasto/fastoredis/issues" CACHE STRING "Git issue link for ${PROJECT_NAME}")
-SET(PROJECT_BUILD_TYPE "beta") #alfa, beta, rc, release
+SET(PROJECT_BUILD_TYPE "rc") #alfa, beta, rc, release
 ##########################################################
 
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
