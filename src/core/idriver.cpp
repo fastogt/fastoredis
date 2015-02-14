@@ -184,7 +184,7 @@ namespace fastoredis
     }
 
     IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text)
-        : parent_(parent), reciver_(reciver)
+        : parent_(parent), reciver_(reciver), tstart_(common::time::current_mstime())
     {
         DCHECK(parent_);
         root_ = createRoot(reciver, text);
@@ -192,7 +192,7 @@ namespace fastoredis
 
     IDriver::RootLocker::~RootLocker()
     {
-        events::CommandRootCompleatedEvent::value_type res(root_);
+        events::CommandRootCompleatedEvent::value_type res(tstart_, root_);
         parent_->reply(reciver_, new events::CommandRootCompleatedEvent(parent_, res));
     }
 

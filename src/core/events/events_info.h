@@ -12,7 +12,7 @@ namespace fastoredis
         {
             typedef common::utils_qt::EventInfo<common::ErrorValueSPtr > base_class;
             EventInfoBase(const error_type &er = error_type());
-
+            EventInfoBase(const common::time64_t time_start, const error_type &er = error_type());
             common::time64_t elapsedTime() const;
 
         private:
@@ -122,6 +122,7 @@ namespace fastoredis
         {
             typedef EventInfoBase base_class;
             CommandRootCompleatedInfo(FastoObjectIPtr root, const error_type &er = error_type());
+            CommandRootCompleatedInfo(common::time64_t timest, FastoObjectIPtr root, const error_type &er = error_type());
 
             FastoObjectIPtr root_;
         };

@@ -12,6 +12,12 @@ namespace fastoredis
 
         }
 
+        EventInfoBase::EventInfoBase(const common::time64_t time_start, const error_type &er)
+            : base_class(er), time_start_(time_start)
+        {
+
+        }
+
         common::time64_t EventInfoBase::elapsedTime() const
         {
             return common::time::current_mstime() - time_start_;
@@ -97,6 +103,12 @@ namespace fastoredis
 
         CommandRootCompleatedInfo::CommandRootCompleatedInfo(FastoObjectIPtr root, const error_type &er)
             : base_class(er), root_(root)
+        {
+
+        }
+
+        CommandRootCompleatedInfo::CommandRootCompleatedInfo(common::time64_t timest, FastoObjectIPtr root, const error_type &er)
+            : base_class(timest, er), root_(root)
         {
 
         }

@@ -100,6 +100,7 @@ namespace fastoredis
 
             IDriver* parent_;
             QObject* reciver_;
+            const common::time64_t tstart_;
         };
 
         RootLocker make_locker(QObject* reciver, const std::string& text)
