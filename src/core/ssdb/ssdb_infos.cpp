@@ -1,4 +1,4 @@
-#include "core/ssdb/SSDB_infos.h"
+#include "core/ssdb/ssdb_infos.h"
 
 #include <ostream>
 #include <sstream>
