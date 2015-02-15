@@ -29,6 +29,12 @@ namespace fastoredis
         return main;
     }
 
+    const QIcon& GuiFactory::ssdbConnectionIcon() const
+    {
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/ssdb.png");
+        return main;
+    }
+
     const QIcon& GuiFactory::connectIcon() const
     {
         static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/connect.png");
@@ -129,6 +135,9 @@ namespace fastoredis
         }
         else if(type == MEMCACHED){
             return memcachedConnectionIcon();
+        }
+        else if(type == SSDB){
+            return ssdbConnectionIcon();
         }
         else{
             return serverIcon();
@@ -277,6 +286,9 @@ namespace fastoredis
         }
         else if(type == MEMCACHED){
             return memcachedConnectionIcon();
+        }
+        else if(type == SSDB){
+            return ssdbConnectionIcon();
         }
         else{
             return serverIcon();

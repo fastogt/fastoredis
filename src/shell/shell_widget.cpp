@@ -21,6 +21,7 @@
 
 #include "shell/redis_shell.h"
 #include "shell/memcached_shell.h"
+#include "shell/ssdb_shell.h"
 
 #include "core/logger.h"
 
@@ -170,6 +171,10 @@ namespace fastoredis
         }
         else if(type == MEMCACHED){
             input_ = new MemcachedShell;
+            setToolTip(tr("Based on libmemcached version: %1").arg(input_->version()));
+        }
+        else if(type == SSDB){
+            input_ = new SsdbShell;
             setToolTip(tr("Based on libmemcached version: %1").arg(input_->version()));
         }
         else{

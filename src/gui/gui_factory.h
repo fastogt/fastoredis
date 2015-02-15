@@ -56,5 +56,6 @@ namespace fastoredis
     private:
         const QIcon& redisConnectionIcon() const;
         const QIcon& memcachedConnectionIcon() const;
+        const QIcon& ssdbConnectionIcon() const;
     };
 }

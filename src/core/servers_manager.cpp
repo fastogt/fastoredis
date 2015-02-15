@@ -8,6 +8,9 @@
 #include "core/memcached/memcached_server.h"
 #include "core/memcached/memcached_driver.h"
 
+#include "core/ssdb/ssdb_server.h"
+#include "core/ssdb/ssdb_driver.h"
+
 namespace fastoredis
 {
     ServersManager::ServersManager()
@@ -76,6 +79,19 @@ namespace fastoredis
                 newMem = new MemcachedServer(ser->driver(), false);
             }
             result.reset(newMem);
+            servers_.push_back(result);
+        }
+        else if(conT == SSDB){
+            SsdbServer *newSsdb = NULL;
+            if(!ser){
+                IDriverSPtr dr(new SsdbDriver(settings));
+                dr->start();
+                newSsdb = new SsdbServer(dr, true);
+            }
+            else{
+                newSsdb = new SsdbServer(ser->driver(), false);
+            }
+            result.reset(newSsdb);
             servers_.push_back(result);
         }
 

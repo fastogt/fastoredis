@@ -50,6 +50,9 @@ namespace fastoredis
         else if(type == MEMCACHED){
             return new MemcachedConnectionSettings(conName);
         }
+        else if(type == SSDB){
+            return new SsdbConnectionSettings(conName);
+        }
         else{
             NOTREACHED();
             return NULL;
@@ -194,6 +197,14 @@ namespace fastoredis
                                "<b>-a &lt;password&gt;</b>      Password to use when connecting to the server.<br/>"
                                "<b>-d &lt;delimiter&gt;</b>     Multi-bulk delimiter in for raw formatting (default: \\n).<br/>";
         }
+        else if(type == SSDB){
+            return "<b>Usage: [OPTIONS] [cmd [arg [arg ...]]]</b><br/>"
+                               "<b>-h &lt;hostname&gt;</b>      Server hostname (default: 127.0.0.1).<br/>"
+                               "<b>-p &lt;port&gt;</b>          Server port (default: 8888).<br/>"
+                               "<b>-u &lt;username&gt;</b>      Username to use when connecting to the server.<br/>"
+                               "<b>-a &lt;password&gt;</b>      Password to use when connecting to the server.<br/>"
+                               "<b>-d &lt;delimiter&gt;</b>     Multi-bulk delimiter in for raw formatting (default: \\n).<br/>";
+        }
 
         NOTREACHED();
         return NULL;
@@ -210,6 +221,10 @@ namespace fastoredis
         }
         else if(type == MEMCACHED){
             memcachedConfig r;
+            return common::convertToString(r);
+        }
+        else if(type == SSDB){
+            ssdbConfig r;
             return common::convertToString(r);
         }
 
@@ -274,6 +289,8 @@ namespace fastoredis
         return red;
     }
 
+//#memcached
+
     MemcachedConnectionSettings::MemcachedConnectionSettings(const std::string& connectionName)
         : IConnectionSettingsBase(connectionName, MEMCACHED), info_()
     {
@@ -331,4 +348,65 @@ namespace fastoredis
     {
         info_ = common::convertFromString<memcachedConfig>(val);
     }
+
+//#ssdb
+
+    SsdbConnectionSettings::SsdbConnectionSettings(const std::string& connectionName)
+        : IConnectionSettingsBase(connectionName, SSDB), info_()
+    {
+
+    }
+
+    std::string SsdbConnectionSettings::commandLine() const
+    {
+        return common::convertToString(info_);
+    }
+
+    void SsdbConnectionSettings::setCommandLine(const std::string& line)
+    {
+        info_ = common::convertFromString<ssdbConfig>(line);
+    }
+
+    std::string SsdbConnectionSettings::host() const
+    {
+        return info_.hostip;
+    }
+
+    int SsdbConnectionSettings::port() const
+    {
+        return info_.hostport;
+    }
+
+    void SsdbConnectionSettings::setPort(int port)
+    {
+        info_.hostport = port;
+    }
+
+    ssdbConfig SsdbConnectionSettings::info() const
+    {
+        return info_;
+    }
+
+    void SsdbConnectionSettings::setInfo(const ssdbConfig& info)
+    {
+        info_ = info;
+    }
+
+    IConnectionSettingsBase* SsdbConnectionSettings::clone() const
+    {
+        SsdbConnectionSettings *red = new SsdbConnectionSettings(*this);
+        return red;
+    }
+
+    std::string SsdbConnectionSettings::toCommandLine() const
+    {
+        std::string result = common::convertToString(info_);
+        return result;
+    }
+
+    void SsdbConnectionSettings::initFromCommandLine(const std::string& val)
+    {
+        info_ = common::convertFromString<ssdbConfig>(val);
+    }
+
 }

@@ -8,10 +8,11 @@ namespace fastoredis
     {
         DBUNKNOWN = 0,
         REDIS,
-        MEMCACHED
+        MEMCACHED,
+        SSDB
     };
 
-    static const std::vector<std::string> connnectionType = { "Unknown", "Redis", "Memcached" };
+    static const std::vector<std::string> connnectionType = { "Unknown", "Redis", "Memcached", "Ssdb" };
 
     enum ConnectionMode
     {

@@ -99,8 +99,6 @@ SET(HEADERS_CORE_TO_MOC
     core/idriver.h
     core/iserver.h
     core/servers_manager.h
-    core/redis/redis_server.h
-    core/redis/redis_driver.h
     core/python_engine.h
     core/lua_engine.h
 )
@@ -108,13 +106,10 @@ SET(HEADERS_CORE
     core/connection_types.h
     core/core_fwd.h
     core/idatabase.h
-    core/redis/redis_database.h
     core/settings_manager.h
     core/connection_settings.h
-    core/redis/redis_infos.h
     core/events/events.h
     core/events/events_info.h
-    core/redis/redis_config.h
     core/types.h
     core/ssh_info.h
     core/scp_file_transfer.h
@@ -126,20 +121,15 @@ SET(HEADERS_CORE
 )
 SET(SOURCES_CORE
     core/events/events_info.cpp
-    core/redis/redis_infos.cpp
     core/command_logger.cpp
     core/connection_types.cpp
     core/settings_manager.cpp
     core/connection_settings.cpp
     core/logger.cpp
-    core/redis/redis_driver.cpp
     core/idriver.cpp
     core/iserver.cpp
     core/idatabase.cpp
-    core/redis/redis_server.cpp
-    core/redis/redis_database.cpp
     core/servers_manager.cpp
-    core/redis/redis_config.cpp
     core/types.cpp
     core/ssh_info.cpp
     core/python_engine.cpp
@@ -158,6 +148,8 @@ SET(HEADERS_SHELL_TO_MOC
     shell/redis_lexer.h
     shell/memcached_shell.h
     shell/memcached_lexer.h
+    shell/ssdb_lexer.h
+    shell/ssdb_shell.h
     shell/python_shell.h
     shell/lua_shell.h
 )
@@ -169,6 +161,8 @@ SET(SOURCES_SHELL
     shell/redis_lexer.cpp
     shell/memcached_shell.cpp
     shell/memcached_lexer.cpp
+    shell/ssdb_lexer.cpp
+    shell/ssdb_shell.cpp
     shell/python_shell.cpp
     shell/lua_shell.cpp
 )
@@ -203,6 +197,25 @@ ADD_SUBDIRECTORY(third-party/libssh2)
 ADD_SUBDIRECTORY(third-party/redis)
 ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
 
+#redis
+SET(HEADERS_REDIS_TO_MOC
+    core/redis/redis_server.h
+    core/redis/redis_driver.h
+)
+SET(HEADERS_REDIS
+    core/redis/redis_infos.h
+    core/redis/redis_config.h
+    core/redis/redis_database.h
+)
+SET(SOURCES_REDIS
+    core/redis/redis_config.cpp
+    core/redis/redis_infos.cpp
+    core/redis/redis_server.cpp
+    core/redis/redis_driver.cpp
+    core/redis/redis_database.cpp
+)
+
+
 #memcached
 FIND_PACKAGE(Sasl QUIET)
 IF(SASL_FOUND)
@@ -229,6 +242,27 @@ SET(SOURCES_MEMCACHED
     core/memcached/memcached_database.cpp
 )
 
+#ssdb
+
+ADD_SUBDIRECTORY(third-party/ssdb)
+
+SET(HEADERS_SSDB_TO_MOC
+    core/ssdb/ssdb_server.h
+    core/ssdb/ssdb_driver.h
+)
+SET(HEADERS_SSDB
+    core/ssdb/ssdb_infos.h
+    core/ssdb/ssdb_config.h
+    core/ssdb/ssdb_database.h
+)
+SET(SOURCES_SSDB
+    core/ssdb/ssdb_config.cpp
+    core/ssdb/ssdb_infos.cpp
+    core/ssdb/ssdb_server.cpp
+    core/ssdb/ssdb_driver.cpp
+    core/ssdb/ssdb_database.cpp
+)
+
 ADD_SUBDIRECTORY(third-party/lua)
 INCLUDE_DIRECTORIES(third-party/lua/lua-5.3.0/src)
 
@@ -237,15 +271,15 @@ IF(PYTHON_ENABLED)
     INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIR} third-party/pytonqt/src)
 ENDIF(PYTHON_ENABLED)
 
-SET(HEADERS ${HEADERS} ${HEADERS_GLOBAL} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL} ${HEADERS_MEMCACHED} ${HEADERS_TRANSLATIONS})
-SET(SOURCES ${SOURCES} ${SOURCES_GLOBAL} ${SOURCES_GUI} ${SOURCES_CORE} ${SOURCES_SHELL} ${SOURCES_MEMCACHED} ${SOURCES_TRANSLATIONS})
-SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC} ${HEADERS_SHELL_TO_MOC} ${HEADERS_MEMCACHED_TO_MOC})
+SET(HEADERS ${HEADERS} ${HEADERS_GLOBAL} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL} ${HEADERS_REDIS} ${HEADERS_MEMCACHED} ${HEADERS_SSDB} ${HEADERS_TRANSLATIONS})
+SET(SOURCES ${SOURCES} ${SOURCES_GLOBAL} ${SOURCES_GUI} ${SOURCES_CORE} ${SOURCES_SHELL} ${SOURCES_REDIS} ${SOURCES_MEMCACHED} ${SOURCES_SSDB} ${SOURCES_TRANSLATIONS})
+SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC} ${HEADERS_SHELL_TO_MOC} ${HEADERS_REDIS_TO_MOC} ${HEADERS_MEMCACHED_TO_MOC} ${HEADERS_SSDB_TO_MOC})
 
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 CONFIGURE_FILE("resources/gui.qrc.in" "${CMAKE_CURRENT_LIST_DIR}/resources/gui.qrc" @ONLY IMMEDIATE)
 SET(RESOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/gui.qrc)
 QTX_ADD_RESOURCES(RES_SRC ${RESOURCES})
-SET(INCLUDE_DIRS ${INCLUDE_DIRS} third-party/redis/redis/src third-party/redis/redis/deps third-party/qscintilla/Qt4Qt5 third-party/memcached/src)
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} third-party/redis/redis/src third-party/redis/redis/deps third-party/qscintilla/Qt4Qt5 third-party/memcached/src third-party/ssdb/src)
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
 SOURCE_GROUP("Header Files" FILES ${HEADERS} ${HEADERS_TOMOC})
@@ -273,7 +307,7 @@ IF(SASL_FOUND)
     SET(ALL_LIBS ${ALL_LIBS} ${SASL_LIBRARIES})
 ENDIF(SASL_FOUND)
 
-SET(OBJECT_LIBS ${OBJECT_LIBS} $<TARGET_OBJECTS:redis_cli> $<TARGET_OBJECTS:libssh2> $<TARGET_OBJECTS:libmemcached> $<TARGET_OBJECTS:liblua>)
+SET(OBJECT_LIBS ${OBJECT_LIBS} $<TARGET_OBJECTS:redis_cli> $<TARGET_OBJECTS:libssh2> $<TARGET_OBJECTS:libmemcached> $<TARGET_OBJECTS:ssd_cli> $<TARGET_OBJECTS:liblua>)
 
 IF(OS_LINUX)
     SET(ALL_LIBS ${ALL_LIBS} pthread)
