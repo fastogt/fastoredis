@@ -28,6 +28,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/lua_console_dialog.h
     gui/dialogs/base_console_dialog.h
     gui/dialogs/encode_decode_dialog.h
+    gui/dialogs/load_contentdb_dialog.h
     gui/widgets/main_widget.h
     gui/main_tab_bar.h
     gui/fasto_editor.h
@@ -70,6 +71,7 @@ SET(SOURCES_GUI
     gui/dialogs/lua_console_dialog.cpp
     gui/dialogs/base_console_dialog.cpp
     gui/dialogs/encode_decode_dialog.cpp
+    gui/dialogs/load_contentdb_dialog.cpp
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
     gui/fasto_editor.cpp

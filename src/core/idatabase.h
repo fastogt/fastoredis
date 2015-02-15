@@ -14,7 +14,7 @@ namespace fastoredis
         bool isDefault() const;
         std::string name() const;
 
-        void loadContent();
+        void loadContent(const std::string& pattern, uint32_t countKeys);
         void setDefault();
 
         DataBaseInfoSPtr info() const;

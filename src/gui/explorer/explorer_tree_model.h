@@ -62,7 +62,7 @@ namespace fastoredis
         virtual IServerSPtr server() const;
         IDatabaseSPtr db() const;
 
-        void loadContent();
+        void loadContent(const std::string& pattern, uint32_t countKeys);
         void setDefault();
         void removeKey(const std::string &key);
         void loadValue(const std::string &key);

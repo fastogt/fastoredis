@@ -18,6 +18,7 @@ extern "C" {
 #include "common/utils.h"
 #include "common/file_system.h"
 #include "common/string_util.h"
+#include "common/sprintf.h"
 
 #include "core/logger.h"
 #include "core/command_logger.h"
@@ -36,7 +37,7 @@ extern "C" {
 #define SET_DEFAULT_DATABASE "SELECT "
 #define DELETE_KEY "DEL"
 #define LOAD_KEY "GET"
-#define GET_KEYS "KEYS *"
+#define GET_KEYS_PATTERN_2ARGS_SI "SCAN 0 MATCH %s COUNT %d"
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 #define STAT_MODE_REQUEST "STAT"
@@ -1087,6 +1088,66 @@ namespace fastoredis
             return common::make_error_value(buff, common::ErrorValue::E_ERROR);
         }
 
+        common::ErrorValueSPtr cliFormatReplyRaw(FastoObjectArray* ar, redisReply *r) WARN_UNUSED_RESULT
+        {
+            DCHECK(ar);
+            if(!ar){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
+            switch (r->type) {
+                case REDIS_REPLY_NIL:
+                {
+                    common::Value *val = common::Value::createNullValue();
+                    ar->append(val);
+
+                    break;
+                }
+                case REDIS_REPLY_ERROR:
+                {
+                    common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    ar->append(val);
+                    break;
+                }
+                case REDIS_REPLY_STATUS:
+                case REDIS_REPLY_STRING:
+                {
+                    common::StringValue *val = common::Value::createStringValue(r->str);
+                    ar->append(val);
+                    break;
+                }
+                case REDIS_REPLY_INTEGER:
+                {
+                    common::FundamentalValue *val = common::Value::createIntegerValue(r->integer);
+                    ar->append(val);
+                    break;
+                }
+                case REDIS_REPLY_ARRAY:
+                {
+                    common::ArrayValue* arv = common::Value::createArrayValue();
+                    FastoObjectArray* child = new FastoObjectArray(ar, arv, config.mb_delim);
+                    ar->addChildren(child);
+
+                    for (size_t i = 0; i < r->elements; ++i) {
+                        common::ErrorValueSPtr er = cliFormatReplyRaw(child, r->element[i]);
+                        if(er){
+                            return er;
+                        }
+                    }
+                    break;
+                }
+            default:
+                {
+                    char tmp2[128] = {0};
+                    sprintf(tmp2, "Unknown reply type: %d", r->type);
+                    common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    ar->append(val);
+                }
+            }
+
+            return common::ErrorValueSPtr();
+        }
+
         common::ErrorValueSPtr cliFormatReplyRaw(FastoObject* out, redisReply *r) WARN_UNUSED_RESULT
         {
             DCHECK(out);
@@ -1094,64 +1155,42 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
-            FastoObjectArray* ar = dynamic_cast<FastoObjectArray*>(out);
-
             FastoObject* obj = NULL;
             switch (r->type) {
                 case REDIS_REPLY_NIL:
                 {
                     common::Value *val = common::Value::createNullValue();
-                    if(ar){
-                        ar->append(val);
-                    }
-                    else{
-                        obj = new FastoObject(out, val, config.mb_delim);
-                        out->addChildren(obj);
-                    }
+                    obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
 
                     break;
                 }
                 case REDIS_REPLY_ERROR:
                 {
                     common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
-                    if(ar){
-                        ar->append(val);
-                    }
-                    else{
-                        obj = new FastoObject(out, val, config.mb_delim);
-                        out->addChildren(obj);
-                    }
+                    obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
                     break;
                 }
                 case REDIS_REPLY_STATUS:
                 case REDIS_REPLY_STRING:
                 {
                     common::StringValue *val = common::Value::createStringValue(r->str);
-                    if(ar){
-                        ar->append(val);
-                    }
-                    else{
-                        obj = new FastoObject(out, val, config.mb_delim);
-                        out->addChildren(obj);
-                    }
+                    obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
                     break;
                 }
                 case REDIS_REPLY_INTEGER:
                 {
                     common::FundamentalValue *val = common::Value::createIntegerValue(r->integer);
-                    if(ar){
-                        ar->append(val);
-                    }
-                    else{
-                        obj = new FastoObject(out, val, config.mb_delim);
-                        out->addChildren(obj);
-                    }
+                    obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
                     break;
                 }
                 case REDIS_REPLY_ARRAY:
                 {
                     common::ArrayValue* arv = common::Value::createArrayValue();
-                    FastoObject* child = new FastoObjectArray(out, arv, config.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, arv, config.mb_delim);
                     out->addChildren(child);
 
                     for (size_t i = 0; i < r->elements; ++i) {
@@ -1167,13 +1206,8 @@ namespace fastoredis
                     char tmp2[128] = {0};
                     sprintf(tmp2, "Unknown reply type: %d", r->type);
                     common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
-                    if(ar){
-                        ar->append(val);
-                    }
-                    else{
-                        obj = new FastoObject(out, val, config.mb_delim);
-                        out->addChildren(obj);
-                    }
+                    obj = new FastoObject(out, val, config.mb_delim);
+                    out->addChildren(obj);
                 }
             }
 
@@ -2013,9 +2047,11 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
-            FastoObjectIPtr root = FastoObject::createRoot(GET_KEYS);
+            char patternResult[1024] = {0};
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEYS_PATTERN_2ARGS_SI, res.pattern_, res.countKeys_);
+            FastoObjectIPtr root = FastoObject::createRoot(patternResult);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, GET_KEYS, common::Value::C_INNER);
+            FastoObjectCommand* cmd = createCommand(root, patternResult, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2028,11 +2064,17 @@ namespace fastoredis
                     if(!array){
                         goto done;
                     }
-                    common::ArrayValue* ar = array->array();
-                    if(!ar){
+                    rchildrens = array->childrens();
+                    if(!rchildrens.size()){
                         goto done;
                     }
 
+                    FastoObjectArray* arr = dynamic_cast<FastoObjectArray*>(rchildrens[0]);
+                    if(!arr){
+                        goto done;
+                    }
+
+                    common::ArrayValue* ar = arr->array();
                     for(int i = 0; i < ar->getSize(); ++i)
                     {
                         std::string ress;

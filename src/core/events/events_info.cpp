@@ -151,8 +151,8 @@ namespace fastoredis
 
 // ============== database =============//
 
-        LoadDatabaseContentRequest::LoadDatabaseContentRequest(DataBaseInfoSPtr inf, const error_type &er)
-            : base_class(er), inf_(inf)
+        LoadDatabaseContentRequest::LoadDatabaseContentRequest(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys, const error_type &er)
+            : base_class(er), inf_(inf), pattern_(pattern), countKeys_(countKeys)
         {
 
         }

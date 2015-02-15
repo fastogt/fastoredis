@@ -187,6 +187,7 @@ namespace fastoredis
     {
         common::ArrayValue* ar = dynamic_cast<common::ArrayValue*>(value_.get());
         if(!ar){
+            NOTREACHED();
             return;
         }
 

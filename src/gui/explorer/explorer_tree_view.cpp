@@ -11,6 +11,7 @@
 #include "gui/dialogs/info_server_dialog.h"
 #include "gui/dialogs/property_server_dialog.h"
 #include "gui/dialogs/history_server_dialog.h"
+#include "gui/dialogs/load_contentdb_dialog.h"
 
 #include "common/qt/convert_string.h"
 
@@ -192,7 +193,11 @@ namespace fastoredis
 
         ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
         if(node){
-            node->loadContent();
+            LoadContentDbDialog loadDb(QString("Load %1 content").arg(node->name()), node->server()->type(), this);
+            int result = loadDb.exec();
+            if(result == QDialog::Accepted){
+                node->loadContent(common::convertToString(loadDb.pattern()), loadDb.count());
+            }
         }
     }
 

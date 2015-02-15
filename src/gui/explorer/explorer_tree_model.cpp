@@ -67,11 +67,11 @@ namespace fastoredis
 
     }
 
-    void ExplorerDatabaseItem::loadContent()
+    void ExplorerDatabaseItem::loadContent(const std::string& pattern, uint32_t countKeys)
     {
         IDatabaseSPtr dbs = db();
         if(dbs){
-            dbs->loadContent();
+            dbs->loadContent(pattern, countKeys);
         }
     }
 
