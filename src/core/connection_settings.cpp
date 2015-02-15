@@ -9,8 +9,9 @@
 #include "common/net/net.h"
 #include "common/logger.h"
 
-#define LOGGING_RESDIS_FILE_EXTENSION ".red"
+#define LOGGING_REDIS_FILE_EXTENSION ".red"
 #define LOGGING_MEMCACHED_FILE_EXTENSION ".mem"
+#define LOGGING_SSDB_FILE_EXTENSION ".ssdb"
 
 namespace fastoredis
 {
@@ -33,7 +34,20 @@ namespace fastoredis
     std::string IConnectionSettingsBase::loggingPath() const
     {
         std::string logDir = common::convertToString(SettingsManager::instance().loggingDirectory());
-        return logDir + hash() + (type_ == REDIS ? LOGGING_RESDIS_FILE_EXTENSION : LOGGING_MEMCACHED_FILE_EXTENSION);
+        std::string ext;
+        if(type_ == REDIS){
+            ext = LOGGING_REDIS_FILE_EXTENSION;
+        }
+        else if(type_ == MEMCACHED){
+            ext = LOGGING_MEMCACHED_FILE_EXTENSION;
+        }
+        else if(type_ == SSDB){
+            ext = LOGGING_SSDB_FILE_EXTENSION;
+        }
+        else {
+            NOTREACHED();
+        }
+        return logDir + hash() + ext;
     }
 
     std::string IConnectionSettingsBase::fullAddress() const

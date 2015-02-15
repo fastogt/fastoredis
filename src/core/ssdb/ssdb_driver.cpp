@@ -128,38 +128,10 @@ namespace fastoredis
 
         common::ErrorValueSPtr stats(const char* args, SsdbServerInfo::Common& statsout)
         {
-            /*Ssdb_return_t error;
-            Ssdb_stat_st* st = Ssdb_stat(memc_, (char*)args, &error);
-            if (error != Ssdb_SUCCESS){
-                char buff[1024] = {0};
-                sprintf(buff, "Stats function error: %s", Ssdb_strerror(memc_, error));
-                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            if (!ssdb_){
+                return common::make_error_value("Stats function error: not connected.", common::ErrorValue::E_ERROR);
             }
 
-            statsout.pid_ = st->pid;
-            statsout.uptime_ = st->uptime;
-            statsout.time_ = st->time;
-            statsout.version_ = st->version;
-            statsout.pointer_size_ = st->pointer_size;
-            statsout.rusage_user_ = st->rusage_user_seconds;
-            statsout.rusage_system_ = st->rusage_system_seconds;
-            statsout.curr_items_ = st->curr_items;
-            statsout.total_items_ = st->total_items;
-            statsout.bytes_ = st->bytes;
-            statsout.curr_connections_ = st->curr_connections;
-            statsout.total_connections_ = st->total_connections;
-            statsout.connection_structures_ = st->connection_structures;
-            statsout.cmd_get_ = st->cmd_get;
-            statsout.cmd_set_ = st->cmd_set;
-            statsout.get_hits_ = st->get_hits;
-            statsout.get_misses_ = st->get_misses;
-            statsout.evictions_ = st->evictions;
-            statsout.bytes_read_ = st->bytes_read;
-            statsout.bytes_written_ = st->bytes_written;
-            statsout.limit_maxbytes_ = st->limit_maxbytes;
-            statsout.threads_ = st->threads;
-
-            Ssdb_stat_free(NULL, st);*/
             return common::ErrorValueSPtr();
         }
 
@@ -337,7 +309,7 @@ namespace fastoredis
 
     const char* SsdbDriver::versionApi()
     {
-        return "unknown";
+        return "1.8.0";
     }
 
     void SsdbDriver::customEvent(QEvent *event)
