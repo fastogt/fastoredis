@@ -7,16 +7,7 @@ found in the LICENSE file.
 #include <fcntl.h>
 #include <string.h>
 #include <stdarg.h>
-#ifdef FASTOREDIS
-#ifdef OS_WIN
-#define F_EINTR 0
-#else
 #include <sys/socket.h>
-#define F_EINTR EINTR
-#endif
-#else
-#include <sys/socket.h>
-#endif
 
 #include "link.h"
 
@@ -71,43 +62,21 @@ void Link::close(){
 
 void Link::nodelay(bool enable){
 	int opt = enable? 1 : 0;
-#ifdef FASTOREDIS
-    ::setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (const char *)&opt, sizeof(opt));
-#else
 	::setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (void *)&opt, sizeof(opt));
-#endif
 }
 
 void Link::keepalive(bool enable){
 	int opt = enable? 1 : 0;
-#ifdef FASTOREDIS
-    ::setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (const char *)&opt, sizeof(opt));
-#else
 	::setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *)&opt, sizeof(opt));
-#endif
 }
 
 void Link::noblock(bool enable){
-#ifdef FASTOREDIS
-    noblock_ = enable;
-#ifdef OS_WIN
-    unsigned long flags = enable? 1 : 0;
-    int res = ioctlsocket(sock, FIONBIO, &flags);
-#else
-    if(enable){
-        ::fcntl(sock, F_SETFL, O_NONBLOCK | O_RDWR);
-    }else{
-        ::fcntl(sock, F_SETFL, O_RDWR);
-    }
-#endif
-#else
 	noblock_ = enable;
 	if(enable){
 		::fcntl(sock, F_SETFL, O_NONBLOCK | O_RDWR);
 	}else{
 		::fcntl(sock, F_SETFL, O_RDWR);
 	}
-#endif
 }
 
 
@@ -116,24 +85,11 @@ Link* Link::connect(const char *ip, int port){
 	int sock = -1;
 
 	struct sockaddr_in addr;
-#ifdef FASTOREDIS
-    memset(&addr, 0, sizeof(addr));
-#ifdef OS_WIN
-    unsigned long hostaddr = inet_addr(ip);
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons((short)port);
-    addr.sin_addr.s_addr = hostaddr;
-#else
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons((short)port);
-    inet_pton(AF_INET, ip, &addr.sin_addr);
-#endif
-#else
 	bzero(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons((short)port);
 	inet_pton(AF_INET, ip, &addr.sin_addr);
-#endif
+
 	if((sock = ::socket(AF_INET, SOCK_STREAM, 0)) == -1){
 		goto sock_err;
 	}
@@ -144,7 +100,7 @@ Link* Link::connect(const char *ip, int port){
 	//log_debug("fd: %d, connect to %s:%d", sock, ip, port);
 	link = new Link();
 	link->sock = sock;
-    link->keepalive(true);
+	link->keepalive(true);
 	return link;
 sock_err:
 	//log_debug("connect to %s:%d failed: %s", ip, port, strerror(errno));
@@ -160,37 +116,17 @@ Link* Link::listen(const char *ip, int port){
 
 	int opt = 1;
 	struct sockaddr_in addr;
-#ifdef FASTOREDIS
-    unsigned long hostaddr = inet_addr(ip);
-
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons((short)port);
-    addr.sin_addr.s_addr = hostaddr;
-#else
 	bzero(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons((short)port);
 	inet_pton(AF_INET, ip, &addr.sin_addr);
-#endif
 
 	if((sock = ::socket(AF_INET, SOCK_STREAM, 0)) == -1){
 		goto sock_err;
 	}
-#ifdef FASTOREDIS
-#ifdef OS_WIN
-    if(::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt, sizeof(opt)) == -1){
-        goto sock_err;
-    }
-#else
-    if(::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1){
-        goto sock_err;
-    }
-#endif
-#else
 	if(::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1){
 		goto sock_err;
 	}
-#endif
 	if(::bind(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1){
 		goto sock_err;
 	}
@@ -199,7 +135,7 @@ Link* Link::listen(const char *ip, int port){
 	}
 	//log_debug("server socket fd: %d, listen on: %s:%d", sock, ip, port);
 
-    link = new Link(true);
+	link = new Link(true);
 	link->sock = sock;
 	snprintf(link->remote_ip, sizeof(link->remote_ip), "%s", ip);
 	link->remote_port = port;
@@ -226,15 +162,7 @@ Link* Link::accept(){
 	}
 
 	struct linger opt = {1, 0};
-#ifdef FASTOREDIS
-#ifdef OS_WIN
-    int ret = ::setsockopt(client_sock, SOL_SOCKET, SO_LINGER, (const char *)&opt, sizeof(opt));
-#else
-    int ret = ::setsockopt(client_sock, SOL_SOCKET, SO_LINGER, (void *)&opt, sizeof(opt));
-#endif
-#else
 	int ret = ::setsockopt(client_sock, SOL_SOCKET, SO_LINGER, (void *)&opt, sizeof(opt));
-#endif
 	if (ret != 0) {
 		//log_error("socket %d set linger failed: %s", client_sock, strerror(errno));
 	}
@@ -242,14 +170,7 @@ Link* Link::accept(){
 	link = new Link();
 	link->sock = client_sock;
 	link->keepalive(true);
-#ifdef FASTOREDIS
-    #ifdef OS_WIN
-    #else
-    inet_ntop(AF_INET, &addr.sin_addr, link->remote_ip, sizeof(link->remote_ip));
-    #endif
-#else
-    inet_ntop(AF_INET, &addr.sin_addr, link->remote_ip, sizeof(link->remote_ip));
-#endif
+	inet_ntop(AF_INET, &addr.sin_addr, link->remote_ip, sizeof(link->remote_ip));
 	link->remote_port = ntohs(addr.sin_port);
 	return link;
 }
@@ -264,17 +185,9 @@ int Link::read(){
 	while((want = input->space()) > 0){
 		// test
 		//want = 1;
-#ifdef FASTOREDIS
-#ifdef OS_WIN
-        int len = ::recv(sock, output->slot(), want, 0);
-#else
-        int len = ::read(sock, output->slot(), want);
-#endif
-#else
-        int len = ::read(sock, input->slot(), want);
-#endif
+		int len = ::read(sock, input->slot(), want);
 		if(len == -1){
-            if(errno == F_EINTR){
+			if(errno == EINTR){
 				continue;
 			}else if(errno == EWOULDBLOCK){
 				break;
@@ -307,15 +220,7 @@ int Link::write(){
 	while((want = output->size()) > 0){
 		// test
 		//want = 1;
-#ifdef FASTOREDIS
-#ifdef OS_WIN
-        int len = ::send(sock, output->data(), want, 0);
-#else
-        int len = ::write(sock, output->data(), want);
-#endif
-#else
-        int len = ::write(sock, output->data(), want);
-#endif
+		int len = ::write(sock, output->data(), want);
 		if(len == -1){
 			if(errno == EINTR){
 				continue;
@@ -462,9 +367,6 @@ const std::vector<Bytes>* Link::recv(){
 }
 
 int Link::send(const std::vector<std::string> &resp){
-	if(resp.empty()){
-		return 0;
-	}
 	// Redis protocol supports
 	if(this->redis){
 		return this->redis->send_resp(this->output, resp);

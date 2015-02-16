@@ -62,7 +62,6 @@ static RedisCommand_raw cmds_raw[] = {
 	{STRATEGY_AUTO, "bitcount",	"redis_bitcount",		REPLY_INT},
 	{STRATEGY_AUTO, "substr",	"getrange",		REPLY_BULK},
 	{STRATEGY_AUTO, "getrange",	"getrange",		REPLY_BULK},
-	{STRATEGY_AUTO, "keys", 	"keys", 		REPLY_MULTI_BULK},
 
 	{STRATEGY_AUTO, "hset",		"hset",			REPLY_INT},
 	{STRATEGY_AUTO, "hget",		"hget",			REPLY_BULK},
@@ -354,9 +353,6 @@ const std::vector<Bytes>* RedisLink::recv_req(Buffer *input){
 }
 
 int RedisLink::send_resp(Buffer *output, const std::vector<std::string> &resp){
-	if(resp.empty()){
-		return 0;
-	}
 	if(resp[0] == "error" || resp[0] == "fail" || resp[0] == "client_error"){
 		output->append("-ERR ");
 		if(resp.size() >= 2){

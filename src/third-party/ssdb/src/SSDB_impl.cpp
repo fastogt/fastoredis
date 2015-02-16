@@ -1,6 +1,5 @@
 #include "SSDB_impl.h"
 #include "util/strings.h"
-#include <signal.h>
 
 namespace ssdb{
 
@@ -53,19 +52,6 @@ ClientImpl::~ClientImpl(){
 }
 
 Client* Client::connect(const char *ip, int port){
-	static bool inited = false;
-	if(!inited){
-		inited = true;
-#ifdef FASTOREDIS
-#ifdef OS_WIN
-    signal(13, SIG_IGN);
-#else
-    signal(SIGPIPE, SIG_IGN);
-#endif
-#else
-    signal(SIGPIPE, SIG_IGN);
-#endif
-	}
 	ClientImpl *client = new ClientImpl();
 	client->link = Link::connect(ip, port);
 	if(client->link == NULL){
@@ -495,30 +481,6 @@ Status ClientImpl::multi_zdel(const std::string &name, const std::vector<std::st
 	resp = this->request("multi_zdel", name, keys);
 	Status s(resp);
 	return s;
-}
-
-Status ClientImpl::qpush(const std::string &key, const std::string &val){
-	const std::vector<std::string> *resp;
-	resp = this->request("qpush", key, val);
-	Status s(resp);
-	return s;
-}
-
-Status ClientImpl::qpop(const std::string &key, std::string *val){
-	const std::vector<std::string> *resp;
-	resp = this->request("qpop", key);
-	return _read_str(resp, val);
-}
-
-Status ClientImpl::qslice(const std::string &name,
-		int64_t begin, int64_t end,
-		std::vector<std::string> *ret)
-{
-	std::string s_begin = str(begin);
-	std::string s_end = str(end);
-	const std::vector<std::string> *resp;
-	resp = this->request("qslice", name, s_begin, s_end);
-	return _read_list(resp, ret);
 }
 
 }; // namespace ssdb
