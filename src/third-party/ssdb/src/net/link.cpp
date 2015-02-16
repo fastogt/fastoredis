@@ -91,7 +91,7 @@ void Link::noblock(bool enable){
 #ifdef FASTOREDIS
     noblock_ = enable;
 #ifdef OS_WIN
-    unsigned long flags = enable;
+    unsigned long flags = enable? 1 : 0;
     int res = ioctlsocket(sock, FIONBIO, &flags);
 #else
     if(enable){
@@ -117,11 +117,17 @@ Link* Link::connect(const char *ip, int port){
 
 	struct sockaddr_in addr;
 #ifdef FASTOREDIS
-    unsigned long hostaddr = inet_addr(ip);
     memset(&addr, 0, sizeof(addr));
+#ifdef OS_WIN
+    unsigned long hostaddr = inet_addr(ip);
     addr.sin_family = AF_INET;
     addr.sin_port = htons((short)port);
     addr.sin_addr.s_addr = hostaddr;
+#else
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons((short)port);
+    inet_pton(AF_INET, ip, &addr.sin_addr);
+#endif
 #else
 	bzero(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
@@ -193,7 +199,7 @@ Link* Link::listen(const char *ip, int port){
 	}
 	//log_debug("server socket fd: %d, listen on: %s:%d", sock, ip, port);
 
-	link = new Link(true);
+    link = new Link(true);
 	link->sock = sock;
 	snprintf(link->remote_ip, sizeof(link->remote_ip), "%s", ip);
 	link->remote_port = port;
@@ -239,6 +245,7 @@ Link* Link::accept(){
 #ifdef FASTOREDIS
     #ifdef OS_WIN
     #else
+    inet_ntop(AF_INET, &addr.sin_addr, link->remote_ip, sizeof(link->remote_ip));
     #endif
 #else
     inet_ntop(AF_INET, &addr.sin_addr, link->remote_ip, sizeof(link->remote_ip));

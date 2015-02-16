@@ -201,7 +201,7 @@ namespace fastoredis
                 return er;
             }
             else if(strcasecmp(argv[0], "set") == 0){
-                if(argc != 5){
+                if(argc != 3){
                     return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
                 }
 
@@ -226,7 +226,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->get(key, &ex);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Set function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "Get function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             ret_val = ex;
@@ -238,7 +238,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->set(key, value);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Get function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "Set function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();

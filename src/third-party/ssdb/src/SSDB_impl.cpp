@@ -58,6 +58,7 @@ Client* Client::connect(const char *ip, int port){
 		inited = true;
 #ifdef FASTOREDIS
 #ifdef OS_WIN
+    signal(13, SIG_IGN);
 #else
     signal(SIGPIPE, SIG_IGN);
 #endif
