@@ -8,9 +8,20 @@ found in the LICENSE file.
 
 #include <vector>
 #include <unistd.h>
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+        #include <winsock2.h>
+        #include <Ws2tcpip.h>
+    #else
+        #include <arpa/inet.h>
+        #include <netinet/in.h>
+        #include <netinet/tcp.h>
+    #endif
+#else
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#endif
 
 #include "../util/bytes.h"
 

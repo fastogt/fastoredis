@@ -7,7 +7,14 @@ found in the LICENSE file.
 #include <fcntl.h>
 #include <string.h>
 #include <stdarg.h>
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+    #else
+        #include <sys/socket.h>
+    #endif
+#else
 #include <sys/socket.h>
+#endif
 
 #include "link.h"
 
@@ -61,22 +68,51 @@ void Link::close(){
 }
 
 void Link::nodelay(bool enable){
-	int opt = enable? 1 : 0;
+    int opt = enable? 1 : 0;
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+        ::setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (const char*)&opt, sizeof(opt));
+    #else
+        ::setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (void *)&opt, sizeof(opt));
+    #endif
+#else
 	::setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (void *)&opt, sizeof(opt));
+#endif
 }
 
 void Link::keepalive(bool enable){
 	int opt = enable? 1 : 0;
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+        ::setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (const char *)&opt, sizeof(opt));
+    #else
+        ::setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *)&opt, sizeof(opt));
+    #endif
+#else
 	::setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *)&opt, sizeof(opt));
+#endif
 }
 
 void Link::noblock(bool enable){
 	noblock_ = enable;
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+        unsigned long flags = !enable;
+        int res = ioctlsocket(sock, FIONBIO, &flags);
+    #else
+        if(enable){
+            ::fcntl(sock, F_SETFL, O_NONBLOCK | O_RDWR);
+        }else{
+            ::fcntl(sock, F_SETFL, O_RDWR);
+        }
+    #endif
+#else
 	if(enable){
 		::fcntl(sock, F_SETFL, O_NONBLOCK | O_RDWR);
 	}else{
 		::fcntl(sock, F_SETFL, O_RDWR);
 	}
+#endif
 }
 
 
@@ -85,10 +121,24 @@ Link* Link::connect(const char *ip, int port){
 	int sock = -1;
 
 	struct sockaddr_in addr;
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+        unsigned long hostaddr = inet_addr(ip);
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons((short)port);
+        addr.sin_addr.s_addr = hostaddr;
+    #else
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons((short)port);
+        inet_pton(AF_INET, ip, &addr.sin_addr);
+    #endif
+#else
 	bzero(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons((short)port);
-	inet_pton(AF_INET, ip, &addr.sin_addr);
+    inet_pton(AF_INET, ip, &addr.sin_addr);
+#endif
 
 	if((sock = ::socket(AF_INET, SOCK_STREAM, 0)) == -1){
 		goto sock_err;
@@ -116,17 +166,42 @@ Link* Link::listen(const char *ip, int port){
 
 	int opt = 1;
 	struct sockaddr_in addr;
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+        unsigned long hostaddr = inet_addr(ip);
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons((short)port);
+        addr.sin_addr.s_addr = hostaddr;
+    #else
+        bzero(&addr, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons((short)port);
+        inet_pton(AF_INET, ip, &addr.sin_addr);
+    #endif
+#else
 	bzero(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons((short)port);
 	inet_pton(AF_INET, ip, &addr.sin_addr);
-
+#endif
 	if((sock = ::socket(AF_INET, SOCK_STREAM, 0)) == -1){
 		goto sock_err;
 	}
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+        if(::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&opt, sizeof(opt)) == -1){
+            goto sock_err;
+        }
+    #else
+        if(::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1){
+            goto sock_err;
+        }
+    #endif
+#else
 	if(::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1){
 		goto sock_err;
 	}
+#endif
 	if(::bind(sock, (struct sockaddr *)&addr, sizeof(addr)) == -1){
 		goto sock_err;
 	}
@@ -162,15 +237,30 @@ Link* Link::accept(){
 	}
 
 	struct linger opt = {1, 0};
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+        int ret = ::setsockopt(client_sock, SOL_SOCKET, SO_LINGER, (const char *)&opt, sizeof(opt));
+    #else
+        int ret = ::setsockopt(client_sock, SOL_SOCKET, SO_LINGER, (void *)&opt, sizeof(opt));
+    #endif
+#else
 	int ret = ::setsockopt(client_sock, SOL_SOCKET, SO_LINGER, (void *)&opt, sizeof(opt));
-	if (ret != 0) {
+#endif
+    if (ret != 0) {
 		//log_error("socket %d set linger failed: %s", client_sock, strerror(errno));
 	}
 
 	link = new Link();
 	link->sock = client_sock;
 	link->keepalive(true);
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+    #else
+        inet_ntop(AF_INET, &addr.sin_addr, link->remote_ip, sizeof(link->remote_ip));
+    #endif
+#else
 	inet_ntop(AF_INET, &addr.sin_addr, link->remote_ip, sizeof(link->remote_ip));
+#endif
 	link->remote_port = ntohs(addr.sin_port);
 	return link;
 }
