@@ -202,10 +202,163 @@ namespace fastoredis
             }
             else if(strcasecmp(argv[0], "set") == 0){
                 if(argc != 3){
-                    return common::make_error_value("Invalid get input argument", common::ErrorValue::E_ERROR);
+                    return common::make_error_value("Invalid set input argument", common::ErrorValue::E_ERROR);
                 }
 
                 common::ErrorValueSPtr er = set(argv[1], argv[2]);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "setx") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid setx input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = setx(argv[1], argv[2], atoi(argv[3]));
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "del") == 0){
+                if(argc != 2){
+                    return common::make_error_value("Invalid del input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = del(argv[1]);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("DELETED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "incr") == 0){
+                if(argc != 3){
+                    return common::make_error_value("Invalid incr input argument", common::ErrorValue::E_ERROR);
+                }
+
+                int64_t ret = 0;
+                common::ErrorValueSPtr er = incr(argv[1], atoll(argv[2]), &ret);
+                if(!er){
+                    common::FundamentalValue *val = common::Value::createIntegerValue(ret);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "keys") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid keys input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> keysout;
+                common::ErrorValueSPtr er = keys(argv[1], argv[2], atoll(argv[3]), &keysout);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < keysout.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(keysout[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "scan") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid scan input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> keysout;
+                common::ErrorValueSPtr er = scan(argv[1], argv[2], atoll(argv[3]), &keysout);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < keysout.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(keysout[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "rscan") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid rscan input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> keysout;
+                common::ErrorValueSPtr er = rscan(argv[1], argv[2], atoll(argv[3]), &keysout);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < keysout.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(keysout[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "multi_get") == 0){
+                if(argc < 2){
+                    return common::make_error_value("Invalid multi_get input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> keysget;
+                for(int i = 1; i < argc; ++i){
+                    keysget.push_back(argv[i]);
+                }
+
+                std::vector<std::string> keysout;
+                common::ErrorValueSPtr er = multi_get(keysget, &keysout);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < keysout.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(keysout[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "multi_del") == 0){
+                if(argc < 2){
+                    return common::make_error_value("Invalid multi_del input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> keysget;
+                for(int i = 1; i < argc; ++i){
+                    keysget.push_back(argv[i]);
+                }
+
+                common::ErrorValueSPtr er = multi_del(keysget);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("DELETED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "multi_set") == 0){
+                if(argc < 2 || argc % 2){
+                    return common::make_error_value("Invalid multi_del input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::map<std::string, std::string> keysset;
+                for(int i = 1; i < argc; i += 2){
+                    keysset[argv[i]] = argv[i + 1];
+                }
+
+                common::ErrorValueSPtr er = multi_set(keysset);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
                     FastoObject* child = new FastoObject(out, val, config_.mb_delim);
@@ -239,6 +392,105 @@ namespace fastoredis
             if (st.error()){
                 char buff[1024] = {0};
                 common::SNPrintf(buff, sizeof(buff), "Set function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr setx(const std::string& key, const std::string& value, int ttl)
+        {
+            ssdb::Status st = ssdb_->setx(key, value, ttl);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Set function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr del(const std::string& key)
+        {
+            ssdb::Status st = ssdb_->del(key);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Set function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr incr(const std::string& key, int64_t incrby, int64_t *ret)
+        {
+            ssdb::Status st = ssdb_->incr(key, incrby, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Incr function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr keys(const std::string &key_start, const std::string &key_end, uint64_t limit, std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->keys(key_start, key_end, limit, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Keys function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr scan(const std::string &key_start, const std::string &key_end, uint64_t limit, std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->scan(key_start, key_end, limit, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Scan function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr rscan(const std::string &key_start, const std::string &key_end, uint64_t limit, std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->rscan(key_start, key_end, limit, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Rscan function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr multi_get(const std::vector<std::string>& keys, std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->multi_get(keys, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "multi_get function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr multi_set(const std::map<std::string, std::string> &kvs)
+        {
+            ssdb::Status st = ssdb_->multi_set(kvs);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "multi_set function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr multi_del(const std::vector<std::string>& keys)
+        {
+            ssdb::Status st = ssdb_->multi_del(keys);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "multi_del function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
