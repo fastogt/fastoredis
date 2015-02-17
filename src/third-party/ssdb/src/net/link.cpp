@@ -9,8 +9,10 @@ found in the LICENSE file.
 #include <stdarg.h>
 #ifdef FASTOREDIS
     #ifdef OS_WIN
+        #define F_EINTR 0
     #else
         #include <sys/socket.h>
+        #define F_EINTR EINTR
     #endif
 #else
 #include <sys/socket.h>
@@ -230,7 +232,7 @@ Link* Link::accept(){
 	socklen_t addrlen = sizeof(addr);
 
 	while((client_sock = ::accept(sock, (struct sockaddr *)&addr, &addrlen)) == -1){
-		if(errno != EINTR){
+        if(errno != F_EINTR){
 			//log_error("socket %d accept failed: %s", sock, strerror(errno));
 			return NULL;
 		}
@@ -275,9 +277,17 @@ int Link::read(){
 	while((want = input->space()) > 0){
 		// test
 		//want = 1;
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+            int len = ::recv(sock, input->slot(), want, 0);
+    #else
+            int len = ::read(sock, input->slot(), want);
+    #endif
+#else
 		int len = ::read(sock, input->slot(), want);
+#endif
 		if(len == -1){
-			if(errno == EINTR){
+            if(errno == F_EINTR){
 				continue;
 			}else if(errno == EWOULDBLOCK){
 				break;
@@ -310,9 +320,17 @@ int Link::write(){
 	while((want = output->size()) > 0){
 		// test
 		//want = 1;
+#ifdef FASTOREDIS
+    #ifdef OS_WIN
+            int len = ::send(sock, output->data(), want, 0);
+    #else
+            int len = ::write(sock, output->data(), want);
+    #endif
+#else
 		int len = ::write(sock, output->data(), want);
-		if(len == -1){
-			if(errno == EINTR){
+#endif
+        if(len == -1){
+            if(errno == F_EINTR){
 				continue;
 			}else if(errno == EWOULDBLOCK){
 				break;
