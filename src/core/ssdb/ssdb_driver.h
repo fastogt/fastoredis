@@ -4,7 +4,8 @@
 
 namespace fastoredis
 {
-    const std::vector<QString> ssdbCommandsKeywords = { "quit", "set", "get", "setx", "del", "incr", "keys", "scan", "rscan", "multi_get", "multi_set", "multi_del" };
+    const std::vector<QString> ssdbCommandsKeywords = { "quit", "set", "get", "setx", "del", "incr", "keys", "scan", "rscan", "multi_get", "multi_set", "multi_del",
+                                                        "hset", "hget", "hdel", "hincr", "hsize", "hclear", "hkeys", "hscan", "hrscan", "multi_hget", "multi_hset" };
     //get [key]
     //set [key] [value] [time-to-live-seconds] [flags]
     //add
