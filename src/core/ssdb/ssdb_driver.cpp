@@ -527,7 +527,7 @@ namespace fastoredis
             }
             else if(strcasecmp(argv[0], "multi_hset") == 0){
                 if(argc < 2 || (argc % 2 == 0)){
-                    return common::make_error_value("Invalid multi_get input argument", common::ErrorValue::E_ERROR);
+                    return common::make_error_value("Invalid multi_hset input argument", common::ErrorValue::E_ERROR);
                 }
 
                 std::map<std::string, std::string> keys;
@@ -538,6 +538,271 @@ namespace fastoredis
                 common::ErrorValueSPtr er = multi_hset(argv[1], keys);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zget") == 0){
+                if(argc != 3){
+                    return common::make_error_value("Invalid zget input argument", common::ErrorValue::E_ERROR);
+                }
+
+                int64_t ret;
+                common::ErrorValueSPtr er = zget(argv[1], argv[2], &ret);
+                if(!er){
+                    common::FundamentalValue *val = common::Value::createIntegerValue(ret);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zset") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid zset input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = zset(argv[1], argv[2], atoll(argv[3]));
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zdel") == 0){
+                if(argc != 3){
+                    return common::make_error_value("Invalid zdel input argument", common::ErrorValue::E_ERROR);
+                }
+
+                common::ErrorValueSPtr er = zdel(argv[1], argv[2]);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("DELETED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zincr") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid zincr input argument", common::ErrorValue::E_ERROR);
+                }
+
+                int64_t ret = 0;
+                common::ErrorValueSPtr er = zincr(argv[1], argv[2], atoll(argv[3]), &ret);
+                if(!er){
+                    common::FundamentalValue *val = common::Value::createIntegerValue(ret);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zsize") == 0){
+                if(argc != 2){
+                    return common::make_error_value("Invalid zsize input argument", common::ErrorValue::E_ERROR);
+                }
+
+                int64_t res = 0;
+                common::ErrorValueSPtr er = zsize(argv[1], &res);
+                if(!er){
+                    common::FundamentalValue *val = common::Value::createIntegerValue(res);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zclear") == 0){
+                if(argc != 2){
+                    return common::make_error_value("Invalid zclear input argument", common::ErrorValue::E_ERROR);
+                }
+
+                int64_t res = 0;
+                common::ErrorValueSPtr er = zclear(argv[1], &res);
+                if(!er){
+                    common::FundamentalValue *val = common::Value::createIntegerValue(res);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zrank") == 0){
+                if(argc != 3){
+                    return common::make_error_value("Invalid zrank input argument", common::ErrorValue::E_ERROR);
+                }
+
+                int64_t res = 0;
+                common::ErrorValueSPtr er = zrank(argv[1], argv[2], &res);
+                if(!er){
+                    common::FundamentalValue *val = common::Value::createIntegerValue(res);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zzrank") == 0){
+                if(argc != 3){
+                    return common::make_error_value("Invalid zzrank input argument", common::ErrorValue::E_ERROR);
+                }
+
+                int64_t res = 0;
+                common::ErrorValueSPtr er = zrrank(argv[1], argv[2], &res);
+                if(!er){
+                    common::FundamentalValue *val = common::Value::createIntegerValue(res);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zrange") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid zrange input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> res;
+                common::ErrorValueSPtr er = zrange(argv[1], atoll(argv[2]), atoll(argv[3]), &res);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < res.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(res[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zrrange") == 0){
+                if(argc != 4){
+                    return common::make_error_value("Invalid zrrange input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> res;
+                common::ErrorValueSPtr er = zrrange(argv[1], atoll(argv[2]), atoll(argv[3]), &res);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < res.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(res[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zkeys") == 0){
+                if(argc != 6){
+                    return common::make_error_value("Invalid zkeys input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> res;
+                int64_t st = atoll(argv[3]);
+                int64_t end = atoll(argv[4]);
+                common::ErrorValueSPtr er = zkeys(argv[1], argv[2], &st, &end, atoll(argv[5]), &res);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < res.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(res[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zscan") == 0){
+                if(argc != 6){
+                    return common::make_error_value("Invalid zscan input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> res;
+                int64_t st = atoll(argv[3]);
+                int64_t end = atoll(argv[4]);
+                common::ErrorValueSPtr er = zscan(argv[1], argv[2], &st, &end, atoll(argv[5]), &res);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < res.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(res[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "zrscan") == 0){
+                if(argc != 6){
+                    return common::make_error_value("Invalid zrscan input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> res;
+                int64_t st = atoll(argv[3]);
+                int64_t end = atoll(argv[4]);
+                common::ErrorValueSPtr er = zrscan(argv[1], argv[2], &st, &end, atoll(argv[5]), &res);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < res.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(res[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "multi_zget") == 0){
+                if(argc < 2){
+                    return common::make_error_value("Invalid zrscan input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> keysget;
+                for(int i = 2; i < argc; ++i){
+                    keysget.push_back(argv[i]);
+                }
+
+                std::vector<std::string> res;
+                common::ErrorValueSPtr er = multi_zget(argv[1], keysget, &res);
+                if(!er){
+                    common::ArrayValue* ar = common::Value::createArrayValue();
+                    for(int i = 0; i < res.size(); ++i){
+                        common::StringValue *val = common::Value::createStringValue(res[i]);
+                        ar->append(val);
+                    }
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "multi_zset") == 0){
+                if(argc < 2 || (argc % 2 == 0)){
+                    return common::make_error_value("Invalid zrscan input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::map<std::string, int64_t> keysget;
+                for(int i = 2; i < argc; i += 2){
+                    keysget[argv[i]] = atoll(argv[i+1]);
+                }
+
+                common::ErrorValueSPtr er = multi_zset(argv[1], keysget);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("STORED");
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
+            else if(strcasecmp(argv[0], "multi_zdel") == 0){
+                if(argc < 2){
+                    return common::make_error_value("Invalid zrscan input argument", common::ErrorValue::E_ERROR);
+                }
+
+                std::vector<std::string> keysget;
+                for(int i = 2; i < argc; ++i){
+                    keysget.push_back(argv[i]);
+                }
+
+                common::ErrorValueSPtr er = multi_zdel(argv[1], keysget);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue("DELETED");
                     FastoObject* child = new FastoObject(out, val, config_.mb_delim);
                     out->addChildren(child);
                 }
@@ -673,7 +938,7 @@ namespace fastoredis
             return common::ErrorValueSPtr();
         }
 
-/******************** hash *************************/
+        /******************** hash *************************/
 
         common::ErrorValueSPtr hget(const std::string& name, const std::string& key, std::string *val)
         {
@@ -791,6 +1056,195 @@ namespace fastoredis
             if (st.error()){
                 char buff[1024] = {0};
                 common::SNPrintf(buff, sizeof(buff), "multi_hset function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        /******************** zset *************************/
+
+        common::ErrorValueSPtr zget(const std::string &name, const std::string &key, int64_t *ret)
+        {
+            ssdb::Status st = ssdb_->zget(name, key, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zget function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zset(const std::string &name, const std::string &key, int64_t score)
+        {
+            ssdb::Status st = ssdb_->zset(name, key, score);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zset function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zdel(const std::string &name, const std::string &key)
+        {
+            ssdb::Status st = ssdb_->zdel(name, key);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zdel function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zincr(const std::string &name, const std::string &key, int64_t incrby, int64_t *ret)
+        {
+            ssdb::Status st = ssdb_->zincr(name, key, incrby, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zincr function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zsize(const std::string &name, int64_t *ret)
+        {
+            ssdb::Status st = ssdb_->zsize(name, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zsize function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zclear(const std::string &name, int64_t *ret)
+        {
+            ssdb::Status st = ssdb_->zclear(name, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zclear function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zrank(const std::string &name, const std::string &key, int64_t *ret)
+        {
+            ssdb::Status st = ssdb_->zrank(name, key, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zrank function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zrrank(const std::string &name, const std::string &key, int64_t *ret)
+        {
+            ssdb::Status st = ssdb_->zrrank(name, key, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zrrank function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zrange(const std::string &name,
+                uint64_t offset, uint64_t limit,
+                std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->zrange(name, offset, limit, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zrange function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zrrange(const std::string &name,
+                uint64_t offset, uint64_t limit,
+                std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->zrrange(name, offset, limit, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zrrange function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zkeys(const std::string &name, const std::string &key_start,
+            int64_t *score_start, int64_t *score_end,
+            uint64_t limit, std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->zkeys(name, key_start, score_start, score_end, limit, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zkeys function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zscan(const std::string &name, const std::string &key_start,
+            int64_t *score_start, int64_t *score_end,
+            uint64_t limit, std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->zscan(name, key_start, score_start, score_end, limit, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "Zscan function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr zrscan(const std::string &name, const std::string &key_start,
+            int64_t *score_start, int64_t *score_end,
+            uint64_t limit, std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->zrscan(name, key_start, score_start, score_end, limit, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "zrscan function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr multi_zget(const std::string &name, const std::vector<std::string> &keys,
+            std::vector<std::string> *ret)
+        {
+            ssdb::Status st = ssdb_->multi_zget(name, keys, ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "multi_zget function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr multi_zset(const std::string &name, const std::map<std::string, int64_t> &kss)
+        {
+            ssdb::Status st = ssdb_->multi_zset(name, kss);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "multi_zset function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+            return common::ErrorValueSPtr();
+        }
+
+        common::ErrorValueSPtr multi_zdel(const std::string &name, const std::vector<std::string> &keys)
+        {
+            ssdb::Status st = ssdb_->multi_zdel(name, keys);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "multi_zdel function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
