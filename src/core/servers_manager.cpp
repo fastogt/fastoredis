@@ -30,6 +30,15 @@ namespace fastoredis
         refreshSyncServers();
     }
 
+    void ServersManager::clear()
+    {
+        for(size_t i = 0; i < servers_.size(); ++i){
+            IServerSPtr ser = servers_[i];
+            ser->driver()->stop();
+        }
+        servers_.clear();
+    }
+
     void ServersManager::refreshSyncServers()
     {
         for(size_t i = 0; i < servers_.size(); ++i){

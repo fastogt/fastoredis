@@ -21,14 +21,20 @@ namespace fastoredis
         VERIFY(connect(shellWidget_, &BaseShellWidget::addedChild, outputWidget_, &OutputWidget::addChild));
         VERIFY(connect(shellWidget_, &BaseShellWidget::itemUpdated, outputWidget_, &OutputWidget::itemUpdate));
 
-        QSplitter *splitter = new QSplitter;
+        QSplitter* splitter = new QSplitter;
+#ifdef OS_WIN
+        splitter->setStyleSheet("QSplitter::handle { background-color: gray }");
+#endif
         splitter->setOrientation(Qt::Vertical);
         splitter->setHandleWidth(1);
         splitter->setContentsMargins(0, 0, 0, 0);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
+        mainLayout->setSpacing(0);
         splitter->addWidget(shellWidget_);
         splitter->addWidget(outputWidget_);
+        splitter->setStretchFactor(0, 0);
+        splitter->setStretchFactor(1, 1);
         mainLayout->addWidget(splitter);
 
         setLayout(mainLayout);

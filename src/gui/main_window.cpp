@@ -258,6 +258,7 @@ namespace fastoredis
 
     MainWindow::~MainWindow()
     {
+        ServersManager::instance().clear();
     }
 
     void MainWindow::createStatusBar()

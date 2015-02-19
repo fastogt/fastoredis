@@ -18,6 +18,7 @@ namespace fastoredis
 
         IServerSPtr createServer(const IConnectionSettingsBaseSPtr& settings);        
         void setSyncServers(bool isSync);        
+        void clear();
 
     public Q_SLOTS:
         void closeServer(IServerSPtr server);

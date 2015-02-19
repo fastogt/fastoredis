@@ -1,6 +1,9 @@
 0.7.0
 [Alexandr Topilski]
 - SSDB database support http://ssdb.io/
+- Info and history for SSDB
+- Redis kyes loading by pattern
+- Fix bug with permission app
 
 0.6.2 / February 14, 2015
 [Alexandr Topilski]
