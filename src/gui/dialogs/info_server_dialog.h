@@ -6,6 +6,7 @@
 
 #include "core/redis/redis_infos.h"
 #include "core/memcached/memcached_infos.h"
+#include "core/ssdb/ssdb_infos.h"
 
 class QLabel;
 
@@ -37,6 +38,7 @@ namespace fastoredis
     private:
         void updateText(const RedisServerInfo& serv);
         void updateText(const MemcachedServerInfo& serv);
+        void updateText(const SsdbServerInfo& serv);
         QLabel* serverTextInfo_;
         QLabel* hardwareTextInfo_;
         GlassWidget* glassWidget_;

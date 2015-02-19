@@ -15,10 +15,10 @@ extern "C" {
 
 #include "SSDB.h"
 
-#define INFO_REQUEST "STATS"
-#define GET_KEYS "STATS ITEMS"
+#define INFO_REQUEST "INFO"
 #define DELETE_KEY "DELETE"
 #define LOAD_KEY "GET"
+#define GET_KEYS "KEYS a z 100"
 
 namespace
 {
@@ -126,10 +126,32 @@ namespace fastoredis
             return common::ErrorValueSPtr();
         }
 
-        common::ErrorValueSPtr stats(const char* args, SsdbServerInfo::Common& statsout)
+        common::ErrorValueSPtr info(const char* args, SsdbServerInfo::Common& statsout)
         {
-            if (!ssdb_){
-                return common::make_error_value("Stats function error: not connected.", common::ErrorValue::E_ERROR);
+            std::vector<std::string> ret;
+            ssdb::Status st = ssdb_->info(args ? args : std::string(), &ret);
+            if (st.error()){
+                char buff[1024] = {0};
+                common::SNPrintf(buff, sizeof(buff), "info function error: %s", st.code());
+                return common::make_error_value(buff, common::ErrorValue::E_ERROR);
+            }
+
+            for(int i = 0; i < ret.size(); i += 2){
+                if(ret[i] == SSDB_VERSION_LABEL){
+                    statsout.version_ = ret[i + 1];
+                }
+                else if (ret[i] == SSDB_LINKS_LABEL){
+                    statsout.links_ = common::convertFromString<uint32_t>(ret[i + 1]);
+                }
+                else if(ret[i] == SSDB_TOTAL_CALLS_LABEL){
+                    statsout.total_calls_ = common::convertFromString<uint32_t>(ret[i + 1]);
+                }
+                else if(ret[i] == SSDB_DBSIZE_LABEL){
+                    statsout.dbsize_ = common::convertFromString<uint32_t>(ret[i + 1]);
+                }
+                else if(ret[i] == SSDB_BINLOGS_LABEL){
+                    statsout.binlogs_ = ret[i + 1];
+                }
             }
 
             return common::ErrorValueSPtr();
@@ -192,7 +214,7 @@ namespace fastoredis
                 }
 
                 std::string ret;
-                common::ErrorValueSPtr er = get(argv[1], ret);
+                common::ErrorValueSPtr er = get(argv[1], &ret);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue(ret);
                     FastoObject* child = new FastoObject(out, val, config_.mb_delim);
@@ -808,6 +830,20 @@ namespace fastoredis
                 }
                 return er;
             }
+            else if(strcasecmp(argv[0], "info") == 0){
+                if(argc > 2){
+                    return common::make_error_value("Invalid info input argument", common::ErrorValue::E_ERROR);
+                }
+
+                SsdbServerInfo::Common statsout;
+                common::ErrorValueSPtr er = info(argc == 2 ? argv[1] : 0, statsout);
+                if(!er){
+                    common::StringValue *val = common::Value::createStringValue(SsdbServerInfo(statsout).toString());
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    out->addChildren(child);
+                }
+                return er;
+            }
             else{
                 char buff[1024] = {0};
                 sprintf(buff, "Not supported command: %s", argv[0]);
@@ -815,16 +851,14 @@ namespace fastoredis
             }
         }
 
-        common::ErrorValueSPtr get(const std::string& key, std::string& ret_val)
+        common::ErrorValueSPtr get(const std::string& key, std::string* ret_val)
         {
-            std::string ex;
-            ssdb::Status st = ssdb_->get(key, &ex);
+            ssdb::Status st = ssdb_->get(key, ret_val);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Get function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "get function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
-            ret_val = ex;
             return common::ErrorValueSPtr();
         }
 
@@ -833,7 +867,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->set(key, value);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Set function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "set function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -844,7 +878,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->setx(key, value, ttl);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Set function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "setx function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -855,7 +889,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->del(key);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Set function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "del function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -888,7 +922,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->scan(key_start, key_end, limit, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Scan function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "scan function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -899,7 +933,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->rscan(key_start, key_end, limit, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Rscan function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "rscan function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1068,7 +1102,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zget(name, key, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zget function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zget function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1079,7 +1113,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zset(name, key, score);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zset function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zset function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1112,7 +1146,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zsize(name, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zsize function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zsize function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1123,7 +1157,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zclear(name, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zclear function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zclear function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1134,7 +1168,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zrank(name, key, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zrank function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zrank function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1145,7 +1179,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zrrank(name, key, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zrrank function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zrrank function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1158,7 +1192,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zrange(name, offset, limit, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zrange function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zrange function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1171,7 +1205,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zrrange(name, offset, limit, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zrrange function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zrrange function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1184,7 +1218,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zkeys(name, key_start, score_start, score_end, limit, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zkeys function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zkeys function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1197,7 +1231,7 @@ namespace fastoredis
             ssdb::Status st = ssdb_->zscan(name, key_start, score_start, score_end, limit, ret);
             if (st.error()){
                 char buff[1024] = {0};
-                common::SNPrintf(buff, sizeof(buff), "Zscan function error: %s", st.code());
+                common::SNPrintf(buff, sizeof(buff), "zscan function error: %s", st.code());
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
             return common::ErrorValueSPtr();
@@ -1339,7 +1373,7 @@ namespace fastoredis
         *info = NULL;
         LOG_COMMAND(Command(INFO_REQUEST, common::Value::C_INNER));
         SsdbServerInfo::Common cm;
-        common::ErrorValueSPtr err = impl_->stats(NULL, cm);
+        common::ErrorValueSPtr err = impl_->info(NULL, cm);
         if(!err){
             *info = new SsdbServerInfo(cm);
         }
@@ -1502,7 +1536,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
             LOG_COMMAND(Command(INFO_REQUEST, common::Value::C_INNER));
             SsdbServerInfo::Common cm;
-            common::ErrorValueSPtr err = impl_->stats(NULL, cm);
+            common::ErrorValueSPtr err = impl_->info(NULL, cm);
             if(err){
                 res.setErrorInfo(err);
             }

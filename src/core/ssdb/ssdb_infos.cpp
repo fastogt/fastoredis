@@ -21,71 +21,20 @@ namespace fastoredis
             size_t delem = line.find_first_of(':');
             std::string field = line.substr(0, delem);
             std::string value = line.substr(delem + 1);
-            if(field == SSDB_PID_LABEL){
-                pid_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_UPTIME_LABEL){
-                uptime_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_TIME_LABEL){
-                time_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_VERSION_LABEL){
+            if(field == SSDB_VERSION_LABEL){
                 version_ = value;
             }
-            else if(field == SSDB_POINTER_SIZE_LABEL){
-                pointer_size_ = common::convertFromString<uint32_t>(value);
+            else if(field == SSDB_LINKS_LABEL){
+                links_ = common::convertFromString<uint32_t>(value);
             }
-            else if(field == SSDB_RUSAGE_USER_LABEL){
-                rusage_user_ = common::convertFromString<uint32_t>(value);
+            else if(field == SSDB_TOTAL_CALLS_LABEL){
+                total_calls_ = common::convertFromString<uint32_t>(value);
             }
-            else if(field == SSDB_RUSAGE_SYSTEM_LABEL){
-                rusage_system_ = common::convertFromString<uint32_t>(value);
+            else if(field == SSDB_DBSIZE_LABEL){
+                dbsize_ = common::convertFromString<uint32_t>(value);
             }
-            else if(field == SSDB_CURR_ITEMS_LABEL){
-                curr_items_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_TOTAL_ITEMS_LABEL){
-                total_items_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_BYTES_LABEL){
-                bytes_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_CURR_CONNECTIONS_LABEL){
-                curr_connections_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_TOTAL_CONNECTIONS_LABEL){
-                total_connections_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_CONNECTION_STRUCTURES_LABEL){
-                connection_structures_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_CMD_GET_LABEL){
-                cmd_get_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_CMD_SET_LABEL){
-                cmd_set_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_GET_HITS_LABEL){
-                get_hits_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_GET_MISSES_LABEL){
-                get_misses_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_EVICTIONS_LABEL){
-                evictions_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_BYTES_READ_LABEL){
-                bytes_read_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_BYTES_WRITTEN_LABEL){
-                bytes_written_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_LIMIT_MAXBYTES_LABEL){
-                limit_maxbytes_ = common::convertFromString<uint32_t>(value);
-            }
-            else if(field == SSDB_THREADS_LABEL){
-                threads_ = common::convertFromString<uint32_t>(value);
+            else if(field == SSDB_BINLOGS_LABEL){
+                binlogs_ = value;
             }
             start = pos + 2;
         }
@@ -95,49 +44,15 @@ namespace fastoredis
     {
         switch (index) {
         case 0:
-            return new common::FundamentalValue(pid_);
-        case 1:
-            return new common::FundamentalValue(uptime_);
-        case 2:
-            return new common::FundamentalValue(time_);
-        case 3:
             return new common::StringValue(version_);
+        case 1:
+            return new common::FundamentalValue(links_);
+        case 2:
+            return new common::FundamentalValue(total_calls_);
+        case 3:
+            return new common::FundamentalValue(dbsize_);
         case 4:
-            return new common::FundamentalValue(pointer_size_);
-        case 5:
-            return new common::FundamentalValue(rusage_user_);
-        case 6:
-            return new common::FundamentalValue(rusage_system_);
-        case 7:
-            return new common::FundamentalValue(curr_items_);
-        case 8:
-            return new common::FundamentalValue(total_items_);
-        case 9:
-            return new common::FundamentalValue(bytes_);
-        case 10:
-            return new common::FundamentalValue(curr_connections_);
-        case 11:
-            return new common::FundamentalValue(total_connections_);
-        case 12:
-            return new common::FundamentalValue(connection_structures_);
-        case 13:
-            return new common::FundamentalValue(cmd_get_);
-        case 14:
-            return new common::FundamentalValue(cmd_set_);
-        case 15:
-            return new common::FundamentalValue(get_hits_);
-        case 16:
-            return new common::FundamentalValue(get_misses_);
-        case 17:
-            return new common::FundamentalValue(evictions_);
-        case 18:
-            return new common::FundamentalValue(bytes_read_);
-        case 19:
-            return new common::FundamentalValue(bytes_written_);
-        case 20:
-            return new common::FundamentalValue(limit_maxbytes_);
-        case 21:
-            return new common::FundamentalValue(threads_);
+            return new common::StringValue(binlogs_);
         default:
             NOTREACHED();
             break;
@@ -171,28 +86,11 @@ namespace fastoredis
 
     std::ostream& operator<<(std::ostream& out, const SsdbServerInfo::Common& value)
     {
-        return out << SSDB_PID_LABEL":" << value.pid_ << ("\r\n")
-                    << SSDB_UPTIME_LABEL":" << value.uptime_ << ("\r\n")
-                    << SSDB_TIME_LABEL":" << value.time_ << ("\r\n")
-                    << SSDB_VERSION_LABEL":" << value.version_ << ("\r\n")
-                    << SSDB_POINTER_SIZE_LABEL":" << value.pointer_size_ << ("\r\n")
-                    << SSDB_RUSAGE_USER_LABEL":" << value.rusage_user_ << ("\r\n")
-                    << SSDB_RUSAGE_SYSTEM_LABEL":" << value.rusage_system_ << ("\r\n")
-                    << SSDB_CURR_ITEMS_LABEL":" << value.curr_items_ << ("\r\n")
-                    << SSDB_TOTAL_ITEMS_LABEL":" << value.total_items_ << ("\r\n")
-                    << SSDB_BYTES_LABEL":" << value.bytes_ << ("\r\n")
-                    << SSDB_CURR_CONNECTIONS_LABEL":" << value.curr_connections_ << ("\r\n")
-                    << SSDB_TOTAL_CONNECTIONS_LABEL":" << value.total_connections_ << ("\r\n")
-                    << SSDB_CONNECTION_STRUCTURES_LABEL":" << value.connection_structures_ << ("\r\n")
-                    << SSDB_CMD_GET_LABEL":" << value.cmd_get_ << ("\r\n")
-                    << SSDB_CMD_SET_LABEL":" << value.cmd_set_ << ("\r\n")
-                    << SSDB_GET_HITS_LABEL":" << value.get_hits_ << ("\r\n")
-                    << SSDB_GET_MISSES_LABEL":" << value.get_misses_ << ("\r\n")
-                    << SSDB_EVICTIONS_LABEL":" << value.evictions_ << ("\r\n")
-                    << SSDB_BYTES_READ_LABEL":" << value.bytes_read_ << ("\r\n")
-                    << SSDB_BYTES_WRITTEN_LABEL":" << value.bytes_written_ << ("\r\n")
-                    << SSDB_LIMIT_MAXBYTES_LABEL":" << value.limit_maxbytes_ << ("\r\n")
-                    << SSDB_THREADS_LABEL":" << value.threads_ << ("\r\n");
+        return out << SSDB_VERSION_LABEL":" << value.version_ << ("\r\n")
+                    << SSDB_LINKS_LABEL":" << value.links_ << ("\r\n")
+                    << SSDB_TOTAL_CALLS_LABEL":" << value.total_calls_ << ("\r\n")
+                    << SSDB_DBSIZE_LABEL":" << value.dbsize_ << ("\r\n")
+                    << SSDB_BINLOGS_LABEL":" << value.binlogs_ << ("\r\n");
     }
 
     std::ostream& operator<<(std::ostream& out, const SsdbServerInfo& value)

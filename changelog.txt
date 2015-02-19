@@ -1,3 +1,7 @@
+0.7.0
+[Alexandr Topilski]
+- SSDB database support http://ssdb.io/
+
 0.6.2 / February 14, 2015
 [Alexandr Topilski]
 - Update design

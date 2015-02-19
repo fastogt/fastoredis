@@ -483,4 +483,20 @@ Status ClientImpl::multi_zdel(const std::string &name, const std::vector<std::st
 	return s;
 }
 
+#ifdef FASTOREDIS
+    Status ClientImpl::info(const std::string& args, std::vector<std::string> *ret)
+    {
+        const std::vector<std::string> *resp;
+        resp = this->request("info", args);
+        Status s(resp);
+        if(s.ok()){
+            std::vector<std::string>::const_iterator it;
+            for(it = resp->begin() + 2; it != resp->end(); it++){
+                ret->push_back(*it);
+            }
+        }
+        return s;
+    }
+#endif
+
 }; // namespace ssdb

@@ -1,13 +1,13 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 #############################################################
-PROJECT("FastoRedis" VERSION 0.7.0.0 LANGUAGES CXX C)
+PROJECT("FastoRedis" VERSION 0.7.0.1 LANGUAGES CXX C)
 #################### Project Settings ####################
 #SET(PROJECT_NAME "FastoRedis" CACHE STRING "Project Name")
 SET(PROJECT_NAME_TITLE ${PROJECT_NAME} CACHE STRING "Title for ${PROJECT_NAME}")
 SET(PROJECT_DOMAIN "www.fastoredis.com" CACHE STRING "Internet domain name for ${PROJECT_NAME}")
 SET(PROJECT_COMPANYNAME "Fasto" CACHE STRING "Company name for ${PROJECT_NAME}")
 SET(PROJECT_COPYRIGHT "Copyright (C) 2014 ${PROJECT_COMPANYNAME} All Rights Reserved.")
-SET(PROJECT_COMPANYNAME_DOMAIN "www.fastoinprogress.com" CACHE STRING "Internet domain name for ${PROJECT_NAME}")
+SET(PROJECT_COMPANYNAME_DOMAIN "www.fastoredis.com" CACHE STRING "Internet domain name for ${PROJECT_NAME}")
 SET(PROJECT_MAINTAINER_MAIL "atopilski@fastoredis.com" CACHE STRING "Internet mail address for ${PROJECT_NAME} mainteiner")
 SET(PROJECT_MAINTAINER_NAME "Alexandr Topilski" CACHE STRING "Name of ${PROJECT_NAME} mainteiner")
 SET(PROJECT_GITHUB_FORK "www.github.com/fasto/fastoredis" CACHE STRING "Git fork of ${PROJECT_NAME}")

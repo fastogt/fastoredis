@@ -113,6 +113,13 @@ namespace
                                                             "Bytes written: %20<br/>"
                                                             "Limit max bytes: %21<br/>"
                                                             "Threads: %22");
+
+    const QString ssdbTextServerTemplate = QObject::tr("<h2>Common:</h2><br/>"
+                                                            "Version: %1<br/>"
+                                                            "Links: %2<br/>"
+                                                            "Total calls: %3<br/>"
+                                                            "Dbsize: %4<br/>"
+                                                            "Binlogs: %5");
 }
 
 namespace fastoredis
@@ -170,6 +177,12 @@ namespace fastoredis
         }
         else if(type_ == MEMCACHED){
             MemcachedServerInfo* infr = dynamic_cast<MemcachedServerInfo*>(inf.get());
+            if(infr){
+                updateText(*infr);
+            }
+        }
+        else if(type_ == SSDB){
+            SsdbServerInfo* infr = dynamic_cast<SsdbServerInfo*>(inf.get());
             if(infr){
                 updateText(*infr);
             }
@@ -294,6 +307,19 @@ namespace fastoredis
         //QString textHard = memcachedTextHardwareTemplate;
         serverTextInfo_->setText(textServ);
         //hardwareTextInfo_->setText(textHard);
+    }
+
+    void InfoServerDialog::updateText(const SsdbServerInfo& serv)
+    {
+        using namespace common;
+        SsdbServerInfo::Common com = serv.common_;
+        QString textServ = ssdbTextServerTemplate.arg(convertFromString<QString>(com.version_))
+                .arg(com.links_)
+                .arg(com.total_calls_)
+                .arg(com.dbsize_)
+                .arg(convertFromString<QString>(com.binlogs_));
+
+        serverTextInfo_->setText(textServ);
     }
 
     void InfoServerDialog::showEvent(QShowEvent* e)

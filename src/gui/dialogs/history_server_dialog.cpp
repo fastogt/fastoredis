@@ -6,6 +6,7 @@
 
 #include "core/redis/redis_infos.h"
 #include "core/memcached/memcached_infos.h"
+#include "core/ssdb/ssdb_infos.h"
 
 #include "gui/base/graph_widget.h"
 #include "gui/gui_factory.h"
@@ -51,6 +52,11 @@ namespace fastoredis
                 serverInfoGroupsNames_->addItem(common::convertFromString<QString>(memcachedHeaders[i]));
             }
         }
+        else if(type_ == SSDB){
+            for(int i = 0; i < SsdbHeaders.size(); ++i){
+                serverInfoGroupsNames_->addItem(common::convertFromString<QString>(SsdbHeaders[i]));
+            }
+        }
 
         QVBoxLayout *setingsLayout = new QVBoxLayout;
         setingsLayout->addWidget(serverInfoGroupsNames_);
@@ -76,7 +82,7 @@ namespace fastoredis
             return;
         }
 
-        if(type_ == REDIS || type_ == MEMCACHED){
+        if(type_ == REDIS || type_ == MEMCACHED || type_ == SSDB){
             infos_ = res.infos();
         }
         reset();
@@ -102,6 +108,9 @@ namespace fastoredis
         }
         else if(type_ == MEMCACHED){
             field = memcachedFields[index];
+        }
+        else if(type_ == SSDB){
+            field = SsdbFields[index];
         }
 
         for(int i = 0; i < field.size(); ++i){
