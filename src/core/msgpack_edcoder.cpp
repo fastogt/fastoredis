@@ -48,7 +48,7 @@ namespace fastoredis
     common::ErrorValueSPtr MsgPackEDcoder::encodeImpl(const std::string& data, std::string& out)
     {
         cmp_ctx_t cmp;
-        char* copy = (char*)calloc(data.size(), sizeof(char));
+        char* copy = (char*)calloc(data.size() + 1, sizeof(char));
         memcpy(copy, data.c_str(), data.size());
         cmp_init(&cmp, (void*)copy, NULL, stram_writer);
 
@@ -61,7 +61,7 @@ namespace fastoredis
     common::ErrorValueSPtr MsgPackEDcoder::decodeImpl(const std::string& data, std::string& out)
     {
         cmp_ctx_t cmp;
-        char* copy = (char*)calloc(data.size(), sizeof(char));
+        char* copy = (char*)calloc(data.size() + 1, sizeof(char));
         memcpy(copy, data.c_str(), data.size());
 
         cmp_init(&cmp, (void*)copy, stream_reader, NULL);
