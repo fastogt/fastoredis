@@ -32,6 +32,7 @@ namespace fastoredis
         void togglePasswordEchoMode();
         void togglePassphraseEchoMode();
         void setPrivateFile();
+        void testConnection();
 
     protected:
         virtual void changeEvent(QEvent* );

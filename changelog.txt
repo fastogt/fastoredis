@@ -4,6 +4,7 @@
 - Info and history for SSDB
 - Redis kyes loading by pattern
 - Fix bug with permission app
+- Test connection functionality
 
 0.6.2 / February 14, 2015
 [Alexandr Topilski]

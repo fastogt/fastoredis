@@ -12,6 +12,8 @@ namespace fastoredis
     //set [key] [value] [time-to-live-seconds] [flags]
     //add
 
+    common::ErrorValueSPtr testConnection(MemcachedConnectionSettings* settings);
+
     class MemcachedDriver
             : public IDriver
     {

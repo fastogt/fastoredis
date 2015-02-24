@@ -114,9 +114,7 @@ namespace fastoredis
         movie_->jumpToFrame(0);
         wAnimationContainer_->resize(movie_->currentPixmap().size());
 
-        wAnimationContainer_->show();
         movie_->start();
-
         wAnimationContainer_->show();
         infoBlockPositioning();
     }

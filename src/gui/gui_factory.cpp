@@ -330,4 +330,16 @@ namespace fastoredis
             return comm;
         }
     }
+
+    const QIcon& GuiFactory::successIcon() const
+    {
+        static QIcon suc(":" PROJECT_NAME_LOWERCASE "/images/64x64/success.png");
+        return suc;
+    }
+
+    const QIcon& GuiFactory::failIcon() const
+    {
+        static QIcon fail(":" PROJECT_NAME_LOWERCASE "/images/64x64/fail.png");
+        return fail;
+    }
 }

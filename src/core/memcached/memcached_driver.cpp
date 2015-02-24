@@ -82,8 +82,18 @@ namespace fastoredis
         }
     }
 
-    common::ErrorValueSPtr testConnection(const char* host, int hostport, const char* user, const char* passwd)
+    common::ErrorValueSPtr testConnection(MemcachedConnectionSettings* settings)
     {
+        if(!settings){
+            return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+        }
+
+        memcachedConfig inf = settings->info();
+        char* user = inf.user_;
+        char* passwd = inf.password_;
+        char* host = inf.hostip;
+        in_port_t hostport = inf.hostport;
+
         memcached_return rc;
         char buff[1024] = {0};
 

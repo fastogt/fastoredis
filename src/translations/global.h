@@ -63,6 +63,7 @@ namespace fastoredis
         const QString trNext = QObject::tr("Next");
         const QString trPrevious = QObject::tr("Previous");
         const QString trLoading = QObject::tr("Loading...");
+        const QString trTryToConnect = QObject::tr("Try to connect...");
 
         const QString trMatchCase = QObject::tr("Match case");
         const QString trRawText = QObject::tr("Raw text");
@@ -94,5 +95,6 @@ namespace fastoredis
         const QString trEncodeDecode = QObject::tr("Encode/Decode");
         const QString trEncode = QObject::tr("Encode");
         const QString trDecode = QObject::tr("Decode");
+        const QString trDiagnostic = QObject::tr("Diagnostic");
     }
 }

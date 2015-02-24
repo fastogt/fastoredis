@@ -188,6 +188,52 @@ namespace fastoredis
     const std::vector<QString> redisTypesKeywords(commandGroups, commandGroups + sizeof(commandGroups)/sizeof(char*));
     const std::vector<QString> redisCommandsKeywords(commandHelp, commandHelp + sizeof(commandHelp)/sizeof(struct commandHelp));
 
+    common::ErrorValueSPtr testConnection(RedisConnectionSettings* settings)
+    {
+        if(!settings){
+            return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+        }
+
+        redisContext *context = NULL;
+        redisConfig config = settings->info();
+        SSHInfo sinfo = settings->sshInfo();
+
+        using namespace common::utils;
+
+        if (config.hostsocket == NULL) {
+            const char *username = c_strornull(sinfo.userName_);
+            const char *password = c_strornull(sinfo.password_);
+            const char *ssh_address = c_strornull(sinfo.hostName_);
+            int ssh_port = sinfo.port_;
+            int curM = sinfo.currentMethod_;
+            const char *publicKey = c_strornull(sinfo.publicKey_);
+            const char *privateKey = c_strornull(sinfo.privateKey_);
+            const char *passphrase = c_strornull(sinfo.passphrase_);
+
+            context = redisConnect(config.hostip, config.hostport, ssh_address, ssh_port, username, password,
+                                   publicKey, privateKey, passphrase, curM);
+        }
+        else {
+            context = redisConnectUnix(config.hostsocket);
+        }
+
+        if (context->err) {
+            char buff[512] = {0};
+            if (!config.hostsocket){
+                sprintf(buff, "Could not connect to Redis at %s:%d : %s", config.hostip, config.hostport, context->errstr);
+            }
+            else{
+                sprintf(buff, "Could not connect to Redis at %s : %s", config.hostsocket, context->errstr);
+            }
+
+            redisFree(context);
+            context = NULL;
+            return common::make_error_value(buff, common::Value::E_ERROR);
+        }
+
+        return common::ErrorValueSPtr();
+    }
+
     struct RedisDriver::pimpl
     {
         pimpl()

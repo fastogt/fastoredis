@@ -53,6 +53,8 @@ namespace fastoredis
         const QIcon& commandIcon(connectionTypes type) const;
         const QIcon& typeIcon(connectionTypes type) const;
 
+        const QIcon& successIcon() const;
+        const QIcon& failIcon() const;
     private:
         const QIcon& redisConnectionIcon() const;
         const QIcon& memcachedConnectionIcon() const;

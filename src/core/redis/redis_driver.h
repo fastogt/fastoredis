@@ -7,6 +7,8 @@ namespace fastoredis
     extern const std::vector<QString> redisTypesKeywords;
     extern const std::vector<QString> redisCommandsKeywords;
 
+    common::ErrorValueSPtr testConnection(RedisConnectionSettings* settings);
+
     class RedisDriver
             : public IDriver
     {

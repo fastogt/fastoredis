@@ -12,6 +12,7 @@ namespace fastoredis
         QHBoxLayout *mainL = new QHBoxLayout;
         icon_ = new QLabel;
         text_ = new QLabel;
+        text_->setWordWrap(true);
         setText(text);
         setIcon(icon, size);
 

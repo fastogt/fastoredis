@@ -9,6 +9,9 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QMessageBox>
+
+#include "gui/dialogs/connection_diagnostic_dialog.h"
 
 #include "common/qt/convert_string.h"
 
@@ -166,16 +169,24 @@ namespace fastoredis
         VERIFY(connect(selectPrivateFileButton_, &QPushButton::clicked, this, &ConnectionDialog::setPrivateFile));
         VERIFY(connect(useSsh_, &QCheckBox::stateChanged, this, &ConnectionDialog::sshSupportStateChange));
 
+        QPushButton *testButton = new QPushButton("&Test");
+        testButton->setIcon(GuiFactory::instance().messageBoxInformationIcon());
+        VERIFY(connect(testButton, &QPushButton::clicked, this, &ConnectionDialog::testConnection));
+
+        QHBoxLayout *bottomLayout = new QHBoxLayout;
+        bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
         buttonBox_ = new QDialogButtonBox(this);
         buttonBox_->setOrientation(Qt::Horizontal);
         buttonBox_->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
         VERIFY(connect(buttonBox_, &QDialogButtonBox::accepted, this, &ConnectionDialog::accept));
         VERIFY(connect(buttonBox_, &QDialogButtonBox::rejected, this, &ConnectionDialog::reject));
+        bottomLayout->addWidget(buttonBox_);
+
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addLayout(inputLayout);
         mainLayout->addWidget(useSshWidget_);
-        mainLayout->addWidget(buttonBox_);
+        mainLayout->addLayout(bottomLayout);
         mainLayout->setSizeConstraint(QLayout::SetFixedSize);
         setLayout(mainLayout);
 
@@ -194,34 +205,6 @@ namespace fastoredis
     void ConnectionDialog::accept()
     {
         if(validateAndApply()){
-            connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(typeConnection_->currentText()));
-            bool isValidType = currentType != DBUNKNOWN;
-            if(isValidType){
-                std::string conName = common::convertToString(connectionName_->text());
-                IConnectionSettingsBase* newConnection = IConnectionSettingsBase::createFromType(currentType, conName);
-                if(newConnection){
-                    connection_.reset(newConnection);
-                    connection_->setCommandLine(common::convertToString(toRawCommandLine(commandLine_->text())));
-                    connection_->setLoggingEnabled(logging_->isChecked());
-
-                    SSHInfo info = connection_->sshInfo();
-                    info.hostName_ = common::convertToString(sshHostName_->text());
-                    info.userName_ = common::convertToString(userName_->text());
-                    info.port_ = sshPort_->text().toInt();
-                    info.password_ = common::convertToString(passwordBox_->text());
-                    info.publicKey_ = "";
-                    info.privateKey_ = common::convertToString(privateKeyBox_->text());
-                    info.passphrase_ = common::convertToString(passphraseBox_->text());
-                    if (useSsh_->isChecked()){
-                        info.currentMethod_ = selectedAuthMethod();
-                    }
-                    else{
-                        info.currentMethod_ = SSHInfo::UNKNOWN;
-                    }
-                    connection_->setSshInfo(info);
-                }
-            }
-
             QDialog::accept();
         }
     }
@@ -323,7 +306,39 @@ namespace fastoredis
 
     bool ConnectionDialog::validateAndApply()
     {
-        return true;
+        connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(typeConnection_->currentText()));
+        bool isValidType = currentType != DBUNKNOWN;
+        if(isValidType){
+            std::string conName = common::convertToString(connectionName_->text());
+            IConnectionSettingsBase* newConnection = IConnectionSettingsBase::createFromType(currentType, conName);
+            if(newConnection){
+                connection_.reset(newConnection);
+                connection_->setCommandLine(common::convertToString(toRawCommandLine(commandLine_->text())));
+                connection_->setLoggingEnabled(logging_->isChecked());
+
+                SSHInfo info = connection_->sshInfo();
+                info.hostName_ = common::convertToString(sshHostName_->text());
+                info.userName_ = common::convertToString(userName_->text());
+                info.port_ = sshPort_->text().toInt();
+                info.password_ = common::convertToString(passwordBox_->text());
+                info.publicKey_ = "";
+                info.privateKey_ = common::convertToString(privateKeyBox_->text());
+                info.passphrase_ = common::convertToString(passphraseBox_->text());
+                if (useSsh_->isChecked()){
+                    info.currentMethod_ = selectedAuthMethod();
+                }
+                else{
+                    info.currentMethod_ = SSHInfo::UNKNOWN;
+                }
+                connection_->setSshInfo(info);
+            }
+            return true;
+        }
+        else{
+            using namespace translations;
+            QMessageBox::critical(this, trError, QObject::tr("Invalid database type!"));
+            return false;
+        }
     }
 
     void ConnectionDialog::changeEvent(QEvent* e)
@@ -345,5 +360,13 @@ namespace fastoredis
         sshAddressLabel_->setText(tr("SSH Address:"));
         sshUserNameLabel_->setText(tr("SSH User Name:"));
         sshAuthMethodLabel_->setText(tr("SSH Auth Method:"));
+    }
+
+    void ConnectionDialog::testConnection()
+    {
+        if(validateAndApply()){
+            ConnectionDiagnosticDialog diag(this, connection_);
+            diag.exec();
+        }
     }
 }

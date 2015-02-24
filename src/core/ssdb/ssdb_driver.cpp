@@ -82,6 +82,22 @@ namespace fastoredis
         }
     }
 
+    common::ErrorValueSPtr testConnection(SsdbConnectionSettings* settings)
+    {
+        if(!settings){
+            return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+        }
+
+        ssdbConfig inf = settings->info();
+
+        ssdb::Client* ssdb = ssdb::Client::connect(inf.hostip, inf.hostport);
+        if (!ssdb){
+            return common::make_error_value("Fail connect to server!", common::ErrorValue::E_ERROR);
+        }
+
+        return common::ErrorValueSPtr();
+    }
+
     struct SsdbDriver::pimpl
     {
         pimpl()
@@ -110,7 +126,7 @@ namespace fastoredis
 
             ssdb_ = ssdb::Client::connect(config_.hostip, config_.hostport);
             if (!ssdb_){
-                return common::make_error_value("Fail to connect to server!", common::ErrorValue::E_ERROR);
+                return common::make_error_value("Fail connect to server!", common::ErrorValue::E_ERROR);
             }
 
             return common::ErrorValueSPtr();
