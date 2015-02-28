@@ -2,6 +2,17 @@
 
 namespace fastoredis
 {
+    KeyValue::KeyValue()
+        : key_(), type_(common::Value::TYPE_NULL)
+    {
+
+    }
+
+    KeyValue::KeyValue(const std::string& key, common::Value::Type type)
+        : key_(key), type_(type)
+    {
+    }
+
     DbValue::DbValue()
     {
 
@@ -117,12 +128,12 @@ namespace fastoredis
         isDefault_ = isDef;
     }
 
-    void DataBaseInfo::setKeys(const std::vector<std::string>& keys)
+    void DataBaseInfo::setKeys(const keys_cont_type& keys)
     {
         keys_ = keys;
     }
 
-    std::vector<std::string> DataBaseInfo::keys() const
+    DataBaseInfo::keys_cont_type DataBaseInfo::keys() const
     {
         return keys_;
     }
@@ -141,6 +152,11 @@ namespace fastoredis
     std::string CommandKey::key() const
     {
         return key_;
+    }
+
+    common::Value::Type CommandKey::itype() const
+    {
+        return itype_;
     }
 
     std::string CommandKey::execCommand() const

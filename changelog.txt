@@ -5,6 +5,7 @@
 - Redis kyes loading by pattern
 - Fix bug with permission app
 - Test connection functionality
+- Fix displaying Redis keys(#51)
 
 0.6.2 / February 14, 2015
 [Alexandr Topilski]

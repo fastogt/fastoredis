@@ -24,8 +24,11 @@ namespace common
             TYPE_UINTEGER,
             TYPE_DOUBLE,
             TYPE_STRING,
-            TYPE_ARRAY,
+            TYPE_ARRAY, //list
             TYPE_STATUS,
+            TYPE_SET, //set
+            TYPE_ZSET,
+            TYPE_HASH,
             TYPE_COMMAND,
 			TYPE_ERROR
         };

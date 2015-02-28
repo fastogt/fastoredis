@@ -35,8 +35,12 @@ extern "C" {
 #define GET_DATABASES "CONFIG GET databases"
 #define GET_DATABASES_KEYS_INFO "INFO keyspace"
 #define SET_DEFAULT_DATABASE "SELECT "
-#define DELETE_KEY "DEL"
-#define LOAD_KEY "GET"
+#define DELETE_KEY_PATTERN_1ARGS_S "DEL %s"
+#define GET_KEY_PATTERN_1ARGS_S "GET %s"
+#define GET_KEY_LIST_PATTERN_1ARGS_S "LRANGE %s 0 -1"
+#define GET_KEY_SET_PATTERN_1ARGS_S "SMEMBERS %s"
+#define GET_KEY_ZSET_PATTERN_1ARGS_S "ZRANGE %s 0 -1"
+#define GET_KEY_HASH_PATTERN_1ARGS_S "HGET %s"
 #define GET_KEYS_PATTERN_2ARGS_SI "SCAN 0 MATCH %s COUNT %d"
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
@@ -48,12 +52,12 @@ extern "C" {
 #define LATENCY_SAMPLE_RATE 10 /* milliseconds. */
 #define LATENCY_HISTORY_DEFAULT_INTERVAL 15000 /* milliseconds. */
 
-#define TYPE_STRING 0
-#define TYPE_LIST   1
-#define TYPE_SET    2
-#define TYPE_HASH   3
-#define TYPE_ZSET   4
-#define TYPE_NONE   5
+#define RTYPE_STRING 0
+#define RTYPE_LIST   1
+#define RTYPE_SET    2
+#define RTYPE_HASH   3
+#define RTYPE_ZSET   4
+#define RTYPE_NONE   5
 
 namespace
 {
@@ -126,6 +130,35 @@ namespace
     } rInit;
 
     std::vector<std::pair<std::string, std::string > > oppositeCommands = { {"GET", "SET"}, {"HSET", "HGET"} };
+
+    common::Value::Type convertFromStringRType(const std::string& type)
+    {
+        if(type.empty()){
+           return common::Value::TYPE_NULL;
+        }
+
+        if(type == "string") {
+            return common::Value::TYPE_STRING;
+        }
+        else if(type == "list") {
+            return common::Value::TYPE_ARRAY;
+        }
+        else if(type == "set") {
+            return common::Value::TYPE_SET;
+        }
+        else if(type == "hash") {
+            return common::Value::TYPE_HASH;
+        }
+        else if(type == "zset") {
+            return common::Value::TYPE_ZSET;
+        }
+        else if(type == "none") {
+            return common::Value::TYPE_NULL;
+        }
+        else {
+            return common::Value::TYPE_NULL;
+        }
+    }
 }
 
 namespace fastoredis
@@ -165,7 +198,7 @@ namespace fastoredis
             }
         };
 
-        FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
+        RedisCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
         {
             DCHECK(parent);
             std::pair<std::string, std::string> kv = getKeyValueFromLine(input);
@@ -174,14 +207,21 @@ namespace fastoredis
                 opposite += " " + kv.second;
             }
             common::CommandValue* cmd = common::Value::createCommand(input, opposite, ct);
-            FastoObjectCommand* fs = new RedisCommand(parent, cmd, "");
+            RedisCommand* fs = new RedisCommand(parent, cmd, "");
             parent->addChildren(fs);
             return fs;
         }
 
-        FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input, common::Value::CommandType ct)
+        RedisCommand* createCommand(FastoObjectIPtr parent, const std::string& input, common::Value::CommandType ct)
         {
             return createCommand(parent.get(), input, ct);
+        }
+
+        RedisCommand* createCommandFast(const std::string& input, common::Value::CommandType ct)
+        {
+            common::CommandValue* cmd = common::Value::createCommand(input, "", ct);
+            RedisCommand* fs = new RedisCommand(NULL, cmd, "");
+            return fs;
         }
     }
 
@@ -556,17 +596,17 @@ namespace fastoredis
 
         int toIntType(common::ErrorValueSPtr& er, char *key, char *type) {
             if(!strcmp(type, "string")) {
-                return TYPE_STRING;
+                return RTYPE_STRING;
             } else if(!strcmp(type, "list")) {
-                return TYPE_LIST;
+                return RTYPE_LIST;
             } else if(!strcmp(type, "set")) {
-                return TYPE_SET;
+                return RTYPE_SET;
             } else if(!strcmp(type, "hash")) {
-                return TYPE_HASH;
+                return RTYPE_HASH;
             } else if(!strcmp(type, "zset")) {
-                return TYPE_ZSET;
+                return RTYPE_ZSET;
             } else if(!strcmp(type, "none")) {
-                return TYPE_NONE;
+                return RTYPE_NONE;
             } else {
                 char buff[4096];
                 sprintf(buff, "Unknown type '%s' for key '%s'", type, key);
@@ -625,7 +665,7 @@ namespace fastoredis
             /* Pipeline size commands */
             for(i=0;i<keys->elements;i++) {
                 /* Skip keys that were deleted */
-                if(types[i]==TYPE_NONE)
+                if(types[i]==RTYPE_NONE)
                     continue;
 
                 redisAppendCommand(context, "%s %s", sizecmds[types[i]],
@@ -635,7 +675,7 @@ namespace fastoredis
             /* Retreive sizes */
             for(i=0;i<keys->elements;i++) {
                 /* Skip keys that dissapeared between SCAN and TYPE */
-                if(types[i] == TYPE_NONE) {
+                if(types[i] == RTYPE_NONE) {
                     sizes[i] = 0;
                     continue;
                 }
@@ -697,7 +737,7 @@ namespace fastoredis
             LOG_MSG("# per 100 SCAN commands (not usually needed).", common::logging::L_INFO, true);
 
             /* New up sds strings to keep track of overall biggest per type */
-            for(i=0;i<TYPE_NONE; i++) {
+            for(i=0;i<RTYPE_NONE; i++) {
                 maxkeys[i] = sdsempty();
                 if(!maxkeys[i]) {
                     return common::make_error_value("Failed to allocate memory for largest key names!", common::Value::E_ERROR);
@@ -742,7 +782,7 @@ namespace fastoredis
 
                 /* Now update our stats */
                 for(i=0;i<keys->elements;i++) {
-                    if((type = types[i]) == TYPE_NONE)
+                    if((type = types[i]) == RTYPE_NONE)
                         continue;
 
                     totalsize[type] += sizes[i];
@@ -792,7 +832,7 @@ namespace fastoredis
             LOG_MSG(buff, common::logging::L_INFO, true);
 
             /* Output the biggest keys we found, for types we did find */
-            for(i=0;i<TYPE_NONE;i++) {
+            for(i=0;i<RTYPE_NONE;i++) {
                 if(sdslen(maxkeys[i])>0) {
                     memset(&buff, 0, sizeof(buff));
                     sprintf(buff, "Biggest %6s found '%s' has %llu %s", typeName[i], maxkeys[i],
@@ -803,7 +843,7 @@ namespace fastoredis
                 }
             }
 
-            for(i=0;i<TYPE_NONE;i++) {
+            for(i=0;i<RTYPE_NONE;i++) {
                 memset(&buff, 0, sizeof(buff));
                 sprintf(buff, "%llu %ss with %llu %s (%05.2f%% of keys, avg size %.2f)",
                    counts[i], typeName[i], totalsize[i], typeunit[i],
@@ -815,7 +855,7 @@ namespace fastoredis
             }
 
             /* Free sds strings containing max keys */
-            for(i=0;i<TYPE_NONE;i++) {
+            for(i=0;i<RTYPE_NONE;i++) {
                 sdsfree(maxkeys[i]);
             }
 
@@ -1525,7 +1565,7 @@ namespace fastoredis
             return common::ErrorValueSPtr();
         }
 
-        common::ErrorValueSPtr execute(FastoObjectCommand* cmd) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr execute(RedisCommand* cmd) WARN_UNUSED_RESULT
         {
             DCHECK(cmd);
             if(!cmd){
@@ -1634,13 +1674,35 @@ namespace fastoredis
         return impl_->config.mb_delim;
     }
 
-    std::string RedisDriver::commandByType(CommandKey::cmdtype type)
+    std::string RedisDriver::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype)
     {
         if(type == CommandKey::C_LOAD){
-            return LOAD_KEY;
+            char patternResult[1024] = {0};
+            if(vtype == common::Value::TYPE_ARRAY){                
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_LIST_PATTERN_1ARGS_S, name);
+                return patternResult;
+            }
+            else if(vtype == common::Value::TYPE_SET){
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_SET_PATTERN_1ARGS_S, name);
+                return patternResult;
+            }
+            else if(vtype == common::Value::TYPE_ZSET){
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_ZSET_PATTERN_1ARGS_S, name);
+                return patternResult;
+            }
+            else if(vtype == common::Value::TYPE_HASH){
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_HASH_PATTERN_1ARGS_S, name);
+                return patternResult;
+            }
+            else{
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, name);
+                return patternResult;
+            }
         }
         else if(type == CommandKey::C_DELETE){
-            return DELETE_KEY;
+            char patternResult[1024] = {0};
+            common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, name);
+            return patternResult;
         }
         else{
             return std::string();
@@ -1677,7 +1739,7 @@ namespace fastoredis
     {
         *info = NULL;
         FastoObjectIPtr root = FastoObject::createRoot(INFO_REQUEST);
-        FastoObjectCommand* cmd = createCommand(root, INFO_REQUEST, common::Value::C_INNER);
+        RedisCommand* cmd = createCommand(root, INFO_REQUEST, common::Value::C_INNER);
         common::ErrorValueSPtr res = impl_->execute(cmd);
         if(!res){
             FastoObject::child_container_type ch = root->childrens();
@@ -1769,7 +1831,7 @@ namespace fastoredis
             events::ShutDownResponceEvent::value_type res(ev->value());
         notifyProgress(sender, 25);
             FastoObjectIPtr root = FastoObject::createRoot(SHUTDOWN);
-            FastoObjectCommand* cmd = createCommand(root, SHUTDOWN, common::Value::C_INNER);
+            RedisCommand* cmd = createCommand(root, SHUTDOWN, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -1786,7 +1848,7 @@ namespace fastoredis
             events::BackupRequestEvent::value_type res(ev->value());
         notifyProgress(sender, 25);
             FastoObjectIPtr root = FastoObject::createRoot(BACKUP);
-            FastoObjectCommand* cmd = createCommand(root, BACKUP, common::Value::C_INNER);
+            RedisCommand* cmd = createCommand(root, BACKUP, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -1999,7 +2061,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        FastoObjectCommand* cmd = createCommand(outRoot, command, common::Value::C_USER);
+                        RedisCommand* cmd = createCommand(outRoot, command, common::Value::C_USER);
                         er = impl_->execute(cmd);
                         if(er){
                             res.setErrorInfo(er);
@@ -2041,7 +2103,7 @@ namespace fastoredis
             events::LoadDatabasesInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_DATABASES);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, GET_DATABASES, common::Value::C_INNER);
+            RedisCommand* cmd = createCommand(root, GET_DATABASES, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2097,7 +2159,7 @@ namespace fastoredis
             common::SNPrintf(patternResult, sizeof(patternResult), GET_KEYS_PATTERN_2ARGS_SI, res.pattern_, res.countKeys_);
             FastoObjectIPtr root = FastoObject::createRoot(patternResult);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, patternResult, common::Value::C_INNER);
+            RedisCommand* cmd = createCommand(root, patternResult, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2121,12 +2183,25 @@ namespace fastoredis
                     }
 
                     common::ArrayValue* ar = arr->array();
-                    for(int i = 0; i < ar->getSize(); ++i)
-                    {
-                        std::string ress;
-                        bool isok = ar->getString(i, &ress);
+                    for(int i = 0; i < ar->getSize(); ++i){
+                        KeyValue ress;
+                        bool isok = ar->getString(i, &ress.key_);
                         if(isok){
-                            res.keys_.push_back(ress);
+                            RedisCommand* cmdType = createCommandFast("TYPE " + ress.key_, common::Value::C_INNER);
+                            er = impl_->execute(cmdType);
+                            if(!er){
+                                FastoObject::child_container_type tchildrens = cmdType->childrens();
+                                if(tchildrens.size()){
+                                    DCHECK(tchildrens.size() == 1);
+                                    if(tchildrens.size() == 1){
+                                        FastoObject* type = tchildrens[0];
+                                        std::string typeRedis = type->toString();
+                                        ress.type_ = convertFromStringRType(typeRedis);
+                                        res.keys_.push_back(ress);
+                                    }
+                                }
+                            }
+                            delete cmdType;
                         }
                     }
                 }
@@ -2145,7 +2220,7 @@ namespace fastoredis
             const std::string setDefCommand = SET_DEFAULT_DATABASE + res.inf_->name();
             FastoObjectIPtr root = FastoObject::createRoot(setDefCommand);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, setDefCommand, common::Value::C_INNER);
+            RedisCommand* cmd = createCommand(root, setDefCommand, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2165,7 +2240,7 @@ namespace fastoredis
             events::ServerInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(INFO_REQUEST);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, INFO_REQUEST, common::Value::C_INNER);
+            RedisCommand* cmd = createCommand(root, INFO_REQUEST, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2190,7 +2265,7 @@ namespace fastoredis
         events::ServerPropertyInfoResponceEvent::value_type res(ev->value());
             FastoObjectIPtr root = FastoObject::createRoot(GET_PROPERTY_SERVER);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, GET_PROPERTY_SERVER, common::Value::C_INNER);
+            RedisCommand* cmd = createCommand(root, GET_PROPERTY_SERVER, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -2219,7 +2294,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
         const std::string changeRequest = "CONFIG SET " + res.newItem_.first + " " + res.newItem_.second;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
-        FastoObjectCommand* cmd = createCommand(root, changeRequest, common::Value::C_INNER);
+        RedisCommand* cmd = createCommand(root, changeRequest, common::Value::C_INNER);
         common::ErrorValueSPtr er = impl_->execute(cmd);
         if(er){
             res.setErrorInfo(er);
@@ -2241,7 +2316,7 @@ namespace fastoredis
         notifyProgress(sender, 50);
         const std::string changeRequest = res.command_ + " " + res.newItem_.value_;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
-        FastoObjectCommand* cmd = createCommand(root, changeRequest, common::Value::C_INNER);
+        RedisCommand* cmd = createCommand(root, changeRequest, common::Value::C_INNER);
         common::ErrorValueSPtr er = impl_->execute(cmd);
         if(er){
             res.setErrorInfo(er);
@@ -2260,16 +2335,14 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
-            std::string cmdtext;
+
             CommandKey::cmdtype t =  res.cmd_.type();
-            if( t == CommandKey::C_DELETE){
-                cmdtext = std::string(DELETE_KEY) + " " + res.cmd_.key();
-            }
-            else if(t == CommandKey::C_LOAD){
-                cmdtext = std::string(LOAD_KEY) + " " + res.cmd_.key();
-            }
+            std::string name = res.cmd_.key();
+            common::Value::Type itype = res.cmd_.itype();
+            std::string cmdtext = commandByType(t, name, itype);
+
             FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
-            FastoObjectCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
+            RedisCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){

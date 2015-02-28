@@ -810,7 +810,7 @@ namespace fastoredis
         return makeRedisServerInfo(content);
     }
 
-    RedisDataBaseInfo::RedisDataBaseInfo(const std::string& name, size_t size, bool isDefault, const std::vector<std::string>& keys)
+    RedisDataBaseInfo::RedisDataBaseInfo(const std::string& name, size_t size, bool isDefault, const keys_cont_type& keys)
         : DataBaseInfo(name, size, isDefault, REDIS)
     {
         setKeys(keys);

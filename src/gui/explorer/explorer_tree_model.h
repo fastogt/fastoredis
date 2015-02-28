@@ -75,7 +75,7 @@ namespace fastoredis
     struct ExplorerKeyItem
             : public IExplorerTreeItem
     {
-        ExplorerKeyItem(const std::string& name, ExplorerDatabaseItem* parent);
+        ExplorerKeyItem(const std::string& name, common::Value::Type itype, ExplorerDatabaseItem* parent);
         virtual ~ExplorerKeyItem();
 
         ExplorerDatabaseItem* parent() const;
@@ -83,12 +83,14 @@ namespace fastoredis
         std::string sname() const;
         virtual IServerSPtr server() const;
         virtual eType type() const;
+        common::Value::Type innerType() const;
 
         void remove();
         void loadValue();
 
     private:
         std::string name_;
+        common::Value::Type itype_;
     };
 
     class ExplorerTreeModel
@@ -111,7 +113,7 @@ namespace fastoredis
         void removeDatabase(IServer* server, DataBaseInfoSPtr db);
         void setDefaultDb(IServer* server, DataBaseInfoSPtr db);
 
-        void addKey(IServer* server, DataBaseInfoSPtr db, const std::string& key);
+        void addKey(IServer* server, DataBaseInfoSPtr db, const std::string& key, common::Value::Type itype);
         void removeKey(IServer* server, DataBaseInfoSPtr db, const std::string& key);
     private:
         ExplorerServerItem* findServerItem(IServer* server) const;

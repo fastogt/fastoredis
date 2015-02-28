@@ -6,6 +6,15 @@
 
 namespace fastoredis
 {
+    struct KeyValue
+    {
+        KeyValue();
+        KeyValue(const std::string& key, common::Value::Type type);
+
+        std::string key_;
+        common::Value::Type type_;
+    };
+
     struct DbValue
     {
         DbValue();
@@ -70,6 +79,7 @@ namespace fastoredis
     class DataBaseInfo
     {
     public:
+        typedef std::vector<KeyValue> keys_cont_type;
         connectionTypes type() const;
         std::string name() const;
         size_t size() const;
@@ -80,8 +90,8 @@ namespace fastoredis
         virtual DataBaseInfo* clone() const = 0;
         virtual ~DataBaseInfo();
 
-        std::vector<std::string> keys() const;
-        void setKeys(const std::vector<std::string>& keys);
+        keys_cont_type keys() const;
+        void setKeys(const keys_cont_type& keys);
 
     protected:
         DataBaseInfo(const std::string& name, size_t size, bool isDefault, connectionTypes type);
@@ -90,7 +100,7 @@ namespace fastoredis
         std::string name_;
         size_t size_;
         bool isDefault_;
-        std::vector<std::string> keys_;
+        keys_cont_type keys_;
 
         const connectionTypes type_;
     };
@@ -112,6 +122,7 @@ namespace fastoredis
         CommandKey(const std::string& key, cmdtype type);
         cmdtype type() const;
         std::string key() const;
+        common::Value::Type itype() const;
         std::string execCommand() const;
         void setExecCommand(const std::string& execCommand);
 
@@ -119,5 +130,6 @@ namespace fastoredis
         cmdtype type_;
         std::string key_;
         std::string execCommand_;
+        common::Value::Type itype_;
     };
 }

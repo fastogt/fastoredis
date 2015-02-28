@@ -147,8 +147,8 @@ namespace fastoredis
         return dynamic_cast<ExplorerServerItem*>(IExplorerTreeItem::parent());
     }
 
-    ExplorerKeyItem::ExplorerKeyItem(const std::string& name, ExplorerDatabaseItem* parent)
-        : IExplorerTreeItem(parent), name_(name)
+    ExplorerKeyItem::ExplorerKeyItem(const std::string& name, common::Value::Type itype, ExplorerDatabaseItem* parent)
+        : IExplorerTreeItem(parent), itype_(itype), name_(name)
     {
 
     }
@@ -181,6 +181,11 @@ namespace fastoredis
     IExplorerTreeItem::eType ExplorerKeyItem::type() const
     {
         return Key;
+    }
+
+    common::Value::Type ExplorerKeyItem::innerType() const
+    {
+        return itype_;
     }
 
     void ExplorerKeyItem::remove()
@@ -386,7 +391,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeModel::addKey(IServer* server, DataBaseInfoSPtr db, const std::string& key)
+    void ExplorerTreeModel::addKey(IServer* server, DataBaseInfoSPtr db, const std::string& key, common::Value::Type itype)
     {
         ExplorerServerItem *parent = findServerItem(server);
         DCHECK(parent);
@@ -403,7 +408,7 @@ namespace fastoredis
         ExplorerKeyItem *keyit = findKeyItem(dbs, key);
         if(!keyit){
             QModelIndex parentdb = createIndex(parent->indexOf(dbs), 0, dbs);
-            ExplorerKeyItem *item = new ExplorerKeyItem(key, dbs);
+            ExplorerKeyItem *item = new ExplorerKeyItem(key, itype, dbs);
             insertItem(parentdb, item);
         }
     }

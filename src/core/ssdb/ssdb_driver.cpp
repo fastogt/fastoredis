@@ -1335,7 +1335,7 @@ namespace fastoredis
         impl_->config_.shutdown = 1;
     }
 
-    std::string SsdbDriver::commandByType(CommandKey::cmdtype type)
+    std::string SsdbDriver::commandByType(CommandKey::cmdtype type, const std::string &name, common::Value::Type vtype)
     {
         if(type == CommandKey::C_LOAD){
             return LOAD_KEY;
@@ -1520,8 +1520,8 @@ namespace fastoredis
 
                     for(int i = 0; i < ar->getSize(); ++i)
                     {
-                        std::string ress;
-                        bool isok = ar->getString(i, &ress);
+                        KeyValue ress;
+                        bool isok = ar->getString(i, &ress.key_);
                         if(isok){
                             res.keys_.push_back(ress);
                         }

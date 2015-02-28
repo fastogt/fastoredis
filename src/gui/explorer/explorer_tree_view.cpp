@@ -224,8 +224,8 @@ namespace fastoredis
         ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
         if(node){
             IServerSPtr server = node->server();
-            QString cmd = server->commandByType(CommandKey::C_LOAD);
-            emit executeText(server, QString("%1 %2").arg(cmd).arg(node->name()));
+            QString cmd = server->commandByType(CommandKey::C_LOAD, node->sname(), node->innerType());
+            emit executeText(server, cmd);
         }
     }
 
@@ -421,8 +421,8 @@ namespace fastoredis
         EventsInfo::LoadDatabaseContentResponce::keys_cont_type keys = res.keys_;
 
         for(int i = 0; i < keys.size(); ++i){
-            std::string key = keys[i];
-            mod->addKey(serv, res.inf_, key);
+            KeyValue key = keys[i];
+            mod->addKey(serv, res.inf_, key.key_, key.type_);
         }
     }
 

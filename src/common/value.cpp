@@ -15,6 +15,9 @@ namespace common
                                         "TYPE_STRING",
                                         "TYPE_ARRAY",
                                         "TYPE_STATUS",
+                                        "TYPE_SET",
+                                        "TYPE_ZSET",
+                                        "TYPE_HASH",
                                         "TYPE_COMMAND",
                                         "TYPE_ERROR"
                                     };

@@ -193,7 +193,7 @@ namespace fastoredis
                 : LoadDatabaseContentRequest
         {
             typedef LoadDatabaseContentRequest base_class;
-            typedef std::vector<std::string> keys_cont_type;
+            typedef std::vector<KeyValue> keys_cont_type;
             LoadDatabaseContentResponce(const base_class &request, const error_type &er = error_type());
 
             keys_cont_type keys_;
