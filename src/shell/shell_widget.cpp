@@ -175,7 +175,7 @@ namespace fastoredis
         }
         else if(type == SSDB){
             input_ = new SsdbShell;
-            setToolTip(tr("Based on libmemcached version: %1").arg(input_->version()));
+            setToolTip(tr("Based on ssdb-cli version: %1").arg(input_->version()));
         }
         else{
             NOTREACHED();

@@ -776,7 +776,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        FastoObjectCommand* cmd = createCommand(outRoot, command, common::Value::C_USER);
+                        FastoObjectCommand* cmd = createCommand(outRoot, stableCommand(command), common::Value::C_USER);
                         er = impl_->execute(cmd);
                         if(er){
                             res.setErrorInfo(er);

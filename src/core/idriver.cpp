@@ -50,8 +50,8 @@ struct WinsockInit {
 
         common::buffer_type cstamp = stamp;
 
-        if(cstamp[cstamp.size()-1] == '\n'){
-            cstamp.resize(cstamp.size()-1);
+        if(cstamp[cstamp.size() - 1] == '\n'){
+            cstamp.resize(cstamp.size() - 1);
         }
 
         timeOut = common::convertFromString<common::time64_t>((const char*)(cstamp.c_str() + 1));

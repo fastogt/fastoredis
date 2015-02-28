@@ -137,6 +137,21 @@ namespace fastoredis
 
     }
 
+    std::string stableCommand(const char* command)
+    {
+        if(!command){
+            return std::string();
+        }
+
+        std::string cmd = command;
+
+        if(cmd[cmd.size() - 1] == '\r'){
+            cmd.resize(cmd.size() - 1);
+        }
+
+        return cmd;
+    }
+
     std::pair<std::string, std::string> getKeyValueFromLine(const std::string& input)
     {
         if(input.empty()){

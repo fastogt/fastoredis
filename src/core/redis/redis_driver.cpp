@@ -2060,8 +2060,9 @@ namespace fastoredis
                         else{
                             strncpy(command, inputLine + offset, n - offset);
                         }
+
                         offset = n + 1;
-                        RedisCommand* cmd = createCommand(outRoot, command, common::Value::C_USER);
+                        RedisCommand* cmd = createCommand(outRoot, stableCommand(command), common::Value::C_USER);
                         er = impl_->execute(cmd);
                         if(er){
                             res.setErrorInfo(er);

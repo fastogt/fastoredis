@@ -59,6 +59,8 @@ namespace fastoredis
         FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string &delemitr);
     };
 
+    std::string stableCommand(const char* command);
+
     std::pair<std::string, std::string> getKeyValueFromLine(const std::string& input);
     std::string getOppositeCommand(const std::string& command, const std::vector<std::pair<std::string, std::string > >& srcOppositeCommands);
 
