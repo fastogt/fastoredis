@@ -57,7 +57,7 @@ namespace fastoredis
             emit connectionResult(false, common::time::current_mstime() - startTime_, common::convertFromString<QString>(er->description()));
         }
         else{
-            emit connectionResult(true, common::time::current_mstime() - startTime_, "Succsess");
+            emit connectionResult(true, common::time::current_mstime() - startTime_, "Success");
         }
     }
 
@@ -66,7 +66,7 @@ namespace fastoredis
     {
         using namespace translations;
 
-        setWindowTitle(trDiagnostic);
+        setWindowTitle(trConnectionDiagnostic);
         setWindowIcon(GuiFactory::instance().serverIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 

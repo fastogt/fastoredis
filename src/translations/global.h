@@ -95,6 +95,6 @@ namespace fastoredis
         const QString trEncodeDecode = QObject::tr("Encode/Decode");
         const QString trEncode = QObject::tr("Encode");
         const QString trDecode = QObject::tr("Decode");
-        const QString trDiagnostic = QObject::tr("Diagnostic");
+        const QString trConnectionDiagnostic = QObject::tr("Connection diagnostic");
     }
 }
