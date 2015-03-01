@@ -10,7 +10,6 @@ class QLabel;
 namespace fastoredis
 {
     class GlassWidget;
-    class IconLabel;
     class TestConnection
             : public QObject
     {
@@ -53,6 +52,7 @@ namespace fastoredis
         void testConnection(IConnectionSettingsBaseSPtr connection);
         GlassWidget *glassWidget_;
         QLabel* executeTimeLabel_;
-        IconLabel* statusLabel_;
+        QLabel* statusLabel_;
+        QLabel* iconLabel_;
     };
 }

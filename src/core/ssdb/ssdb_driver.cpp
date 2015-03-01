@@ -16,9 +16,9 @@ extern "C" {
 #include "SSDB.h"
 
 #define INFO_REQUEST "INFO"
-#define DELETE_KEY "DELETE"
-#define LOAD_KEY "GET"
-#define GET_KEYS "KEYS a z 100"
+#define GET_KEYS_PATTERN_1ARGS_I "KEYS a z %d"
+#define DELETE_KEY_PATTERN_1ARGS_S "DEL %s"
+#define GET_KEY_PATTERN_1ARGS_S "GET %s"
 
 namespace
 {
@@ -62,7 +62,7 @@ namespace fastoredis
             }
         };
 
-        FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
+        SsdbCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
         {
             DCHECK(parent);
             std::pair<std::string, std::string> kv = getKeyValueFromLine(input);
@@ -71,12 +71,12 @@ namespace fastoredis
                 opposite += " " + kv.second;
             }
             common::CommandValue* cmd = common::Value::createCommand(input, opposite, ct);
-            FastoObjectCommand* fs = new SsdbCommand(parent, cmd, "");
+            SsdbCommand* fs = new SsdbCommand(parent, cmd, "");
             parent->addChildren(fs);
             return fs;
         }
 
-        FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input, common::Value::CommandType ct)
+        SsdbCommand* createCommand(FastoObjectIPtr parent, const std::string& input, common::Value::CommandType ct)
         {
             return createCommand(parent.get(), input, ct);
         }
@@ -173,7 +173,7 @@ namespace fastoredis
             return common::ErrorValueSPtr();
         }
 
-        common::ErrorValueSPtr execute(FastoObjectCommand* cmd) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr execute(SsdbCommand* cmd) WARN_UNUSED_RESULT
         {
             DCHECK(cmd);
             if(!cmd){
@@ -1338,10 +1338,14 @@ namespace fastoredis
     std::string SsdbDriver::commandByType(CommandKey::cmdtype type, const std::string &name, common::Value::Type vtype)
     {
         if(type == CommandKey::C_LOAD){
-            return LOAD_KEY;
+            char patternResult[1024] = {0};
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, name);
+            return patternResult;
         }
         else if(type == CommandKey::C_DELETE){
-            return DELETE_KEY;
+            char patternResult[1024] = {0};
+            common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, name);
+            return patternResult;
         }
         else{
             return std::string();
@@ -1463,7 +1467,7 @@ namespace fastoredis
                             strncpy(command, inputLine + offset, n - offset);
                         }
                         offset = n + 1;
-                        FastoObjectCommand* cmd = createCommand(outRoot, stableCommand(command), common::Value::C_USER);
+                        SsdbCommand* cmd = createCommand(outRoot, stableCommand(command), common::Value::C_USER);
                         er = impl_->execute(cmd);
                         if(er){
                             res.setErrorInfo(er);
@@ -1498,9 +1502,11 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
-            FastoObjectIPtr root = FastoObject::createRoot(GET_KEYS);
+            char patternResult[1024] = {0};
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEYS_PATTERN_1ARGS_I, res.countKeys_);
+            FastoObjectIPtr root = FastoObject::createRoot(patternResult);
         notifyProgress(sender, 50);
-            FastoObjectCommand* cmd = createCommand(root, GET_KEYS, common::Value::C_INNER);
+            SsdbCommand* cmd = createCommand(root, patternResult, common::Value::C_INNER);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
@@ -1605,16 +1611,13 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
-            std::string cmdtext;
             CommandKey::cmdtype t =  res.cmd_.type();
-            if( t == CommandKey::C_DELETE){
-                cmdtext = std::string(DELETE_KEY) + " " + res.cmd_.key();
-            }
-            else if(t == CommandKey::C_LOAD){
-                cmdtext = std::string(LOAD_KEY) + " " + res.cmd_.key();
-            }
+            std::string name = res.cmd_.key();
+            common::Value::Type itype = res.cmd_.itype();
+            std::string cmdtext = commandByType(t, name, itype);
+
             FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
-            FastoObjectCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
+            SsdbCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
         notifyProgress(sender, 50);
             common::ErrorValueSPtr er = impl_->execute(cmd);
             if(er){

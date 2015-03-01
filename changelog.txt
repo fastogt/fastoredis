@@ -1,4 +1,9 @@
-0.7.0
+0.7.1
+[Alexandr Topilski]
+- Bug fixes
+
+
+0.7.0 / February 28, 2015
 [Alexandr Topilski]
 - SSDB database support http://ssdb.io/
 - Info and history for SSDB

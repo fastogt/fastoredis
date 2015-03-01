@@ -11,7 +11,6 @@
 #include "core/ssdb/ssdb_driver.h"
 #include "core/memcached/memcached_driver.h"
 
-#include "gui/icon_label.h"
 #include "gui/gui_factory.h"
 #include "gui/glass_widget.h"
 
@@ -21,6 +20,7 @@ namespace
 {
     const QString timeTemplate = "Time execute msec: %1";
     const QString connectionStatusTemplate = "Connection state: %1";
+    const QSize stateIconSize = QSize(64, 64);
 }
 
 namespace fastoredis
@@ -76,12 +76,19 @@ namespace fastoredis
         executeTimeLabel_->setText(connectionStatusTemplate.arg("execute..."));
         mainLayout->addWidget(executeTimeLabel_);
 
-        statusLabel_ = new IconLabel(GuiFactory::instance().failIcon(), timeTemplate.arg("calculate..."), QSize(32, 32));
+        statusLabel_ = new QLabel(timeTemplate.arg("calculate..."));
+        iconLabel_ = new QLabel;
+        QIcon icon = GuiFactory::instance().failIcon();
+        const QPixmap pm = icon.pixmap(stateIconSize);
+        iconLabel_->setPixmap(pm);
+
         mainLayout->addWidget(statusLabel_);
+        mainLayout->addWidget(iconLabel_, 1, Qt::AlignCenter);
 
         QDialogButtonBox* buttonBox = new QDialogButtonBox;
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Ok);
+        VERIFY(connect(buttonBox, &QDialogButtonBox::accepted, this, &ConnectionDiagnosticDialog::accept));
 
         mainLayout->addWidget(buttonBox);
         setFixedSize(QSize(fix_width, fix_height));
@@ -97,7 +104,9 @@ namespace fastoredis
 
         executeTimeLabel_->setText(timeTemplate.arg(mstimeExecute));
         if(suc){
-            statusLabel_->setIcon(GuiFactory::instance().successIcon(), QSize(32, 32));
+            QIcon icon = GuiFactory::instance().successIcon();
+            const QPixmap pm = icon.pixmap(stateIconSize);
+            iconLabel_->setPixmap(pm);
         }
         statusLabel_->setText(connectionStatusTemplate.arg(resultText));
     }
