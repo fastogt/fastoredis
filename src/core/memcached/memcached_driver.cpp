@@ -648,7 +648,7 @@ namespace fastoredis
         impl_->config_.shutdown = 1;
     }
 
-    std::string MemcachedDriver::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype)
+    std::string MemcachedDriver::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const
     {
         if(type == CommandKey::C_LOAD){
             return LOAD_KEY " " + name;
@@ -833,7 +833,7 @@ namespace fastoredis
 
                     for(int i = 0; i < ar->getSize(); ++i)
                     {
-                        KeyValue ress;
+                        NKey ress;
                         bool isok = ar->getString(i, &ress.key_);
                         if(isok){
                             res.keys_.push_back(ress);

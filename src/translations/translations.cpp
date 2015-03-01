@@ -71,7 +71,7 @@ namespace fastoredis
             return langres;
         }
 
-        QStringList getSupportedLanguages()
+        QStringList supportedLanguages()
         {
             const QStringList languages = qmLanguages();
 

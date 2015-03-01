@@ -95,7 +95,7 @@ namespace fastoredis
             return;
         }
 
-        commonModel_->changeValue(res.newItem_, res.command_);
+        commonModel_->changeValue(res.newItem_);
     }
 
     void OutputWidget::syncWithSettings()

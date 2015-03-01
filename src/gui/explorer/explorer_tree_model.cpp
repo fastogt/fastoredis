@@ -147,8 +147,8 @@ namespace fastoredis
         return dynamic_cast<ExplorerServerItem*>(IExplorerTreeItem::parent());
     }
 
-    ExplorerKeyItem::ExplorerKeyItem(const std::string& name, common::Value::Type itype, ExplorerDatabaseItem* parent)
-        : IExplorerTreeItem(parent), itype_(itype), name_(name)
+    ExplorerKeyItem::ExplorerKeyItem(const NKey& key, ExplorerDatabaseItem* parent)
+        : IExplorerTreeItem(parent), key_(key)
     {
 
     }
@@ -160,12 +160,12 @@ namespace fastoredis
 
     QString ExplorerKeyItem::name() const
     {
-        return common::convertFromString<QString>(name_);
+        return common::convertFromString<QString>(key_.key_);
     }
 
     std::string ExplorerKeyItem::sname() const
     {
-        return name_;
+        return key_.key_;
     }
 
     IServerSPtr ExplorerKeyItem::server() const
@@ -185,14 +185,14 @@ namespace fastoredis
 
     common::Value::Type ExplorerKeyItem::innerType() const
     {
-        return itype_;
+        return key_.type_;
     }
 
     void ExplorerKeyItem::remove()
     {
         ExplorerDatabaseItem* par = parent();
         if(par){
-            par->removeKey(name_);
+            par->removeKey(key_.key_);
         }
     }
 
@@ -200,7 +200,7 @@ namespace fastoredis
     {
         ExplorerDatabaseItem* par = parent();
         if(par){
-            par->loadValue(name_);
+            par->loadValue(key_.key_);
         }
     }
 
@@ -391,7 +391,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeModel::addKey(IServer* server, DataBaseInfoSPtr db, const std::string& key, common::Value::Type itype)
+    void ExplorerTreeModel::addKey(IServer* server, DataBaseInfoSPtr db, const NKey &key)
     {
         ExplorerServerItem *parent = findServerItem(server);
         DCHECK(parent);
@@ -405,10 +405,10 @@ namespace fastoredis
             return;
         }
 
-        ExplorerKeyItem *keyit = findKeyItem(dbs, key);
+        ExplorerKeyItem *keyit = findKeyItem(dbs, key.key_);
         if(!keyit){
             QModelIndex parentdb = createIndex(parent->indexOf(dbs), 0, dbs);
-            ExplorerKeyItem *item = new ExplorerKeyItem(key, itype, dbs);
+            ExplorerKeyItem *item = new ExplorerKeyItem(key, dbs);
             insertItem(parentdb, item);
         }
     }

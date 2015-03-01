@@ -40,8 +40,6 @@ namespace fastoredis
         /* Intaractive mode */
         IntaractiveMode
     };
-
-    static const std::vector<std::string> connnectionMode = { "Latency mode", "Slave mode", "Get RDB mode", "Pipe mode",  "Find big keys mode", "Stat mode", "Scan mode", "Intaractive mode" };
 }
 
 namespace common

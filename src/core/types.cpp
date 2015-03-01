@@ -2,23 +2,35 @@
 
 namespace fastoredis
 {
-    KeyValue::KeyValue()
+    NKey::NKey()
         : key_(), type_(common::Value::TYPE_NULL)
     {
 
     }
 
-    KeyValue::KeyValue(const std::string& key, common::Value::Type type)
+    NKey::NKey(const std::string& key, common::Value::Type type)
         : key_(key), type_(type)
     {
     }
 
-    DbValue::DbValue()
+    NValue::NValue()
+        : value_(), type_(common::Value::TYPE_NULL)
     {
 
     }
 
-    DbValue::DbValue(const std::string& key, const std::string& value)
+    NValue::NValue(const std::string& value, common::Value::Type type)
+        : value_(value), type_(type)
+    {
+
+    }
+
+    NDbValue::NDbValue()
+    {
+
+    }
+
+    NDbValue::NDbValue(const NKey& key, const NValue& value)
         : key_(key), value_(value)
     {
 

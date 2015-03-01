@@ -8,6 +8,6 @@ namespace fastoredis
     {
         const QString defLanguage = "System";
         QString applyLanguage(const QString& lang);
-        QStringList getSupportedLanguages();
+        QStringList supportedLanguages();
     }
 }

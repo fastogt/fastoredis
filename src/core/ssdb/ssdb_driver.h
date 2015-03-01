@@ -8,9 +8,6 @@ namespace fastoredis
                                                         "hset", "hget", "hdel", "hincr", "hsize", "hclear", "hkeys", "hscan", "hrscan", "multi_hget", "multi_hset",
                                                         "zset", "zget", "zdel", "zincr", "zsize", "zclear", "zrank", "zrrank", "zrange", "zrrange",
                                                         "zkeys", "zscan", "zrscan", "multi_zget", "multi_zset", "multi_zdel", "info" };
-    //get [key]
-    //set [key] [value] [time-to-live-seconds] [flags]
-    //add
 
     common::ErrorValueSPtr testConnection(SsdbConnectionSettings* settings);
 
@@ -28,7 +25,8 @@ namespace fastoredis
         common::net::hostAndPort address() const;
         std::string version() const;
         virtual std::string outputDelemitr() const;
-        std::string commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype);
+
+        std::string commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const;
 
         static const char* versionApi();
 

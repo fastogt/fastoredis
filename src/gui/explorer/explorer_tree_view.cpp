@@ -421,8 +421,8 @@ namespace fastoredis
         EventsInfo::LoadDatabaseContentResponce::keys_cont_type keys = res.keys_;
 
         for(int i = 0; i < keys.size(); ++i){
-            KeyValue key = keys[i];
-            mod->addKey(serv, res.inf_, key.key_, key.type_);
+            NKey key = keys[i];
+            mod->addKey(serv, res.inf_, key);
         }
     }
 

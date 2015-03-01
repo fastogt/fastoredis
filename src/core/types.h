@@ -6,22 +6,31 @@
 
 namespace fastoredis
 {
-    struct KeyValue
+    struct NKey
     {
-        KeyValue();
-        KeyValue(const std::string& key, common::Value::Type type);
+        NKey();
+        NKey(const std::string& key, common::Value::Type type = common::Value::TYPE_NULL);
 
         std::string key_;
         common::Value::Type type_;
     };
 
-    struct DbValue
+    struct NValue
     {
-        DbValue();
-        DbValue(const std::string& key, const std::string& value);
+        NValue();
+        NValue(const std::string& value, common::Value::Type type = common::Value::TYPE_NULL);
 
-        std::string key_;
         std::string value_;
+        common::Value::Type type_;
+    };
+
+    struct NDbValue
+    {
+        NDbValue();
+        NDbValue(const NKey& key, const NValue& value);
+
+        NKey key_;
+        NValue value_;
     };
 
     struct ServerInfo
@@ -79,7 +88,7 @@ namespace fastoredis
     class DataBaseInfo
     {
     public:
-        typedef std::vector<KeyValue> keys_cont_type;
+        typedef std::vector<NKey> keys_cont_type;
         connectionTypes type() const;
         std::string name() const;
         size_t size() const;

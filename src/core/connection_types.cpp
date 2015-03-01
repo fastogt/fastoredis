@@ -1,5 +1,10 @@
 #include "core/connection_types.h"
 
+namespace
+{
+    const std::vector<std::string> connnectionMode = { "Latency mode", "Slave mode", "Get RDB mode", "Pipe mode",  "Find big keys mode", "Stat mode", "Scan mode", "Intaractive mode" };
+}
+
 namespace common
 {
     template<>
@@ -21,6 +26,6 @@ namespace common
 
     std::string convertToString(fastoredis::ConnectionMode t)
     {
-        return fastoredis::connnectionMode[t];
+        return connnectionMode[t];
     }
 }

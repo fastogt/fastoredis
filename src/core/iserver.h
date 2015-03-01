@@ -23,7 +23,8 @@ namespace fastoredis
         QString outputDelemitr() const;
         IDatabaseSPtr findDatabaseByInfo(DataBaseInfoSPtr inf) const;
         IDatabaseSPtr findDatabaseByName(const std::string& name) const;
-        QString commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype);
+
+        QString commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const;
 
         //async
         void connect();
@@ -119,7 +120,7 @@ namespace fastoredis
         void serverProperty();
         void requestHistoryInfo();
         void changeProperty(const PropertyType& newValue);
-        void changeValue(const DbValue& newValue, const std::string &command);
+        void changeValue(const NDbValue& newValue, const std::string &command);
 
     protected:
         virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info) = 0;

@@ -42,7 +42,7 @@ namespace fastoredis
         langLabel_ = new QLabel;
         langLayout->addWidget(langLabel_);
         languagesComboBox_  = new QComboBox;
-        languagesComboBox_->addItems(translations::getSupportedLanguages());
+        languagesComboBox_->addItems(translations::supportedLanguages());
         langLayout->addWidget(languagesComboBox_);
 
         QVBoxLayout *generalLayout = new QVBoxLayout;

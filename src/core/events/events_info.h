@@ -193,7 +193,7 @@ namespace fastoredis
                 : LoadDatabaseContentRequest
         {
             typedef LoadDatabaseContentRequest base_class;
-            typedef std::vector<KeyValue> keys_cont_type;
+            typedef std::vector<NKey> keys_cont_type;
             LoadDatabaseContentResponce(const base_class &request, const error_type &er = error_type());
 
             keys_cont_type keys_;
@@ -299,7 +299,7 @@ namespace fastoredis
             typedef EventInfoBase base_class;
             ChangeDbValueRequest(const error_type &er = error_type());
 
-            DbValue newItem_;
+            NDbValue newItem_;
             std::string command_;
         };
 

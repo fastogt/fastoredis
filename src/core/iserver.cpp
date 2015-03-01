@@ -125,7 +125,7 @@ namespace fastoredis
         return IDatabaseSPtr();
     }
 
-    QString IServer::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype)
+    QString IServer::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const
     {
         return common::convertFromString<QString>(drv_->commandByType(type, name, vtype));
     }
@@ -240,7 +240,7 @@ namespace fastoredis
         notify(ev);
     }
 
-    void IServer::changeValue(const DbValue& newValue, const std::string& command)
+    void IServer::changeValue(const NDbValue& newValue, const std::string& command)
     {
         EventsInfo::ChangeDbValueRequest req;
         req.newItem_ = newValue;

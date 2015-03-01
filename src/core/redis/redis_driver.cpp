@@ -1674,7 +1674,7 @@ namespace fastoredis
         return impl_->config.mb_delim;
     }
 
-    std::string RedisDriver::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype)
+    std::string RedisDriver::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const
     {
         if(type == CommandKey::C_LOAD){
             char patternResult[1024] = {0};
@@ -2185,7 +2185,7 @@ namespace fastoredis
 
                     common::ArrayValue* ar = arr->array();
                     for(int i = 0; i < ar->getSize(); ++i){
-                        KeyValue ress;
+                        NKey ress;
                         bool isok = ar->getString(i, &ress.key_);
                         if(isok){
                             RedisCommand* cmdType = createCommandFast("TYPE " + ress.key_, common::Value::C_INNER);
@@ -2315,7 +2315,7 @@ namespace fastoredis
         events::ChangeDbValueResponceEvent::value_type res(ev->value());
 
         notifyProgress(sender, 50);
-        const std::string changeRequest = res.command_ + " " + res.newItem_.value_;
+        const std::string changeRequest = res.command_ + " " + res.newItem_.value_.value_;
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
         RedisCommand* cmd = createCommand(root, changeRequest, common::Value::C_INNER);
         common::ErrorValueSPtr er = impl_->execute(cmd);
