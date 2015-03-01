@@ -106,35 +106,15 @@ namespace fastoredis
 
         SsdbServerInfo* result = new SsdbServerInfo;
 
-        int j = 0;
         std::string word;
-        size_t pos = 0;
+        DCHECK(SsdbHeaders.size() == 1);
         for(int i = 0; i < content.size(); ++i)
         {
-            char ch = content[i];
-            word += ch;
-            if(word == SsdbHeaders[j]){
-                if(j+1 != SsdbHeaders.size()){
-                    pos = content.find(SsdbHeaders[j+1], pos);
-                }
-                else{
-                    break;
-                }
-
-                if(pos != std::string::npos){
-                    std::string part = content.substr(i + 1, pos - i - 1 );
-                    switch(j)
-                    {
-                    case 0:
-                        result->common_ = SsdbServerInfo::Common(part);
-                        break;
-                    default:
-                        break;
-                    }
-                    i = pos-1;
-                    ++j;
-                }
-                word.clear();
+            word += content[i];
+            if(word == SsdbHeaders[0]){
+                std::string part = content.substr(i + 1);
+                result->common_ = SsdbServerInfo::Common(part);
+                break;
             }
         }
 

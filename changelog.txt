@@ -1,7 +1,7 @@
 0.7.1
 [Alexandr Topilski]
 - Bug fixes
-
+- History for SSDB
 
 0.7.0 / February 28, 2015
 [Alexandr Topilski]
