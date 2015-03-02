@@ -9,20 +9,30 @@ namespace fastoredis
     struct NKey
     {
         NKey();
-        NKey(const std::string& key, common::Value::Type type = common::Value::TYPE_NULL);
+        explicit NKey(const std::string& key, common::Value::Type type = common::Value::TYPE_NULL);
 
         std::string key_;
         common::Value::Type type_;
     };
 
+    inline bool operator == (const NKey& lhs, const NKey& rhs)
+    {
+        return lhs.key_ == rhs.key_ && lhs.type_ == rhs.type_;
+    }
+
     struct NValue
     {
         NValue();
-        NValue(const std::string& value, common::Value::Type type = common::Value::TYPE_NULL);
+        explicit NValue(const std::string& value, common::Value::Type type = common::Value::TYPE_NULL);
 
         std::string value_;
         common::Value::Type type_;
     };
+
+    inline bool operator == (const NValue& lhs, const NValue& rhs)
+    {
+        return lhs.value_ == rhs.value_ && lhs.type_ == rhs.type_;
+    }
 
     struct NDbValue
     {
@@ -128,17 +138,15 @@ namespace fastoredis
             C_LOAD
         };
 
-        CommandKey(const std::string& key, cmdtype type);
+        CommandKey(const NKey& key, cmdtype type);
         cmdtype type() const;
-        std::string key() const;
-        common::Value::Type itype() const;
+        NKey key() const;
         std::string execCommand() const;
         void setExecCommand(const std::string& execCommand);
 
     private:
         cmdtype type_;
-        std::string key_;
+        NKey key_;
         std::string execCommand_;
-        common::Value::Type itype_;
     };
 }

@@ -53,8 +53,9 @@ namespace fastoredis
         void startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest& req);
         void finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res);
 
-        void startExecuteCommand(const EventsInfo::CommandRequest& req);
-        void finishExecuteCommand(const EventsInfo::CommandResponce& res);
+        //void startExecuteCommand(const EventsInfo::CommandRequest& req);
+        //void finishExecuteCommand(const EventsInfo::CommandResponce& res);
+
     protected:
         virtual void changeEvent(QEvent* );
 

@@ -1674,34 +1674,34 @@ namespace fastoredis
         return impl_->config.mb_delim;
     }
 
-    std::string RedisDriver::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const
+    std::string RedisDriver::commandByType(CommandKey::cmdtype type, const NKey& key) const
     {
         if(type == CommandKey::C_LOAD){
             char patternResult[1024] = {0};
-            if(vtype == common::Value::TYPE_ARRAY){                
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_LIST_PATTERN_1ARGS_S, name);
+            if(key.type_ == common::Value::TYPE_ARRAY){
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_LIST_PATTERN_1ARGS_S, key.key_);
                 return patternResult;
             }
-            else if(vtype == common::Value::TYPE_SET){
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_SET_PATTERN_1ARGS_S, name);
+            else if(key.type_ == common::Value::TYPE_SET){
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_SET_PATTERN_1ARGS_S, key.key_);
                 return patternResult;
             }
-            else if(vtype == common::Value::TYPE_ZSET){
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_ZSET_PATTERN_1ARGS_S, name);
+            else if(key.type_ == common::Value::TYPE_ZSET){
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_ZSET_PATTERN_1ARGS_S, key.key_);
                 return patternResult;
             }
-            else if(vtype == common::Value::TYPE_HASH){
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_HASH_PATTERN_1ARGS_S, name);
+            else if(key.type_ == common::Value::TYPE_HASH){
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_HASH_PATTERN_1ARGS_S, key.key_);
                 return patternResult;
             }
             else{
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, name);
+                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, key.key_);
                 return patternResult;
             }
         }
         else if(type == CommandKey::C_DELETE){
             char patternResult[1024] = {0};
-            common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, name);
+            common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, key.key_);
             return patternResult;
         }
         else{
@@ -2338,9 +2338,8 @@ namespace fastoredis
             events::CommandResponceEvent::value_type res(ev->value());
 
             CommandKey::cmdtype t =  res.cmd_.type();
-            std::string name = res.cmd_.key();
-            common::Value::Type itype = res.cmd_.itype();
-            std::string cmdtext = commandByType(t, name, itype);
+            NKey key = res.cmd_.key();
+            std::string cmdtext = commandByType(t, key);
 
             FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
             RedisCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);

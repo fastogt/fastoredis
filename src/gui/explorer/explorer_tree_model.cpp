@@ -96,22 +96,6 @@ namespace fastoredis
         }
     }
 
-    void ExplorerDatabaseItem::removeKey(const std::string& key)
-    {
-        IDatabaseSPtr dbs = db();
-        if(dbs){
-            dbs->removeKey(key);
-        }
-    }
-
-    void ExplorerDatabaseItem::loadValue(const std::string& key)
-    {
-        IDatabaseSPtr dbs = db();
-        if(dbs){
-            dbs->loadValue(key);
-        }
-    }
-
     DataBaseInfoSPtr ExplorerDatabaseItem::info() const
     {
         return inf_;
@@ -163,9 +147,9 @@ namespace fastoredis
         return common::convertFromString<QString>(key_.key_);
     }
 
-    std::string ExplorerKeyItem::sname() const
+    NKey ExplorerKeyItem::key() const
     {
-        return key_.key_;
+        return key_;
     }
 
     IServerSPtr ExplorerKeyItem::server() const
@@ -181,27 +165,6 @@ namespace fastoredis
     IExplorerTreeItem::eType ExplorerKeyItem::type() const
     {
         return Key;
-    }
-
-    common::Value::Type ExplorerKeyItem::innerType() const
-    {
-        return key_.type_;
-    }
-
-    void ExplorerKeyItem::remove()
-    {
-        ExplorerDatabaseItem* par = parent();
-        if(par){
-            par->removeKey(key_.key_);
-        }
-    }
-
-    void ExplorerKeyItem::loadValue()
-    {
-        ExplorerDatabaseItem* par = parent();
-        if(par){
-            par->loadValue(key_.key_);
-        }
     }
 
     ExplorerDatabaseItem* ExplorerKeyItem::parent() const
@@ -405,7 +368,7 @@ namespace fastoredis
             return;
         }
 
-        ExplorerKeyItem *keyit = findKeyItem(dbs, key.key_);
+        ExplorerKeyItem *keyit = findKeyItem(dbs, key);
         if(!keyit){
             QModelIndex parentdb = createIndex(parent->indexOf(dbs), 0, dbs);
             ExplorerKeyItem *item = new ExplorerKeyItem(key, dbs);
@@ -413,7 +376,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeModel::removeKey(IServer* server, DataBaseInfoSPtr db, const std::string& key)
+    void ExplorerTreeModel::removeKey(IServer* server, DataBaseInfoSPtr db, const NKey &key)
     {
         ExplorerServerItem *parent = findServerItem(server);
         DCHECK(parent);
@@ -470,7 +433,7 @@ namespace fastoredis
         return NULL;
     }
 
-    ExplorerKeyItem *ExplorerTreeModel::findKeyItem(ExplorerDatabaseItem* db, const std::string& key) const
+    ExplorerKeyItem *ExplorerTreeModel::findKeyItem(ExplorerDatabaseItem* db, const NKey& key) const
     {
         if(db){
             for(int i = 0; i < db->childrenCount() ; ++i){
@@ -480,7 +443,7 @@ namespace fastoredis
                     continue;
                 }
 
-                if(item->sname() == key){
+                if(item->key() == key){
                     return item;
                 }
             }

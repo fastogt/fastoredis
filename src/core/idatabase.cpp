@@ -51,12 +51,12 @@ namespace fastoredis
         info_ = info;
     }
 
-    void IDatabase::removeKey(const std::string& key)
+    void IDatabase::removeKey(const NKey& key)
     {
         server_->executeCommand(info_, CommandKey(key, CommandKey::C_DELETE));
     }
 
-    void IDatabase::loadValue(const std::string& key)
+    void IDatabase::loadValue(const NKey& key)
     {
         server_->executeCommand(info_, CommandKey(key, CommandKey::C_LOAD));
     }

@@ -1335,16 +1335,16 @@ namespace fastoredis
         impl_->config_.shutdown = 1;
     }
 
-    std::string SsdbDriver::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const
+    std::string SsdbDriver::commandByType(CommandKey::cmdtype type, const NKey &key) const
     {
         if(type == CommandKey::C_LOAD){
             char patternResult[1024] = {0};
-            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, name);
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, key.key_);
             return patternResult;
         }
         else if(type == CommandKey::C_DELETE){
             char patternResult[1024] = {0};
-            common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, name);
+            common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, key.key_);
             return patternResult;
         }
         else{
@@ -1611,10 +1611,10 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
+
             CommandKey::cmdtype t =  res.cmd_.type();
-            std::string name = res.cmd_.key();
-            common::Value::Type itype = res.cmd_.itype();
-            std::string cmdtext = commandByType(t, name, itype);
+            NKey key = res.cmd_.key();
+            std::string cmdtext = commandByType(t, key);
 
             FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
             SsdbCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);

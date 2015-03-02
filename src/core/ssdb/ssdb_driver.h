@@ -26,7 +26,7 @@ namespace fastoredis
         std::string version() const;
         virtual std::string outputDelemitr() const;
 
-        std::string commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const;
+        std::string commandByType(CommandKey::cmdtype type, const NKey& key) const;
 
         static const char* versionApi();
 

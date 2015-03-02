@@ -24,7 +24,7 @@ namespace fastoredis
         IDatabaseSPtr findDatabaseByInfo(DataBaseInfoSPtr inf) const;
         IDatabaseSPtr findDatabaseByName(const std::string& name) const;
 
-        QString commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const;
+        QString commandByType(CommandKey::cmdtype type, const NKey &key) const;
 
         //async
         void connect();

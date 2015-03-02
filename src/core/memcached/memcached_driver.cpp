@@ -648,13 +648,13 @@ namespace fastoredis
         impl_->config_.shutdown = 1;
     }
 
-    std::string MemcachedDriver::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const
+    std::string MemcachedDriver::commandByType(CommandKey::cmdtype type, const NKey& key) const
     {
         if(type == CommandKey::C_LOAD){
-            return LOAD_KEY " " + name;
+            return LOAD_KEY " " + key.key_;
         }
         else if(type == CommandKey::C_DELETE){
-            return DELETE_KEY;
+            return DELETE_KEY " " + key.key_;
         }
         else{
             return std::string();
@@ -918,14 +918,11 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
-            std::string cmdtext;
+
             CommandKey::cmdtype t =  res.cmd_.type();
-            if( t == CommandKey::C_DELETE){
-                cmdtext = std::string(DELETE_KEY) + " " + res.cmd_.key();
-            }
-            else if(t == CommandKey::C_LOAD){
-                cmdtext = std::string(LOAD_KEY) + " " + res.cmd_.key();
-            }
+            NKey key = res.cmd_.key();
+            std::string cmdtext = commandByType(t, key);
+
             FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
             FastoObjectCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
         notifyProgress(sender, 50);

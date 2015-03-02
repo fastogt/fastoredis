@@ -125,9 +125,9 @@ namespace fastoredis
         return IDatabaseSPtr();
     }
 
-    QString IServer::commandByType(CommandKey::cmdtype type, const std::string& name, common::Value::Type vtype) const
+    QString IServer::commandByType(CommandKey::cmdtype type, const NKey& key) const
     {
-        return common::convertFromString<QString>(drv_->commandByType(type, name, vtype));
+        return common::convertFromString<QString>(drv_->commandByType(type, key));
     }
 
     connectionTypes IServer::type() const
