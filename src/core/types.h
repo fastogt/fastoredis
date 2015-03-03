@@ -134,19 +134,18 @@ namespace fastoredis
     public:
         enum cmdtype
         {
+            C_NONE,
             C_DELETE,
             C_LOAD
         };
 
+        CommandKey();
         CommandKey(const NKey& key, cmdtype type);
         cmdtype type() const;
         NKey key() const;
-        std::string execCommand() const;
-        void setExecCommand(const std::string& execCommand);
 
     private:
         cmdtype type_;
         NKey key_;
-        std::string execCommand_;
     };
 }

@@ -66,6 +66,10 @@ namespace fastoredis
         void setDefault();
 
         DataBaseInfoSPtr info() const;
+
+        void removeKey(const NKey& key);
+        void loadValue(const NKey& key);
+
     private:
         DataBaseInfoSPtr inf_;
     };
@@ -83,6 +87,9 @@ namespace fastoredis
         virtual QString name() const;        
         virtual IServerSPtr server() const;
         virtual eType type() const;
+
+        void removeFromDb();
+        void loadValueFromDb();
 
     private:
         NKey key_;

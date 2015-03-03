@@ -101,6 +101,22 @@ namespace fastoredis
         return inf_;
     }
 
+    void ExplorerDatabaseItem::removeKey(const NKey& key)
+    {
+        IDatabaseSPtr dbs = db();
+        if(dbs){
+            dbs->removeKey(key);
+        }
+    }
+
+    void ExplorerDatabaseItem::loadValue(const NKey& key)
+    {
+        IDatabaseSPtr dbs = db();
+        if(dbs){
+            dbs->loadValue(key);
+        }
+    }
+
     bool ExplorerDatabaseItem::isDefault() const
     {
         return inf_->isDefault();
@@ -165,6 +181,22 @@ namespace fastoredis
     IExplorerTreeItem::eType ExplorerKeyItem::type() const
     {
         return Key;
+    }
+
+    void ExplorerKeyItem::removeFromDb()
+    {
+        ExplorerDatabaseItem* par = parent();
+        if(par){
+            par->removeKey(key_);
+        }
+    }
+
+    void ExplorerKeyItem::loadValueFromDb()
+    {
+        ExplorerDatabaseItem* par = parent();
+        if(par){
+            par->loadValue(key_);
+        }
     }
 
     ExplorerDatabaseItem* ExplorerKeyItem::parent() const

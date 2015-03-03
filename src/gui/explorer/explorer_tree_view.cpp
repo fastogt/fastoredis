@@ -223,10 +223,7 @@ namespace fastoredis
 
         ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
         if(node){
-            IServerSPtr server = node->server();
-            NKey key = node->key();
-            QString cmd = server->commandByType(CommandKey::C_LOAD, key);
-            emit executeText(server, cmd);
+            node->loadValueFromDb();
         }
     }
 
@@ -239,10 +236,7 @@ namespace fastoredis
 
         ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
         if(node){
-            IServerSPtr server = node->server();
-            NKey key = node->key();
-            QString cmd = server->commandByType(CommandKey::C_DELETE, key);
-            emit executeText(server, cmd);
+            node->removeFromDb();
         }
     }
 
@@ -265,8 +259,8 @@ namespace fastoredis
         VERIFY(connect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
         VERIFY(connect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
         VERIFY(connect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
-        //VERIFY(connect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
-        //VERIFY(connect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
+        VERIFY(connect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
+        VERIFY(connect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
 
         mod->addServer(server);
     }
@@ -290,8 +284,8 @@ namespace fastoredis
         VERIFY(disconnect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
         VERIFY(disconnect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
         VERIFY(disconnect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
-        //VERIFY(disconnect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
-        //VERIFY(disconnect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
+        VERIFY(disconnect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
+        VERIFY(disconnect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
 
         mod->removeServer(server);
         emit closeServer(server);
@@ -430,15 +424,35 @@ namespace fastoredis
         }
     }
 
-    /*void ExplorerTreeView::startExecuteCommand(const EventsInfo::CommandRequest& req)
+    void ExplorerTreeView::startExecuteCommand(const EventsInfo::CommandRequest& req)
     {
 
     }
 
     void ExplorerTreeView::finishExecuteCommand(const EventsInfo::CommandResponce& res)
     {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
 
-    }*/
+        IServer* serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+        if(!serv){
+            return;
+        }
+
+        ExplorerTreeModel* mod = qobject_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        CommandKey key = res.cmd_;
+        if(key.type() == CommandKey::C_DELETE){
+            mod->removeKey(serv, res.inf_, key.key());
+        }
+    }
 
     QModelIndexList ExplorerTreeView::selectedIndexes() const
     {

@@ -1,17 +1,6 @@
 #pragma once
 
-#if defined(OS_LINUX)
-    #if !defined(QT_NO_STYLE_GTK)
-        #include <QProxyStyle>
-        typedef QProxyStyle OsStyle;
-    #else
-        #include <QCleanlooksStyle>
-        typedef QCleanlooksStyle OsStyle;
-    #endif
-#else
-	#include <QProxyStyle>
-	typedef QProxyStyle OsStyle;
-#endif
+#include <QProxyStyle>
 
 #include "common/types.h"
 
@@ -22,7 +11,7 @@ namespace fastoredis
     QStringList getSupportedStyles();
 
     class AppStyle 
-        : public OsStyle
+        : public QProxyStyle
     {
         Q_OBJECT
     public:        

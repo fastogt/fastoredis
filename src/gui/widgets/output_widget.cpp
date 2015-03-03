@@ -39,7 +39,6 @@ namespace fastoredis
         VERIFY(connect(server.get(), &IServer::startedChangeDbValue, this, &OutputWidget::startChangeDbValue, Qt::DirectConnection));
         VERIFY(connect(server.get(), &IServer::finishedChangeDbValue, this, &OutputWidget::finishChangeDbValue, Qt::DirectConnection));
 
-
         treeView_ = new FastoTreeView;
         treeView_->setModel(commonModel_);
 
@@ -112,6 +111,11 @@ namespace fastoredis
         }
     }
 
+    void OutputWidget::updateTimeLabel(const EventsInfo::EventInfoBase& evinfo)
+    {
+        timeLabel_->setText(QString("%1 msec").arg(evinfo.elapsedTime()));
+    }
+
     void OutputWidget::setTreeView()
     {
         treeView_->setVisible(true);
@@ -142,7 +146,7 @@ namespace fastoredis
 
     void OutputWidget::rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res)
     {
-        timeLabel_->setText(QString("%1 msec").arg(res.elapsedTime()));
+        updateTimeLabel(res);
     }
 
     void OutputWidget::addChild(FastoObject* child)

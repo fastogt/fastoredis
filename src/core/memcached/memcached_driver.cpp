@@ -62,7 +62,7 @@ namespace fastoredis
             }
         };
 
-        FastoObjectCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
+        MemcachedCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
         {
             DCHECK(parent);
             std::pair<std::string, std::string> kv = getKeyValueFromLine(input);
@@ -71,12 +71,12 @@ namespace fastoredis
                 opposite += " " + kv.second;
             }
             common::CommandValue* cmd = common::Value::createCommand(input, opposite, ct);
-            FastoObjectCommand* fs = new MemcachedCommand(parent, cmd, "");
+            MemcachedCommand* fs = new MemcachedCommand(parent, cmd, "");
             parent->addChildren(fs);
             return fs;
         }
 
-        FastoObjectCommand* createCommand(FastoObjectIPtr parent, const std::string& input, common::Value::CommandType ct)
+        MemcachedCommand* createCommand(FastoObjectIPtr parent, const std::string& input, common::Value::CommandType ct)
         {
             return createCommand(parent.get(), input, ct);
         }
@@ -795,6 +795,28 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
+    void MemcachedDriver::handleCommandRequestEvent(events::CommandRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::CommandResponceEvent::value_type res(ev->value());
+
+            CommandKey::cmdtype t =  res.cmd_.type();
+            NKey key = res.cmd_.key();
+            std::string cmdtext = commandByType(t, key);
+
+            RootLocker lock = make_locker(sender, cmdtext);
+            FastoObjectIPtr root = lock.root_;
+            MemcachedCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
+        notifyProgress(sender, 50);
+            common::ErrorValueSPtr er = impl_->execute(cmd);
+            if(er){
+                res.setErrorInfo(er);
+            }
+            reply(sender, new events::CommandResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
     void MemcachedDriver::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoRequestEvent* ev)
     {
         QObject *sender = ev->sender();
@@ -911,30 +933,6 @@ namespace fastoredis
     void MemcachedDriver::handleExportEvent(events::ExportRequestEvent* ev)
     {
 
-    }
-
-    void MemcachedDriver::handleCommandRequestEvent(events::CommandRequestEvent* ev)
-    {
-        QObject *sender = ev->sender();
-        notifyProgress(sender, 0);
-            events::CommandResponceEvent::value_type res(ev->value());
-
-            CommandKey::cmdtype t =  res.cmd_.type();
-            NKey key = res.cmd_.key();
-            std::string cmdtext = commandByType(t, key);
-
-            FastoObjectIPtr root = FastoObject::createRoot(cmdtext);
-            FastoObjectCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
-        notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(cmd);
-            if(er){
-                res.setErrorInfo(er);
-            }
-            else{
-                res.cmd_.setExecCommand(cmdtext);
-            }
-            reply(sender, new events::CommandResponceEvent(this, res));
-        notifyProgress(sender, 100);
     }
 
     ServerInfoSPtr MemcachedDriver::makeServerInfoFromString(const std::string& val)

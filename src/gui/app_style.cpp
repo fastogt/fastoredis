@@ -23,7 +23,7 @@ namespace fastoredis
 
     void AppStyle::drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const
     {
-        OsStyle::drawControl(element, option, painter, widget);
+        QProxyStyle::drawControl(element, option, painter, widget);
     }
 
     void AppStyle::drawPrimitive(PrimitiveElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const
@@ -35,11 +35,11 @@ namespace fastoredis
 
 #endif // Q_OS_WIN
 
-        return OsStyle::drawPrimitive(element, option, painter, widget);
+        return QProxyStyle::drawPrimitive(element, option, painter, widget);
     }
 
     QRect AppStyle::subElementRect(SubElement element, const QStyleOption* option, const QWidget* widget /*= 0 */) const
     {
-        return OsStyle::subElementRect(element, option, widget);
+        return QProxyStyle::subElementRect(element, option, widget);
     }
 }

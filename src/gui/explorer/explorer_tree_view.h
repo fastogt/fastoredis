@@ -18,7 +18,6 @@ namespace fastoredis
 
     Q_SIGNALS:
         void openedConsole(IServerSPtr server, const QString& text);
-        void executeText(IServerSPtr server, const QString& text);
         void closeServer(IServerSPtr server);
 
     public Q_SLOTS:
@@ -53,8 +52,8 @@ namespace fastoredis
         void startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest& req);
         void finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res);
 
-        //void startExecuteCommand(const EventsInfo::CommandRequest& req);
-        //void finishExecuteCommand(const EventsInfo::CommandResponce& res);
+        void startExecuteCommand(const EventsInfo::CommandRequest& req);
+        void finishExecuteCommand(const EventsInfo::CommandResponce& res);
 
     protected:
         virtual void changeEvent(QEvent* );

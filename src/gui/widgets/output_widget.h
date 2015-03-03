@@ -27,6 +27,7 @@ namespace fastoredis
         void rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res);
         void startChangeDbValue(const EventsInfo::ChangeDbValueRequest& req);
         void finishChangeDbValue(const EventsInfo::ChangeDbValueResponce& res);
+
         void addChild(FastoObject* child);
         void itemUpdate(FastoObject* item, const QString& newValue);
 
@@ -37,6 +38,7 @@ namespace fastoredis
 
     private:
         void syncWithSettings();
+        void updateTimeLabel(const EventsInfo::EventInfoBase& evinfo);
         IconLabel* timeLabel_;
         QPushButton* treeButton_;
         QPushButton* tableButton_;
