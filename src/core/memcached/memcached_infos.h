@@ -118,4 +118,10 @@ namespace fastoredis
         MemcachedDataBaseInfo(const std::string& name, size_t size, bool isDefault);
         virtual DataBaseInfo* clone() const;
     };
+
+    template<>
+    struct DBTraits<MEMCACHED>
+    {
+        static const std::vector<common::Value::Type> supportedTypes;
+    };
 }

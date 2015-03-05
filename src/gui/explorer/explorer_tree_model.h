@@ -69,6 +69,7 @@ namespace fastoredis
 
         void removeKey(const NKey& key);
         void loadValue(const NKey& key);
+        void createKey(const NKey& key, FastoObjectIPtr value);
 
     private:
         DataBaseInfoSPtr inf_;

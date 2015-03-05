@@ -33,7 +33,7 @@ namespace fastoredis
         //sync
         void start();
         void stop();
-        virtual std::string commandByType(CommandKey::cmdtype type, const NKey& key) const = 0;
+        common::ErrorValueSPtr commandByType(CommandKeySPtr command, std::string& cmdstring) const WARN_UNUSED_RESULT;
 
         virtual void interrupt() = 0;
         virtual bool isConnected() const = 0;
@@ -116,6 +116,10 @@ namespace fastoredis
 
         virtual ServerInfoSPtr makeServerInfoFromString(const std::string& val) = 0;
         virtual void handleProcessCommandLineArgs(events::ProcessConfigArgsRequestEvent* ev) = 0;
+
+        virtual common::ErrorValueSPtr commandDeleteImpl(CommandDeleteKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT = 0;
+        virtual common::ErrorValueSPtr commandLoadImpl(CommandLoadKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT = 0;
+        virtual common::ErrorValueSPtr commandCreateImpl(CommandCreateKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT = 0;
 
     protected:
         DataBaseInfoSPtr currentDatabaseInfo_;

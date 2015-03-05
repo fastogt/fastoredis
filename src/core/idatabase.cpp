@@ -53,12 +53,20 @@ namespace fastoredis
 
     void IDatabase::removeKey(const NKey& key)
     {
-        server_->executeCommand(info_, CommandKey(key, CommandKey::C_DELETE));
+        CommandKeySPtr com(new CommandDeleteKey(key));
+        server_->executeCommand(info_, com);
     }
 
     void IDatabase::loadValue(const NKey& key)
     {
-        server_->executeCommand(info_, CommandKey(key, CommandKey::C_LOAD));
+        CommandKeySPtr com(new CommandLoadKey(key));
+        server_->executeCommand(info_, com);
+    }
+
+    void IDatabase::createKey(const NKey& key, FastoObjectIPtr value)
+    {
+        CommandKeySPtr com(new CommandCreateKey(key, value));
+        server_->executeCommand(info_, com);
     }
 
     IDatabase::~IDatabase()

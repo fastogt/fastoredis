@@ -1335,22 +1335,30 @@ namespace fastoredis
         impl_->config_.shutdown = 1;
     }
 
-    std::string SsdbDriver::commandByType(CommandKey::cmdtype type, const NKey &key) const
+    // ============== commands =============//
+    common::ErrorValueSPtr SsdbDriver::commandDeleteImpl(CommandDeleteKey* command, std::string& cmdstring) const
     {
-        if(type == CommandKey::C_LOAD){
-            char patternResult[1024] = {0};
-            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, key.key_);
-            return patternResult;
-        }
-        else if(type == CommandKey::C_DELETE){
-            char patternResult[1024] = {0};
-            common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, key.key_);
-            return patternResult;
-        }
-        else{
-            return std::string();
-        }
+        char patternResult[1024] = {0};
+        const NKey key = command->key();
+        common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, key.key_);
+        cmdstring = patternResult;
+        return common::ErrorValueSPtr();
     }
+
+    common::ErrorValueSPtr SsdbDriver::commandLoadImpl(CommandLoadKey* command, std::string& cmdstring) const
+    {
+        char patternResult[1024] = {0};
+        const NKey key = command->key();
+        common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, key.key_);
+        cmdstring = patternResult;
+        return common::ErrorValueSPtr();
+    }
+
+    common::ErrorValueSPtr SsdbDriver::commandCreateImpl(CommandCreateKey* command, std::string& cmdstring) const
+    {
+        return common::ErrorValueSPtr();
+    }
+     // ============== commands =============//
 
     common::net::hostAndPort SsdbDriver::address() const
     {
@@ -1491,16 +1499,20 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
-
-            CommandKey::cmdtype t =  res.cmd_.type();
-            NKey key = res.cmd_.key();
-            std::string cmdtext = commandByType(t, key);
+            std::string cmdtext;
+            common::ErrorValueSPtr er = commandByType(res.cmd_, cmdtext);
+            if(er){
+                res.setErrorInfo(er);
+                reply(sender, new events::CommandResponceEvent(this, res));
+                notifyProgress(sender, 100);
+                return;
+            }
 
             RootLocker lock = make_locker(sender, cmdtext);
             FastoObjectIPtr root = lock.root_;
             SsdbCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
         notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(cmd);
+            er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
             }

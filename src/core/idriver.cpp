@@ -95,6 +95,32 @@ namespace fastoredis
         thread_->wait();
     }
 
+    common::ErrorValueSPtr IDriver::commandByType(CommandKeySPtr command, std::string& cmdstring) const
+    {
+        if(!command){
+            return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+        }
+
+        CommandKey::cmdtype t = command->type();
+
+        if(t == CommandKey::C_DELETE){
+            CommandDeleteKey* delc = dynamic_cast<CommandDeleteKey*>(command.get());
+            return commandDeleteImpl(delc, cmdstring);
+        }
+        else if(t == CommandKey::C_LOAD){
+            CommandLoadKey* loadc = dynamic_cast<CommandLoadKey*>(command.get());
+            return commandLoadImpl(loadc, cmdstring);
+        }
+        else if(t == CommandKey::C_CREATE){
+            CommandCreateKey* createc = dynamic_cast<CommandCreateKey*>(command.get());
+            return commandCreateImpl(createc, cmdstring);
+        }
+        else{
+            NOTREACHED();
+            return common::make_error_value("Unknown command", common::ErrorValue::E_ERROR);
+        }
+    }
+
     DataBaseInfoSPtr IDriver::currentDatabaseInfo() const
     {
         return currentDatabaseInfo_;

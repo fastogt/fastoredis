@@ -382,4 +382,10 @@ namespace fastoredis
 
         virtual DataBaseInfo* clone() const;
     };
+
+    template<>
+    struct DBTraits<REDIS>
+    {
+        static const std::vector<common::Value::Type> supportedTypes;
+    };
 }

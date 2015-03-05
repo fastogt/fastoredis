@@ -6,6 +6,12 @@
 
 namespace fastoredis
 {
+    template<connectionTypes ct>
+    struct DBTraits
+    {
+        static const common::Value::Type supportedTypes[];
+    };
+
     struct NKey
     {
         NKey();
@@ -136,16 +142,47 @@ namespace fastoredis
         {
             C_NONE,
             C_DELETE,
-            C_LOAD
+            C_LOAD,
+            C_CREATE
         };
 
-        CommandKey();
-        CommandKey(const NKey& key, cmdtype type);
         cmdtype type() const;
         NKey key() const;
+
+        virtual ~CommandKey();
+    protected:
+        CommandKey();
+        CommandKey(const NKey& key, cmdtype type);
 
     private:
         cmdtype type_;
         NKey key_;
     };
+
+    class CommandDeleteKey
+            : public CommandKey
+    {
+    public:
+        CommandDeleteKey(const NKey& key);
+    };
+
+    class CommandLoadKey
+            : public CommandKey
+    {
+    public:
+        CommandLoadKey(const NKey& key);
+    };
+
+    class CommandCreateKey
+            : public CommandKey
+    {
+    public:
+        CommandCreateKey(const NKey& key, FastoObjectIPtr value);
+        FastoObjectIPtr value() const;
+
+    private:
+        FastoObjectIPtr value_;
+    };
+
+    typedef shared_ptr_t<CommandKey> CommandKeySPtr;
 }

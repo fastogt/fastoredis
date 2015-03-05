@@ -40,6 +40,7 @@ namespace fastoredis
 
         void loadContentDb();
         void setDefaultDb();
+        void createKey();
         void getValue();
         void deleteKey();
 
@@ -68,6 +69,7 @@ namespace fastoredis
         QAction* loadDatabaseAction_;
         QAction* loadContentAction_;
         QAction* setDefaultDbAction_;
+        QAction* createKeyAction_;
         QAction* getValueAction_;
         QAction* deleteKeyAction_;
         QAction* infoServerAction_;

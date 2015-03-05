@@ -319,10 +319,10 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            CommandRequest(DataBaseInfoSPtr inf, const CommandKey& cmd, const error_type &er = error_type());
+            CommandRequest(DataBaseInfoSPtr inf, CommandKeySPtr cmd, const error_type &er = error_type());
 
             DataBaseInfoSPtr inf_;
-            CommandKey cmd_;
+            CommandKeySPtr cmd_;
         };
 
         struct CommandResponce

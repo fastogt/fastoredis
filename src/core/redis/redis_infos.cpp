@@ -5,6 +5,19 @@
 
 namespace fastoredis
 {
+    const std::vector<common::Value::Type> DBTraits<REDIS>::supportedTypes = {
+                                            common::Value::TYPE_BOOLEAN,
+                                            common::Value::TYPE_INTEGER,
+                                            common::Value::TYPE_UINTEGER,
+                                            common::Value::TYPE_DOUBLE,
+                                            common::Value::TYPE_STRING,
+
+                                            common::Value::TYPE_ARRAY,
+                                            common::Value::TYPE_SET,
+                                            common::Value::TYPE_ZSET,
+                                            common::Value::TYPE_HASH
+                                           };
+
     RedisServerInfo::Server::Server::Server()
         : redis_version_(), redis_git_sha1_(), redis_git_dirty_(), redis_mode_(), os_(),
         arch_bits_(0), multiplexing_api_(), gcc_version_() ,process_id_(0),

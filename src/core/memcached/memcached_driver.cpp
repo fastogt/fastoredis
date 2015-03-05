@@ -8,6 +8,7 @@ extern "C" {
 }
 
 #include "common/utils.h"
+#include "common/sprintf.h"
 
 #include "core/logger.h"
 #include "core/command_logger.h"
@@ -17,8 +18,8 @@ extern "C" {
 
 #define INFO_REQUEST "STATS"
 #define GET_KEYS "STATS ITEMS"
-#define DELETE_KEY "DELETE"
-#define LOAD_KEY "GET"
+#define DELETE_KEY_PATTERN_1ARGS_S "DELETE %s"
+#define GET_KEY_PATTERN_1ARGS_S "GET %s"
 
 namespace
 {
@@ -648,19 +649,6 @@ namespace fastoredis
         impl_->config_.shutdown = 1;
     }
 
-    std::string MemcachedDriver::commandByType(CommandKey::cmdtype type, const NKey& key) const
-    {
-        if(type == CommandKey::C_LOAD){
-            return LOAD_KEY " " + key.key_;
-        }
-        else if(type == CommandKey::C_DELETE){
-            return DELETE_KEY " " + key.key_;
-        }
-        else{
-            return std::string();
-        }
-    }
-
     common::net::hostAndPort MemcachedDriver::address() const
     {
         return common::net::hostAndPort(impl_->config_.hostip, impl_->config_.hostport);
@@ -800,16 +788,20 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
-
-            CommandKey::cmdtype t =  res.cmd_.type();
-            NKey key = res.cmd_.key();
-            std::string cmdtext = commandByType(t, key);
+            std::string cmdtext;
+            common::ErrorValueSPtr er = commandByType(res.cmd_, cmdtext);
+            if(er){
+                res.setErrorInfo(er);
+                reply(sender, new events::CommandResponceEvent(this, res));
+                notifyProgress(sender, 100);
+                return;
+            }
 
             RootLocker lock = make_locker(sender, cmdtext);
             FastoObjectIPtr root = lock.root_;
             MemcachedCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
         notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(cmd);
+            er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
             }
@@ -899,6 +891,32 @@ namespace fastoredis
             reply(sender, new events::ServerInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
+
+    // ============== commands =============//
+    common::ErrorValueSPtr MemcachedDriver::commandDeleteImpl(CommandDeleteKey* command, std::string& cmdstring) const
+    {
+        char patternResult[1024] = {0};
+        const NKey key = command->key();
+        common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, key.key_);
+        cmdstring = patternResult;
+        return common::ErrorValueSPtr();
+    }
+
+    common::ErrorValueSPtr MemcachedDriver::commandLoadImpl(CommandLoadKey* command, std::string& cmdstring) const
+    {
+        char patternResult[1024] = {0};
+        const NKey key = command->key();
+        common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, key.key_);
+        cmdstring = patternResult;
+        return common::ErrorValueSPtr();
+    }
+
+    common::ErrorValueSPtr MemcachedDriver::commandCreateImpl(CommandCreateKey* command, std::string& cmdstring) const
+    {
+        return common::ErrorValueSPtr();
+    }
+
+    // ============== commands =============//
 
     void MemcachedDriver::handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev)
     {

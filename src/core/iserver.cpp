@@ -125,11 +125,6 @@ namespace fastoredis
         return IDatabaseSPtr();
     }
 
-    QString IServer::commandByType(CommandKey::cmdtype type, const NKey& key) const
-    {
-        return common::convertFromString<QString>(drv_->commandByType(type, key));
-    }
-
     connectionTypes IServer::type() const
     {
         return drv_->connectionType();
@@ -207,7 +202,7 @@ namespace fastoredis
         notify(ev);
     }
 
-    void IServer::executeCommand(DataBaseInfoSPtr inf, const CommandKey& cmd)
+    void IServer::executeCommand(DataBaseInfoSPtr inf, CommandKeySPtr cmd)
     {
         EventsInfo::CommandRequest req(inf, cmd);
         emit startedExecuteCommand(req);

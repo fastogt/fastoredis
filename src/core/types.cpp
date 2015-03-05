@@ -171,4 +171,32 @@ namespace fastoredis
     {
         return key_;
     }
+
+    CommandKey::~CommandKey()
+    {
+
+    }
+
+    CommandDeleteKey::CommandDeleteKey(const NKey& key)
+        : CommandKey(key, C_DELETE)
+    {
+
+    }
+
+    CommandLoadKey::CommandLoadKey(const NKey& key)
+        : CommandKey(key, C_LOAD)
+    {
+
+    }
+
+    CommandCreateKey::CommandCreateKey(const NKey& key, FastoObjectIPtr value)
+        : CommandKey(key, C_CREATE), value_(value)
+    {
+
+    }
+
+    FastoObjectIPtr CommandCreateKey::value() const
+    {
+        return value_;
+    }
 }

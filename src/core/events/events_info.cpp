@@ -266,7 +266,7 @@ namespace fastoredis
 
 // ============== command =============//
 
-        CommandRequest::CommandRequest(DataBaseInfoSPtr inf, const CommandKey& cmd, const error_type& er)
+        CommandRequest::CommandRequest(DataBaseInfoSPtr inf, CommandKeySPtr cmd, const error_type& er)
             : base_class(er), inf_(inf), cmd_(cmd)
         {
 

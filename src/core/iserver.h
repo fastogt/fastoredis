@@ -24,8 +24,6 @@ namespace fastoredis
         IDatabaseSPtr findDatabaseByInfo(DataBaseInfoSPtr inf) const;
         IDatabaseSPtr findDatabaseByName(const std::string& name) const;
 
-        QString commandByType(CommandKey::cmdtype type, const NKey &key) const;
-
         //async
         void connect();
         void disconnect();
@@ -33,7 +31,7 @@ namespace fastoredis
         void loadDatabaseContent(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys);
         void setDefaultDb(DataBaseInfoSPtr inf);
         void execute(const QString& script);
-        void executeCommand(DataBaseInfoSPtr inf, const CommandKey& cmd);
+        void executeCommand(DataBaseInfoSPtr inf, CommandKeySPtr cmd);
         void shutDown();
         void backupToPath(const QString& path);
         void exportFromPath(const QString& path);

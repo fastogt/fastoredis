@@ -117,6 +117,14 @@ namespace fastoredis
         }
     }
 
+    void ExplorerDatabaseItem::createKey(const NKey& key, FastoObjectIPtr value)
+    {
+        IDatabaseSPtr dbs = db();
+        if(dbs){
+            dbs->createKey(key, value);
+        }
+    }
+
     bool ExplorerDatabaseItem::isDefault() const
     {
         return inf_->isDefault();

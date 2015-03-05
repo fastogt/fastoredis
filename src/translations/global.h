@@ -64,6 +64,8 @@ namespace fastoredis
         const QString trPrevious = QObject::tr("Previous");
         const QString trLoading = QObject::tr("Loading...");
         const QString trTryToConnect = QObject::tr("Try to connect...");
+        const QString trAddItem = QObject::tr("Add item");
+        const QString trRemoveItem = QObject::tr("Remove item");
 
         const QString trMatchCase = QObject::tr("Match case");
         const QString trRawText = QObject::tr("Raw text");
@@ -92,6 +94,7 @@ namespace fastoredis
 
         const QString trLoadAndExecuteFile = QObject::tr("Load and execute file");
         const QString trLoadContOfDataBases = QObject::tr("Load content of database");
+        const QString trCreateKey = QObject::tr("Create key");
         const QString trEncodeDecode = QObject::tr("Encode/Decode");
         const QString trEncode = QObject::tr("Encode");
         const QString trDecode = QObject::tr("Decode");

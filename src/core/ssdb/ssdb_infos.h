@@ -67,4 +67,10 @@ namespace fastoredis
         SsdbDataBaseInfo(const std::string& name, size_t size, bool isDefault);
         virtual DataBaseInfo* clone() const;
     };
+
+    template<>
+    struct DBTraits<SSDB>
+    {
+        static const std::vector<common::Value::Type> supportedTypes;
+    };
 }

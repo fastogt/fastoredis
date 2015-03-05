@@ -5,6 +5,15 @@
 
 namespace fastoredis
 {   
+    const std::vector<common::Value::Type> DBTraits<MEMCACHED>::supportedTypes = {
+                                            common::Value::TYPE_BOOLEAN,
+                                            common::Value::TYPE_INTEGER,
+                                            common::Value::TYPE_UINTEGER,
+                                            common::Value::TYPE_DOUBLE,
+                                            common::Value::TYPE_STRING,
+                                            common::Value::TYPE_ARRAY
+                                           };
+
     MemcachedServerInfo::Common::Common()
     {
 

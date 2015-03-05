@@ -44,6 +44,8 @@ namespace fastoredis
         mainLayout->addLayout(patternLayout);
 
         mainLayout->addWidget(buttonBox);
+
+        setMinimumSize(QSize(min_width, min_height));
         setLayout(mainLayout);
     }
 

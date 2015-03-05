@@ -26,8 +26,6 @@ namespace fastoredis
         std::string version() const;
         virtual std::string outputDelemitr() const;
 
-        std::string commandByType(CommandKey::cmdtype type, const NKey& key) const;
-
         static const char* versionApi();
 
     private:
@@ -48,6 +46,12 @@ namespace fastoredis
         virtual void handleShutdownEvent(events::ShutDownRequestEvent* ev);
         virtual void handleBackupEvent(events::BackupRequestEvent* ev);
         virtual void handleExportEvent(events::ExportRequestEvent* ev);
+
+// ============== commands =============//
+        virtual common::ErrorValueSPtr commandDeleteImpl(CommandDeleteKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT;
+        virtual common::ErrorValueSPtr commandLoadImpl(CommandLoadKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT;
+        virtual common::ErrorValueSPtr commandCreateImpl(CommandCreateKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT;
+// ============== commands =============//
 
 // ============== database =============//
         virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev);

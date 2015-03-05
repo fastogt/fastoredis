@@ -36,12 +36,21 @@ extern "C" {
 #define GET_DATABASES_KEYS_INFO "INFO keyspace"
 #define SET_DEFAULT_DATABASE "SELECT "
 #define DELETE_KEY_PATTERN_1ARGS_S "DEL %s"
+
 #define GET_KEY_PATTERN_1ARGS_S "GET %s"
 #define GET_KEY_LIST_PATTERN_1ARGS_S "LRANGE %s 0 -1"
 #define GET_KEY_SET_PATTERN_1ARGS_S "SMEMBERS %s"
 #define GET_KEY_ZSET_PATTERN_1ARGS_S "ZRANGE %s 0 -1"
 #define GET_KEY_HASH_PATTERN_1ARGS_S "HGET %s"
+
+#define SET_KEY_PATTERN_2ARGS_SS "SET %s %s"
+#define SET_KEY_LIST_PATTERN_2ARGS_SS "LPUSH %s %s"
+#define SET_KEY_SET_PATTERN_2ARGS_SS "SADD %s %s"
+#define SET_KEY_ZSET_PATTERN_2ARGS_SS "ZADD %s %s"
+#define SET_KEY_HASH_PATTERN_2ARGS_SS "HMSET %s %s"
+
 #define GET_KEYS_PATTERN_2ARGS_SI "SCAN 0 MATCH %s COUNT %d"
+
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 #define STAT_MODE_REQUEST "STAT"
@@ -1674,41 +1683,6 @@ namespace fastoredis
         return impl_->config.mb_delim;
     }
 
-    std::string RedisDriver::commandByType(CommandKey::cmdtype type, const NKey& key) const
-    {
-        if(type == CommandKey::C_LOAD){
-            char patternResult[1024] = {0};
-            if(key.type_ == common::Value::TYPE_ARRAY){
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_LIST_PATTERN_1ARGS_S, key.key_);
-                return patternResult;
-            }
-            else if(key.type_ == common::Value::TYPE_SET){
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_SET_PATTERN_1ARGS_S, key.key_);
-                return patternResult;
-            }
-            else if(key.type_ == common::Value::TYPE_ZSET){
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_ZSET_PATTERN_1ARGS_S, key.key_);
-                return patternResult;
-            }
-            else if(key.type_ == common::Value::TYPE_HASH){
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_HASH_PATTERN_1ARGS_S, key.key_);
-                return patternResult;
-            }
-            else{
-                common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, key.key_);
-                return patternResult;
-            }
-        }
-        else if(type == CommandKey::C_DELETE){
-            char patternResult[1024] = {0};
-            common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, key.key_);
-            return patternResult;
-        }
-        else{
-            return std::string();
-        }
-    }
-
     const char* RedisDriver::versionApi()
     {
         return REDIS_VERSION;
@@ -2086,16 +2060,20 @@ namespace fastoredis
         QObject *sender = ev->sender();
         notifyProgress(sender, 0);
             events::CommandResponceEvent::value_type res(ev->value());
-
-            CommandKey::cmdtype t =  res.cmd_.type();
-            NKey key = res.cmd_.key();
-            std::string cmdtext = commandByType(t, key);
+            std::string cmdtext;
+            common::ErrorValueSPtr er = commandByType(res.cmd_, cmdtext);
+            if(er){
+                res.setErrorInfo(er);
+                reply(sender, new events::CommandResponceEvent(this, res));
+                notifyProgress(sender, 100);
+                return;
+            }
 
             RootLocker lock = make_locker(sender, cmdtext);
             FastoObjectIPtr root = lock.root_;
             RedisCommand* cmd = createCommand(root, cmdtext, common::Value::C_INNER);
         notifyProgress(sender, 50);
-            common::ErrorValueSPtr er = impl_->execute(cmd);
+            er = impl_->execute(cmd);
             if(er){
                 res.setErrorInfo(er);
             }
@@ -2328,6 +2306,65 @@ namespace fastoredis
         notifyProgress(sender, 75);
             reply(sender, new events::ChangeServerPropertyInfoResponceEvent(this, res));
         notifyProgress(sender, 100);
+    }
+
+    common::ErrorValueSPtr RedisDriver::commandDeleteImpl(CommandDeleteKey* command, std::string& cmdstring) const
+    {
+        char patternResult[1024] = {0};
+        const NKey key = command->key();
+        common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, key.key_);
+        cmdstring = patternResult;
+
+        return common::ErrorValueSPtr();
+    }
+
+    common::ErrorValueSPtr RedisDriver::commandLoadImpl(CommandLoadKey* command, std::string& cmdstring) const
+    {
+        char patternResult[1024] = {0};
+        const NKey key = command->key();
+        if(key.type_ == common::Value::TYPE_ARRAY){
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_LIST_PATTERN_1ARGS_S, key.key_);
+        }
+        else if(key.type_ == common::Value::TYPE_SET){
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_SET_PATTERN_1ARGS_S, key.key_);
+        }
+        else if(key.type_ == common::Value::TYPE_ZSET){
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_ZSET_PATTERN_1ARGS_S, key.key_);
+        }
+        else if(key.type_ == common::Value::TYPE_HASH){
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_HASH_PATTERN_1ARGS_S, key.key_);
+        }
+        else{
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, key.key_);\
+        }
+        cmdstring = patternResult;
+
+        return common::ErrorValueSPtr();
+    }
+
+    common::ErrorValueSPtr RedisDriver::commandCreateImpl(CommandCreateKey* command, std::string& cmdstring) const
+    {
+        char patternResult[1024] = {0};
+        const NKey key = command->key();
+        FastoObjectIPtr val = command->value();
+        if(key.type_ == common::Value::TYPE_ARRAY){
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_LIST_PATTERN_2ARGS_SS, key.key_, val->toString());
+        }
+        else if(key.type_ == common::Value::TYPE_SET){
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_SET_PATTERN_2ARGS_SS, key.key_, val->toString());
+        }
+        else if(key.type_ == common::Value::TYPE_ZSET){
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_ZSET_PATTERN_2ARGS_SS, key.key_, val->toString());
+        }
+        else if(key.type_ == common::Value::TYPE_HASH){
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_HASH_PATTERN_2ARGS_SS, key.key_, val->toString());
+        }
+        else{
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_PATTERN_2ARGS_SS, key.key_, val->toString());\
+        }
+        cmdstring = patternResult;
+
+        return common::ErrorValueSPtr();
     }
 
     void RedisDriver::handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev)

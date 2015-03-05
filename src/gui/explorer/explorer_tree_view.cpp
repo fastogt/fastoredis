@@ -12,6 +12,7 @@
 #include "gui/dialogs/property_server_dialog.h"
 #include "gui/dialogs/history_server_dialog.h"
 #include "gui/dialogs/load_contentdb_dialog.h"
+#include "gui/dialogs/create_dbkey_dialog.h"
 
 #include "common/qt/convert_string.h"
 
@@ -61,6 +62,9 @@ namespace fastoredis
 
         setDefaultDbAction_ = new QAction(this);
         VERIFY(connect(setDefaultDbAction_, &QAction::triggered, this, &ExplorerTreeView::setDefaultDb));
+
+        createKeyAction_ = new QAction(this);
+        VERIFY(connect(createKeyAction_, &QAction::triggered, this, &ExplorerTreeView::createKey));
 
         getValueAction_ = new QAction(this);
         VERIFY(connect(getValueAction_, &QAction::triggered, this, &ExplorerTreeView::getValue));
@@ -119,6 +123,9 @@ namespace fastoredis
                 menu.addAction(loadContentAction_);
                 bool isDefault = db && db->isDefault();
                 loadContentAction_->setEnabled(isDefault);
+
+                menu.addAction(createKeyAction_);
+                createKeyAction_->setEnabled(isDefault);
 
                 menu.addAction(setDefaultDbAction_);
                 setDefaultDbAction_->setEnabled(!isDefault);
@@ -211,6 +218,25 @@ namespace fastoredis
         ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
         if(node){
             node->setDefault();
+        }
+    }
+
+    void ExplorerTreeView::createKey()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+        if(node){
+            CreateDbKeyDialog loadDb(QString("Create key for %1 database").arg(node->name()), node->server()->type(), this);
+            int result = loadDb.exec();
+            if(result == QDialog::Accepted){
+                FastoObjectIPtr val = loadDb.value();
+                NKey key = loadDb.key();
+                node->createKey(key, val);
+            }
         }
     }
 
@@ -327,6 +353,7 @@ namespace fastoredis
         shutdownAction_->setText(trShutdown);
 
         loadContentAction_->setText(trLoadContOfDataBases);
+        createKeyAction_->setText(trCreateKey);
         setDefaultDbAction_->setText(trSetDefault);
         getValueAction_->setText(trValue);
         deleteKeyAction_->setText(trDelete);
@@ -448,9 +475,9 @@ namespace fastoredis
             return;
         }
 
-        CommandKey key = res.cmd_;
-        if(key.type() == CommandKey::C_DELETE){
-            mod->removeKey(serv, res.inf_, key.key());
+        CommandKeySPtr key = res.cmd_;
+        if(key->type() == CommandKey::C_DELETE){
+            mod->removeKey(serv, res.inf_, key->key());
         }
     }
 

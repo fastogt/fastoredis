@@ -13,6 +13,12 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
+        enum
+        {
+            min_height = 120,
+            min_width = 240
+        };
+
         explicit LoadContentDbDialog(const QString& title, connectionTypes type, QWidget* parent = 0);
         uint32_t count() const;
         QString pattern() const;
