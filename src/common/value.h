@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <set>
+#include <map>
 
 #include "common/log_levels.h"
 #include "common/types.h"
@@ -10,6 +12,8 @@ namespace common
 {
     class FundamentalValue;
     class ArrayValue;
+    class SetValue;
+    class ZSetValue;
     class StringValue;
     class ErrorValue;
     class CommandValue;
@@ -45,6 +49,8 @@ namespace common
         static FundamentalValue* createDoubleValue(double in_value);
         static StringValue* createStringValue(const std::string& in_value);
         static ArrayValue* createArrayValue();
+        static SetValue* createSetValue();
+        static ZSetValue* createZSetValue();
         static CommandValue* createCommand(const std::string& src, const std::string& oppositeCommand, CommandType type);
         static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
@@ -198,6 +204,79 @@ namespace common
     private:
 		DISALLOW_COPY_AND_ASSIGN(ArrayValue);
         ValueVector list_;
+    };
+
+    class SetValue
+            : public Value
+    {
+    public:
+        typedef std::set<Value*> ValueSet;
+
+        typedef ValueSet::iterator iterator;
+        typedef ValueSet::const_iterator const_iterator;
+
+        SetValue();
+        virtual ~SetValue();
+
+        virtual std::string toString() const;
+        void clear();
+
+        size_t getSize() const { return set_.size(); }
+
+        // Returns whether the list is empty.
+        bool empty() const { return set_.empty(); }
+
+        void insertString(const std::string &in_value);
+
+        // Insert a Value to the set.
+        bool insert(Value* in_value);
+
+        // Iteration.
+        iterator begin() { return set_.begin(); }
+        iterator end() { return set_.end(); }
+
+        const_iterator begin() const { return set_.begin(); }
+        const_iterator end() const { return set_.end(); }
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(SetValue);
+        ValueSet set_;
+    };
+
+    class ZSetValue
+            : public Value
+    {
+    public:
+        typedef std::map<Value*, Value*> ValueZSet;
+
+        typedef ValueZSet::iterator iterator;
+        typedef ValueZSet::const_iterator const_iterator;
+        typedef ValueZSet::value_type value_type;
+
+        ZSetValue();
+        virtual ~ZSetValue();
+
+        virtual std::string toString() const;
+        void clear();
+
+        size_t getSize() const { return map_.size(); }
+
+        // Returns whether the list is empty.
+        bool empty() const { return map_.empty(); }
+
+        // Insert a Value to the map.
+        bool insert(Value* key, Value* value);
+
+        // Iteration.
+        iterator begin() { return map_.begin(); }
+        iterator end() { return map_.end(); }
+
+        const_iterator begin() const { return map_.begin(); }
+        const_iterator end() const { return map_.end(); }
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(ZSetValue);
+        ValueZSet map_;
     };
 
     class CommandValue

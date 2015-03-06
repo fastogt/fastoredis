@@ -85,6 +85,17 @@ namespace common
         return new ArrayValue;
     }
 
+    // static
+    SetValue* Value::createSetValue()
+    {
+        return new SetValue;
+    }
+
+    ZSetValue* Value::createZSetValue()
+    {
+        return new ZSetValue;
+    }
+
     CommandValue* Value::createCommand(const std::string& src, const std::string &oppositeCommand, CommandType type)
     {
         return new CommandValue(src, oppositeCommand, type);
@@ -343,7 +354,8 @@ namespace common
         return getAsString(&lhs) && other->getAsString(&rhs) && lhs == rhs;
     }
 
-    ArrayValue::ArrayValue() : Value(TYPE_ARRAY)
+    ArrayValue::ArrayValue()
+        : Value(TYPE_ARRAY)
     {
 	}
 
@@ -606,10 +618,101 @@ namespace common
         std::string result;
 
         for (ValueVector::const_iterator i(list_.begin()); i != list_.end(); ++i){
+            if(!result.empty()){
+                result += " ";
+            }
             result += (*i)->toString();
         }
 
 		return result;
+    }
+
+    SetValue::SetValue()
+        : Value(TYPE_SET)
+    {
+
+    }
+
+    SetValue::~SetValue()
+    {
+        clear();
+    }
+
+    std::string SetValue::toString() const
+    {
+        std::string result;
+
+        for (ValueSet::const_iterator i(set_.begin()); i != set_.end(); ++i){
+            if(!result.empty()){
+                result += " ";
+            }
+            result += (*i)->toString();
+        }
+
+        return result;
+    }
+
+    void SetValue::clear()
+    {
+        for (ValueSet::iterator i(set_.begin()); i != set_.end(); ++i)
+            delete *i;
+        set_.clear();
+    }
+
+    void SetValue::insertString(const std::string &in_value)
+    {
+        insert(createStringValue(in_value));
+    }
+
+    bool SetValue::insert(Value* in_value)
+    {
+        DCHECK(in_value);
+        if (!in_value)
+            return false;
+
+        set_.insert(in_value);
+        return true;
+    }
+
+    ZSetValue::ZSetValue()
+        : Value(TYPE_ZSET)
+    {
+
+    }
+
+    ZSetValue::~ZSetValue()
+    {
+        clear();
+    }
+
+    std::string ZSetValue::toString() const
+    {
+        std::string result;
+
+        for (ValueZSet::const_iterator i(map_.begin()); i != map_.end(); ++i){
+            ValueZSet::value_type m = *i;
+            if(!result.empty()){
+                result += " ";
+            }
+            result += (m.first)->toString() + " " + (m.second)->toString();
+        }
+
+        return result;
+    }
+
+    void ZSetValue::clear()
+    {
+        for (ValueZSet::iterator i(map_.begin()); i != map_.end(); ++i){
+            ValueZSet::value_type m = *i;
+            delete m.first;
+            delete m.second;
+        }
+        map_.clear();
+    }
+
+    bool ZSetValue::insert(Value* key, Value* value)
+    {
+        map_[key] = value;
     }
 
     CommandValue::CommandValue(const std::string& src, const std::string& oppositeCommand, CommandType ctype)

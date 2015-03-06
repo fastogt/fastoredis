@@ -200,7 +200,31 @@ namespace fastoredis
                 ar->appendString(val);
             }
 
-            return new FastoObjectArray(NULL, ar, std::string());
+            return new FastoObjectArray(NULL, ar, " ");
+        }
+        else if(t == common::Value::TYPE_SET){
+            if(valueListEdit_->count() == 0) {
+                return NULL;
+            }
+            common::SetValue* ar = common::Value::createSetValue();
+            for(int i = 0; i < valueListEdit_->count(); ++i){
+                std::string val = common::convertToString(valueListEdit_->item(i)->text());
+                ar->insertString(val);
+            }
+
+            return new FastoObjectSet(NULL, ar, " ");
+        }
+        else if(t == common::Value::TYPE_SET){
+            if(valueListEdit_->count() == 0) {
+                return NULL;
+            }
+            common::ZSetValue* ar = common::Value::createZSetValue();
+            for(int i = 0; i < valueListEdit_->count(); ++i){
+                //std::string val = common::convertToString(valueListEdit_->item(i)->text());
+                //ar->insertString(val);
+            }
+
+            return new FastoObjectZSet(NULL, ar, " ");
         }
         else{
             QString text = valueEdit_->text();

@@ -77,6 +77,32 @@ namespace fastoredis
         common::ArrayValue* array() const;
     };
 
+    class FastoObjectSet
+            : public FastoObject
+    {
+    public:
+        FastoObjectSet(FastoObject* parent, common::SetValue* ar, const std::string& delemitr);
+
+        // Insert a Value to the set.
+        void insert(common::Value* in_value);
+        virtual std::string toString() const;
+
+        common::SetValue* set() const;
+    };
+
+    class FastoObjectZSet
+            : public FastoObject
+    {
+    public:
+        FastoObjectZSet(FastoObject* parent, common::ZSetValue *ar, const std::string& delemitr);
+
+        // Insert a Value to the map.
+        void insert(common::Value* key, common::Value* value);
+        virtual std::string toString() const;
+
+        common::ZSetValue *zset() const;
+    };
+
     class IFastoObjectObserver
     {
     public:

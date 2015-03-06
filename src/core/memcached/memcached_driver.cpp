@@ -18,8 +18,10 @@ extern "C" {
 
 #define INFO_REQUEST "STATS"
 #define GET_KEYS "STATS ITEMS"
+
 #define DELETE_KEY_PATTERN_1ARGS_S "DELETE %s"
 #define GET_KEY_PATTERN_1ARGS_S "GET %s"
+#define SET_KEY_PATTERN_2ARGS_SS "SET %s 0 0 %s"
 
 namespace
 {
@@ -913,6 +915,11 @@ namespace fastoredis
 
     common::ErrorValueSPtr MemcachedDriver::commandCreateImpl(CommandCreateKey* command, std::string& cmdstring) const
     {
+        char patternResult[1024] = {0};
+        const NKey key = command->key();
+        FastoObjectIPtr val = command->value();
+        common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_PATTERN_2ARGS_SS, key.key_, val->toString());
+        cmdstring = patternResult;
         return common::ErrorValueSPtr();
     }
 

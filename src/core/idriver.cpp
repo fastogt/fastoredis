@@ -105,14 +105,23 @@ namespace fastoredis
 
         if(t == CommandKey::C_DELETE){
             CommandDeleteKey* delc = dynamic_cast<CommandDeleteKey*>(command.get());
+            if(!delc){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
             return commandDeleteImpl(delc, cmdstring);
         }
         else if(t == CommandKey::C_LOAD){
             CommandLoadKey* loadc = dynamic_cast<CommandLoadKey*>(command.get());
+            if(!loadc){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
             return commandLoadImpl(loadc, cmdstring);
         }
         else if(t == CommandKey::C_CREATE){
             CommandCreateKey* createc = dynamic_cast<CommandCreateKey*>(command.get());
+            if(!createc || !createc->value().get()){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
             return commandCreateImpl(createc, cmdstring);
         }
         else{

@@ -18,7 +18,18 @@ extern "C" {
 #define INFO_REQUEST "INFO"
 #define GET_KEYS_PATTERN_1ARGS_I "KEYS a z %d"
 #define DELETE_KEY_PATTERN_1ARGS_S "DEL %s"
+
 #define GET_KEY_PATTERN_1ARGS_S "GET %s"
+#define GET_KEY_LIST_PATTERN_1ARGS_S "LRANGE %s 0 -1"
+#define GET_KEY_SET_PATTERN_1ARGS_S "SMEMBERS %s"
+#define GET_KEY_ZSET_PATTERN_1ARGS_S "ZRANGE %s 0 -1"
+#define GET_KEY_HASH_PATTERN_1ARGS_S "HGET %s"
+
+#define SET_KEY_PATTERN_2ARGS_SS "SET %s %s"
+#define SET_KEY_LIST_PATTERN_2ARGS_SS "LPUSH %s %s"
+#define SET_KEY_SET_PATTERN_2ARGS_SS "SADD %s %s"
+#define SET_KEY_ZSET_PATTERN_2ARGS_SS "ZADD %s %s"
+#define SET_KEY_HASH_PATTERN_2ARGS_SS "HMSET %s %s"
 
 namespace
 {
@@ -1342,6 +1353,7 @@ namespace fastoredis
         const NKey key = command->key();
         common::SNPrintf(patternResult, sizeof(patternResult), DELETE_KEY_PATTERN_1ARGS_S, key.key_);
         cmdstring = patternResult;
+
         return common::ErrorValueSPtr();
     }
 
@@ -1349,13 +1361,48 @@ namespace fastoredis
     {
         char patternResult[1024] = {0};
         const NKey key = command->key();
-        common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, key.key_);
+        if(key.type_ == common::Value::TYPE_ARRAY){
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_LIST_PATTERN_1ARGS_S, key.key_);
+        }
+        else if(key.type_ == common::Value::TYPE_SET){
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_SET_PATTERN_1ARGS_S, key.key_);
+        }
+        else if(key.type_ == common::Value::TYPE_ZSET){
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_ZSET_PATTERN_1ARGS_S, key.key_);
+        }
+        else if(key.type_ == common::Value::TYPE_HASH){
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_HASH_PATTERN_1ARGS_S, key.key_);
+        }
+        else{
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEY_PATTERN_1ARGS_S, key.key_);\
+        }
         cmdstring = patternResult;
+
         return common::ErrorValueSPtr();
     }
 
     common::ErrorValueSPtr SsdbDriver::commandCreateImpl(CommandCreateKey* command, std::string& cmdstring) const
     {
+        char patternResult[1024] = {0};
+        const NKey key = command->key();
+        FastoObjectIPtr val = command->value();
+        if(key.type_ == common::Value::TYPE_ARRAY){
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_LIST_PATTERN_2ARGS_SS, key.key_, val->toString());
+        }
+        else if(key.type_ == common::Value::TYPE_SET){
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_SET_PATTERN_2ARGS_SS, key.key_, val->toString());
+        }
+        else if(key.type_ == common::Value::TYPE_ZSET){
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_ZSET_PATTERN_2ARGS_SS, key.key_, val->toString());
+        }
+        else if(key.type_ == common::Value::TYPE_HASH){
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_HASH_PATTERN_2ARGS_SS, key.key_, val->toString());
+        }
+        else{
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_KEY_PATTERN_2ARGS_SS, key.key_, val->toString());\
+        }
+        cmdstring = patternResult;
+
         return common::ErrorValueSPtr();
     }
      // ============== commands =============//

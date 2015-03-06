@@ -217,11 +217,11 @@ namespace fastoredis
         }
 
         std::string result;
+        const common::ArrayValue::const_iterator lastIt = std::prev(ar->end());
         for(common::ArrayValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
             std::string val = (*it)->toString();
-            common::ArrayValue::const_iterator lastIt = it + 1;
             result += val;
-            if(!val.empty() && lastIt != ar->end()){
+            if(!val.empty() && lastIt != it){
                 result += delemitr();
             }
         }
@@ -231,6 +231,91 @@ namespace fastoredis
     common::ArrayValue* FastoObjectArray::array() const
     {
         return dynamic_cast<common::ArrayValue*>(value_.get());
+    }
+
+    FastoObjectSet::FastoObjectSet(FastoObject* parent, common::SetValue* set, const std::string& delemitr)
+        : FastoObject(parent, set, delemitr)
+    {
+
+    }
+
+    // Insert a Value to the set.
+    void FastoObjectSet::insert(common::Value* in_value)
+    {
+        common::SetValue* ar = set();
+        if(!ar){
+            NOTREACHED();
+            return;
+        }
+
+        ar->insert(in_value);
+    }
+
+    std::string FastoObjectSet::toString() const
+    {
+        common::SetValue* ar = set();
+        if(!ar){
+            return std::string();
+        }
+
+        std::string result;
+        const common::SetValue::const_iterator lastIt = std::prev(ar->end());
+        for(common::SetValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
+            std::string val = (*it)->toString();
+            result += val;
+            if(!val.empty() && lastIt != it){
+                result += delemitr();
+            }
+        }
+        return result;
+    }
+
+    common::SetValue* FastoObjectSet::set() const
+    {
+        return dynamic_cast<common::SetValue*>(value_.get());
+    }
+
+    FastoObjectZSet::FastoObjectZSet(FastoObject* parent, common::ZSetValue* ar, const std::string& delemitr)
+        : FastoObject(parent, ar, delemitr)
+    {
+
+    }
+
+    void FastoObjectZSet::insert(common::Value* key, common::Value* value)
+    {
+        common::ZSetValue* ar = zset();
+        if(!ar){
+            NOTREACHED();
+            return;
+        }
+
+        ar->insert(key, value);
+    }
+
+    std::string FastoObjectZSet::toString() const
+    {
+        common::ZSetValue* ar = zset();
+        if(!ar){
+            return std::string();
+        }
+
+        std::string result;
+        const common::ZSetValue::const_iterator lastIt = std::prev(ar->end());
+        for(common::ZSetValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
+            common::ZSetValue::value_type v = *it;
+            std::string key = (v.first)->toString();
+            std::string val = (v.second)->toString();
+            result += key + " " + val;
+            if(!val.empty() && lastIt != it){
+                result += delemitr();
+            }
+        }
+        return result;
+    }
+
+    common::ZSetValue* FastoObjectZSet::zset() const
+    {
+        return dynamic_cast<common::ZSetValue*>(value_.get());
     }
 }
 
