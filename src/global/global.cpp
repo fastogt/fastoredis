@@ -220,8 +220,12 @@ namespace fastoredis
         const common::ArrayValue::const_iterator lastIt = std::prev(ar->end());
         for(common::ArrayValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
             std::string val = (*it)->toString();
+            if(val.empty()){
+                continue;
+            }
+
             result += val;
-            if(!val.empty() && lastIt != it){
+            if(lastIt != it){
                 result += delemitr();
             }
         }
@@ -262,8 +266,12 @@ namespace fastoredis
         const common::SetValue::const_iterator lastIt = std::prev(ar->end());
         for(common::SetValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
             std::string val = (*it)->toString();
+            if(val.empty()){
+                continue;
+            }
+
             result += val;
-            if(!val.empty() && lastIt != it){
+            if(lastIt != it){
                 result += delemitr();
             }
         }
@@ -305,8 +313,12 @@ namespace fastoredis
             common::ZSetValue::value_type v = *it;
             std::string key = (v.first)->toString();
             std::string val = (v.second)->toString();
+            if(val.empty() || key.empty()){
+                continue;
+            }
+
             result += key + " " + val;
-            if(!val.empty() && lastIt != it){
+            if(lastIt != it){
                 result += delemitr();
             }
         }
@@ -316,6 +328,54 @@ namespace fastoredis
     common::ZSetValue* FastoObjectZSet::zset() const
     {
         return dynamic_cast<common::ZSetValue*>(value_.get());
+    }
+
+    FastoObjectHash::FastoObjectHash(FastoObject* parent, common::HashValue *ar, const std::string& delemitr)
+        : FastoObject(parent, ar, delemitr)
+    {
+
+    }
+
+    // Insert a Value to the map.
+    void FastoObjectHash::insert(common::Value* key, common::Value* value)
+    {
+        common::HashValue* ar = hash();
+        if(!ar){
+            NOTREACHED();
+            return;
+        }
+
+        ar->insert(key, value);
+    }
+
+    std::string FastoObjectHash::toString() const
+    {
+        common::HashValue* ar = hash();
+        if(!ar){
+            return std::string();
+        }
+
+        std::string result;
+        const common::HashValue::const_iterator lastIt = std::prev(ar->end());
+        for(common::HashValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
+            common::HashValue::value_type v = *it;
+            std::string key = (v.first)->toString();
+            std::string val = (v.second)->toString();
+            if(val.empty() || key.empty()){
+                continue;
+            }
+
+            result += key + " " + val;
+            if(lastIt != it){
+                result += delemitr();
+            }
+        }
+        return result;
+    }
+
+    common::HashValue* FastoObjectHash::hash() const
+    {
+        return dynamic_cast<common::HashValue*>(value_.get());
     }
 }
 

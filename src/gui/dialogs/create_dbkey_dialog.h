@@ -7,6 +7,7 @@
 class QLineEdit;
 class QComboBox;
 class QListWidget;
+class QTableWidget;
 class QGroupBox;
 
 namespace fastoredis
@@ -48,6 +49,7 @@ namespace fastoredis
         QComboBox* typesCombo_;
         QLineEdit* valueEdit_;
         QListWidget* valueListEdit_;
+        QTableWidget* valueTableEdit_;
         FastoObjectIPtr value_;
     };
 }

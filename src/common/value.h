@@ -3,6 +3,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <unordered_map>
 
 #include "common/log_levels.h"
 #include "common/types.h"
@@ -17,6 +18,7 @@ namespace common
     class StringValue;
     class ErrorValue;
     class CommandValue;
+    class HashValue;
 
     class Value
     {
@@ -51,6 +53,7 @@ namespace common
         static ArrayValue* createArrayValue();
         static SetValue* createSetValue();
         static ZSetValue* createZSetValue();
+        static HashValue* createHashValue();
         static CommandValue* createCommand(const std::string& src, const std::string& oppositeCommand, CommandType type);
         static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
@@ -277,6 +280,44 @@ namespace common
     private:
         DISALLOW_COPY_AND_ASSIGN(ZSetValue);
         ValueZSet map_;
+    };
+
+    typedef ZSetValue MapValue;
+
+    class HashValue
+            : public Value
+    {
+    public:
+        typedef std::unordered_map<Value*, Value*> ValueHash;
+
+        typedef ValueHash::iterator iterator;
+        typedef ValueHash::const_iterator const_iterator;
+        typedef ValueHash::value_type value_type;
+
+        HashValue();
+        virtual ~HashValue();
+
+        virtual std::string toString() const;
+        void clear();
+
+        size_t getSize() const { return hash_.size(); }
+
+        // Returns whether the list is empty.
+        bool empty() const { return hash_.empty(); }
+
+        // Insert a Value to the map.
+        bool insert(Value* key, Value* value);
+
+        // Iteration.
+        iterator begin() { return hash_.begin(); }
+        iterator end() { return hash_.end(); }
+
+        const_iterator begin() const { return hash_.begin(); }
+        const_iterator end() const { return hash_.end(); }
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(HashValue);
+        ValueHash hash_;
     };
 
     class CommandValue

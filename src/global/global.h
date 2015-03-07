@@ -103,6 +103,19 @@ namespace fastoredis
         common::ZSetValue *zset() const;
     };
 
+    class FastoObjectHash
+            : public FastoObject
+    {
+    public:
+        FastoObjectHash(FastoObject* parent, common::HashValue *ar, const std::string& delemitr);
+
+        // Insert a Value to the map.
+        void insert(common::Value* key, common::Value* value);
+        virtual std::string toString() const;
+
+        common::HashValue* hash() const;
+    };
+
     class IFastoObjectObserver
     {
     public:

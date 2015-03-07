@@ -6,6 +6,8 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QListWidget>
+#include <QTableWidget>
+#include <QHeaderView>
 #include <QPushButton>
 #include <QMenu>
 #include <QInputDialog>
@@ -75,22 +77,34 @@ namespace fastoredis
         kvLayout->addWidget(new QLabel(tr("Value:")), 2, 0);
         valueEdit_ = new QLineEdit;
         kvLayout->addWidget(valueEdit_, 2, 1);
-        valueEdit_->setVisible(false);
+        valueEdit_->setVisible(true);
 
         valueListEdit_ = new QListWidget;
         valueListEdit_->setContextMenuPolicy(Qt::ActionsContextMenu);
         valueListEdit_->setSelectionMode(QAbstractItemView::SingleSelection);
 
-        QAction* addItem = new QAction(trAddItem, valueListEdit_);
+        QAction* addItem = new QAction(trAddItem, this);
         VERIFY(connect(addItem, &QAction::triggered, this, &CreateDbKeyDialog::addItem));
         valueListEdit_->addAction(addItem);
 
-        QAction* removeItem = new QAction(trRemoveItem, valueListEdit_);
+        QAction* removeItem = new QAction(trRemoveItem, this);
         VERIFY(connect(removeItem, &QAction::triggered, this, &CreateDbKeyDialog::removeItem));
         valueListEdit_->addAction(removeItem);
 
         kvLayout->addWidget(valueListEdit_, 2, 1);
         valueListEdit_->setVisible(false);
+
+        valueTableEdit_ = new QTableWidget(0, 2);
+        valueTableEdit_->setContextMenuPolicy(Qt::ActionsContextMenu);
+        valueTableEdit_->setSelectionBehavior(QAbstractItemView::SelectRows);
+        valueTableEdit_->verticalHeader()->hide();
+        valueTableEdit_->horizontalHeader()->hide();
+
+        valueTableEdit_->addAction(addItem);
+        valueTableEdit_->addAction(removeItem);
+
+        kvLayout->addWidget(valueTableEdit_, 2, 1);
+        valueTableEdit_->setVisible(false);
 
         generalBox_ = new QGroupBox;
         generalBox_->setLayout(kvLayout);
@@ -143,13 +157,20 @@ namespace fastoredis
     {
         QVariant var = typesCombo_->itemData(index);
         common::Value::Type t = (common::Value::Type)qvariant_cast<unsigned char>(var);
-        if(t == common::Value::TYPE_ARRAY){
+        if(t == common::Value::TYPE_ARRAY || t == common::Value::TYPE_SET){
             valueListEdit_->setVisible(true);
             valueEdit_->setVisible(false);
+            valueTableEdit_->setVisible(false);
+        }
+        else if(t == common::Value::TYPE_ZSET || t == common::Value::TYPE_HASH){
+            valueTableEdit_->setVisible(true);
+            valueEdit_->setVisible(false);
+            valueListEdit_->setVisible(false);
         }
         else{
             valueEdit_->setVisible(true);
             valueListEdit_->setVisible(false);
+            valueTableEdit_->setVisible(false);
         }
     }
 
@@ -173,16 +194,40 @@ namespace fastoredis
         bool ok;
         QString text = QInputDialog::getText(this, trAddItem, trValue, QLineEdit::Normal, QString(), &ok);
         if (ok && !text.isEmpty()){
-            QListWidgetItem* nitem = new QListWidgetItem(text, valueListEdit_);
-            nitem->setFlags(nitem->flags() | Qt::ItemIsEditable);
-            valueListEdit_->addItem(nitem);
+            if(valueListEdit_->isVisible()){
+                QListWidgetItem* nitem = new QListWidgetItem(text, valueListEdit_);
+                nitem->setFlags(nitem->flags() | Qt::ItemIsEditable);
+                valueListEdit_->addItem(nitem);
+            }
+            else{
+                QTableWidgetItem* kitem = new QTableWidgetItem(text);
+                kitem->setFlags(kitem->flags() | Qt::ItemIsEditable);
+
+                QTableWidgetItem* vitem = new QTableWidgetItem(text);
+                vitem->setFlags(vitem->flags() | Qt::ItemIsEditable);
+
+                valueTableEdit_->insertRow(0);
+                valueTableEdit_->setItem(0, 0, kitem);
+                valueTableEdit_->setItem(0, 1, vitem);
+            }
         }
     }
 
     void CreateDbKeyDialog::removeItem()
     {
-        QListWidgetItem* ritem = valueListEdit_->currentItem();
-        delete ritem;
+        if(valueListEdit_->isVisible()){
+            QListWidgetItem* ritem = valueListEdit_->currentItem();
+            delete ritem;
+        }
+        else{
+            int row = valueTableEdit_->currentRow();
+
+            QTableWidgetItem* kitem = valueTableEdit_->item(row, 0);
+            delete kitem;
+
+            QTableWidgetItem* vitem = valueTableEdit_->item(row, 1);
+            delete vitem;
+        }
     }
 
     FastoObject* CreateDbKeyDialog::getItem() const
@@ -214,17 +259,29 @@ namespace fastoredis
 
             return new FastoObjectSet(NULL, ar, " ");
         }
-        else if(t == common::Value::TYPE_SET){
+        else if(t == common::Value::TYPE_ZSET){
             if(valueListEdit_->count() == 0) {
                 return NULL;
             }
             common::ZSetValue* ar = common::Value::createZSetValue();
             for(int i = 0; i < valueListEdit_->count(); ++i){
-                //std::string val = common::convertToString(valueListEdit_->item(i)->text());
+                //std::string val = common::convertToString(valueTableEdit_->item(i)->text());
                 //ar->insertString(val);
             }
 
             return new FastoObjectZSet(NULL, ar, " ");
+        }
+        else if(t == common::Value::TYPE_HASH){
+            if(valueListEdit_->count() == 0) {
+                return NULL;
+            }
+            common::HashValue* ar = common::Value::createHashValue();
+            for(int i = 0; i < valueListEdit_->count(); ++i){
+                //std::string val = common::convertToString(valueTableEdit_->item(i)->text());
+                //ar->insertString(val);
+            }
+
+            return new FastoObjectHash(NULL, ar, " ");
         }
         else{
             QString text = valueEdit_->text();

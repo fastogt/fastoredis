@@ -96,6 +96,11 @@ namespace common
         return new ZSetValue;
     }
 
+    HashValue* Value::createHashValue()
+    {
+        return new HashValue;
+    }
+
     CommandValue* Value::createCommand(const std::string& src, const std::string &oppositeCommand, CommandType type)
     {
         return new CommandValue(src, oppositeCommand, type);
@@ -617,11 +622,17 @@ namespace common
 	{
         std::string result;
 
-        for (ValueVector::const_iterator i(list_.begin()); i != list_.end(); ++i){
-            if(!result.empty()){
-                result += " ";
+        const const_iterator lastIt = std::prev(list_.end());
+        for (const_iterator i(list_.begin()); i != list_.end(); ++i){
+            std::string val = (*i)->toString();
+            if(val.empty()){
+                continue;
             }
-            result += (*i)->toString();
+
+            result += val;
+            if(i != lastIt){
+                result += val;
+            }
         }
 
 		return result;
@@ -642,11 +653,17 @@ namespace common
     {
         std::string result;
 
-        for (ValueSet::const_iterator i(set_.begin()); i != set_.end(); ++i){
-            if(!result.empty()){
-                result += " ";
+        const const_iterator lastIt = std::prev(set_.end());
+        for (const_iterator i(set_.begin()); i != set_.end(); ++i){
+            std::string val = (*i)->toString();
+            if(val.empty()){
+                continue;
             }
-            result += (*i)->toString();
+
+            result += val;
+            if(i != lastIt){
+                result += val;
+            }
         }
 
         return result;
@@ -689,12 +706,19 @@ namespace common
     {
         std::string result;
 
-        for (ValueZSet::const_iterator i(map_.begin()); i != map_.end(); ++i){
-            ValueZSet::value_type m = *i;
-            if(!result.empty()){
-                result += " ";
+        const const_iterator lastIt = std::prev(map_.end());
+        for (const_iterator i(map_.begin()); i != map_.end(); ++i){
+            value_type m = *i;
+            std::string key = (m.first)->toString();
+            std::string val = (m.second)->toString();
+            if(val.empty() || key.empty()){
+                continue;
             }
-            result += (m.first)->toString() + " " + (m.second)->toString();
+
+            result += val;
+            if(i != lastIt){
+                result += key + " " + val;
+            }
         }
 
         return result;
@@ -713,6 +737,53 @@ namespace common
     bool ZSetValue::insert(Value* key, Value* value)
     {
         map_[key] = value;
+    }
+
+    HashValue::HashValue()
+        : Value(TYPE_HASH)
+    {
+
+    }
+
+    HashValue::~HashValue()
+    {
+        clear();
+    }
+
+    std::string HashValue::toString() const
+    {
+        std::string result;
+        const const_iterator lastIt = std::prev(hash_.end());
+        for(const_iterator i(hash_.begin()); i != hash_.end(); ++i){
+            value_type m = *i;
+            std::string key = (m.first)->toString();
+            std::string val = (m.second)->toString();
+            if(val.empty() || key.empty()){
+                continue;
+            }
+
+            result += val;
+            if(i != lastIt){
+                result += key + " " + val;
+            }
+        }
+
+        return result;
+    }
+
+    void HashValue::clear()
+    {
+        for (iterator i(hash_.begin()); i != hash_.end(); ++i){
+            value_type m = *i;
+            delete m.first;
+            delete m.second;
+        }
+        hash_.clear();
+    }
+
+    bool HashValue::insert(Value* key, Value* value)
+    {
+        hash_[key] = value;
     }
 
     CommandValue::CommandValue(const std::string& src, const std::string& oppositeCommand, CommandType ctype)
