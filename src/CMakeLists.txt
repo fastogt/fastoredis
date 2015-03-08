@@ -18,6 +18,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/explorer/explorer_tree_view.h
     gui/explorer/explorer_tree_model.h
     gui/dialogs/about_dialog.h
+    gui/dialogs/input_dialog.h
     gui/dialogs/info_server_dialog.h
     gui/dialogs/history_server_dialog.h
     gui/dialogs/property_server_dialog.h
@@ -63,6 +64,7 @@ SET(SOURCES_GUI
     gui/widgets/commands_widget.cpp
     gui/property_table_model.cpp
     gui/dialogs/about_dialog.cpp
+    gui/dialogs/input_dialog.cpp
     gui/dialogs/preferences_dialog.cpp
     gui/dialogs/connections_dialog.cpp
     gui/dialogs/connection_dialog.cpp

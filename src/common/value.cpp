@@ -582,8 +582,10 @@ namespace common
 
     bool ArrayValue::getAsList(const ArrayValue** out_value) const
     {
-        if (out_value)
+        if (out_value){
             *out_value = this;
+        }
+
         return true;
 	}
 
@@ -600,8 +602,9 @@ namespace common
 
     bool ArrayValue::equals(const Value* other) const
     {
-        if (other->getType() != getType())
+        if (other->getType() != getType()){
             return false;
+        }
 
         const ArrayValue* other_list =
         static_cast<const ArrayValue*>(other);
@@ -612,8 +615,9 @@ namespace common
         if (!(*lhs_it)->equals(*rhs_it))
             return false;
         }
-        if (lhs_it != end() || rhs_it != other_list->end())
+        if (lhs_it != end() || rhs_it != other_list->end()){
             return false;
+        }
 
         return true;
 	}
@@ -671,12 +675,14 @@ namespace common
 
     void SetValue::clear()
     {
-        for (ValueSet::iterator i(set_.begin()); i != set_.end(); ++i)
+        for (ValueSet::iterator i(set_.begin()); i != set_.end(); ++i){
             delete *i;
+        }
+
         set_.clear();
     }
 
-    void SetValue::insertString(const std::string &in_value)
+    void SetValue::insert(const std::string &in_value)
     {
         insert(createStringValue(in_value));
     }
@@ -684,8 +690,9 @@ namespace common
     bool SetValue::insert(Value* in_value)
     {
         DCHECK(in_value);
-        if (!in_value)
+        if (!in_value){
             return false;
+        }
 
         set_.insert(in_value);
         return true;
@@ -736,7 +743,17 @@ namespace common
 
     bool ZSetValue::insert(Value* key, Value* value)
     {
+        if(!key || !value){
+            return false;
+        }
+
         map_[key] = value;
+        return true;
+    }
+
+    void ZSetValue::insert(const std::string& key, const std::string& value)
+    {
+        insert(common::Value::createStringValue(key), common::Value::createStringValue(value));
     }
 
     HashValue::HashValue()
@@ -783,7 +800,17 @@ namespace common
 
     bool HashValue::insert(Value* key, Value* value)
     {
+        if(!key || !value){
+            return false;
+        }
+
         hash_[key] = value;
+        return true;
+    }
+
+    void HashValue::insert(const std::string& key, const std::string& value)
+    {
+        insert(common::Value::createStringValue(key), common::Value::createStringValue(value));
     }
 
     CommandValue::CommandValue(const std::string& src, const std::string& oppositeCommand, CommandType ctype)

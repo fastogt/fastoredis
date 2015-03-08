@@ -229,10 +229,9 @@ namespace common
         // Returns whether the list is empty.
         bool empty() const { return set_.empty(); }
 
-        void insertString(const std::string &in_value);
-
         // Insert a Value to the set.
         bool insert(Value* in_value);
+        void insert(const std::string &in_value);
 
         // Iteration.
         iterator begin() { return set_.begin(); }
@@ -269,6 +268,7 @@ namespace common
 
         // Insert a Value to the map.
         bool insert(Value* key, Value* value);
+        void insert(const std::string& key, const std::string& value);
 
         // Iteration.
         iterator begin() { return map_.begin(); }
@@ -307,6 +307,7 @@ namespace common
 
         // Insert a Value to the map.
         bool insert(Value* key, Value* value);
+        void insert(const std::string& key, const std::string& value);
 
         // Iteration.
         iterator begin() { return hash_.begin(); }

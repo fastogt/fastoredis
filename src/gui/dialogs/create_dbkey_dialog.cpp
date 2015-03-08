@@ -10,13 +10,15 @@
 #include <QHeaderView>
 #include <QPushButton>
 #include <QMenu>
-#include <QInputDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QEvent>
 
 #include "common/qt/convert_string.h"
+
 #include "gui/gui_factory.h"
+#include "gui/dialogs/input_dialog.h"
+
 #include "translations/global.h"
 
 #include "core/redis/redis_infos.h"
@@ -157,6 +159,8 @@ namespace fastoredis
     {
         QVariant var = typesCombo_->itemData(index);
         common::Value::Type t = (common::Value::Type)qvariant_cast<unsigned char>(var);
+        valueEdit_->clear();
+
         if(t == common::Value::TYPE_ARRAY || t == common::Value::TYPE_SET){
             valueListEdit_->setVisible(true);
             valueEdit_->setVisible(false);
@@ -167,10 +171,22 @@ namespace fastoredis
             valueEdit_->setVisible(false);
             valueListEdit_->setVisible(false);
         }
-        else{
+        else{            
             valueEdit_->setVisible(true);
             valueListEdit_->setVisible(false);
             valueTableEdit_->setVisible(false);
+            if(t == common::Value::TYPE_INTEGER || t == common::Value::TYPE_UINTEGER){
+                QRegExp rx("\\d+");//(0-65554)
+                valueEdit_->setValidator(new QRegExpValidator(rx, this));
+            }
+            else if(t == common::Value::TYPE_BOOLEAN){
+                QRegExp rx("true|false");//
+                valueEdit_->setValidator(new QRegExpValidator(rx, this));
+            }
+            else{
+                QRegExp rx("*");//
+                valueEdit_->setValidator(new QRegExpValidator(rx, this));
+            }
         }
     }
 
@@ -191,24 +207,44 @@ namespace fastoredis
     {
         using namespace translations;
 
-        bool ok;
-        QString text = QInputDialog::getText(this, trAddItem, trValue, QLineEdit::Normal, QString(), &ok);
-        if (ok && !text.isEmpty()){
-            if(valueListEdit_->isVisible()){
+        if(valueListEdit_->isVisible()){
+            InputDialog diag(this, trAddItem, InputDialog::SingleLine, trValue);
+            int result = diag.exec();
+            if(result != QDialog::Accepted){
+                return;
+            }
+
+            QString text = diag.firstText();
+            if(!text.isEmpty()){
                 QListWidgetItem* nitem = new QListWidgetItem(text, valueListEdit_);
                 nitem->setFlags(nitem->flags() | Qt::ItemIsEditable);
                 valueListEdit_->addItem(nitem);
             }
-            else{
-                QTableWidgetItem* kitem = new QTableWidgetItem(text);
-                kitem->setFlags(kitem->flags() | Qt::ItemIsEditable);
+        }
+        else{
+            int index = typesCombo_->currentIndex();
+            QVariant var = typesCombo_->itemData(index);
+            common::Value::Type t = (common::Value::Type)qvariant_cast<unsigned char>(var);
 
-                QTableWidgetItem* vitem = new QTableWidgetItem(text);
-                vitem->setFlags(vitem->flags() | Qt::ItemIsEditable);
+            InputDialog diag(this, trAddItem, InputDialog::DoubleLine, t == common::Value::TYPE_HASH ? trField : trScore, trValue);
+            int result = diag.exec();
+            if(result != QDialog::Accepted){
+                return;
+            }
+
+            QString ftext = diag.firstText();
+            QString stext = diag.secondText();
+
+            if(!ftext.isEmpty() && !stext.isEmpty()){
+                QTableWidgetItem* fitem = new QTableWidgetItem(ftext);
+                fitem->setFlags(fitem->flags() | Qt::ItemIsEditable);
+
+                QTableWidgetItem* sitem = new QTableWidgetItem(stext);
+                sitem->setFlags(sitem->flags() | Qt::ItemIsEditable);
 
                 valueTableEdit_->insertRow(0);
-                valueTableEdit_->setItem(0, 0, kitem);
-                valueTableEdit_->setItem(0, 1, vitem);
+                valueTableEdit_->setItem(0, 0, fitem);
+                valueTableEdit_->setItem(0, 1, sitem);
             }
         }
     }
@@ -254,31 +290,41 @@ namespace fastoredis
             common::SetValue* ar = common::Value::createSetValue();
             for(int i = 0; i < valueListEdit_->count(); ++i){
                 std::string val = common::convertToString(valueListEdit_->item(i)->text());
-                ar->insertString(val);
+                ar->insert(val);
             }
 
             return new FastoObjectSet(NULL, ar, " ");
         }
         else if(t == common::Value::TYPE_ZSET){
-            if(valueListEdit_->count() == 0) {
+            if(valueTableEdit_->rowCount() == 0) {
                 return NULL;
             }
+
             common::ZSetValue* ar = common::Value::createZSetValue();
-            for(int i = 0; i < valueListEdit_->count(); ++i){
-                //std::string val = common::convertToString(valueTableEdit_->item(i)->text());
-                //ar->insertString(val);
+            for(int i = 0; i < valueTableEdit_->rowCount(); ++i){
+                QTableWidgetItem* kitem = valueTableEdit_->item(i, 0);
+                QTableWidgetItem* vitem = valueTableEdit_->item(i, 0);
+
+                std::string key = common::convertToString(kitem->text());
+                std::string val = common::convertToString(vitem->text());
+                ar->insert(key, val);
             }
 
             return new FastoObjectZSet(NULL, ar, " ");
         }
         else if(t == common::Value::TYPE_HASH){
-            if(valueListEdit_->count() == 0) {
+            if(valueTableEdit_->rowCount() == 0) {
                 return NULL;
             }
+
             common::HashValue* ar = common::Value::createHashValue();
-            for(int i = 0; i < valueListEdit_->count(); ++i){
-                //std::string val = common::convertToString(valueTableEdit_->item(i)->text());
-                //ar->insertString(val);
+            for(int i = 0; i < valueTableEdit_->rowCount(); ++i){
+                QTableWidgetItem* kitem = valueTableEdit_->item(i, 0);
+                QTableWidgetItem* vitem = valueTableEdit_->item(i, 0);
+
+                std::string key = common::convertToString(kitem->text());
+                std::string val = common::convertToString(vitem->text());
+                ar->insert(key, val);
             }
 
             return new FastoObjectHash(NULL, ar, " ");

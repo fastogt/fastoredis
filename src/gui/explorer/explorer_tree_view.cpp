@@ -479,6 +479,9 @@ namespace fastoredis
         if(key->type() == CommandKey::C_DELETE){
             mod->removeKey(serv, res.inf_, key->key());
         }
+        else if(key->type() == CommandKey::C_CREATE){
+            mod->addKey(serv, res.inf_, key->key());
+        }
     }
 
     QModelIndexList ExplorerTreeView::selectedIndexes() const
