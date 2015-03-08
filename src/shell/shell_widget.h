@@ -20,6 +20,7 @@ namespace fastoredis
         Q_OBJECT
     public:
         BaseShellWidget(IServerSPtr server, const QString& filePath = QString(), QWidget* parent = 0);
+        virtual ~BaseShellWidget();
 
         IServerSPtr server() const;
         QString text() const;

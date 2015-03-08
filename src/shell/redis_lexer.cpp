@@ -76,22 +76,6 @@ namespace fastoredis
         return QString(style);
     }
 
-    QColor RedisLexer::defaultColor(int style) const
-    {
-        switch(style) {
-            case Default:
-                return Qt::black;
-            case Command:
-                return Qt::red;
-            case Types:
-                return Qt::blue;
-            case HelpKeyword:
-                return Qt::red;
-        }
-
-        return Qt::black;
-    }
-
     void RedisLexer::styleText(int start, int end)
     {
         if(!editor()){
@@ -119,6 +103,22 @@ namespace fastoredis
             setStyling(help.length(), HelpKeyword);
             startStyling(start + begin);
         }
+    }
+
+    QColor RedisLexer::defaultColor(int style) const
+    {
+        switch(style) {
+            case Default:
+                return Qt::black;
+            case Command:
+                return Qt::red;
+            case Types:
+                return Qt::blue;
+            case HelpKeyword:
+                return Qt::red;
+        }
+
+        return Qt::black;
     }
 
     void RedisLexer::paintCommands(const QString& source, int start)

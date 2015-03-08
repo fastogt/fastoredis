@@ -191,47 +191,14 @@ namespace fastoredis
         syncConnectionActions();
     }
 
-    void BaseShellWidget::enterMode(const EventsInfo::EnterModeInfo& res)
-    {
-        ConnectionMode mode = res.mode_;
-        connectionMode_->setIcon(GuiFactory::instance().modeIcon(mode), iconSize);
-        std::string modeText = common::convertToString(mode);
-        connectionMode_->setText(common::convertFromString<QString>(modeText));
-    }
-
-    void BaseShellWidget::leaveMode(const EventsInfo::LeaveModeInfo& res)
+    BaseShellWidget::~BaseShellWidget()
     {
 
-    }
-
-    void BaseShellWidget::execute()
-    {
-        QString selected = input_->selectedText();
-        if(selected.isEmpty()){
-            selected = input_->text();
-        }
-
-        server_->execute(selected);
     }
 
     QString BaseShellWidget::text() const
     {
         return input_->text();
-    }
-
-    void BaseShellWidget::stop()
-    {
-        server_->stopCurrentEvent();
-    }
-
-    void BaseShellWidget::connectToServer()
-    {
-        server_->connect();
-    }
-
-    void BaseShellWidget::disconnectFromServer()
-    {
-        server_->disconnect();
     }
 
     IServerSPtr BaseShellWidget::server() const
@@ -250,36 +217,29 @@ namespace fastoredis
         execute();
     }
 
-    void BaseShellWidget::syncConnectionActions()
+    void BaseShellWidget::execute()
     {
-        connectAction_->setVisible(!server_->isConnected());
-        disConnectAction_->setVisible(server_->isConnected());
-        executeAction_->setEnabled(server_->isConnected());
+        QString selected = input_->selectedText();
+        if(selected.isEmpty()){
+            selected = input_->text();
+        }
+
+        server_->execute(selected);
     }
 
-    void BaseShellWidget::startConnect(const EventsInfo::ConnectInfoRequest& req)
+    void BaseShellWidget::stop()
     {
-        syncConnectionActions();
+        server_->stopCurrentEvent();
     }
 
-    void BaseShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce& res)
+    void BaseShellWidget::connectToServer()
     {
-        syncConnectionActions();
+        server_->connect();
     }
 
-    void BaseShellWidget::startDisconnect(const EventsInfo::DisonnectInfoRequest& req)
+    void BaseShellWidget::disconnectFromServer()
     {
-        syncConnectionActions();
-    }
-
-    void BaseShellWidget::finishDisconnect(const EventsInfo::DisConnectInfoResponce& res)
-    {
-        syncConnectionActions();
-    }
-
-    void BaseShellWidget::progressChange(const EventsInfo::ProgressInfoResponce& res)
-    {
-        workProgressBar_->setValue(res.progress_);
+        server_->disconnect();
     }
 
     void BaseShellWidget::loadFromFile()
@@ -319,5 +279,50 @@ namespace fastoredis
         else {
             saveToFileText(filePath_, text(), this);
         }
+    }
+
+    void BaseShellWidget::startConnect(const EventsInfo::ConnectInfoRequest& req)
+    {
+        syncConnectionActions();
+    }
+
+    void BaseShellWidget::finishConnect(const EventsInfo::ConnectInfoResponce& res)
+    {
+        syncConnectionActions();
+    }
+
+    void BaseShellWidget::startDisconnect(const EventsInfo::DisonnectInfoRequest& req)
+    {
+        syncConnectionActions();
+    }
+
+    void BaseShellWidget::finishDisconnect(const EventsInfo::DisConnectInfoResponce& res)
+    {
+        syncConnectionActions();
+    }
+
+    void BaseShellWidget::progressChange(const EventsInfo::ProgressInfoResponce& res)
+    {
+        workProgressBar_->setValue(res.progress_);
+    }
+
+    void BaseShellWidget::enterMode(const EventsInfo::EnterModeInfo& res)
+    {
+        ConnectionMode mode = res.mode_;
+        connectionMode_->setIcon(GuiFactory::instance().modeIcon(mode), iconSize);
+        std::string modeText = common::convertToString(mode);
+        connectionMode_->setText(common::convertFromString<QString>(modeText));
+    }
+
+    void BaseShellWidget::leaveMode(const EventsInfo::LeaveModeInfo& res)
+    {
+
+    }
+
+    void BaseShellWidget::syncConnectionActions()
+    {
+        connectAction_->setVisible(!server_->isConnected());
+        disConnectAction_->setVisible(server_->isConnected());
+        executeAction_->setEnabled(server_->isConnected());
     }
 }

@@ -9,6 +9,7 @@ namespace fastoredis
     public:
         FastoQKeySequence(QKeySequence::StandardKey skey);
         FastoQKeySequence(Qt::KeyboardModifiers mod, int key = Qt::Key_unknown);
+
         operator QKeySequence();
         operator QKeySequence() const;
         bool operator == (QKeyEvent* ev) const;

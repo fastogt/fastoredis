@@ -67,20 +67,6 @@ namespace fastoredis
         return QString(style);
     }
 
-    QColor MemcachedLexer::defaultColor(int style) const
-    {
-        switch(style) {
-            case Default:
-                return Qt::black;
-            case Command:
-                return Qt::red;
-            case HelpKeyword:
-                return Qt::red;
-        }
-
-        return Qt::black;
-    }
-
     void MemcachedLexer::styleText(int start, int end)
     {
         if(!editor()){
@@ -107,6 +93,20 @@ namespace fastoredis
             setStyling(help.length(), HelpKeyword);
             startStyling(start + begin);
         }
+    }
+
+    QColor MemcachedLexer::defaultColor(int style) const
+    {
+        switch(style) {
+            case Default:
+                return Qt::black;
+            case Command:
+                return Qt::red;
+            case HelpKeyword:
+                return Qt::red;
+        }
+
+        return Qt::black;
     }
 
     void MemcachedLexer::paintCommands(const QString& source, int start)
