@@ -178,7 +178,6 @@ namespace fastoredis
             database_info_cont_type databases_;
         };
 
-// ============== database =============//
         struct LoadDatabaseContentRequest
                 : public EventInfoBase
         {
@@ -215,7 +214,6 @@ namespace fastoredis
             typedef SetDefaultDatabaseRequest base_class;
             SetDefaultDatabaseResponce(const base_class &request, const error_type &er = error_type());
         };
-// ============== database =============//
 
         struct ServerInfoRequest
                 : public EventInfoBase
@@ -275,7 +273,6 @@ namespace fastoredis
             ServerPropertyInfo info_;
         };
 
-// ============== change =============//
         struct ChangeServerPropertyInfoRequest
                 : public EventInfoBase
         {
@@ -312,9 +309,7 @@ namespace fastoredis
 
             bool isChange_;
         };
-// ============== change =============//
 
-// ============== command =============//
         struct CommandRequest
                 : public EventInfoBase
         {
@@ -331,7 +326,6 @@ namespace fastoredis
             typedef CommandRequest base_class;
             CommandResponce(const base_class &request, const error_type &er = error_type());
         };
-// ============== command =============//
 
         struct ProgressInfoResponce
         {

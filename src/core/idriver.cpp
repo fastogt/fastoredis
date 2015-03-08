@@ -1,6 +1,8 @@
 #include "core/idriver.h"
 
-#ifdef OS_POSIX
+#ifdef OS_WIN
+#include <winsock2.h>
+#else
 #include <signal.h>
 #endif
 
@@ -13,7 +15,6 @@
 namespace
 {
 #ifdef OS_WIN
-#include <winsock2.h>
 struct WinsockInit {
         WinsockInit() {
             WSADATA d;
@@ -62,7 +63,7 @@ struct WinsockInit {
 
 namespace fastoredis
 {
-    IDriver::IDriver(const IConnectionSettingsBaseSPtr &settings)
+    IDriver::IDriver(IConnectionSettingsBaseSPtr settings)
         : settings_(settings), timer_info_id_(0), log_file_(NULL)
     {
         thread_ = new QThread(this);
@@ -78,15 +79,29 @@ namespace fastoredis
         log_file_ = NULL;
     }
 
+    void IDriver::reply(QObject *reciver, QEvent *ev)
+    {
+        qApp->postEvent(reciver, ev);
+    }
+
+    connectionTypes IDriver::connectionType() const
+    {
+        return settings_->connectionType();
+    }
+
+    IConnectionSettingsBaseSPtr IDriver::settings() const
+    {
+        return settings_;
+    }
+
+    DataBaseInfoSPtr IDriver::currentDatabaseInfo() const
+    {
+        return currentDatabaseInfo_;
+    }
+
     void IDriver::start()
     {
         thread_->start();
-    }
-
-    void IDriver::clear()
-    {
-        killTimer(timer_info_id_);
-        timer_info_id_ = 0;
     }
 
     void IDriver::stop()
@@ -130,17 +145,18 @@ namespace fastoredis
         }
     }
 
-    DataBaseInfoSPtr IDriver::currentDatabaseInfo() const
-    {
-        return currentDatabaseInfo_;
-    }
-
     void IDriver::init()
     {
         int interval = settings_->loggingMsTimeInterval();
         timer_info_id_ = startTimer(interval);
         DCHECK(timer_info_id_);
         initImpl();
+    }
+
+    void IDriver::clear()
+    {
+        killTimer(timer_info_id_);
+        timer_info_id_ = 0;
     }
 
     void IDriver::customEvent(QEvent *event)
@@ -199,7 +215,6 @@ namespace fastoredis
             ExportRequestEvent *ev = static_cast<ExportRequestEvent*>(event);
             handleExportEvent(ev);
         }
-// ============== database =============//
         else if (type == static_cast<QEvent::Type>(LoadDatabaseContentRequestEvent::EventType)){
             LoadDatabaseContentRequestEvent *ev = static_cast<LoadDatabaseContentRequestEvent*>(event);
             handleLoadDatabaseContentEvent(ev);
@@ -208,61 +223,11 @@ namespace fastoredis
             SetDefaultDatabaseRequestEvent *ev = static_cast<SetDefaultDatabaseRequestEvent*>(event);
             handleSetDefaultDatabaseEvent(ev);
         }
-// ============== database =============//
-// ============== command =============//
         else if(type == static_cast<QEvent::Type>(CommandRequestEvent::EventType)){
             events::CommandRequestEvent* ev = static_cast<events::CommandRequestEvent*>(event);
             handleCommandRequestEvent(ev);
         }
-// ============== command =============//
         return QObject::customEvent(event);
-    }
-
-    IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text)
-        : parent_(parent), reciver_(reciver), tstart_(common::time::current_mstime())
-    {
-        DCHECK(parent_);
-        root_ = createRoot(reciver, text);
-    }
-
-    IDriver::RootLocker::~RootLocker()
-    {
-        events::CommandRootCompleatedEvent::value_type res(tstart_, root_);
-        parent_->reply(reciver_, new events::CommandRootCompleatedEvent(parent_, res));
-    }
-
-    FastoObjectIPtr IDriver::RootLocker::createRoot(QObject *reciver, const std::string& text)
-    {
-        FastoObjectIPtr root = FastoObject::createRoot(text, parent_);
-        events::CommandRootCreatedEvent::value_type res(root);
-        parent_->reply(reciver, new events::CommandRootCreatedEvent(parent_, res));
-        return root;
-    }
-
-    void IDriver::addedChildren(FastoObject* child)
-    {
-        DCHECK(child);
-        if(!child){
-            return;
-        }
-
-        emit addedChild(child);
-    }
-
-    void IDriver::updated(FastoObject* item, common::Value* val)
-    {
-        const QString value = common::convertFromString<QString>(val->toString());
-        emit itemUpdated(item, value);
-    }
-
-    void IDriver::reply(QObject *reciver, QEvent *ev)
-    {
-        qApp->postEvent(reciver, ev);
-    }
-
-    void IDriver::notifyProgress(QObject *reciver, int value)
-    {
-        reply(reciver, new events::ProgressResponceEvent(this, events::ProgressResponceEvent::value_type(value)));
     }
 
     void IDriver::timerEvent(QTimerEvent* event)
@@ -304,14 +269,30 @@ namespace fastoredis
         QObject::timerEvent(event);
     }
 
-    connectionTypes IDriver::connectionType() const
+    void IDriver::notifyProgress(QObject *reciver, int value)
     {
-        return settings_->connectionType();
+        reply(reciver, new events::ProgressResponceEvent(this, events::ProgressResponceEvent::value_type(value)));
     }
 
-    IConnectionSettingsBaseSPtr IDriver::settings() const
+    IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text)
+        : parent_(parent), reciver_(reciver), tstart_(common::time::current_mstime())
     {
-        return settings_;
+        DCHECK(parent_);
+        root_ = createRoot(reciver, text);
+    }
+
+    IDriver::RootLocker::~RootLocker()
+    {
+        events::CommandRootCompleatedEvent::value_type res(tstart_, root_);
+        parent_->reply(reciver_, new events::CommandRootCompleatedEvent(parent_, res));
+    }
+
+    FastoObjectIPtr IDriver::RootLocker::createRoot(QObject *reciver, const std::string& text)
+    {
+        FastoObjectIPtr root = FastoObject::createRoot(text, parent_);
+        events::CommandRootCreatedEvent::value_type res(root);
+        parent_->reply(reciver, new events::CommandRootCreatedEvent(parent_, res));
+        return root;
     }
 
     void IDriver::handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryRequestEvent *ev)
@@ -360,5 +341,21 @@ namespace fastoredis
         }
 
         reply(sender, new events::ServerInfoHistoryResponceEvent(this, res));
+    }
+
+    void IDriver::addedChildren(FastoObject* child)
+    {
+        DCHECK(child);
+        if(!child){
+            return;
+        }
+
+        emit addedChild(child);
+    }
+
+    void IDriver::updated(FastoObject* item, common::Value* val)
+    {
+        const QString value = common::convertFromString<QString>(val->toString());
+        emit itemUpdated(item, value);
     }
 }

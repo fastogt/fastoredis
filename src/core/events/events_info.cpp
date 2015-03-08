@@ -149,8 +149,6 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
-// ============== database =============//
-
         LoadDatabaseContentRequest::LoadDatabaseContentRequest(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys, const error_type &er)
             : base_class(er), inf_(inf), pattern_(pattern), countKeys_(countKeys)
         {
@@ -174,8 +172,6 @@ namespace fastoredis
         {
             base_class::errorInfo_ = er;
         }
-
-// ============== database =============//
 
         ServerInfoRequest::ServerInfoRequest(const error_type &er)
             : base_class(er)
@@ -238,7 +234,6 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
-// ============== change =============//
         ChangeServerPropertyInfoRequest::ChangeServerPropertyInfoRequest(const error_type &er)
             : base_class(er)
         {
@@ -262,9 +257,6 @@ namespace fastoredis
         {
             base_class::errorInfo_ = er;
         }
-// ============== change =============//
-
-// ============== command =============//
 
         CommandRequest::CommandRequest(DataBaseInfoSPtr inf, CommandKeySPtr cmd, const error_type& er)
             : base_class(er), inf_(inf), cmd_(cmd)
@@ -277,8 +269,6 @@ namespace fastoredis
         {
             base_class::errorInfo_ = er;
         }
-
-// ============== command =============//
 
         ProgressInfoResponce::ProgressInfoResponce(uint8_t pr)
             : progress_(pr)

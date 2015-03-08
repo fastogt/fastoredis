@@ -14,7 +14,17 @@ namespace fastoredis
     public:
         typedef std::vector<IDatabaseSPtr> databases_container_t;
 
+        IServer(IDriverSPtr drv, bool isMaster);
         virtual ~IServer();
+
+        //sync methods
+        void stopCurrentEvent();
+        bool isConnected() const;
+
+        bool isMaster() const;
+        void setIsMaster(bool isMaster);
+
+        bool isLocalHost() const;
 
         connectionTypes type() const;
         QString name() const;
@@ -24,7 +34,10 @@ namespace fastoredis
         IDatabaseSPtr findDatabaseByInfo(DataBaseInfoSPtr inf) const;
         IDatabaseSPtr findDatabaseByName(const std::string& name) const;
 
-        //async
+        virtual void syncWithServer(IServer* src);
+        virtual void unSyncFromServer(IServer* src);
+
+        //async methods
         void connect();
         void disconnect();
         void loadDatabases();
@@ -35,18 +48,6 @@ namespace fastoredis
         void shutDown();
         void backupToPath(const QString& path);
         void exportFromPath(const QString& path);
-
-        //sync
-        void stopCurrentEvent();
-        bool isConnected() const;
-
-        bool isMaster() const;        
-        void setIsMaster(bool isMaster);
-
-        bool isLocalHost() const;
-
-        virtual void syncWithServer(IServer* src);
-        virtual void unSyncFromServer(IServer* src);
 
     Q_SIGNALS: //only direct connections
         void startedConnect(const EventsInfo::ConnectInfoRequest& req);
@@ -78,13 +79,11 @@ namespace fastoredis
         void startedLoadServerProperty(const EventsInfo::ServerPropertyInfoRequest& req);
         void finishedLoadServerProperty(const EventsInfo::ServerPropertyInfoResponce& res);
 
-// ============== change =============//
         void startedChangeDbValue(const EventsInfo::ChangeDbValueRequest& req);
         void finishedChangeDbValue(const EventsInfo::ChangeDbValueResponce& res);
 
         void startedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoRequest& req);
         void finishedChangeServerProperty(const EventsInfo::ChangeServerPropertyInfoResponce& res);
-// ============== change =============//
 
         void progressChanged(const EventsInfo::ProgressInfoResponce& res);
 
@@ -94,18 +93,14 @@ namespace fastoredis
         void rootCreated(const EventsInfo::CommandRootCreatedInfo& res);
         void rootCompleated(const EventsInfo::CommandRootCompleatedInfo& res);
 
-// ============== database =============//
         void startedLoadDataBaseContent(const EventsInfo::LoadDatabaseContentRequest& req);
         void finishedLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res);
 
         void startedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req);
         void finishedSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res);
-// ============== database =============//
 
-// ============== command =============//
         void startedExecuteCommand(const EventsInfo::CommandRequest& req);
         void finishedExecuteCommand(const EventsInfo::CommandResponce& res);
-// ============== command =============//
 
    Q_SIGNALS:
         void addedChild(FastoObject *child);
@@ -113,7 +108,7 @@ namespace fastoredis
         void serverInfoSnapShoot(ServerInfoSnapShoot shot);
 
     public Q_SLOTS:
-        //async
+        //async methods
         void serverInfo();
         void serverProperty();
         void requestHistoryInfo();
@@ -121,36 +116,39 @@ namespace fastoredis
         void changeValue(const NDbValue& newValue, const std::string &command);
 
     protected:
-        virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info) = 0;
-        void notify(QEvent* ev);
         virtual void customEvent(QEvent* event);
 
+        virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info) = 0;
+        void notify(QEvent* ev);
+
+        // handle server events
         virtual void handleConnectEvent(events::ConnectResponceEvent* ev);
         virtual void handleDisconnectEvent(events::DisconnectResponceEvent* ev);
-        virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev);
         virtual void handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev);
         virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoResponceEvent* ev);
         virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoResponceEvent* ev);
-        virtual void handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev);
         virtual void handleShutdownEvent(events::ShutDownResponceEvent* ev);
         virtual void handleBackupEvent(events::BackupResponceEvent* ev);
         virtual void handleExportEvent(events::ExportResponceEvent* ev);
 
-// ============== database =============//
+        // handle database events
+        virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev);
+        virtual void handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev);
         virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev);
         virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev);
-// ============== database =============//
-// ============== command =============//
+
+        // handle command events
         virtual void handleCommandResponceEvent(events::CommandResponceEvent* ev);
-// ============== command =============//
-        IServer(const IDriverSPtr& drv, bool isMaster);
 
         const IDriverSPtr drv_;
         databases_container_t databases_;
 
     private:
+        // handle info events
         void handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryResponceEvent* ev);
+
         void processConfigArgs();
+
         bool isMaster_;
     };
 }

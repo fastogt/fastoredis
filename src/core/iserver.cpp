@@ -56,7 +56,7 @@ namespace
 
 namespace fastoredis
 {
-    IServer::IServer(const IDriverSPtr &drv, bool isMaster)
+    IServer::IServer(IDriverSPtr drv, bool isMaster)
         : drv_(drv), isMaster_(isMaster)
     {
         if(isMaster_){
@@ -66,28 +66,48 @@ namespace fastoredis
         }
     }
 
-    void IServer::syncWithServer(IServer *src)
+    IServer::~IServer()
     {
-        DCHECK(src != this);
-        syncServersFunct<true>(src, this);
-        //syncServersFunct<true>(this, src);
     }
 
-    void IServer::unSyncFromServer(IServer *src)
+    void IServer::stopCurrentEvent()
     {
-        DCHECK(src != this);
-        syncServersFunct<false>(src, this);
-        //syncServersFunct<false>(this, src);
+        drv_->interrupt();
     }
 
-    IDriverSPtr IServer::driver() const
+    bool IServer::isConnected() const
     {
-        return drv_;
+        return drv_->isConnected();
+    }
+
+    bool IServer::isMaster() const
+    {
+        return isMaster_;
+    }
+
+    void IServer::setIsMaster(bool isMaster)
+    {
+        isMaster_ = isMaster;
+    }
+
+    bool IServer::isLocalHost() const
+    {
+        return common::net::isLocalHost(drv_->address().host_);
+    }
+
+    connectionTypes IServer::type() const
+    {
+        return drv_->connectionType();
     }
 
     QString IServer::name() const
     {
         return common::convertFromString<QString>(drv_->settings()->connectionName());
+    }
+
+    IDriverSPtr IServer::driver() const
+    {
+        return drv_;
     }
 
     QString IServer::address() const
@@ -125,9 +145,18 @@ namespace fastoredis
         return IDatabaseSPtr();
     }
 
-    connectionTypes IServer::type() const
+    void IServer::syncWithServer(IServer *src)
     {
-        return drv_->connectionType();
+        DCHECK(src != this);
+        syncServersFunct<true>(src, this);
+        //syncServersFunct<true>(this, src);
+    }
+
+    void IServer::unSyncFromServer(IServer *src)
+    {
+        DCHECK(src != this);
+        syncServersFunct<false>(src, this);
+        //syncServersFunct<false>(this, src);
     }
 
     void IServer::connect()
@@ -138,27 +167,11 @@ namespace fastoredis
         notify(ev);
     }
 
-    void IServer::shutDown()
+    void IServer::disconnect()
     {
-        EventsInfo::ShutDownInfoRequest req;
-        emit startedShutdown(req);
-        QEvent *ev = new events::ShutDownRequestEvent(this, req);
-        notify(ev);
-    }
-
-    void IServer::backupToPath(const QString& path)
-    {
-        EventsInfo::BackupInfoRequest req(common::convertToString(path));
-        emit startedBackup(req);
-        QEvent *ev = new events::BackupRequestEvent(this, req);
-        notify(ev);
-    }
-
-    void IServer::exportFromPath(const QString& path)
-    {
-        EventsInfo::ExportInfoRequest req(common::convertToString(path));
-        emit startedExport(req);
-        QEvent *ev = new events::ExportRequestEvent(this, req);
+        EventsInfo::DisonnectInfoRequest req;
+        emit startedDisconnect(req);
+        QEvent *ev = new events::DisconnectRequestEvent(this, req);
         notify(ev);
     }
 
@@ -186,14 +199,6 @@ namespace fastoredis
         notify(ev);
     }
 
-    void IServer::disconnect()
-    {
-        EventsInfo::DisonnectInfoRequest req;
-        emit startedDisconnect(req);
-        QEvent *ev = new events::DisconnectRequestEvent(this, req);
-        notify(ev);
-    }
-
     void IServer::execute(const QString &script)
     {
         EventsInfo::ExecuteInfoRequest req(common::convertToString(script));
@@ -210,6 +215,30 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::shutDown()
+    {
+        EventsInfo::ShutDownInfoRequest req;
+        emit startedShutdown(req);
+        QEvent *ev = new events::ShutDownRequestEvent(this, req);
+        notify(ev);
+    }
+
+    void IServer::backupToPath(const QString& path)
+    {
+        EventsInfo::BackupInfoRequest req(common::convertToString(path));
+        emit startedBackup(req);
+        QEvent *ev = new events::BackupRequestEvent(this, req);
+        notify(ev);
+    }
+
+    void IServer::exportFromPath(const QString& path)
+    {
+        EventsInfo::ExportInfoRequest req(common::convertToString(path));
+        emit startedExport(req);
+        QEvent *ev = new events::ExportRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::serverInfo()
     {
         EventsInfo::ServerInfoRequest req;
@@ -223,6 +252,14 @@ namespace fastoredis
         EventsInfo::ServerPropertyInfoRequest req;
         emit startedLoadServerProperty(req);
         QEvent *ev = new events::ServerPropertyInfoRequestEvent(this, req);
+        notify(ev);
+    }
+
+    void IServer::requestHistoryInfo()
+    {
+        EventsInfo::ServerInfoHistoryRequest req;
+        emit startedLoadServerHistoryInfo(req);
+        QEvent *ev = new events::ServerInfoHistoryRequestEvent(this, req);
         notify(ev);
     }
 
@@ -243,67 +280,6 @@ namespace fastoredis
         emit startedChangeDbValue(req);
         QEvent *ev = new events::ChangeDbValueRequestEvent(this, req);
         notify(ev);
-    }
-
-    void IServer::requestHistoryInfo()
-    {
-        EventsInfo::ServerInfoHistoryRequest req;
-        emit startedLoadServerHistoryInfo(req);
-        QEvent *ev = new events::ServerInfoHistoryRequestEvent(this, req);
-        notify(ev);
-    }
-
-    void IServer::handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryResponceEvent *ev)
-    {
-        using namespace events;
-        ServerInfoHistoryResponceEvent::value_type v = ev->value();
-        common::ErrorValueSPtr er = v.errorInfo();
-        if(er && er->isError()){
-            LOG_ERROR(er, true);
-        }
-        emit finishedLoadServerHistoryInfo(v);
-    }
-
-    void IServer::processConfigArgs()
-    {
-        EventsInfo::ProcessConfigArgsInfoRequest req;
-        QEvent *ev = new events::ProcessConfigArgsRequestEvent(this, req);
-        notify(ev);
-    }
-
-    void IServer::stopCurrentEvent()
-    {
-        drv_->interrupt();
-    }
-
-    bool IServer::isConnected() const
-    {
-        return drv_->isConnected();
-    }
-
-    bool IServer::isMaster() const
-    {
-        return isMaster_;
-    }
-
-    void IServer::setIsMaster(bool isMaster)
-    {
-        isMaster_ = isMaster;
-    }
-
-    bool IServer::isLocalHost() const
-    {
-        return common::net::isLocalHost(drv_->address().host_);
-    }
-
-    IServer::~IServer()
-    {
-    }
-
-    void IServer::notify(QEvent *ev)
-    {
-        emit progressChanged(0);
-        qApp->postEvent(drv_.get(), ev);
     }
 
     void IServer::customEvent(QEvent *event)
@@ -401,6 +377,12 @@ namespace fastoredis
         return QObject::customEvent(event);
     }
 
+    void IServer::notify(QEvent *ev)
+    {
+        emit progressChanged(0);
+        qApp->postEvent(drv_.get(), ev);
+    }
+
     void IServer::handleConnectEvent(events::ConnectResponceEvent* ev)
     {
         using namespace events;
@@ -421,79 +403,6 @@ namespace fastoredis
             LOG_ERROR(er, true);
         }
         emit finishedDisconnect(v);
-    }
-
-    void IServer::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev)
-    {
-        using namespace events;
-        LoadDatabasesInfoResponceEvent::value_type v = ev->value();
-        common::ErrorValueSPtr er(v.errorInfo());
-        if(er && er->isError()){
-            LOG_ERROR(er, true);
-            databases_.clear();
-        }
-        else{
-            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = v.databases_;
-            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type tmp;
-            for(int j = 0; j < dbs.size(); ++j){
-                DataBaseInfoSPtr db = dbs[j];
-                IDatabaseSPtr datab = findDatabaseByInfo(db);
-                if(!datab){
-                    databases_.push_back(createDatabaseImpl(db));
-                    tmp.push_back(db);
-                }
-                else{
-                    tmp.push_back(datab->info());
-                }
-            }
-            v.databases_ = tmp;
-        }
-        emit finishedLoadDatabases(v);
-    }
-
-    void IServer::handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev)
-    {
-        using namespace events;
-        LoadDatabaseContentResponceEvent::value_type v = ev->value();
-        common::ErrorValueSPtr er(v.errorInfo());
-        if(er && er->isError()){
-            LOG_ERROR(er, true);
-        }
-        else{
-            IDatabaseSPtr db = findDatabaseByInfo(v.inf_);
-            if(db){
-                DataBaseInfoSPtr rdb = db->info();
-                if(rdb){
-                    rdb->setKeys(v.keys_);
-                }
-            }
-        }
-        emit finishedLoadDatabaseContent(v);
-    }
-
-    void IServer::handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev)
-    {
-        using namespace events;
-        SetDefaultDatabaseResponceEvent::value_type v = ev->value();
-        common::ErrorValueSPtr er(v.errorInfo());
-        if(er && er->isError()){
-            LOG_ERROR(er, true);
-        }
-        else{
-            DataBaseInfoSPtr inf = v.inf_;
-            for(int i = 0; i < databases_.size(); ++i){
-                IDatabaseSPtr db = databases_[i];
-                DataBaseInfoSPtr info = db->info();
-                if(info->name() == inf->name()){
-                    info->setIsDefault(true);
-                }
-                else{
-                    info->setIsDefault(false);
-                }
-            }
-        }
-
-        emit finishedSetDefaultDatabase(v);
     }
 
     void IServer::handleLoadServerInfoEvent(events::ServerInfoResponceEvent* ev)
@@ -529,17 +438,6 @@ namespace fastoredis
         emit finishedChangeServerProperty(v);
     }
 
-    void IServer::handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev)
-    {
-        using namespace events;
-        ChangeDbValueResponceEvent::value_type v = ev->value();
-        common::ErrorValueSPtr er(v.errorInfo());
-        if(er && er->isError()){
-            LOG_ERROR(er, true);
-        }
-        emit finishedChangeDbValue(v);
-    }
-
     void IServer::handleShutdownEvent(events::ShutDownResponceEvent* ev)
     {
         using namespace events;
@@ -573,6 +471,102 @@ namespace fastoredis
         emit finishedExport(v);
     }
 
+
+    void IServer::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev)
+    {
+        using namespace events;
+        LoadDatabasesInfoResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+            databases_.clear();
+        }
+        else{
+            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = v.databases_;
+            EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type tmp;
+            for(int j = 0; j < dbs.size(); ++j){
+                DataBaseInfoSPtr db = dbs[j];
+                IDatabaseSPtr datab = findDatabaseByInfo(db);
+                if(!datab){
+                    databases_.push_back(createDatabaseImpl(db));
+                    tmp.push_back(db);
+                }
+                else{
+                    tmp.push_back(datab->info());
+                }
+            }
+            v.databases_ = tmp;
+        }
+        emit finishedLoadDatabases(v);
+    }
+
+    void IServer::handleChangeDbValueEvent(events::ChangeDbValueResponceEvent* ev)
+    {
+        using namespace events;
+        ChangeDbValueResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedChangeDbValue(v);
+    }
+
+    void IServer::handleLoadDatabaseContentEvent(events::LoadDatabaseContentResponceEvent* ev)
+    {
+        using namespace events;
+        LoadDatabaseContentResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        else{
+            IDatabaseSPtr db = findDatabaseByInfo(v.inf_);
+            if(db){
+                DataBaseInfoSPtr rdb = db->info();
+                if(rdb){
+                    rdb->setKeys(v.keys_);
+                }
+            }
+        }
+        emit finishedLoadDatabaseContent(v);
+    }
+
+    void IServer::handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryResponceEvent *ev)
+    {
+        using namespace events;
+        ServerInfoHistoryResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er = v.errorInfo();
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedLoadServerHistoryInfo(v);
+    }
+
+    void IServer::handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev)
+    {
+        using namespace events;
+        SetDefaultDatabaseResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        else{
+            DataBaseInfoSPtr inf = v.inf_;
+            for(int i = 0; i < databases_.size(); ++i){
+                IDatabaseSPtr db = databases_[i];
+                DataBaseInfoSPtr info = db->info();
+                if(info->name() == inf->name()){
+                    info->setIsDefault(true);
+                }
+                else{
+                    info->setIsDefault(false);
+                }
+            }
+        }
+
+        emit finishedSetDefaultDatabase(v);
+    }
+
     void IServer::handleCommandResponceEvent(events::CommandResponceEvent* ev)
     {
         using namespace events;
@@ -582,5 +576,12 @@ namespace fastoredis
             LOG_ERROR(er, true);
         }
         emit finishedExecuteCommand(v);
+    }
+
+    void IServer::processConfigArgs()
+    {
+        EventsInfo::ProcessConfigArgsInfoRequest req;
+        QEvent *ev = new events::ProcessConfigArgsRequestEvent(this, req);
+        notify(ev);
     }
 }

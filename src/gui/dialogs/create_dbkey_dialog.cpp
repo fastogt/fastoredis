@@ -257,12 +257,7 @@ namespace fastoredis
         }
         else{
             int row = valueTableEdit_->currentRow();
-
-            QTableWidgetItem* kitem = valueTableEdit_->item(row, 0);
-            delete kitem;
-
-            QTableWidgetItem* vitem = valueTableEdit_->item(row, 1);
-            delete vitem;
+            valueTableEdit_->removeRow(row);
         }
     }
 
