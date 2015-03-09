@@ -2,6 +2,8 @@
 
 #include "core/idriver.h"
 
+#include "core/ssdb/ssdb_settings.h"
+
 namespace fastoredis
 {
     const std::vector<QString> ssdbCommandsKeywords = { "quit", "set", "get", "setx", "del", "incr", "keys", "scan", "rscan", "multi_get", "multi_set", "multi_del",

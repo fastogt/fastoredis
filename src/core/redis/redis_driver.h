@@ -2,6 +2,8 @@
 
 #include "core/idriver.h"
 
+#include "core/redis/redis_settings.h"
+
 namespace fastoredis
 {
     extern const std::vector<QString> redisTypesKeywords;

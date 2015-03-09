@@ -2,6 +2,8 @@
 
 #include "core/idriver.h"
 
+#include "core/memcached/memcached_settings.h"
+
 namespace fastoredis
 {
     const std::vector<QString> memcachedCommandsKeywords = {"quit",

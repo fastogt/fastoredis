@@ -5,10 +5,6 @@
 #include "core/connection_types.h"
 #include "core/ssh_info.h"
 
-#include "core/redis/redis_config.h"
-#include "core/memcached/memcached_config.h"
-#include "core/ssdb/ssdb_config.h"
-
 namespace fastoredis
 {
     class IConnectionSettingsBase
@@ -63,76 +59,4 @@ namespace fastoredis
     std::string defaultCommandLine(connectionTypes type);
 
     typedef shared_ptr_t<IConnectionSettingsBase> IConnectionSettingsBaseSPtr;
-
-    class RedisConnectionSettings
-            : public IConnectionSettingsBase
-    {
-    public:
-        RedisConnectionSettings(const std::string& connectionName);
-
-        virtual std::string commandLine() const;
-        virtual void setCommandLine(const std::string& line);
-
-        virtual std::string host() const;
-        virtual int port() const;
-        virtual void setPort(int port);
-
-        redisConfig info() const;
-        void setInfo(const redisConfig& info);
-
-        virtual IConnectionSettingsBase* clone() const;
-
-    private:
-        virtual std::string toCommandLine() const;
-        virtual void initFromCommandLine(const std::string& val);
-        redisConfig info_;
-    };
-
-    class MemcachedConnectionSettings
-            : public IConnectionSettingsBase
-    {
-    public:
-        MemcachedConnectionSettings(const std::string& connectionName);
-
-        virtual std::string commandLine() const;
-        virtual void setCommandLine(const std::string& line);
-
-        virtual std::string host() const;
-        virtual int port() const;
-        virtual void setPort(int port);
-
-        memcachedConfig info() const;
-        void setInfo(const memcachedConfig& info);
-
-        virtual IConnectionSettingsBase* clone() const;
-
-    private:
-        virtual std::string toCommandLine() const;
-        virtual void initFromCommandLine(const std::string& val);
-        memcachedConfig info_;
-    };
-
-    class SsdbConnectionSettings
-            : public IConnectionSettingsBase
-    {
-    public:
-        SsdbConnectionSettings(const std::string& connectionName);
-
-        virtual std::string commandLine() const;
-        virtual void setCommandLine(const std::string& line);
-
-        virtual std::string host() const;
-        virtual int port() const;
-        virtual void setPort(int port);
-
-        ssdbConfig info() const;
-        void setInfo(const ssdbConfig &info);
-
-        virtual IConnectionSettingsBase* clone() const;
-
-    private:
-        virtual std::string toCommandLine() const;
-        virtual void initFromCommandLine(const std::string& val);
-        ssdbConfig info_;
-    };
 }

@@ -212,6 +212,7 @@ SET(HEADERS_REDIS
     core/redis/redis_infos.h
     core/redis/redis_config.h
     core/redis/redis_database.h
+    core/redis/redis_settings.h
 )
 SET(SOURCES_REDIS
     core/redis/redis_config.cpp
@@ -219,8 +220,8 @@ SET(SOURCES_REDIS
     core/redis/redis_server.cpp
     core/redis/redis_driver.cpp
     core/redis/redis_database.cpp
+    core/redis/redis_settings.cpp
 )
-
 
 #memcached
 FIND_PACKAGE(Sasl QUIET)
@@ -239,6 +240,7 @@ SET(HEADERS_MEMCACHED
     core/memcached/memcached_infos.h
     core/memcached/memcached_config.h
     core/memcached/memcached_database.h
+    core/memcached/memcached_settings.h
 )
 SET(SOURCES_MEMCACHED
     core/memcached/memcached_config.cpp
@@ -246,6 +248,7 @@ SET(SOURCES_MEMCACHED
     core/memcached/memcached_server.cpp
     core/memcached/memcached_driver.cpp
     core/memcached/memcached_database.cpp
+    core/memcached/memcached_settings.cpp
 )
 
 #ssdb
@@ -260,6 +263,7 @@ SET(HEADERS_SSDB
     core/ssdb/ssdb_infos.h
     core/ssdb/ssdb_config.h
     core/ssdb/ssdb_database.h
+    core/ssdb/ssdb_settings.h
 )
 SET(SOURCES_SSDB
     core/ssdb/ssdb_config.cpp
@@ -267,6 +271,7 @@ SET(SOURCES_SSDB
     core/ssdb/ssdb_server.cpp
     core/ssdb/ssdb_driver.cpp
     core/ssdb/ssdb_database.cpp
+    core/ssdb/ssdb_settings.cpp
 )
 
 ADD_SUBDIRECTORY(third-party/lua)

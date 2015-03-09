@@ -2,12 +2,16 @@
 
 #include <sstream>
 
-#include "core/settings_manager.h"
-
 #include "common/qt/convert_string.h"
 #include "common/utils.h"
 #include "common/net/net.h"
 #include "common/logger.h"
+
+#include "core/settings_manager.h"
+
+#include "core/redis/redis_settings.h"
+#include "core/memcached/memcached_settings.h"
+#include "core/ssdb/ssdb_settings.h"
 
 #define LOGGING_REDIS_FILE_EXTENSION ".red"
 #define LOGGING_MEMCACHED_FILE_EXTENSION ".mem"
@@ -245,183 +249,4 @@ namespace fastoredis
 
         return std::string();
     }
-
-    RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName)
-        : IConnectionSettingsBase(connectionName, REDIS), info_()
-    {
-
-    }
-
-    std::string RedisConnectionSettings::host() const
-    {
-        return info_.hostip;
-    }
-
-    int RedisConnectionSettings::port() const
-    {
-        return info_.hostport;
-    }
-
-    void RedisConnectionSettings::setPort(int port)
-    {
-        info_.hostport = port;
-    }
-
-    void RedisConnectionSettings::initFromCommandLine(const std::string &val)
-    {
-        info_ = common::convertFromString<redisConfig>(val);
-    }
-
-    std::string RedisConnectionSettings::toCommandLine() const
-    {
-        std::string result = common::convertToString(info_);
-        return result;
-    }
-
-    void RedisConnectionSettings::setCommandLine(const std::string &line)
-    {
-        info_ = common::convertFromString<redisConfig>(line);
-    }
-
-    std::string RedisConnectionSettings::commandLine() const
-    {
-        return common::convertToString(info_);
-    }
-
-    redisConfig RedisConnectionSettings::info() const
-    {
-        return info_;
-    }
-
-    void RedisConnectionSettings::setInfo(const redisConfig &info)
-    {
-        info_ =  info;
-    }
-
-    IConnectionSettingsBase *RedisConnectionSettings::clone() const
-    {
-        RedisConnectionSettings *red = new RedisConnectionSettings(*this);
-        return red;
-    }
-
-//#memcached
-
-    MemcachedConnectionSettings::MemcachedConnectionSettings(const std::string& connectionName)
-        : IConnectionSettingsBase(connectionName, MEMCACHED), info_()
-    {
-
-    }
-
-    std::string MemcachedConnectionSettings::commandLine() const
-    {
-        return common::convertToString(info_);
-    }
-
-    void MemcachedConnectionSettings::setCommandLine(const std::string& line)
-    {
-        info_ = common::convertFromString<memcachedConfig>(line);
-    }
-
-    std::string MemcachedConnectionSettings::host() const
-    {
-        return info_.hostip;
-    }
-
-    int MemcachedConnectionSettings::port() const
-    {
-        return info_.hostport;
-    }
-
-    void MemcachedConnectionSettings::setPort(int port)
-    {
-        info_.hostport = port;
-    }
-
-    memcachedConfig MemcachedConnectionSettings::info() const
-    {
-        return info_;
-    }
-
-    void MemcachedConnectionSettings::setInfo(const memcachedConfig& info)
-    {
-        info_ = info;
-    }
-
-    IConnectionSettingsBase* MemcachedConnectionSettings::clone() const
-    {
-        MemcachedConnectionSettings *red = new MemcachedConnectionSettings(*this);
-        return red;
-    }
-
-    std::string MemcachedConnectionSettings::toCommandLine() const
-    {
-        std::string result = common::convertToString(info_);
-        return result;
-    }
-
-    void MemcachedConnectionSettings::initFromCommandLine(const std::string& val)
-    {
-        info_ = common::convertFromString<memcachedConfig>(val);
-    }
-
-//#ssdb
-
-    SsdbConnectionSettings::SsdbConnectionSettings(const std::string& connectionName)
-        : IConnectionSettingsBase(connectionName, SSDB), info_()
-    {
-
-    }
-
-    std::string SsdbConnectionSettings::commandLine() const
-    {
-        return common::convertToString(info_);
-    }
-
-    void SsdbConnectionSettings::setCommandLine(const std::string& line)
-    {
-        info_ = common::convertFromString<ssdbConfig>(line);
-    }
-
-    std::string SsdbConnectionSettings::host() const
-    {
-        return info_.hostip;
-    }
-
-    int SsdbConnectionSettings::port() const
-    {
-        return info_.hostport;
-    }
-
-    void SsdbConnectionSettings::setPort(int port)
-    {
-        info_.hostport = port;
-    }
-
-    ssdbConfig SsdbConnectionSettings::info() const
-    {
-        return info_;
-    }
-
-    void SsdbConnectionSettings::setInfo(const ssdbConfig& info)
-    {
-        info_ = info;
-    }
-
-    IConnectionSettingsBase* SsdbConnectionSettings::clone() const
-    {
-        SsdbConnectionSettings *red = new SsdbConnectionSettings(*this);
-        return red;
-    }
-
-    std::string SsdbConnectionSettings::toCommandLine() const
-    {
-        std::string result = common::convertToString(info_);
-        return result;
-    }
-
-    void SsdbConnectionSettings::initFromCommandLine(const std::string& val)
-    {
-        info_ = common::convertFromString<ssdbConfig>(val);
-    }
-
 }
