@@ -71,6 +71,11 @@ namespace fastoredis
         return currentMethod_ != UNKNOWN;
     }
 
+    SSHInfo::SupportedAuthenticationMetods SSHInfo::authMethod() const
+    {
+        return currentMethod_;
+    }
+
     std::string SSHInfo::toString() const
     {
         return  HOST":" + hostName_  + MARKER
@@ -81,10 +86,5 @@ namespace fastoredis
                 PRIVKEY":" + privateKey_ + MARKER
                 PASSPHRASE":" + passphrase_ + MARKER
                 CURMETHOD":" + common::convertToString(currentMethod_) + MARKER;
-    }
-
-    SSHInfo::SupportedAuthenticationMetods SSHInfo::authMethod() const
-    {
-        return currentMethod_;
     }
 }

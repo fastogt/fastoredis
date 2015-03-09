@@ -2,30 +2,13 @@
 
 namespace fastoredis
 {
-    NKey::NKey()
-        : key_(), type_(common::Value::TYPE_NULL)
-    {
-
-    }
-
     NKey::NKey(const std::string& key, common::Value::Type type)
         : key_(key), type_(type)
     {
     }
 
-    NValue::NValue()
-        : value_(), type_(common::Value::TYPE_NULL)
-    {
-
-    }
-
     NValue::NValue(const std::string& value, common::Value::Type type)
         : value_(value), type_(type)
-    {
-
-    }
-
-    NDbValue::NDbValue()
     {
 
     }
@@ -148,12 +131,6 @@ namespace fastoredis
     DataBaseInfo::keys_cont_type DataBaseInfo::keys() const
     {
         return keys_;
-    }
-
-    CommandKey::CommandKey()
-        : type_(C_NONE)
-    {
-
     }
 
     CommandKey::CommandKey(const NKey& key, cmdtype type)

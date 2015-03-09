@@ -2185,9 +2185,10 @@ namespace fastoredis
 
                     common::ArrayValue* ar = arr->array();
                     for(int i = 0; i < ar->getSize(); ++i){
-                        NKey ress;
-                        bool isok = ar->getString(i, &ress.key_);
+                        std::string key;
+                        bool isok = ar->getString(i, &key);
                         if(isok){
+                            NKey ress(key);
                             RedisCommand* cmdType = createCommandFast("TYPE " + ress.key_, common::Value::C_INNER);
                             er = impl_->execute(cmdType);
                             if(!er){

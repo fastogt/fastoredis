@@ -44,11 +44,6 @@ namespace fastoredis
         return EDcoderTypes;
     }
 
-    EDTypes IEDcoder::type() const
-    {
-        return type_;
-    }
-
     IEDcoder::IEDcoder(EDTypes type)
         : type_(type)
     {
@@ -71,6 +66,11 @@ namespace fastoredis
         }
 
         return decodeImpl(data, out);
+    }
+
+    EDTypes IEDcoder::type() const
+    {
+        return type_;
     }
 
     IEDcoder* IEDcoder::createEDCoder(EDTypes type)

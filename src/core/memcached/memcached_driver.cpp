@@ -849,9 +849,10 @@ namespace fastoredis
 
                     for(int i = 0; i < ar->getSize(); ++i)
                     {
-                        NKey ress;
-                        bool isok = ar->getString(i, &ress.key_);
+                        std::string key;
+                        bool isok = ar->getString(i, &key);
                         if(isok){
+                            NKey ress(key);
                             res.keys_.push_back(ress);
                         }
                     }

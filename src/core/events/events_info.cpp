@@ -246,8 +246,8 @@ namespace fastoredis
             base_class::errorInfo_ = er;
         }
 
-        ChangeDbValueRequest::ChangeDbValueRequest(const error_type &er)
-            : base_class(er)
+        ChangeDbValueRequest::ChangeDbValueRequest(const NDbValue& val, const error_type &er)
+            : base_class(er), newItem_(val)
         {
 
         }

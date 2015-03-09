@@ -295,7 +295,7 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            ChangeDbValueRequest(const error_type &er = error_type());
+            ChangeDbValueRequest(const NDbValue& val, const error_type &er = error_type());
 
             NDbValue newItem_;
             std::string command_;

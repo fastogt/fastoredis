@@ -44,20 +44,16 @@ namespace fastoredis
         virtual void handleBackupEvent(events::BackupRequestEvent* ev);
         virtual void handleExportEvent(events::ExportRequestEvent* ev);
 
-// ============== commands =============//
         virtual common::ErrorValueSPtr commandDeleteImpl(CommandDeleteKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT;
         virtual common::ErrorValueSPtr commandLoadImpl(CommandLoadKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT;
         virtual common::ErrorValueSPtr commandCreateImpl(CommandCreateKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT;
- // ============== commands =============//
 
-// ============== database =============//
         virtual void handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev);
         virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev);
         virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseRequestEvent* ev);
-// ============== database =============//
-// ============== command =============//
+
         virtual void handleCommandRequestEvent(events::CommandRequestEvent* ev);
-// ============== command =============//
+
         ServerInfoSPtr makeServerInfoFromString(const std::string& val);
 
         struct pimpl;

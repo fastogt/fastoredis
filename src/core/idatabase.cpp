@@ -11,6 +11,11 @@ namespace fastoredis
         DCHECK(info);
     }
 
+    IDatabase::~IDatabase()
+    {
+
+    }
+
     connectionTypes IDatabase::type() const
     {
         return server_->type();
@@ -67,10 +72,5 @@ namespace fastoredis
     {
         CommandKeySPtr com(new CommandCreateKey(key, value));
         server_->executeCommand(info_, com);
-    }
-
-    IDatabase::~IDatabase()
-    {
-
     }
 }

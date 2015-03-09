@@ -274,8 +274,7 @@ namespace fastoredis
 
     void IServer::changeValue(const NDbValue& newValue, const std::string& command)
     {
-        EventsInfo::ChangeDbValueRequest req;
-        req.newItem_ = newValue;
+        EventsInfo::ChangeDbValueRequest req(newValue);
         req.command_ = command;
         emit startedChangeDbValue(req);
         QEvent *ev = new events::ChangeDbValueRequestEvent(this, req);

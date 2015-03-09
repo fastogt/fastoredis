@@ -24,47 +24,13 @@ namespace fastoredis
 
     }
 
-    void ServersManager::setSyncServers(bool isSync)
-    {
-        syncServers_ = isSync;
-        refreshSyncServers();
-    }
-
-    void ServersManager::clear()
-    {
-        for(size_t i = 0; i < servers_.size(); ++i){
-            IServerSPtr ser = servers_[i];
-            ser->driver()->stop();
-        }
-        servers_.clear();
-    }
-
-    void ServersManager::refreshSyncServers()
-    {
-        for(size_t i = 0; i < servers_.size(); ++i){
-            IServerSPtr servi = servers_[i];
-            if(servi->isMaster()){
-                for(size_t j = 0; j < servers_.size(); ++j){
-                    IServerSPtr servj = servers_[j];
-                    if(servj != servi && servj->driver() == servi->driver()){
-                        if(syncServers_){
-                            servj->syncWithServer(servi.get());
-                        }
-                        else{
-                            servj->unSyncFromServer(servi.get());
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     IServerSPtr ServersManager::createServer(const IConnectionSettingsBaseSPtr &settings)
     {
         IServerSPtr result;
         connectionTypes conT = settings->connectionType();
         IServerSPtr ser = findServerBySetting(settings);
-        if(conT == REDIS){            
+        if(conT == REDIS){
             RedisServer *newRed = NULL;
             if(!ser){
                 IDriverSPtr dr(new RedisDriver(settings));
@@ -111,6 +77,21 @@ namespace fastoredis
         return result;
     }
 
+    void ServersManager::setSyncServers(bool isSync)
+    {
+        syncServers_ = isSync;
+        refreshSyncServers();
+    }
+
+    void ServersManager::clear()
+    {
+        for(size_t i = 0; i < servers_.size(); ++i){
+            IServerSPtr ser = servers_[i];
+            ser->driver()->stop();
+        }
+        servers_.clear();
+    }
+
     void ServersManager::closeServer(IServerSPtr server)
     {
         for(size_t i = 0; i < servers_.size(); ++i){
@@ -130,6 +111,26 @@ namespace fastoredis
                 servers_.erase(servers_.begin()+i);
                 refreshSyncServers();
                 break;
+            }
+        }
+    }
+
+    void ServersManager::refreshSyncServers()
+    {
+        for(size_t i = 0; i < servers_.size(); ++i){
+            IServerSPtr servi = servers_[i];
+            if(servi->isMaster()){
+                for(size_t j = 0; j < servers_.size(); ++j){
+                    IServerSPtr servj = servers_[j];
+                    if(servj != servi && servj->driver() == servi->driver()){
+                        if(syncServers_){
+                            servj->syncWithServer(servi.get());
+                        }
+                        else{
+                            servj->unSyncFromServer(servi.get());
+                        }
+                    }
+                }
             }
         }
     }

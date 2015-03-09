@@ -34,66 +34,20 @@ namespace fastoredis
        load();
     }
 
-    void SettingsManager::load()
-    {
-        QString inip = common::convertFromString<QString>(common::file_system::prepare_path(iniPath));
-        QSettings settings(inip, QSettings::IniFormat);
-        DCHECK(settings.status() == QSettings::NoError);
-
-        curStyle_ = settings.value(STYLE, fastoredis::defStyle).toString();
-        curLanguage_ = settings.value(LANGUAGE, fastoredis::translations::defLanguage).toString();
-
-        int view = settings.value(VIEW, fastoredis::Tree).toInt();
-        views_ = static_cast<supportedViews>(view);
-
-        QList<QVariant> connections = settings.value(CONNECTIONS, "").toList();
-        for(QList<QVariant>::const_iterator it = connections.begin(); it != connections.end(); ++it){
-            QVariant var = *it;
-            QString string = var.toString();
-            std::string encoded = common::convertToString(string);
-            std::string raw = common::utils::base64::decode64(encoded);
-
-            IConnectionSettingsBaseSPtr sett(IConnectionSettingsBase::fromString(raw));
-            if(sett){
-               connections_.push_back(sett);
-            }
-        }
-
-        syncTabs_= settings.value(SYNCTABS, false).toBool();
-        std::string dir = common::file_system::get_dir_path(iniPath);
-        loggingDir_ = settings.value(LOGGINGDIR, common::convertFromString<QString>(dir)).toString();
-        autoCheckUpdate_ = settings.value(CHECKUPDATES, true).toBool();
-    }
-
-    void SettingsManager::save()
-    {
-        QSettings settings(common::convertFromString<QString>(common::file_system::prepare_path(iniPath)), QSettings::IniFormat);
-        DCHECK(settings.status() == QSettings::NoError);
-
-        settings.setValue(STYLE, curStyle_);
-        settings.setValue(LANGUAGE, curLanguage_);
-        settings.setValue(VIEW, views_);
-
-        QList<QVariant> connections;
-        for(ConnectionSettingsContainerType::const_iterator it = connections_.begin(); it != connections_.end(); ++it){
-            IConnectionSettingsBaseSPtr conn = *it;
-            if(conn){
-               std::string raw = conn->toString();
-               std::string enc = common::utils::base64::encode64(raw);
-               QString qdata = common::convertFromString<QString>(enc);
-               connections.push_back(qdata);
-            }
-        }
-        settings.setValue(CONNECTIONS, connections);
-
-        settings.setValue(SYNCTABS, syncTabs_);
-        settings.setValue(LOGGINGDIR, loggingDir_);
-        settings.setValue(CHECKUPDATES, autoCheckUpdate_);
-    }
 
     SettingsManager::~SettingsManager()
     {
         save();
+    }
+
+    supportedViews SettingsManager::defaultView() const
+    {
+        return views_;
+    }
+
+    void SettingsManager::setDefaultView(supportedViews view)
+    {
+        views_ = view;
     }
 
     QString SettingsManager::currentStyle() const
@@ -114,16 +68,6 @@ namespace fastoredis
     void SettingsManager::setCurrentLanguage(const QString &lang)
     {
         curLanguage_ = lang;
-    }
-
-    supportedViews SettingsManager::defaultView() const
-    {
-        return views_;
-    }
-
-    void SettingsManager::setDefaultView(supportedViews view)
-    {
-        views_ = view;
     }
 
     void SettingsManager::addConnection(const IConnectionSettingsBaseSPtr &connection)
@@ -179,5 +123,62 @@ namespace fastoredis
     void SettingsManager::setAutoCheckUpdates(bool isCheck)
     {
         autoCheckUpdate_ = isCheck;
+    }
+
+    void SettingsManager::load()
+    {
+        QString inip = common::convertFromString<QString>(common::file_system::prepare_path(iniPath));
+        QSettings settings(inip, QSettings::IniFormat);
+        DCHECK(settings.status() == QSettings::NoError);
+
+        curStyle_ = settings.value(STYLE, fastoredis::defStyle).toString();
+        curLanguage_ = settings.value(LANGUAGE, fastoredis::translations::defLanguage).toString();
+
+        int view = settings.value(VIEW, fastoredis::Tree).toInt();
+        views_ = static_cast<supportedViews>(view);
+
+        QList<QVariant> connections = settings.value(CONNECTIONS, "").toList();
+        for(QList<QVariant>::const_iterator it = connections.begin(); it != connections.end(); ++it){
+            QVariant var = *it;
+            QString string = var.toString();
+            std::string encoded = common::convertToString(string);
+            std::string raw = common::utils::base64::decode64(encoded);
+
+            IConnectionSettingsBaseSPtr sett(IConnectionSettingsBase::fromString(raw));
+            if(sett){
+               connections_.push_back(sett);
+            }
+        }
+
+        syncTabs_= settings.value(SYNCTABS, false).toBool();
+        std::string dir = common::file_system::get_dir_path(iniPath);
+        loggingDir_ = settings.value(LOGGINGDIR, common::convertFromString<QString>(dir)).toString();
+        autoCheckUpdate_ = settings.value(CHECKUPDATES, true).toBool();
+    }
+
+    void SettingsManager::save()
+    {
+        QSettings settings(common::convertFromString<QString>(common::file_system::prepare_path(iniPath)), QSettings::IniFormat);
+        DCHECK(settings.status() == QSettings::NoError);
+
+        settings.setValue(STYLE, curStyle_);
+        settings.setValue(LANGUAGE, curLanguage_);
+        settings.setValue(VIEW, views_);
+
+        QList<QVariant> connections;
+        for(ConnectionSettingsContainerType::const_iterator it = connections_.begin(); it != connections_.end(); ++it){
+            IConnectionSettingsBaseSPtr conn = *it;
+            if(conn){
+               std::string raw = conn->toString();
+               std::string enc = common::utils::base64::encode64(raw);
+               QString qdata = common::convertFromString<QString>(enc);
+               connections.push_back(qdata);
+            }
+        }
+        settings.setValue(CONNECTIONS, connections);
+
+        settings.setValue(SYNCTABS, syncTabs_);
+        settings.setValue(LOGGINGDIR, loggingDir_);
+        settings.setValue(CHECKUPDATES, autoCheckUpdate_);
     }
 }

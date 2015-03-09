@@ -14,7 +14,6 @@ namespace fastoredis
 
     struct NKey
     {
-        NKey();
         explicit NKey(const std::string& key, common::Value::Type type = common::Value::TYPE_NULL);
 
         std::string key_;
@@ -28,7 +27,6 @@ namespace fastoredis
 
     struct NValue
     {
-        NValue();
         explicit NValue(const std::string& value, common::Value::Type type = common::Value::TYPE_NULL);
 
         std::string value_;
@@ -42,15 +40,15 @@ namespace fastoredis
 
     struct NDbValue
     {
-        NDbValue();
         NDbValue(const NKey& key, const NValue& value);
 
         NKey key_;
         NValue value_;
     };
 
-    struct ServerInfo
+    class ServerInfo
     {
+    public:
         connectionTypes type() const;
         virtual std::string toString() const = 0;
         virtual common::Value* valueByIndexes(unsigned char property, unsigned char field) const = 0;
@@ -58,8 +56,7 @@ namespace fastoredis
 
     protected:
         ServerInfo(connectionTypes type);
-        ServerInfo(const ServerInfo& that);
-        ServerInfo& operator=(const ServerInfo& that);
+        DISALLOW_COPY_AND_ASSIGN(ServerInfo);
 
     private:
         const connectionTypes type_;
@@ -150,8 +147,8 @@ namespace fastoredis
         NKey key() const;
 
         virtual ~CommandKey();
+
     protected:
-        CommandKey();
         CommandKey(const NKey& key, cmdtype type);
 
     private:

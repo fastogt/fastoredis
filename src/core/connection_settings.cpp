@@ -26,9 +26,9 @@ namespace fastoredis
 
     }
 
-    connectionTypes IConnectionSettingsBase::connectionType() const
+    std::string IConnectionSettingsBase::hash() const
     {
-        return type_;
+        return hash_;
     }
 
     std::string IConnectionSettingsBase::loggingPath() const
@@ -50,10 +50,30 @@ namespace fastoredis
         return logDir + hash() + ext;
     }
 
+
+    void IConnectionSettingsBase::setConnectionName(const std::string& name)
+    {
+        connectionName_ = name;
+        using namespace common::utils;
+        common::buffer_type bcon = common::convertFromString<common::buffer_type>(connectionName_);
+        uint64_t v = hash::crc64(0, bcon);
+        hash_ = common::convertToString(v);
+    }
+
     std::string IConnectionSettingsBase::fullAddress() const
     {
         common::net::hostAndPort h(host(), port());
         return common::convertToString(h);
+    }
+
+    std::string IConnectionSettingsBase::connectionName() const
+    {
+        return connectionName_;
+    }
+
+    connectionTypes IConnectionSettingsBase::connectionType() const
+    {
+        return type_;
     }
 
     IConnectionSettingsBase* IConnectionSettingsBase::createFromType(connectionTypes type, const std::string& conName)
@@ -126,11 +146,6 @@ namespace fastoredis
         return res;
     }
 
-    std::string IConnectionSettingsBase::hash() const
-    {
-        return hash_;
-    }
-
     bool IConnectionSettingsBase::loggingEnabled() const
     {
         return logging_enabled_;
@@ -154,20 +169,6 @@ namespace fastoredis
     void IConnectionSettingsBase::setSshInfo(const SSHInfo& info)
     {
         sshInfo_ = info;
-    }
-
-    void IConnectionSettingsBase::setConnectionName(const std::string& name)
-    {
-        connectionName_ = name;
-        using namespace common::utils;        
-        common::buffer_type bcon = common::convertFromString<common::buffer_type>(connectionName_);
-        uint64_t v = hash::crc64(0, bcon);
-        hash_ = common::convertToString(v);
-    }
-
-    std::string IConnectionSettingsBase::connectionName() const
-    {
-        return connectionName_;
     }
 
     const char* useHelpText(connectionTypes type)

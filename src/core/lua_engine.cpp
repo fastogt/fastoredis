@@ -37,6 +37,32 @@ namespace fastoredis
         }
     }
 
+    void LuaWorker::execute(const QString& script, const QStringList &args)
+    {
+        std::vector<std::string> sargs;
+        for(QStringList::const_iterator it = args.begin(); it < args.end(); ++it){
+            QString val = *it;
+            sargs.push_back(common::convertToString(val));
+        }
+
+        EventsInfo::ExecuteInfoRequest req(common::convertToString(script), sargs);
+        QEvent *ev = new events::ExecuteRequestEvent(this, req);
+        qApp->postEvent(this, ev);
+    }
+
+    void LuaWorker::executeScript(const QString& path, const QStringList& args)
+    {
+        std::vector<std::string> sargs;
+        for(QStringList::const_iterator it = args.begin(); it < args.end(); ++it){
+            QString val = *it;
+            sargs.push_back(common::convertToString(val));
+        }
+
+        EventsInfo::ExecuteScriptInfoRequest req(common::convertToString(path), sargs);
+        QEvent *ev = new events::ExecuteScriptRequestEvent(this, req);
+        qApp->postEvent(this, ev);
+    }
+
     void LuaWorker::stop()
     {
         stop_ = true;
@@ -56,7 +82,7 @@ namespace fastoredis
             ExecuteRequestEvent::value_type val = ev->value();
             if(!stop_){
                 executeImpl(val.text_, val.args_);
-            }            
+            }
         }
         else if(type == static_cast<QEvent::Type>(ExecuteScriptRequestEvent::EventType)){
             ExecuteScriptRequestEvent *ev = static_cast<ExecuteScriptRequestEvent*>(event);
@@ -142,37 +168,6 @@ namespace fastoredis
 
     done:
         emit executeProgress(100);
-    }
-
-    void LuaWorker::execute(const QString& script, const QStringList &args)
-    {
-        std::vector<std::string> sargs;
-        for(QStringList::const_iterator it = args.begin(); it < args.end(); ++it){
-            QString val = *it;
-            sargs.push_back(common::convertToString(val));
-        }
-
-        EventsInfo::ExecuteInfoRequest req(common::convertToString(script), sargs);
-        QEvent *ev = new events::ExecuteRequestEvent(this, req);
-        qApp->postEvent(this, ev);
-    }
-
-    void LuaWorker::executeScript(const QString& path, const QStringList& args)
-    {
-        std::vector<std::string> sargs;
-        for(QStringList::const_iterator it = args.begin(); it < args.end(); ++it){
-            QString val = *it;
-            sargs.push_back(common::convertToString(val));
-        }
-
-        EventsInfo::ExecuteScriptInfoRequest req(common::convertToString(path), sargs);
-        QEvent *ev = new events::ExecuteScriptRequestEvent(this, req);
-        qApp->postEvent(this, ev);
-    }
-
-    const char* LuaEngine::version()
-    {
-        return LUA_VERSION;
     }
 
     namespace
@@ -295,9 +290,13 @@ namespace fastoredis
         lua_printf  = redirect_printf;
     }
 
-    bool LuaEngine::hasModule(const std::string& name)
+    LuaEngine::~LuaEngine()
     {
-        return false;
+    }
+
+    const char* LuaEngine::version()
+    {
+        return LUA_VERSION;
     }
 
     namespace
@@ -361,7 +360,9 @@ namespace fastoredis
         return worker;
     }
 
-    LuaEngine::~LuaEngine()
+
+    bool LuaEngine::hasModule(const std::string& name)
     {
+        return false;
     }
 }
