@@ -48,6 +48,15 @@ namespace fastoredis
         }
     }
 
+    /*bool isDuplicateTabShortcut(QKeyEvent* keyEvent)
+    {
+        bool ctrlShiftT = (keyEvent->modifiers() & Qt::ControlModifier) &&
+            (keyEvent->modifiers() & Qt::ShiftModifier) &&
+            (keyEvent->key() == Qt::Key_T);
+
+        return ctrlShiftT;
+    }*/
+
     bool isOpenShortcut(QKeyEvent* keyEvent)
     {
         return openKey == keyEvent;
@@ -71,6 +80,11 @@ namespace fastoredis
     bool isCloseShortcut(QKeyEvent* keyEvent)
     {
         return closeKey == keyEvent;
+    }
+
+    bool isSetFocusOnQueryLineShortcut(QKeyEvent* keyEvent)
+    {
+        return keyEvent->key() == Qt::Key_F6;
     }
 
     bool isNewTabShortcut(QKeyEvent* keyEvent)
@@ -98,24 +112,16 @@ namespace fastoredis
         return fullScreenKey == keyEvent;
     }
 
-    bool isDuplicateTabShortcut(QKeyEvent* keyEvent)
-    {
-        bool ctrlShiftT = (keyEvent->modifiers() & Qt::ControlModifier) &&
-            (keyEvent->modifiers() & Qt::ShiftModifier) &&
-            (keyEvent->key() == Qt::Key_T);
-
-        return ctrlShiftT;
-    }
-
-    bool isSetFocusOnQueryLineShortcut(QKeyEvent* keyEvent)
-    {
-        return keyEvent->key() == Qt::Key_F6;
-    }
-
     bool isExecuteScriptShortcut(QKeyEvent* keyEvent)
     {
         return executeKey == keyEvent;
     }
+
+    /*bool isToggleCommentsShortcut(QKeyEvent* keyEvent)
+    {
+        return ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Slash)) ||
+               ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::ShiftModifier) && (keyEvent->key() == Qt::Key_C));
+    }*/
 
     bool isAutoCompleteShortcut(QKeyEvent* keyEvent)
     {
@@ -125,11 +131,5 @@ namespace fastoredis
     bool isHideAutoCompleteShortcut(QKeyEvent* keyEvent)
     {
         return (keyEvent->key() == Qt::Key_Escape);
-    }
-
-    bool isToggleCommentsShortcut(QKeyEvent* keyEvent)
-    {
-        return ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Slash)) ||
-               ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::ShiftModifier) && (keyEvent->key() == Qt::Key_C));
     }
 }

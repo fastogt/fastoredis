@@ -121,11 +121,6 @@ namespace fastoredis
         }
     }
 
-    void ServerHistoryDialog::reset()
-    {
-        refreshGraph(serverInfoFields_->currentIndex());
-    }
-
     void ServerHistoryDialog::refreshGraph(int index)
     {
         if(index == -1){
@@ -159,5 +154,10 @@ namespace fastoredis
     {
         QDialog::showEvent(e);
         emit showed();
+    }
+
+    void ServerHistoryDialog::reset()
+    {
+        refreshGraph(serverInfoFields_->currentIndex());
     }
 }

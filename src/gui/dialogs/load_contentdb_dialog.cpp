@@ -49,6 +49,16 @@ namespace fastoredis
         setLayout(mainLayout);
     }
 
+    uint32_t LoadContentDbDialog::count() const
+    {
+        return countTextEdit_->text().toUInt();
+    }
+
+    QString LoadContentDbDialog::pattern() const
+    {
+        return patternEdit_->text();
+    }
+
     void LoadContentDbDialog::accept()
     {
         using namespace translations;
@@ -67,15 +77,5 @@ namespace fastoredis
         }
 
         QDialog::accept();
-    }
-
-    uint32_t LoadContentDbDialog::count() const
-    {
-        return countTextEdit_->text().toUInt();
-    }
-
-    QString LoadContentDbDialog::pattern() const
-    {
-        return patternEdit_->text();
     }
 }

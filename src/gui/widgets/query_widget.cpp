@@ -40,6 +40,23 @@ namespace fastoredis
         setLayout(mainLayout);
     }
 
+    QueryWidget* QueryWidget::clone(const QString& text)
+    {
+        QueryWidget *result = new QueryWidget(shellWidget_->server(), parentWidget());
+        result->shellWidget_->setText(text);
+        return result;
+    }
+
+    connectionTypes QueryWidget::connectionType() const
+    {
+        IServerSPtr ser = shellWidget_->server();
+        if(!ser){
+            return DBUNKNOWN;
+        }
+
+        return ser->type();
+    }
+
     QString QueryWidget::inputText() const
     {
         return shellWidget_->text();
@@ -58,22 +75,5 @@ namespace fastoredis
     void QueryWidget::reload()
     {
 
-    }
-
-    QueryWidget* QueryWidget::clone(const QString& text)
-    {
-        QueryWidget *result = new QueryWidget(shellWidget_->server(), parentWidget());
-        result->shellWidget_->setText(text);
-        return result;
-    }
-
-    connectionTypes QueryWidget::connectionType() const
-    {
-        IServerSPtr ser = shellWidget_->server();
-        if(!ser){
-            return DBUNKNOWN;
-        }
-
-        return ser->type();
     }
 }

@@ -189,6 +189,12 @@ namespace fastoredis
         }
     }
 
+    void InfoServerDialog::showEvent(QShowEvent* e)
+    {
+        QDialog::showEvent(e);
+        emit showed();
+    }
+
     void InfoServerDialog::updateText(const RedisServerInfo& serv)
     {
         using namespace common;
@@ -320,11 +326,5 @@ namespace fastoredis
                 .arg(convertFromString<QString>(com.binlogs_));
 
         serverTextInfo_->setText(textServ);
-    }
-
-    void InfoServerDialog::showEvent(QShowEvent* e)
-    {
-        QDialog::showEvent(e);
-        emit showed();
     }
 }

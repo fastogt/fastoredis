@@ -21,10 +21,10 @@ namespace fastoredis
         const int key_;
     };
 
-    const FastoQKeySequence openKey(QKeySequence::Open);
+    const FastoQKeySequence openKey = QKeySequence::Open;
     bool isOpenShortcut(QKeyEvent* keyEvent);
 
-    const FastoQKeySequence saveKey(QKeySequence::Save);
+    const FastoQKeySequence saveKey = QKeySequence::Save;
     bool isSaveShortcut(QKeyEvent* keyEvent);
 
     const FastoQKeySequence saveAsKey = QKeySequence::SaveAs;
@@ -51,7 +51,7 @@ namespace fastoredis
     const FastoQKeySequence fullScreenKey = QKeySequence::FullScreen;
     bool isFullScreenShortcut(QKeyEvent* keyEvent);
 
-    const FastoQKeySequence executeKey(Qt::ControlModifier, Qt::Key_Return);
+    const FastoQKeySequence executeKey = FastoQKeySequence(Qt::ControlModifier, Qt::Key_Return);
     bool isExecuteScriptShortcut(QKeyEvent* keyEvent);
 
     bool isAutoCompleteShortcut(QKeyEvent* keyEvent);

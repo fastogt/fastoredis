@@ -209,78 +209,6 @@ namespace fastoredis
         }
     }
 
-    SSHInfo::SupportedAuthenticationMetods ConnectionDialog::selectedAuthMethod() const
-    {
-        using namespace translations;
-
-        if (security_->currentText() == trPrivateKey){
-            return SSHInfo::PUBLICKEY;
-        }
-
-        return SSHInfo::PASSWORD;
-    }
-
-    void ConnectionDialog::sshSupportStateChange(int value)
-    {
-        useSshWidget_->setVisible(value);
-        sshHostName_->setEnabled(value);
-        userName_->setEnabled(value);
-        sshPort_->setEnabled(value);
-        security_->setEnabled(value);
-        sshPrivateKeyLabel_->setEnabled(value);
-        privateKeyBox_->setEnabled(value);
-        selectPrivateFileButton_->setEnabled(value);
-        sshAddressLabel_->setEnabled(value);
-        sshUserNameLabel_->setEnabled(value);
-        sshAuthMethodLabel_->setEnabled(value);
-        sshPassphraseLabel_->setEnabled(value);
-        passphraseBox_->setEnabled(value);
-        passwordBox_->setEnabled(value);
-        passwordLabel_->setEnabled(value);
-    }
-
-    void ConnectionDialog::securityChange(const QString& )
-    {
-        bool isKey = selectedAuthMethod() == SSHInfo::PUBLICKEY;
-        sshPrivateKeyLabel_->setVisible(isKey);
-        privateKeyBox_->setVisible(isKey);
-        selectPrivateFileButton_->setVisible(isKey);
-        sshPassphraseLabel_->setVisible(isKey);
-        passphraseBox_->setVisible(isKey);
-        passphraseEchoModeButton_->setVisible(isKey);
-        passwordBox_->setVisible(!isKey);
-        passwordLabel_->setVisible(!isKey);
-        passwordEchoModeButton_->setVisible(!isKey);
-    }
-
-    void ConnectionDialog::setPrivateFile()
-    {
-        QString filepath = QFileDialog::getOpenFileName(this, tr("Select private key file"),
-        privateKeyBox_->text(), tr("Private key files (*.*)"));
-        if (filepath.isNull())
-            return;
-
-        privateKeyBox_->setText(filepath);
-    }
-
-    void ConnectionDialog::togglePasswordEchoMode()
-    {
-        using namespace translations;
-
-        bool isPassword = passwordBox_->echoMode() == QLineEdit::Password;
-        passwordBox_->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
-        passwordEchoModeButton_->setText(isPassword ? trHide: trShow);
-    }
-
-    void ConnectionDialog::togglePassphraseEchoMode()
-    {
-        using namespace translations;
-
-        bool isPassword = passphraseBox_->echoMode() == QLineEdit::Password;
-        passphraseBox_->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
-        passphraseEchoModeButton_->setText(isPassword ? trHide: trShow);
-    }
-
     void ConnectionDialog::typeConnectionChange(const QString& value)
     {
         connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(value));
@@ -302,6 +230,96 @@ namespace fastoredis
         }
 
         useSsh_->setEnabled(isValidType);
+    }
+
+    void ConnectionDialog::securityChange(const QString& )
+    {
+        bool isKey = selectedAuthMethod() == SSHInfo::PUBLICKEY;
+        sshPrivateKeyLabel_->setVisible(isKey);
+        privateKeyBox_->setVisible(isKey);
+        selectPrivateFileButton_->setVisible(isKey);
+        sshPassphraseLabel_->setVisible(isKey);
+        passphraseBox_->setVisible(isKey);
+        passphraseEchoModeButton_->setVisible(isKey);
+        passwordBox_->setVisible(!isKey);
+        passwordLabel_->setVisible(!isKey);
+        passwordEchoModeButton_->setVisible(!isKey);
+    }
+
+    void ConnectionDialog::sshSupportStateChange(int value)
+    {
+        useSshWidget_->setVisible(value);
+        sshHostName_->setEnabled(value);
+        userName_->setEnabled(value);
+        sshPort_->setEnabled(value);
+        security_->setEnabled(value);
+        sshPrivateKeyLabel_->setEnabled(value);
+        privateKeyBox_->setEnabled(value);
+        selectPrivateFileButton_->setEnabled(value);
+        sshAddressLabel_->setEnabled(value);
+        sshUserNameLabel_->setEnabled(value);
+        sshAuthMethodLabel_->setEnabled(value);
+        sshPassphraseLabel_->setEnabled(value);
+        passphraseBox_->setEnabled(value);
+        passwordBox_->setEnabled(value);
+        passwordLabel_->setEnabled(value);
+    }
+
+    void ConnectionDialog::togglePasswordEchoMode()
+    {
+        using namespace translations;
+
+        bool isPassword = passwordBox_->echoMode() == QLineEdit::Password;
+        passwordBox_->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
+        passwordEchoModeButton_->setText(isPassword ? trHide: trShow);
+    }
+
+    void ConnectionDialog::togglePassphraseEchoMode()
+    {
+        using namespace translations;
+
+        bool isPassword = passphraseBox_->echoMode() == QLineEdit::Password;
+        passphraseBox_->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
+        passphraseEchoModeButton_->setText(isPassword ? trHide: trShow);
+    }
+
+    void ConnectionDialog::setPrivateFile()
+    {
+        QString filepath = QFileDialog::getOpenFileName(this, tr("Select private key file"),
+        privateKeyBox_->text(), tr("Private key files (*.*)"));
+        if (filepath.isNull())
+            return;
+
+        privateKeyBox_->setText(filepath);
+    }
+
+    void ConnectionDialog::testConnection()
+    {
+        if(validateAndApply()){
+            ConnectionDiagnosticDialog diag(this, connection_);
+            diag.exec();
+        }
+    }
+
+    void ConnectionDialog::changeEvent(QEvent* e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QDialog::changeEvent(e);
+    }
+
+    void ConnectionDialog::retranslateUi()
+    {
+        setWindowTitle(tr("Connection Settings"));
+        logging_->setText(tr("Logging enabled"));
+        useSsh_->setText(tr("Use SSH tunnel"));
+        passwordLabel_->setText(tr("User Password:"));
+        sshPrivateKeyLabel_->setText(tr("Private key:"));
+        sshPassphraseLabel_->setText(tr("Passphrase:"));
+        sshAddressLabel_->setText(tr("SSH Address:"));
+        sshUserNameLabel_->setText(tr("SSH User Name:"));
+        sshAuthMethodLabel_->setText(tr("SSH Auth Method:"));
     }
 
     bool ConnectionDialog::validateAndApply()
@@ -341,32 +359,14 @@ namespace fastoredis
         }
     }
 
-    void ConnectionDialog::changeEvent(QEvent* e)
+    SSHInfo::SupportedAuthenticationMetods ConnectionDialog::selectedAuthMethod() const
     {
-        if(e->type() == QEvent::LanguageChange){
-            retranslateUi();
-        }
-        QDialog::changeEvent(e);
-    }
+        using namespace translations;
 
-    void ConnectionDialog::retranslateUi()
-    {
-        setWindowTitle(tr("Connection Settings"));
-        logging_->setText(tr("Logging enabled"));
-        useSsh_->setText(tr("Use SSH tunnel"));
-        passwordLabel_->setText(tr("User Password:"));
-        sshPrivateKeyLabel_->setText(tr("Private key:"));
-        sshPassphraseLabel_->setText(tr("Passphrase:"));
-        sshAddressLabel_->setText(tr("SSH Address:"));
-        sshUserNameLabel_->setText(tr("SSH User Name:"));
-        sshAuthMethodLabel_->setText(tr("SSH Auth Method:"));
-    }
-
-    void ConnectionDialog::testConnection()
-    {
-        if(validateAndApply()){
-            ConnectionDiagnosticDialog diag(this, connection_);
-            diag.exec();
+        if (security_->currentText() == trPrivateKey){
+            return SSHInfo::PUBLICKEY;
         }
+
+        return SSHInfo::PASSWORD;
     }
 }

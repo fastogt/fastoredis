@@ -85,39 +85,6 @@ namespace fastoredis
         return value;
     }
 
-    QString fromHexMsgPack(FastoCommonItem* item)
-    {
-        if(!item){
-            return QString();
-        }
-
-        if(!item->childrenCount()){
-            std::string sval = common::convertToString(item->value());
-
-            HexEDcoder hex;
-            std::string hexstr;
-            common::ErrorValueSPtr er = hex.decode(sval, hexstr);
-            if(er){
-                return QString();
-            }
-
-            MsgPackEDcoder msg;
-            std::string upack;
-            er = msg.decode(hexstr, upack);
-            if(er){
-                return QString();
-            }
-            return common::convertFromString<QString>(upack);
-        }
-
-        QString value;
-        for(int i = 0; i < item->childrenCount(); ++i){
-            value += fromHexMsgPack(dynamic_cast<FastoCommonItem*>(item->child(i)));
-        }
-
-        return value;
-    }
-
     QString toHex(FastoCommonItem* item)
     {
         if(!item){
@@ -189,6 +156,39 @@ namespace fastoredis
         QString value;
         for(int i = 0; i < item->childrenCount(); ++i){
             value += fromGzip(dynamic_cast<FastoCommonItem*>(item->child(i)));
+        }
+
+        return value;
+    }
+
+    QString fromHexMsgPack(FastoCommonItem* item)
+    {
+        if(!item){
+            return QString();
+        }
+
+        if(!item->childrenCount()){
+            std::string sval = common::convertToString(item->value());
+
+            HexEDcoder hex;
+            std::string hexstr;
+            common::ErrorValueSPtr er = hex.decode(sval, hexstr);
+            if(er){
+                return QString();
+            }
+
+            MsgPackEDcoder msg;
+            std::string upack;
+            er = msg.decode(hexstr, upack);
+            if(er){
+                return QString();
+            }
+            return common::convertFromString<QString>(upack);
+        }
+
+        QString value;
+        for(int i = 0; i < item->childrenCount(); ++i){
+            value += fromHexMsgPack(dynamic_cast<FastoCommonItem*>(item->child(i)));
         }
 
         return value;

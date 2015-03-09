@@ -12,12 +12,13 @@ namespace fastoredis
         Q_OBJECT
     public:
         TreeModel(QObject* parent = 0);
+        virtual ~TreeModel();
 
         virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
         virtual QModelIndex index(int row, int column, const QModelIndex& parent= QModelIndex()) const;
         virtual QModelIndex parent(const QModelIndex& index) const;
-        TreeItem* root() const;
 
+        TreeItem* root() const;
         void setRoot(TreeItem *root);
 
         virtual void insertItem(const QModelIndex& parent, TreeItem* child);
@@ -25,8 +26,6 @@ namespace fastoredis
         virtual void updateItem(const QModelIndex& topLeft, const QModelIndex &bottomRight);
 
         bool findItem(void* internalPointer, QModelIndex& index);
-
-        virtual ~TreeModel();
 
     protected:        
         TreeItem* root_;

@@ -166,26 +166,9 @@ namespace fastoredis
     {
     }
 
-    void BaseConsoleDialog::changeEvent(QEvent* e)
-    {
-        if(e->type() == QEvent::LanguageChange){
-            retranslateUi();
-        }
-        QDialog::changeEvent(e);
-    }
-
-    void BaseConsoleDialog::retranslateUi()
-    {
-    }
-
     void BaseConsoleDialog::loadFromFile()
     {
         loadFromFile(filePath_);
-    }
-
-    void BaseConsoleDialog::loadAndInstallFile()
-    {
-        loadAndInstallFileImpl(filePath_);
     }
 
     bool BaseConsoleDialog::loadFromFile(const QString& path)
@@ -258,13 +241,30 @@ namespace fastoredis
         }
     }
 
+    void BaseConsoleDialog::stop()
+    {
+        stopImpl();
+    }
+
     void BaseConsoleDialog::execute(const QString& script, const QStringList& args)
     {
         executeImpl(script, args);
     }
 
-    void BaseConsoleDialog::stop()
+    void BaseConsoleDialog::loadAndInstallFile()
     {
-        stopImpl();
+        loadAndInstallFileImpl(filePath_);
+    }
+
+    void BaseConsoleDialog::changeEvent(QEvent* e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QDialog::changeEvent(e);
+    }
+
+    void BaseConsoleDialog::retranslateUi()
+    {
     }
 }

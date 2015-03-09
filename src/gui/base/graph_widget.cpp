@@ -45,18 +45,6 @@ namespace fastoredis
     {
     }
 
-    plot_settings plot_settings::create_child(qreal dx, qreal dy, QRect rect)const
-    {
-        plot_settings settings(*this);
-        settings.min_x_ = min_x_ + dx * rect.left();
-        settings.max_x_ = min_x_ + dx * rect.right();
-        settings.min_y_ = max_y_ - dy * rect.bottom();
-        settings.max_y_ = max_y_ - dy * rect.top();
-        settings.adjust();
-
-        return settings;
-    }
-
     void plot_settings::scroll(int dx, int dy)
     {
         qreal stepX = span_x() / num_x_ticks_;
@@ -74,6 +62,18 @@ namespace fastoredis
     {
         adjust_axis(min_x_, max_x_, num_x_ticks_);
         adjust_axis(min_y_, max_y_, num_y_ticks_);
+    }
+
+    plot_settings plot_settings::create_child(qreal dx, qreal dy, QRect rect)const
+    {
+        plot_settings settings(*this);
+        settings.min_x_ = min_x_ + dx * rect.left();
+        settings.max_x_ = min_x_ + dx * rect.right();
+        settings.min_y_ = max_y_ - dy * rect.bottom();
+        settings.max_y_ = max_y_ - dy * rect.top();
+        settings.adjust();
+
+        return settings;
     }
 
     GraphWidget::GraphWidget(QWidget* parent)
@@ -215,17 +215,73 @@ namespace fastoredis
         update(rect.right(), rect.top(), 1, rect.height());
     }
 
-    void GraphWidget::wheelEvent(QWheelEvent *event)
+    void GraphWidget::paintEvent(QPaintEvent* event)
     {
-        int numDegrees = event->delta() / 8;
-        int numTicks = numDegrees / 15;
-        if (event->orientation() == Qt::Horizontal){
-            zoomStack[cur_zoom_].scroll(numTicks, 0);
+        if (rubber_band_is_shown_){
+            QStylePainter spainter(this);
+            spainter.setPen(QColor(rubber_color));
+            spainter.drawRect(rubber_band_rect_.normalized().adjusted(0, 0, -1, -1));
         }
-        else{
-            zoomStack[cur_zoom_].scroll(0, numTicks);
+
+        QPainter painter(this);
+        drawGrid(&painter);
+        drawCurves(&painter);
+    }
+
+    void GraphWidget::mousePressEvent(QMouseEvent* event)
+    {
+        if(zoomStack.empty()){
+            return;
         }
-        update();
+
+        if (event->button() == Qt::LeftButton){
+            if (paintRect().contains(event->pos())){
+                rubber_band_is_shown_ = true;
+                rubber_band_rect_.setTopLeft(event->pos());
+                rubber_band_rect_.setBottomRight(event->pos());
+                updateRubberBandRegion();
+                setCursor(Qt::CrossCursor);
+            }
+        }
+    }
+
+    void GraphWidget::mouseMoveEvent(QMouseEvent* event)
+    {
+        if (rubber_band_is_shown_){
+            updateRubberBandRegion();
+            rubber_band_rect_.setBottomRight(event->pos());
+            updateRubberBandRegion();
+        }
+
+        //QWidget::mouseMoveEvent(event);
+    }
+
+    void GraphWidget::mouseReleaseEvent(QMouseEvent* event)
+    {
+        if(zoomStack.empty()){
+            return;
+        }
+
+        if ((event->button() == Qt::LeftButton) && rubber_band_is_shown_){
+            rubber_band_is_shown_ = false;
+            updateRubberBandRegion();
+            unsetCursor();
+
+            QRect rect = rubber_band_rect_.normalized();
+            if (rect.width() > 4 && rect.height() > 4){
+                rect.translate(-margin, -margin);
+
+                plot_settings prevSettings = zoomStack[cur_zoom_];
+                qreal dx = prevSettings.span_x() / qreal(width() - 2 * margin);
+                qreal dy = prevSettings.span_y() / qreal(height() - 2 * margin);
+                plot_settings settings = prevSettings.create_child(dx,dy,rect);
+                if(is_valid_setting(settings)){
+                    zoomStack.push_back(settings);
+                    zoom_in();
+                    update();
+                }
+            }
+        }
     }
 
     void GraphWidget::keyPressEvent(QKeyEvent* event)
@@ -261,73 +317,17 @@ namespace fastoredis
         QWidget::keyPressEvent(event);
     }
 
-    void GraphWidget::mouseReleaseEvent(QMouseEvent* event)
+    void GraphWidget::wheelEvent(QWheelEvent *event)
     {
-        if(zoomStack.empty()){
-            return;
+        int numDegrees = event->delta() / 8;
+        int numTicks = numDegrees / 15;
+        if (event->orientation() == Qt::Horizontal){
+            zoomStack[cur_zoom_].scroll(numTicks, 0);
         }
-
-        if ((event->button() == Qt::LeftButton) && rubber_band_is_shown_){
-            rubber_band_is_shown_ = false;
-            updateRubberBandRegion();
-            unsetCursor();
-
-            QRect rect = rubber_band_rect_.normalized();
-            if (rect.width() > 4 && rect.height() > 4){
-                rect.translate(-margin, -margin);
-
-                plot_settings prevSettings = zoomStack[cur_zoom_];
-                qreal dx = prevSettings.span_x() / qreal(width() - 2 * margin);
-                qreal dy = prevSettings.span_y() / qreal(height() - 2 * margin);
-                plot_settings settings = prevSettings.create_child(dx,dy,rect);
-                if(is_valid_setting(settings)){
-                    zoomStack.push_back(settings);
-                    zoom_in();
-                    update();
-                }
-            }
+        else{
+            zoomStack[cur_zoom_].scroll(0, numTicks);
         }
-    }
-
-    void GraphWidget::mouseMoveEvent(QMouseEvent* event)
-    {
-        if (rubber_band_is_shown_){
-            updateRubberBandRegion();
-            rubber_band_rect_.setBottomRight(event->pos());
-            updateRubberBandRegion();
-        }
-
-        //QWidget::mouseMoveEvent(event);
-    }
-
-    void GraphWidget::mousePressEvent(QMouseEvent* event)
-    {
-        if(zoomStack.empty()){
-            return;
-        }
-
-        if (event->button() == Qt::LeftButton){
-            if (paintRect().contains(event->pos())){
-                rubber_band_is_shown_ = true;
-                rubber_band_rect_.setTopLeft(event->pos());
-                rubber_band_rect_.setBottomRight(event->pos());
-                updateRubberBandRegion();
-                setCursor(Qt::CrossCursor);
-            }
-        }
-    }
-
-    void GraphWidget::paintEvent(QPaintEvent* event)
-    {
-        if (rubber_band_is_shown_){
-            QStylePainter spainter(this);
-            spainter.setPen(QColor(rubber_color));
-            spainter.drawRect(rubber_band_rect_.normalized().adjusted(0, 0, -1, -1));
-        }
-
-        QPainter painter(this);
-        drawGrid(&painter);
-        drawCurves(&painter);
+        update();
     }
 
     QRect GraphWidget::paintRect() const

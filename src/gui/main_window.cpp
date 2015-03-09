@@ -93,39 +93,6 @@ namespace
 
 namespace fastoredis
 {
-
-    UpdateChecker::UpdateChecker(QObject* parent)
-        : QObject(parent)
-    {
-
-    }
-
-    void UpdateChecker::routine()
-    {
-        common::net::SocketTcp s(SITE_URL, SERV_PORT);
-        bool res = s.connect();
-        if(!res){
-            emit versionAvailibled(res, QString());
-            return;
-        }
-
-        res = s.write(common::convertFromString<common::buffer_type>(GET_VERSION));
-        if(!res){
-            emit versionAvailibled(res, QString());
-            s.close();
-            return;
-        }
-
-        common::buffer_type version;
-        res = s.read(version, 128);
-
-        QString vers = common::convertFromString<QString>(common::convertToString(version));
-        emit versionAvailibled(res, vers);
-
-        s.close();
-        return;
-    }
-
     MainWindow::MainWindow()
         : QMainWindow(), isCheckedInSession_(false)
     {
@@ -260,8 +227,23 @@ namespace fastoredis
         ServersManager::instance().clear();
     }
 
-    void MainWindow::createStatusBar()
+    void MainWindow::changeEvent(QEvent* ev)
     {
+        if(ev->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+
+        return QMainWindow::changeEvent(ev);
+    }
+
+    void MainWindow::showEvent(QShowEvent* ev)
+    {
+        QMainWindow::showEvent(ev);
+        bool isA = SettingsManager::instance().autoCheckUpdates();
+        if(isA && !isCheckedInSession_){
+            isCheckedInSession_ = true;
+            checkUpdate();
+        }
     }
 
     void MainWindow::open()
@@ -274,13 +256,83 @@ namespace fastoredis
         }
     }
 
-    void MainWindow::showEvent(QShowEvent* ev)
+    void MainWindow::about()
     {
-        QMainWindow::showEvent(ev);
-        bool isA = SettingsManager::instance().autoCheckUpdates();
-        if(isA && !isCheckedInSession_){
-            isCheckedInSession_ = true;
-            checkUpdate();
+        AboutDialog dlg(this);
+        dlg.exec();
+    }
+
+    void MainWindow::openPreferences()
+    {
+        PreferencesDialog dlg(this);
+        dlg.exec();
+    }
+
+    void MainWindow::checkUpdate()
+    {
+        QThread* th = new QThread;
+        UpdateChecker* cheker = new UpdateChecker;
+        cheker->moveToThread(th);
+        VERIFY(connect(th, &QThread::started, cheker, &UpdateChecker::routine));
+        VERIFY(connect(cheker, &UpdateChecker::versionAvailibled, this, &MainWindow::versionAvailible));
+        VERIFY(connect(cheker, &UpdateChecker::versionAvailibled, th, &QThread::quit));
+        VERIFY(connect(th, &QThread::finished, cheker, &UpdateChecker::deleteLater));
+        VERIFY(connect(th, &QThread::finished, th, &QThread::deleteLater));
+        th->start();
+    }
+
+    void MainWindow::enterLeaveFullScreen()
+    {
+        using namespace translations;
+        if(isFullScreen()){
+            showNormal();
+            fullScreanAction_->setText(trEnterFullScreen);
+        }
+        else{
+            showFullScreen();
+            fullScreanAction_->setText(trExitFullScreen);
+        }
+    }
+
+    void MainWindow::openPythonConsole()
+    {
+        PythonConsoleDialog dlg(QString(), this);
+        dlg.exec();
+    }
+
+    void MainWindow::openLuaConsole()
+    {
+        LuaConsoleDialog dlg(QString(), this);
+        dlg.exec();
+    }
+
+    void MainWindow::openEncodeDecodeDialog()
+    {
+        EncodeDecodeDialog dlg(this);
+        dlg.exec();
+    }
+
+    void MainWindow::versionAvailible(bool succesResult, const QString& version)
+    {
+        using namespace translations;
+        if(!succesResult){
+            QMessageBox::information(this, trCheckVersion, trConnectionErrorText);
+            checkUpdateAction_->setEnabled(true);
+        }
+        else{
+            bool isn = isNeededUpdate(version);
+            if(isn){
+                QMessageBox::information(this, trCheckVersion,
+                    QObject::tr("Availible new version: %1")
+                        .arg(version));
+            }
+            else{
+                QMessageBox::information(this, trCheckVersion,
+                    QObject::tr("<h3>You're' up-to-date!</h3>" PROJECT_NAME_TITLE " %1 is currently the newest version available.")
+                        .arg(version));
+            }
+
+            checkUpdateAction_->setEnabled(isn);
         }
     }
 
@@ -336,13 +388,8 @@ namespace fastoredis
     }
 #endif
 
-    void MainWindow::changeEvent(QEvent* ev)
+    void MainWindow::createStatusBar()
     {
-        if(ev->type() == QEvent::LanguageChange){
-            retranslateUi();
-        }
-
-        return QMainWindow::changeEvent(ev);
     }
 
     void MainWindow::retranslateUi()
@@ -365,87 +412,39 @@ namespace fastoredis
         explorerAction_->setText(trExpTree);
         logsAction_->setText(trLogs);
         expDock_->setWindowTitle(trExpTree);
-        logDock_->setWindowTitle(trLogs);        
+        logDock_->setWindowTitle(trLogs);
     }
 
-    void MainWindow::about()
+    UpdateChecker::UpdateChecker(QObject* parent)
+        : QObject(parent)
     {
-        AboutDialog dlg(this);
-        dlg.exec();
+
     }
 
-    void MainWindow::openPreferences()
+    void UpdateChecker::routine()
     {
-        PreferencesDialog dlg(this);
-        dlg.exec();
-    }
-
-    void MainWindow::checkUpdate()
-    {
-        QThread* th = new QThread;
-        UpdateChecker* cheker = new UpdateChecker;
-        cheker->moveToThread(th);
-        VERIFY(connect(th, &QThread::started, cheker, &UpdateChecker::routine));
-        VERIFY(connect(cheker, &UpdateChecker::versionAvailibled, this, &MainWindow::versionAvailible));
-        VERIFY(connect(cheker, &UpdateChecker::versionAvailibled, th, &QThread::quit));
-        VERIFY(connect(th, &QThread::finished, cheker, &UpdateChecker::deleteLater));
-        VERIFY(connect(th, &QThread::finished, th, &QThread::deleteLater));
-        th->start();
-    }
-
-    void MainWindow::openPythonConsole()
-    {
-        PythonConsoleDialog dlg(QString(), this);
-        dlg.exec();
-    }
-
-    void MainWindow::openLuaConsole()
-    {
-        LuaConsoleDialog dlg(QString(), this);
-        dlg.exec();
-    }
-
-    void MainWindow::openEncodeDecodeDialog()
-    {
-        EncodeDecodeDialog dlg(this);
-        dlg.exec();
-    }
-
-    void MainWindow::enterLeaveFullScreen()
-    {
-        using namespace translations;
-        if(isFullScreen()){
-            showNormal();
-            fullScreanAction_->setText(trEnterFullScreen);
+        common::net::SocketTcp s(SITE_URL, SERV_PORT);
+        bool res = s.connect();
+        if(!res){
+            emit versionAvailibled(res, QString());
+            return;
         }
-        else{
-            showFullScreen();
-            fullScreanAction_->setText(trExitFullScreen);
-        }
-    }
 
-    void MainWindow::versionAvailible(bool succesResult, const QString& version)
-    {
-        using namespace translations;
-        if(!succesResult){
-            QMessageBox::information(this, trCheckVersion, trConnectionErrorText);
-            checkUpdateAction_->setEnabled(true);
+        res = s.write(common::convertFromString<common::buffer_type>(GET_VERSION));
+        if(!res){
+            emit versionAvailibled(res, QString());
+            s.close();
+            return;
         }
-        else{
-            bool isn = isNeededUpdate(version);
-            if(isn){
-                QMessageBox::information(this, trCheckVersion,
-                    QObject::tr("Availible new version: %1")
-                        .arg(version));
-            }
-            else{
-                QMessageBox::information(this, trCheckVersion,
-                    QObject::tr("<h3>You're' up-to-date!</h3>" PROJECT_NAME_TITLE " %1 is currently the newest version available.")
-                        .arg(version));
-            }
 
-            checkUpdateAction_->setEnabled(isn);
-        }
+        common::buffer_type version;
+        res = s.read(version, 128);
+
+        QString vers = common::convertFromString<QString>(common::convertToString(version));
+        emit versionAvailibled(res, vers);
+
+        s.close();
+        return;
     }
 }
 

@@ -57,9 +57,10 @@ namespace fastoredis
 
     }
 
-    TreeItem* TreeModel::root() const
+    TreeModel::~TreeModel()
     {
-        return root_;
+        delete root_;
+        root_ = NULL;
     }
 
     int TreeModel::rowCount(const QModelIndex& parent) const
@@ -73,6 +74,56 @@ namespace fastoredis
         }
 
         return parentItem ? parentItem->childrenCount() : 0;
+    }
+
+    QModelIndex TreeModel::index(int row, int column, const QModelIndex& parent) const
+    {
+        if (hasIndex(row, column, parent)) {
+            const TreeItem * parentItem = NULL;
+            if (!parent.isValid()) {
+                parentItem = root_;
+            }
+            else {
+                parentItem = common::utils_qt::item<TreeItem*>(parent);
+            }
+
+            if(!parentItem){
+                return QModelIndex();
+            }
+
+            TreeItem* childItem = parentItem->child(row);
+            if (childItem) {
+                return createIndex(row, column, childItem);
+            }
+            return QModelIndex();
+        }
+        return QModelIndex();
+    }
+
+    QModelIndex TreeModel::parent(const QModelIndex& index) const
+    {
+        if (!index.isValid()) {
+            return QModelIndex();
+        }
+
+        TreeItem* childItem = common::utils_qt::item<TreeItem*>(index);
+        if(childItem){
+            TreeItem* parentItem = childItem->parent();
+            if (parentItem && parentItem != root_) {
+                TreeItem* grandParent = parentItem->parent();
+                if(grandParent){
+                    int row = grandParent->indexOf(parentItem);
+                    return createIndex(row, 0, parentItem);
+                }
+            }
+        }
+
+        return QModelIndex();
+    }
+
+    TreeItem* TreeModel::root() const
+    {
+        return root_;
     }
 
     void TreeModel::setRoot(TreeItem *root)
@@ -136,56 +187,5 @@ namespace fastoredis
     bool TreeModel::findItem(void* internalPointer, QModelIndex& index)
     {
         return findChildInModel(QModelIndex(), internalPointer, index, root_, this);
-    }
-
-    QModelIndex TreeModel::index(int row, int column, const QModelIndex& parent) const
-    {
-        if (hasIndex(row, column, parent)) {
-            const TreeItem * parentItem = NULL;
-            if (!parent.isValid()) {
-                parentItem = root_;
-            }
-            else {
-                parentItem = common::utils_qt::item<TreeItem*>(parent);
-            }
-
-            if(!parentItem){
-                return QModelIndex();
-            }
-
-            TreeItem* childItem = parentItem->child(row);
-            if (childItem) {
-                return createIndex(row, column, childItem);
-            }
-            return QModelIndex();
-        }
-        return QModelIndex();
-    }
-
-    QModelIndex TreeModel::parent(const QModelIndex& index) const
-    {
-        if (!index.isValid()) {
-            return QModelIndex();
-        }
-
-        TreeItem* childItem = common::utils_qt::item<TreeItem*>(index);
-        if(childItem){
-            TreeItem* parentItem = childItem->parent();
-            if (parentItem && parentItem != root_) {
-                TreeItem* grandParent = parentItem->parent();
-                if(grandParent){
-                    int row = grandParent->indexOf(parentItem);
-                    return createIndex(row, 0, parentItem);
-                }
-            }
-        }
-
-        return QModelIndex();
-    }
-
-    TreeModel::~TreeModel()
-    {
-        delete root_;
-        root_ = NULL;
     }
 }

@@ -22,6 +22,7 @@ namespace fastoredis
         {
             HeightFindPanel = 40
         };
+
         FastoTextView(const QString& delemitr, QWidget* parent = 0);
 
         void setModel(QAbstractItemModel* model);
@@ -38,8 +39,8 @@ namespace fastoredis
         virtual bool eventFilter(QObject* object, QEvent* event);
 
     private:
-        void retranslateUi();
         void findElement(bool forward);
+        void retranslateUi();        
 
         QRadioButton* jsonRadioButton_;
         QRadioButton* csvRadioButton_;

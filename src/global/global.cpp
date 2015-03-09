@@ -37,6 +37,11 @@ namespace fastoredis
         return root;
     }
 
+    FastoObject::child_container_type FastoObject::childrens() const
+    {
+        return childrens_;
+    }
+
     void FastoObject::addChildren(FastoObject* child)
     {
         if(child){
@@ -81,13 +86,13 @@ namespace fastoredis
         }
     }
 
-    FastoObject::child_container_type FastoObject::childrens() const
-    {
-        return childrens_;
-    }
-
     FastoObjectCommand::FastoObjectCommand(FastoObject* parent, common::CommandValue* cmd, const std::string& delemitr)
         : FastoObject(parent, cmd, delemitr)
+    {
+
+    }
+
+    FastoObjectCommand::~FastoObjectCommand()
     {
 
     }
@@ -130,11 +135,6 @@ namespace fastoredis
         }
 
         return common::Value::C_UNKNOWN;
-    }
-
-    FastoObjectCommand::~FastoObjectCommand()
-    {
-
     }
 
     std::string stableCommand(const char* command)

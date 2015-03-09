@@ -82,6 +82,20 @@ namespace fastoredis
         return false;
     }
 
+    Qt::ItemFlags FastoCommonModel::flags(const QModelIndex& index) const
+    {
+        Qt::ItemFlags result = 0;
+        if (index.isValid()) {
+            result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+            int col = index.column();
+            FastoCommonItem *node = common::utils_qt::item<FastoCommonItem*>(index);
+            if(node && col == FastoCommonItem::eValue && !node->isReadOnly()){
+                result |= Qt::ItemIsEditable;
+            }
+        }
+        return result;
+    }
+
     QVariant FastoCommonModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
         using namespace translations;
@@ -106,20 +120,6 @@ namespace fastoredis
     int FastoCommonModel::columnCount(const QModelIndex &parent) const
     {
         return FastoCommonItem::eCountColumns;
-    }
-
-    Qt::ItemFlags FastoCommonModel::flags(const QModelIndex& index) const
-    {
-        Qt::ItemFlags result = 0;
-        if (index.isValid()) {
-            result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-            int col = index.column();
-            FastoCommonItem *node = common::utils_qt::item<FastoCommonItem*>(index);
-            if(node && col == FastoCommonItem::eValue && !node->isReadOnly()){
-                result |= Qt::ItemIsEditable;
-            }
-        }
-        return result;
     }
 
     void FastoCommonModel::changeValue(const NDbValue &value)

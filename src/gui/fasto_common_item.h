@@ -26,9 +26,9 @@ namespace fastoredis
         void setValue(const QString& val);
         common::Value::Type type() const;
 
+        bool isReadOnly() const;
         void setChangeCommand(const std::string& cmd);
         std::string changeCommand() const;
-        bool isReadOnly() const;
 
     private:
         QString key_;
@@ -41,6 +41,7 @@ namespace fastoredis
     QString toRaw(FastoCommonItem* item);
     QString toHex(FastoCommonItem* item);
     QString toCsv(FastoCommonItem* item, const QString &delemitr);
+
     QString fromGzip(FastoCommonItem* item);
     QString fromHexMsgPack(FastoCommonItem* item);
 }

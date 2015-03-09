@@ -128,31 +128,24 @@ namespace fastoredis
         retranslateUi();
     }
 
-    bool CreateDbKeyDialog::validateAndApply()
+    FastoObjectIPtr CreateDbKeyDialog::value() const
     {
-        if(keyEdit_->text().isEmpty()){
-            return false;
-        }
-
-        FastoObject* obj = getItem();
-        if(!obj){
-            return false;
-        }
-
-        value_.reset(obj);
+        return value_;
     }
 
-    void CreateDbKeyDialog::retranslateUi()
+    NKey CreateDbKeyDialog::key() const
     {
-        generalBox_->setTitle(tr("Key/Value setup:"));
+        int index = typesCombo_->currentIndex();
+        QVariant var = typesCombo_->itemData(index);
+        common::Value::Type t = (common::Value::Type)qvariant_cast<unsigned char>(var);
+        return NKey(common::convertToString(keyEdit_->text()), t);
     }
 
-    void CreateDbKeyDialog::changeEvent(QEvent* e)
+    void CreateDbKeyDialog::accept()
     {
-        if(e->type() == QEvent::LanguageChange){
-            retranslateUi();
+        if(validateAndApply()){
+            QDialog::accept();
         }
-        QDialog::changeEvent(e);
     }
 
     void CreateDbKeyDialog::typeChanged(int index)
@@ -188,19 +181,6 @@ namespace fastoredis
                 valueEdit_->setValidator(new QRegExpValidator(rx, this));
             }
         }
-    }
-
-    FastoObjectIPtr CreateDbKeyDialog::value() const
-    {
-        return value_;
-    }
-
-    NKey CreateDbKeyDialog::key() const
-    {
-        int index = typesCombo_->currentIndex();
-        QVariant var = typesCombo_->itemData(index);
-        common::Value::Type t = (common::Value::Type)qvariant_cast<unsigned char>(var);
-        return NKey(common::convertToString(keyEdit_->text()), t);
     }
 
     void CreateDbKeyDialog::addItem()
@@ -259,6 +239,33 @@ namespace fastoredis
             int row = valueTableEdit_->currentRow();
             valueTableEdit_->removeRow(row);
         }
+    }
+
+    void CreateDbKeyDialog::changeEvent(QEvent* e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+        QDialog::changeEvent(e);
+    }
+
+    bool CreateDbKeyDialog::validateAndApply()
+    {
+        if(keyEdit_->text().isEmpty()){
+            return false;
+        }
+
+        FastoObject* obj = getItem();
+        if(!obj){
+            return false;
+        }
+
+        value_.reset(obj);
+    }
+
+    void CreateDbKeyDialog::retranslateUi()
+    {
+        generalBox_->setTitle(tr("Key/Value setup:"));
     }
 
     FastoObject* CreateDbKeyDialog::getItem() const
@@ -331,13 +338,6 @@ namespace fastoredis
             }
 
             return new FastoObject(NULL, common::Value::createStringValue(common::convertToString(text)), std::string());
-        }
-    }
-
-    void CreateDbKeyDialog::accept()
-    {
-        if(validateAndApply()){
-            QDialog::accept();
         }
     }
 }

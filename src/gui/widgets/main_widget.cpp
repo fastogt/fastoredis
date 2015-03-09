@@ -29,6 +29,16 @@ namespace fastoredis
         setDocumentMode(true);
     }
 
+    QueryWidget *MainWidget::currentWidget() const
+    {
+        return qobject_cast<QueryWidget *>(QTabWidget::currentWidget());
+    }
+
+    QueryWidget *MainWidget::widget(int index) const
+    {
+        return qobject_cast<QueryWidget *>(QTabWidget::widget(index));
+    }
+
     void MainWidget::openConsole(IServerSPtr server, const QString& text)
     {
         if(server){
@@ -47,31 +57,50 @@ namespace fastoredis
         }
     }
 
-    QueryWidget *MainWidget::currentWidget() const
-    {
-        return qobject_cast<QueryWidget *>(QTabWidget::currentWidget());
-    }
-
-    QueryWidget *MainWidget::widget(int index) const
-    {
-        return qobject_cast<QueryWidget *>(QTabWidget::widget(index));
-    }
-
-    void MainWidget::closeTab(int index)
-    {
-        QueryWidget * shw = widget(index);
-        if(shw){
-            removeTab(index);
-            delete shw;
-        }
-    }
-
     void MainWidget::createNewTab()
     {
         int curIndex = currentIndex();
         QueryWidget * shw = widget(curIndex);
         if(shw){
             openNewTab(shw, tabText(curIndex), QString());
+        }
+    }
+
+    void MainWidget::nextTab()
+    {
+        int index = currentIndex();
+        int tabsCount = count();
+        if(index == tabsCount - 1){
+            setCurrentIndex(0);
+            return;
+        }
+
+        if (index >= 0 && index < tabsCount - 1){
+            setCurrentIndex(index + 1);
+            return;
+        }
+    }
+
+    void MainWidget::previousTab()
+    {
+        int index = currentIndex();
+        if (index == 0){
+            setCurrentIndex(count() - 1);
+            return;
+        }
+
+        if (index > 0){
+            setCurrentIndex(index - 1);
+            return;
+        }
+    }
+
+    void MainWidget::reloadeCurrentTab()
+    {
+        int curIndex = currentIndex();
+        QueryWidget *shw = widget(curIndex);
+        if(shw){
+            shw->reload();
         }
     }
 
@@ -84,12 +113,12 @@ namespace fastoredis
         }
     }
 
-    void MainWidget::reloadeCurrentTab()
+    void MainWidget::closeTab(int index)
     {
-        int curIndex = currentIndex();
-        QueryWidget *shw = widget(curIndex);
+        QueryWidget * shw = widget(index);
         if(shw){
-            shw->reload();
+            removeTab(index);
+            delete shw;
         }
     }
 
@@ -123,35 +152,6 @@ namespace fastoredis
         QueryWidget *newWid = src->clone(text);
         DCHECK(newWid);
         addWidgetToTab(newWid, title);
-    }
-
-    void MainWidget::nextTab()
-    {
-        int index = currentIndex();
-        int tabsCount = count();
-        if(index == tabsCount - 1){
-            setCurrentIndex(0);
-            return;
-        }
-
-        if (index >= 0 && index < tabsCount - 1){
-            setCurrentIndex(index + 1);
-            return;
-        }
-    }
-
-    void MainWidget::previousTab()
-    {
-        int index = currentIndex();
-        if (index == 0){
-            setCurrentIndex(count() - 1);
-            return;
-        }
-
-        if (index > 0){
-            setCurrentIndex(index - 1);
-            return;
-        }
     }
 }
 

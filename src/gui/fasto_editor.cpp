@@ -67,6 +67,11 @@ namespace fastoredis
         VERIFY(connect(this, &FastoEditor::linesChanged, this, &FastoEditor::updateLineNumbersMarginWidth));
     }
 
+    FastoEditor::~FastoEditor()
+    {
+
+    }
+
     void FastoEditor::updateLineNumbersMarginWidth()
     {
         int numberOfDigits = getNumberOfDigits(lines());
@@ -77,17 +82,6 @@ namespace fastoredis
         // If line numbers margin already displayed, update its width
         if (lineNumberMarginWidth()) {
             setMarginWidth(0, lineNumberMarginWidth_);
-        }
-    }
-
-    void FastoEditor::showOrHideLinesNumbers()
-    {
-        updateLineNumbersMarginWidth();
-        if (!lineNumberMarginWidth()) {
-            setMarginWidth(0, lineNumberMarginWidth_);
-        }
-        else {
-            setMarginWidth(0, 0);
         }
     }
 
@@ -105,6 +99,17 @@ namespace fastoredis
     int FastoEditor::lineNumberMarginWidth() const
     {
         return marginWidth(0);
+    }
+
+    void FastoEditor::showOrHideLinesNumbers()
+    {
+        updateLineNumbersMarginWidth();
+        if (!lineNumberMarginWidth()) {
+            setMarginWidth(0, lineNumberMarginWidth_);
+        }
+        else {
+            setMarginWidth(0, 0);
+        }
     }
 
     int FastoEditor::textWidth(int style, const QString& text)
@@ -168,6 +173,12 @@ namespace fastoredis
         reset();
     }
 
+    void FastoEditorOutput::viewChanged(int viewMethod)
+    {
+        viewMethod_ = viewMethod;
+        layoutChanged();
+    }
+
     void FastoEditorOutput::modelDestroyed()
     {
 
@@ -215,12 +226,6 @@ namespace fastoredis
 
     void FastoEditorOutput::reset()
     {
-        layoutChanged();
-    }
-
-    void FastoEditorOutput::viewChanged(int viewMethod)
-    {
-        viewMethod_ = viewMethod;
         layoutChanged();
     }
 
@@ -303,6 +308,13 @@ namespace fastoredis
         cancelList();
     }
 
+    void FastoEditorShell::showContextMenu(const QPoint& pt)
+    {
+        QMenu *menu = createStandardContextMenu();
+        menu->exec(mapToGlobal(pt));
+        delete menu;
+    }
+
     void FastoEditorShell::keyPressEvent(QKeyEvent* keyEvent)
     {
         if(isAutoCompleteShortcut(keyEvent)){
@@ -315,12 +327,5 @@ namespace fastoredis
         }
 
         return FastoEditor::keyPressEvent(keyEvent);
-    }
-
-    void FastoEditorShell::showContextMenu(const QPoint& pt)
-    {
-        QMenu *menu = createStandardContextMenu();
-        menu->exec(mapToGlobal(pt));
-        delete menu;
     }
 }

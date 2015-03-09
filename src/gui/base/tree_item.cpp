@@ -32,14 +32,6 @@ namespace fastoredis
         }
     }
 
-    void TreeItem::clear()
-    {
-        for(unsigned i = 0; i < childrens_.size(); ++i){
-            delete childrens_[i];
-        }
-        childrens_.clear();
-    }
-
     int TreeItem::childrenCount() const
     {
         return childrens_.size();
@@ -72,6 +64,14 @@ namespace fastoredis
     void* const TreeItem::internalPointer() const
     {
         return internalPointer_;
+    }
+
+    void TreeItem::clear()
+    {
+        for(unsigned i = 0; i < childrens_.size(); ++i){
+            delete childrens_[i];
+        }
+        childrens_.clear();
     }
 }
 

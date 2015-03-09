@@ -82,6 +82,18 @@ namespace fastoredis
         syncWithSettings();
     }
 
+    void OutputWidget::rootCreate(const EventsInfo::CommandRootCreatedInfo& res)
+    {
+        FastoObject* rootObj = res.root_.get();
+        fastoredis::FastoCommonItem* root = createItem(NULL, "", rootObj);
+        commonModel_->setRoot(root);
+    }
+
+    void OutputWidget::rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res)
+    {
+        updateTimeLabel(res);
+    }
+
     void OutputWidget::startChangeDbValue(const EventsInfo::ChangeDbValueRequest& req)
     {
 
@@ -95,58 +107,6 @@ namespace fastoredis
         }
 
         commonModel_->changeValue(res.newItem_);
-    }
-
-    void OutputWidget::syncWithSettings()
-    {
-        supportedViews curV = SettingsManager::instance().defaultView();
-        if(curV == Tree){
-            setTreeView();
-        }
-        else if(curV == Table){
-            setTableView();
-        }
-        else{
-            setTextView();
-        }
-    }
-
-    void OutputWidget::updateTimeLabel(const EventsInfo::EventInfoBase& evinfo)
-    {
-        timeLabel_->setText(QString("%1 msec").arg(evinfo.elapsedTime()));
-    }
-
-    void OutputWidget::setTreeView()
-    {
-        treeView_->setVisible(true);
-        tableView_->setVisible(false);
-        textView_->setVisible(false);
-    }
-
-    void OutputWidget::setTableView()
-    {
-        treeView_->setVisible(false);
-        tableView_->setVisible(true);
-        textView_->setVisible(false);
-    }
-
-    void OutputWidget::setTextView()
-    {
-        treeView_->setVisible(false);
-        tableView_->setVisible(false);
-        textView_->setVisible(true);
-    }
-
-    void OutputWidget::rootCreate(const EventsInfo::CommandRootCreatedInfo& res)
-    {
-        FastoObject* rootObj = res.root_.get();
-        fastoredis::FastoCommonItem* root = createItem(NULL, "", rootObj);
-        commonModel_->setRoot(root);
-    }
-
-    void OutputWidget::rootCompleate(const EventsInfo::CommandRootCompleatedInfo& res)
-    {
-        updateTimeLabel(res);
     }
 
     void OutputWidget::addChild(FastoObject* child)
@@ -234,5 +194,45 @@ namespace fastoredis
 
         it->setValue(newValue);
         commonModel_->updateItem(index.parent(), index);
+    }
+
+    void OutputWidget::setTreeView()
+    {
+        treeView_->setVisible(true);
+        tableView_->setVisible(false);
+        textView_->setVisible(false);
+    }
+
+    void OutputWidget::setTableView()
+    {
+        treeView_->setVisible(false);
+        tableView_->setVisible(true);
+        textView_->setVisible(false);
+    }
+
+    void OutputWidget::setTextView()
+    {
+        treeView_->setVisible(false);
+        tableView_->setVisible(false);
+        textView_->setVisible(true);
+    }
+
+    void OutputWidget::syncWithSettings()
+    {
+        supportedViews curV = SettingsManager::instance().defaultView();
+        if(curV == Tree){
+            setTreeView();
+        }
+        else if(curV == Table){
+            setTableView();
+        }
+        else{
+            setTextView();
+        }
+    }
+
+    void OutputWidget::updateTimeLabel(const EventsInfo::EventInfoBase& evinfo)
+    {
+        timeLabel_->setText(QString("%1 msec").arg(evinfo.elapsedTime()));
     }
 }

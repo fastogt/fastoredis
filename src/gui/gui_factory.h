@@ -26,35 +26,40 @@ namespace fastoredis
         const QIcon& editIcon() const;
         const QIcon& messageBoxInformationIcon() const;
         const QIcon& messageBoxQuestionIcon() const;
-        const QIcon& executeIcon() const;
-        const QIcon& stopIcon() const;
+        const QIcon& executeIcon() const;        
         const QIcon& timeIcon() const;
+        const QIcon& stopIcon() const;
         const QIcon& databaseIcon() const;
         const QIcon& keyIcon() const;
-        QFont font() const;
+
         const QIcon& icon(connectionTypes type) const;
         const QIcon& modeIcon(ConnectionMode mode) const;
         const QIcon& icon(common::Value::Type type) const;
+
         const QIcon& loadIcon() const;
         const QIcon& saveIcon() const;
         const QIcon& saveAsIcon() const;
         const QIcon& textIcon() const;
         const QIcon& tableIcon() const;
-        const QIcon& treeIcon() const;
-        const QString& pathToLoadingGif() const;
+        const QIcon& treeIcon() const;        
         const QIcon& loggingIcon() const;
         const QIcon& commandIcon() const;
-        const QIcon& close16Icon() const;
         const QIcon& pythonIcon() const;
         const QIcon& luaIcon() const;
         const QIcon& encodeDecodeIcon() const;
         const QIcon& preferencesIcon() const;
+
+        const QIcon& close16Icon() const;
 
         const QIcon& commandIcon(connectionTypes type) const;
         const QIcon& typeIcon(connectionTypes type) const;
 
         const QIcon& successIcon() const;
         const QIcon& failIcon() const;
+
+        QFont font() const;
+        const QString& pathToLoadingGif() const;
+
     private:
         const QIcon& redisConnectionIcon() const;
         const QIcon& memcachedConnectionIcon() const;

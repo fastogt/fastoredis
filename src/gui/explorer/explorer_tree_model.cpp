@@ -31,9 +31,10 @@ namespace fastoredis
 
     }
 
-    ExplorerServerItem::eType ExplorerServerItem::type() const
+
+    QString ExplorerServerItem::name() const
     {
-        return Server;
+        return server_->name();
     }
 
     IServerSPtr ExplorerServerItem::server() const
@@ -41,14 +42,14 @@ namespace fastoredis
         return server_;
     }
 
+    ExplorerServerItem::eType ExplorerServerItem::type() const
+    {
+        return Server;
+    }
+
     void ExplorerServerItem::loadDatabases()
     {
          return server_->loadDatabases();
-    }
-
-    QString ExplorerServerItem::name() const
-    {
-        return server_->name();
     }
 
     ExplorerDatabaseItem::ExplorerDatabaseItem(DataBaseInfoSPtr db, ExplorerServerItem* parent)
@@ -67,12 +68,34 @@ namespace fastoredis
 
     }
 
-    void ExplorerDatabaseItem::loadContent(const std::string& pattern, uint32_t countKeys)
+    ExplorerServerItem *ExplorerDatabaseItem::parent() const
     {
-        IDatabaseSPtr dbs = db();
-        if(dbs){
-            dbs->loadContent(pattern, countKeys);
+        return dynamic_cast<ExplorerServerItem*>(IExplorerTreeItem::parent());
+    }
+
+    QString ExplorerDatabaseItem::name() const
+    {
+        return common::convertFromString<QString>(inf_->name());
+    }
+
+    ExplorerDatabaseItem::eType ExplorerDatabaseItem::type() const
+    {
+        return Database;
+    }
+
+    bool ExplorerDatabaseItem::isDefault() const
+    {
+        return inf_->isDefault();
+    }
+
+    IServerSPtr ExplorerDatabaseItem::server() const
+    {
+        ExplorerServerItem* serv = dynamic_cast<ExplorerServerItem*>(parent_);
+        if(!serv){
+            return IServerSPtr();
         }
+
+        return serv->server();
     }
 
     IDatabaseSPtr ExplorerDatabaseItem::db() const
@@ -86,6 +109,14 @@ namespace fastoredis
         IDatabaseSPtr db = serv->findDatabaseByName(inf_->name());
         DCHECK(db);
         return db;
+    }
+
+    void ExplorerDatabaseItem::loadContent(const std::string& pattern, uint32_t countKeys)
+    {
+        IDatabaseSPtr dbs = db();
+        if(dbs){
+            dbs->loadContent(pattern, countKeys);
+        }
     }
 
     void ExplorerDatabaseItem::setDefault()
@@ -125,36 +156,6 @@ namespace fastoredis
         }
     }
 
-    bool ExplorerDatabaseItem::isDefault() const
-    {
-        return inf_->isDefault();
-    }
-
-    IServerSPtr ExplorerDatabaseItem::server() const
-    {
-        ExplorerServerItem* serv = dynamic_cast<ExplorerServerItem*>(parent_);
-        if(!serv){
-            return IServerSPtr();
-        }
-
-        return serv->server();
-    }
-
-    ExplorerDatabaseItem::eType ExplorerDatabaseItem::type() const
-    {
-        return Database;
-    }
-
-    QString ExplorerDatabaseItem::name() const
-    {
-        return common::convertFromString<QString>(inf_->name());
-    }
-
-    ExplorerServerItem *ExplorerDatabaseItem::parent() const
-    {
-        return dynamic_cast<ExplorerServerItem*>(IExplorerTreeItem::parent());
-    }
-
     ExplorerKeyItem::ExplorerKeyItem(const NKey& key, ExplorerDatabaseItem* parent)
         : IExplorerTreeItem(parent), key_(key)
     {
@@ -166,14 +167,19 @@ namespace fastoredis
 
     }
 
-    QString ExplorerKeyItem::name() const
+    ExplorerDatabaseItem* ExplorerKeyItem::parent() const
     {
-        return common::convertFromString<QString>(key_.key_);
+        return dynamic_cast<ExplorerDatabaseItem*>(parent_);
     }
 
     NKey ExplorerKeyItem::key() const
     {
         return key_;
+    }
+
+    QString ExplorerKeyItem::name() const
+    {
+        return common::convertFromString<QString>(key_.key_);
     }
 
     IServerSPtr ExplorerKeyItem::server() const
@@ -207,14 +213,14 @@ namespace fastoredis
         }
     }
 
-    ExplorerDatabaseItem* ExplorerKeyItem::parent() const
-    {
-        return dynamic_cast<ExplorerDatabaseItem*>(parent_);
-    }
-
     ExplorerTreeModel::ExplorerTreeModel(QObject *parent)
         : TreeModel(parent)
     {
+    }
+
+    ExplorerTreeModel::~ExplorerTreeModel()
+    {
+
     }
 
     QVariant ExplorerTreeModel::data(const QModelIndex& index, int role) const
@@ -271,6 +277,15 @@ namespace fastoredis
         return QVariant();
     }
 
+    Qt::ItemFlags ExplorerTreeModel::flags(const QModelIndex& index) const
+    {
+        Qt::ItemFlags result = 0;
+        if (index.isValid()) {
+            result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+        }
+        return result;
+    }
+
     QVariant ExplorerTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
         if (role != Qt::DisplayRole)
@@ -288,15 +303,6 @@ namespace fastoredis
     int ExplorerTreeModel::columnCount(const QModelIndex& parent) const
     {
         return ExplorerServerItem::eCountColumns;
-    }
-
-    Qt::ItemFlags ExplorerTreeModel::flags(const QModelIndex& index) const
-    {
-        Qt::ItemFlags result = 0;
-        if (index.isValid()) {
-            result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-        }
-        return result;
     }
 
     void ExplorerTreeModel::addServer(IServerSPtr server)
@@ -489,10 +495,5 @@ namespace fastoredis
             }
         }
         return NULL;
-    }
-
-    ExplorerTreeModel::~ExplorerTreeModel()
-    {
-
     }
 }

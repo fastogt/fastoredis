@@ -30,16 +30,6 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void CommandsWidget::showContextMenu(const QPoint& pt)
-    {
-        QMenu *menu = logTextEdit_->createStandardContextMenu();
-        menu->addAction(clear_);
-        clear_->setEnabled(!logTextEdit_->toPlainText().isEmpty());
-
-        menu->exec(logTextEdit_->mapToGlobal(pt));
-        delete menu;
-    }
-
     void CommandsWidget::addCommand(const Command& command)
     {
         QTime time = QTime::currentTime();
@@ -48,6 +38,16 @@ namespace fastoredis
         logTextEdit_->append(time.toString("h:mm:ss AP: ") + mess);
         QScrollBar *sb = logTextEdit_->verticalScrollBar();
         sb->setValue(sb->maximum());
+    }
+
+    void CommandsWidget::showContextMenu(const QPoint& pt)
+    {
+        QMenu *menu = logTextEdit_->createStandardContextMenu();
+        menu->addAction(clear_);
+        clear_->setEnabled(!logTextEdit_->toPlainText().isEmpty());
+
+        menu->exec(logTextEdit_->mapToGlobal(pt));
+        delete menu;
     }
 
     void CommandsWidget::changeEvent(QEvent* e)

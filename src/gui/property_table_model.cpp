@@ -19,6 +19,11 @@ namespace fastoredis
 
     }
 
+    PropertyTableModel::~PropertyTableModel()
+    {
+
+    }
+
     QVariant PropertyTableModel::data(const QModelIndex& index, int role) const
     {
         QVariant result;
@@ -70,18 +75,17 @@ namespace fastoredis
         return false;
     }
 
-    void PropertyTableModel::changeProperty(const PropertyType& pr)
+    Qt::ItemFlags PropertyTableModel::flags(const QModelIndex &index) const
     {
-        const QString key = common::convertFromString<QString>(pr.first);
-        for(int i = 0; i < data_.size(); ++i)
-        {
-            PropertyTableItem *it = dynamic_cast<PropertyTableItem*>(data_[i]);
-            if(it->key_ == key){
-                it->value_ = common::convertFromString<QString>(pr.second);
-                emit dataChanged(index(i,0), index(i,1));
-                break;
+        Qt::ItemFlags result = 0;
+        if (index.isValid()) {
+            result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+            int col = index.column();
+            if(col == PropertyTableItem::eValue){
+                result |= Qt::ItemIsEditable;
             }
         }
+        return result;
     }
 
     QVariant PropertyTableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -107,19 +111,6 @@ namespace fastoredis
         return PropertyTableItem::eCountColumns;
     }
 
-    Qt::ItemFlags PropertyTableModel::flags(const QModelIndex &index) const
-    {
-        Qt::ItemFlags result = 0;
-        if (index.isValid()) {
-            result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-            int col = index.column();
-            if(col == PropertyTableItem::eValue){
-                result |= Qt::ItemIsEditable;
-            }
-        }
-        return result;
-    }
-
     void PropertyTableModel::addItem(PropertyTableItem* item)
     {
         beginInsertRows(QModelIndex(), data_.size(), data_.size()+1 );
@@ -127,8 +118,17 @@ namespace fastoredis
         endInsertRows();
     }
 
-    PropertyTableModel::~PropertyTableModel()
+    void PropertyTableModel::changeProperty(const PropertyType& pr)
     {
-
+        const QString key = common::convertFromString<QString>(pr.first);
+        for(int i = 0; i < data_.size(); ++i)
+        {
+            PropertyTableItem *it = dynamic_cast<PropertyTableItem*>(data_[i]);
+            if(it->key_ == key){
+                it->value_ = common::convertFromString<QString>(pr.second);
+                emit dataChanged(index(i,0), index(i,1));
+                break;
+            }
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace fastoredis
         Q_OBJECT
     public:
         FastoCommonModel(QObject *parent = 0);
-        ~FastoCommonModel();
+        virtual ~FastoCommonModel();
 
         virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
         virtual bool setData(const QModelIndex& index, const QVariant& value, int role);

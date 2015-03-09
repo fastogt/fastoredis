@@ -24,15 +24,16 @@ namespace fastoredis
             indentationWidth = 4
         };
         FastoEditor(QWidget* parent = 0);
+        virtual ~FastoEditor();
 
     private Q_SLOTS:
         void updateLineNumbersMarginWidth();
 
     protected:
-        virtual void keyPressEvent(QKeyEvent* e);
-        int lineNumberMarginWidth() const;
+        virtual void keyPressEvent(QKeyEvent* e);        
 
     private:
+        int lineNumberMarginWidth() const;
         void showOrHideLinesNumbers();
         int textWidth(int style, const QString& text);
 
@@ -47,7 +48,6 @@ namespace fastoredis
         FastoEditorOutput(const QString &delemitr, QWidget *parent = 0);
 
         void setModel(QAbstractItemModel* model);
-        void setRootIndex(const QModelIndex& index);
 
     public Q_SLOTS:
         void viewChanged(int viewMethod);

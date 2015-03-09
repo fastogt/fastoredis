@@ -10,6 +10,11 @@ namespace fastoredis
 
     }
 
+    TableModel::~TableModel()
+    {
+
+    }
+
     int TableModel::rowCount(const QModelIndex& parent) const
     {
         int sz = data_.size();
@@ -27,10 +32,5 @@ namespace fastoredis
             }
         }
         return index;
-    }
-
-    TableModel::~TableModel()
-    {
-
     }
 }

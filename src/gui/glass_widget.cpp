@@ -76,27 +76,6 @@ namespace fastoredis
         return false;
     }
 
-    void GlassWidget::infoBlockPositioning()
-    {
-        if (wAnimationContainer_->isVisible() && wInfoTextContaiter_->isVisible()) {
-            wAnimationContainer_->move((wGlass_->width() - wAnimationContainer_->width()) / 2,
-                wGlass_->height() / 2 - wAnimationContainer_->height());
-            wInfoTextContaiter_->move((wGlass_->width() - wInfoTextContaiter_->width()) / 2,
-                wGlass_->height() / 2 + wInfoTextContaiter_->height());
-        }
-        else {
-            if (wAnimationContainer_->isVisible()){
-                wAnimationContainer_->move((wGlass_->width() - wAnimationContainer_->width()) / 2,
-                (wGlass_->height() - wAnimationContainer_->height()) / 2);
-            }
-
-            if (wInfoTextContaiter_->isVisible()){
-                wInfoTextContaiter_->move((wGlass_->width() - wInfoTextContaiter_->width()) / 2,
-                (wGlass_->height() - wInfoTextContaiter_->height()) / 2);
-            }
-        }
-    }
-
     void GlassWidget::showInfoTextBlock()
     {
         wInfoTextContaiter_->setParent(wGlass_->parentWidget());
@@ -117,5 +96,26 @@ namespace fastoredis
         movie_->start();
         wAnimationContainer_->show();
         infoBlockPositioning();
+    }
+
+    void GlassWidget::infoBlockPositioning()
+    {
+        if (wAnimationContainer_->isVisible() && wInfoTextContaiter_->isVisible()) {
+            wAnimationContainer_->move((wGlass_->width() - wAnimationContainer_->width()) / 2,
+                wGlass_->height() / 2 - wAnimationContainer_->height());
+            wInfoTextContaiter_->move((wGlass_->width() - wInfoTextContaiter_->width()) / 2,
+                wGlass_->height() / 2 + wInfoTextContaiter_->height());
+        }
+        else {
+            if (wAnimationContainer_->isVisible()){
+                wAnimationContainer_->move((wGlass_->width() - wAnimationContainer_->width()) / 2,
+                (wGlass_->height() - wAnimationContainer_->height()) / 2);
+            }
+
+            if (wInfoTextContaiter_->isVisible()){
+                wInfoTextContaiter_->move((wGlass_->width() - wInfoTextContaiter_->width()) / 2,
+                (wGlass_->height() - wInfoTextContaiter_->height()) / 2);
+            }
+        }
     }
 }

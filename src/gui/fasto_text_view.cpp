@@ -91,6 +91,11 @@ namespace fastoredis
         editor_->setModel(model);
     }
 
+    void FastoTextView::setReadOnly(bool readOnly)
+    {
+        editor_->setReadOnly(readOnly);
+    }
+
     void FastoTextView::viewChanged(bool checked)
     {
         if (!checked){
@@ -128,9 +133,14 @@ namespace fastoredis
         }
     }
 
-    void FastoTextView::setReadOnly(bool readOnly)
+    void FastoTextView::goToNextElement()
     {
-        editor_->setReadOnly(readOnly);
+        findElement(true);
+    }
+
+    void FastoTextView::goToPrevElement()
+    {
+        findElement(false);
     }
 
     void FastoTextView::changeEvent(QEvent* e)
@@ -140,24 +150,6 @@ namespace fastoredis
         }
 
         QWidget::changeEvent(e);
-    }
-
-    bool FastoTextView::eventFilter(QObject* object, QEvent* event)
-    {
-        if (object == editor_) {
-            if (event->type() == QEvent::KeyPress) {
-                QKeyEvent *keyEvent = (QKeyEvent *)event;
-                if (((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key() == Qt::Key_F)) {
-                    findPanel_->show();
-                    findLine_->setFocus();
-                    //findPanel_->selectAll();
-                    keyEvent->accept();
-                    return true;
-                }
-            }
-        }
-
-        return QWidget::eventFilter(object, event);
     }
 
     void FastoTextView::keyPressEvent(QKeyEvent* keyEvent)
@@ -181,14 +173,22 @@ namespace fastoredis
         }
     }
 
-    void FastoTextView::goToNextElement()
+    bool FastoTextView::eventFilter(QObject* object, QEvent* event)
     {
-        findElement(true);
-    }
+        if (object == editor_) {
+            if (event->type() == QEvent::KeyPress) {
+                QKeyEvent *keyEvent = (QKeyEvent *)event;
+                if (((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key() == Qt::Key_F)) {
+                    findPanel_->show();
+                    findLine_->setFocus();
+                    //findPanel_->selectAll();
+                    keyEvent->accept();
+                    return true;
+                }
+            }
+        }
 
-    void FastoTextView::goToPrevElement()
-    {
-        findElement(false);
+        return QWidget::eventFilter(object, event);
     }
 
     void FastoTextView::findElement(bool forward)

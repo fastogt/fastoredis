@@ -96,16 +96,6 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void PreferencesDialog::syncWithSettings()
-    {
-        autoCheckUpdates_->setChecked(SettingsManager::instance().autoCheckUpdates());
-        languagesComboBox_->setCurrentText(SettingsManager::instance().currentLanguage());
-        stylesComboBox_->setCurrentText(SettingsManager::instance().currentStyle());
-        defaultViewComboBox_->setCurrentText(common::convertFromString<QString>(common::convertToString(SettingsManager::instance().defaultView())));
-        syncTabs_->setChecked(SettingsManager::instance().syncTabs());
-        logDirPath_->setText(SettingsManager::instance().loggingDirectory());
-    }
-
     void PreferencesDialog::accept()
     {
         SettingsManager::instance().setAutoCheckUpdates(autoCheckUpdates_->isChecked());
@@ -125,6 +115,16 @@ namespace fastoredis
         SettingsManager::instance().setLoggingDirectory(logDirPath_->text());
 
         return QDialog::accept();
+    }
+
+    void PreferencesDialog::syncWithSettings()
+    {
+        autoCheckUpdates_->setChecked(SettingsManager::instance().autoCheckUpdates());
+        languagesComboBox_->setCurrentText(SettingsManager::instance().currentLanguage());
+        stylesComboBox_->setCurrentText(SettingsManager::instance().currentStyle());
+        defaultViewComboBox_->setCurrentText(common::convertFromString<QString>(common::convertToString(SettingsManager::instance().defaultView())));
+        syncTabs_->setChecked(SettingsManager::instance().syncTabs());
+        logDirPath_->setText(SettingsManager::instance().loggingDirectory());
     }
 
     void PreferencesDialog::changeEvent(QEvent* e)

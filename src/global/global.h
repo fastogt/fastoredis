@@ -18,8 +18,8 @@ namespace fastoredis
         common::Value::Type type() const;
         virtual std::string toString() const;
 
-		child_container_type childrens() const;
         static FastoObject* createRoot(const std::string& text, IFastoObjectObserver* observer = NULL);
+        child_container_type childrens() const;
         void addChildren(FastoObject* child);
         FastoObject* parent() const;
         void clear();
@@ -60,7 +60,6 @@ namespace fastoredis
     };
 
     std::string stableCommand(const char* command);
-
     std::pair<std::string, std::string> getKeyValueFromLine(const std::string& input);
     std::string getOppositeCommand(const std::string& command, const std::vector<std::pair<std::string, std::string > >& srcOppositeCommands);
 

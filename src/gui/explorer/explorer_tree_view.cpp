@@ -75,6 +75,57 @@ namespace fastoredis
         retranslateUi();
     }
 
+    void ExplorerTreeView::addServer(IServerSPtr server)
+    {
+        DCHECK(server);
+        if(!server){
+            return;
+        }
+
+        ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        VERIFY(connect(server.get(), &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
+        VERIFY(connect(server.get(), &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
+        VERIFY(connect(server.get(), &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
+        VERIFY(connect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
+        VERIFY(connect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
+        VERIFY(connect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
+        VERIFY(connect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
+        VERIFY(connect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
+
+        mod->addServer(server);
+    }
+
+    void ExplorerTreeView::removeServer(IServerSPtr server)
+    {
+        DCHECK(server);
+        if(!server){
+            return;
+        }
+
+        ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        VERIFY(disconnect(server.get(), &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
+        VERIFY(disconnect(server.get(), &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
+        VERIFY(disconnect(server.get(), &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
+        VERIFY(disconnect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
+        VERIFY(disconnect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
+        VERIFY(disconnect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
+        VERIFY(disconnect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
+        VERIFY(disconnect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
+
+        mod->removeServer(server);
+        emit closeServer(server);
+    }
+
     void ExplorerTreeView::showContextMenu(const QPoint& point)
     {
         QPoint menuPoint = mapToGlobal(point);
@@ -189,304 +240,6 @@ namespace fastoredis
         if(node){
             node->loadDatabases();
         }
-    }
-
-    void ExplorerTreeView::loadContentDb()
-    {
-        QModelIndex sel = selectedIndex();
-        if(!sel.isValid()){
-            return;
-        }
-
-        ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
-        if(node){
-            LoadContentDbDialog loadDb(QString("Load %1 content").arg(node->name()), node->server()->type(), this);
-            int result = loadDb.exec();
-            if(result == QDialog::Accepted){
-                node->loadContent(common::convertToString(loadDb.pattern()), loadDb.count());
-            }
-        }
-    }
-
-    void ExplorerTreeView::setDefaultDb()
-    {
-        QModelIndex sel = selectedIndex();
-        if(!sel.isValid()){
-            return;
-        }
-
-        ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
-        if(node){
-            node->setDefault();
-        }
-    }
-
-    void ExplorerTreeView::createKey()
-    {
-        QModelIndex sel = selectedIndex();
-        if(!sel.isValid()){
-            return;
-        }
-
-        ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
-        if(node){
-            CreateDbKeyDialog loadDb(QString("Create key for %1 database").arg(node->name()), node->server()->type(), this);
-            int result = loadDb.exec();
-            if(result == QDialog::Accepted){
-                FastoObjectIPtr val = loadDb.value();
-                NKey key = loadDb.key();
-                node->createKey(key, val);
-            }
-        }
-    }
-
-    void ExplorerTreeView::getValue()
-    {
-        QModelIndex sel = selectedIndex();
-        if(!sel.isValid()){
-            return;
-        }
-
-        ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
-        if(node){
-            node->loadValueFromDb();
-        }
-    }
-
-    void ExplorerTreeView::deleteKey()
-    {
-        QModelIndex sel = selectedIndex();
-        if(!sel.isValid()){
-            return;
-        }
-
-        ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
-        if(node){
-            node->removeFromDb();
-        }
-    }
-
-    void ExplorerTreeView::addServer(IServerSPtr server)
-    {
-        DCHECK(server);
-        if(!server){
-            return;
-        }
-
-        ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
-        DCHECK(mod);
-        if(!mod){
-            return;
-        }
-
-        VERIFY(connect(server.get(), &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
-        VERIFY(connect(server.get(), &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
-        VERIFY(connect(server.get(), &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
-        VERIFY(connect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
-        VERIFY(connect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
-        VERIFY(connect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
-        VERIFY(connect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
-        VERIFY(connect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
-
-        mod->addServer(server);
-    }
-
-    void ExplorerTreeView::removeServer(IServerSPtr server)
-    {
-        DCHECK(server);
-        if(!server){
-            return;
-        }
-
-        ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
-        DCHECK(mod);
-        if(!mod){
-            return;
-        }
-
-        VERIFY(disconnect(server.get(), &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
-        VERIFY(disconnect(server.get(), &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
-        VERIFY(disconnect(server.get(), &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
-        VERIFY(disconnect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
-        VERIFY(disconnect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
-        VERIFY(disconnect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
-        VERIFY(disconnect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
-        VERIFY(disconnect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
-
-        mod->removeServer(server);
-        emit closeServer(server);
-    }
-
-    QModelIndex ExplorerTreeView::selectedIndex() const
-    {
-        QModelIndexList indexses = selectionModel()->selectedRows();
-
-        if (indexses.count() != 1){
-            return QModelIndex();
-        }
-
-        return indexses[0];
-    }
-
-    void ExplorerTreeView::changeEvent(QEvent* e)
-    {
-        if(e->type() == QEvent::LanguageChange){
-            retranslateUi();
-        }
-
-        QTreeView::changeEvent(e);
-    }
-
-    void ExplorerTreeView::retranslateUi()
-    {
-        using namespace translations;
-
-        connectAction_->setText(tr("Connect/Disconnect"));
-        openConsoleAction_->setText(trOpenConsole);
-        loadDatabaseAction_->setText(trLoadDataBases);        
-        infoServerAction_->setText(trInfo);
-        propertyServerAction_->setText(trProperty);
-        historyServerAction_->setText(trHistory);
-        closeAction_->setText(trClose);
-        backupAction_->setText(trBackup);
-        importAction_->setText(trImport);
-        shutdownAction_->setText(trShutdown);
-
-        loadContentAction_->setText(trLoadContOfDataBases);
-        createKeyAction_->setText(trCreateKey);
-        setDefaultDbAction_->setText(trSetDefault);
-        getValueAction_->setText(trValue);
-        deleteKeyAction_->setText(trDelete);
-    }
-
-    void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req)
-    {
-
-    }
-
-    void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res)
-    {
-        common::ErrorValueSPtr er = res.errorInfo();
-        if(er && er->isError()){
-            return;
-        }
-
-        IServer *serv = qobject_cast<IServer *>(sender());
-        DCHECK(serv);
-        if(!serv){
-            return;
-        }
-
-        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
-        DCHECK(mod);
-        if(!mod){
-            return;
-        }
-
-        EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
-
-        for(int i = 0; i < dbs.size(); ++i){
-            DataBaseInfoSPtr db = dbs[i];
-            mod->addDatabase(serv, db);
-        }
-    }
-
-    void ExplorerTreeView::startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req)
-    {
-
-    }
-
-    void ExplorerTreeView::finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res)
-    {
-        common::ErrorValueSPtr er = res.errorInfo();
-        if(er && er->isError()){
-            return;
-        }
-
-        IServer *serv = qobject_cast<IServer *>(sender());
-        DCHECK(serv);
-        if(!serv){
-            return;
-        }
-
-        DataBaseInfoSPtr db = res.inf_;
-        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
-        DCHECK(mod);
-        if(!mod){
-            return;
-        }
-
-        mod->setDefaultDb(serv, db);
-    }
-
-    void ExplorerTreeView::startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest& req)
-    {
-
-    }
-
-    void ExplorerTreeView::finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res)
-    {
-        common::ErrorValueSPtr er = res.errorInfo();
-        if(er && er->isError()){
-            return;
-        }
-
-        IServer *serv = qobject_cast<IServer *>(sender());
-        DCHECK(serv);
-        if(!serv){
-            return;
-        }
-
-        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
-        DCHECK(mod);
-        if(!mod){
-            return;
-        }
-
-        EventsInfo::LoadDatabaseContentResponce::keys_cont_type keys = res.keys_;
-
-        for(int i = 0; i < keys.size(); ++i){
-            NKey key = keys[i];
-            mod->addKey(serv, res.inf_, key);
-        }
-    }
-
-    void ExplorerTreeView::startExecuteCommand(const EventsInfo::CommandRequest& req)
-    {
-
-    }
-
-    void ExplorerTreeView::finishExecuteCommand(const EventsInfo::CommandResponce& res)
-    {
-        common::ErrorValueSPtr er = res.errorInfo();
-        if(er && er->isError()){
-            return;
-        }
-
-        IServer* serv = qobject_cast<IServer *>(sender());
-        DCHECK(serv);
-        if(!serv){
-            return;
-        }
-
-        ExplorerTreeModel* mod = qobject_cast<ExplorerTreeModel*>(model());
-        DCHECK(mod);
-        if(!mod){
-            return;
-        }
-
-        CommandKeySPtr key = res.cmd_;
-        if(key->type() == CommandKey::C_DELETE){
-            mod->removeKey(serv, res.inf_, key->key());
-        }
-        else if(key->type() == CommandKey::C_CREATE){
-            mod->addKey(serv, res.inf_, key->key());
-        }
-    }
-
-    QModelIndexList ExplorerTreeView::selectedIndexes() const
-    {
-        return selectionModel()->selectedRows();
     }
 
     void ExplorerTreeView::openInfoServerDialog()
@@ -646,5 +399,252 @@ namespace fastoredis
 
             server->shutDown();
         }
+    }
+
+    void ExplorerTreeView::loadContentDb()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+        if(node){
+            LoadContentDbDialog loadDb(QString("Load %1 content").arg(node->name()), node->server()->type(), this);
+            int result = loadDb.exec();
+            if(result == QDialog::Accepted){
+                node->loadContent(common::convertToString(loadDb.pattern()), loadDb.count());
+            }
+        }
+    }
+
+    void ExplorerTreeView::setDefaultDb()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+        if(node){
+            node->setDefault();
+        }
+    }
+
+    void ExplorerTreeView::createKey()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerDatabaseItem *node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+        if(node){
+            CreateDbKeyDialog loadDb(QString("Create key for %1 database").arg(node->name()), node->server()->type(), this);
+            int result = loadDb.exec();
+            if(result == QDialog::Accepted){
+                FastoObjectIPtr val = loadDb.value();
+                NKey key = loadDb.key();
+                node->createKey(key, val);
+            }
+        }
+    }
+
+    void ExplorerTreeView::getValue()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
+        if(node){
+            node->loadValueFromDb();
+        }
+    }
+
+    void ExplorerTreeView::deleteKey()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerKeyItem *node = common::utils_qt::item<ExplorerKeyItem*>(sel);
+        if(node){
+            node->removeFromDb();
+        }
+    }
+
+    void ExplorerTreeView::startLoadDatabases(const EventsInfo::LoadDatabasesInfoRequest& req)
+    {
+
+    }
+
+    void ExplorerTreeView::finishLoadDatabases(const EventsInfo::LoadDatabasesInfoResponce& res)
+    {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        IServer *serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+        if(!serv){
+            return;
+        }
+
+        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        EventsInfo::LoadDatabasesInfoResponce::database_info_cont_type dbs = res.databases_;
+
+        for(int i = 0; i < dbs.size(); ++i){
+            DataBaseInfoSPtr db = dbs[i];
+            mod->addDatabase(serv, db);
+        }
+    }
+
+    void ExplorerTreeView::startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req)
+    {
+
+    }
+
+    void ExplorerTreeView::finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res)
+    {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        IServer *serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+        if(!serv){
+            return;
+        }
+
+        DataBaseInfoSPtr db = res.inf_;
+        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        mod->setDefaultDb(serv, db);
+    }
+
+    void ExplorerTreeView::startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest& req)
+    {
+
+    }
+
+    void ExplorerTreeView::finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res)
+    {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        IServer *serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+        if(!serv){
+            return;
+        }
+
+        ExplorerTreeModel *mod = qobject_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        EventsInfo::LoadDatabaseContentResponce::keys_cont_type keys = res.keys_;
+
+        for(int i = 0; i < keys.size(); ++i){
+            NKey key = keys[i];
+            mod->addKey(serv, res.inf_, key);
+        }
+    }
+
+    void ExplorerTreeView::startExecuteCommand(const EventsInfo::CommandRequest& req)
+    {
+
+    }
+
+    void ExplorerTreeView::finishExecuteCommand(const EventsInfo::CommandResponce& res)
+    {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        IServer* serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+        if(!serv){
+            return;
+        }
+
+        ExplorerTreeModel* mod = qobject_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        CommandKeySPtr key = res.cmd_;
+        if(key->type() == CommandKey::C_DELETE){
+            mod->removeKey(serv, res.inf_, key->key());
+        }
+        else if(key->type() == CommandKey::C_CREATE){
+            mod->addKey(serv, res.inf_, key->key());
+        }
+    }
+
+    void ExplorerTreeView::changeEvent(QEvent* e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+
+        QTreeView::changeEvent(e);
+    }
+
+    void ExplorerTreeView::retranslateUi()
+    {
+        using namespace translations;
+
+        connectAction_->setText(tr("Connect/Disconnect"));
+        openConsoleAction_->setText(trOpenConsole);
+        loadDatabaseAction_->setText(trLoadDataBases);
+        infoServerAction_->setText(trInfo);
+        propertyServerAction_->setText(trProperty);
+        historyServerAction_->setText(trHistory);
+        closeAction_->setText(trClose);
+        backupAction_->setText(trBackup);
+        importAction_->setText(trImport);
+        shutdownAction_->setText(trShutdown);
+
+        loadContentAction_->setText(trLoadContOfDataBases);
+        createKeyAction_->setText(trCreateKey);
+        setDefaultDbAction_->setText(trSetDefault);
+        getValueAction_->setText(trValue);
+        deleteKeyAction_->setText(trDelete);
+    }
+
+    QModelIndex ExplorerTreeView::selectedIndex() const
+    {
+        QModelIndexList indexses = selectionModel()->selectedRows();
+
+        if (indexses.count() != 1){
+            return QModelIndex();
+        }
+
+        return indexses[0];
+    }
+
+    QModelIndexList ExplorerTreeView::selectedIndexes() const
+    {
+        return selectionModel()->selectedRows();
     }
 }

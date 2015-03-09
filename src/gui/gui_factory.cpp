@@ -17,24 +17,6 @@ namespace fastoredis
         return main;
     }
 
-    const QIcon& GuiFactory::redisConnectionIcon() const
-    {
-        static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/redis.png");
-        return main;
-    }
-
-    const QIcon& GuiFactory::memcachedConnectionIcon() const
-    {
-        static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/memcached.png");
-        return main;
-    }
-
-    const QIcon& GuiFactory::ssdbConnectionIcon() const
-    {
-        static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/ssdb.png");
-        return main;
-    }
-
     const QIcon& GuiFactory::connectIcon() const
     {
         static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/connect.png");
@@ -111,21 +93,6 @@ namespace fastoredis
     {
         static QIcon db(":" PROJECT_NAME_LOWERCASE "/images/64x64/key.png");
         return db;
-    }
-
-    QFont GuiFactory::font() const
-    {
-#if defined(OS_MACOSX)
-        static const QFont textFont = QFont("Monaco",12);
-#elif defined(OS_LINUX)
-        static QFont textFont = QFont("Monospace");
-        textFont.setFixedPitch(true);
-#elif defined(OS_WIN)
-        static const QFont textFont = QFont("Courier",10);
-#elif defined(OS_ANDROID)
-        static const QFont textFont = QFont("Monospace");
-#endif
-        return textFont;
     }
 
     const QIcon& GuiFactory::icon(connectionTypes type) const
@@ -262,12 +229,6 @@ namespace fastoredis
         return start;
     }
 
-    const QString &GuiFactory::pathToLoadingGif() const
-    {
-        static QString path(":" PROJECT_NAME_LOWERCASE "/images/loading.gif");
-        return path;
-    }
-
     const QIcon& GuiFactory::loggingIcon() const
     {
         static QIcon logg(":" PROJECT_NAME_LOWERCASE "/images/64x64/logging.png");
@@ -278,28 +239,6 @@ namespace fastoredis
     {
         static QIcon comm(":" PROJECT_NAME_LOWERCASE "/images/64x64/command.png");
         return comm;
-    }
-
-    const QIcon& GuiFactory::preferencesIcon() const
-    {
-        static QIcon pref(":" PROJECT_NAME_LOWERCASE "/images/64x64/preferences.png");
-        return pref;
-    }
-
-    const QIcon& GuiFactory::commandIcon(connectionTypes type) const
-    {
-        if(type == REDIS){
-            return redisConnectionIcon();
-        }
-        else if(type == MEMCACHED){
-            return memcachedConnectionIcon();
-        }
-        else if(type == SSDB){
-            return ssdbConnectionIcon();
-        }
-        else{
-            return serverIcon();
-        }
     }
 
     const QIcon& GuiFactory::pythonIcon() const
@@ -320,10 +259,32 @@ namespace fastoredis
         return main;
     }
 
+    const QIcon& GuiFactory::preferencesIcon() const
+    {
+        static QIcon pref(":" PROJECT_NAME_LOWERCASE "/images/64x64/preferences.png");
+        return pref;
+    }
+
     const QIcon& GuiFactory::close16Icon() const
     {
         static QIcon close(":" PROJECT_NAME_LOWERCASE "/images/16x16/close.png");
         return close;
+    }
+
+    const QIcon& GuiFactory::commandIcon(connectionTypes type) const
+    {
+        if(type == REDIS){
+            return redisConnectionIcon();
+        }
+        else if(type == MEMCACHED){
+            return memcachedConnectionIcon();
+        }
+        else if(type == SSDB){
+            return ssdbConnectionIcon();
+        }
+        else{
+            return serverIcon();
+        }
     }
 
     const QIcon& GuiFactory::typeIcon(connectionTypes type) const
@@ -348,5 +309,44 @@ namespace fastoredis
     {
         static QIcon fail(":" PROJECT_NAME_LOWERCASE "/images/64x64/fail.png");
         return fail;
+    }
+
+    QFont GuiFactory::font() const
+    {
+#if defined(OS_MACOSX)
+        static const QFont textFont = QFont("Monaco",12);
+#elif defined(OS_LINUX)
+        static QFont textFont = QFont("Monospace");
+        textFont.setFixedPitch(true);
+#elif defined(OS_WIN)
+        static const QFont textFont = QFont("Courier",10);
+#elif defined(OS_ANDROID)
+        static const QFont textFont = QFont("Monospace");
+#endif
+        return textFont;
+    }
+
+    const QString &GuiFactory::pathToLoadingGif() const
+    {
+        static QString path(":" PROJECT_NAME_LOWERCASE "/images/loading.gif");
+        return path;
+    }
+
+    const QIcon& GuiFactory::redisConnectionIcon() const
+    {
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/redis.png");
+        return main;
+    }
+
+    const QIcon& GuiFactory::memcachedConnectionIcon() const
+    {
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/memcached.png");
+        return main;
+    }
+
+    const QIcon& GuiFactory::ssdbConnectionIcon() const
+    {
+        static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/ssdb.png");
+        return main;
     }
 }

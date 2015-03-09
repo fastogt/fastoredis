@@ -131,16 +131,14 @@ namespace fastoredis
         retranslateUi();
     }
 
-    void ConnectionsDialog::connectionSelectChange()
+    IConnectionSettingsBaseSPtr ConnectionsDialog::selectedConnection() const
     {
-        bool isEnable = selectedConnection() != NULL;
-        acButton_->setEnabled(isEnable);
-    }
+        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        if (currentItem){
+            return currentItem->connection();
+        }
 
-    void ConnectionsDialog::addConnection(const IConnectionSettingsBaseSPtr& con)
-    {
-        ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
-        listWidget_->addTopLevelItem(item);
+        return IConnectionSettingsBaseSPtr();
     }
 
     void ConnectionsDialog::add()
@@ -196,14 +194,10 @@ namespace fastoredis
         }
     }
 
-    IConnectionSettingsBaseSPtr ConnectionsDialog::selectedConnection() const
+    void ConnectionsDialog::connectionSelectChange()
     {
-        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
-        if (currentItem){
-            return currentItem->connection();
-        }
-
-        return IConnectionSettingsBaseSPtr();
+        bool isEnable = selectedConnection() != NULL;
+        acButton_->setEnabled(isEnable);
     }
 
     /**
@@ -228,5 +222,11 @@ namespace fastoredis
 
         setWindowTitle(trConnections);
         acButton_->setText(trOpen);
+    }
+
+    void ConnectionsDialog::addConnection(const IConnectionSettingsBaseSPtr& con)
+    {
+        ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
+        listWidget_->addTopLevelItem(item);
     }
 }
