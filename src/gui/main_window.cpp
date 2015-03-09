@@ -132,8 +132,16 @@ namespace fastoredis
         QMenu *fileMenu = new QMenu(this);
         fileAction_ = menuBar()->addMenu(fileMenu);
         fileMenu->addAction(openAction_);
+        QMenu *recentMenu = new QMenu(this);
+        recentConnections_ = fileMenu->addMenu(recentMenu);
+        for (int i = 0; i < MaxRecentConnections; ++i) {
+            recentConnectionsActs_[i] = new QAction(this);
+            VERIFY(connect(recentConnectionsActs_[i], &QAction::triggered, this, &MainWindow::openRecentConnection));
+            recentMenu->addAction(recentConnectionsActs_[i]);
+        }
         fileMenu->addSeparator();
         fileMenu->addAction(exitAction_);
+        updateRecentConnectionActions();
 
         preferencesAction_ = new QAction(this);
         preferencesAction_->setIcon(GuiFactory::instance().preferencesIcon());
@@ -251,8 +259,8 @@ namespace fastoredis
         ConnectionsDialog dlg(this);
         int result = dlg.exec();
         if(result == QDialog::Accepted){
-            IServerSPtr server = ServersManager::instance().createServer(dlg.selectedConnection());
-            exp_->addServer(server);
+            IConnectionSettingsBaseSPtr con = dlg.selectedConnection();
+            createServer(con);
         }
     }
 
@@ -310,6 +318,23 @@ namespace fastoredis
     {
         EncodeDecodeDialog dlg(this);
         dlg.exec();
+    }
+
+    void MainWindow::openRecentConnection()
+    {
+        QAction *action = qobject_cast<QAction *>(sender());
+        if (action){
+            QString rcon = action->data().toString();
+            std::string srcon = common::convertToString(rcon);
+            SettingsManager::ConnectionSettingsContainerType conns = SettingsManager::instance().connections();
+            for(SettingsManager::ConnectionSettingsContainerType::const_iterator it = conns.begin(); it != conns.end(); ++it){
+                IConnectionSettingsBaseSPtr con = *it;
+                if(con && con->connectionName() == srcon){
+                    createServer(con);
+                    break;
+                }
+            }
+        }
     }
 
     void MainWindow::versionAvailible(bool succesResult, const QString& version)
@@ -411,8 +436,39 @@ namespace fastoredis
         helpAction_->setText(trHelp);
         explorerAction_->setText(trExpTree);
         logsAction_->setText(trLogs);
+        recentConnections_->setText(trRecentConnections);
         expDock_->setWindowTitle(trExpTree);
         logDock_->setWindowTitle(trLogs);
+    }
+
+    void MainWindow::updateRecentConnectionActions()
+    {
+        QStringList connections = SettingsManager::instance().recentConnections();
+
+        int numRecentFiles = qMin(connections.size(), (int)MaxRecentConnections);
+
+        for (int i = 0; i < numRecentFiles; ++i) {
+            QString text = connections[i];
+            recentConnectionsActs_[i]->setText(text);
+            recentConnectionsActs_[i]->setData(text);
+            recentConnectionsActs_[i]->setVisible(true);
+        }
+
+        for (int j = numRecentFiles; j < MaxRecentConnections; ++j){
+            recentConnectionsActs_[j]->setVisible(false);
+        }
+
+        recentConnections_->setEnabled(numRecentFiles > 0);
+    }
+
+    void MainWindow::createServer(IConnectionSettingsBaseSPtr settings)
+    {
+        QString rcon = common::convertFromString<QString>(settings->connectionName());
+        SettingsManager::instance().removeRConnection(rcon);
+        IServerSPtr server = ServersManager::instance().createServer(settings);
+        exp_->addServer(server);
+        SettingsManager::instance().addRConnection(rcon);
+        updateRecentConnectionActions();
     }
 
     UpdateChecker::UpdateChecker(QObject* parent)

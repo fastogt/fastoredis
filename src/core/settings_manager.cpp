@@ -19,6 +19,7 @@
 #define SYNCTABS PREFIX"synctabs"
 #define LOGGINGDIR PREFIX"loggingdir"
 #define CHECKUPDATES PREFIX"checkupdates"
+#define RCONNECTIONS PREFIX"rconnections"
 
 namespace
 {
@@ -95,6 +96,31 @@ namespace fastoredis
         return connections_;
     }
 
+    void SettingsManager::addRConnection(const QString& connection)
+    {
+        if(!connection.isEmpty()){
+            QStringList::iterator it = std::find(recentConnections_.begin(), recentConnections_.end(), connection);
+            if (it == recentConnections_.end()) {
+                recentConnections_.push_front(connection);
+            }
+        }
+    }
+
+    void SettingsManager::removeRConnection(const QString& connection)
+    {
+        if(!connection.isEmpty()){
+            QStringList::iterator it = std::find(recentConnections_.begin(), recentConnections_.end(), connection);
+            if (it != recentConnections_.end()) {
+                recentConnections_.erase(it);
+            }
+        }
+    }
+
+    QStringList SettingsManager::recentConnections() const
+    {
+        return recentConnections_;
+    }
+
     bool SettingsManager::syncTabs() const
     {
         return syncTabs_;
@@ -150,6 +176,18 @@ namespace fastoredis
             }
         }
 
+        QStringList rconnections = settings.value(RCONNECTIONS, "").toStringList();
+        for(QStringList::const_iterator it = rconnections.begin(); it != rconnections.end(); ++it){
+            QString string = *it;
+            std::string encoded = common::convertToString(string);
+            std::string raw = common::utils::base64::decode64(encoded);
+
+            QString qdata = common::convertFromString<QString>(raw);
+            if(!qdata.isEmpty()){
+               recentConnections_.push_back(qdata);
+            }
+        }
+
         syncTabs_= settings.value(SYNCTABS, false).toBool();
         std::string dir = common::file_system::get_dir_path(iniPath);
         loggingDir_ = settings.value(LOGGINGDIR, common::convertFromString<QString>(dir)).toString();
@@ -176,6 +214,18 @@ namespace fastoredis
             }
         }
         settings.setValue(CONNECTIONS, connections);
+
+        QStringList rconnections;
+        for(QStringList::const_iterator it = recentConnections_.begin(); it != recentConnections_.end(); ++it){
+            QString conn = *it;
+            if(!conn.isEmpty()){
+               std::string raw = common::convertToString(conn);
+               std::string enc = common::utils::base64::encode64(raw);
+               QString qdata = common::convertFromString<QString>(enc);
+               rconnections.push_back(qdata);
+            }
+        }
+        settings.setValue(RCONNECTIONS, rconnections);
 
         settings.setValue(SYNCTABS, syncTabs_);
         settings.setValue(LOGGINGDIR, loggingDir_);

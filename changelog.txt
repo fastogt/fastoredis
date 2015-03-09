@@ -3,6 +3,7 @@
 - Bug fixes
 - History for SSDB
 - Create key value dialog
+- Recent connections menu
 
 0.7.0 / February 28, 2015
 [Alexandr Topilski]

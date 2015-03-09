@@ -74,6 +74,7 @@ namespace fastoredis
         if(ser && syncServers_){
             result->syncWithServer(ser.get());
         }
+
         return result;
     }
 

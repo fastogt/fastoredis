@@ -80,6 +80,7 @@ namespace fastoredis
         const QString trSetDefault = QObject::tr("Set default");
         const QString trLoadDataBases = QObject::tr("Load databases");
         const QString trExpTree = QObject::tr("Explorer tree");
+        const QString trRecentConnections = QObject::tr("Recent Connections");
         const QString trCheckVersion = QObject::tr("Check version");
         const QString trConnectionErrorText = QObject::tr("Connection error!");
         const QString trNewTab = QObject::tr("New Tab");

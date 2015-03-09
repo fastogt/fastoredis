@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QString>
+#include <QStringList>
 
 #include "global/types.h"
 
@@ -31,6 +31,10 @@ namespace fastoredis
 
         ConnectionSettingsContainerType connections() const;
 
+        void addRConnection(const QString& connection);
+        void removeRConnection(const QString& connection);
+        QStringList recentConnections() const;
+
         bool syncTabs() const;
         void setSyncTabs(bool sync);
 
@@ -51,6 +55,7 @@ namespace fastoredis
         QString curStyle_;
         QString curLanguage_;
         ConnectionSettingsContainerType connections_;
+        QStringList recentConnections_;
         bool syncTabs_;
         QString loggingDir_;
         bool autoCheckUpdate_;

@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 
+#include "core/connection_settings.h"
+
 class QAction;
 class QDockWidget;
 
@@ -24,7 +26,8 @@ namespace fastoredis
         enum
         {
             min_height = 480,
-            min_width = 640
+            min_width = 640,
+            MaxRecentConnections = 5
         };
         MainWindow();
         ~MainWindow();
@@ -42,6 +45,7 @@ namespace fastoredis
         void openPythonConsole();
         void openLuaConsole();
         void openEncodeDecodeDialog();
+        void openRecentConnection();
 
         void versionAvailible(bool succesResult, const QString& version);
 
@@ -56,6 +60,8 @@ namespace fastoredis
     private:
         void createStatusBar();
         void retranslateUi();
+        void updateRecentConnectionActions();
+        void createServer(IConnectionSettingsBaseSPtr settings);
 
         QAction* openAction_;
         QAction* exitAction_;
@@ -73,6 +79,9 @@ namespace fastoredis
         QAction* helpAction_;
         QAction* explorerAction_;
         QAction* logsAction_;
+        QAction* recentConnections_;
+        QAction* recentConnectionsActs_[MaxRecentConnections];
+
         ExplorerTreeView* exp_;
         QDockWidget* expDock_;
         QDockWidget* logDock_;
