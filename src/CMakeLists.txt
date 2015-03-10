@@ -122,6 +122,7 @@ SET(HEADERS_CORE
     core/iedcoder.h
     core/base64_edcoder.h
     core/hex_edcoder.h
+    core/html_edcoder.h
     core/compress_edcoder.h
     core/msgpack_edcoder.h
 )
@@ -144,10 +145,12 @@ SET(SOURCES_CORE
     core/iedcoder.cpp
     core/base64_edcoder.cpp
     core/hex_edcoder.cpp
+    core/html_edcoder.cpp
     core/compress_edcoder.cpp
     core/msgpack_edcoder.cpp
     third-party/cmp/cmp.c
 )
+
 SET(HEADERS_SHELL_TO_MOC
     shell/shell_widget.h
     shell/redis_shell.h

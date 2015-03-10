@@ -49,13 +49,14 @@ namespace fastoredis
     class ServerInfo
     {
     public:
-        connectionTypes type() const;
-        virtual std::string toString() const = 0;
-        virtual common::Value* valueByIndexes(unsigned char property, unsigned char field) const = 0;
+        ServerInfo(connectionTypes type);
         virtual ~ServerInfo();
 
+        connectionTypes type() const;
+        virtual std::string toString() const = 0;
+        virtual common::Value* valueByIndexes(unsigned char property, unsigned char field) const = 0;        
+
     protected:
-        ServerInfo(connectionTypes type);
         DISALLOW_COPY_AND_ASSIGN(ServerInfo);
 
     private:

@@ -207,6 +207,12 @@ namespace common
             buffer_type decode64(const buffer_type& input);
         }
 
+        namespace html
+        {
+            std::string encode(const std::string& input);
+            std::string decode(const std::string& input);
+        }
+
         void msleep(unsigned int msec);
         void usleep(unsigned int usec);
 

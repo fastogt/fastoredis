@@ -5,12 +5,12 @@ IF(OS_WINDOWS)
 ADD_CUSTOM_TARGET(redis_version
             COMMAND ./mkreleasehdr.sh
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src
-            COMMENT "Build redis-cli release.h")
+            COMMENT "Build redis_cli release.h")
 ELSE()
 ADD_CUSTOM_TARGET(redis_version
             COMMAND sh ./mkreleasehdr.sh
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src
-            COMMENT "Build redis-cli release.h")
+            COMMENT "Build redis_cli release.h")
 ENDIF(OS_WINDOWS)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/deps/hiredis ${CMAKE_CURRENT_LIST_DIR}/src)

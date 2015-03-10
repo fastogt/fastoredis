@@ -309,6 +309,62 @@ namespace common
             }
         }
 
+        namespace html
+        {
+            std::string encode(const std::string& input)
+            {
+                std::string buffer;
+                buffer.reserve(input.size());
+                for(size_t pos = 0; pos != input.size(); ++pos) {
+                    switch(input[pos]) {
+                        case '&':  buffer.append("&amp;");       break;
+                        case '\"': buffer.append("&quot;");      break;
+                        case '\'': buffer.append("&apos;");      break;
+                        case '<':  buffer.append("&lt;");        break;
+                        case '>':  buffer.append("&gt;");        break;
+                        default:   buffer.append(&input[pos], 1); break;
+                    }
+                }
+                return buffer;
+            }
+
+            std::string decode(const std::string& input)
+            {
+                std::string str = input;
+                std::string subs[] = {
+                    "& #34;", "&quot;",
+                    "& #39;", "&apos;",
+                    "& #38;", "&amp;",
+                    "& #60;", "&lt;",
+                    "& #62;", "&gt;",
+                    "&34;", "&39;",
+                    "&38;", "&60;",
+                    "&62;"
+                };
+
+                std::string reps[] = {
+                    "\"", "\"",
+                    "'", "'",
+                    "&", "&",
+                    "<", "<",
+                    ">", ">",
+                    "\"", "'",
+                    "&", "<",
+                    ">"
+                };
+
+                size_t found;
+                for(int j = 0; j < 15; j++) {
+                    do {
+                        found = str.find(subs[j]);
+                        if (found != std::string::npos)
+                            str.replace (found,subs[j].length(),reps[j]);
+                    } while (found != std::string::npos);
+                }
+                return str;
+            }
+        }
+
         void usleep(unsigned int usec)
         {
         #ifdef OS_WIN

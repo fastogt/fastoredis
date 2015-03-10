@@ -9,7 +9,8 @@ namespace fastoredis
         Base64,
         Compress,
         Hex,
-        MsgPack
+        MsgPack,
+        HtmlEsc
     };
 
     std::vector<std::string> supportedEDcoderTypes();

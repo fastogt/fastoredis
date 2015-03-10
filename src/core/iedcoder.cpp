@@ -4,10 +4,11 @@
 #include "core/compress_edcoder.h"
 #include "core/hex_edcoder.h"
 #include "core/msgpack_edcoder.h"
+#include "core/html_edcoder.h"
 
 namespace
 {
-    std::vector<std::string> EDcoderTypes = { "Base64", "GZip", "Hex", "MsgPack" };
+    std::vector<std::string> EDcoderTypes = { "Base64", "GZip", "Hex", "MsgPack", "Html escape" };
 }
 
 namespace common
@@ -86,6 +87,9 @@ namespace fastoredis
         }
         else if(type == MsgPack){
             return new MsgPackEDcoder;
+        }
+        else if(type == HtmlEsc){
+            return new HtmlEscEDcoder;
         }
         else{
             NOTREACHED();
