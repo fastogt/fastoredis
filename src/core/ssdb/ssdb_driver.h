@@ -19,7 +19,7 @@ namespace fastoredis
         Q_OBJECT
     public:        
 
-        SsdbDriver(const IConnectionSettingsBaseSPtr& settings);
+        SsdbDriver(IConnectionSettingsBaseSPtr settings);
         virtual ~SsdbDriver();
 
         virtual bool isConnected() const;

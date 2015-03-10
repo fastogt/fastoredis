@@ -1325,7 +1325,7 @@ namespace fastoredis
         ssdb::Client* ssdb_;
     };
 
-    SsdbDriver::SsdbDriver(const IConnectionSettingsBaseSPtr &settings)
+    SsdbDriver::SsdbDriver(IConnectionSettingsBaseSPtr settings)
         : IDriver(settings), impl_(new pimpl)
     {
 

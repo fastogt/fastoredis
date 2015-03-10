@@ -37,7 +37,7 @@ namespace fastoredis
 
     private:
         void retranslateUi();
-        void addConnection(const fastoredis::IConnectionSettingsBaseSPtr& con);
+        void addConnection(IConnectionSettingsBaseSPtr con);
         QTreeWidget* listWidget_;
         QPushButton* acButton_;
     };

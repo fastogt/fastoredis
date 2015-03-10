@@ -265,7 +265,7 @@ namespace fastoredis
 
     void CreateDbKeyDialog::retranslateUi()
     {
-        generalBox_->setTitle(tr("Key/Value setup:"));
+        generalBox_->setTitle(tr("Key/Value input"));
     }
 
     FastoObject* CreateDbKeyDialog::getItem() const

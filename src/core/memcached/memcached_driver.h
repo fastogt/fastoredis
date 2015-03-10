@@ -22,7 +22,7 @@ namespace fastoredis
         Q_OBJECT
     public:        
 
-        MemcachedDriver(const IConnectionSettingsBaseSPtr& settings);
+        MemcachedDriver(IConnectionSettingsBaseSPtr settings);
         virtual ~MemcachedDriver();
 
         virtual bool isConnected() const;

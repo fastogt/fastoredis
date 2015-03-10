@@ -324,7 +324,7 @@ namespace fastoredis
     {
         QAction *action = qobject_cast<QAction *>(sender());
         if (action){
-            QString rcon = action->data().toString();
+            QString rcon = action->text();
             std::string srcon = common::convertToString(rcon);
             SettingsManager::ConnectionSettingsContainerType conns = SettingsManager::instance().connections();
             for(SettingsManager::ConnectionSettingsContainerType::const_iterator it = conns.begin(); it != conns.end(); ++it){
@@ -450,7 +450,6 @@ namespace fastoredis
         for (int i = 0; i < numRecentFiles; ++i) {
             QString text = connections[i];
             recentConnectionsActs_[i]->setText(text);
-            recentConnectionsActs_[i]->setData(text);
             recentConnectionsActs_[i]->setVisible(true);
         }
 

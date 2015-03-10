@@ -224,7 +224,7 @@ namespace fastoredis
         acButton_->setText(trOpen);
     }
 
-    void ConnectionsDialog::addConnection(const IConnectionSettingsBaseSPtr& con)
+    void ConnectionsDialog::addConnection(IConnectionSettingsBaseSPtr con)
     {
         ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
         listWidget_->addTopLevelItem(item);

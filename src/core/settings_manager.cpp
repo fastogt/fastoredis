@@ -71,7 +71,7 @@ namespace fastoredis
         curLanguage_ = lang;
     }
 
-    void SettingsManager::addConnection(const IConnectionSettingsBaseSPtr &connection)
+    void SettingsManager::addConnection(IConnectionSettingsBaseSPtr connection)
     {
         if(connection){
             ConnectionSettingsContainerType::iterator it = std::find(connections_.begin(),connections_.end(),connection);
@@ -81,7 +81,7 @@ namespace fastoredis
         }
     }
 
-    void SettingsManager::removeConnection(const IConnectionSettingsBaseSPtr &connection)
+    void SettingsManager::removeConnection(IConnectionSettingsBaseSPtr connection)
     {
         if(connection){
             ConnectionSettingsContainerType::iterator it = std::find(connections_.begin(),connections_.end(),connection);

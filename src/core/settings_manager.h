@@ -26,8 +26,8 @@ namespace fastoredis
         QString currentLanguage() const;
         void setCurrentLanguage(const QString &lang);
 
-        void addConnection(const IConnectionSettingsBaseSPtr& connection);
-        void removeConnection(const IConnectionSettingsBaseSPtr& connection);
+        void addConnection(IConnectionSettingsBaseSPtr connection);
+        void removeConnection(IConnectionSettingsBaseSPtr connection);
 
         ConnectionSettingsContainerType connections() const;
 
