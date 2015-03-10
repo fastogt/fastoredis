@@ -39,7 +39,7 @@ namespace common
             Event(senders_type sender, const value_t& initValue)
                 : base_class((base_class::Type)EventType), _value(initValue), _sender(sender){}
 
-            const value_t &value() const
+            const value_t& value() const
             {
                 return _value;
             }

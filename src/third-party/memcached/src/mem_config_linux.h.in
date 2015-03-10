@@ -554,7 +554,7 @@
 /* #undef __APPLE_CC__ */
 
 /* Use STDC Limit Macros in C++ */
-#define __STDC_LIMIT_MACROS 1
+//#define __STDC_LIMIT_MACROS 1
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */

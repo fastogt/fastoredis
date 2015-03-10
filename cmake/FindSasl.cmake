@@ -30,12 +30,12 @@ ENDIF(MINGW)
 
 IF(SASL_LIBRARIES)
     find_package_handle_standard_args(Sasl
-    REQUIRED_VARS
-      SASL_LIBRARIES 
-      SASL_INCLUDE_DIR
-    FAIL_MESSAGE
-      "Could NOT find Sasl, try to set the path to Sasl root folder in the system variable SASL_ROOT_DIR"
-  )
+        REQUIRED_VARS
+        SASL_LIBRARIES
+        SASL_INCLUDE_DIR
+        FAIL_MESSAGE
+        "Could NOT find Sasl, try to set the path to Sasl root folder in the system variable SASL_ROOT_DIR"
+    )
 ENDIF(SASL_LIBRARIES)
 
 mark_as_advanced(SASL_LIBRARIES SASL_INCLUDE_DIR)

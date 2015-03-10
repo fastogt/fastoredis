@@ -2,7 +2,6 @@ SET(HEADERS_GLOBAL
     global/global.h
     global/types.h
 )
-
 SET(SOURCES_GLOBAL
     global/global.cpp
     global/types.cpp
