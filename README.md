@@ -1,7 +1,7 @@
 About FastoRedis
 ===============
 
-FastoRedis &mdash; is a crossplatform Redis management tool. <br />
+FastoRedis &mdash; is a crossplatform Redis, Memcached, SSDB management tool. <br />
 Visit our site: [www.fastoredis.com](http://www.fastoredis.com)
 
 Download
