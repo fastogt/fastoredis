@@ -25,7 +25,6 @@ namespace fastoredis
     PreferencesDialog::PreferencesDialog(QWidget* parent)
         : QDialog(parent)
     {
-        setWindowIcon(GuiFactory::instance().mainWindowIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 //      ui settings

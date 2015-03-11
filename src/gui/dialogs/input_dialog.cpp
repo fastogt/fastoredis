@@ -14,8 +14,6 @@ namespace fastoredis
                              const QString& firstLabelText, const QString& secondLabelText)
         : QDialog(parent)
     {
-        setWindowIcon(GuiFactory::instance().mainWindowIcon());
-
         setWindowTitle(title);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         QGridLayout* glayout = new QGridLayout;

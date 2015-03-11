@@ -116,7 +116,6 @@ namespace fastoredis
         fastoredis::applyStyle(style);
 
         setWindowTitle(PROJECT_NAME_TITLE " " PROJECT_VERSION);
-        setWindowIcon(GuiFactory::instance().mainWindowIcon());
 
         openAction_ = new QAction(this);
         openAction_->setIcon(GuiFactory::instance().openIcon());

@@ -77,6 +77,6 @@ namespace common
             error_type errorInfo_;
         };
 
-        QString applicationDirPath();
+        const QString& applicationDirPath();
     }
 }

@@ -11,10 +11,15 @@ namespace fastoredis
         return open;
     }
 
-    const QIcon& GuiFactory::mainWindowIcon() const
+    const QIcon& GuiFactory::logoIcon() const
     {
         static QIcon main(":" PROJECT_NAME_LOWERCASE "/images/64x64/logo.png");
         return main;
+    }
+
+    const QIcon& GuiFactory::mainWindowIcon() const
+    {
+        return logoIcon();
     }
 
     const QIcon& GuiFactory::connectIcon() const

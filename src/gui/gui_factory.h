@@ -17,6 +17,7 @@ namespace fastoredis
         friend class common::patterns::LazySingleton<GuiFactory>;
 
         const QIcon& openIcon() const;
+        const QIcon& logoIcon() const;
         const QIcon& mainWindowIcon() const;
         const QIcon& connectIcon() const;
         const QIcon& disConnectIcon() const;

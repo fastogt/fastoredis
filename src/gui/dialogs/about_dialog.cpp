@@ -34,8 +34,6 @@ namespace fastoredis
     AboutDialog::AboutDialog(QWidget* parent)
         : QDialog(parent)
     {
-        setWindowIcon(GuiFactory::instance().mainWindowIcon());
-
         setWindowTitle("About " PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         QGridLayout* glayout = new QGridLayout;

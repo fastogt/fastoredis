@@ -2,6 +2,7 @@
 #include <QDesktopWidget>
 
 #include "gui/main_window.h"
+#include "gui/gui_factory.h"
 
 namespace
 {
@@ -13,7 +14,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setOrganizationName(PROJECT_COMPANYNAME);
     app.setApplicationName(PROJECT_NAME);
+    app.setApplicationVersion(PROJECT_VERSION);
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    app.setWindowIcon(fastoredis::GuiFactory::instance().logoIcon()); //default icon for app
 
     fastoredis::MainWindow win;
     QRect screenGeometry = app.desktop()->availableGeometry();

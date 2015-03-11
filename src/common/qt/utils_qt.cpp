@@ -7,9 +7,10 @@ namespace common
 {
     namespace utils_qt
     {
-        QString applicationDirPath()
+        const QString& applicationDirPath()
         {
-            return QApplication::applicationDirPath();
+            static const QString path = QApplication::applicationDirPath();
+            return path;
         }
     }
 }
