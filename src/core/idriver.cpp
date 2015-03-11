@@ -284,14 +284,14 @@ namespace fastoredis
     IDriver::RootLocker::~RootLocker()
     {
         events::CommandRootCompleatedEvent::value_type res(tstart_, root_);
-        parent_->reply(reciver_, new events::CommandRootCompleatedEvent(parent_, res));
+        reply(reciver_, new events::CommandRootCompleatedEvent(parent_, res));
     }
 
     FastoObjectIPtr IDriver::RootLocker::createRoot(QObject *reciver, const std::string& text)
     {
         FastoObjectIPtr root = FastoObject::createRoot(text, parent_);
         events::CommandRootCreatedEvent::value_type res(root);
-        parent_->reply(reciver, new events::CommandRootCreatedEvent(parent_, res));
+        reply(reciver, new events::CommandRootCreatedEvent(parent_, res));
         return root;
     }
 

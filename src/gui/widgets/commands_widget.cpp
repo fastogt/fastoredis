@@ -21,7 +21,7 @@ namespace fastoredis
         logTextEdit_->setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(logTextEdit_, &QTextEdit::customContextMenuRequested, this, &CommandsWidget::showContextMenu));
 
-        QHBoxLayout *hlayout = new QHBoxLayout;
+        QHBoxLayout* hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0, 0, 0, 0);
         hlayout->addWidget(logTextEdit_);
         clear_ = new QAction(this);
@@ -33,10 +33,10 @@ namespace fastoredis
     void CommandsWidget::addCommand(const Command& command)
     {
         QTime time = QTime::currentTime();
-        logTextEdit_->setTextColor(command.type() == common::Value::C_INNER ? QColor(Qt::gray):QColor(Qt::black));
+        logTextEdit_->setTextColor(command.type() == common::Value::C_INNER ? QColor(Qt::gray) : QColor(Qt::black));
         QString mess = common::convertFromString<QString>(command.message());
         logTextEdit_->append(time.toString("h:mm:ss AP: ") + mess);
-        QScrollBar *sb = logTextEdit_->verticalScrollBar();
+        QScrollBar* sb = logTextEdit_->verticalScrollBar();
         sb->setValue(sb->maximum());
     }
 

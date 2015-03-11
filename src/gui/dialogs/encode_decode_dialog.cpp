@@ -9,6 +9,7 @@
 #include <QComboBox>
 #include <QRadioButton>
 #include <QEvent>
+#include <QKeyEvent>
 
 #include "gui/gui_factory.h"
 #include "gui/fasto_editor.h"
@@ -34,8 +35,8 @@ namespace fastoredis
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         QVBoxLayout* layout = new QVBoxLayout;
 
-        QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
-        QPushButton *closeButton = buttonBox->button(QDialogButtonBox::Close);
+        QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
+        QPushButton* closeButton = buttonBox->button(QDialogButtonBox::Close);
         buttonBox->addButton(closeButton, QDialogButtonBox::ButtonRole(QDialogButtonBox::RejectRole | QDialogButtonBox::AcceptRole));
         VERIFY(connect(buttonBox, &QDialogButtonBox::rejected, this, &EncodeDecodeDialog::reject));
 
@@ -49,7 +50,7 @@ namespace fastoredis
             decoders_->addItem(common::convertFromString<QString>(sup[i]));
         }
 
-        QHBoxLayout *toolBarLayout = new QHBoxLayout;
+        QHBoxLayout* toolBarLayout = new QHBoxLayout;
         toolBarLayout->setContentsMargins(0, 0, 0, 0);
         toolBarLayout->addWidget(decode);
         toolBarLayout->addWidget(decoders_);
@@ -58,16 +59,17 @@ namespace fastoredis
         decodeButton_ = new QRadioButton;
         toolBarLayout->addWidget(encodeButton_);
         toolBarLayout->addWidget(decodeButton_);
-        encodeButton_->setChecked(true);
 
-        QSplitter *splitter = new QSplitter;
+        QSplitter* splitter = new QSplitter;
         splitter->setOrientation(Qt::Horizontal);
         splitter->setHandleWidth(1);
         splitter->setContentsMargins(0, 0, 0, 0);
         toolBarLayout->addWidget(splitter);
 
         input_ = new FastoEditor;
+        input_->installEventFilter(this);
         output_ = new FastoEditor;
+        output_->installEventFilter(this);
 
         layout->addWidget(input_);       
         layout->addLayout(toolBarLayout);        
@@ -76,7 +78,22 @@ namespace fastoredis
         setMinimumSize(QSize(width, height));
         setLayout(layout);
 
-        retranslateUi();
+        retranslateUi();        
+    }
+
+    bool EncodeDecodeDialog::eventFilter(QObject* object, QEvent* event)
+    {
+        if (object == output_ || object == input_) {
+            if (event->type() == QEvent::KeyPress) {
+                QKeyEvent *keyEvent = (QKeyEvent *)event;
+                if (keyEvent->key() == Qt::Key_Escape) {
+                    reject();
+                    return true;
+                }
+            }
+        }
+
+        return QWidget::eventFilter(object, event);
     }
 
     void EncodeDecodeDialog::changeEvent(QEvent* e)

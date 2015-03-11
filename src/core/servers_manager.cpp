@@ -25,7 +25,7 @@ namespace fastoredis
     }
 
 
-    IServerSPtr ServersManager::createServer(const IConnectionSettingsBaseSPtr &settings)
+    IServerSPtr ServersManager::createServer(IConnectionSettingsBaseSPtr settings)
     {
         IServerSPtr result;
         connectionTypes conT = settings->connectionType();

@@ -23,6 +23,7 @@ namespace fastoredis
 
     protected:
         virtual void changeEvent(QEvent* );
+        virtual bool eventFilter(QObject* object, QEvent* event);
 
     private Q_SLOTS:
         void decode();
