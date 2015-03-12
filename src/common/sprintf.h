@@ -21,6 +21,14 @@ namespace common
     }
 
     template<typename... Args>
+    inline int SPrintf(char* buff, const char* fmt, Args... args)
+    {
+        int res = sprintf(buff, fmt, normalize(args)...);
+        DCHECK(res != -1);
+        return res;
+    }
+
+    template<typename... Args>
     inline int SNPrintf(char* buff, uint16_t buff_size, const char* fmt, Args... args)
     {
         int res = snprintf(buff, buff_size, fmt, normalize(args)...);

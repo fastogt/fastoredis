@@ -1,5 +1,6 @@
 #include "core/ssdb/ssdb_config.h"
 
+#include "common/sprintf.h"
 #include "common/utils.h"
 
 #include "core/logger.h"
@@ -35,7 +36,7 @@ namespace fastoredis
                     if (argv[i][0] == '-') {
                         const uint16_t size_buff = 256;
                         char buff[size_buff] = {0};
-                        sprintf(buff, "Unrecognized option or bad number of args for: '%s'", argv[i]);
+                        common::SNPrintf(buff, sizeof(buff), "Unrecognized option or bad number of args for: '%s'", argv[i]);
                         LOG_MSG(buff, common::logging::L_WARNING, true);
                         break;
                     } else {

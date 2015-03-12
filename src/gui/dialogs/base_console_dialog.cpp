@@ -13,6 +13,7 @@
 #include <QInputDialog>
 
 #include "common/qt/convert_string.h"
+#include "common/sprintf.h"
 
 #include "gui/gui_factory.h"
 #include "translations/global.h"
@@ -39,8 +40,8 @@ namespace
         else {
             static const uint16_t size_buff = 256;
             char buff[size_buff] = {0};
-            sprintf(buff, PROJECT_NAME" can't read from %s:\n%s.", convertToString(filePath).c_str(),
-                            convertToString(file.errorString()).c_str());
+            common::SNPrintf(buff, sizeof(buff), PROJECT_NAME" can't read from %s:\n%s.", convertToString(filePath),
+                            convertToString(file.errorString()));
             //ErrorValueSPtr er = common::make_error_value(buff, Value::E_ERROR);
             //fastoredis::LOG_ERROR(er);
             QMessageBox::critical(parent, trError,

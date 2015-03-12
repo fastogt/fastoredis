@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <string.h>
 
+#include "common/sprintf.h"
+
 namespace
 {
     using namespace common;
@@ -200,7 +202,7 @@ namespace common
         std::string url::get_url()const
         {
             char buf[host_size + path_size + query_size + 7] = {0};
-            sprintf(buf, "%s://%s%s%s", protocol().c_str(), host_.c_str(), path_.c_str(), query_.c_str());
+            SNPrintf(buf, sizeof(buf), "%s://%s%s%s", protocol().c_str(), host_.c_str(), path_.c_str(), query_.c_str());
             return buf;
         }
 

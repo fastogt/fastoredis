@@ -873,7 +873,7 @@ namespace fastoredis
             }
             else{
                 char buff[1024] = {0};
-                sprintf(buff, "Not supported command: %s", argv[0]);
+                common::SNPrintf(buff, sizeof(buff), "Not supported command: %s", argv[0]);
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
         }

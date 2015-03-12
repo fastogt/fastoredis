@@ -269,10 +269,10 @@ namespace fastoredis
         if (context->err) {
             char buff[512] = {0};
             if (!config.hostsocket){
-                sprintf(buff, "Could not connect to Redis at %s:%d : %s", config.hostip, config.hostport, context->errstr);
+                common::SNPrintf(buff, sizeof(buff), "Could not connect to Redis at %s:%d : %s", config.hostip, config.hostport, context->errstr);
             }
             else{
-                sprintf(buff, "Could not connect to Redis at %s : %s", config.hostsocket, context->errstr);
+                common::SNPrintf(buff, sizeof(buff), "Could not connect to Redis at %s : %s", config.hostsocket, context->errstr);
             }
 
             redisFree(context);
@@ -356,7 +356,7 @@ namespace fastoredis
                 }
 
                 char buff[1024];
-                sprintf(buff, "min: %lld, max: %lld, avg: %.2f (%lld samples)",
+                common::SNPrintf(buff, sizeof(buff), "min: %lld, max: %lld, avg: %.2f (%lld samples)",
                                     min, max, avg, count);
                 common::Value *val = common::Value::createStringValue(buff);
 
@@ -421,7 +421,7 @@ namespace fastoredis
             *p = '\0';
             if (buf[0] == '-') {
                 char buf2[4096];
-                sprintf(buf2, "SYNC with master failed: %s", buf);
+                common::SNPrintf(buf2, sizeof(buf2), "SYNC with master failed: %s", buf);
                 return common::make_error_value(buf2, common::ErrorValue::E_ERROR);
             }
 
@@ -504,7 +504,7 @@ namespace fastoredis
                 fd = open(config.rdb_filename, O_CREAT | O_WRONLY, 0644);
                 if (fd == INVALID_DESCRIPTOR) {
                     char bufeEr[2048];
-                    sprintf(bufeEr, "Error opening '%s': %s", config.rdb_filename, strerror(errno));
+                    common::SNPrintf(bufeEr, sizeof(bufeEr), "Error opening '%s': %s", config.rdb_filename, strerror(errno));
 
                     return common::make_error_value(bufeEr, common::ErrorValue::E_ERROR);
                 }
@@ -533,7 +533,7 @@ namespace fastoredis
 
                 if (nwritten != nread) {
                     char bufeEr[2048];
-                    sprintf(bufeEr, "Error writing data to file: %s", strerror(errno));
+                    common::SNPrintf(bufeEr, sizeof(bufeEr), "Error writing data to file: %s", strerror(errno));
 
                     if(fd != INVALID_DESCRIPTOR){
                         close(fd);
@@ -567,7 +567,7 @@ namespace fastoredis
                 return NULL;
             } else if(reply->type == REDIS_REPLY_ERROR) {
                 char buff[512];
-                sprintf(buff, "SCAN error: %s", reply->str);
+                common::SNPrintf(buff, sizeof(buff), "SCAN error: %s", reply->str);
                 er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
                 return NULL;
             } else if(reply->type != REDIS_REPLY_ARRAY) {
@@ -618,7 +618,7 @@ namespace fastoredis
                 return RTYPE_NONE;
             } else {
                 char buff[4096];
-                sprintf(buff, "Unknown type '%s' for key '%s'", type, key);
+                common::SNPrintf(buff, sizeof(buff), "Unknown type '%s' for key '%s'", type, key);
                 er.reset(new common::ErrorValue(buff, common::Value::E_ERROR));
                 return -1;
             }
@@ -638,13 +638,13 @@ namespace fastoredis
             for(i=0;i<keys->elements;i++) {
                 if(redisGetReply(context, (void**)&reply)!=REDIS_OK) {
                     char buff[4096];
-                    sprintf(buff, "Error getting type for key '%s' (%d: %s)",
+                    common::SNPrintf(buff, sizeof(buff), "Error getting type for key '%s' (%d: %s)",
                         keys->element[i]->str, context->err, context->errstr);
 
                     return common::make_error_value(buff, common::Value::E_ERROR);
                 } else if(reply->type != REDIS_REPLY_STATUS) {
                     char buff[4096];
-                    sprintf(buff, "Invalid reply type (%d) for TYPE on key '%s'!",
+                    common::SNPrintf(buff, sizeof(buff), "Invalid reply type (%d) for TYPE on key '%s'!",
                         reply->type, keys->element[i]->str);
 
                     return common::make_error_value(buff, common::Value::E_ERROR);
@@ -692,14 +692,14 @@ namespace fastoredis
                 /* Retreive size */
                 if(redisGetReply(context, (void**)&reply)!=REDIS_OK) {
                     char buff[4096];
-                    sprintf(buff, "Error getting size for key '%s' (%d: %s)",
+                    common::SNPrintf(buff, sizeof(buff), "Error getting size for key '%s' (%d: %s)",
                         keys->element[i]->str, context->err, context->errstr);
                     return common::make_error_value(buff, common::Value::E_ERROR);
                 } else if(reply->type != REDIS_REPLY_INTEGER) {
                     /* Theoretically the key could have been removed and
                      * added as a different type between TYPE and SIZE */
                     char buff[4096];
-                    sprintf(buff,
+                    common::SNPrintf(buff, sizeof(buff),
                         "Warning:  %s on '%s' failed (may have changed type)",
                          sizecmds[types[i]], keys->element[i]->str);
                     LOG_MSG(buff, common::logging::L_WARNING, true);
@@ -801,7 +801,7 @@ namespace fastoredis
 
                     if(biggest[type]<sizes[i]) {
                         char buff[4096];
-                        sprintf(buff,
+                        common::SNPrintf(buff, sizeof(buff),
                            "[%05.2f%%] Biggest %-6s found so far '%s' with %llu %s",
                            pct, typeName[type], keys->element[i]->str, sizes[i],
                            typeunit[type]);
@@ -832,11 +832,11 @@ namespace fastoredis
 
             /* We're done */
             char buff[4096];
-            sprintf(buff, "Sampled %llu keys in the keyspace!", sampled);
+            common::SNPrintf(buff, sizeof(buff), "Sampled %llu keys in the keyspace!", sampled);
             LOG_MSG(buff, common::logging::L_INFO, true);
 
             memset(&buff, 0, sizeof(buff));
-            sprintf(buff, "Total key length in bytes is %llu (avg len %.2f)",
+            common::SNPrintf(buff, sizeof(buff), "Total key length in bytes is %llu (avg len %.2f)",
                totlen, totlen ? (double)totlen/sampled : 0);
             LOG_MSG(buff, common::logging::L_INFO, true);
 
@@ -844,7 +844,7 @@ namespace fastoredis
             for(i=0;i<RTYPE_NONE;i++) {
                 if(sdslen(maxkeys[i])>0) {
                     memset(&buff, 0, sizeof(buff));
-                    sprintf(buff, "Biggest %6s found '%s' has %llu %s", typeName[i], maxkeys[i],
+                    common::SNPrintf(buff, sizeof(buff), "Biggest %6s found '%s' has %llu %s", typeName[i], maxkeys[i],
                        biggest[i], typeunit[i]);
                     common::StringValue *val = common::Value::createStringValue(buff);
                     FastoObject* obj = new FastoObject(cmd, val, config.mb_delim);
@@ -854,7 +854,7 @@ namespace fastoredis
 
             for(i=0;i<RTYPE_NONE;i++) {
                 memset(&buff, 0, sizeof(buff));
-                sprintf(buff, "%llu %ss with %llu %s (%05.2f%% of keys, avg size %.2f)",
+                common::SNPrintf(buff, sizeof(buff), "%llu %ss with %llu %s (%05.2f%% of keys, avg size %.2f)",
                    counts[i], typeName[i], totalsize[i], typeunit[i],
                    sampled ? 100 * (double)counts[i]/sampled : 0,
                    counts[i] ? (double)totalsize[i]/counts[i] : 0);
@@ -919,17 +919,17 @@ namespace fastoredis
             }
             if (n < 1024) {
                 /* Bytes */
-                sprintf(s,"%lluB",n);
+                common::SPrintf(s, "%lluB", n);
                 return;
             } else if (n < (1024*1024)) {
                 d = (double)n/(1024);
-                sprintf(s,"%.2fK",d);
+                common::SPrintf(s,"%.2fK",d);
             } else if (n < (1024LL*1024*1024)) {
                 d = (double)n/(1024*1024);
-                sprintf(s,"%.2fM",d);
+                common::SPrintf(s,"%.2fM",d);
             } else if (n < (1024LL*1024*1024*1024)) {
                 d = (double)n/(1024LL*1024*1024);
-                sprintf(s,"%.2fG",d);
+                common::SPrintf(s,"%.2fG",d);
             }
         }
 
@@ -953,14 +953,14 @@ namespace fastoredis
                     reply = (redisReply*)redisCommand(context, command.c_str());
                     if (context->err && !(context->err & (REDIS_ERR_IO | REDIS_ERR_EOF))) {
                         char buff[2048];
-                        sprintf(buff, "ERROR: %s", context->errstr);
+                        common::SNPrintf(buff, sizeof(buff), "ERROR: %s", context->errstr);
                         return common::make_error_value(buff, common::ErrorValue::E_ERROR);
                     }
                 }
 
                 if (reply->type == REDIS_REPLY_ERROR) {
                     char buff[2048];
-                    sprintf(buff, "ERROR: %s", reply->str);
+                    common::SNPrintf(buff, sizeof(buff), "ERROR: %s", reply->str);
                     return common::make_error_value(buff, common::ErrorValue::E_ERROR);
                 }
 
@@ -969,15 +969,15 @@ namespace fastoredis
                 for (j = 0; j < 20; j++) {
                     long k;
 
-                    sprintf(buf,"db%d:keys",j);
-                    k = getLongInfoField(reply->str,buf);
+                    common::SNPrintf(buf, sizeof(buf), "db%d:keys", j);
+                    k = getLongInfoField(reply->str, buf);
                     if (k == LONG_MIN) continue;
                     aux += k;
                 }
 
                 std::string result;
 
-                sprintf(buf,"keys %ld",aux);
+                common::SNPrintf(buf, sizeof(buf), "keys %ld", aux);
                 result += buf;
 
                 /* Used memory */
@@ -988,23 +988,23 @@ namespace fastoredis
 
                 /* Clients */
                 aux = getLongInfoField(reply->str, "connected_clients");
-                sprintf(buf," connected_clients: %ld",aux);
+                common::SNPrintf(buf, sizeof(buf), " connected_clients: %ld", aux);
                 result += buf;
 
                 /* Blocked (BLPOPPING) Clients */
                 aux = getLongInfoField(reply->str, "blocked_clients");
-                sprintf(buf," blocked_clients: %ld",aux);
+                common::SPrintf(buf," blocked_clients: %ld",aux);
                 result += buf;
 
                 /* Requets */
                 aux = getLongInfoField(reply->str, "total_commands_processed");
-                sprintf(buf," total_commands_processed: %ld (+%ld)",aux,requests == 0 ? 0 : aux-requests);
+                common::SPrintf(buf," total_commands_processed: %ld (+%ld)",aux,requests == 0 ? 0 : aux-requests);
                 result += buf;
                 requests = aux;
 
                 /* Connections */
                 aux = getLongInfoField(reply->str, "total_connections_received");
-                sprintf(buf," total_connections_received: %ld",aux);
+                common::SPrintf(buf," total_connections_received: %ld",aux);
                 result += buf;
 
                 /* Children */
@@ -1061,7 +1061,7 @@ namespace fastoredis
                     return common::make_error_value("I/O error", common::ErrorValue::E_ERROR);
                 } else if (reply->type == REDIS_REPLY_ERROR) {
                     char buff[2048];
-                    sprintf(buff, "ERROR: %s", reply->str);
+                    common::SNPrintf(buff, sizeof(buff), "ERROR: %s", reply->str);
                     return common::make_error_value(buff, common::ErrorValue::E_ERROR);
                 } else {
                     unsigned int j;
@@ -1140,10 +1140,10 @@ namespace fastoredis
                 if (context->err) {
                     char buff[512] = {0};
                     if (!config.hostsocket){
-                        sprintf(buff, "Could not connect to Redis at %s:%d : %s", config.hostip, config.hostport, context->errstr);
+                        common::SNPrintf(buff, sizeof(buff), "Could not connect to Redis at %s:%d : %s", config.hostip, config.hostport, context->errstr);
                     }
                     else{
-                        sprintf(buff, "Could not connect to Redis at %s : %s", config.hostsocket, context->errstr);
+                        common::SNPrintf(buff, sizeof(buff), "Could not connect to Redis at %s : %s", config.hostsocket, context->errstr);
                     }
 
                     redisFree(context);
@@ -1179,7 +1179,7 @@ namespace fastoredis
             }
 
             char buff[512] = {0};
-            sprintf(buff,"Error: %s",context->errstr);
+            common::SNPrintf(buff, sizeof(buff), "Error: %s", context->errstr);
             return common::make_error_value(buff, common::ErrorValue::E_ERROR);
         }
 
@@ -1234,7 +1234,7 @@ namespace fastoredis
             default:
                 {
                     char tmp2[128] = {0};
-                    sprintf(tmp2, "Unknown reply type: %d", r->type);
+                    common::SNPrintf(tmp2, sizeof(tmp2), "Unknown reply type: %d", r->type);
                     common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     ar->append(val);
                 }
@@ -1299,7 +1299,7 @@ namespace fastoredis
             default:
                 {
                     char tmp2[128] = {0};
-                    sprintf(tmp2, "Unknown reply type: %d", r->type);
+                    common::SNPrintf(tmp2, sizeof(tmp2), "Unknown reply type: %d", r->type);
                     common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     obj = new FastoObject(out, val, config.mb_delim);
                     out->addChildren(obj);
@@ -1317,13 +1317,13 @@ namespace fastoredis
             }
 
             char buff[1024] = {0};
-            sprintf(buff,"name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
+            common::SNPrintf(buff, sizeof(buff), "name: %s %s\r\n  summary: %s\r\n  since: %s", help->name, help->params, help->summary, help->since);
             common::StringValue *val =common::Value::createStringValue(buff);
             FastoObject* child = new FastoObject(out, val, config.mb_delim);
             out->addChildren(child);
             if (group) {
                 char buff2[1024] = {0};
-                sprintf(buff2,"  group: %s", commandGroups[help->group]);
+                common::SNPrintf(buff2, sizeof(buff2), "  group: %s", commandGroups[help->group]);
                 val = common::Value::createStringValue(buff2);
                 FastoObject* gchild = new FastoObject(out, val, config.mb_delim);
                 out->addChildren(gchild);
@@ -1341,7 +1341,7 @@ namespace fastoredis
 
             sds version = cliVersion();
             char buff[512] = {0};
-            sprintf(buff,
+            common::SNPrintf(buff, sizeof(buff),
                 PROJECT_NAME" based on redis-cli %s\r\n"
                 "Type: \"help @<group>\" to get a list of commands in <group>\r\n"
                 "      \"help <command>\" for help on <command>\r\n"
@@ -1462,7 +1462,7 @@ namespace fastoredis
                 config.hostip = p+1;
                 config.hostport = atoi(s+1);                
                 char redir[512] = {0};
-                sprintf(redir, "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
+                common::SNPrintf(redir, sizeof(redir), "-> Redirected to slot [%d] located at %s:%d", slot, config.hostip, config.hostport);
                 common::StringValue *val = common::Value::createStringValue(redir);
                 FastoObject* child = new FastoObject(out, val, config.mb_delim);
                 out->addChildren(child);
