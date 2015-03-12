@@ -29,6 +29,7 @@ namespace fastoredis
             min_width = 640,
             MaxRecentConnections = 5
         };
+
         MainWindow();
         ~MainWindow();
 

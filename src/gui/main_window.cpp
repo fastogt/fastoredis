@@ -322,16 +322,18 @@ namespace fastoredis
     void MainWindow::openRecentConnection()
     {
         QAction *action = qobject_cast<QAction *>(sender());
-        if (action){
-            QString rcon = action->text();
-            std::string srcon = common::convertToString(rcon);
-            SettingsManager::ConnectionSettingsContainerType conns = SettingsManager::instance().connections();
-            for(SettingsManager::ConnectionSettingsContainerType::const_iterator it = conns.begin(); it != conns.end(); ++it){
-                IConnectionSettingsBaseSPtr con = *it;
-                if(con && con->connectionName() == srcon){
-                    createServer(con);
-                    break;
-                }
+        if (!action){
+            return;
+        }
+
+        QString rcon = action->text();
+        std::string srcon = common::convertToString(rcon);
+        SettingsManager::ConnectionSettingsContainerType conns = SettingsManager::instance().connections();
+        for(SettingsManager::ConnectionSettingsContainerType::const_iterator it = conns.begin(); it != conns.end(); ++it){
+            IConnectionSettingsBaseSPtr con = *it;
+            if(con && con->connectionName() == srcon){
+                createServer(con);
+                return;
             }
         }
     }
@@ -444,7 +446,7 @@ namespace fastoredis
     {
         QStringList connections = SettingsManager::instance().recentConnections();
 
-        int numRecentFiles = qMin(connections.size(), (int)MaxRecentConnections);
+        int numRecentFiles = qMin(connections.size(), static_cast<int>(MaxRecentConnections));
 
         for (int i = 0; i < numRecentFiles; ++i) {
             QString text = connections[i];

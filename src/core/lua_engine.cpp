@@ -2,7 +2,6 @@
 
 #include <QThread>
 #include <QApplication>
-#include <QCoreApplication>
 
 extern "C" {
 #include "lua.h"
