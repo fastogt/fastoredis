@@ -18,40 +18,43 @@ namespace common
         inline Type get_item(const QModelIndex& index,Type root)
         {
             Type result = root;
-            if (index.isValid())
-            {
+            if (index.isValid()){
                 Type item = static_cast<Type>(index.internalPointer());
-                if (item)
+                if (item){
                     result= item;
+                }
             }
             return result;
         }
 
         template<typename value_t, unsigned event_t>
-        class Event : public QEvent
+        class Event
+                : public QEvent
         {
         public:
             typedef value_t value_type;
-            typedef QEvent base_class;
             typedef QObject* const senders_type;
             enum { EventType = event_t };
 
             Event(senders_type sender, const value_t& initValue)
-                : base_class((base_class::Type)EventType), _value(initValue), _sender(sender){}
+                : QEvent(static_cast<QEvent::Type>(EventType)), value_(initValue), sender_(sender)
+            {
+
+            }
 
             const value_t& value() const
             {
-                return _value;
+                return value_;
             }
 
             senders_type sender() const
             {
-                return _sender;
+                return sender_;
             }
 
         private:
-            const value_t _value;
-            senders_type _sender;
+            const value_t value_;
+            senders_type sender_;
         };
 
         template<typename error_t>
@@ -61,7 +64,10 @@ namespace common
             typedef error_t error_type;
 
             EventInfo(const error_type& er)
-                : errorInfo_(er){}
+                : errorInfo_(er)
+            {
+
+            }
 
             error_type errorInfo() const
             {

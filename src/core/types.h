@@ -77,7 +77,7 @@ namespace fastoredis
         common::Value::Type type_;
     };
 
-    typedef shared_ptr_t<ServerInfo> ServerInfoSPtr;
+    typedef common::shared_ptr<ServerInfo> ServerInfoSPtr;
 
     struct ServerInfoSnapShoot
     {
@@ -182,5 +182,5 @@ namespace fastoredis
         FastoObjectIPtr value_;
     };
 
-    typedef shared_ptr_t<CommandKey> CommandKeySPtr;
+    typedef common::shared_ptr<CommandKey> CommandKeySPtr;
 }

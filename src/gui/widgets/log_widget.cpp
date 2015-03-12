@@ -47,13 +47,13 @@ namespace fastoredis
         delete menu;
     }
 
-    void LogWidget::changeEvent(QEvent* e)
+    void LogWidget::changeEvent(QEvent* ev)
     {
-        if(e->type() == QEvent::LanguageChange){
+        if(ev->type() == QEvent::LanguageChange){
             retranslateUi();
         }
 
-        QWidget::changeEvent(e);
+        QWidget::changeEvent(ev);
     }
 
     void LogWidget::retranslateUi()

@@ -204,7 +204,8 @@ namespace common
         typedef intrusive_ptr_base<T, refcount_t> class_type;
 
     protected:
-        intrusive_ptr_base(): ref_count_(0)
+        intrusive_ptr_base()
+            : ref_count_(0)
         {
         }
 

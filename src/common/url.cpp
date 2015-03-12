@@ -32,7 +32,7 @@ namespace common
                 return hex[code & 15];
             }
 
-            char *url_encode(const char *str, size_t len)
+            char* url_encode(const char *str, size_t len)
             {
                 const char *pstr = str;
                 char *buf = (char *)malloc(len * 3 + 1);
@@ -179,27 +179,27 @@ namespace common
             return host_.c_str()!=NULL;
         }
 
-        const memory_string& url::protocol()const
+        const memory_string& url::protocol() const
         {
             return protocols_array[protocol_];
         }
 
-        const memory_string& url::host()const
+        const memory_string& url::host() const
         {
             return host_;
         }
 
-        const memory_string& url::path()const
+        const memory_string& url::path() const
         {
             return path_;
         }
 
-        const memory_string& url::query()const
+        const memory_string& url::query() const
         {
             return query_;
         }
 
-        std::string url::get_url()const
+        std::string url::get_url() const
         {
             char buf[host_size + path_size + query_size + 7] = {0};
             SNPrintf(buf, sizeof(buf), "%s://%s%s%s", protocol().c_str(), host_.c_str(), path_.c_str(), query_.c_str());

@@ -11,7 +11,7 @@
 
 #include "common/types.h"
 
-#define HAS_MEMBER(CLASS_NAME,FUNC_MUST_BE) static_assert(std::is_member_function_pointer<decltype(&CLASS_NAME::FUNC_MUST_BE)>::value, "Class does not contain member " #FUNC_MUST_BE "!")
+#define HAS_MEMBER(CLASS_NAME, FUNC_MUST_BE) static_assert(std::is_member_function_pointer<decltype(&CLASS_NAME::FUNC_MUST_BE)>::value, "Class does not contain member " #FUNC_MUST_BE "!")
 
 namespace common
 {
@@ -30,6 +30,7 @@ namespace common
             {
                 enum { value = sizeof(T) };
             };
+
             template<size_t N>
             struct size_trait_info<const char16[N] >
             {
@@ -173,30 +174,6 @@ namespace common
                     return typeid(*t)==typeid(is_type);
                 }
             };
-        }
-
-        namespace algoritm
-        {
-            template<class fwd_it,class type_t>
-            inline fwd_it lower_bound_size(fwd_it first, fwd_it last, const type_t& val,size_t size)
-            {
-                size_t count = size;
-                for (; 0 < count; )
-                {
-                    size_t count2 = count / 2;
-                    fwd_it mid = first;
-                    std::advance(mid, count2);
-
-                    if (*mid < val)
-                    {
-                        first = ++mid;
-                        count -= count2 + 1;
-                    }
-                    else
-                        count = count2;
-                }
-                return (first);
-            }
         }
 
         namespace base64

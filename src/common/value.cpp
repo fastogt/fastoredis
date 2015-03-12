@@ -466,7 +466,7 @@ namespace common
             const_cast<const ArrayValue**>(out_value));
 	}
 
-    bool ArrayValue::remove(size_t index, scoped_ptr_t<Value> *out_value)
+    bool ArrayValue::remove(size_t index, common::scoped_ptr<Value> *out_value)
     {
         if (index >= list_.size())
             return false;
@@ -496,7 +496,7 @@ namespace common
         return false;
 	}
 
-    ArrayValue::iterator ArrayValue::erase(iterator iter, scoped_ptr_t<Value> *out_value)
+    ArrayValue::iterator ArrayValue::erase(iterator iter, common::scoped_ptr<Value> *out_value)
     {
         if (out_value)
             out_value->reset(*iter);

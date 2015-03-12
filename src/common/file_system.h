@@ -64,9 +64,9 @@ namespace common
         bool clear_file_by_descriptor(int fd_desc) WARN_UNUSED_RESULT;\
         bool close_descriptor(int fd_desc) WARN_UNUSED_RESULT;
 
-        bool open_descriptor(const std::string& path, int &fd_desc, int oflags) WARN_UNUSED_RESULT;
+        bool open_descriptor(const std::string& path, int& fd_desc, int oflags) WARN_UNUSED_RESULT;
 #ifdef OS_POSIX
-        bool create_node(const std::string &path) WARN_UNUSED_RESULT;
+        bool create_node(const std::string& path) WARN_UNUSED_RESULT;
         bool create_node(const std::string& path, size_t permissions) WARN_UNUSED_RESULT;
 #else
         bool create_node(const std::string &path) WARN_UNUSED_RESULT;
@@ -80,7 +80,7 @@ namespace common
         bool write_to_descriptor(int fd_desc, const void* buf, unsigned int len) WARN_UNUSED_RESULT;
         bool read_from_descriptor(int fd_desc, void* buf, unsigned int len, int& readlen) WARN_UNUSED_RESULT;
 
-        bool findFileInPath(const char* fileName, std::string &outPath) WARN_UNUSED_RESULT;
+        bool findFileInPath(const char* fileName, std::string& outPath) WARN_UNUSED_RESULT;
 
         //==============================Path=====================================//
 

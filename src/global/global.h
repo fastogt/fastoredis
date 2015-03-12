@@ -30,7 +30,7 @@ namespace fastoredis
 
     protected:
         IFastoObjectObserver* observer_;
-        scoped_ptr_t<common::Value> value_;
+        common::scoped_ptr<common::Value> value_;
 
     private:
         DISALLOW_COPY_AND_ASSIGN(FastoObject);
@@ -99,7 +99,7 @@ namespace fastoredis
         void insert(common::Value* key, common::Value* value);
         virtual std::string toString() const;
 
-        common::ZSetValue *zset() const;
+        common::ZSetValue* zset() const;
     };
 
     class FastoObjectHash

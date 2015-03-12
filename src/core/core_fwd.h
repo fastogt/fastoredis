@@ -4,14 +4,14 @@
 
 namespace fastoredis
 {
-    typedef shared_ptr_t<DataBaseInfo> DataBaseInfoSPtr;
+    typedef common::shared_ptr<DataBaseInfo> DataBaseInfoSPtr;
 
     class IDatabase;
-    typedef shared_ptr_t<IDatabase> IDatabaseSPtr;
+    typedef common::shared_ptr<IDatabase> IDatabaseSPtr;
 
     class IServer;
-    typedef shared_ptr_t<IServer> IServerSPtr;
+    typedef common::shared_ptr<IServer> IServerSPtr;
 
     class IDriver;
-    typedef shared_ptr_t<IDriver> IDriverSPtr;   
+    typedef common::shared_ptr<IDriver> IDriverSPtr;   
 }

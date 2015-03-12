@@ -23,7 +23,7 @@ namespace fastoredis
         void showContextMenu(const QPoint& pt);
 
     protected:
-        virtual void changeEvent(QEvent *);
+        virtual void changeEvent(QEvent *ev);
 
     private:
         void retranslateUi();

@@ -174,6 +174,7 @@ namespace common
             return false;
         }
 #endif
+
         bool copy_file(const std::string& pathFrom, const std::string& pathTo)
         {
             if(pathFrom.empty()){

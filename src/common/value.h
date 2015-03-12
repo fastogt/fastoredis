@@ -168,8 +168,8 @@ namespace common
         bool getList(size_t index, const ArrayValue** out_value) const WARN_UNUSED_RESULT;
         bool getList(size_t index, ArrayValue** out_value) WARN_UNUSED_RESULT;
 
-        virtual bool remove(size_t index, scoped_ptr_t<Value>* out_value);
-        iterator erase(iterator iter, scoped_ptr_t<Value>* out_value);
+        virtual bool remove(size_t index, common::scoped_ptr<Value>* out_value);
+        iterator erase(iterator iter, common::scoped_ptr<Value>* out_value);
 
         bool remove(const Value& value, size_t* index);
 
@@ -365,7 +365,7 @@ namespace common
         common::logging::LEVEL_LOG level_;
     };
 
-    typedef shared_ptr_t<ErrorValue> ErrorValueSPtr;
+    typedef common::shared_ptr<ErrorValue> ErrorValueSPtr;
 
     ErrorValueSPtr make_error_value(const std::string& in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
 

@@ -58,5 +58,5 @@ namespace fastoredis
     const char *useHelpText(connectionTypes type);
     std::string defaultCommandLine(connectionTypes type);
 
-    typedef shared_ptr_t<IConnectionSettingsBase> IConnectionSettingsBaseSPtr;
+    typedef common::shared_ptr<IConnectionSettingsBase> IConnectionSettingsBaseSPtr;
 }
