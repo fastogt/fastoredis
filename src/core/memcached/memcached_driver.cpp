@@ -103,14 +103,14 @@ namespace fastoredis
         if(user && passwd){
             libmemcached_util_ping2(host, hostport, user, passwd, &rc);
             if (rc != MEMCACHED_SUCCESS){
-                sprintf(buff, "Couldn't ping server: %s", memcached_strerror(NULL, rc));
+                common::SNPrintf(buff, sizeof(buff), "Couldn't ping server: %s", memcached_strerror(NULL, rc));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
         }
         else{
             libmemcached_util_ping(host, hostport, &rc);
             if (rc != MEMCACHED_SUCCESS){
-                sprintf(buff, "Couldn't ping server: %s", memcached_strerror(NULL, rc));
+                common::SNPrintf(buff, sizeof(buff), "Couldn't ping server: %s", memcached_strerror(NULL, rc));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
         }
@@ -163,7 +163,7 @@ namespace fastoredis
             if(config_.user_ && config_.password_){
                 rc = memcached_set_sasl_auth_data(memc_, config_.user_, config_.password_);
                 if (rc != MEMCACHED_SUCCESS){
-                    sprintf(buff, "Couldn't setup SASL auth: %s", memcached_strerror(memc_, rc));
+                    common::SNPrintf(buff, sizeof(buff), "Couldn't setup SASL auth: %s", memcached_strerror(memc_, rc));
                     return common::make_error_value(buff, common::ErrorValue::E_ERROR);
                 }
             }
@@ -177,14 +177,14 @@ namespace fastoredis
             rc = memcached_server_add(memc_, config_.hostip, config_.hostport);
 
             if (rc != MEMCACHED_SUCCESS){
-                sprintf(buff, "Couldn't add server: %s", memcached_strerror(memc_, rc));
+                common::SNPrintf(buff, sizeof(buff), "Couldn't add server: %s", memcached_strerror(memc_, rc));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
             memcached_return_t error = memcached_version(memc_);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Connect to server error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Connect to server error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -207,7 +207,7 @@ namespace fastoredis
             memcached_stat_st* st = memcached_stat(memc_, (char*)args, &error);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Stats function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Stats function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -450,7 +450,7 @@ namespace fastoredis
             }
             else{
                 char buff[1024] = {0};
-                sprintf(buff, "Not supported command: %s", argv[0]);
+                common::SNPrintf(buff, sizeof(buff), "Not supported command: %s", argv[0]);
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
         }
@@ -465,7 +465,7 @@ namespace fastoredis
             char *value = memcached_get(memc_, key.c_str(), key.length(), &value_length, &flags, &error);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Get function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Get function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -483,7 +483,7 @@ namespace fastoredis
             memcached_return_t error = memcached_set(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Set function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Set function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -495,7 +495,7 @@ namespace fastoredis
             memcached_return_t error = memcached_add(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Add function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Add function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -507,7 +507,7 @@ namespace fastoredis
             memcached_return_t error = memcached_replace(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Replace function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Replace function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -519,7 +519,7 @@ namespace fastoredis
             memcached_return_t error = memcached_append(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Append function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Append function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -531,7 +531,7 @@ namespace fastoredis
             memcached_return_t error = memcached_prepend(memc_, key.c_str(), key.length(), value.c_str(), value.length(), expiration, flags);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Prepend function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Prepend function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -543,7 +543,7 @@ namespace fastoredis
             memcached_return_t error = memcached_increment(memc_, key.c_str(), key.length(), 0, &value);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Incr function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Incr function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -555,7 +555,7 @@ namespace fastoredis
             memcached_return_t error = memcached_decrement(memc_, key.c_str(), key.length(), 0, &value);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Decr function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Decr function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -569,7 +569,7 @@ namespace fastoredis
             memcached_return_t error = memcached_delete(memc_, key.c_str(), key.length(), expiration);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Delete function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Delete function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -581,7 +581,7 @@ namespace fastoredis
             memcached_return_t error = memcached_flush(memc_, expiration);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Fluss all function error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Fluss all function error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
@@ -593,7 +593,7 @@ namespace fastoredis
             memcached_return_t error = memcached_version(memc_);
             if (error != MEMCACHED_SUCCESS){
                 char buff[1024] = {0};
-                sprintf(buff, "Get server version error: %s", memcached_strerror(memc_, error));
+                common::SNPrintf(buff, sizeof(buff), "Get server version error: %s", memcached_strerror(memc_, error));
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }
 
