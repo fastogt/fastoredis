@@ -12,7 +12,7 @@ namespace fastoredis
 	public:
         typedef std::vector<FastoObject*> child_container_type;
 
-        FastoObject(FastoObject* parent, common::Value* val, const std::string& delemitr);
+        FastoObject(FastoObject* parent, common::Value* val, const std::string& delemitr = std::string());
         virtual ~FastoObject();
 
         common::Value::Type type() const;

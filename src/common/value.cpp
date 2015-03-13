@@ -330,6 +330,12 @@ namespace common
 
     }
 
+    StringValue::StringValue(const string16& in_value)
+        : Value(TYPE_STRING), value_(common::convertToString(in_value))
+    {
+
+    }
+
     StringValue::~StringValue()
     {
 	}

@@ -123,6 +123,7 @@ namespace common
     {
         public:
             explicit StringValue(const std::string& in_value);
+            explicit StringValue(const string16& in_value);
             virtual ~StringValue();
 
             virtual std::string toString() const;
