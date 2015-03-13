@@ -94,8 +94,8 @@ namespace fastoredis
         memcachedConfig inf = settings->info();
         char* user = inf.user_;
         char* passwd = inf.password_;
-        char* host = inf.hostip;
-        in_port_t hostport = inf.hostport;
+        char* host = inf.hostip_;
+        in_port_t hostport = inf.hostport_;
 
         memcached_return rc;
         char buff[1024] = {0};
@@ -153,7 +153,7 @@ namespace fastoredis
                 return common::make_error_value("Init error", common::ErrorValue::E_ERROR);
             }
 
-            if(config_.shutdown){
+            if(config_.shutdown_){
                 return common::make_error_value("Interrupted connect.", common::ErrorValue::E_INTERRUPTED);
             }
 
@@ -174,7 +174,7 @@ namespace fastoredis
                 return common::make_error_value(buff, common::ErrorValue::E_ERROR);
             }*/
 
-            rc = memcached_server_add(memc_, config_.hostip, config_.hostport);
+            rc = memcached_server_add(memc_, config_.hostip_, config_.hostport_);
 
             if (rc != MEMCACHED_SUCCESS){
                 common::SNPrintf(buff, sizeof(buff), "Couldn't add server: %s", memcached_strerror(memc_, rc));
@@ -261,12 +261,12 @@ namespace fastoredis
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
-                    FastoObject* child = new FastoObject(cmd, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(cmd, val, config_.mb_delim_);
                     cmd->addChildren(child);
                 }
                 else if (argc > 0) {
                     if (strcasecmp(argv[0], "quit") == 0){
-                        config_.shutdown = 1;
+                        config_.shutdown_ = 1;
                     }
                     else {
                         er = execute(cmd, argc, argv);
@@ -298,7 +298,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = get(argv[1], ret);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue(ret);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -311,7 +311,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = set(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -324,7 +324,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = add(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -337,7 +337,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = replace(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -350,7 +350,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = append(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -363,7 +363,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = prepend(argv[1], argv[4], atoi(argv[2]), atoi(argv[3]));
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -376,7 +376,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = incr(argv[1], common::convertFromString<uint64_t>(argv[2]));
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -389,7 +389,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = decr(argv[1], common::convertFromString<uint64_t>(argv[2]));
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -402,7 +402,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = del(argv[1]);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("DELETED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -415,7 +415,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = flush_all(argc == 2 ? common::convertFromString<time_t>(argv[1]) : 0);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -429,7 +429,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = stats(argc == 2 ? argv[1] : 0, statsout);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue(MemcachedServerInfo(statsout).toString());
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -648,12 +648,12 @@ namespace fastoredis
 
     void MemcachedDriver::interrupt()
     {
-        impl_->config_.shutdown = 1;
+        impl_->config_.shutdown_ = 1;
     }
 
     common::net::hostAndPort MemcachedDriver::address() const
     {
-        return common::net::hostAndPort(impl_->config_.hostip, impl_->config_.hostport);
+        return common::net::hostAndPort(impl_->config_.hostip_, impl_->config_.hostport_);
     }
 
     std::string MemcachedDriver::version() const
@@ -663,7 +663,7 @@ namespace fastoredis
 
     std::string MemcachedDriver::outputDelemitr() const
     {
-        return impl_->config_.mb_delim;
+        return impl_->config_.mb_delim_;
     }
 
     const char* MemcachedDriver::versionApi()
@@ -674,7 +674,7 @@ namespace fastoredis
     void MemcachedDriver::customEvent(QEvent *event)
     {
         IDriver::customEvent(event);
-        impl_->config_.shutdown = 0;
+        impl_->config_.shutdown_ = 0;
     }
 
     void MemcachedDriver::initImpl()
@@ -751,7 +751,7 @@ namespace fastoredis
                 FastoObjectIPtr outRoot = lock.root_;
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
-                    if(impl_->config_.shutdown){
+                    if(impl_->config_.shutdown_){
                         er.reset(new common::ErrorValue("Interrupted exec.", common::ErrorValue::E_INTERRUPTED));
                         res.setErrorInfo(er);
                         break;

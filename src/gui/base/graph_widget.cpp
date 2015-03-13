@@ -64,6 +64,16 @@ namespace fastoredis
         adjust_axis(min_y_, max_y_, num_y_ticks_);
     }
 
+    qreal plot_settings::span_x() const
+    {
+        return max_x_ - min_x_;
+    }
+
+    qreal plot_settings::span_y() const
+    {
+        return max_y_ - min_y_;
+    }
+
     plot_settings plot_settings::create_child(qreal dx, qreal dy, QRect rect)const
     {
         plot_settings settings(*this);
@@ -77,7 +87,7 @@ namespace fastoredis
     }
 
     GraphWidget::GraphWidget(QWidget* parent)
-        : QWidget(parent),cur_zoom_(0),rubber_band_is_shown_(false), nodes_()
+        : QWidget(parent),curZoom_(0),rubberBandIsShown_(false), nodes_()
     {
         setBackgroundRole(QPalette::Light);
         setAutoFillBackground(true);
@@ -88,7 +98,7 @@ namespace fastoredis
     void GraphWidget::setNodes(const nodes_container_type& nodes)
     {
         nodes_ = nodes;
-        zoomStack.clear();
+        zoomStack_.clear();
         if(!nodes_.empty()){
             qreal min_x = nodes_[0].first;
             qreal max_x = nodes_[0].first;
@@ -115,30 +125,30 @@ namespace fastoredis
                 }
             }
 
-            zoomStack.push_back(plot_settings(min_x, max_x, min_y, max_y, 5, 5));
+            zoomStack_.push_back(plot_settings(min_x, max_x, min_y, max_y, 5, 5));
         }
         update();
     }
 
     void GraphWidget::zoom_out()
     {
-        if (cur_zoom_ > 0){
-            --cur_zoom_;
+        if (curZoom_ > 0){
+            --curZoom_;
             update();
         }
     }
 
     void GraphWidget::zoom_in()
     {
-        if (cur_zoom_ < zoomStack.size() - 1){
-            ++cur_zoom_;
+        if (curZoom_ < zoomStack_.size() - 1){
+            ++curZoom_;
             update();
         }
     }
 
     void GraphWidget::drawGrid(QPainter* painter)
     {
-        if(zoomStack.empty()){
+        if(zoomStack_.empty()){
             return;
         }
 
@@ -151,7 +161,7 @@ namespace fastoredis
         font.setPointSize(7);
         painter->setFont(font);
 
-        plot_settings settings = zoomStack[cur_zoom_];
+        plot_settings settings = zoomStack_[curZoom_];
         painter->setPen(QColor(grid_color));
         for (unsigned i = 0; i <= settings.num_x_ticks_; ++i){
              int x = rect.left() + (i * (rect.width() - 1) / settings.num_x_ticks_);
@@ -178,7 +188,7 @@ namespace fastoredis
 
     void GraphWidget::drawCurves(QPainter* painter)
     {
-        if(zoomStack.empty()){
+        if(zoomStack_.empty()){
             return;
         }
 
@@ -191,7 +201,7 @@ namespace fastoredis
         painter->setClipRect(rect.adjusted(+1, +1, -1, -1));
 
         QPolygonF polyline;
-        plot_settings settings = zoomStack[cur_zoom_];
+        plot_settings settings = zoomStack_[curZoom_];
         for(unsigned int i = 0; i < nodes_.size(); ++i){
             qreal dx = nodes_[i].first - settings.min_x_;
             qreal dy = nodes_[i].second - settings.min_y_;
@@ -208,7 +218,7 @@ namespace fastoredis
 
     void GraphWidget::updateRubberBandRegion()
     {
-        QRect rect = rubber_band_rect_.normalized();
+        QRect rect = rubberBandRect_.normalized();
         update(rect.left(), rect.top(), rect.width(), 1);
         update(rect.left(), rect.top(), 1, rect.height());
         update(rect.left(), rect.bottom(), rect.width(), 1);
@@ -217,10 +227,10 @@ namespace fastoredis
 
     void GraphWidget::paintEvent(QPaintEvent* event)
     {
-        if (rubber_band_is_shown_){
+        if (rubberBandIsShown_){
             QStylePainter spainter(this);
             spainter.setPen(QColor(rubber_color));
-            spainter.drawRect(rubber_band_rect_.normalized().adjusted(0, 0, -1, -1));
+            spainter.drawRect(rubberBandRect_.normalized().adjusted(0, 0, -1, -1));
         }
 
         QPainter painter(this);
@@ -230,15 +240,15 @@ namespace fastoredis
 
     void GraphWidget::mousePressEvent(QMouseEvent* event)
     {
-        if(zoomStack.empty()){
+        if(zoomStack_.empty()){
             return;
         }
 
         if (event->button() == Qt::LeftButton){
             if (paintRect().contains(event->pos())){
-                rubber_band_is_shown_ = true;
-                rubber_band_rect_.setTopLeft(event->pos());
-                rubber_band_rect_.setBottomRight(event->pos());
+                rubberBandIsShown_ = true;
+                rubberBandRect_.setTopLeft(event->pos());
+                rubberBandRect_.setBottomRight(event->pos());
                 updateRubberBandRegion();
                 setCursor(Qt::CrossCursor);
             }
@@ -247,9 +257,9 @@ namespace fastoredis
 
     void GraphWidget::mouseMoveEvent(QMouseEvent* event)
     {
-        if (rubber_band_is_shown_){
+        if (rubberBandIsShown_){
             updateRubberBandRegion();
-            rubber_band_rect_.setBottomRight(event->pos());
+            rubberBandRect_.setBottomRight(event->pos());
             updateRubberBandRegion();
         }
 
@@ -258,25 +268,25 @@ namespace fastoredis
 
     void GraphWidget::mouseReleaseEvent(QMouseEvent* event)
     {
-        if(zoomStack.empty()){
+        if(zoomStack_.empty()){
             return;
         }
 
-        if ((event->button() == Qt::LeftButton) && rubber_band_is_shown_){
-            rubber_band_is_shown_ = false;
+        if ((event->button() == Qt::LeftButton) && rubberBandIsShown_){
+            rubberBandIsShown_ = false;
             updateRubberBandRegion();
             unsetCursor();
 
-            QRect rect = rubber_band_rect_.normalized();
+            QRect rect = rubberBandRect_.normalized();
             if (rect.width() > 4 && rect.height() > 4){
                 rect.translate(-margin, -margin);
 
-                plot_settings prevSettings = zoomStack[cur_zoom_];
+                plot_settings prevSettings = zoomStack_[curZoom_];
                 qreal dx = prevSettings.span_x() / qreal(width() - 2 * margin);
                 qreal dy = prevSettings.span_y() / qreal(height() - 2 * margin);
                 plot_settings settings = prevSettings.create_child(dx,dy,rect);
                 if(is_valid_setting(settings)){
-                    zoomStack.push_back(settings);
+                    zoomStack_.push_back(settings);
                     zoom_in();
                     update();
                 }
@@ -295,19 +305,19 @@ namespace fastoredis
             zoom_out();
             break;
         case Qt::Key_Left:
-            zoomStack[cur_zoom_].scroll(-1, 0);
+            zoomStack_[curZoom_].scroll(-1, 0);
             update();
             break;
         case Qt::Key_Right:
-            zoomStack[cur_zoom_].scroll(+1, 0);
+            zoomStack_[curZoom_].scroll(+1, 0);
             update();
             break;
         case Qt::Key_Down:
-            zoomStack[cur_zoom_].scroll(0, -1);
+            zoomStack_[curZoom_].scroll(0, -1);
             update();
             break;
         case Qt::Key_Up:
-            zoomStack[cur_zoom_].scroll(0, +1);
+            zoomStack_[curZoom_].scroll(0, +1);
             update();
             break;
         default:
@@ -322,10 +332,10 @@ namespace fastoredis
         int numDegrees = event->delta() / 8;
         int numTicks = numDegrees / 15;
         if (event->orientation() == Qt::Horizontal){
-            zoomStack[cur_zoom_].scroll(numTicks, 0);
+            zoomStack_[curZoom_].scroll(numTicks, 0);
         }
         else{
-            zoomStack[cur_zoom_].scroll(0, numTicks);
+            zoomStack_[curZoom_].scroll(0, numTicks);
         }
         update();
     }

@@ -45,7 +45,6 @@ namespace common
         virtual ~Value();
 
         static Value* createNullValue();
-
         static FundamentalValue* createBooleanValue(bool in_value);
         static FundamentalValue* createIntegerValue(int in_value);
         static FundamentalValue* createDoubleValue(double in_value);

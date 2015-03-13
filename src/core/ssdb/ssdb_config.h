@@ -16,14 +16,14 @@ namespace fastoredis
 
         ~ssdbConfig();
 
-        char *hostip;
-        int hostport;
+        char *hostip_;
+        int hostport_;
 
         char* user_;
         char* password_;
 
-        char *mb_delim;
-        int shutdown;
+        char *mb_delim_;
+        int shutdown_;
 
     private:
         void copy(const ssdbConfig& other);

@@ -910,7 +910,7 @@ namespace common
 
     ErrorValueSPtr make_error_value(const std::string& in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
     {
-        ErrorValueSPtr er(new ErrorValue(in_value, errorType, level));
+        ErrorValueSPtr er(Value::createErrorValue(in_value, errorType, level));
         return er;
     }
 }

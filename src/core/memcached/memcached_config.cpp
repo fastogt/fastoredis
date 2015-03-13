@@ -15,11 +15,11 @@ namespace fastoredis
                 int lastarg = i==argc-1;
 
                 if (!strcmp(argv[i],"-h") && !lastarg) {
-                    free(cfg.hostip);
-                    cfg.hostip = strdup(argv[++i]);
+                    free(cfg.hostip_);
+                    cfg.hostip_ = strdup(argv[++i]);
                 }
                 else if (!strcmp(argv[i],"-p") && !lastarg) {
-                    cfg.hostport = atoi(argv[++i]);
+                    cfg.hostport_ = atoi(argv[++i]);
                 }
                 else if (!strcmp(argv[i],"-u") && !lastarg) {
                     cfg.user_ = strdup(argv[++i]);
@@ -28,8 +28,8 @@ namespace fastoredis
                     cfg.password_ = strdup(argv[++i]);
                 }
                 else if (!strcmp(argv[i],"-d") && !lastarg) {
-                    free(cfg.mb_delim);
-                    cfg.mb_delim = strdup(argv[++i]);
+                    free(cfg.mb_delim_);
+                    cfg.mb_delim_ = strdup(argv[++i]);
                 }
                 else {
                     if (argv[i][0] == '-') {
@@ -68,38 +68,38 @@ namespace fastoredis
     void memcachedConfig::copy(const memcachedConfig& other)
     {
         using namespace common::utils;
-        freeifnotnull(hostip);
-        hostip = strdupornull(other.hostip); //
+        freeifnotnull(hostip_);
+        hostip_ = strdupornull(other.hostip_); //
 
-        hostport = other.hostport;
+        hostport_ = other.hostport_;
 
         freeifnotnull(user_);
         user_ = strdupornull(other.user_); //
         freeifnotnull(password_);
         password_ = strdupornull(other.password_); //
 
-        freeifnotnull(mb_delim);
-        mb_delim = strdupornull(other.mb_delim); //
-        shutdown = other.shutdown;
+        freeifnotnull(mb_delim_);
+        mb_delim_ = strdupornull(other.mb_delim_); //
+        shutdown_ = other.shutdown_;
     }
 
     void memcachedConfig::init()
     {
-        hostip = strdup("127.0.0.1");
-        hostport = 11211;
+        hostip_ = strdup("127.0.0.1");
+        hostport_ = 11211;
 
         user_ = NULL;
         password_ = NULL;
 
-        mb_delim = strdup("\n");
-        shutdown = 0;
+        mb_delim_ = strdup("\n");
+        shutdown_ = 0;
     }
 
     memcachedConfig::~memcachedConfig()
     {
         using namespace common::utils;
-        freeifnotnull(hostip);
-        freeifnotnull(mb_delim);
+        freeifnotnull(hostip_);
+        freeifnotnull(mb_delim_);
         freeifnotnull(user_);
         freeifnotnull(password_);
     }
@@ -111,14 +111,14 @@ namespace common
     {
         std::vector<std::string> argv;
 
-        if(conf.hostip){
+        if(conf.hostip_){
             argv.push_back("-h");
-            argv.push_back(conf.hostip);
+            argv.push_back(conf.hostip_);
         }
 
-        if(conf.hostport){
+        if(conf.hostport_){
             argv.push_back("-p");
-            argv.push_back(convertToString(conf.hostport));
+            argv.push_back(convertToString(conf.hostport_));
         }
 
         if(conf.user_){
@@ -131,9 +131,9 @@ namespace common
             argv.push_back(conf.password_);
         }
 
-        if (conf.mb_delim) {
+        if (conf.mb_delim_) {
             argv.push_back("-d");
-            argv.push_back(conf.mb_delim);
+            argv.push_back(conf.mb_delim_);
         }
 
         std::string result;

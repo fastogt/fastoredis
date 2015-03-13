@@ -12,17 +12,17 @@ namespace fastoredis
 
         void scroll(int dx, int dy);
         void adjust();
-        qreal span_x() const { return max_x_ - min_x_; }
-        qreal span_y() const { return max_y_ - min_y_; }
+        qreal span_x() const;
+        qreal span_y() const;
+        plot_settings create_child(qreal dx,qreal dy,QRect rect) const;
+
         qreal min_x_;
         qreal max_x_;
         qreal min_y_;
         qreal max_y_;
 
         unsigned num_x_ticks_;
-        unsigned num_y_ticks_;
-
-        plot_settings create_child(qreal dx,qreal dy,QRect rect) const;
+        unsigned num_y_ticks_;        
     };
 
     class GraphWidget
@@ -66,10 +66,10 @@ namespace fastoredis
 
         static const Qt::GlobalColor grid_color = Qt::black, rubber_color = Qt::blue, line_color = Qt::red;
 
-        std::vector<plot_settings> zoomStack;
-        unsigned cur_zoom_;
-        bool rubber_band_is_shown_;
-        QRect rubber_band_rect_;
+        std::vector<plot_settings> zoomStack_;
+        unsigned curZoom_;
+        bool rubberBandIsShown_;
+        QRect rubberBandRect_;
         nodes_container_type nodes_;
     };
 }

@@ -20,17 +20,17 @@ namespace fastoredis
 
     std::string MemcachedConnectionSettings::host() const
     {
-        return info_.hostip;
+        return info_.hostip_;
     }
 
     int MemcachedConnectionSettings::port() const
     {
-        return info_.hostport;
+        return info_.hostport_;
     }
 
     void MemcachedConnectionSettings::setPort(int port)
     {
-        info_.hostport = port;
+        info_.hostport_ = port;
     }
 
     memcachedConfig MemcachedConnectionSettings::info() const

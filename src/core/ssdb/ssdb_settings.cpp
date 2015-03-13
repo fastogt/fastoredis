@@ -20,17 +20,17 @@ namespace fastoredis
 
     std::string SsdbConnectionSettings::host() const
     {
-        return info_.hostip;
+        return info_.hostip_;
     }
 
     int SsdbConnectionSettings::port() const
     {
-        return info_.hostport;
+        return info_.hostport_;
     }
 
     void SsdbConnectionSettings::setPort(int port)
     {
-        info_.hostport = port;
+        info_.hostport_ = port;
     }
 
     ssdbConfig SsdbConnectionSettings::info() const

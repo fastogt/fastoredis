@@ -108,7 +108,7 @@ namespace common
             struct default_delete<T*>
                     : public std::unary_function<T*,void>
             {
-                inline  void operator ()(T *ptr) const
+                inline void operator ()(T *ptr) const
                 {
                       destroy(ptr);
                 }
@@ -133,7 +133,7 @@ namespace common
             {
                 inline bool operator()(const T &t1,const T &t2)const
                 {
-                    return t1<t2;
+                    return t1 < t2;
                 }
             };
 
@@ -168,6 +168,7 @@ namespace common
                 {
                     return typeid(t)==typeid(is_type);
                 }
+
                 template <typename type>
                 inline bool operator()(type *t)const
                 {

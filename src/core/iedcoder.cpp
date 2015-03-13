@@ -8,19 +8,14 @@
 
 namespace
 {
-    std::vector<std::string> EDcoderTypes = { "Base64", "GZip", "Hex", "MsgPack", "Html escape" };
+    const std::vector<std::string> EDcoderTypes = { "Base64", "GZip", "Hex", "MsgPack", "HtmlEscape" };
 }
 
 namespace common
 {
     std::string convertToString(fastoredis::EDTypes t)
     {
-        const uint32_t count = EDcoderTypes.size();
-        if(t < count){
-            return EDcoderTypes[t];
-        }
-
-        return std::string();
+        return EDcoderTypes[t];
     }
 
     template<>

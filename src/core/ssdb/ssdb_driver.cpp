@@ -101,7 +101,7 @@ namespace fastoredis
 
         ssdbConfig inf = settings->info();
 
-        ssdb::Client* ssdb = ssdb::Client::connect(inf.hostip, inf.hostport);
+        ssdb::Client* ssdb = ssdb::Client::connect(inf.hostip_, inf.hostport_);
         if (!ssdb){
             return common::make_error_value("Fail connect to server!", common::ErrorValue::E_ERROR);
         }
@@ -135,7 +135,7 @@ namespace fastoredis
             clear();
             init();
 
-            ssdb_ = ssdb::Client::connect(config_.hostip, config_.hostport);
+            ssdb_ = ssdb::Client::connect(config_.hostip_, config_.hostport_);
             if (!ssdb_){
                 return common::make_error_value("Fail connect to server!", common::ErrorValue::E_ERROR);
             }
@@ -207,12 +207,12 @@ namespace fastoredis
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
-                    FastoObject* child = new FastoObject(cmd, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(cmd, val, config_.mb_delim_);
                     cmd->addChildren(child);
                 }
                 else if (argc > 0) {
                     if (strcasecmp(argv[0], "quit") == 0){
-                        config_.shutdown = 1;
+                        config_.shutdown_ = 1;
                     }
                     else {
                         er = execute(cmd, argc, argv);
@@ -244,7 +244,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = get(argv[1], &ret);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue(ret);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -257,7 +257,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = set(argv[1], argv[2]);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -270,7 +270,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = setx(argv[1], argv[2], atoi(argv[3]));
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -283,7 +283,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = del(argv[1]);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("DELETED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -297,7 +297,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = incr(argv[1], atoll(argv[2]), &ret);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(ret);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -315,7 +315,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(keysout[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -333,7 +333,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(keysout[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -351,7 +351,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(keysout[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -374,7 +374,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(keysout[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -392,7 +392,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = multi_del(keysget);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("DELETED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -410,7 +410,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = multi_set(keysset);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -424,7 +424,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = hget(argv[1], argv[2], &ret);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue(ret);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -437,7 +437,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = hset(argv[1], argv[2], argv[3]);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -450,7 +450,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = hdel(argv[1], argv[2]);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("DELETED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -464,7 +464,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = hincr(argv[1], argv[2], atoll(argv[3]), &res);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(res);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -478,7 +478,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = hsize(argv[1], &res);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(res);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -492,7 +492,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = hclear(argv[1], &res);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(res);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -510,7 +510,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(keysout[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -528,7 +528,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(keysout[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -546,7 +546,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(keysout[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -569,7 +569,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(keysout[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -587,7 +587,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = multi_hset(argv[1], keys);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -601,7 +601,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = zget(argv[1], argv[2], &ret);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(ret);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -614,7 +614,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = zset(argv[1], argv[2], atoll(argv[3]));
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -627,7 +627,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = zdel(argv[1], argv[2]);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("DELETED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -641,7 +641,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = zincr(argv[1], argv[2], atoll(argv[3]), &ret);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(ret);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -655,7 +655,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = zsize(argv[1], &res);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(res);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -669,7 +669,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = zclear(argv[1], &res);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(res);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -683,7 +683,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = zrank(argv[1], argv[2], &res);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(res);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -697,7 +697,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = zrrank(argv[1], argv[2], &res);
                 if(!er){
                     common::FundamentalValue *val = common::Value::createIntegerValue(res);
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -715,7 +715,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(res[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -733,7 +733,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(res[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -753,7 +753,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(res[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -773,7 +773,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(res[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -793,7 +793,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(res[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -816,7 +816,7 @@ namespace fastoredis
                         common::StringValue *val = common::Value::createStringValue(res[i]);
                         ar->append(val);
                     }
-                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim);
+                    FastoObjectArray* child = new FastoObjectArray(out, ar, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -834,7 +834,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = multi_zset(argv[1], keysget);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("STORED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -852,7 +852,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = multi_zdel(argv[1], keysget);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue("DELETED");
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -866,7 +866,7 @@ namespace fastoredis
                 common::ErrorValueSPtr er = info(argc == 2 ? argv[1] : 0, statsout);
                 if(!er){
                     common::StringValue *val = common::Value::createStringValue(SsdbServerInfo(statsout).toString());
-                    FastoObject* child = new FastoObject(out, val, config_.mb_delim);
+                    FastoObject* child = new FastoObject(out, val, config_.mb_delim_);
                     out->addChildren(child);
                 }
                 return er;
@@ -1343,7 +1343,7 @@ namespace fastoredis
 
     void SsdbDriver::interrupt()
     {
-        impl_->config_.shutdown = 1;
+        impl_->config_.shutdown_ = 1;
     }
 
     // ============== commands =============//
@@ -1409,7 +1409,7 @@ namespace fastoredis
 
     common::net::hostAndPort SsdbDriver::address() const
     {
-        return common::net::hostAndPort(impl_->config_.hostip, impl_->config_.hostport);
+        return common::net::hostAndPort(impl_->config_.hostip_, impl_->config_.hostport_);
     }
 
     std::string SsdbDriver::version() const
@@ -1419,7 +1419,7 @@ namespace fastoredis
 
     std::string SsdbDriver::outputDelemitr() const
     {
-        return impl_->config_.mb_delim;
+        return impl_->config_.mb_delim_;
     }
 
     const char* SsdbDriver::versionApi()
@@ -1430,7 +1430,7 @@ namespace fastoredis
     void SsdbDriver::customEvent(QEvent *event)
     {
         IDriver::customEvent(event);
-        impl_->config_.shutdown = 0;
+        impl_->config_.shutdown_ = 0;
     }
 
     void SsdbDriver::initImpl()
@@ -1507,7 +1507,7 @@ namespace fastoredis
                 FastoObjectIPtr outRoot = lock.root_;
                 double step = 100.0f/length;
                 for(size_t n = 0; n < length; ++n){
-                    if(impl_->config_.shutdown){
+                    if(impl_->config_.shutdown_){
                         er.reset(new common::ErrorValue("Interrupted exec.", common::ErrorValue::E_INTERRUPTED));
                         res.setErrorInfo(er);
                         break;
