@@ -356,7 +356,6 @@ namespace fastoredis
         }
 
         std::string result;
-        const common::HashValue::const_iterator lastIt = std::prev(ar->end());
         for(common::HashValue::const_iterator it = ar->begin(); it != ar->end(); ++it){
             common::HashValue::value_type v = *it;
             std::string key = (v.first)->toString();
@@ -366,7 +365,7 @@ namespace fastoredis
             }
 
             result += key + " " + val;
-            if(lastIt != it){
+            if(std::next(it) != ar->end()){
                 result += delemitr();
             }
         }
