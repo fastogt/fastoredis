@@ -776,7 +776,6 @@ namespace common
     std::string HashValue::toString() const
     {
         std::string result;
-        const const_iterator lastIt = std::prev(hash_.end());
         for(const_iterator i(hash_.begin()); i != hash_.end(); ++i){
             value_type m = *i;
             std::string key = (m.first)->toString();
@@ -786,7 +785,7 @@ namespace common
             }
 
             result += val;
-            if(i != lastIt){
+            if(std::next(i) != hash_.end()){
                 result += key + " " + val;
             }
         }
