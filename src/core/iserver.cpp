@@ -56,10 +56,10 @@ namespace
 
 namespace fastoredis
 {
-    IServer::IServer(IDriverSPtr drv, bool isMaster)
-        : drv_(drv), isMaster_(isMaster)
+    IServer::IServer(IDriverSPtr drv, bool isSuperServer)
+        : drv_(drv), isSuperServer_(isSuperServer)
     {
-        if(isMaster_){
+        if(isSuperServer_){
             VERIFY(QObject::connect(drv_.get(), &IDriver::addedChild, this, &IServer::addedChild));
             VERIFY(QObject::connect(drv_.get(), &IDriver::itemUpdated, this, &IServer::itemUpdated));
             VERIFY(QObject::connect(drv_.get(), &IDriver::serverInfoSnapShoot, this, &IServer::serverInfoSnapShoot));
@@ -80,14 +80,9 @@ namespace fastoredis
         return drv_->isConnected();
     }
 
-    bool IServer::isMaster() const
+    bool IServer::isSuperServer() const
     {
-        return isMaster_;
-    }
-
-    void IServer::setIsMaster(bool isMaster)
-    {
-        isMaster_ = isMaster;
+        return isSuperServer_;
     }
 
     bool IServer::isLocalHost() const

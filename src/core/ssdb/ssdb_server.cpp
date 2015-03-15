@@ -5,8 +5,8 @@
 
 namespace fastoredis
 {
-    SsdbServer::SsdbServer(const IDriverSPtr& drv, bool isMaster)
-        : IServer(drv,isMaster)
+    SsdbServer::SsdbServer(const IDriverSPtr& drv, bool isSuperServer)
+        : IServer(drv,isSuperServer)
     {
 
     }

@@ -5,8 +5,8 @@
 
 namespace fastoredis
 {
-    RedisServer::RedisServer(const IDriverSPtr& drv, bool isMaster)
-        : IServer(drv, isMaster)
+    RedisServer::RedisServer(const IDriverSPtr& drv, bool isSuperServer)
+        : IServer(drv, isSuperServer)
     {
 
     }

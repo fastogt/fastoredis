@@ -18,6 +18,7 @@ extern "C" {
 #define INFO_REQUEST "INFO"
 #define GET_KEYS_PATTERN_1ARGS_I "KEYS a z %d"
 #define DELETE_KEY_PATTERN_1ARGS_S "DEL %s"
+#define GET_SERVER_TYPE ""
 
 #define GET_KEY_PATTERN_1ARGS_S "GET %s"
 #define GET_KEY_LIST_PATTERN_1ARGS_S "LRANGE %s 0 -1"
@@ -1454,6 +1455,22 @@ namespace fastoredis
         }
 
         return err;
+    }
+
+    common::ErrorValueSPtr SsdbDriver::serverDiscoveryInfo(ServerDiscoveryInfo** dinfo)
+    {
+        *dinfo = NULL;
+        FastoObjectIPtr root = FastoObject::createRoot(GET_SERVER_TYPE);
+        SsdbCommand* cmd = createCommand(root, GET_SERVER_TYPE, common::Value::C_INNER);
+        common::ErrorValueSPtr er = impl_->execute(cmd);
+
+        if(!er){
+            FastoObject::child_container_type ch = root->childrens();
+            if(ch.size()){
+                //*dinfo = makeOwnRedisDiscoveryInfo(ch[0]);
+            }
+        }
+        return er;
     }
 
     void SsdbDriver::handleConnectEvent(events::ConnectRequestEvent *ev)

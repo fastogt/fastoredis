@@ -46,6 +46,31 @@ namespace fastoredis
         NValue value_;
     };
 
+    class ServerDiscoveryInfo
+    {
+    public:
+        virtual ~ServerDiscoveryInfo();
+
+        connectionTypes connectionType() const;
+        serverTypes type() const;
+
+        common::net::hostAndPort host() const;
+        void setHost(const common::net::hostAndPort& host);
+
+    protected:
+        DISALLOW_COPY_AND_ASSIGN(ServerDiscoveryInfo);
+
+        ServerDiscoveryInfo(connectionTypes ctype, serverTypes type, bool self);
+        common::net::hostAndPort host_;
+
+    private:
+        const bool self_;
+        const serverTypes type_;
+        const connectionTypes ctype_;
+    };
+
+    typedef common::shared_ptr<ServerDiscoveryInfo> ServerDiscoveryInfoSPtr;
+
     class ServerInfo
     {
     public:

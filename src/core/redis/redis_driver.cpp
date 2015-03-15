@@ -51,6 +51,7 @@ extern "C" {
 
 #define GET_KEYS_PATTERN_2ARGS_SI "SCAN 0 MATCH %s COUNT %d"
 
+#define GET_SERVER_TYPE "CLUSTER NODES"
 #define SHUTDOWN "shutdown"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 #define STAT_MODE_REQUEST "STAT"
@@ -1720,8 +1721,43 @@ namespace fastoredis
             if(ch.size()){
                 *info = makeRedisServerInfo(ch[0]);
             }
+            if(*info == NULL){
+                res = common::make_error_value("Invalid " INFO_REQUEST " command output", common::ErrorValue::E_ERROR);
+            }
         }
         return res;
+    }
+
+    common::ErrorValueSPtr RedisDriver::serverDiscoveryInfo(ServerDiscoveryInfo** dinfo)
+    {
+        *dinfo = NULL;
+        FastoObjectIPtr root = FastoObject::createRoot(GET_SERVER_TYPE);
+        RedisCommand* cmd = createCommand(root, GET_SERVER_TYPE, common::Value::C_INNER);
+        common::ErrorValueSPtr er = impl_->execute(cmd);
+
+        if(!er){
+            FastoObject::child_container_type ch = cmd->childrens();
+            if(ch.size()){
+                FastoObject* obj = ch[0];
+                if(obj){
+                    common::Value::Type t = obj->type();
+                    if(t == common::Value::TYPE_STRING){
+                        *dinfo = makeOwnRedisDiscoveryInfo(obj);
+                    }
+                    else if(t == common::Value::TYPE_ERROR){
+                        return common::make_error_value(obj->toString(), common::ErrorValue::E_ERROR);
+                    }
+                    else{
+                        NOTREACHED();
+                    }
+                }
+            }
+
+            if(*dinfo == NULL){
+                er = common::make_error_value("Invalid " GET_SERVER_TYPE " command output", common::ErrorValue::E_ERROR);
+            }
+        }
+        return er;
     }
 
     void RedisDriver::handleConnectEvent(events::ConnectRequestEvent *ev)
@@ -1733,14 +1769,13 @@ namespace fastoredis
             if(set){
                 impl_->config = set->info();
                 impl_->sinfo_ = set->sshInfo();
-                common::ErrorValueSPtr er;
         notifyProgress(sender, 25);
                     if(impl_->config.shutdown){
                         common::ErrorValueSPtr er = common::make_error_value("Interrupted connect.", common::ErrorValue::E_INTERRUPTED);
                         res.setErrorInfo(er);
                     }
                     else{
-                        er = impl_->cliConnect(0);
+                        common::ErrorValueSPtr er = impl_->cliConnect(0);
                         if(er){
                             res.setErrorInfo(er);
                         }

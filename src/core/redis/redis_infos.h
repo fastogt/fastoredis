@@ -222,6 +222,19 @@ namespace fastoredis
         redisKeySpaceFields
     };
 
+    class RedisDiscoveryInfo
+            : public ServerDiscoveryInfo
+    {
+    public:
+        RedisDiscoveryInfo(serverTypes type, bool self);
+
+        std::string hash() const;
+        void setHash(const std::string& hash);
+
+    private:
+        std::string hash_;
+    };
+
     struct RedisServerInfo
             : public ServerInfo
     {
@@ -371,8 +384,10 @@ namespace fastoredis
 
     std::ostream& operator<<(std::ostream& out, const RedisServerInfo& value);
 
-    RedisServerInfo* makeRedisServerInfo(const std::string &content);
-    RedisServerInfo* makeRedisServerInfo(FastoObject *root);
+    RedisServerInfo* makeRedisServerInfo(const std::string& content);
+    RedisServerInfo* makeRedisServerInfo(FastoObject* root);
+    ServerDiscoveryInfo* makeOwnRedisDiscoveryInfo(const std::string& text);
+    ServerDiscoveryInfo* makeOwnRedisDiscoveryInfo(FastoObject* root);
 
     class RedisDataBaseInfo
             : public DataBaseInfo

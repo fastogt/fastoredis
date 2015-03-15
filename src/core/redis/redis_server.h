@@ -13,6 +13,6 @@ namespace fastoredis
 
     private:
         virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info);
-        RedisServer(const IDriverSPtr& drv, bool isMaster);
+        RedisServer(const IDriverSPtr& drv, bool isSuperServer);
     };
 }

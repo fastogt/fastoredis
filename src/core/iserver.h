@@ -10,19 +10,18 @@ namespace fastoredis
             : public QObject, public std::enable_shared_from_this<IServer>
     {
         Q_OBJECT
-
+        friend class ServersManager;
     public:
         typedef std::vector<IDatabaseSPtr> databases_container_t;
 
-        IServer(IDriverSPtr drv, bool isMaster);
+        IServer(IDriverSPtr drv, bool isSuperServer);
         virtual ~IServer();
 
         //sync methods
         void stopCurrentEvent();
         bool isConnected() const;
 
-        bool isMaster() const;
-        void setIsMaster(bool isMaster);
+        bool isSuperServer() const;
 
         bool isLocalHost() const;
 
@@ -149,6 +148,6 @@ namespace fastoredis
 
         void processConfigArgs();
 
-        bool isMaster_;
+        bool isSuperServer_;
     };
 }

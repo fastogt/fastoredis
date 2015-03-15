@@ -5,8 +5,8 @@
 
 namespace fastoredis
 {
-    MemcachedServer::MemcachedServer(const IDriverSPtr& drv, bool isMaster)
-        : IServer(drv,isMaster)
+    MemcachedServer::MemcachedServer(const IDriverSPtr& drv, bool isSuperServer)
+        : IServer(drv, isSuperServer)
     {
 
     }

@@ -1,4 +1,4 @@
-0.7.1
+0.7.1 / March 14, 2015
 [Alexandr Topilski]
 - Bug fixes
 - History for SSDB

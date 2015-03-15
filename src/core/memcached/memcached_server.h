@@ -13,6 +13,6 @@ namespace fastoredis
 
     private:
         virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info);
-        MemcachedServer(const IDriverSPtr& drv, bool isMaster);
+        MemcachedServer(const IDriverSPtr& drv, bool isSuperServer);
     };
 }

@@ -64,7 +64,7 @@ struct WinsockInit {
 namespace fastoredis
 {
     IDriver::IDriver(IConnectionSettingsBaseSPtr settings)
-        : settings_(settings), timer_info_id_(0), log_file_(NULL)
+        : settings_(settings), serverDiscInfo_(), thread_(NULL), timer_info_id_(0), log_file_(NULL)
     {
         thread_ = new QThread(this);
         moveToThread(thread_);
@@ -87,6 +87,11 @@ namespace fastoredis
     connectionTypes IDriver::connectionType() const
     {
         return settings_->connectionType();
+    }
+
+    ServerDiscoveryInfoSPtr IDriver::serverDiscoveryInfo() const
+    {
+        return serverDiscInfo_;
     }
 
     IConnectionSettingsBaseSPtr IDriver::settings() const
@@ -165,7 +170,14 @@ namespace fastoredis
         QEvent::Type type = event->type();
         if (type == static_cast<QEvent::Type>(ConnectRequestEvent::EventType)){            
             ConnectRequestEvent *ev = static_cast<ConnectRequestEvent*>(event);
-            handleConnectEvent(ev);
+            handleConnectEvent(ev);            
+            if(isConnected()){
+                ServerDiscoveryInfo* disc = NULL;
+                common::ErrorValueSPtr er = serverDiscoveryInfo(&disc);
+                if(!er){
+                   serverDiscInfo_.reset(disc);
+                }
+            }
         }
         else if (type == static_cast<QEvent::Type>(ShutDownRequestEvent::EventType)){
             ShutDownRequestEvent *ev = static_cast<ShutDownRequestEvent*>(event);

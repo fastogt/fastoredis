@@ -98,12 +98,12 @@ namespace fastoredis
         for(size_t i = 0; i < servers_.size(); ++i){
             IServerSPtr ser = servers_[i];
             if(ser == server){
-                if(ser->isMaster()){
+                if(ser->isSuperServer()){
                     IDriverSPtr drv = ser->driver();
                     for(size_t j = 0; j < servers_.size(); ++j){
                         IServerSPtr servj = servers_[j];
                         if(servj->driver() == drv){
-                            servj->setIsMaster(true);
+                            servj->isSuperServer_ = true;
                             break;
                         }
                     }
@@ -120,7 +120,7 @@ namespace fastoredis
     {
         for(size_t i = 0; i < servers_.size(); ++i){
             IServerSPtr servi = servers_[i];
-            if(servi->isMaster()){
+            if(servi->isSuperServer()){
                 for(size_t j = 0; j < servers_.size(); ++j){
                     IServerSPtr servj = servers_[j];
                     if(servj != servi && servj->driver() == servi->driver()){

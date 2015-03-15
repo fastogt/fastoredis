@@ -18,6 +18,7 @@ extern "C" {
 
 #define INFO_REQUEST "STATS"
 #define GET_KEYS "STATS ITEMS"
+#define GET_SERVER_TYPE ""
 
 #define DELETE_KEY_PATTERN_1ARGS_S "DELETE %s"
 #define GET_KEY_PATTERN_1ARGS_S "GET %s"
@@ -698,6 +699,22 @@ namespace fastoredis
         }
 
         return err;
+    }
+
+    common::ErrorValueSPtr MemcachedDriver::serverDiscoveryInfo(ServerDiscoveryInfo** dinfo)
+    {
+        *dinfo = NULL;
+        FastoObjectIPtr root = FastoObject::createRoot(GET_SERVER_TYPE);
+        MemcachedCommand* cmd = createCommand(root, GET_SERVER_TYPE, common::Value::C_INNER);
+        common::ErrorValueSPtr er = impl_->execute(cmd);
+
+        if(!er){
+            FastoObject::child_container_type ch = root->childrens();
+            if(ch.size()){
+                //*dinfo = makeOwnRedisDiscoveryInfo(ch[0]);
+            }
+        }
+        return er;
     }
 
     void MemcachedDriver::handleConnectEvent(events::ConnectRequestEvent *ev)

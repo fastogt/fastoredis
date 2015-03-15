@@ -13,6 +13,6 @@ namespace fastoredis
 
     private:
         virtual IDatabaseSPtr createDatabaseImpl(DataBaseInfoSPtr info);
-        SsdbServer(const IDriverSPtr& drv, bool isMaster);
+        SsdbServer(const IDriverSPtr& drv, bool isSuperServer);
     };
 }

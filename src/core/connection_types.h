@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/convert2string.h"
+#include "common/net/net.h"
 
 namespace fastoredis
 {
@@ -10,6 +11,12 @@ namespace fastoredis
         REDIS,
         MEMCACHED,
         SSDB
+    };
+
+    enum serverTypes
+    {
+        MASTER,
+        SLAVE
     };
 
     static const std::vector<std::string> connnectionType = { "Unknown", "Redis", "Memcached", "Ssdb" };

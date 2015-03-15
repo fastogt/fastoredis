@@ -19,6 +19,38 @@ namespace fastoredis
 
     }
 
+    ServerDiscoveryInfo::ServerDiscoveryInfo(connectionTypes ctype, serverTypes type, bool self)
+        : ctype_(ctype), type_(type), self_(self)
+    {
+
+    }
+
+    connectionTypes ServerDiscoveryInfo::connectionType() const
+    {
+        return ctype_;
+    }
+
+    serverTypes ServerDiscoveryInfo::type() const
+    {
+        return type_;
+    }
+
+    common::net::hostAndPort ServerDiscoveryInfo::host() const
+    {
+        return host_;
+    }
+
+    void ServerDiscoveryInfo::setHost(const common::net::hostAndPort& host)
+    {
+        host_ = host;
+    }
+
+
+    ServerDiscoveryInfo::~ServerDiscoveryInfo()
+    {
+
+    }
+
     ServerInfo::~ServerInfo()
     {
 

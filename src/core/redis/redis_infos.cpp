@@ -3,6 +3,8 @@
 #include <ostream>
 #include <sstream>
 
+#define MARKER "\n"
+
 namespace fastoredis
 {
     const std::vector<common::Value::Type> DBTraits<REDIS>::supportedTypes = {
@@ -17,6 +19,22 @@ namespace fastoredis
                                             common::Value::TYPE_ZSET,
                                             common::Value::TYPE_HASH
                                            };
+
+    RedisDiscoveryInfo::RedisDiscoveryInfo(serverTypes type, bool self)
+        : ServerDiscoveryInfo(REDIS, type, self), hash_()
+    {
+
+    }
+
+    std::string RedisDiscoveryInfo::hash() const
+    {
+        return hash_;
+    }
+
+    void RedisDiscoveryInfo::setHash(const std::string& hash)
+    {
+        hash_ = hash;
+    }
 
     RedisServerInfo::Server::Server::Server()
         : redis_version_(), redis_git_sha1_(), redis_git_dirty_(), redis_mode_(), os_(),
@@ -821,6 +839,71 @@ namespace fastoredis
     {
         const std::string content = common::convertToString(root);
         return makeRedisServerInfo(content);
+    }
+
+    ServerDiscoveryInfo* makeOwnRedisDiscoveryInfo(const std::string& text)
+    {
+        if(text.empty()){
+            return NULL;
+        }
+
+        size_t pos = 0;
+        size_t start = 0;
+
+        while((pos = text.find(MARKER, start)) != std::string::npos){
+            std::string line = text.substr(start, pos - start);
+            size_t posm = line.find("myself");
+            if(posm != std::string::npos){
+                std::string word;
+
+                std::string hash;
+                std::string hport;
+                serverTypes t = MASTER;
+                int fieldpos = 0;
+                for(int i = 0; i < line.size(); ++i)
+                {
+                    char ch = line[i];
+                    if(ch == ' '){
+                        switch(fieldpos)
+                        {
+                        case 0:
+                            hash = word;
+                            break;
+                        case 1:
+                            hport = word;
+                            break;
+                        case 2:
+                            if(word == "myself,slave"){
+                                t = SLAVE;
+                            }
+                            break;
+                        default:
+                            break;
+                        }
+                        word.clear();
+                        ++fieldpos;
+                    }
+                    else{
+                        word += ch;
+                    }
+
+                }
+
+                RedisDiscoveryInfo* ser = new RedisDiscoveryInfo(t, true);
+                ser->setHash(hash);
+                ser->setHost(common::convertFromString<common::net::hostAndPort>(hport));
+                return ser;
+            }
+            start = pos + 1;
+        }
+
+        return NULL;
+    }
+
+    ServerDiscoveryInfo* makeOwnRedisDiscoveryInfo(FastoObject* root)
+    {
+        const std::string content = common::convertToString(root);
+        return makeOwnRedisDiscoveryInfo(content);
     }
 
     RedisDataBaseInfo::RedisDataBaseInfo(const std::string& name, size_t size, bool isDefault, const keys_cont_type& keys)

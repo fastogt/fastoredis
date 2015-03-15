@@ -31,6 +31,7 @@ namespace fastoredis
 
         // sync methods
         connectionTypes connectionType() const;
+        ServerDiscoveryInfoSPtr serverDiscoveryInfo() const;
         IConnectionSettingsBaseSPtr settings() const;
         DataBaseInfoSPtr currentDatabaseInfo() const;
 
@@ -114,6 +115,7 @@ namespace fastoredis
         // internal methods
         virtual common::ErrorValueSPtr currentLoggingInfo(ServerInfo** info) = 0;
         virtual ServerInfoSPtr makeServerInfoFromString(const std::string& val) = 0;
+        virtual common::ErrorValueSPtr serverDiscoveryInfo(ServerDiscoveryInfo** dinfo) = 0;
         virtual void initImpl() = 0;
         virtual void clearImpl() = 0;
 
@@ -125,9 +127,10 @@ namespace fastoredis
         virtual common::ErrorValueSPtr commandCreateImpl(CommandCreateKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT = 0;
 
     protected:
-        DataBaseInfoSPtr currentDatabaseInfo_;
+        DataBaseInfoSPtr currentDatabaseInfo_;        
 
     private:
+        ServerDiscoveryInfoSPtr serverDiscInfo_;
         QThread* thread_;
         int timer_info_id_;
         common::file_system::File* log_file_;
