@@ -26,8 +26,8 @@ namespace
 
 namespace fastoredis
 {
-    ClusterDialog::ClusterDialog(QWidget* parent, IConnectionSettingsBase* connection)
-        : QDialog(parent), connection_(connection)
+    ClusterDialog::ClusterDialog(QWidget* parent, IClusterSettingsBase *connection)
+        : QDialog(parent), cluster_connection_(connection)
     {
         using namespace translations;
 
@@ -36,8 +36,8 @@ namespace fastoredis
 
         connectionName_ = new QLineEdit;
         QString conName = defaultNameConnection;
-        if(connection_){
-            conName = common::convertFromString<QString>(connection_->connectionName());
+        if(cluster_connection_){
+            conName = common::convertFromString<QString>(cluster_connection_->connectionName());
         }
         connectionName_->setText(conName);
         typeConnection_ = new QComboBox;
@@ -46,15 +46,15 @@ namespace fastoredis
             typeConnection_->addItem(common::convertFromString<QString>(connnectionType[i]));
         }
 
-        if(connection_){
-            typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(connection_->connectionType())));
+        if(cluster_connection_){
+            typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(cluster_connection_->connectionType())));
         }
 
         VERIFY(connect(typeConnection_, &QComboBox::currentTextChanged, this, &ClusterDialog::typeConnectionChange));
 
         logging_ = new QCheckBox;
-        if(connection_){
-            logging_->setChecked(connection_->loggingEnabled());
+        if(cluster_connection_){
+            logging_->setChecked(cluster_connection_->loggingEnabled());
         }
         else{
             logging_->setChecked(false);
@@ -89,9 +89,9 @@ namespace fastoredis
         retranslateUi();
     }
 
-    IConnectionSettingsBaseSPtr ClusterDialog::connection() const
+    IClusterSettingsBaseSPtr ClusterDialog::connection() const
     {
-        return connection_;
+        return cluster_connection_;
     }
 
     void ClusterDialog::accept()
@@ -112,8 +112,8 @@ namespace fastoredis
     void ClusterDialog::testConnection()
     {
         if(validateAndApply()){
-            ConnectionDiagnosticDialog diag(this, connection_);
-            diag.exec();
+            //ConnectionDiagnosticDialog diag(this, cluster_connection_);
+            //diag.exec();
         }
     }
 
@@ -136,10 +136,10 @@ namespace fastoredis
         bool isValidType = currentType != DBUNKNOWN;
         if(isValidType){
             std::string conName = common::convertToString(connectionName_->text());
-            IConnectionSettingsBase* newConnection = IConnectionSettingsBase::createFromType(currentType, conName);
+            IClusterSettingsBase* newConnection = IClusterSettingsBase::createFromType(currentType, conName);
             if(newConnection){
-                connection_.reset(newConnection);
-                connection_->setLoggingEnabled(logging_->isChecked());
+                cluster_connection_.reset(newConnection);
+                cluster_connection_->setLoggingEnabled(logging_->isChecked());
             }
             return true;
         }

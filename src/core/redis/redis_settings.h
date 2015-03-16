@@ -22,7 +22,7 @@ namespace fastoredis
         redisConfig info() const;
         void setInfo(const redisConfig& info);
 
-        virtual IConnectionSettingsBase* clone() const;
+        virtual IConnectionSettings* clone() const;
 
     private:
         virtual std::string toCommandLine() const;

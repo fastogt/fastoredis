@@ -15,6 +15,7 @@ namespace fastoredis
     {
     public:
         typedef std::vector<IConnectionSettingsBaseSPtr> ConnectionSettingsContainerType;
+        typedef std::vector<IClusterSettingsBaseSPtr> ClusterSettingsContainerType;
         friend class common::patterns::LazySingleton<SettingsManager>;
 
         void setDefaultView(supportedViews view);
@@ -26,10 +27,17 @@ namespace fastoredis
         QString currentLanguage() const;
         void setCurrentLanguage(const QString &lang);
 
+        // connections
         void addConnection(IConnectionSettingsBaseSPtr connection);
         void removeConnection(IConnectionSettingsBaseSPtr connection);
 
         ConnectionSettingsContainerType connections() const;
+
+        // clusters
+        void addCluster(IClusterSettingsBaseSPtr cluster);
+        void removeCluster(IClusterSettingsBaseSPtr cluster);
+
+        ClusterSettingsContainerType clusters() const;
 
         void addRConnection(const QString& connection);
         void removeRConnection(const QString& connection);
@@ -55,6 +63,7 @@ namespace fastoredis
         QString curStyle_;
         QString curLanguage_;
         ConnectionSettingsContainerType connections_;
+        ClusterSettingsContainerType clusters_;
         QStringList recentConnections_;
         bool syncTabs_;
         QString loggingDir_;

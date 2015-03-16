@@ -43,7 +43,7 @@ namespace fastoredis
         info_ = info;
     }
 
-    IConnectionSettingsBase* SsdbConnectionSettings::clone() const
+    IConnectionSettings* SsdbConnectionSettings::clone() const
     {
         SsdbConnectionSettings *red = new SsdbConnectionSettings(*this);
         return red;

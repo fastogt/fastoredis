@@ -43,7 +43,7 @@ namespace fastoredis
         info_ = info;
     }
 
-    IConnectionSettingsBase* MemcachedConnectionSettings::clone() const
+    IConnectionSettings *MemcachedConnectionSettings::clone() const
     {
         MemcachedConnectionSettings *red = new MemcachedConnectionSettings(*this);
         return red;

@@ -19,8 +19,9 @@ namespace fastoredis
         Q_OBJECT
 
     public:
-        ClusterDialog(QWidget* parent, IConnectionSettingsBase* connection = NULL); //get ownerships connection
-        IConnectionSettingsBaseSPtr connection() const;
+        typedef std::vector<IConnectionSettingsBaseSPtr> cluster_connection_type;
+        ClusterDialog(QWidget* parent, IClusterSettingsBase* connection = NULL); //get ownerships connection
+        IClusterSettingsBaseSPtr connection() const;
 
     public Q_SLOTS:
         virtual void accept();
@@ -36,7 +37,7 @@ namespace fastoredis
         void retranslateUi();
         bool validateAndApply();
 
-        IConnectionSettingsBaseSPtr connection_;
+        IClusterSettingsBaseSPtr cluster_connection_;
         QLineEdit* connectionName_;
         QComboBox* typeConnection_;
         QCheckBox* logging_;

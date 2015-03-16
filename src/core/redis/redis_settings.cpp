@@ -54,7 +54,7 @@ namespace fastoredis
         info_ =  info;
     }
 
-    IConnectionSettingsBase *RedisConnectionSettings::clone() const
+    IConnectionSettings *RedisConnectionSettings::clone() const
     {
         RedisConnectionSettings *red = new RedisConnectionSettings(*this);
         return red;

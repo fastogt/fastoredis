@@ -195,7 +195,7 @@ namespace fastoredis
 
         IConnectionSettingsBaseSPtr oldConnection = currentItem->connection();
 
-        ConnectionDialog dlg(this, oldConnection->clone());
+        ConnectionDialog dlg(this, dynamic_cast<IConnectionSettingsBase*>(oldConnection->clone()));
         int result = dlg.exec();
         IConnectionSettingsBaseSPtr newConnection = dlg.connection();
         if(result == QDialog::Accepted && newConnection){

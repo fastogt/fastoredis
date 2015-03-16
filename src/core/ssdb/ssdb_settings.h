@@ -22,7 +22,7 @@ namespace fastoredis
         ssdbConfig info() const;
         void setInfo(const ssdbConfig &info);
 
-        virtual IConnectionSettingsBase* clone() const;
+        virtual IConnectionSettings* clone() const;
 
     private:
         virtual std::string toCommandLine() const;

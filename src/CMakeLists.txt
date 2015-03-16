@@ -217,6 +217,7 @@ SET(HEADERS_REDIS
     core/redis/redis_config.h
     core/redis/redis_database.h
     core/redis/redis_settings.h
+    core/redis/redis_cluster_settings.h
 )
 SET(SOURCES_REDIS
     core/redis/redis_config.cpp
@@ -225,6 +226,7 @@ SET(SOURCES_REDIS
     core/redis/redis_driver.cpp
     core/redis/redis_database.cpp
     core/redis/redis_settings.cpp
+    core/redis/redis_cluster_settings.cpp
 )
 
 #memcached

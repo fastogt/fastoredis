@@ -22,7 +22,7 @@ namespace fastoredis
         memcachedConfig info() const;
         void setInfo(const memcachedConfig& info);
 
-        virtual IConnectionSettingsBase* clone() const;
+        virtual IConnectionSettings* clone() const;
 
     private:
         virtual std::string toCommandLine() const;

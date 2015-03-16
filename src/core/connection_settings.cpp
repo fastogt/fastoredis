@@ -10,6 +10,8 @@
 #include "core/settings_manager.h"
 
 #include "core/redis/redis_settings.h"
+#include "core/redis/redis_cluster_settings.h"
+
 #include "core/memcached/memcached_settings.h"
 #include "core/ssdb/ssdb_settings.h"
 
@@ -19,15 +21,60 @@
 
 namespace fastoredis
 {
-    IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName, connectionTypes type)
-        : connectionName_(), hash_(), logging_enabled_(false), sshInfo_(), type_(type)
+    IConnectionSettings::IConnectionSettings(const std::string& connectionName, connectionTypes type)
+        : connectionName_(connectionName), type_(type), logging_enabled_(false)
     {
-        setConnectionName(connectionName);
+
+    }
+
+    void IConnectionSettings::setConnectionName(const std::string& name)
+    {
+        connectionName_ = name;
+    }
+
+    IConnectionSettings::~IConnectionSettings()
+    {
+
+    }
+
+    std::string IConnectionSettings::connectionName() const
+    {
+        return connectionName_;
+    }
+
+    connectionTypes IConnectionSettings::connectionType() const
+    {
+        return type_;
+    }
+
+    bool IConnectionSettings::loggingEnabled() const
+    {
+        return logging_enabled_;
+    }
+
+    void IConnectionSettings::setLoggingEnabled(bool isLogging)
+    {
+        logging_enabled_ = isLogging;
+    }
+
+    IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName, connectionTypes type)
+        : IConnectionSettings(connectionName, type), hash_(), sshInfo_()
+    {
+        setConnectionNameAndUpdateHash(connectionName);
     }
 
     IConnectionSettingsBase::~IConnectionSettingsBase()
     {
 
+    }
+
+    void IConnectionSettingsBase::setConnectionNameAndUpdateHash(const std::string& name)
+    {
+        using namespace common::utils;
+        setConnectionName(name);
+        common::buffer_type bcon = common::convertFromString<common::buffer_type>(connectionName_);
+        uint64_t v = hash::crc64(0, bcon);
+        hash_ = common::convertToString(v);
     }
 
     std::string IConnectionSettingsBase::hash() const
@@ -54,30 +101,10 @@ namespace fastoredis
         return logDir + hash() + ext;
     }
 
-
-    void IConnectionSettingsBase::setConnectionName(const std::string& name)
-    {
-        connectionName_ = name;
-        using namespace common::utils;
-        common::buffer_type bcon = common::convertFromString<common::buffer_type>(connectionName_);
-        uint64_t v = hash::crc64(0, bcon);
-        hash_ = common::convertToString(v);
-    }
-
     std::string IConnectionSettingsBase::fullAddress() const
     {
         common::net::hostAndPort h(host(), port());
         return common::convertToString(h);
-    }
-
-    std::string IConnectionSettingsBase::connectionName() const
-    {
-        return connectionName_;
-    }
-
-    connectionTypes IConnectionSettingsBase::connectionType() const
-    {
-        return type_;
     }
 
     IConnectionSettingsBase* IConnectionSettingsBase::createFromType(connectionTypes type, const std::string& conName)
@@ -117,7 +144,7 @@ namespace fastoredis
                         }
                     }
                     else if(commaCount == 1){
-                        result->setConnectionName(elText);
+                        result->setConnectionNameAndUpdateHash(elText);
                     }
                     else if(commaCount == 2){
                         result->setLoggingEnabled(common::convertFromString<uint8_t>(elText));
@@ -148,16 +175,6 @@ namespace fastoredis
             res = str.str();
         }
         return res;
-    }
-
-    bool IConnectionSettingsBase::loggingEnabled() const
-    {
-        return logging_enabled_;
-    }
-
-    void IConnectionSettingsBase::setLoggingEnabled(bool isLogging)
-    {
-        logging_enabled_ = isLogging;
     }
 
     uint32_t IConnectionSettingsBase::loggingMsTimeInterval() const
@@ -248,5 +265,84 @@ namespace fastoredis
         }
 
         return std::string();
+    }
+
+    IClusterSettingsBase::IClusterSettingsBase(const std::string& connectionName, connectionTypes type)
+        : IConnectionSettings(connectionName, type)
+    {
+
+    }
+
+    IClusterSettingsBase::cluster_connection_type IClusterSettingsBase::nodes() const
+    {
+        return clusters_nodes_;
+    }
+
+    void IClusterSettingsBase::addNode(IConnectionSettingsBaseSPtr node)
+    {
+        if(!node){
+            return;
+        }
+
+        clusters_nodes_.push_back(node);
+    }
+
+    IClusterSettingsBase* IClusterSettingsBase::createFromType(connectionTypes type, const std::string& conName)
+    {
+        if(type == REDIS){
+            return new RedisClusterSettings(conName);
+        }
+        else{
+            NOTREACHED();
+            return NULL;
+        }
+    }
+
+    IClusterSettingsBase* IClusterSettingsBase::fromString(const std::string& val)
+    {
+        IClusterSettingsBase *result = NULL;
+        if(!val.empty()){
+            size_t len = val.size();
+
+            uint8_t commaCount = 0;
+            std::string elText;
+
+            for(size_t i = 0; i < len; ++i ){
+                char ch = val[i];
+                if(ch == ','){
+                    if(commaCount == 0){
+                        int crT = elText[0] - 48;
+                        result = createFromType((connectionTypes)crT);
+                        if(!result){
+                            return NULL;
+                        }
+                    }
+                    else if(commaCount == 1){
+                        result->setConnectionName(elText);
+                    }
+                    else if(commaCount == 2){
+                        result->setLoggingEnabled(common::convertFromString<uint8_t>(elText));
+                    }
+                    commaCount++;
+                    elText.clear();
+                }
+                else{
+                   elText += ch;
+                }
+            }
+        }
+        return result;
+    }
+
+    std::string IClusterSettingsBase::toString() const
+    {
+        std::string res;
+        connectionTypes crT = connectionType();
+        if(crT != DBUNKNOWN){
+            std::stringstream str;
+            str << crT << ',' << connectionName() << ',' << logging_enabled_;
+            res = str.str();
+        }
+        return res;
     }
 }

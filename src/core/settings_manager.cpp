@@ -15,6 +15,7 @@
 #define LANGUAGE PREFIX"language"
 #define STYLE PREFIX"style"
 #define CONNECTIONS PREFIX"connections"
+#define CLUSTERS PREFIX"clusters"
 #define VIEW PREFIX"view"
 #define SYNCTABS PREFIX"synctabs"
 #define LOGGINGDIR PREFIX"loggingdir"
@@ -96,6 +97,31 @@ namespace fastoredis
         return connections_;
     }
 
+    void SettingsManager::addCluster(IClusterSettingsBaseSPtr cluster)
+    {
+        if(cluster){
+            ClusterSettingsContainerType::iterator it = std::find(clusters_.begin(),clusters_.end(),cluster);
+            if (it == clusters_.end()) {
+                clusters_.push_back(cluster);
+            }
+        }
+    }
+
+    void SettingsManager::removeCluster(IClusterSettingsBaseSPtr cluster)
+    {
+        if(cluster){
+            ClusterSettingsContainerType::iterator it = std::find(clusters_.begin(),clusters_.end(),cluster);
+            if (it != clusters_.end()) {
+                clusters_.erase(it);
+            }
+        }
+    }
+
+    SettingsManager::ClusterSettingsContainerType SettingsManager::clusters() const
+    {
+        return clusters_;
+    }
+
     void SettingsManager::addRConnection(const QString& connection)
     {
         if(!connection.isEmpty()){
@@ -163,6 +189,19 @@ namespace fastoredis
         int view = settings.value(VIEW, fastoredis::Tree).toInt();
         views_ = static_cast<supportedViews>(view);
 
+        QList<QVariant> clusters = settings.value(CLUSTERS, "").toList();
+        for(QList<QVariant>::const_iterator it = clusters.begin(); it != clusters.end(); ++it){
+            QVariant var = *it;
+            QString string = var.toString();
+            std::string encoded = common::convertToString(string);
+            std::string raw = common::utils::base64::decode64(encoded);
+
+            IClusterSettingsBaseSPtr sett(IClusterSettingsBase::fromString(raw));
+            if(sett){
+               clusters_.push_back(sett);
+            }
+        }
+
         QList<QVariant> connections = settings.value(CONNECTIONS, "").toList();
         for(QList<QVariant>::const_iterator it = connections.begin(); it != connections.end(); ++it){
             QVariant var = *it;
@@ -202,6 +241,18 @@ namespace fastoredis
         settings.setValue(STYLE, curStyle_);
         settings.setValue(LANGUAGE, curLanguage_);
         settings.setValue(VIEW, views_);
+
+        QList<QVariant> clusters;
+        for(ClusterSettingsContainerType::const_iterator it = clusters_.begin(); it != clusters_.end(); ++it){
+            IClusterSettingsBaseSPtr conn = *it;
+            if(conn){
+               std::string raw = conn->toString();
+               std::string enc = common::utils::base64::encode64(raw);
+               QString qdata = common::convertFromString<QString>(enc);
+               clusters.push_back(qdata);
+            }
+        }
+        settings.setValue(CLUSTERS, clusters);
 
         QList<QVariant> connections;
         for(ConnectionSettingsContainerType::const_iterator it = connections_.begin(); it != connections_.end(); ++it){
