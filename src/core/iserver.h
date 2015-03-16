@@ -101,6 +101,9 @@ namespace fastoredis
         void startedExecuteCommand(const EventsInfo::CommandRequest& req);
         void finishedExecuteCommand(const EventsInfo::CommandResponce& res);
 
+        void startedLoadDiscoveryInfo(const EventsInfo::DiscoveryInfoRequest& res);
+        void finishedLoadDiscoveryInfo(const EventsInfo::DiscoveryInfoResponce& res);
+
    Q_SIGNALS:
         void addedChild(FastoObject *child);
         void itemUpdated(FastoObject* item, const QString& val);
@@ -146,7 +149,10 @@ namespace fastoredis
         // handle info events
         void handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryResponceEvent* ev);
 
+        void handleDiscoveryInfoResponceEvent(events::DiscoveryInfoResponceEvent* ev);
+
         void processConfigArgs();
+        void discoveryInfo();
 
         bool isSuperServer_;
     };

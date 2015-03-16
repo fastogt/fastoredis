@@ -170,14 +170,7 @@ namespace fastoredis
         QEvent::Type type = event->type();
         if (type == static_cast<QEvent::Type>(ConnectRequestEvent::EventType)){            
             ConnectRequestEvent *ev = static_cast<ConnectRequestEvent*>(event);
-            handleConnectEvent(ev);            
-            if(isConnected()){
-                ServerDiscoveryInfo* disc = NULL;
-                common::ErrorValueSPtr er = serverDiscoveryInfo(&disc);
-                if(!er){
-                   serverDiscInfo_.reset(disc);
-                }
-            }
+            handleConnectEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(ShutDownRequestEvent::EventType)){
             ShutDownRequestEvent *ev = static_cast<ShutDownRequestEvent*>(event);
@@ -238,6 +231,10 @@ namespace fastoredis
         else if(type == static_cast<QEvent::Type>(CommandRequestEvent::EventType)){
             events::CommandRequestEvent* ev = static_cast<events::CommandRequestEvent*>(event);
             handleCommandRequestEvent(ev);
+        }
+        else if(type == static_cast<QEvent::Type>(DiscoveryInfoRequestEvent::EventType)){
+            events::DiscoveryInfoRequestEvent* ev = static_cast<events::DiscoveryInfoRequestEvent*>(event);
+            handleDiscoveryInfoRequestEvent(ev);
         }
         return QObject::customEvent(event);
     }
@@ -353,6 +350,29 @@ namespace fastoredis
         }
 
         reply(sender, new events::ServerInfoHistoryResponceEvent(this, res));
+    }
+
+    void IDriver::handleDiscoveryInfoRequestEvent(events::DiscoveryInfoRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        events::DiscoveryInfoResponceEvent::value_type res(ev->value());
+
+        if(isConnected()){
+            ServerDiscoveryInfo* disc = NULL;
+            common::ErrorValueSPtr er = serverDiscoveryInfo(&disc);
+            if(!er){
+               serverDiscInfo_.reset(disc);
+               res.info_ = serverDiscInfo_;
+            }
+            else{
+                res.setErrorInfo(er);
+            }
+        }
+        else{
+            res.setErrorInfo(common::make_error_value("Not connected to server, impossible to get discovery info!", common::Value::E_ERROR));
+        }
+
+        reply(sender, new events::DiscoveryInfoResponceEvent(this, res));
     }
 
     void IDriver::addedChildren(FastoObject* child)

@@ -287,6 +287,7 @@ namespace fastoredis
             ConnectResponceEvent::value_type v = ev->value();
             common::ErrorValueSPtr er(v.errorInfo());
             if(!er){
+                discoveryInfo();
                 processConfigArgs();
             }
         }
@@ -361,6 +362,10 @@ namespace fastoredis
         else if(type == static_cast<QEvent::Type>(CommandResponceEvent::EventType)){
             CommandResponceEvent *ev = static_cast<CommandResponceEvent*>(event);
             handleCommandResponceEvent(ev);
+        }
+        else if(type == static_cast<QEvent::Type>(DiscoveryInfoResponceEvent::EventType)){
+            DiscoveryInfoResponceEvent *ev = static_cast<DiscoveryInfoResponceEvent*>(event);
+            handleDiscoveryInfoResponceEvent(ev);
         }
         else if(type == static_cast<QEvent::Type>(ProgressResponceEvent::EventType))
         {
@@ -536,6 +541,17 @@ namespace fastoredis
         emit finishedLoadServerHistoryInfo(v);
     }
 
+    void IServer::handleDiscoveryInfoResponceEvent(events::DiscoveryInfoResponceEvent* ev)
+    {
+        using namespace events;
+        DiscoveryInfoResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er = v.errorInfo();
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedLoadDiscoveryInfo(v);
+    }
+
     void IServer::handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseResponceEvent* ev)
     {
         using namespace events;
@@ -576,6 +592,14 @@ namespace fastoredis
     {
         EventsInfo::ProcessConfigArgsInfoRequest req;
         QEvent *ev = new events::ProcessConfigArgsRequestEvent(this, req);
+        notify(ev);
+    }
+
+    void IServer::discoveryInfo()
+    {
+        EventsInfo::DiscoveryInfoRequest req;
+        emit startedLoadDiscoveryInfo(req);
+        QEvent *ev = new events::DiscoveryInfoRequestEvent(this, req);
         notify(ev);
     }
 }

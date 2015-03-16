@@ -77,7 +77,19 @@ namespace fastoredis
 
         }
 
-        ProcessConfigArgsInfoResponce::ProcessConfigArgsInfoResponce(const base_class &request, const error_type &er)
+        ProcessConfigArgsInfoResponce::ProcessConfigArgsInfoResponce(const base_class& request, const error_type& er)
+            : base_class(request)
+        {
+            base_class::errorInfo_ = er;
+        }
+
+        DiscoveryInfoRequest::DiscoveryInfoRequest(const error_type& er)
+            : base_class(er)
+        {
+
+        }
+
+        DiscoveryInfoResponce::DiscoveryInfoResponce(const base_class& request, const error_type& er)
             : base_class(request)
         {
             base_class::errorInfo_ = er;

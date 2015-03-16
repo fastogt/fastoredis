@@ -92,6 +92,22 @@ namespace fastoredis
             ProcessConfigArgsInfoResponce(const base_class &request, const error_type &er = error_type());
         };
 
+        struct DiscoveryInfoRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            DiscoveryInfoRequest(const error_type &er = error_type());
+        };
+
+        struct DiscoveryInfoResponce
+                : DiscoveryInfoRequest
+        {
+            typedef DiscoveryInfoRequest base_class;
+            DiscoveryInfoResponce(const base_class &request, const error_type &er = error_type());
+
+            ServerDiscoveryInfoSPtr info_;
+        };
+
         struct EnterModeInfo
                 : public EventInfoBase
         {

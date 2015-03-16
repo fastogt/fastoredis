@@ -108,6 +108,8 @@ namespace fastoredis
         // handle info events
         void handleLoadServerInfoHistoryEvent(events::ServerInfoHistoryRequestEvent *ev);
 
+        void handleDiscoveryInfoRequestEvent(events::DiscoveryInfoRequestEvent* ev);
+
         // notification of execute events
         virtual void addedChildren(FastoObject *child);
         virtual void updated(FastoObject* item, common::Value* val);

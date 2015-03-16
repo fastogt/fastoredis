@@ -61,6 +61,8 @@ namespace fastoredis
         typedef common::utils_qt::Event<EventsInfo::CommandRequest, QEvent::User + 35> CommandRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::CommandResponce, QEvent::User + 36> CommandResponceEvent;
 
+        typedef common::utils_qt::Event<EventsInfo::DiscoveryInfoRequest, QEvent::User + 37> DiscoveryInfoRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::DiscoveryInfoResponce, QEvent::User + 38> DiscoveryInfoResponceEvent;
 
         typedef common::utils_qt::Event<EventsInfo::ProgressInfoResponce, QEvent::User + 100> ProgressResponceEvent;
     }
