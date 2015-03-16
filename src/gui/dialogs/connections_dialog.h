@@ -8,8 +8,6 @@ class QTreeWidget;
 
 namespace fastoredis
 {
-    class ConnectionListWidgetItem;
-
     class ConnectionsDialog
             : public QDialog
     {

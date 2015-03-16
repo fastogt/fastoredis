@@ -169,12 +169,12 @@ namespace fastoredis
         VERIFY(connect(selectPrivateFileButton_, &QPushButton::clicked, this, &ConnectionDialog::setPrivateFile));
         VERIFY(connect(useSsh_, &QCheckBox::stateChanged, this, &ConnectionDialog::sshSupportStateChange));
 
-        QPushButton *testButton = new QPushButton("&Test");
-        testButton->setIcon(GuiFactory::instance().messageBoxInformationIcon());
-        VERIFY(connect(testButton, &QPushButton::clicked, this, &ConnectionDialog::testConnection));
+        testButton_ = new QPushButton("&Test");
+        testButton_->setIcon(GuiFactory::instance().messageBoxInformationIcon());
+        VERIFY(connect(testButton_, &QPushButton::clicked, this, &ConnectionDialog::testConnection));
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
-        bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
+        bottomLayout->addWidget(testButton_, 1, Qt::AlignLeft);
         buttonBox_ = new QDialogButtonBox(this);
         buttonBox_->setOrientation(Qt::Horizontal);
         buttonBox_->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
@@ -195,6 +195,13 @@ namespace fastoredis
         securityChange(security_->currentText());
         typeConnectionChange(typeConnection_->currentText());
         retranslateUi();
+    }
+
+    void ConnectionDialog::setConnectionTypeOnly(connectionTypes type)
+    {
+        typeConnection_->clear();
+        typeConnection_->addItem(common::convertFromString<QString>(connnectionType[type]));
+
     }
 
     IConnectionSettingsBaseSPtr ConnectionDialog::connection() const
@@ -230,6 +237,7 @@ namespace fastoredis
         }
 
         useSsh_->setEnabled(isValidType);
+        testButton_->setEnabled(isValidType);
     }
 
     void ConnectionDialog::securityChange(const QString& )

@@ -11,6 +11,9 @@ class QLabel;
 
 #include "core/connection_settings.h"
 
+class QTreeWidget;
+class QToolBar;
+
 namespace fastoredis
 {
     class ClusterDialog
@@ -30,18 +33,29 @@ namespace fastoredis
         void typeConnectionChange(const QString& value);
         void testConnection();
 
+        void add();
+        void remove();
+        void edit();
+
+        void itemSelectionChanged();
+
     protected:
         virtual void changeEvent(QEvent* );
 
     private:
         void retranslateUi();
         bool validateAndApply();
+        void addConnection(IConnectionSettingsBaseSPtr con);
 
         IClusterSettingsBaseSPtr cluster_connection_;
         QLineEdit* connectionName_;
         QComboBox* typeConnection_;
         QCheckBox* logging_;
 
-        QDialogButtonBox *buttonBox_;
+        QToolBar* savebar_;
+        QTreeWidget* listWidget_;
+
+        QPushButton* testButton_;
+        QDialogButtonBox* buttonBox_;
     };
 }

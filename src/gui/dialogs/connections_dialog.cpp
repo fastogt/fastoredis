@@ -24,24 +24,27 @@
 
 namespace fastoredis
 {
-    class ConnectionListWidgetItem
-            : public QTreeWidgetItem
+    namespace
     {
-    public:
-        ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection) : connection_(connection) { refreshFields(); }
-        IConnectionSettingsBaseSPtr connection() const { return connection_; }
-
-        void refreshFields()
+        class ConnectionListWidgetItem
+                : public QTreeWidgetItem
         {
-            setText(0, common::convertFromString<QString>(connection_->connectionName()));
-            connectionTypes conType = connection_->connectionType();
-            setIcon(0, GuiFactory::instance().icon(conType));
-            setText(1, common::convertFromString<QString>(connection_->fullAddress()));
-        }
+        public:
+            ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection) : connection_(connection) { refreshFields(); }
+            IConnectionSettingsBaseSPtr connection() const { return connection_; }
 
-    private:
-        IConnectionSettingsBaseSPtr connection_;
-    };
+            void refreshFields()
+            {
+                setText(0, common::convertFromString<QString>(connection_->connectionName()));
+                connectionTypes conType = connection_->connectionType();
+                setIcon(0, GuiFactory::instance().icon(conType));
+                setText(1, common::convertFromString<QString>(connection_->fullAddress()));
+            }
+
+        private:
+            IConnectionSettingsBaseSPtr connection_;
+        };
+    }
 
     /**
      * @brief Creates dialog

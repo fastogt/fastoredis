@@ -20,6 +20,8 @@ namespace fastoredis
 
     public:
         ConnectionDialog(QWidget* parent, IConnectionSettingsBase* connection = NULL); //get ownerships connection
+        void setConnectionTypeOnly(connectionTypes type);
+
         IConnectionSettingsBaseSPtr connection() const;
 
     public Q_SLOTS:
@@ -48,6 +50,7 @@ namespace fastoredis
         QCheckBox* logging_;
         QLineEdit* commandLine_;
 
+        QPushButton* testButton_;
         QDialogButtonBox *buttonBox_;
 
         QCheckBox* useSsh_;

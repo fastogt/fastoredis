@@ -10,8 +10,12 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QTreeWidget>
+#include <QToolBar>
+#include <QAction>
 
 #include "gui/dialogs/connection_diagnostic_dialog.h"
+#include "gui/dialogs/connection_dialog.h"
 
 #include "common/qt/convert_string.h"
 
@@ -26,6 +30,28 @@ namespace
 
 namespace fastoredis
 {
+    namespace
+    {
+        class ConnectionListWidgetItem
+                : public QTreeWidgetItem
+        {
+        public:
+            ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection) : connection_(connection) { refreshFields(); }
+            IConnectionSettingsBaseSPtr connection() const { return connection_; }
+
+            void refreshFields()
+            {
+                setText(0, common::convertFromString<QString>(connection_->connectionName()));
+                connectionTypes conType = connection_->connectionType();
+                setIcon(0, GuiFactory::instance().icon(conType));
+                setText(1, common::convertFromString<QString>(connection_->fullAddress()));
+            }
+
+        private:
+            IConnectionSettingsBaseSPtr connection_;
+        };
+    }
+
     ClusterDialog::ClusterDialog(QWidget* parent, IClusterSettingsBase *connection)
         : QDialog(parent), cluster_connection_(connection)
     {
@@ -60,17 +86,54 @@ namespace fastoredis
             logging_->setChecked(false);
         }
 
+        listWidget_ = new QTreeWidget;
+        listWidget_->setIndentation(5);
+
+        QStringList colums;
+        colums << trName << trAddress;
+        listWidget_->setHeaderLabels(colums);
+        listWidget_->setContextMenuPolicy(Qt::ActionsContextMenu);
+        listWidget_->setIndentation(15);
+        listWidget_->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
+
+        VERIFY(connect(listWidget_, &QTreeWidget::itemSelectionChanged, this, &ClusterDialog::itemSelectionChanged));
+
+
+        QHBoxLayout *toolBarLayout = new QHBoxLayout;
+        savebar_ = new QToolBar;
+        savebar_->setStyleSheet("QToolBar { border: 0px; }");
+        toolBarLayout->addWidget(savebar_);
+
+        QAction *addB = new QAction(GuiFactory::instance().loadIcon(), trAddConnection, savebar_);
+        typedef void(QAction::*trig)(bool);
+        VERIFY(connect(addB, static_cast<trig>(&QAction::triggered), this, &ClusterDialog::add));
+        savebar_->addAction(addB);
+
+        QAction *rmB = new QAction(GuiFactory::instance().removeIcon(), trRemoveConnection, savebar_);
+        VERIFY(connect(rmB, static_cast<trig>(&QAction::triggered), this, &ClusterDialog::remove));
+        savebar_->addAction(rmB);
+
+        QAction *editB = new QAction(GuiFactory::instance().editIcon(), trEditConnection, savebar_);
+        VERIFY(connect(editB, static_cast<trig>(&QAction::triggered), this, &ClusterDialog::edit));
+        savebar_->addAction(editB);
+
+        QSpacerItem *hSpacer = new QSpacerItem(300, 0, QSizePolicy::Expanding);
+        toolBarLayout->addSpacerItem(hSpacer);
+
         QVBoxLayout *inputLayout = new QVBoxLayout;
         inputLayout->addWidget(connectionName_);
         inputLayout->addWidget(typeConnection_);
         inputLayout->addWidget(logging_);
+        inputLayout->addLayout(toolBarLayout);
+        inputLayout->addWidget(listWidget_);
 
-        QPushButton *testButton = new QPushButton("&Test");
-        testButton->setIcon(GuiFactory::instance().messageBoxInformationIcon());
-        VERIFY(connect(testButton, &QPushButton::clicked, this, &ClusterDialog::testConnection));
+        testButton_ = new QPushButton("&Test");
+        testButton_->setIcon(GuiFactory::instance().messageBoxInformationIcon());
+        VERIFY(connect(testButton_, &QPushButton::clicked, this, &ClusterDialog::testConnection));
+        testButton_->setEnabled(false);
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
-        bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
+        bottomLayout->addWidget(testButton_, 1, Qt::AlignLeft);
         buttonBox_ = new QDialogButtonBox(this);
         buttonBox_->setOrientation(Qt::Horizontal);
         buttonBox_->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
@@ -107,14 +170,78 @@ namespace fastoredis
         bool isValidType = currentType == REDIS;
         connectionName_->setEnabled(isValidType);
         buttonBox_->button(QDialogButtonBox::Save)->setEnabled(isValidType);
+        savebar_->setEnabled(isValidType);
+        listWidget_->setEnabled(isValidType);
     }
 
     void ClusterDialog::testConnection()
     {
-        if(validateAndApply()){
-            //ConnectionDiagnosticDialog diag(this, cluster_connection_);
-            //diag.exec();
+        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+
+        // Do nothing if no item selected
+        if (!currentItem)
+            return;
+
+        ConnectionDiagnosticDialog diag(this, currentItem->connection());
+        diag.exec();
+    }
+
+    void ClusterDialog::add()
+    {
+        ConnectionDialog dlg(this);
+        dlg.setConnectionTypeOnly(REDIS);
+        int result = dlg.exec();
+        IConnectionSettingsBaseSPtr p = dlg.connection();
+        if(result == QDialog::Accepted && p){
+            addConnection(p);
         }
+    }
+
+    void ClusterDialog::remove()
+    {
+        ConnectionListWidgetItem *currentItem =
+                    dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+
+        // Do nothing if no item selected
+        if (!currentItem)
+            return;
+
+        // Ask user
+        int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
+                                           QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+        if (answer != QMessageBox::Yes)
+            return;
+
+        IConnectionSettingsBaseSPtr connection = currentItem->connection();
+        delete currentItem;
+    }
+
+    void ClusterDialog::edit()
+    {
+        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+
+        // Do nothing if no item selected
+        if (!currentItem)
+            return;
+
+        IConnectionSettingsBaseSPtr oldConnection = currentItem->connection();
+
+        ConnectionDialog dlg(this, dynamic_cast<IConnectionSettingsBase*>(oldConnection->clone()));
+        dlg.setConnectionTypeOnly(REDIS);
+        int result = dlg.exec();
+        IConnectionSettingsBaseSPtr newConnection = dlg.connection();
+        if(result == QDialog::Accepted && newConnection){
+            delete currentItem;
+            addConnection(newConnection);
+        }
+    }
+
+    void ClusterDialog::itemSelectionChanged()
+    {
+        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+
+        testButton_->setEnabled(currentItem != NULL);
     }
 
     void ClusterDialog::changeEvent(QEvent* e)
@@ -140,6 +267,12 @@ namespace fastoredis
             if(newConnection){
                 cluster_connection_.reset(newConnection);
                 cluster_connection_->setLoggingEnabled(logging_->isChecked());
+                for(int i = 0; i < listWidget_->topLevelItemCount(); ++i){
+                    ConnectionListWidgetItem* item = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->topLevelItem(i));
+                    if(item){
+                        cluster_connection_->addNode(item->connection());
+                    }
+                }
             }
             return true;
         }
@@ -148,5 +281,11 @@ namespace fastoredis
             QMessageBox::critical(this, trError, QObject::tr("Invalid database type!"));
             return false;
         }
+    }
+
+    void ClusterDialog::addConnection(IConnectionSettingsBaseSPtr con)
+    {
+        ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
+        listWidget_->addTopLevelItem(item);
     }
 }
