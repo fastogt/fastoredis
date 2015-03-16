@@ -38,6 +38,7 @@ namespace fastoredis
         const QIcon& icon(common::Value::Type type) const;
 
         const QIcon& loadIcon() const;
+        const QIcon& clusterIcon() const;
         const QIcon& saveIcon() const;
         const QIcon& saveAsIcon() const;
         const QIcon& textIcon() const;

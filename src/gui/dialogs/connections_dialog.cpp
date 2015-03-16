@@ -18,6 +18,7 @@
 
 #include "gui/gui_factory.h"
 #include "gui/dialogs/connection_dialog.h"
+#include "gui/dialogs/cluster_dialog.h"
 
 #include "translations/global.h"
 
@@ -99,6 +100,11 @@ namespace fastoredis
         VERIFY(connect(addB, static_cast<trig>(&QAction::triggered), this, &ConnectionsDialog::add));
         savebar->addAction(addB);
 
+        QAction *addc = new QAction(GuiFactory::instance().clusterIcon(), trAddClusterConnection, savebar);
+        typedef void(QAction::*trig)(bool);
+        VERIFY(connect(addc, static_cast<trig>(&QAction::triggered), this, &ConnectionsDialog::addCluster));
+        savebar->addAction(addc);
+
         QAction *rmB = new QAction(GuiFactory::instance().removeIcon(), trRemoveConnection, savebar);
         VERIFY(connect(rmB, static_cast<trig>(&QAction::triggered), this, &ConnectionsDialog::remove));
         savebar->addAction(rmB);
@@ -150,6 +156,12 @@ namespace fastoredis
             SettingsManager::instance().addConnection(p);
             addConnection(p);
         }
+    }
+
+    void ConnectionsDialog::addCluster()
+    {
+        ClusterDialog dlg(this);
+        int result = dlg.exec();
     }
 
     void ConnectionsDialog::remove()

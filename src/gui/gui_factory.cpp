@@ -204,6 +204,12 @@ namespace fastoredis
         return start;
     }
 
+    const QIcon& GuiFactory::clusterIcon() const
+    {
+        static QIcon cluster(":" PROJECT_NAME_LOWERCASE "/images/64x64/cluster.png");
+        return cluster;
+    }
+
     const QIcon& GuiFactory::saveIcon() const
     {
         static QIcon start(":" PROJECT_NAME_LOWERCASE "/images/64x64/save.png");
