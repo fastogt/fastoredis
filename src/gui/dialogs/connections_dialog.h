@@ -26,7 +26,7 @@ namespace fastoredis
 
     private Q_SLOTS:
         void add();
-        void addCluster();
+        void addCls();
         void remove();
         void edit();
         void connectionSelectChange();
@@ -37,6 +37,7 @@ namespace fastoredis
     private:
         void retranslateUi();
         void addConnection(IConnectionSettingsBaseSPtr con);
+        void addCluster(IClusterSettingsBaseSPtr con);
 
         QTreeWidget* listWidget_;
         QPushButton* acButton_;

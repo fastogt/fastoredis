@@ -19,6 +19,11 @@
 #define LOGGING_MEMCACHED_FILE_EXTENSION ".mem"
 #define LOGGING_SSDB_FILE_EXTENSION ".ssdb"
 
+namespace
+{
+    const char magicNumber = 0x1E;
+}
+
 namespace fastoredis
 {
     IConnectionSettings::IConnectionSettings(const std::string& connectionName, connectionTypes type)
@@ -302,12 +307,12 @@ namespace fastoredis
     {
         IClusterSettingsBase *result = NULL;
         if(!val.empty()){
-            size_t len = val.size();
+            const size_t len = val.size();
 
             uint8_t commaCount = 0;
             std::string elText;
 
-            for(size_t i = 0; i < len; ++i ){
+            for(size_t i = 0; i < len; ++i){
                 char ch = val[i];
                 if(ch == ','){
                     if(commaCount == 0){
@@ -322,6 +327,19 @@ namespace fastoredis
                     }
                     else if(commaCount == 2){
                         result->setLoggingEnabled(common::convertFromString<uint8_t>(elText));
+                        std::string serText;
+                        for(size_t j = i + 2; j < len; ++j){
+                            ch = val[j];
+                            if(ch == magicNumber || j == len - 1){
+                                IConnectionSettingsBaseSPtr ser(IConnectionSettingsBase::fromString(serText));
+                                result->addNode(ser);
+                                serText.clear();
+                            }
+                            else{
+                                serText += ch;
+                            }
+                        }
+                        break;
                     }
                     commaCount++;
                     elText.clear();
@@ -340,7 +358,13 @@ namespace fastoredis
         connectionTypes crT = connectionType();
         if(crT != DBUNKNOWN){
             std::stringstream str;
-            str << crT << ',' << connectionName() << ',' << logging_enabled_;
+            str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',';
+            for(int i = 0; i < clusters_nodes_.size(); ++i){
+               IConnectionSettingsBaseSPtr serv = clusters_nodes_[i];
+               if(serv){
+                   str << magicNumber << serv->toString();
+               }
+            }
             res = str.str();
         }
         return res;

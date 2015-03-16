@@ -96,8 +96,15 @@ namespace fastoredis
         listWidget_->setIndentation(15);
         listWidget_->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
 
-        VERIFY(connect(listWidget_, &QTreeWidget::itemSelectionChanged, this, &ClusterDialog::itemSelectionChanged));
+        if(cluster_connection_){
+            IClusterSettingsBase::cluster_connection_type clusters = cluster_connection_->nodes();
+            for(IClusterSettingsBase::cluster_connection_type::const_iterator it = clusters.begin(); it != clusters.end(); ++it){
+                IConnectionSettingsBaseSPtr serv = *it;
+                addConnection(serv);
+            }
+        }
 
+        VERIFY(connect(listWidget_, &QTreeWidget::itemSelectionChanged, this, &ClusterDialog::itemSelectionChanged));
 
         QHBoxLayout *toolBarLayout = new QHBoxLayout;
         savebar_ = new QToolBar;
@@ -213,7 +220,6 @@ namespace fastoredis
         if (answer != QMessageBox::Yes)
             return;
 
-        IConnectionSettingsBaseSPtr connection = currentItem->connection();
         delete currentItem;
     }
 

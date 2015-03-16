@@ -30,10 +30,8 @@ namespace fastoredis
                 : public QTreeWidgetItem
         {
         public:
-            ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection) : connection_(connection) { refreshFields(); }
-            IConnectionSettingsBaseSPtr connection() const { return connection_; }
-
-            void refreshFields()
+            ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection)
+                : connection_(connection)
             {
                 setText(0, common::convertFromString<QString>(connection_->connectionName()));
                 connectionTypes conType = connection_->connectionType();
@@ -41,8 +39,42 @@ namespace fastoredis
                 setText(1, common::convertFromString<QString>(connection_->fullAddress()));
             }
 
+            IConnectionSettingsBaseSPtr connection() const
+            {
+                return connection_;
+            }
+
         private:
             IConnectionSettingsBaseSPtr connection_;
+        };
+
+        class ClusterConnectionListWidgetItem
+                : public QTreeWidgetItem
+        {
+        public:
+            ClusterConnectionListWidgetItem(IClusterSettingsBaseSPtr connection)
+                : connection_(connection)
+            {
+                setText(0, common::convertFromString<QString>(connection_->connectionName()));
+                connectionTypes conType = connection_->connectionType();
+                setIcon(0, GuiFactory::instance().icon(conType));
+
+                IClusterSettingsBase::cluster_connection_type servers = connection_->nodes();
+
+                for(int i = 0; i < servers.size(); ++i){
+                    IConnectionSettingsBaseSPtr con = servers[i];
+                    ConnectionListWidgetItem* item = new ConnectionListWidgetItem(con);
+                    addChild(item);
+                }
+            }
+
+            IClusterSettingsBaseSPtr connection() const
+            {
+                return connection_;
+            }
+
+        private:
+            IClusterSettingsBaseSPtr connection_;
         };
     }
 
@@ -105,7 +137,7 @@ namespace fastoredis
 
         QAction *addc = new QAction(GuiFactory::instance().clusterIcon(), trAddClusterConnection, savebar);
         typedef void(QAction::*trig)(bool);
-        VERIFY(connect(addc, static_cast<trig>(&QAction::triggered), this, &ConnectionsDialog::addCluster));
+        VERIFY(connect(addc, static_cast<trig>(&QAction::triggered), this, &ConnectionsDialog::addCls));
         savebar->addAction(addc);
 
         QAction *rmB = new QAction(GuiFactory::instance().removeIcon(), trRemoveConnection, savebar);
@@ -132,6 +164,12 @@ namespace fastoredis
         for (SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
             IConnectionSettingsBaseSPtr connectionModel = (*it);
             addConnection(connectionModel);
+        }
+
+        SettingsManager::ClusterSettingsContainerType clusters = SettingsManager::instance().clusters();
+        for (SettingsManager::ClusterSettingsContainerType::const_iterator it = clusters.begin(); it != clusters.end(); ++it) {
+            IClusterSettingsBaseSPtr connectionModel = (*it);
+            addCluster(connectionModel);
         }
 
         // Highlight first item
@@ -161,51 +199,76 @@ namespace fastoredis
         }
     }
 
-    void ConnectionsDialog::addCluster()
+    void ConnectionsDialog::addCls()
     {
         ClusterDialog dlg(this);
         int result = dlg.exec();
+        IClusterSettingsBaseSPtr p = dlg.connection();
+        if(result == QDialog::Accepted && p){
+            SettingsManager::instance().addCluster(p);
+            addCluster(p);
+        }
     }
 
     void ConnectionsDialog::remove()
     {
-        ConnectionListWidgetItem *currentItem =
-                    dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        if (ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem())){
 
-        // Do nothing if no item selected
-        if (!currentItem)
-            return;
+            // Ask user
+            int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
+                                               QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
-        // Ask user
-        int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
-                                           QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+            if (answer != QMessageBox::Yes)
+                return;
 
-        if (answer != QMessageBox::Yes)
-            return;
+            IConnectionSettingsBaseSPtr connection = currentItem->connection();
+            delete currentItem;
+            SettingsManager::instance().removeConnection(connection);
+        }
+        else if(ClusterConnectionListWidgetItem* currentItem = dynamic_cast<ClusterConnectionListWidgetItem *>(listWidget_->currentItem())){
 
-        IConnectionSettingsBaseSPtr connection = currentItem->connection();
-        delete currentItem;
-        SettingsManager::instance().removeConnection(connection);
+            // Ask user
+            int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" cluster?").arg(currentItem->text(0)),
+                                               QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+            if (answer != QMessageBox::Yes)
+                return;
+
+            IClusterSettingsBaseSPtr connection = currentItem->connection();
+            delete currentItem;
+            SettingsManager::instance().removeCluster(connection);
+        }
     }
 
     void ConnectionsDialog::edit()
     {
-        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        if (ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem())){
 
-        // Do nothing if no item selected
-        if (!currentItem)
-            return;
+            IConnectionSettingsBaseSPtr oldConnection = currentItem->connection();
 
-        IConnectionSettingsBaseSPtr oldConnection = currentItem->connection();
+            ConnectionDialog dlg(this, dynamic_cast<IConnectionSettingsBase*>(oldConnection->clone()));
+            int result = dlg.exec();
+            IConnectionSettingsBaseSPtr newConnection = dlg.connection();
+            if(result == QDialog::Accepted && newConnection){
+                delete currentItem;
+                SettingsManager::instance().removeConnection(oldConnection);
+                SettingsManager::instance().addConnection(newConnection);
+                addConnection(newConnection);
+            }
+        }
+        else if(ClusterConnectionListWidgetItem* currentItem = dynamic_cast<ClusterConnectionListWidgetItem *>(listWidget_->currentItem())){
 
-        ConnectionDialog dlg(this, dynamic_cast<IConnectionSettingsBase*>(oldConnection->clone()));
-        int result = dlg.exec();
-        IConnectionSettingsBaseSPtr newConnection = dlg.connection();
-        if(result == QDialog::Accepted && newConnection){
-            delete currentItem;
-            SettingsManager::instance().removeConnection(oldConnection);            
-            SettingsManager::instance().addConnection(newConnection);
-            addConnection(newConnection);
+            IClusterSettingsBaseSPtr oldConnection = currentItem->connection();
+
+            ClusterDialog dlg(this, dynamic_cast<IClusterSettingsBase*>(oldConnection->clone()));
+            int result = dlg.exec();
+            IClusterSettingsBaseSPtr newConnection = dlg.connection();
+            if(result == QDialog::Accepted && newConnection){
+                delete currentItem;
+                SettingsManager::instance().removeCluster(oldConnection);
+                SettingsManager::instance().addCluster(newConnection);
+                addCluster(newConnection);
+            }
         }
     }
 
@@ -241,7 +304,13 @@ namespace fastoredis
 
     void ConnectionsDialog::addConnection(IConnectionSettingsBaseSPtr con)
     {
-        ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
+        ConnectionListWidgetItem* item = new ConnectionListWidgetItem(con);
+        listWidget_->addTopLevelItem(item);
+    }
+
+    void ConnectionsDialog::addCluster(IClusterSettingsBaseSPtr con)
+    {
+        ClusterConnectionListWidgetItem* item = new ClusterConnectionListWidgetItem(con);
         listWidget_->addTopLevelItem(item);
     }
 }
