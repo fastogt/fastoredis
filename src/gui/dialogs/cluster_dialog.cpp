@@ -139,8 +139,14 @@ namespace fastoredis
         VERIFY(connect(testButton_, &QPushButton::clicked, this, &ClusterDialog::testConnection));
         testButton_->setEnabled(false);
 
+        discoveryButton_ = new QPushButton("&Discovery");
+        discoveryButton_->setIcon(GuiFactory::instance().discoveryIcon());
+        VERIFY(connect(discoveryButton_, &QPushButton::clicked, this, &ClusterDialog::discoveryCluster));
+        discoveryButton_->setEnabled(false);
+
         QHBoxLayout *bottomLayout = new QHBoxLayout;
         bottomLayout->addWidget(testButton_, 1, Qt::AlignLeft);
+        bottomLayout->addWidget(discoveryButton_, 1, Qt::AlignLeft);
         buttonBox_ = new QDialogButtonBox(this);
         buttonBox_->setOrientation(Qt::Horizontal);
         buttonBox_->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
@@ -191,6 +197,17 @@ namespace fastoredis
 
         ConnectionDiagnosticDialog diag(this, currentItem->connection());
         diag.exec();
+    }
+
+    void ClusterDialog::discoveryCluster()
+    {
+        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+
+        // Do nothing if no item selected
+        if (!currentItem)
+            return;
+
+
     }
 
     void ClusterDialog::add()
@@ -247,7 +264,10 @@ namespace fastoredis
     {
         ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
 
-        testButton_->setEnabled(currentItem != NULL);
+        bool isValidConnection = currentItem != NULL;
+
+        testButton_->setEnabled(isValidConnection);
+        discoveryButton_->setEnabled(isValidConnection);
     }
 
     void ClusterDialog::changeEvent(QEvent* e)

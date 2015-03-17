@@ -32,6 +32,7 @@ namespace fastoredis
     private Q_SLOTS:
         void typeConnectionChange(const QString& value);
         void testConnection();
+        void discoveryCluster();
 
         void add();
         void remove();
@@ -56,6 +57,7 @@ namespace fastoredis
         QTreeWidget* listWidget_;
 
         QPushButton* testButton_;
+        QPushButton* discoveryButton_;
         QDialogButtonBox* buttonBox_;
     };
 }

@@ -246,6 +246,12 @@ namespace fastoredis
         return logg;
     }
 
+    const QIcon& GuiFactory::discoveryIcon() const
+    {
+        static QIcon discovery(":" PROJECT_NAME_LOWERCASE "/images/64x64/discovery.png");
+        return discovery;
+    }
+
     const QIcon& GuiFactory::commandIcon() const
     {
         static QIcon comm(":" PROJECT_NAME_LOWERCASE "/images/64x64/command.png");
