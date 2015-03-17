@@ -85,6 +85,11 @@ namespace fastoredis
         return isSuperServer_;
     }
 
+    bool IServer::isRoot() const
+    {
+        return drv_->isRoot();
+    }
+
     bool IServer::isLocalHost() const
     {
         return common::net::isLocalHost(drv_->address().host_);

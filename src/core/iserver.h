@@ -22,6 +22,7 @@ namespace fastoredis
         bool isConnected() const;
 
         bool isSuperServer() const;
+        bool isRoot() const;
 
         bool isLocalHost() const;
 
@@ -155,5 +156,6 @@ namespace fastoredis
         void discoveryInfo();
 
         bool isSuperServer_;
+        bool isRoot_;
     };
 }

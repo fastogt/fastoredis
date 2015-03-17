@@ -63,6 +63,7 @@ namespace fastoredis
         void retranslateUi();
         void updateRecentConnectionActions();
         void createServer(IConnectionSettingsBaseSPtr settings);
+        void createCluster(IClusterSettingsBaseSPtr settings);
 
         QAction* openAction_;
         QAction* exitAction_;

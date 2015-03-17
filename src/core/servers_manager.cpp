@@ -27,6 +27,8 @@ namespace fastoredis
 
     IServerSPtr ServersManager::createServer(IConnectionSettingsBaseSPtr settings)
     {
+        DCHECK(settings);
+
         IServerSPtr result;
         connectionTypes conT = settings->connectionType();
         IServerSPtr ser = findServerBySetting(settings);
@@ -76,6 +78,19 @@ namespace fastoredis
         }
 
         return result;
+    }
+
+    Cluster ServersManager::createCluster(IClusterSettingsBaseSPtr settings)
+    {
+        DCHECK(settings);
+
+        Cluster cl(settings->connectionName());
+        IClusterSettingsBase::cluster_connection_type nodes = settings->nodes();
+        for(int i = 0; i < nodes.size(); ++i){
+            IServerSPtr serv = createServer(nodes[i]);
+            cl.addServer(serv);
+        }
+        return cl;
     }
 
     void ServersManager::setSyncServers(bool isSync)

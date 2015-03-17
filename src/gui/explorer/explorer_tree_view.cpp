@@ -126,6 +126,28 @@ namespace fastoredis
         emit closeServer(server);
     }
 
+    void ExplorerTreeView::addCluster(Cluster cluster)
+    {
+        ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        mod->addCluster(cluster);
+    }
+
+    void ExplorerTreeView::removeCluster(Cluster cluster)
+    {
+        ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
+        DCHECK(mod);
+        if(!mod){
+            return;
+        }
+
+        mod->removeCluster(cluster);
+    }
+
     void ExplorerTreeView::showContextMenu(const QPoint& point)
     {
         QPoint menuPoint = mapToGlobal(point);

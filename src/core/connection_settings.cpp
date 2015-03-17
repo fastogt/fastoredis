@@ -63,7 +63,7 @@ namespace fastoredis
     }
 
     IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName, connectionTypes type)
-        : IConnectionSettings(connectionName, type), hash_(), sshInfo_()
+        : IConnectionSettings(connectionName, type), hash_(), sshInfo_(), isRoot_(false)
     {
         setConnectionNameAndUpdateHash(connectionName);
     }
@@ -203,6 +203,11 @@ namespace fastoredis
         sshInfo_ = info;
     }
 
+    bool IConnectionSettingsBase::isRoot() const
+    {
+        return isRoot_;
+    }
+
     const char* useHelpText(connectionTypes type)
     {
         if(type == DBUNKNOWN){
@@ -287,6 +292,18 @@ namespace fastoredis
     IClusterSettingsBase::cluster_connection_type IClusterSettingsBase::nodes() const
     {
         return clusters_nodes_;
+    }
+
+    IConnectionSettingsBaseSPtr IClusterSettingsBase::rootSetting() const
+    {
+        for(int i = 0; i < clusters_nodes_.size(); ++i){
+            IConnectionSettingsBaseSPtr serv = clusters_nodes_[i];
+            if(serv && serv->isRoot()){
+                return serv;
+            }
+        }
+
+        return IConnectionSettingsBaseSPtr();
     }
 
     void IClusterSettingsBase::addNode(IConnectionSettingsBaseSPtr node)

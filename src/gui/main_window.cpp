@@ -258,8 +258,12 @@ namespace fastoredis
         ConnectionsDialog dlg(this);
         int result = dlg.exec();
         if(result == QDialog::Accepted){
-            IConnectionSettingsBaseSPtr con = dlg.selectedConnection();
-            createServer(con);
+            if(IConnectionSettingsBaseSPtr con = dlg.selectedConnection()){
+                createServer(con);
+            }
+            else if(IClusterSettingsBaseSPtr clus = dlg.selectedCluster()){
+                createCluster(clus);
+            }
         }
     }
 
@@ -463,12 +467,26 @@ namespace fastoredis
 
     void MainWindow::createServer(IConnectionSettingsBaseSPtr settings)
     {
+        if(!settings){
+            return;
+        }
+
         QString rcon = common::convertFromString<QString>(settings->connectionName());
         SettingsManager::instance().removeRConnection(rcon);
         IServerSPtr server = ServersManager::instance().createServer(settings);
         exp_->addServer(server);
         SettingsManager::instance().addRConnection(rcon);
         updateRecentConnectionActions();
+    }
+
+    void MainWindow::createCluster(IClusterSettingsBaseSPtr settings)
+    {
+        if(!settings){
+            return;
+        }
+
+        Cluster cl = ServersManager::instance().createCluster(settings);
+        exp_->addCluster(cl);
     }
 
     UpdateChecker::UpdateChecker(QObject* parent)

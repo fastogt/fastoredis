@@ -22,8 +22,7 @@ namespace fastoredis
         : connection_(connection)
     {
         setText(0, common::convertFromString<QString>(connection_->connectionName()));
-        connectionTypes conType = connection_->connectionType();
-        setIcon(0, GuiFactory::instance().icon(conType));
+        setIcon(0, GuiFactory::instance().clusterIcon());
 
         IClusterSettingsBase::cluster_connection_type servers = connection_->nodes();
 

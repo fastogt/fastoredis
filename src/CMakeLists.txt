@@ -132,6 +132,7 @@ SET(HEADERS_CORE
     core/msgpack_edcoder.h
 )
 SET(SOURCES_CORE
+    core/core_fwd.cpp
     core/events/events_info.cpp
     core/command_logger.cpp
     core/connection_types.cpp

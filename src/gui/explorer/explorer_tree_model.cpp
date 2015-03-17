@@ -52,6 +52,41 @@ namespace fastoredis
          return server_->loadDatabases();
     }
 
+    ExplorerClusterItem::ExplorerClusterItem(Cluster server, TreeItem* parent)
+        : IExplorerTreeItem(parent), cluster_(server)
+    {
+        Cluster::nodes_type nodes = server.nodes();
+        for(int i = 0; i < nodes.size(); ++i){
+            ExplorerServerItem* ser = new ExplorerServerItem(nodes[i], this);
+            addChildren(ser);
+        }
+    }
+
+    ExplorerClusterItem::~ExplorerClusterItem()
+    {
+
+    }
+
+    QString ExplorerClusterItem::name() const
+    {
+        return common::convertFromString<QString>(cluster_.name());
+    }
+
+    IServerSPtr ExplorerClusterItem::server() const
+    {
+        return cluster_.root();
+    }
+
+    ExplorerClusterItem::eType ExplorerClusterItem::type() const
+    {
+        return eCluster;
+    }
+
+    Cluster ExplorerClusterItem::cluster() const
+    {
+        return cluster_;
+    }
+
     ExplorerDatabaseItem::ExplorerDatabaseItem(DataBaseInfoSPtr db, ExplorerServerItem* parent)
         : IExplorerTreeItem(parent)
     {
@@ -239,8 +274,11 @@ namespace fastoredis
 
         IExplorerTreeItem::eType t = node->type();
 
-        if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){            
-            if(t == IExplorerTreeItem::Server){
+        if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){
+            if(t == IExplorerTreeItem::eCluster){
+                return GuiFactory::instance().clusterIcon();
+            }
+            else if(t == IExplorerTreeItem::Server){
                 return GuiFactory::instance().icon(node->server()->type());
             }
             else if(t == IExplorerTreeItem::Key){
@@ -303,6 +341,35 @@ namespace fastoredis
     int ExplorerTreeModel::columnCount(const QModelIndex& parent) const
     {
         return ExplorerServerItem::eCountColumns;
+    }
+
+    void ExplorerTreeModel::addCluster(Cluster cluster)
+    {
+        ExplorerClusterItem* cl = findClusterItem(cluster);
+        if(!cl){
+            TreeItem *parent = dynamic_cast<TreeItem*>(root_);
+            DCHECK(parent);
+            if(!parent){
+                return;
+            }
+
+            ExplorerClusterItem *item = new ExplorerClusterItem(cluster, parent);
+            insertItem(QModelIndex(), item);
+        }
+    }
+
+    void ExplorerTreeModel::removeCluster(Cluster cluster)
+    {
+        TreeItem *par = dynamic_cast<TreeItem*>(root_);
+        DCHECK(par);
+        if(!par){
+            return;
+        }
+
+        ExplorerClusterItem *serverItem = findClusterItem(cluster);
+        if(serverItem){
+            removeItem(QModelIndex(), serverItem);
+        }
     }
 
     void ExplorerTreeModel::addServer(IServerSPtr server)
@@ -443,7 +510,24 @@ namespace fastoredis
         }
     }
 
-    ExplorerServerItem *ExplorerTreeModel::findServerItem(IServer* server) const
+    ExplorerClusterItem* ExplorerTreeModel::findClusterItem(Cluster cl)
+    {
+        TreeItem *parent = dynamic_cast<TreeItem*>(root_);
+        DCHECK(parent);
+        if(!parent){
+            return NULL;
+        }
+
+        for(int i = 0; i < parent->childrenCount() ; ++i){
+            ExplorerClusterItem *item = dynamic_cast<ExplorerClusterItem*>(parent->child(i));
+            if(item && item->cluster().root() == cl.root()){
+                return item;
+            }
+        }
+        return NULL;
+    }
+
+    ExplorerServerItem* ExplorerTreeModel::findServerItem(IServer* server) const
     {
         TreeItem *parent = dynamic_cast<TreeItem*>(root_);
         DCHECK(parent);
@@ -452,8 +536,7 @@ namespace fastoredis
         }
         for(int i = 0; i < parent->childrenCount() ; ++i){
             ExplorerServerItem *item = dynamic_cast<ExplorerServerItem*>(parent->child(i));
-            DCHECK(item);
-            if(item->server().get() == server){
+            if(item && item->server().get() == server){
                 return item;
             }
         }

@@ -18,6 +18,7 @@ namespace fastoredis
 
         enum eType
         {
+            eCluster,
             Server,
             Database,
             Key
@@ -45,6 +46,22 @@ namespace fastoredis
 
     private:
         const IServerSPtr server_;
+    };
+
+    struct ExplorerClusterItem
+            : public IExplorerTreeItem
+    {
+        ExplorerClusterItem(Cluster server, TreeItem* parent);
+        virtual ~ExplorerClusterItem();
+
+        virtual QString name() const;
+        virtual IServerSPtr server() const;
+        virtual eType type() const;
+
+        Cluster cluster() const;
+
+    private:
+        const Cluster cluster_;
     };
 
     struct ExplorerDatabaseItem
@@ -109,6 +126,9 @@ namespace fastoredis
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
         virtual int columnCount(const QModelIndex &parent) const;
 
+        void addCluster(Cluster cluster);
+        void removeCluster(Cluster cluster);
+
         void addServer(IServerSPtr server);
         void removeServer(IServerSPtr server);
 
@@ -118,7 +138,9 @@ namespace fastoredis
 
         void addKey(IServer* server, DataBaseInfoSPtr db, const NKey& key);
         void removeKey(IServer* server, DataBaseInfoSPtr db, const NKey& key);
+
     private:
+        ExplorerClusterItem* findClusterItem(Cluster cl);
         ExplorerServerItem* findServerItem(IServer* server) const;
         ExplorerDatabaseItem* findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const;
         ExplorerKeyItem* findKeyItem(ExplorerDatabaseItem* db, const NKey& key) const;

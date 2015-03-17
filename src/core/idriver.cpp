@@ -104,6 +104,11 @@ namespace fastoredis
         return currentDatabaseInfo_;
     }
 
+    bool IDriver::isRoot() const
+    {
+        return settings_->isRoot();
+    }
+
     void IDriver::start()
     {
         thread_->start();

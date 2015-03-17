@@ -22,6 +22,8 @@ namespace fastoredis
 
         ConnectionsDialog(QWidget* parent = 0);
         IConnectionSettingsBaseSPtr selectedConnection() const;
+        IClusterSettingsBaseSPtr selectedCluster() const;
+
         virtual void accept();
 
     private Q_SLOTS:

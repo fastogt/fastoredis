@@ -136,6 +136,16 @@ namespace fastoredis
         return IConnectionSettingsBaseSPtr();
     }
 
+    IClusterSettingsBaseSPtr ConnectionsDialog::selectedCluster() const
+    {
+        ClusterConnectionListWidgetItem *currentItem = dynamic_cast<ClusterConnectionListWidgetItem *>(listWidget_->currentItem());
+        if (currentItem){
+            return currentItem->connection();
+        }
+
+        return IClusterSettingsBaseSPtr();
+    }
+
     void ConnectionsDialog::add()
     {
         ConnectionDialog dlg(this);
