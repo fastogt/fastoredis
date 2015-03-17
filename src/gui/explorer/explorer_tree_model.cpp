@@ -7,6 +7,8 @@
 #include "common/qt/utils_qt.h"
 #include "common/qt/convert_string.h"
 
+#include "core/icluster.h"
+
 namespace fastoredis
 {
     IExplorerTreeItem::IExplorerTreeItem(TreeItem* parent)
@@ -52,10 +54,10 @@ namespace fastoredis
          return server_->loadDatabases();
     }
 
-    ExplorerClusterItem::ExplorerClusterItem(Cluster server, TreeItem* parent)
+    ExplorerClusterItem::ExplorerClusterItem(IClusterSPtr server, TreeItem* parent)
         : IExplorerTreeItem(parent), cluster_(server)
     {
-        Cluster::nodes_type nodes = server.nodes();
+        ICluster::nodes_type nodes = server->nodes();
         for(int i = 0; i < nodes.size(); ++i){
             ExplorerServerItem* ser = new ExplorerServerItem(nodes[i], this);
             addChildren(ser);
@@ -69,12 +71,12 @@ namespace fastoredis
 
     QString ExplorerClusterItem::name() const
     {
-        return common::convertFromString<QString>(cluster_.name());
+        return common::convertFromString<QString>(cluster_->name());
     }
 
     IServerSPtr ExplorerClusterItem::server() const
     {
-        return cluster_.root();
+        return cluster_->root();
     }
 
     ExplorerClusterItem::eType ExplorerClusterItem::type() const
@@ -82,7 +84,7 @@ namespace fastoredis
         return eCluster;
     }
 
-    Cluster ExplorerClusterItem::cluster() const
+    IClusterSPtr ExplorerClusterItem::cluster() const
     {
         return cluster_;
     }
@@ -343,7 +345,7 @@ namespace fastoredis
         return ExplorerServerItem::eCountColumns;
     }
 
-    void ExplorerTreeModel::addCluster(Cluster cluster)
+    void ExplorerTreeModel::addCluster(IClusterSPtr cluster)
     {
         ExplorerClusterItem* cl = findClusterItem(cluster);
         if(!cl){
@@ -358,7 +360,7 @@ namespace fastoredis
         }
     }
 
-    void ExplorerTreeModel::removeCluster(Cluster cluster)
+    void ExplorerTreeModel::removeCluster(IClusterSPtr cluster)
     {
         TreeItem *par = dynamic_cast<TreeItem*>(root_);
         DCHECK(par);
@@ -510,7 +512,7 @@ namespace fastoredis
         }
     }
 
-    ExplorerClusterItem* ExplorerTreeModel::findClusterItem(Cluster cl)
+    ExplorerClusterItem* ExplorerTreeModel::findClusterItem(IClusterSPtr cl)
     {
         TreeItem *parent = dynamic_cast<TreeItem*>(root_);
         DCHECK(parent);
@@ -520,7 +522,7 @@ namespace fastoredis
 
         for(int i = 0; i < parent->childrenCount() ; ++i){
             ExplorerClusterItem *item = dynamic_cast<ExplorerClusterItem*>(parent->child(i));
-            if(item && item->cluster().root() == cl.root()){
+            if(item && item->cluster()->root() == cl->root()){
                 return item;
             }
         }

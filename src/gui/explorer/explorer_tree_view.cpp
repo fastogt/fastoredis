@@ -16,6 +16,8 @@
 
 #include "common/qt/convert_string.h"
 
+#include "core/icluster.h"
+
 #include "translations/global.h"
 
 namespace fastoredis
@@ -112,7 +114,7 @@ namespace fastoredis
         emit closeServer(server);
     }
 
-    void ExplorerTreeView::addCluster(Cluster cluster)
+    void ExplorerTreeView::addCluster(IClusterSPtr cluster)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         DCHECK(mod);
@@ -120,7 +122,7 @@ namespace fastoredis
             return;
         }
 
-        Cluster::nodes_type nodes = cluster.nodes();
+        ICluster::nodes_type nodes = cluster->nodes();
         for(int i = 0; i < nodes.size(); ++i){
             syncWithServer(nodes[i].get());
         }
@@ -128,7 +130,7 @@ namespace fastoredis
         mod->addCluster(cluster);
     }
 
-    void ExplorerTreeView::removeCluster(Cluster cluster)
+    void ExplorerTreeView::removeCluster(IClusterSPtr cluster)
     {
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         DCHECK(mod);
@@ -136,7 +138,7 @@ namespace fastoredis
             return;
         }
 
-        Cluster::nodes_type nodes = cluster.nodes();
+        ICluster::nodes_type nodes = cluster->nodes();
         for(int i = 0; i < nodes.size(); ++i){
             unsyncWithServer(nodes[i].get());
         }

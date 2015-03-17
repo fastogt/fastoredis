@@ -51,17 +51,17 @@ namespace fastoredis
     struct ExplorerClusterItem
             : public IExplorerTreeItem
     {
-        ExplorerClusterItem(Cluster server, TreeItem* parent);
+        ExplorerClusterItem(IClusterSPtr server, TreeItem* parent);
         virtual ~ExplorerClusterItem();
 
         virtual QString name() const;
         virtual IServerSPtr server() const;
         virtual eType type() const;
 
-        Cluster cluster() const;
+        IClusterSPtr cluster() const;
 
     private:
-        const Cluster cluster_;
+        const IClusterSPtr cluster_;
     };
 
     struct ExplorerDatabaseItem
@@ -126,8 +126,8 @@ namespace fastoredis
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
         virtual int columnCount(const QModelIndex &parent) const;
 
-        void addCluster(Cluster cluster);
-        void removeCluster(Cluster cluster);
+        void addCluster(IClusterSPtr cluster);
+        void removeCluster(IClusterSPtr cluster);
 
         void addServer(IServerSPtr server);
         void removeServer(IServerSPtr server);
@@ -140,7 +140,7 @@ namespace fastoredis
         void removeKey(IServer* server, DataBaseInfoSPtr db, const NKey& key);
 
     private:
-        ExplorerClusterItem* findClusterItem(Cluster cl);
+        ExplorerClusterItem* findClusterItem(IClusterSPtr cl);
         ExplorerServerItem* findServerItem(IServer* server) const;
         ExplorerDatabaseItem* findDatabaseItem(ExplorerServerItem* server, DataBaseInfoSPtr db) const;
         ExplorerKeyItem* findKeyItem(ExplorerDatabaseItem* db, const NKey& key) const;

@@ -27,7 +27,6 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/cluster_dialog.h
     gui/dialogs/connection_diagnostic_dialog.h
     gui/dialogs/discovery_dialog.h
-    gui/dialogs/connection_listwidget_items.h
     gui/dialogs/python_console_dialog.h
     gui/dialogs/lua_console_dialog.h
     gui/dialogs/base_console_dialog.h
@@ -50,6 +49,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/base/graph_widget.h
 )
 SET(HEADERS_GUI
+    gui/dialogs/connection_listwidget_items.h
     gui/gui_factory.h
     gui/shortcuts.h
     gui/fasto_common_item.h
@@ -116,6 +116,7 @@ SET(HEADERS_CORE_TO_MOC
 SET(HEADERS_CORE
     core/connection_types.h
     core/core_fwd.h
+    core/icluster.h
     core/idatabase.h
     core/settings_manager.h
     core/connection_settings.h
@@ -132,7 +133,6 @@ SET(HEADERS_CORE
     core/msgpack_edcoder.h
 )
 SET(SOURCES_CORE
-    core/core_fwd.cpp
     core/events/events_info.cpp
     core/command_logger.cpp
     core/connection_types.cpp
@@ -141,6 +141,7 @@ SET(SOURCES_CORE
     core/logger.cpp
     core/idriver.cpp
     core/iserver.cpp
+    core/icluster.cpp
     core/idatabase.cpp
     core/servers_manager.cpp
     core/types.cpp

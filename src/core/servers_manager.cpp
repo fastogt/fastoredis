@@ -2,6 +2,8 @@
 
 #include "core/settings_manager.h"
 
+#include "core/icluster.h"
+
 #include "core/redis/redis_server.h"
 #include "core/redis/redis_driver.h"
 
@@ -80,15 +82,15 @@ namespace fastoredis
         return result;
     }
 
-    Cluster ServersManager::createCluster(IClusterSettingsBaseSPtr settings)
+    IClusterSPtr ServersManager::createCluster(IClusterSettingsBaseSPtr settings)
     {
         DCHECK(settings);
 
-        Cluster cl(settings->connectionName());
+        IClusterSPtr cl(new ICluster(settings->connectionName()));
         IClusterSettingsBase::cluster_connection_type nodes = settings->nodes();
         for(int i = 0; i < nodes.size(); ++i){
             IServerSPtr serv = createServer(nodes[i]);
-            cl.addServer(serv);
+            cl->addServer(serv);
         }
         return cl;
     }

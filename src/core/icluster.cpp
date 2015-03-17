@@ -1,16 +1,16 @@
-#include "core/core_fwd.h"
+#include "core/icluster.h"
 
 #include "core/iserver.h"
 
 namespace fastoredis
 {
-    Cluster::Cluster(const std::string &name, const nodes_type& nodes)
+    ICluster::ICluster(const std::string &name, const nodes_type& nodes)
         : name_(name), nodes_(nodes)
     {
 
     }
 
-    IServerSPtr Cluster::root() const
+    IServerSPtr ICluster::root() const
     {
         for(int i = 0; i < nodes_.size(); ++i){
             IServerSPtr ser = nodes_[i];
@@ -22,17 +22,17 @@ namespace fastoredis
         return IServerSPtr();
     }
 
-    std::string Cluster::name() const
+    std::string ICluster::name() const
     {
         return name_;
     }
 
-    Cluster::nodes_type Cluster::nodes() const
+    ICluster::nodes_type ICluster::nodes() const
     {
         return nodes_;
     }
 
-    void Cluster::addServer(IServerSPtr serv)
+    void ICluster::addServer(IServerSPtr serv)
     {
         if(serv){
             nodes_.push_back(serv);

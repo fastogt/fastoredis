@@ -24,8 +24,8 @@ namespace fastoredis
         void addServer(IServerSPtr server);
         void removeServer(IServerSPtr server);
 
-        void addCluster(Cluster cluster);
-        void removeCluster(Cluster cluster);
+        void addCluster(IClusterSPtr cluster);
+        void removeCluster(IClusterSPtr cluster);
 
     private Q_SLOTS:
         void showContextMenu(const QPoint& point);
