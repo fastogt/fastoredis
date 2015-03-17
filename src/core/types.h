@@ -53,6 +53,10 @@ namespace fastoredis
 
         connectionTypes connectionType() const;
         serverTypes type() const;
+        bool self() const;
+
+        std::string name() const;
+        void setName(const std::string& name);
 
         common::net::hostAndPort host() const;
         void setHost(const common::net::hostAndPort& host);
@@ -62,6 +66,7 @@ namespace fastoredis
 
         ServerDiscoveryInfo(connectionTypes ctype, serverTypes type, bool self);
         common::net::hostAndPort host_;
+        std::string name_;
 
     private:
         const bool self_;

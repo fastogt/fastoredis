@@ -194,6 +194,7 @@ namespace common
         void msleep(unsigned int msec);
         void usleep(unsigned int usec);
 
+        char* strdupornull(const std::string& src);
         char* strdupornull(const char* src);
         void freeifnotnull(void* ptr);
         const char* c_strornull(const std::string& val);

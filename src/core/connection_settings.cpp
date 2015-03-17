@@ -73,6 +73,12 @@ namespace fastoredis
 
     }
 
+    void IConnectionSettingsBase::setHost(const common::net::hostAndPort& host)
+    {
+        setPort(host.port_);
+        setHost(host.host_);
+    }
+
     void IConnectionSettingsBase::setConnectionNameAndUpdateHash(const std::string& name)
     {
         using namespace common::utils;

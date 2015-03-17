@@ -1,5 +1,7 @@
 #include "core/memcached/memcached_settings.h"
 
+#include "common/utils.h"
+
 namespace fastoredis
 {
     MemcachedConnectionSettings::MemcachedConnectionSettings(const std::string& connectionName)
@@ -21,6 +23,11 @@ namespace fastoredis
     std::string MemcachedConnectionSettings::host() const
     {
         return info_.hostip_;
+    }
+
+    void MemcachedConnectionSettings::setHost(const std::string& host)
+    {
+        info_.hostip_ = common::utils::strdupornull(host);
     }
 
     int MemcachedConnectionSettings::port() const

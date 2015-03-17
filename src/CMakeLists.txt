@@ -26,6 +26,8 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/connection_dialog.h
     gui/dialogs/cluster_dialog.h
     gui/dialogs/connection_diagnostic_dialog.h
+    gui/dialogs/discovery_dialog.h
+    gui/dialogs/connection_listwidget_items.h
     gui/dialogs/python_console_dialog.h
     gui/dialogs/lua_console_dialog.h
     gui/dialogs/base_console_dialog.h
@@ -70,6 +72,8 @@ SET(SOURCES_GUI
     gui/dialogs/connection_dialog.cpp
     gui/dialogs/cluster_dialog.cpp
     gui/dialogs/connection_diagnostic_dialog.cpp
+    gui/dialogs/discovery_dialog.cpp
+    gui/dialogs/connection_listwidget_items.cpp
     gui/dialogs/info_server_dialog.cpp
     gui/dialogs/property_server_dialog.cpp
     gui/dialogs/history_server_dialog.cpp

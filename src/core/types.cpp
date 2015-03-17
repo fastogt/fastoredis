@@ -20,7 +20,7 @@ namespace fastoredis
     }
 
     ServerDiscoveryInfo::ServerDiscoveryInfo(connectionTypes ctype, serverTypes type, bool self)
-        : ctype_(ctype), type_(type), self_(self)
+        : host_(), name_(), ctype_(ctype), type_(type), self_(self)
     {
 
     }
@@ -33,6 +33,21 @@ namespace fastoredis
     serverTypes ServerDiscoveryInfo::type() const
     {
         return type_;
+    }
+
+    bool ServerDiscoveryInfo::self() const
+    {
+        return self_;
+    }
+
+    std::string ServerDiscoveryInfo::name() const
+    {
+        return name_;
+    }
+
+    void ServerDiscoveryInfo::setName(const std::string& name)
+    {
+        name_ = name;
     }
 
     common::net::hostAndPort ServerDiscoveryInfo::host() const

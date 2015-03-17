@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/smart_ptr.h"
+#include "common/net/net.h"
 
 #include "core/connection_types.h"
 #include "core/ssh_info.h"
@@ -40,12 +41,14 @@ namespace fastoredis
 
         std::string loggingPath() const;
 
+        void setHost(const common::net::hostAndPort& host);
         void setConnectionNameAndUpdateHash(const std::string& name);
 
         virtual std::string commandLine() const = 0;
         virtual void setCommandLine(const std::string& line) = 0;
 
         virtual std::string host() const = 0;
+        virtual void setHost(const std::string& host) = 0;
         virtual int port() const = 0;
         virtual void setPort(int port) = 0;
 

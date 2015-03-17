@@ -386,8 +386,10 @@ namespace fastoredis
 
     RedisServerInfo* makeRedisServerInfo(const std::string& content);
     RedisServerInfo* makeRedisServerInfo(FastoObject* root);
+
     ServerDiscoveryInfo* makeOwnRedisDiscoveryInfo(const std::string& text);
     ServerDiscoveryInfo* makeOwnRedisDiscoveryInfo(FastoObject* root);
+    common::ErrorValueSPtr makeAllDiscoveryInfo(const std::string& text, std::vector<ServerDiscoveryInfoSPtr>& infos);
 
     class RedisDataBaseInfo
             : public DataBaseInfo

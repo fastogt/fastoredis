@@ -1,5 +1,7 @@
 #include "core/ssdb/ssdb_settings.h"
 
+#include "common/utils.h"
+
 namespace fastoredis
 {
     SsdbConnectionSettings::SsdbConnectionSettings(const std::string& connectionName)
@@ -21,6 +23,11 @@ namespace fastoredis
     std::string SsdbConnectionSettings::host() const
     {
         return info_.hostip_;
+    }
+
+    void SsdbConnectionSettings::setHost(const std::string& host)
+    {
+        info_.hostip_ = common::utils::strdupornull(host);
     }
 
     int SsdbConnectionSettings::port() const

@@ -1,6 +1,5 @@
 #include "gui/dialogs/connections_dialog.h"
 
-#include <QTreeWidget>
 #include <QHeaderView>
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -17,6 +16,7 @@
 #include "core/connection_settings.h"
 
 #include "gui/gui_factory.h"
+#include "gui/dialogs/connection_listwidget_items.h"
 #include "gui/dialogs/connection_dialog.h"
 #include "gui/dialogs/cluster_dialog.h"
 
@@ -24,60 +24,6 @@
 
 namespace fastoredis
 {
-    namespace
-    {
-        class ConnectionListWidgetItem
-                : public QTreeWidgetItem
-        {
-        public:
-            ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection)
-                : connection_(connection)
-            {
-                setText(0, common::convertFromString<QString>(connection_->connectionName()));
-                connectionTypes conType = connection_->connectionType();
-                setIcon(0, GuiFactory::instance().icon(conType));
-                setText(1, common::convertFromString<QString>(connection_->fullAddress()));
-            }
-
-            IConnectionSettingsBaseSPtr connection() const
-            {
-                return connection_;
-            }
-
-        private:
-            IConnectionSettingsBaseSPtr connection_;
-        };
-
-        class ClusterConnectionListWidgetItem
-                : public QTreeWidgetItem
-        {
-        public:
-            ClusterConnectionListWidgetItem(IClusterSettingsBaseSPtr connection)
-                : connection_(connection)
-            {
-                setText(0, common::convertFromString<QString>(connection_->connectionName()));
-                connectionTypes conType = connection_->connectionType();
-                setIcon(0, GuiFactory::instance().icon(conType));
-
-                IClusterSettingsBase::cluster_connection_type servers = connection_->nodes();
-
-                for(int i = 0; i < servers.size(); ++i){
-                    IConnectionSettingsBaseSPtr con = servers[i];
-                    ConnectionListWidgetItem* item = new ConnectionListWidgetItem(con);
-                    addChild(item);
-                }
-            }
-
-            IClusterSettingsBaseSPtr connection() const
-            {
-                return connection_;
-            }
-
-        private:
-            IClusterSettingsBaseSPtr connection_;
-        };
-    }
-
     /**
      * @brief Creates dialog
      */
@@ -105,6 +51,8 @@ namespace fastoredis
         listWidget_->setContextMenuPolicy(Qt::ActionsContextMenu);
         listWidget_->setIndentation(15);
         listWidget_->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
+        listWidget_->setSelectionBehavior(QAbstractItemView::SelectRows);
+
         //listWidget_->setDragEnabled(true);
         //listWidget_->setDragDropMode(QAbstractItemView::InternalMove);
         setMinimumSize(QSize(min_width, min_height));

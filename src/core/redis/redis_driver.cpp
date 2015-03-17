@@ -238,50 +238,86 @@ namespace fastoredis
     const std::vector<QString> redisTypesKeywords(commandGroups, commandGroups + sizeof(commandGroups)/sizeof(char*));
     const std::vector<QString> redisCommandsKeywords(commandHelp, commandHelp + sizeof(commandHelp)/sizeof(struct commandHelp));
 
+    namespace
+    {
+        common::ErrorValueSPtr createConnection(RedisConnectionSettings* settings, redisContext** context)
+        {
+            DCHECK(*context == NULL);
+            if(!settings){
+                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+            }
+
+            redisConfig config = settings->info();
+            SSHInfo sinfo = settings->sshInfo();
+
+            using namespace common::utils;
+
+            if (config.hostsocket == NULL) {
+                const char *username = c_strornull(sinfo.userName_);
+                const char *password = c_strornull(sinfo.password_);
+                const char *ssh_address = c_strornull(sinfo.hostName_);
+                int ssh_port = sinfo.port_;
+                int curM = sinfo.currentMethod_;
+                const char *publicKey = c_strornull(sinfo.publicKey_);
+                const char *privateKey = c_strornull(sinfo.privateKey_);
+                const char *passphrase = c_strornull(sinfo.passphrase_);
+
+                *context = redisConnect(config.hostip, config.hostport, ssh_address, ssh_port, username, password,
+                                       publicKey, privateKey, passphrase, curM);
+            }
+            else {
+                *context = redisConnectUnix(config.hostsocket);
+            }
+
+            if ((*context)->err) {
+                char buff[512] = {0};
+                if (!config.hostsocket){
+                    common::SNPrintf(buff, sizeof(buff), "Could not connect to Redis at %s:%d : %s", config.hostip, config.hostport, (*context)->errstr);
+                }
+                else{
+                    common::SNPrintf(buff, sizeof(buff), "Could not connect to Redis at %s : %s", config.hostsocket, (*context)->errstr);
+                }
+                return common::make_error_value(buff, common::Value::E_ERROR);
+            }
+
+            return common::ErrorValueSPtr();
+        }
+    }
+
     common::ErrorValueSPtr testConnection(RedisConnectionSettings* settings)
     {
-        if(!settings){
-            return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+        redisContext* context = NULL;
+        common::ErrorValueSPtr er = createConnection(settings, &context);
+        redisFree(context);
+        context = NULL;
+        return er;
+    }
+
+    common::ErrorValueSPtr discoveryConnection(RedisConnectionSettings* settings, std::vector<ServerDiscoveryInfoSPtr>& infos)
+    {
+        redisContext* context = NULL;
+        common::ErrorValueSPtr er = createConnection(settings, &context);
+        if(er){
+            return er;
         }
 
-        redisContext *context = NULL;
-        redisConfig config = settings->info();
-        SSHInfo sinfo = settings->sshInfo();
-
-        using namespace common::utils;
-
-        if (config.hostsocket == NULL) {
-            const char *username = c_strornull(sinfo.userName_);
-            const char *password = c_strornull(sinfo.password_);
-            const char *ssh_address = c_strornull(sinfo.hostName_);
-            int ssh_port = sinfo.port_;
-            int curM = sinfo.currentMethod_;
-            const char *publicKey = c_strornull(sinfo.publicKey_);
-            const char *privateKey = c_strornull(sinfo.privateKey_);
-            const char *passphrase = c_strornull(sinfo.passphrase_);
-
-            context = redisConnect(config.hostip, config.hostport, ssh_address, ssh_port, username, password,
-                                   publicKey, privateKey, passphrase, curM);
-        }
-        else {
-            context = redisConnectUnix(config.hostsocket);
+        /* Send the GET CLUSTER command. */
+        redisReply *reply = (redisReply*)redisCommand(context, GET_SERVER_TYPE);
+        if (reply == NULL) {
+            er = common::make_error_value("I/O error", common::Value::E_ERROR);
+            goto cleanup;
         }
 
-        if (context->err) {
-            char buff[512] = {0};
-            if (!config.hostsocket){
-                common::SNPrintf(buff, sizeof(buff), "Could not connect to Redis at %s:%d : %s", config.hostip, config.hostport, context->errstr);
-            }
-            else{
-                common::SNPrintf(buff, sizeof(buff), "Could not connect to Redis at %s : %s", config.hostsocket, context->errstr);
-            }
-
-            redisFree(context);
-            context = NULL;
-            return common::make_error_value(buff, common::Value::E_ERROR);
+        if(reply->type == REDIS_REPLY_STRING){
+            er = makeAllDiscoveryInfo(reply->str, infos);
         }
 
-        return common::ErrorValueSPtr();
+        freeReplyObject(reply);
+
+    cleanup:
+        redisFree(context);
+        context = NULL;
+        return er;
     }
 
     struct RedisDriver::pimpl

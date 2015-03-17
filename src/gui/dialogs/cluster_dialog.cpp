@@ -16,6 +16,8 @@
 
 #include "gui/dialogs/connection_diagnostic_dialog.h"
 #include "gui/dialogs/connection_dialog.h"
+#include "gui/dialogs/discovery_dialog.h"
+#include "gui/dialogs/connection_listwidget_items.h"
 
 #include "common/qt/convert_string.h"
 
@@ -30,28 +32,6 @@ namespace
 
 namespace fastoredis
 {
-    namespace
-    {
-        class ConnectionListWidgetItem
-                : public QTreeWidgetItem
-        {
-        public:
-            ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection) : connection_(connection) { refreshFields(); }
-            IConnectionSettingsBaseSPtr connection() const { return connection_; }
-
-            void refreshFields()
-            {
-                setText(0, common::convertFromString<QString>(connection_->connectionName()));
-                connectionTypes conType = connection_->connectionType();
-                setIcon(0, GuiFactory::instance().icon(conType));
-                setText(1, common::convertFromString<QString>(connection_->fullAddress()));
-            }
-
-        private:
-            IConnectionSettingsBaseSPtr connection_;
-        };
-    }
-
     ClusterDialog::ClusterDialog(QWidget* parent, IClusterSettingsBase *connection)
         : QDialog(parent), cluster_connection_(connection)
     {
@@ -95,6 +75,7 @@ namespace fastoredis
         listWidget_->setContextMenuPolicy(Qt::ActionsContextMenu);
         listWidget_->setIndentation(15);
         listWidget_->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
+        listWidget_->setSelectionBehavior(QAbstractItemView::SelectRows);
 
         if(cluster_connection_){
             IClusterSettingsBase::cluster_connection_type clusters = cluster_connection_->nodes();
@@ -207,7 +188,14 @@ namespace fastoredis
         if (!currentItem)
             return;
 
-
+        DiscoveryDiagnosticDialog diag(this, currentItem->connection());
+        int result = diag.exec();
+        if(result == QDialog::Accepted){
+            std::vector<IConnectionSettingsBaseSPtr> conns = diag.selectedConnections();
+            for(int i = 0; i < conns.size(); ++i){
+                addConnection(conns[i]);
+            }
+        }
     }
 
     void ClusterDialog::add()

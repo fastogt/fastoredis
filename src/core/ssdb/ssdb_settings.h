@@ -16,6 +16,7 @@ namespace fastoredis
         virtual void setCommandLine(const std::string& line);
 
         virtual std::string host() const;
+        virtual void setHost(const std::string& host);
         virtual int port() const;
         virtual void setPort(int port);
 

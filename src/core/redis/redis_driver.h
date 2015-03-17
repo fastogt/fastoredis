@@ -10,6 +10,7 @@ namespace fastoredis
     extern const std::vector<QString> redisCommandsKeywords;
 
     common::ErrorValueSPtr testConnection(RedisConnectionSettings* settings);
+    common::ErrorValueSPtr discoveryConnection(RedisConnectionSettings* settings, std::vector<ServerDiscoveryInfoSPtr>& infos);
 
     class RedisDriver
             : public IDriver

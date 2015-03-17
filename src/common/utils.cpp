@@ -379,7 +379,13 @@ namespace common
             usleep(msec*1000);
         }
 
-        char *strdupornull(const char* src)
+        char* strdupornull(const std::string& src)
+        {
+            const char* csrc = src.c_str();
+            return strdupornull(csrc);
+        }
+
+        char* strdupornull(const char* src)
         {
             if(!src){
                 return NULL;

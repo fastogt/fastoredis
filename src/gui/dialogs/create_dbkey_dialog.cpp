@@ -84,6 +84,7 @@ namespace fastoredis
         valueListEdit_ = new QListWidget;
         valueListEdit_->setContextMenuPolicy(Qt::ActionsContextMenu);
         valueListEdit_->setSelectionMode(QAbstractItemView::SingleSelection);
+        valueListEdit_->setSelectionBehavior(QAbstractItemView::SelectRows);
 
         QAction* addItem = new QAction(trAddItem, this);
         VERIFY(connect(addItem, &QAction::triggered, this, &CreateDbKeyDialog::addItem));

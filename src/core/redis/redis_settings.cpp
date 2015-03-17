@@ -1,5 +1,7 @@
 #include "core/redis/redis_settings.h"
 
+#include "common/utils.h"
+
 namespace fastoredis
 {
     RedisConnectionSettings::RedisConnectionSettings(const std::string &connectionName)
@@ -11,6 +13,11 @@ namespace fastoredis
     std::string RedisConnectionSettings::host() const
     {
         return info_.hostip;
+    }
+
+    void RedisConnectionSettings::setHost(const std::string& host)
+    {
+        info_.hostip = common::utils::strdupornull(host);
     }
 
     int RedisConnectionSettings::port() const
