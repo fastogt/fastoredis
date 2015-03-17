@@ -232,7 +232,7 @@ namespace fastoredis
 
     void ConnectionsDialog::connectionSelectChange()
     {
-        bool isEnable = selectedConnection() != NULL;
+        bool isEnable = selectedConnection() != NULL || selectedCluster() != NULL;
         acButton_->setEnabled(isEnable);
     }
 

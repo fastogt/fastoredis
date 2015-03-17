@@ -63,6 +63,9 @@ namespace fastoredis
         virtual void changeEvent(QEvent* );
 
     private:
+        void syncWithServer(IServer* server);
+        void unsyncWithServer(IServer* server);
+
         void retranslateUi();
         QModelIndex selectedIndex() const;
         QModelIndexList selectedIndexes() const;

@@ -88,14 +88,7 @@ namespace fastoredis
             return;
         }
 
-        VERIFY(connect(server.get(), &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
-        VERIFY(connect(server.get(), &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
-        VERIFY(connect(server.get(), &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
-        VERIFY(connect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
-        VERIFY(connect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
-        VERIFY(connect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
-        VERIFY(connect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
-        VERIFY(connect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
+        syncWithServer(server.get());
 
         mod->addServer(server);
     }
@@ -113,14 +106,7 @@ namespace fastoredis
             return;
         }
 
-        VERIFY(disconnect(server.get(), &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
-        VERIFY(disconnect(server.get(), &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
-        VERIFY(disconnect(server.get(), &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
-        VERIFY(disconnect(server.get(), &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
-        VERIFY(disconnect(server.get(), &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
-        VERIFY(disconnect(server.get(), &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
-        VERIFY(disconnect(server.get(), &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
-        VERIFY(disconnect(server.get(), &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
+        unsyncWithServer(server.get());
 
         mod->removeServer(server);
         emit closeServer(server);
@@ -134,6 +120,11 @@ namespace fastoredis
             return;
         }
 
+        Cluster::nodes_type nodes = cluster.nodes();
+        for(int i = 0; i < nodes.size(); ++i){
+            syncWithServer(nodes[i].get());
+        }
+
         mod->addCluster(cluster);
     }
 
@@ -145,7 +136,13 @@ namespace fastoredis
             return;
         }
 
+        Cluster::nodes_type nodes = cluster.nodes();
+        for(int i = 0; i < nodes.size(); ++i){
+            unsyncWithServer(nodes[i].get());
+        }
+
         mod->removeCluster(cluster);
+        //emit closeCluster(cluster);
     }
 
     void ExplorerTreeView::showContextMenu(const QPoint& point)
@@ -630,6 +627,38 @@ namespace fastoredis
         }
 
         QTreeView::changeEvent(e);
+    }
+
+    void ExplorerTreeView::syncWithServer(IServer* server)
+    {
+        if(!server){
+            return;
+        }
+
+        VERIFY(connect(server, &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
+        VERIFY(connect(server, &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
+        VERIFY(connect(server, &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
+        VERIFY(connect(server, &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
+        VERIFY(connect(server, &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
+        VERIFY(connect(server, &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
+        VERIFY(connect(server, &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
+        VERIFY(connect(server, &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
+    }
+
+    void ExplorerTreeView::unsyncWithServer(IServer* server)
+    {
+        if(!server){
+            return;
+        }
+
+        VERIFY(disconnect(server, &IServer::startedLoadDatabases, this, &ExplorerTreeView::startLoadDatabases));
+        VERIFY(disconnect(server, &IServer::finishedLoadDatabases, this, &ExplorerTreeView::finishLoadDatabases));
+        VERIFY(disconnect(server, &IServer::startedSetDefaultDatabase, this, &ExplorerTreeView::startSetDefaultDatabase));
+        VERIFY(disconnect(server, &IServer::finishedSetDefaultDatabase, this, &ExplorerTreeView::finishSetDefaultDatabase));
+        VERIFY(disconnect(server, &IServer::startedLoadDataBaseContent, this, &ExplorerTreeView::startLoadDatabaseContent));
+        VERIFY(disconnect(server, &IServer::finishedLoadDatabaseContent, this, &ExplorerTreeView::finishLoadDatabaseContent));
+        VERIFY(disconnect(server, &IServer::startedExecuteCommand, this, &ExplorerTreeView::startExecuteCommand));
+        VERIFY(disconnect(server, &IServer::finishedExecuteCommand, this, &ExplorerTreeView::finishExecuteCommand));
     }
 
     void ExplorerTreeView::retranslateUi()
