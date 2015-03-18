@@ -12,6 +12,6 @@ namespace fastoredis
     public:
 
     private:
-        RedisCluster(IServerSPtr root, const std::string& name);
+        RedisCluster(const std::string& name);
     };
 }

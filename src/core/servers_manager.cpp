@@ -93,20 +93,17 @@ namespace fastoredis
                 return IClusterSPtr();
             }
 
-            IServerSPtr serv = createServer(root);
-            if(!serv){
-                return IClusterSPtr();
-            }
-
-            cl.reset(new RedisCluster(serv, settings->connectionName()));
+            cl.reset(new RedisCluster(settings->connectionName()));
             IClusterSettingsBase::cluster_connection_type nodes = settings->nodes();
             for(int i = 0; i < nodes.size(); ++i){
                 IConnectionSettingsBaseSPtr nd = nodes[i];
-                if(nd && nd != root){
+                if(nd){
                     IServerSPtr serv = createServer(nd);
                     cl->addServer(serv);
                 }
             }
+            IDriverSPtr drv = cl->root()->driver();
+            DCHECK(drv->settings() == root);
         }
         else{
             NOTREACHED();

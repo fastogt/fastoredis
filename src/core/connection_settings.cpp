@@ -279,7 +279,7 @@ namespace fastoredis
     }
 
     IClusterSettingsBase::IClusterSettingsBase(const std::string& connectionName, connectionTypes type)
-        : IConnectionSettings(connectionName, type), root_()
+        : IConnectionSettings(connectionName, type)
     {
 
     }
@@ -289,14 +289,13 @@ namespace fastoredis
         return clusters_nodes_;
     }
 
-    void IClusterSettingsBase::setRoot(IConnectionSettingsBaseSPtr root)
-    {
-        root_ = root;
-    }
-
     IConnectionSettingsBaseSPtr IClusterSettingsBase::root() const
     {
-        return root_;
+        if(clusters_nodes_.empty()){
+            return IConnectionSettingsBaseSPtr();
+        }
+
+        return clusters_nodes_[0];
     }
 
     void IClusterSettingsBase::addNode(IConnectionSettingsBaseSPtr node)
@@ -348,12 +347,7 @@ namespace fastoredis
                             ch = val[j];
                             if(ch == magicNumber || j == len - 1){
                                 IConnectionSettingsBaseSPtr ser(IConnectionSettingsBase::fromString(serText));
-                                if(result->root_){
-                                    result->addNode(ser);
-                                }
-                                else{
-                                    result->setRoot(ser);
-                                }
+                                result->addNode(ser);
                                 serText.clear();
                             }
                             else{
@@ -380,14 +374,11 @@ namespace fastoredis
         if(crT != DBUNKNOWN){
             std::stringstream str;
             str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',';
-            if(root_){
-                str << magicNumber << root_->toString();
-                for(int i = 0; i < clusters_nodes_.size(); ++i){
-                   IConnectionSettingsBaseSPtr serv = clusters_nodes_[i];
-                   if(serv){
-                       str << magicNumber << serv->toString();
-                   }
-                }
+            for(int i = 0; i < clusters_nodes_.size(); ++i){
+               IConnectionSettingsBaseSPtr serv = clusters_nodes_[i];
+               if(serv){
+                   str << magicNumber << serv->toString();
+               }
             }
             res = str.str();
         }

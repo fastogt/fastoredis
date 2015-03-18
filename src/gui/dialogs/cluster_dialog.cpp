@@ -78,14 +78,10 @@ namespace fastoredis
         listWidget_->setSelectionBehavior(QAbstractItemView::SelectRows);
 
         if(cluster_connection_){
-            IConnectionSettingsBaseSPtr root = cluster_connection_->root();
-            if(root){
-                addConnection(root);
-                IClusterSettingsBase::cluster_connection_type clusters = cluster_connection_->nodes();
-                for(IClusterSettingsBase::cluster_connection_type::const_iterator it = clusters.begin(); it != clusters.end(); ++it){
-                    IConnectionSettingsBaseSPtr serv = *it;
-                    addConnection(serv);
-                }
+            IClusterSettingsBase::cluster_connection_type clusters = cluster_connection_->nodes();
+            for(IClusterSettingsBase::cluster_connection_type::const_iterator it = clusters.begin(); it != clusters.end(); ++it){
+                IConnectionSettingsBaseSPtr serv = (*it);
+                addConnection(serv, it == clusters.begin());
             }
         }
 
@@ -227,6 +223,10 @@ namespace fastoredis
         if (!currentItem)
             return;
 
+        if(!currentItem->isRoot()){
+            return;
+        }
+
         // Ask user
         int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
                                            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
@@ -296,12 +296,7 @@ namespace fastoredis
                     ConnectionListWidgetItemEx* item = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->topLevelItem(i));
                     if(item){
                         IConnectionSettingsBaseSPtr con = item->connection();
-                        if(item->isRoot()){
-                            cluster_connection_->setRoot(con);
-                        }
-                        else{
-                            cluster_connection_->addNode(con);
-                        }
+                        cluster_connection_->addNode(con);
                     }
                 }
             }

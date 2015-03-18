@@ -87,7 +87,6 @@ namespace fastoredis
     public:
         typedef std::vector<IConnectionSettingsBaseSPtr> cluster_connection_type;
         cluster_connection_type nodes() const;
-        void setRoot(IConnectionSettingsBaseSPtr root);
         IConnectionSettingsBaseSPtr root() const;
 
         void addNode(IConnectionSettingsBaseSPtr node);
@@ -101,8 +100,7 @@ namespace fastoredis
         IClusterSettingsBase(const std::string& connectionName, connectionTypes type);
 
     private:
-        IConnectionSettingsBaseSPtr root_;
-        cluster_connection_type clusters_nodes_;
+        cluster_connection_type clusters_nodes_; //first element is root!!!
     };
 
     typedef common::shared_ptr<IClusterSettingsBase> IClusterSettingsBaseSPtr;

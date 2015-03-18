@@ -2,8 +2,8 @@
 
 namespace fastoredis
 {
-    RedisCluster::RedisCluster(IServerSPtr root, const std::string& name)
-        : ICluster(root, name)
+    RedisCluster::RedisCluster(const std::string& name)
+        : ICluster(name)
     {
 
     }

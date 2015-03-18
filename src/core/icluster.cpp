@@ -6,10 +6,9 @@
 
 namespace fastoredis
 {
-    ICluster::ICluster(IServerSPtr root, const std::string &name)
-        : root_(root), name_(name)
+    ICluster::ICluster(const std::string &name)
+        : name_(name)
     {
-
     }
 
     QString ICluster::name() const
@@ -31,6 +30,10 @@ namespace fastoredis
 
     IServerSPtr ICluster::root() const
     {
-        return root_;
+        if(nodes_.empty()){
+            return IServerSPtr();
+        }
+
+        return nodes_[0];
     }
 }

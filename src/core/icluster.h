@@ -19,11 +19,10 @@ namespace fastoredis
         IServerSPtr root() const;
 
     protected:
-        ICluster(IServerSPtr root, const std::string& name);
+        ICluster(const std::string& name);
 
     private:
         const std::string name_;
-        const IServerSPtr root_;
         nodes_type nodes_;
     };
 }
