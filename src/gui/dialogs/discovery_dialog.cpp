@@ -67,8 +67,8 @@ namespace fastoredis
         }
     }
 
-    DiscoveryDiagnosticDialog::DiscoveryDiagnosticDialog(QWidget* parent, IConnectionSettingsBaseSPtr connection)
-        : QDialog(parent)
+    DiscoveryDiagnosticDialog::DiscoveryDiagnosticDialog(QWidget* parent, IConnectionSettingsBaseSPtr connection, IClusterSettingsBaseSPtr cluster)
+        : QDialog(parent), cluster_(cluster)
     {
         using namespace translations;
 
@@ -145,10 +145,11 @@ namespace fastoredis
 
             for(int i = 0; i < infos.size(); ++i){
                 ServerDiscoveryInfoSPtr inf = infos[i];
+                common::net::hostAndPort host = inf->host();
                 IConnectionSettingsBaseSPtr con(IConnectionSettingsBase::createFromType(inf->connectionType(), inf->name()));
-                con->setHost(inf->host());
+                con->setHost(host);
                 ConnectionListWidgetItem* item = new ConnectionListWidgetItem(con);
-                item->setDisabled(inf->self());
+                item->setDisabled(inf->self() || cluster_->findSettingsByHost(host));
                 listWidget_->addTopLevelItem(item);
             }
         }

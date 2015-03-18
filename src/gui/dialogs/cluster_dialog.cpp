@@ -189,11 +189,11 @@ namespace fastoredis
             return;
         }
 
-        if(!currentItem->isRoot()){
+        if(!validateAndApply()){
             return;
         }
 
-        DiscoveryDiagnosticDialog diag(this, currentItem->connection());
+        DiscoveryDiagnosticDialog diag(this, currentItem->connection(), cluster_connection_);
         int result = diag.exec();
         if(result == QDialog::Accepted){
             std::vector<IConnectionSettingsBaseSPtr> conns = diag.selectedConnections();
@@ -216,16 +216,11 @@ namespace fastoredis
 
     void ClusterDialog::remove()
     {
-        ConnectionListWidgetItemEx *currentItem =
-                    dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
+        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx*>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
             return;
-
-        if(!currentItem->isRoot()){
-            return;
-        }
 
         // Ask user
         int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
@@ -239,7 +234,7 @@ namespace fastoredis
 
     void ClusterDialog::edit()
     {
-        ConnectionListWidgetItemEx *currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
+        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx*>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -260,13 +255,12 @@ namespace fastoredis
 
     void ClusterDialog::itemSelectionChanged()
     {
-        ConnectionListWidgetItemEx *currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
+        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx*>(listWidget_->currentItem());
 
         bool isValidConnection = currentItem != NULL;
-        bool isRoot = currentItem != NULL && currentItem->isRoot();
 
         testButton_->setEnabled(isValidConnection);
-        discoveryButton_->setEnabled(isRoot);
+        discoveryButton_->setEnabled(isValidConnection);
     }
 
     void ClusterDialog::changeEvent(QEvent* e)

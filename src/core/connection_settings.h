@@ -96,6 +96,8 @@ namespace fastoredis
 
         virtual std::string toString() const;
 
+        IConnectionSettingsBaseSPtr findSettingsByHost(const common::net::hostAndPort& host) const;
+
     protected:
         IClusterSettingsBase(const std::string& connectionName, connectionTypes type);
 

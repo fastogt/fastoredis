@@ -384,4 +384,16 @@ namespace fastoredis
         }
         return res;
     }
+
+    IConnectionSettingsBaseSPtr IClusterSettingsBase::findSettingsByHost(const common::net::hostAndPort& host) const
+    {
+        for(int i = 0; i < clusters_nodes_.size(); ++i){
+            IConnectionSettingsBaseSPtr cur = clusters_nodes_[i];
+            if(cur->host() == host.host_ && cur->port() == host.port_){
+                return cur;
+            }
+        }
+
+        return IConnectionSettingsBaseSPtr();
+    }
 }

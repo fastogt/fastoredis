@@ -42,7 +42,7 @@ namespace fastoredis
             fix_width = 480
         };
 
-        DiscoveryDiagnosticDialog(QWidget* parent, IConnectionSettingsBaseSPtr connection);
+        DiscoveryDiagnosticDialog(QWidget* parent, IConnectionSettingsBaseSPtr connection, IClusterSettingsBaseSPtr cluster);
         std::vector<IConnectionSettingsBaseSPtr> selectedConnections() const;
 
     private Q_SLOTS:
@@ -53,10 +53,12 @@ namespace fastoredis
 
     private:
         void testConnection(IConnectionSettingsBaseSPtr connection);
+
         GlassWidget *glassWidget_;
         QLabel* executeTimeLabel_;
         QLabel* statusLabel_;
         QTreeWidget* listWidget_;
         QLabel* iconLabel_;
+        IClusterSettingsBaseSPtr cluster_;
     };
 }
