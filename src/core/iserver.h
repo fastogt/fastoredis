@@ -6,8 +6,17 @@
 
 namespace fastoredis
 {
+    class IServerBase
+            : public QObject
+    {
+        Q_OBJECT
+    public:
+        virtual QString name() const = 0;
+        virtual ~IServerBase();
+    };
+
     class IServer
-            : public QObject, public std::enable_shared_from_this<IServer>
+            : public IServerBase, public std::enable_shared_from_this<IServer>
     {
         Q_OBJECT
         friend class ServersManager;

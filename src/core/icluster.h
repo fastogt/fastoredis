@@ -2,25 +2,28 @@
 
 #include "core/core_fwd.h"
 
-#include "core/events/events.h"
+#include "core/iserver.h"
 
 namespace fastoredis
 {
     class ICluster
+            : public IServerBase
     {
     public:
         typedef std::vector<IServerSPtr> nodes_type;
 
-        explicit ICluster(const std::string& name, const nodes_type& nodes = nodes_type());
-
-        std::string name() const;
-
-        IServerSPtr root() const;
+        QString name() const;
         nodes_type nodes() const;
         void addServer(IServerSPtr serv);
 
+        IServerSPtr root() const;
+
+    protected:
+        ICluster(IServerSPtr root, const std::string& name);
+
     private:
-        std::string name_;
+        const std::string name_;
+        const IServerSPtr root_;
         nodes_type nodes_;
     };
 }

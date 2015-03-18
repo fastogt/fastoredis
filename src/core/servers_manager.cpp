@@ -2,8 +2,7 @@
 
 #include "core/settings_manager.h"
 
-#include "core/icluster.h"
-
+#include "core/redis/redis_cluster.h"
 #include "core/redis/redis_server.h"
 #include "core/redis/redis_driver.h"
 
@@ -86,11 +85,27 @@ namespace fastoredis
     {
         DCHECK(settings);
 
-        IClusterSPtr cl(new ICluster(settings->connectionName()));
-        IClusterSettingsBase::cluster_connection_type nodes = settings->nodes();
-        for(int i = 0; i < nodes.size(); ++i){
-            IServerSPtr serv = createServer(nodes[i]);
-            cl->addServer(serv);
+        IClusterSPtr cl;
+        connectionTypes conT = settings->connectionType();
+        if(conT == REDIS){
+            IConnectionSettingsBaseSPtr root = settings->rootSetting();
+            IServerSPtr serv = createServer(root);
+            if(!serv){
+                return IClusterSPtr();
+            }
+
+            cl.reset(new RedisCluster(serv, settings->connectionName()));
+            IClusterSettingsBase::cluster_connection_type nodes = settings->nodes();
+            for(int i = 0; i < nodes.size(); ++i){
+                IConnectionSettingsBaseSPtr nd = nodes[i];
+                if(nd && nd != root){
+                    IServerSPtr serv = createServer(nd);
+                    cl->addServer(serv);
+                }
+            }
+        }
+        else{
+            NOTREACHED();
         }
         return cl;
     }

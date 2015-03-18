@@ -1,30 +1,20 @@
 #include "core/icluster.h"
 
+#include "common/qt/convert_string.h"
+
 #include "core/iserver.h"
 
 namespace fastoredis
 {
-    ICluster::ICluster(const std::string &name, const nodes_type& nodes)
-        : name_(name), nodes_(nodes)
+    ICluster::ICluster(IServerSPtr root, const std::string &name)
+        : root_(root), name_(name)
     {
 
     }
 
-    IServerSPtr ICluster::root() const
+    QString ICluster::name() const
     {
-        for(int i = 0; i < nodes_.size(); ++i){
-            IServerSPtr ser = nodes_[i];
-            if(ser && ser->isRoot()){
-                return ser;
-            }
-        }
-
-        return IServerSPtr();
-    }
-
-    std::string ICluster::name() const
-    {
-        return name_;
+        return common::convertFromString<QString>(name_);
     }
 
     ICluster::nodes_type ICluster::nodes() const
@@ -37,5 +27,10 @@ namespace fastoredis
         if(serv){
             nodes_.push_back(serv);
         }
+    }
+
+    IServerSPtr ICluster::root() const
+    {
+        return root_;
     }
 }

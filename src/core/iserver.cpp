@@ -56,6 +56,11 @@ namespace
 
 namespace fastoredis
 {
+    IServerBase::~IServerBase()
+    {
+
+    }
+
     IServer::IServer(IDriverSPtr drv, bool isSuperServer)
         : drv_(drv), isSuperServer_(isSuperServer)
     {

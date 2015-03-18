@@ -71,7 +71,7 @@ namespace fastoredis
 
     QString ExplorerClusterItem::name() const
     {
-        return common::convertFromString<QString>(cluster_->name());
+        return cluster_->name();
     }
 
     IServerSPtr ExplorerClusterItem::server() const
@@ -522,7 +522,7 @@ namespace fastoredis
 
         for(int i = 0; i < parent->childrenCount() ; ++i){
             ExplorerClusterItem *item = dynamic_cast<ExplorerClusterItem*>(parent->child(i));
-            if(item && item->cluster()->root() == cl->root()){
+            if(item && item->cluster() == cl){
                 return item;
             }
         }

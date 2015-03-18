@@ -215,6 +215,7 @@ ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
 
 #redis
 SET(HEADERS_REDIS_TO_MOC
+    core/redis/redis_cluster.h
     core/redis/redis_server.h
     core/redis/redis_driver.h
 )
@@ -228,6 +229,7 @@ SET(HEADERS_REDIS
 SET(SOURCES_REDIS
     core/redis/redis_config.cpp
     core/redis/redis_infos.cpp
+    core/redis/redis_cluster.cpp
     core/redis/redis_server.cpp
     core/redis/redis_driver.cpp
     core/redis/redis_database.cpp
