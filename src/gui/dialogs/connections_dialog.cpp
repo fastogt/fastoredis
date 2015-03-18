@@ -170,60 +170,87 @@ namespace fastoredis
 
     void ConnectionsDialog::remove()
     {
-        if (ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem())){
-
-            // Ask user
-            int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
-                                               QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-            if (answer != QMessageBox::Yes)
-                return;
-
-            IConnectionSettingsBaseSPtr connection = currentItem->connection();
-            delete currentItem;
-            SettingsManager::instance().removeConnection(connection);
+        QTreeWidgetItem* qitem = listWidget_->currentItem();
+        if(!qitem){
+            return;
         }
-        else if(ClusterConnectionListWidgetItem* currentItem = dynamic_cast<ClusterConnectionListWidgetItem *>(listWidget_->currentItem())){
+
+        ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem *>(qitem);
+        if(currentItem){
+
+            QTreeWidgetItem* qpitem = qitem->parent();
+            if(!qpitem){
+                // Ask user
+                int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" connection?").arg(currentItem->text(0)),
+                                                   QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+                if (answer != QMessageBox::Yes)
+                    return;
+
+                IConnectionSettingsBaseSPtr connection = currentItem->connection();
+                delete currentItem;
+                SettingsManager::instance().removeConnection(connection);
+                return;
+            }
+            else{
+                qitem = qpitem;
+            }
+        }
+
+        ClusterConnectionListWidgetItem* clCurrentItem = dynamic_cast<ClusterConnectionListWidgetItem *>(qitem);
+        if(clCurrentItem){
 
             // Ask user
-            int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" cluster?").arg(currentItem->text(0)),
+            int answer = QMessageBox::question(this, "Connections", QString("Really delete \"%1\" cluster?").arg(clCurrentItem->text(0)),
                                                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
             if (answer != QMessageBox::Yes)
                 return;
 
-            IClusterSettingsBaseSPtr connection = currentItem->connection();
-            delete currentItem;
+            IClusterSettingsBaseSPtr connection = clCurrentItem->connection();
+            delete clCurrentItem;
             SettingsManager::instance().removeCluster(connection);
         }
     }
 
     void ConnectionsDialog::edit()
     {
-        if (ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem())){
+        QTreeWidgetItem* qitem = listWidget_->currentItem();
+        if(!qitem){
+            return;
+        }
 
-            IConnectionSettingsBaseSPtr oldConnection = currentItem->connection();
-
-            ConnectionDialog dlg(this, dynamic_cast<IConnectionSettingsBase*>(oldConnection->clone()));
-            int result = dlg.exec();
-            IConnectionSettingsBaseSPtr newConnection = dlg.connection();
-            if(result == QDialog::Accepted && newConnection){
-                delete currentItem;
-                SettingsManager::instance().removeConnection(oldConnection);
-                SettingsManager::instance().addConnection(newConnection);
-                addConnection(newConnection);
+        ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem *>(qitem);
+        if(currentItem){
+            QTreeWidgetItem* qpitem = qitem->parent();
+            if(!qpitem){
+                IConnectionSettingsBaseSPtr con = currentItem->connection();
+                ConnectionDialog dlg(this, dynamic_cast<IConnectionSettingsBase*>(con->clone()));
+                int result = dlg.exec();
+                IConnectionSettingsBaseSPtr newConnection = dlg.connection();
+                if(result == QDialog::Accepted && newConnection){
+                    delete currentItem;
+                    SettingsManager::instance().removeConnection(con);
+                    SettingsManager::instance().addConnection(newConnection);
+                    addConnection(newConnection);
+                }
+                return;
+            }
+            else{
+                qitem = qpitem;
             }
         }
-        else if(ClusterConnectionListWidgetItem* currentItem = dynamic_cast<ClusterConnectionListWidgetItem *>(listWidget_->currentItem())){
 
-            IClusterSettingsBaseSPtr oldConnection = currentItem->connection();
 
-            ClusterDialog dlg(this, dynamic_cast<IClusterSettingsBase*>(oldConnection->clone()));
+        ClusterConnectionListWidgetItem* clCurrentItem = dynamic_cast<ClusterConnectionListWidgetItem *>(qitem);
+        if(clCurrentItem){
+            IClusterSettingsBaseSPtr con = clCurrentItem->connection();
+            ClusterDialog dlg(this, dynamic_cast<IClusterSettingsBase*>(con->clone()));
             int result = dlg.exec();
             IClusterSettingsBaseSPtr newConnection = dlg.connection();
             if(result == QDialog::Accepted && newConnection){
-                delete currentItem;
-                SettingsManager::instance().removeCluster(oldConnection);
+                delete clCurrentItem;
+                SettingsManager::instance().removeCluster(con);
                 SettingsManager::instance().addCluster(newConnection);
                 addCluster(newConnection);
             }

@@ -485,6 +485,12 @@ namespace fastoredis
             return;
         }
 
+        if(!settings->root()){
+            QMessageBox::critical(this, QObject::tr("Cluster open failed"),
+                                  QObject::tr("Imposible open cluster \"%1\" without connections!").arg(common::convertFromString<QString>(settings->connectionName())));
+            return;
+        }
+
         IClusterSPtr cl = ServersManager::instance().createCluster(settings);
         if(!cl){
             return;

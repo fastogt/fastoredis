@@ -33,6 +33,7 @@ namespace fastoredis
         void typeConnectionChange(const QString& value);
         void testConnection();
         void discoveryCluster();
+        void setStartNode();
 
         void add();
         void remove();

@@ -69,6 +69,10 @@ namespace fastoredis
         listWidget_ = new QTreeWidget;
         listWidget_->setIndentation(5);
 
+        QAction* setDefault = new QAction(trSetAsStartNode, this);
+        VERIFY(connect(setDefault, &QAction::triggered, this, &ClusterDialog::setStartNode));
+        listWidget_->addAction(setDefault);
+
         QStringList colums;
         colums << trName << trAddress;
         listWidget_->setHeaderLabels(colums);
@@ -126,8 +130,8 @@ namespace fastoredis
         discoveryButton_->setEnabled(false);
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
-        bottomLayout->addWidget(testButton_, 1, Qt::AlignLeft);
-        bottomLayout->addWidget(discoveryButton_, 1, Qt::AlignLeft);
+        bottomLayout->addWidget(testButton_, 0, Qt::AlignLeft);
+        bottomLayout->addWidget(discoveryButton_, 0, Qt::AlignLeft);
         buttonBox_ = new QDialogButtonBox(this);
         buttonBox_->setOrientation(Qt::Horizontal);
         buttonBox_->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
@@ -200,6 +204,16 @@ namespace fastoredis
             for(int i = 0; i < conns.size(); ++i){
                 addConnection(conns[i]);
             }
+        }
+    }
+
+    void ClusterDialog::setStartNode()
+    {
+        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
+
+        // Do nothing if no item selected
+        if (!currentItem){
+            return;
         }
     }
 
