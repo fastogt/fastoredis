@@ -18,6 +18,17 @@ namespace fastoredis
         return connection_;
     }
 
+    ConnectionListWidgetItemEx::ConnectionListWidgetItemEx(IConnectionSettingsBaseSPtr connection, bool isRoot)
+        : ConnectionListWidgetItem(connection), isRoot_(isRoot)
+    {
+
+    }
+
+    bool ConnectionListWidgetItemEx::isRoot() const
+    {
+        return isRoot_;
+    }
+
     ClusterConnectionListWidgetItem::ClusterConnectionListWidgetItem(IClusterSettingsBaseSPtr connection)
         : connection_(connection)
     {

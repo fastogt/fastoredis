@@ -486,6 +486,10 @@ namespace fastoredis
         }
 
         IClusterSPtr cl = ServersManager::instance().createCluster(settings);
+        if(!cl){
+            return;
+        }
+
         exp_->addCluster(cl);
     }
 

@@ -34,7 +34,6 @@ namespace fastoredis
         ServerDiscoveryInfoSPtr serverDiscoveryInfo() const;
         IConnectionSettingsBaseSPtr settings() const;
         DataBaseInfoSPtr currentDatabaseInfo() const;
-        bool isRoot() const;
 
         void start();
         void stop();

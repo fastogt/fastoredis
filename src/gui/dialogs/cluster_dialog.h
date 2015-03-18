@@ -46,7 +46,7 @@ namespace fastoredis
     private:
         void retranslateUi();
         bool validateAndApply();
-        void addConnection(IConnectionSettingsBaseSPtr con);
+        void addConnection(IConnectionSettingsBaseSPtr con, bool isRoot = false);
 
         IClusterSettingsBaseSPtr cluster_connection_;
         QLineEdit* connectionName_;

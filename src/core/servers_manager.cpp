@@ -88,7 +88,11 @@ namespace fastoredis
         IClusterSPtr cl;
         connectionTypes conT = settings->connectionType();
         if(conT == REDIS){
-            IConnectionSettingsBaseSPtr root = settings->rootSetting();
+            IConnectionSettingsBaseSPtr root = settings->root();
+            if(!root){
+                return IClusterSPtr();
+            }
+
             IServerSPtr serv = createServer(root);
             if(!serv){
                 return IClusterSPtr();

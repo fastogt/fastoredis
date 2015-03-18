@@ -17,6 +17,17 @@ namespace fastoredis
         IConnectionSettingsBaseSPtr connection_;
     };
 
+    class ConnectionListWidgetItemEx
+            : public ConnectionListWidgetItem
+    {
+    public:
+        ConnectionListWidgetItemEx(IConnectionSettingsBaseSPtr connection, bool isRoot);
+        bool isRoot() const;
+
+    private:
+        const bool isRoot_;
+    };
+
     class ClusterConnectionListWidgetItem
             : public QTreeWidgetItem
     {

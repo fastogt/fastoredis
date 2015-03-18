@@ -64,8 +64,6 @@ namespace fastoredis
         SSHInfo sshInfo() const;
         void setSshInfo(const SSHInfo& info);
 
-        bool isRoot() const;
-
     protected:
         virtual std::string toCommandLine() const = 0;
         virtual void initFromCommandLine(const std::string& val) = 0;
@@ -76,7 +74,6 @@ namespace fastoredis
 
         std::string hash_;        
         SSHInfo sshInfo_;
-        bool isRoot_;
     };
 
     const char *useHelpText(connectionTypes type);
@@ -90,7 +87,8 @@ namespace fastoredis
     public:
         typedef std::vector<IConnectionSettingsBaseSPtr> cluster_connection_type;
         cluster_connection_type nodes() const;
-        IConnectionSettingsBaseSPtr rootSetting() const;
+        void setRoot(IConnectionSettingsBaseSPtr root);
+        IConnectionSettingsBaseSPtr root() const;
 
         void addNode(IConnectionSettingsBaseSPtr node);
 
@@ -103,6 +101,7 @@ namespace fastoredis
         IClusterSettingsBase(const std::string& connectionName, connectionTypes type);
 
     private:
+        IConnectionSettingsBaseSPtr root_;
         cluster_connection_type clusters_nodes_;
     };
 

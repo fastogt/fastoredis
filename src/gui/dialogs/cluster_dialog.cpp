@@ -78,10 +78,14 @@ namespace fastoredis
         listWidget_->setSelectionBehavior(QAbstractItemView::SelectRows);
 
         if(cluster_connection_){
-            IClusterSettingsBase::cluster_connection_type clusters = cluster_connection_->nodes();
-            for(IClusterSettingsBase::cluster_connection_type::const_iterator it = clusters.begin(); it != clusters.end(); ++it){
-                IConnectionSettingsBaseSPtr serv = *it;
-                addConnection(serv);
+            IConnectionSettingsBaseSPtr root = cluster_connection_->root();
+            if(root){
+                addConnection(root);
+                IClusterSettingsBase::cluster_connection_type clusters = cluster_connection_->nodes();
+                for(IClusterSettingsBase::cluster_connection_type::const_iterator it = clusters.begin(); it != clusters.end(); ++it){
+                    IConnectionSettingsBaseSPtr serv = *it;
+                    addConnection(serv);
+                }
             }
         }
 
@@ -170,7 +174,7 @@ namespace fastoredis
 
     void ClusterDialog::testConnection()
     {
-        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        ConnectionListWidgetItemEx *currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -182,11 +186,16 @@ namespace fastoredis
 
     void ClusterDialog::discoveryCluster()
     {
-        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
-        if (!currentItem)
+        if (!currentItem){
             return;
+        }
+
+        if(!currentItem->isRoot()){
+            return;
+        }
 
         DiscoveryDiagnosticDialog diag(this, currentItem->connection());
         int result = diag.exec();
@@ -205,14 +214,14 @@ namespace fastoredis
         int result = dlg.exec();
         IConnectionSettingsBaseSPtr p = dlg.connection();
         if(result == QDialog::Accepted && p){
-            addConnection(p);
+            addConnection(p, listWidget_->topLevelItemCount() == 0);
         }
     }
 
     void ClusterDialog::remove()
     {
-        ConnectionListWidgetItem *currentItem =
-                    dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        ConnectionListWidgetItemEx *currentItem =
+                    dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -230,7 +239,7 @@ namespace fastoredis
 
     void ClusterDialog::edit()
     {
-        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        ConnectionListWidgetItemEx *currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -243,19 +252,21 @@ namespace fastoredis
         int result = dlg.exec();
         IConnectionSettingsBaseSPtr newConnection = dlg.connection();
         if(result == QDialog::Accepted && newConnection){
+            bool isRoot = currentItem->isRoot();
             delete currentItem;
-            addConnection(newConnection);
+            addConnection(newConnection, isRoot);
         }
     }
 
     void ClusterDialog::itemSelectionChanged()
     {
-        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+        ConnectionListWidgetItemEx *currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
 
         bool isValidConnection = currentItem != NULL;
+        bool isRoot = currentItem != NULL && currentItem->isRoot();
 
         testButton_->setEnabled(isValidConnection);
-        discoveryButton_->setEnabled(isValidConnection);
+        discoveryButton_->setEnabled(isRoot);
     }
 
     void ClusterDialog::changeEvent(QEvent* e)
@@ -282,9 +293,15 @@ namespace fastoredis
                 cluster_connection_.reset(newConnection);
                 cluster_connection_->setLoggingEnabled(logging_->isChecked());
                 for(int i = 0; i < listWidget_->topLevelItemCount(); ++i){
-                    ConnectionListWidgetItem* item = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->topLevelItem(i));
+                    ConnectionListWidgetItemEx* item = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->topLevelItem(i));
                     if(item){
-                        cluster_connection_->addNode(item->connection());
+                        IConnectionSettingsBaseSPtr con = item->connection();
+                        if(item->isRoot()){
+                            cluster_connection_->setRoot(con);
+                        }
+                        else{
+                            cluster_connection_->addNode(con);
+                        }
                     }
                 }
             }
@@ -297,9 +314,9 @@ namespace fastoredis
         }
     }
 
-    void ClusterDialog::addConnection(IConnectionSettingsBaseSPtr con)
+    void ClusterDialog::addConnection(IConnectionSettingsBaseSPtr con, bool isRoot)
     {
-        ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
+        ConnectionListWidgetItemEx *item = new ConnectionListWidgetItemEx(con, isRoot);
         listWidget_->addTopLevelItem(item);
     }
 }

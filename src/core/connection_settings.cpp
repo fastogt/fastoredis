@@ -63,7 +63,7 @@ namespace fastoredis
     }
 
     IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName, connectionTypes type)
-        : IConnectionSettings(connectionName, type), hash_(), sshInfo_(), isRoot_(false)
+        : IConnectionSettings(connectionName, type), hash_(), sshInfo_()
     {
         setConnectionNameAndUpdateHash(connectionName);
     }
@@ -203,11 +203,6 @@ namespace fastoredis
         sshInfo_ = info;
     }
 
-    bool IConnectionSettingsBase::isRoot() const
-    {
-        return isRoot_;
-    }
-
     const char* useHelpText(connectionTypes type)
     {
         if(type == DBUNKNOWN){
@@ -284,7 +279,7 @@ namespace fastoredis
     }
 
     IClusterSettingsBase::IClusterSettingsBase(const std::string& connectionName, connectionTypes type)
-        : IConnectionSettings(connectionName, type)
+        : IConnectionSettings(connectionName, type), root_()
     {
 
     }
@@ -294,16 +289,14 @@ namespace fastoredis
         return clusters_nodes_;
     }
 
-    IConnectionSettingsBaseSPtr IClusterSettingsBase::rootSetting() const
+    void IClusterSettingsBase::setRoot(IConnectionSettingsBaseSPtr root)
     {
-        for(int i = 0; i < clusters_nodes_.size(); ++i){
-            IConnectionSettingsBaseSPtr serv = clusters_nodes_[i];
-            if(serv && serv->isRoot()){
-                return serv;
-            }
-        }
+        root_ = root;
+    }
 
-        return IConnectionSettingsBaseSPtr();
+    IConnectionSettingsBaseSPtr IClusterSettingsBase::root() const
+    {
+        return root_;
     }
 
     void IClusterSettingsBase::addNode(IConnectionSettingsBaseSPtr node)
@@ -355,7 +348,12 @@ namespace fastoredis
                             ch = val[j];
                             if(ch == magicNumber || j == len - 1){
                                 IConnectionSettingsBaseSPtr ser(IConnectionSettingsBase::fromString(serText));
-                                result->addNode(ser);
+                                if(result->root_){
+                                    result->addNode(ser);
+                                }
+                                else{
+                                    result->setRoot(ser);
+                                }
                                 serText.clear();
                             }
                             else{
@@ -382,11 +380,14 @@ namespace fastoredis
         if(crT != DBUNKNOWN){
             std::stringstream str;
             str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',';
-            for(int i = 0; i < clusters_nodes_.size(); ++i){
-               IConnectionSettingsBaseSPtr serv = clusters_nodes_[i];
-               if(serv){
-                   str << magicNumber << serv->toString();
-               }
+            if(root_){
+                str << magicNumber << root_->toString();
+                for(int i = 0; i < clusters_nodes_.size(); ++i){
+                   IConnectionSettingsBaseSPtr serv = clusters_nodes_[i];
+                   if(serv){
+                       str << magicNumber << serv->toString();
+                   }
+                }
             }
             res = str.str();
         }
