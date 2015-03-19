@@ -5,8 +5,18 @@
 namespace fastoredis
 {
     ConnectionListWidgetItem::ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection)
-        : connection_(connection)
+        : connection_()
     {
+        setConnection(connection);
+    }
+
+    void ConnectionListWidgetItem::setConnection(IConnectionSettingsBaseSPtr cons)
+    {
+        if(!cons){
+            return;
+        }
+
+        connection_ = cons;
         setText(0, common::convertFromString<QString>(connection_->connectionName()));
         connectionTypes conType = connection_->connectionType();
         setIcon(0, GuiFactory::instance().icon(conType));
@@ -16,17 +26,6 @@ namespace fastoredis
     IConnectionSettingsBaseSPtr ConnectionListWidgetItem::connection() const
     {
         return connection_;
-    }
-
-    ConnectionListWidgetItemEx::ConnectionListWidgetItemEx(IConnectionSettingsBaseSPtr connection, bool isRoot)
-        : ConnectionListWidgetItem(connection), isRoot_(isRoot)
-    {
-
-    }
-
-    bool ConnectionListWidgetItemEx::isRoot() const
-    {
-        return isRoot_;
     }
 
     ClusterConnectionListWidgetItem::ClusterConnectionListWidgetItem(IClusterSettingsBaseSPtr connection)

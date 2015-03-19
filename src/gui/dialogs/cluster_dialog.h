@@ -33,6 +33,8 @@ namespace fastoredis
         void typeConnectionChange(const QString& value);
         void testConnection();
         void discoveryCluster();
+        void showContextMenu(const QPoint& point);
+
         void setStartNode();
 
         void add();
@@ -47,7 +49,7 @@ namespace fastoredis
     private:
         void retranslateUi();
         bool validateAndApply();
-        void addConnection(IConnectionSettingsBaseSPtr con, bool isRoot = false);
+        void addConnection(IConnectionSettingsBaseSPtr con);
 
         IClusterSettingsBaseSPtr cluster_connection_;
         QLineEdit* connectionName_;
@@ -60,5 +62,6 @@ namespace fastoredis
         QPushButton* testButton_;
         QPushButton* discoveryButton_;
         QDialogButtonBox* buttonBox_;
+        QAction* setDefault_;
     };
 }

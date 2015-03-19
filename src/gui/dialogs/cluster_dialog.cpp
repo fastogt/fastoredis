@@ -2,6 +2,7 @@
 
 #include <QDialogButtonBox>
 #include <QEvent>
+#include <QMenu>
 #include <QFileDialog>
 #include <QLabel>
 #include <QPushButton>
@@ -69,23 +70,24 @@ namespace fastoredis
         listWidget_ = new QTreeWidget;
         listWidget_->setIndentation(5);
 
-        QAction* setDefault = new QAction(trSetAsStartNode, this);
-        VERIFY(connect(setDefault, &QAction::triggered, this, &ClusterDialog::setStartNode));
-        listWidget_->addAction(setDefault);
-
         QStringList colums;
         colums << trName << trAddress;
         listWidget_->setHeaderLabels(colums);
-        listWidget_->setContextMenuPolicy(Qt::ActionsContextMenu);
         listWidget_->setIndentation(15);
         listWidget_->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
         listWidget_->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+        listWidget_->setContextMenuPolicy(Qt::CustomContextMenu);
+        VERIFY(connect(listWidget_, &QTreeWidget::customContextMenuRequested, this, &ClusterDialog::showContextMenu));
+
+        setDefault_ = new QAction(this);
+        VERIFY(connect(setDefault_, &QAction::triggered, this, &ClusterDialog::setStartNode));
 
         if(cluster_connection_){
             IClusterSettingsBase::cluster_connection_type clusters = cluster_connection_->nodes();
             for(IClusterSettingsBase::cluster_connection_type::const_iterator it = clusters.begin(); it != clusters.end(); ++it){
                 IConnectionSettingsBaseSPtr serv = (*it);
-                addConnection(serv, it == clusters.begin());
+                addConnection(serv);
             }
         }
 
@@ -174,7 +176,7 @@ namespace fastoredis
 
     void ClusterDialog::testConnection()
     {
-        ConnectionListWidgetItemEx *currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
+        ConnectionListWidgetItem *currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -186,7 +188,7 @@ namespace fastoredis
 
     void ClusterDialog::discoveryCluster()
     {
-        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
+        ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem){
@@ -207,14 +209,42 @@ namespace fastoredis
         }
     }
 
-    void ClusterDialog::setStartNode()
+    void ClusterDialog::showContextMenu(const QPoint& point)
     {
-        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->currentItem());
+        ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem){
             return;
         }
+
+        QMenu menu(this);
+        bool isPrimary = listWidget_->topLevelItem(0) == currentItem;
+        setDefault_->setEnabled(!isPrimary);
+        menu.addAction(setDefault_);
+
+        QPoint menuPoint = listWidget_->mapToGlobal(point);
+        menu.exec(menuPoint);
+    }
+
+    void ClusterDialog::setStartNode()
+    {
+        ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->currentItem());
+
+        // Do nothing if no item selected
+        if (!currentItem){
+            return;
+        }
+
+        ConnectionListWidgetItem* top = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->topLevelItem(0));
+        if (top == currentItem){
+            return;
+        }
+
+        IConnectionSettingsBaseSPtr tc = top->connection();
+        IConnectionSettingsBaseSPtr cc = currentItem->connection();
+        currentItem->setConnection(tc);
+        top->setConnection(cc);
     }
 
     void ClusterDialog::add()
@@ -224,13 +254,13 @@ namespace fastoredis
         int result = dlg.exec();
         IConnectionSettingsBaseSPtr p = dlg.connection();
         if(result == QDialog::Accepted && p){
-            addConnection(p, listWidget_->topLevelItemCount() == 0);
+            addConnection(p);
         }
     }
 
     void ClusterDialog::remove()
     {
-        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx*>(listWidget_->currentItem());
+        ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem*>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -248,7 +278,7 @@ namespace fastoredis
 
     void ClusterDialog::edit()
     {
-        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx*>(listWidget_->currentItem());
+        ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem*>(listWidget_->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -261,15 +291,13 @@ namespace fastoredis
         int result = dlg.exec();
         IConnectionSettingsBaseSPtr newConnection = dlg.connection();
         if(result == QDialog::Accepted && newConnection){
-            bool isRoot = currentItem->isRoot();
-            delete currentItem;
-            addConnection(newConnection, isRoot);
+            currentItem->setConnection(newConnection);
         }
     }
 
     void ClusterDialog::itemSelectionChanged()
     {
-        ConnectionListWidgetItemEx* currentItem = dynamic_cast<ConnectionListWidgetItemEx*>(listWidget_->currentItem());
+        ConnectionListWidgetItem* currentItem = dynamic_cast<ConnectionListWidgetItem*>(listWidget_->currentItem());
 
         bool isValidConnection = currentItem != NULL;
 
@@ -282,12 +310,15 @@ namespace fastoredis
         if(e->type() == QEvent::LanguageChange){
             retranslateUi();
         }
+
         QDialog::changeEvent(e);
     }
 
     void ClusterDialog::retranslateUi()
     {
+        using namespace translations;
         logging_->setText(tr("Logging enabled"));
+        setDefault_->setText(trSetAsStartNode);
     }
 
     bool ClusterDialog::validateAndApply()
@@ -301,7 +332,7 @@ namespace fastoredis
                 cluster_connection_.reset(newConnection);
                 cluster_connection_->setLoggingEnabled(logging_->isChecked());
                 for(int i = 0; i < listWidget_->topLevelItemCount(); ++i){
-                    ConnectionListWidgetItemEx* item = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->topLevelItem(i));
+                    ConnectionListWidgetItem* item = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->topLevelItem(i));
                     if(item){
                         IConnectionSettingsBaseSPtr con = item->connection();
                         cluster_connection_->addNode(con);
@@ -317,9 +348,9 @@ namespace fastoredis
         }
     }
 
-    void ClusterDialog::addConnection(IConnectionSettingsBaseSPtr con, bool isRoot)
+    void ClusterDialog::addConnection(IConnectionSettingsBaseSPtr con)
     {
-        ConnectionListWidgetItemEx *item = new ConnectionListWidgetItemEx(con, isRoot);
+        ConnectionListWidgetItem *item = new ConnectionListWidgetItem(con);
         listWidget_->addTopLevelItem(item);
     }
 }

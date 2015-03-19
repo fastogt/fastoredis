@@ -11,21 +11,11 @@ namespace fastoredis
     {
     public:
         ConnectionListWidgetItem(IConnectionSettingsBaseSPtr connection);
+        void setConnection(IConnectionSettingsBaseSPtr cons);
         IConnectionSettingsBaseSPtr connection() const;
 
     private:
         IConnectionSettingsBaseSPtr connection_;
-    };
-
-    class ConnectionListWidgetItemEx
-            : public ConnectionListWidgetItem
-    {
-    public:
-        ConnectionListWidgetItemEx(IConnectionSettingsBaseSPtr connection, bool isRoot);
-        bool isRoot() const;
-
-    private:
-        const bool isRoot_;
     };
 
     class ClusterConnectionListWidgetItem
