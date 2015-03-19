@@ -21,7 +21,10 @@ namespace fastoredis
         bool loggingEnabled() const;
         void setLoggingEnabled(bool isLogging);
 
-        virtual std::string toString() const = 0;
+        uint32_t loggingMsTimeInterval() const;
+        void setLoggingMsTimeInterval(uint32_t mstime);
+
+        virtual std::string toString() const;
         virtual IConnectionSettings* clone() const = 0;
 
     protected:
@@ -30,6 +33,7 @@ namespace fastoredis
         std::string connectionName_;
         bool logging_enabled_;
         const connectionTypes type_;
+        uint32_t msinterval_;
     };
 
     class IConnectionSettingsBase
@@ -58,8 +62,6 @@ namespace fastoredis
         static IConnectionSettingsBase* fromString(const std::string& val);
 
         virtual std::string toString() const;
-
-        uint32_t loggingMsTimeInterval() const;
 
         SSHInfo sshInfo() const;
         void setSshInfo(const SSHInfo& info);

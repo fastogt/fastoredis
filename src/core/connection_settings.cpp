@@ -27,7 +27,7 @@ namespace
 namespace fastoredis
 {
     IConnectionSettings::IConnectionSettings(const std::string& connectionName, connectionTypes type)
-        : connectionName_(connectionName), type_(type), logging_enabled_(false)
+        : connectionName_(connectionName), type_(type), logging_enabled_(false), msinterval_(60000)
     {
 
     }
@@ -60,6 +60,23 @@ namespace fastoredis
     void IConnectionSettings::setLoggingEnabled(bool isLogging)
     {
         logging_enabled_ = isLogging;
+    }
+
+    uint32_t IConnectionSettings::loggingMsTimeInterval() const
+    {
+        return msinterval_;
+    }
+
+    void IConnectionSettings::setLoggingMsTimeInterval(uint32_t mstime)
+    {
+        msinterval_ = mstime;
+    }
+
+    std::string IConnectionSettings::toString() const
+    {
+        char buff[1024]={0};
+        common::SNPrintf(buff, sizeof(buff), "%d,%s,%d", type_, connectionName_, logging_enabled_);
+        return buff;
     }
 
     IConnectionSettingsBase::IConnectionSettingsBase(const std::string &connectionName, connectionTypes type)
@@ -178,19 +195,13 @@ namespace fastoredis
 
     std::string IConnectionSettingsBase::toString() const
     {
-        std::string res;
-        connectionTypes crT = connectionType();
-        if(crT != DBUNKNOWN){
-            std::stringstream str;
-            str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',' << toCommandLine() << ',' << sshInfo_.toString();
-            res = str.str();
-        }
-        return res;
-    }
+        DCHECK(type_ != DBUNKNOWN);
 
-    uint32_t IConnectionSettingsBase::loggingMsTimeInterval() const
-    {
-        return 60000;
+        std::stringstream str;
+        str << IConnectionSettings::toString() << ','
+            << toCommandLine() << ',' << sshInfo_.toString();
+        std::string res = str.str();
+        return res;
     }
 
     SSHInfo IConnectionSettingsBase::sshInfo() const
@@ -369,19 +380,18 @@ namespace fastoredis
 
     std::string IClusterSettingsBase::toString() const
     {
-        std::string res;
-        connectionTypes crT = connectionType();
-        if(crT != DBUNKNOWN){
-            std::stringstream str;
-            str << crT << ',' << connectionName() << ',' << logging_enabled_ << ',';
-            for(int i = 0; i < clusters_nodes_.size(); ++i){
-               IConnectionSettingsBaseSPtr serv = clusters_nodes_[i];
-               if(serv){
-                   str << magicNumber << serv->toString();
-               }
-            }
-            res = str.str();
+        DCHECK(type_ != DBUNKNOWN);
+
+        std::stringstream str;
+        str << IConnectionSettings::toString() << ',';
+        for(int i = 0; i < clusters_nodes_.size(); ++i){
+           IConnectionSettingsBaseSPtr serv = clusters_nodes_[i];
+           if(serv){
+               str << magicNumber << serv->toString();
+           }
         }
+
+        std::string res = str.str();
         return res;
     }
 
