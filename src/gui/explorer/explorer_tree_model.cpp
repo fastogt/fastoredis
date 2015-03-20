@@ -536,10 +536,26 @@ namespace fastoredis
         if(!parent){
             return NULL;
         }
-        for(int i = 0; i < parent->childrenCount() ; ++i){
+
+        for(int i = 0; i < parent->childrenCount(); ++i){
             ExplorerServerItem *item = dynamic_cast<ExplorerServerItem*>(parent->child(i));
-            if(item && item->server().get() == server){
-                return item;
+            if(item){
+                if(item->server().get() == server){
+                    return item;
+                }
+            }
+            else{
+                ExplorerClusterItem* citem = dynamic_cast<ExplorerClusterItem*>(parent->child(i));
+                if(citem){
+                    for(int j = 0; j < citem->childrenCount(); ++j){
+                        ExplorerServerItem *item = dynamic_cast<ExplorerServerItem*>(citem->child(i));
+                        if(item){
+                            if(item->server().get() == server){
+                                return item;
+                            }
+                        }
+                    }
+                }
             }
         }
         return NULL;

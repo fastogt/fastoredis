@@ -309,7 +309,13 @@ namespace fastoredis
         }
 
         if(reply->type == REDIS_REPLY_STRING){
-            er = makeAllDiscoveryInfo(reply->str, infos);
+            er = makeAllDiscoveryInfo(std::string(reply->str, reply->len), infos);
+        }
+        else if(reply->type == REDIS_REPLY_ERROR){
+            er = common::make_error_value(std::string(reply->str, reply->len), common::Value::E_ERROR);
+        }
+        else{
+            NOTREACHED();
         }
 
         freeReplyObject(reply);
@@ -1237,14 +1243,14 @@ namespace fastoredis
                 }
                 case REDIS_REPLY_ERROR:
                 {
-                    common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    common::ErrorValue *val = common::Value::createErrorValue(std::string(r->str, r->len), common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     ar->append(val);
                     break;
                 }
                 case REDIS_REPLY_STATUS:
                 case REDIS_REPLY_STRING:
                 {
-                    common::StringValue *val = common::Value::createStringValue(r->str);
+                    common::StringValue *val = common::Value::createStringValue(std::string(r->str, r->len));
                     ar->append(val);
                     break;
                 }

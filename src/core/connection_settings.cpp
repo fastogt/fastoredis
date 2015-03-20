@@ -74,7 +74,7 @@ namespace fastoredis
 
     std::string IConnectionSettings::toString() const
     {
-        char buff[1024]={0};
+        char buff[1024] = {0};
         common::SNPrintf(buff, sizeof(buff), "%d,%s,%d", type_, connectionName_, logging_enabled_);
         return buff;
     }
