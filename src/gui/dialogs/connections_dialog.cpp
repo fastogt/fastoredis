@@ -229,10 +229,9 @@ namespace fastoredis
                 int result = dlg.exec();
                 IConnectionSettingsBaseSPtr newConnection = dlg.connection();
                 if(result == QDialog::Accepted && newConnection){
-                    delete currentItem;
+                    currentItem->setConnection(newConnection);
                     SettingsManager::instance().removeConnection(con);
                     SettingsManager::instance().addConnection(newConnection);
-                    addConnection(newConnection);
                 }
                 return;
             }
@@ -249,10 +248,9 @@ namespace fastoredis
             int result = dlg.exec();
             IClusterSettingsBaseSPtr newConnection = dlg.connection();
             if(result == QDialog::Accepted && newConnection){
-                delete clCurrentItem;
+                clCurrentItem->setConnection(newConnection);
                 SettingsManager::instance().removeCluster(con);
                 SettingsManager::instance().addCluster(newConnection);
-                addCluster(newConnection);
             }
         }
     }

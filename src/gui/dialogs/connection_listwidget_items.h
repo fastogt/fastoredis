@@ -23,6 +23,7 @@ namespace fastoredis
     {
     public:
         ClusterConnectionListWidgetItem(IClusterSettingsBaseSPtr connection);
+        void setConnection(IClusterSettingsBaseSPtr cons);
         IClusterSettingsBaseSPtr connection() const;
 
     private:

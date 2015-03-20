@@ -43,6 +43,17 @@ namespace fastoredis
         }
     }
 
+    void ClusterConnectionListWidgetItem::setConnection(IClusterSettingsBaseSPtr cons)
+    {
+        if(!cons){
+            return;
+        }
+
+        connection_ = cons;
+        setText(0, common::convertFromString<QString>(connection_->connectionName()));
+        setIcon(0, GuiFactory::instance().clusterIcon());
+    }
+
     IClusterSettingsBaseSPtr ClusterConnectionListWidgetItem::connection() const
     {
         return connection_;
