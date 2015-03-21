@@ -17,6 +17,11 @@ namespace common
             bool isValid() const;
         };
 
+        inline bool operator ==(const hostAndPort& lhs,const hostAndPort& rhs)
+        {
+            return lhs.host_ == rhs.host_ && lhs.port_ == rhs.port_;
+        }
+
         bool isLocalHost(const std::string& host);
 
         int connect(const hostAndPort& from) WARN_UNUSED_RESULT;

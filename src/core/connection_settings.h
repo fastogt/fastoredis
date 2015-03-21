@@ -45,16 +45,13 @@ namespace fastoredis
 
         std::string loggingPath() const;
 
-        void setHost(const common::net::hostAndPort& host);
+        virtual void setHost(const common::net::hostAndPort& host) = 0;
+        virtual common::net::hostAndPort host() const = 0;
+
         void setConnectionNameAndUpdateHash(const std::string& name);
 
         virtual std::string commandLine() const = 0;
         virtual void setCommandLine(const std::string& line) = 0;
-
-        virtual std::string host() const = 0;
-        virtual void setHost(const std::string& host) = 0;
-        virtual int port() const = 0;
-        virtual void setPort(int port) = 0;
 
         std::string fullAddress() const;
 

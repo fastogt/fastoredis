@@ -20,24 +20,15 @@ namespace fastoredis
         info_ = common::convertFromString<memcachedConfig>(line);
     }
 
-    std::string MemcachedConnectionSettings::host() const
+    void MemcachedConnectionSettings::setHost(const common::net::hostAndPort& host)
     {
-        return info_.hostip_;
+        info_.hostip_ = common::utils::strdupornull(host.host_);
+        info_.hostport_ = host.port_;
     }
 
-    void MemcachedConnectionSettings::setHost(const std::string& host)
+    common::net::hostAndPort MemcachedConnectionSettings::host() const
     {
-        info_.hostip_ = common::utils::strdupornull(host);
-    }
-
-    int MemcachedConnectionSettings::port() const
-    {
-        return info_.hostport_;
-    }
-
-    void MemcachedConnectionSettings::setPort(int port)
-    {
-        info_.hostport_ = port;
+        return common::net::hostAndPort(info_.hostip_, info_.hostport_);
     }
 
     memcachedConfig MemcachedConnectionSettings::info() const

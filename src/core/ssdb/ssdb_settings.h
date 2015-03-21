@@ -15,10 +15,8 @@ namespace fastoredis
         virtual std::string commandLine() const;
         virtual void setCommandLine(const std::string& line);
 
-        virtual std::string host() const;
-        virtual void setHost(const std::string& host);
-        virtual int port() const;
-        virtual void setPort(int port);
+        virtual void setHost(const common::net::hostAndPort& host);
+        virtual common::net::hostAndPort host() const;
 
         ssdbConfig info() const;
         void setInfo(const ssdbConfig &info);

@@ -90,12 +90,6 @@ namespace fastoredis
 
     }
 
-    void IConnectionSettingsBase::setHost(const common::net::hostAndPort& host)
-    {
-        setPort(host.port_);
-        setHost(host.host_);
-    }
-
     void IConnectionSettingsBase::setConnectionNameAndUpdateHash(const std::string& name)
     {
         using namespace common::utils;
@@ -131,7 +125,7 @@ namespace fastoredis
 
     std::string IConnectionSettingsBase::fullAddress() const
     {
-        common::net::hostAndPort h(host(), port());
+        const common::net::hostAndPort h = host();
         return common::convertToString(h);
     }
 
@@ -399,7 +393,7 @@ namespace fastoredis
     {
         for(int i = 0; i < clusters_nodes_.size(); ++i){
             IConnectionSettingsBaseSPtr cur = clusters_nodes_[i];
-            if(cur->host() == host.host_ && cur->port() == host.port_){
+            if(cur->host() == host){
                 return cur;
             }
         }

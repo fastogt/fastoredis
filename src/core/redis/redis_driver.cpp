@@ -309,7 +309,7 @@ namespace fastoredis
         }
 
         if(reply->type == REDIS_REPLY_STRING){
-            er = makeAllDiscoveryInfo(std::string(reply->str, reply->len), infos);
+            er = makeAllDiscoveryInfo(settings->host(), std::string(reply->str, reply->len), infos);
         }
         else if(reply->type == REDIS_REPLY_ERROR){
             er = common::make_error_value(std::string(reply->str, reply->len), common::Value::E_ERROR);

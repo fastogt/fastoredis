@@ -907,7 +907,7 @@ namespace fastoredis
         return makeOwnRedisDiscoveryInfo(content);
     }
 
-    common::ErrorValueSPtr makeAllDiscoveryInfo(const std::string& text, std::vector<ServerDiscoveryInfoSPtr> &infos)
+    common::ErrorValueSPtr makeAllDiscoveryInfo(const common::net::hostAndPort& parentHost, const std::string& text, std::vector<ServerDiscoveryInfoSPtr> &infos)
     {
         if(text.empty()){
             return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);;
@@ -921,7 +921,7 @@ namespace fastoredis
 
             std::string word;
             std::string hash;
-            std::string hport;
+            common::net::hostAndPort hport;
             serverTypes t = MASTER;
             bool self = false;
             int fieldpos = 0;
@@ -935,7 +935,10 @@ namespace fastoredis
                         hash = word;
                         break;
                     case 1:
-                        hport = word;
+                        hport = common::convertFromString<common::net::hostAndPort>(word);
+                        if(common::net::isLocalHost(hport.host_)){
+                            hport.host_ = parentHost.host_;
+                        }
                         break;
                     case 2:
                         if(word.find("slave") != std::string::npos ){
@@ -958,7 +961,7 @@ namespace fastoredis
             RedisDiscoveryInfo* ser = new RedisDiscoveryInfo(t, self);
             ser->setHash(hash);
             ser->setName(hash);
-            ser->setHost(common::convertFromString<common::net::hostAndPort>(hport));
+            ser->setHost(hport);
             infos.push_back(ServerDiscoveryInfoSPtr(ser));
 
             start = pos + 1;

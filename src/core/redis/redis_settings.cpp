@@ -10,24 +10,15 @@ namespace fastoredis
 
     }
 
-    std::string RedisConnectionSettings::host() const
+    void RedisConnectionSettings::setHost(const common::net::hostAndPort& host)
     {
-        return info_.hostip;
+        info_.hostip = common::utils::strdupornull(host.host_);
+        info_.hostport = host.port_;
     }
 
-    void RedisConnectionSettings::setHost(const std::string& host)
+    common::net::hostAndPort RedisConnectionSettings::host() const
     {
-        info_.hostip = common::utils::strdupornull(host);
-    }
-
-    int RedisConnectionSettings::port() const
-    {
-        return info_.hostport;
-    }
-
-    void RedisConnectionSettings::setPort(int port)
-    {
-        info_.hostport = port;
+        return common::net::hostAndPort(info_.hostip, info_.hostport);
     }
 
     void RedisConnectionSettings::initFromCommandLine(const std::string &val)

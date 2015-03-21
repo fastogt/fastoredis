@@ -389,7 +389,7 @@ namespace fastoredis
 
     ServerDiscoveryInfo* makeOwnRedisDiscoveryInfo(const std::string& text);
     ServerDiscoveryInfo* makeOwnRedisDiscoveryInfo(FastoObject* root);
-    common::ErrorValueSPtr makeAllDiscoveryInfo(const std::string& text, std::vector<ServerDiscoveryInfoSPtr>& infos);
+    common::ErrorValueSPtr makeAllDiscoveryInfo(const common::net::hostAndPort& parentHost, const std::string& text, std::vector<ServerDiscoveryInfoSPtr>& infos);
 
     class RedisDataBaseInfo
             : public DataBaseInfo
