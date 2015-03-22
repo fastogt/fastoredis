@@ -197,6 +197,7 @@ namespace fastoredis
         exp_ = new ExplorerTreeView(this);
         VERIFY(connect(exp_, &ExplorerTreeView::openedConsole, mainW, &MainWidget::openConsole));
         VERIFY(connect(exp_, &ExplorerTreeView::closeServer, &ServersManager::instance(), &ServersManager::closeServer));
+        VERIFY(connect(exp_, &ExplorerTreeView::closeCluster, &ServersManager::instance(), &ServersManager::closeCluster));
         expDock_ = new QDockWidget(this);
         explorerAction_ = expDock_->toggleViewAction();
         explorerAction_->setShortcut(explorerKeySequence);

@@ -46,7 +46,7 @@ namespace fastoredis
 
     ExplorerServerItem::eType ExplorerServerItem::type() const
     {
-        return Server;
+        return eServer;
     }
 
     void ExplorerServerItem::loadDatabases()
@@ -54,10 +54,10 @@ namespace fastoredis
          return server_->loadDatabases();
     }
 
-    ExplorerClusterItem::ExplorerClusterItem(IClusterSPtr server, TreeItem* parent)
-        : IExplorerTreeItem(parent), cluster_(server)
+    ExplorerClusterItem::ExplorerClusterItem(IClusterSPtr cluster, TreeItem* parent)
+        : IExplorerTreeItem(parent), cluster_(cluster)
     {
-        ICluster::nodes_type nodes = server->nodes();
+        ICluster::nodes_type nodes = cluster_->nodes();
         for(int i = 0; i < nodes.size(); ++i){
             ExplorerServerItem* ser = new ExplorerServerItem(nodes[i], this);
             addChildren(ser);
@@ -117,7 +117,7 @@ namespace fastoredis
 
     ExplorerDatabaseItem::eType ExplorerDatabaseItem::type() const
     {
-        return Database;
+        return eDatabase;
     }
 
     bool ExplorerDatabaseItem::isDefault() const
@@ -231,7 +231,7 @@ namespace fastoredis
 
     IExplorerTreeItem::eType ExplorerKeyItem::type() const
     {
-        return Key;
+        return eKey;
     }
 
     void ExplorerKeyItem::removeFromDb()
@@ -280,13 +280,13 @@ namespace fastoredis
             if(t == IExplorerTreeItem::eCluster){
                 return GuiFactory::instance().clusterIcon();
             }
-            else if(t == IExplorerTreeItem::Server){
+            else if(t == IExplorerTreeItem::eServer){
                 return GuiFactory::instance().icon(node->server()->type());
             }
-            else if(t == IExplorerTreeItem::Key){
+            else if(t == IExplorerTreeItem::eKey){
                 return GuiFactory::instance().keyIcon();
             }
-            else if(t == IExplorerTreeItem::Database){
+            else if(t == IExplorerTreeItem::eDatabase){
                 return GuiFactory::instance().databaseIcon();
             }
             else{
@@ -296,7 +296,7 @@ namespace fastoredis
 
         if (role == Qt::DisplayRole) {
             if (col == IExplorerTreeItem::eName) {
-                if(t == IExplorerTreeItem::Key){
+                if(t == IExplorerTreeItem::eKey){
                     return node->name();
                 }
                 else{
@@ -306,7 +306,7 @@ namespace fastoredis
         }
 
         if(role == Qt::ForegroundRole){
-            if(t == IExplorerTreeItem::Database){
+            if(t == IExplorerTreeItem::eDatabase){
                 ExplorerDatabaseItem* db = dynamic_cast<ExplorerDatabaseItem*>(node);
                 if(db && db->isDefault()){
                     return QVariant( QColor( Qt::red ) );
@@ -355,7 +355,7 @@ namespace fastoredis
                 return;
             }
 
-            ExplorerClusterItem *item = new ExplorerClusterItem(cluster, parent);
+            ExplorerClusterItem* item = new ExplorerClusterItem(cluster, parent);
             insertItem(QModelIndex(), item);
         }
     }

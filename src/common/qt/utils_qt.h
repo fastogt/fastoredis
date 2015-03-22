@@ -11,18 +11,22 @@ namespace common
         template<typename Type>
         inline Type item(const QModelIndex& index)
         {
-            return dynamic_cast<Type>(static_cast<Type>(index.internalPointer()));
+            void* raw = index.internalPointer();
+            Type stype = static_cast<Type>(raw);
+            if(!stype){
+                return NULL;
+            }
+
+            Type dtype = dynamic_cast<Type>(stype);
+            return dtype;
         }
 
         template<typename Type>
-        inline Type get_item(const QModelIndex& index,Type root)
+        inline Type get_item(const QModelIndex& index, Type root)
         {
             Type result = root;
             if (index.isValid()){
-                Type item = static_cast<Type>(index.internalPointer());
-                if (item){
-                    result= item;
-                }
+                result = item<Type>(index);
             }
             return result;
         }

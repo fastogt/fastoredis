@@ -19,6 +19,7 @@ namespace fastoredis
     Q_SIGNALS:
         void openedConsole(IServerSPtr server, const QString& text);
         void closeServer(IServerSPtr server);
+        void closeCluster(IClusterSPtr cluster);
 
     public Q_SLOTS:
         void addServer(IServerSPtr server);
@@ -68,7 +69,6 @@ namespace fastoredis
 
         void retranslateUi();
         QModelIndex selectedIndex() const;
-        QModelIndexList selectedIndexes() const;
 
         QAction* connectAction_;
         QAction* openConsoleAction_;

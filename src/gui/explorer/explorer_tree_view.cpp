@@ -28,6 +28,7 @@ namespace fastoredis
         setModel(new ExplorerTreeModel(this));
 
         setSelectionBehavior(QAbstractItemView::SelectRows);
+        setSelectionMode(QAbstractItemView::SingleSelection);
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
@@ -132,6 +133,11 @@ namespace fastoredis
 
     void ExplorerTreeView::removeCluster(IClusterSPtr cluster)
     {
+        DCHECK(cluster);
+        if(!cluster){
+            return;
+        }
+
         ExplorerTreeModel *mod = static_cast<ExplorerTreeModel*>(model());
         DCHECK(mod);
         if(!mod){
@@ -144,7 +150,7 @@ namespace fastoredis
         }
 
         mod->removeCluster(cluster);
-        //emit closeCluster(cluster);
+        emit closeCluster(cluster);
     }
 
     void ExplorerTreeView::showContextMenu(const QPoint& point)
@@ -160,13 +166,20 @@ namespace fastoredis
                 return;
             }
 
-            if(node->type() == IExplorerTreeItem::Server){
+            if(node->type() == IExplorerTreeItem::eCluster){
+                QMenu menu(this);
+                menu.addAction(closeAction_);
+                menu.exec(menuPoint);
+            }
+            else if(node->type() == IExplorerTreeItem::eServer){
                 QMenu menu(this);                
                 menu.addAction(connectAction_);
                 menu.addAction(openConsoleAction_);
 
                 IServerSPtr server = node->server();
                 bool isCon = server->isConnected();
+
+                bool isClusterMember = dynamic_cast<ExplorerClusterItem*>(node->parent()) != NULL;
 
                 loadDatabaseAction_->setEnabled(isCon);
                 menu.addAction(loadDatabaseAction_);
@@ -176,6 +189,7 @@ namespace fastoredis
                 menu.addAction(propertyServerAction_);
 
                 menu.addAction(historyServerAction_);
+                closeAction_->setEnabled(!isClusterMember);
                 menu.addAction(closeAction_);
 
                 bool isLocal = server->isLocalHost();
@@ -189,7 +203,7 @@ namespace fastoredis
 
                 menu.exec(menuPoint);
             }
-            else if(node->type() == IExplorerTreeItem::Database){
+            else if(node->type() == IExplorerTreeItem::eDatabase){
                 ExplorerDatabaseItem *db = dynamic_cast<ExplorerDatabaseItem*>(node);
                 QMenu menu(this);
                 menu.addAction(loadContentAction_);
@@ -203,7 +217,7 @@ namespace fastoredis
                 setDefaultDbAction_->setEnabled(!isDefault);
                 menu.exec(menuPoint);
             }
-            else if(node->type() == IExplorerTreeItem::Key){
+            else if(node->type() == IExplorerTreeItem::eKey){
                 QMenu menu(this);
                 menu.addAction(getValueAction_);
                 menu.addAction(deleteKeyAction_);
@@ -346,12 +360,22 @@ namespace fastoredis
             return;
         }
 
-        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
-        if(node){
-            IServerSPtr server = node->server();
+        ExplorerServerItem* snode = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(snode && snode->type() == IExplorerTreeItem::eServer){
+            IServerSPtr server = snode->server();
             if(server){
                 removeServer(server);
             }
+            return;
+        }
+
+        ExplorerClusterItem* cnode = common::utils_qt::item<ExplorerClusterItem*>(sel);
+        if(cnode && cnode->type() == IExplorerTreeItem::eCluster){
+            IClusterSPtr server = cnode->cluster();
+            if(server){
+                removeCluster(server);
+            }
+            return;
         }
     }
 
@@ -694,10 +718,5 @@ namespace fastoredis
         }
 
         return indexses[0];
-    }
-
-    QModelIndexList ExplorerTreeView::selectedIndexes() const
-    {
-        return selectionModel()->selectedRows();
     }
 }

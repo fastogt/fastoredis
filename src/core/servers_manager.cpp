@@ -149,6 +149,14 @@ namespace fastoredis
         }
     }
 
+    void ServersManager::closeCluster(IClusterSPtr cluster)
+    {
+        ICluster::nodes_type nodes = cluster->nodes();
+        for(int i = 0; i < nodes.size(); ++i){
+            closeServer(nodes[i]);
+        }
+    }
+
     void ServersManager::refreshSyncServers()
     {
         for(size_t i = 0; i < servers_.size(); ++i){

@@ -24,6 +24,7 @@ namespace fastoredis
 
     public Q_SLOTS:
         void closeServer(IServerSPtr server);
+        void closeCluster(IClusterSPtr cluster);
 
     private:
         ServersManager();

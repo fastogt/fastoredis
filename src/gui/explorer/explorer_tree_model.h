@@ -19,9 +19,9 @@ namespace fastoredis
         enum eType
         {
             eCluster,
-            Server,
-            Database,
-            Key
+            eServer,
+            eDatabase,
+            eKey
         };
 
         IExplorerTreeItem(TreeItem* parent);
@@ -51,7 +51,7 @@ namespace fastoredis
     struct ExplorerClusterItem
             : public IExplorerTreeItem
     {
-        ExplorerClusterItem(IClusterSPtr server, TreeItem* parent);
+        ExplorerClusterItem(IClusterSPtr cluster, TreeItem* parent);
         virtual ~ExplorerClusterItem();
 
         virtual QString name() const;

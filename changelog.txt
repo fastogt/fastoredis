@@ -1,6 +1,7 @@
 0.7.2
 [Alexandr Topilski]
 - Redis clusters basic support
+- Redis clusters discovery
 
 0.7.1 / March 14, 2015
 [Alexandr Topilski]
