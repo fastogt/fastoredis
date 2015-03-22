@@ -53,14 +53,17 @@ namespace fastoredis
         typeConnection_ = new QComboBox;
 
         for(int i = 0; i < connnectionType.size(); ++i){
-            typeConnection_->addItem(common::convertFromString<QString>(connnectionType[i]));
+            connectionTypes ct = static_cast<connectionTypes>(i);
+            std::string str = common::convertToString(ct);
+            typeConnection_->addItem(GuiFactory::instance().icon(ct), common::convertFromString<QString>(str), i);
         }
 
         if(connection_){
-            typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(connection_->connectionType())));
+            typeConnection_->setCurrentIndex(connection_->connectionType());
         }
 
-        VERIFY(connect(typeConnection_, &QComboBox::currentTextChanged, this, &ConnectionDialog::typeConnectionChange));
+        typedef void (QComboBox::*qind)(int);
+        VERIFY(connect(typeConnection_, static_cast<qind>(&QComboBox::currentIndexChanged), this, &ConnectionDialog::typeConnectionChange));
 
         logging_ = new QCheckBox;
         if(connection_){
@@ -193,14 +196,14 @@ namespace fastoredis
         //update controls
         sshSupportStateChange(useSsh_->checkState());
         securityChange(security_->currentText());
-        typeConnectionChange(typeConnection_->currentText());
+        typeConnectionChange(typeConnection_->currentIndex());
         retranslateUi();
     }
 
     void ConnectionDialog::setConnectionTypeOnly(connectionTypes type)
     {
         typeConnection_->clear();
-        typeConnection_->addItem(common::convertFromString<QString>(connnectionType[type]));
+        typeConnection_->addItem(common::convertFromString<QString>(common::convertToString(type)));
 
     }
 
@@ -216,9 +219,10 @@ namespace fastoredis
         }
     }
 
-    void ConnectionDialog::typeConnectionChange(const QString& value)
+    void ConnectionDialog::typeConnectionChange(int index)
     {
-        connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(value));
+        QVariant var = typeConnection_->itemData(index);
+        connectionTypes currentType = (connectionTypes)qvariant_cast<unsigned char>(var);
         bool isValidType = currentType != DBUNKNOWN;
         connectionName_->setEnabled(isValidType);
         commandLine_->setEnabled(isValidType);

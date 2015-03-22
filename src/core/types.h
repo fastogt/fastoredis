@@ -4,6 +4,8 @@
 
 #include "core/connection_types.h"
 
+#include "common/net/net.h"
+
 namespace fastoredis
 {
     template<connectionTypes ct>

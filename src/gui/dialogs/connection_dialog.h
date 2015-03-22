@@ -28,7 +28,7 @@ namespace fastoredis
         virtual void accept();
 
     private Q_SLOTS:
-        void typeConnectionChange(const QString& value);
+        void typeConnectionChange(int index);
         void securityChange(const QString& val);
         void sshSupportStateChange(int value);
         void togglePasswordEchoMode();
