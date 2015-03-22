@@ -203,8 +203,8 @@ namespace fastoredis
     void ConnectionDialog::setConnectionTypeOnly(connectionTypes type)
     {
         typeConnection_->clear();
-        typeConnection_->addItem(common::convertFromString<QString>(common::convertToString(type)));
-
+        std::string str = common::convertToString(type);
+        typeConnection_->addItem(GuiFactory::instance().icon(type), common::convertFromString<QString>(str), type);
     }
 
     IConnectionSettingsBaseSPtr ConnectionDialog::connection() const

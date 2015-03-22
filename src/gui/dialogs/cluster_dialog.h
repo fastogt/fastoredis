@@ -30,7 +30,7 @@ namespace fastoredis
         virtual void accept();
 
     private Q_SLOTS:
-        void typeConnectionChange(const QString& value);
+        void typeConnectionChange(int index);
         void testConnection();
         void discoveryCluster();
         void showContextMenu(const QPoint& point);

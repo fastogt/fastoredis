@@ -50,14 +50,17 @@ namespace fastoredis
         typeConnection_ = new QComboBox;
 
         for(int i = 0; i < connnectionType.size(); ++i){
-            typeConnection_->addItem(common::convertFromString<QString>(connnectionType[i]));
+            connectionTypes ct = static_cast<connectionTypes>(i);
+            std::string str = common::convertToString(ct);
+            typeConnection_->addItem(GuiFactory::instance().icon(ct), common::convertFromString<QString>(str), i);
         }
 
         if(cluster_connection_){
-            typeConnection_->setCurrentText(common::convertFromString<QString>(common::convertToString(cluster_connection_->connectionType())));
+            typeConnection_->setCurrentIndex(cluster_connection_->connectionType());
         }
 
-        VERIFY(connect(typeConnection_, &QComboBox::currentTextChanged, this, &ClusterDialog::typeConnectionChange));
+        typedef void (QComboBox::*qind)(int);
+        VERIFY(connect(typeConnection_, static_cast<qind>(&QComboBox::currentIndexChanged), this, &ClusterDialog::typeConnectionChange));
 
         logging_ = new QCheckBox;
         if(cluster_connection_){
@@ -148,7 +151,7 @@ namespace fastoredis
         setLayout(mainLayout);
 
         //update controls
-        typeConnectionChange(typeConnection_->currentText());
+        typeConnectionChange(typeConnection_->currentIndex());
         retranslateUi();
     }
 
@@ -164,9 +167,10 @@ namespace fastoredis
         }
     }
 
-    void ClusterDialog::typeConnectionChange(const QString& value)
+    void ClusterDialog::typeConnectionChange(int index)
     {
-        connectionTypes currentType = common::convertFromString<connectionTypes>(common::convertToString(value));
+        QVariant var = typeConnection_->itemData(index);
+        connectionTypes currentType = (connectionTypes)qvariant_cast<unsigned char>(var);
         bool isValidType = currentType == REDIS;
         connectionName_->setEnabled(isValidType);
         buttonBox_->button(QDialogButtonBox::Save)->setEnabled(isValidType);
