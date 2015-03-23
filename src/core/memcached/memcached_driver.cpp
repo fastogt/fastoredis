@@ -68,6 +68,10 @@ namespace fastoredis
 
         MemcachedCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
         {
+            if(input.empty()){
+                return NULL;
+            }
+
             DCHECK(parent);
             std::pair<std::string, std::string> kv = getKeyValueFromLine(input);
             std::string opposite = getOppositeCommand(kv.first, oppositeCommands);
@@ -241,7 +245,7 @@ namespace fastoredis
 
         common::ErrorValueSPtr execute(FastoObjectCommand* cmd) WARN_UNUSED_RESULT
         {
-            DCHECK(cmd);
+            //DCHECK(cmd);
             if(!cmd){
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }

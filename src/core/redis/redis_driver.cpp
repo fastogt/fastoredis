@@ -210,6 +210,10 @@ namespace fastoredis
 
         RedisCommand* createCommand(FastoObject* parent, const std::string& input, common::Value::CommandType ct)
         {
+            if(input.empty()){
+                return NULL;
+            }
+
             DCHECK(parent);
             std::pair<std::string, std::string> kv = getKeyValueFromLine(input);
             std::string opposite = getOppositeCommand(kv.first, oppositeCommands);
@@ -359,6 +363,10 @@ namespace fastoredis
             }
 
             FastoObjectCommand* cmd = createCommand(out, "PING", common::Value::C_INNER);
+            DCHECK(cmd);
+            if(!cmd){
+                return common::make_error_value("Invalid createCommand input argument", common::ErrorValue::E_ERROR);
+            }
 
             redisReply *reply;
             common::time64_t start;
@@ -486,6 +494,10 @@ namespace fastoredis
             }
 
             FastoObjectCommand* cmd = createCommand(out, SYNC_REQUEST, common::Value::C_INNER);
+            DCHECK(cmd);
+            if(!cmd){
+                return common::make_error_value("Invalid createCommand input argument", common::ErrorValue::E_ERROR);
+            }
 
             char buf[1024];
             /* Discard the payload. */
@@ -535,6 +547,10 @@ namespace fastoredis
             FastoObject* child = NULL;
             common::ArrayValue* val = NULL;
             FastoObjectCommand* cmd = createCommand(out, RDM_REQUEST, common::Value::C_INNER);
+            DCHECK(cmd);
+            if(!cmd){
+                return common::make_error_value("Invalid createCommand input argument", common::ErrorValue::E_ERROR);
+            }
 
             int fd = INVALID_DESCRIPTOR;
             /* Write to file. */
@@ -765,6 +781,10 @@ namespace fastoredis
             }
 
             FastoObjectCommand* cmd = createCommand(out, FIND_BIG_KEYS_REQUEST, common::Value::C_INNER);
+            DCHECK(cmd);
+            if(!cmd){
+                return common::make_error_value("Invalid createCommand input argument", common::ErrorValue::E_ERROR);
+            }
 
             unsigned long long biggest[5] = {0}, counts[5] = {0}, totalsize[5] = {0};
             unsigned long long sampled = 0, totlen=0, *sizes=NULL, it=0;
@@ -984,6 +1004,11 @@ namespace fastoredis
             }
 
             FastoObjectCommand* cmd = createCommand(out, INFO_REQUEST, common::Value::C_INNER);
+            DCHECK(cmd);
+            if(!cmd){
+                return common::make_error_value("Invalid createCommand input argument", common::ErrorValue::E_ERROR);
+            }
+
             const std::string command = cmd->inputCommand();
             long aux, requests = 0;
 
@@ -1090,6 +1115,10 @@ namespace fastoredis
             }
 
             FastoObjectCommand* cmd = createCommand(out, SCAN_MODE_REQUEST, common::Value::C_INNER);
+            DCHECK(cmd);
+            if(!cmd){
+                return common::make_error_value("Invalid createCommand input argument", common::ErrorValue::E_ERROR);
+            }
 
             redisReply *reply;
             unsigned long long cur = 0;
@@ -1619,7 +1648,7 @@ namespace fastoredis
 
         common::ErrorValueSPtr execute(RedisCommand* cmd) WARN_UNUSED_RESULT
         {
-            DCHECK(cmd);
+            //DCHECK(cmd);
             if(!cmd){
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
