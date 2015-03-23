@@ -36,21 +36,25 @@ namespace
     template<bool con>
     void syncServersFunct(IServer *src, IServer *dsc)
     {
+        if(!src || !dsc){
+            return;
+        }
+
         connectFunct<con> func;
-        VERIFY(func(src, &IServer::startedConnect, dsc, &IServer::startedConnect, Qt::UniqueConnection));
-        VERIFY(func(src, &IServer::finishedConnect, dsc, &IServer::finishedConnect, Qt::UniqueConnection));
+        func(src, &IServer::startedConnect, dsc, &IServer::startedConnect, Qt::UniqueConnection);
+        func(src, &IServer::finishedConnect, dsc, &IServer::finishedConnect, Qt::UniqueConnection);
 
-        VERIFY(func(src, &IServer::startedDisconnect, dsc, &IServer::startedDisconnect, Qt::UniqueConnection));
-        VERIFY(func(src, &IServer::finishedDisconnect, dsc, &IServer::finishedDisconnect, Qt::UniqueConnection));
+        func(src, &IServer::startedDisconnect, dsc, &IServer::startedDisconnect, Qt::UniqueConnection);
+        func(src, &IServer::finishedDisconnect, dsc, &IServer::finishedDisconnect, Qt::UniqueConnection);
 
-        VERIFY(func(src, &IServer::startedExecute, dsc, &IServer::startedExecute, Qt::UniqueConnection));
+        func(src, &IServer::startedExecute, dsc, &IServer::startedExecute, Qt::UniqueConnection);
 
-        VERIFY(func(src, &IServer::rootCreated, dsc, &IServer::rootCreated, Qt::UniqueConnection));
-        VERIFY(func(src, &IServer::rootCompleated, dsc, &IServer::rootCompleated, Qt::UniqueConnection));
+        func(src, &IServer::rootCreated, dsc, &IServer::rootCreated, Qt::UniqueConnection);
+        func(src, &IServer::rootCompleated, dsc, &IServer::rootCompleated, Qt::UniqueConnection);
 
-        VERIFY(func(src, &IServer::addedChild, dsc, &IServer::addedChild, Qt::UniqueConnection));
-        VERIFY(func(src, &IServer::itemUpdated, dsc, &IServer::itemUpdated, Qt::UniqueConnection));
-        VERIFY(func(src, &IServer::serverInfoSnapShoot, dsc, &IServer::serverInfoSnapShoot, Qt::UniqueConnection));
+        func(src, &IServer::addedChild, dsc, &IServer::addedChild, Qt::UniqueConnection);
+        func(src, &IServer::itemUpdated, dsc, &IServer::itemUpdated, Qt::UniqueConnection);
+        func(src, &IServer::serverInfoSnapShoot, dsc, &IServer::serverInfoSnapShoot, Qt::UniqueConnection);
    }
 }
 
