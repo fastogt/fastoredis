@@ -175,7 +175,9 @@ namespace fastoredis
         connectionName_->setEnabled(isValidType);
         buttonBox_->button(QDialogButtonBox::Save)->setEnabled(isValidType);
         savebar_->setEnabled(isValidType);
+        listWidget_->selectionModel()->clear();
         listWidget_->setEnabled(isValidType);
+        itemSelectionChanged();
     }
 
     void ClusterDialog::testConnection()

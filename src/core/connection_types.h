@@ -51,5 +51,6 @@ namespace fastoredis
 namespace common
 {
     std::string convertToString(fastoredis::connectionTypes t);
+    std::string convertToString(fastoredis::serverTypes st);
     std::string convertToString(fastoredis::ConnectionMode t);
 }

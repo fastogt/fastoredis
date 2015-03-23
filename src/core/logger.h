@@ -17,8 +17,8 @@ namespace fastoredis
 
     public:
         void print(const char* mess, common::logging::LEVEL_LOG level, bool notify);
-        void print(const std::string& mess, common::logging::LEVEL_LOG level, bool notify);
         void print(const QString& mess, common::logging::LEVEL_LOG level, bool notify);
+        void print(const std::string& mess, common::logging::LEVEL_LOG level, bool notify);
 
     Q_SIGNALS:
         void printed(const QString& mess, common::logging::LEVEL_LOG level);

@@ -95,7 +95,7 @@ namespace fastoredis
         listWidget_->setIndentation(5);
 
         QStringList colums;
-        colums << trName << trAddress;
+        colums << trName << trAddress << trType;
         listWidget_->setHeaderLabels(colums);
         listWidget_->setContextMenuPolicy(Qt::ActionsContextMenu);
         listWidget_->setIndentation(15);
@@ -123,7 +123,7 @@ namespace fastoredis
     {
         std::vector<IConnectionSettingsBaseSPtr> res;
         for(int i = 0; i < listWidget_->topLevelItemCount(); ++i){
-            ConnectionListWidgetItem* item = dynamic_cast<ConnectionListWidgetItem *>(listWidget_->topLevelItem(i));
+            ConnectionListWidgetItemEx* item = dynamic_cast<ConnectionListWidgetItemEx *>(listWidget_->topLevelItem(i));
             if(item && item->isSelected()){
                 res.push_back(item->connection());
             }
@@ -148,7 +148,7 @@ namespace fastoredis
                 common::net::hostAndPort host = inf->host();
                 IConnectionSettingsBaseSPtr con(IConnectionSettingsBase::createFromType(inf->connectionType(), inf->name()));
                 con->setHost(host);
-                ConnectionListWidgetItem* item = new ConnectionListWidgetItem(con);
+                ConnectionListWidgetItemEx* item = new ConnectionListWidgetItemEx(con, inf->type());
                 item->setDisabled(inf->self() || cluster_->findSettingsByHost(host));
                 listWidget_->addTopLevelItem(item);
             }

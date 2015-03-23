@@ -18,6 +18,16 @@ namespace fastoredis
         IConnectionSettingsBaseSPtr connection_;
     };
 
+    class ConnectionListWidgetItemEx
+            : public ConnectionListWidgetItem
+    {
+    public:
+        ConnectionListWidgetItemEx(IConnectionSettingsBaseSPtr connection, serverTypes st);
+
+    private:
+        const serverTypes serverType_;
+    };
+
     class ClusterConnectionListWidgetItem
             : public QTreeWidgetItem
     {

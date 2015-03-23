@@ -43,6 +43,7 @@ namespace fastoredis
         void retranslateUi();
         bool validateAndApply();
         SSHInfo::SupportedAuthenticationMetods selectedAuthMethod() const;
+        void updateSshControls(bool isValidType);
 
         IConnectionSettingsBaseSPtr connection_;
         QLineEdit* connectionName_;

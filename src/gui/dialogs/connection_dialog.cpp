@@ -241,6 +241,7 @@ namespace fastoredis
         }
 
         useSsh_->setEnabled(isValidType);
+        updateSshControls(isValidType);
         testButton_->setEnabled(isValidType);
     }
 
@@ -261,20 +262,7 @@ namespace fastoredis
     void ConnectionDialog::sshSupportStateChange(int value)
     {
         useSshWidget_->setVisible(value);
-        sshHostName_->setEnabled(value);
-        userName_->setEnabled(value);
-        sshPort_->setEnabled(value);
-        security_->setEnabled(value);
-        sshPrivateKeyLabel_->setEnabled(value);
-        privateKeyBox_->setEnabled(value);
-        selectPrivateFileButton_->setEnabled(value);
-        sshAddressLabel_->setEnabled(value);
-        sshUserNameLabel_->setEnabled(value);
-        sshAuthMethodLabel_->setEnabled(value);
-        sshPassphraseLabel_->setEnabled(value);
-        passphraseBox_->setEnabled(value);
-        passwordBox_->setEnabled(value);
-        passwordLabel_->setEnabled(value);
+        updateSshControls(value);
     }
 
     void ConnectionDialog::togglePasswordEchoMode()
@@ -380,5 +368,23 @@ namespace fastoredis
         }
 
         return SSHInfo::PASSWORD;
+    }
+
+    void ConnectionDialog::updateSshControls(bool isValidType)
+    {
+        sshHostName_->setEnabled(isValidType);
+        userName_->setEnabled(isValidType);
+        sshPort_->setEnabled(isValidType);
+        security_->setEnabled(isValidType);
+        sshPrivateKeyLabel_->setEnabled(isValidType);
+        privateKeyBox_->setEnabled(isValidType);
+        selectPrivateFileButton_->setEnabled(isValidType);
+        sshAddressLabel_->setEnabled(isValidType);
+        sshUserNameLabel_->setEnabled(isValidType);
+        sshAuthMethodLabel_->setEnabled(isValidType);
+        sshPassphraseLabel_->setEnabled(isValidType);
+        passphraseBox_->setEnabled(isValidType);
+        passwordBox_->setEnabled(isValidType);
+        passwordLabel_->setEnabled(isValidType);
     }
 }

@@ -110,6 +110,11 @@ namespace fastoredis
         return drv_;
     }
 
+    ServerDiscoveryInfoSPtr IServer::discoveryInfo() const
+    {
+        return drv_->serverDiscoveryInfo();
+    }
+
     QString IServer::address() const
     {
         std::string shost = common::convertToString(drv_->address());
@@ -292,7 +297,7 @@ namespace fastoredis
             ConnectResponceEvent::value_type v = ev->value();
             common::ErrorValueSPtr er(v.errorInfo());
             if(!er){
-                discoveryInfo();
+                discoveryInfoP();
                 processConfigArgs();
             }
         }
@@ -600,7 +605,7 @@ namespace fastoredis
         notify(ev);
     }
 
-    void IServer::discoveryInfo()
+    void IServer::discoveryInfoP()
     {
         EventsInfo::DiscoveryInfoRequest req;
         emit startedLoadDiscoveryInfo(req);

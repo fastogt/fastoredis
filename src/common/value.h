@@ -55,6 +55,7 @@ namespace common
         static HashValue* createHashValue();
         static CommandValue* createCommand(const std::string& src, const std::string& oppositeCommand, CommandType type);
         static ErrorValue* createErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
+        static ErrorValue* createErrorValue(const char* in_value, ErrorsType errorType, common::logging::LEVEL_LOG level);
 
         static bool isIntegral(Type type) { return type == TYPE_BOOLEAN || type == TYPE_INTEGER || type == TYPE_UINTEGER || type == TYPE_DOUBLE; }
 
@@ -347,7 +348,7 @@ namespace common
     {
     public:
         ErrorValue(const std::string& in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
-        ErrorValue();
+        ErrorValue(const char* in_value, ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
 
         bool isError() const;
         common::logging::LEVEL_LOG level() const;
@@ -368,6 +369,7 @@ namespace common
     typedef common::shared_ptr<ErrorValue> ErrorValueSPtr;
 
     ErrorValueSPtr make_error_value(const std::string& in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
+    ErrorValueSPtr make_error_value(const char* in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level = common::logging::L_WARNING);
 
     std::ostream& operator<<(std::ostream& out, const Value& value);
 

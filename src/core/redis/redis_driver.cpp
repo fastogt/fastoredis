@@ -1236,14 +1236,14 @@ namespace fastoredis
             switch (r->type) {
                 case REDIS_REPLY_NIL:
                 {
-                    common::Value *val = common::Value::createNullValue();
+                    common::Value* val = common::Value::createNullValue();
                     ar->append(val);
 
                     break;
                 }
                 case REDIS_REPLY_ERROR:
                 {
-                    common::ErrorValue *val = common::Value::createErrorValue(std::string(r->str, r->len), common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    common::ErrorValue* val = common::Value::createErrorValue(std::string(r->str, r->len), common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     ar->append(val);
                     break;
                 }
@@ -1278,7 +1278,7 @@ namespace fastoredis
                 {
                     char tmp2[128] = {0};
                     common::SNPrintf(tmp2, sizeof(tmp2), "Unknown reply type: %d", r->type);
-                    common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    common::ErrorValue* val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     ar->append(val);
                 }
             }
@@ -1305,7 +1305,7 @@ namespace fastoredis
                 }
                 case REDIS_REPLY_ERROR:
                 {
-                    common::ErrorValue *val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    common::ErrorValue* val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     obj = new FastoObject(out, val, config.mb_delim);
                     out->addChildren(obj);
                     break;
@@ -1343,7 +1343,7 @@ namespace fastoredis
                 {
                     char tmp2[128] = {0};
                     common::SNPrintf(tmp2, sizeof(tmp2), "Unknown reply type: %d", r->type);
-                    common::ErrorValue *val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    common::ErrorValue* val = common::Value::createErrorValue(tmp2, common::ErrorValue::E_NONE, common::logging::L_WARNING);
                     obj = new FastoObject(out, val, config.mb_delim);
                     out->addChildren(obj);
                 }

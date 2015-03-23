@@ -276,6 +276,21 @@ namespace fastoredis
 
         IExplorerTreeItem::eType t = node->type();
 
+        if(role == Qt::ToolTipRole){
+            if(t == IExplorerTreeItem::eServer && node->server()){
+                IServerSPtr serv = node->server();
+                ServerDiscoveryInfoSPtr disc = serv->discoveryInfo();
+                if(disc){
+                    QString dname = common::convertFromString<QString>(disc->name());
+                    QString dtype = common::convertFromString<QString>(common::convertToString(disc->type()));
+                    QString dhost = common::convertFromString<QString>(common::convertToString(disc->host()));
+                    return QString("<b>Name:</b> %1<br/>"
+                                   "<b>Type:</b> %2<br/>"
+                                   "<b>Host:</b> %3<br/>").arg(dname).arg(dtype).arg(dhost);
+                }
+            }
+        }
+
         if(role == Qt::DecorationRole && col == ExplorerServerItem::eName ){
             if(t == IExplorerTreeItem::eCluster){
                 return GuiFactory::instance().clusterIcon();

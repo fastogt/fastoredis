@@ -37,6 +37,7 @@ namespace fastoredis
         connectionTypes type() const;
         QString name() const;
         IDriverSPtr driver() const;
+        ServerDiscoveryInfoSPtr discoveryInfo() const;
         QString address() const;
         QString outputDelemitr() const;
         IDatabaseSPtr findDatabaseByInfo(DataBaseInfoSPtr inf) const;
@@ -161,7 +162,7 @@ namespace fastoredis
         void handleDiscoveryInfoResponceEvent(events::DiscoveryInfoResponceEvent* ev);
 
         void processConfigArgs();
-        void discoveryInfo();
+        void discoveryInfoP();
 
         bool isSuperServer_;
     };

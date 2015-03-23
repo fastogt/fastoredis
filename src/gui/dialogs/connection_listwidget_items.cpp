@@ -28,6 +28,13 @@ namespace fastoredis
         return connection_;
     }
 
+    ConnectionListWidgetItemEx::ConnectionListWidgetItemEx(IConnectionSettingsBaseSPtr connection, serverTypes st)
+        : ConnectionListWidgetItem(connection), serverType_(st)
+    {
+        std::string sert = common::convertToString(st);
+        setText(2, common::convertFromString<QString>(sert));
+    }
+
     ClusterConnectionListWidgetItem::ClusterConnectionListWidgetItem(IClusterSettingsBaseSPtr connection)
         : connection_(connection)
     {

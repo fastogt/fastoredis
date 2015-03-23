@@ -108,6 +108,16 @@ namespace common
 
     ErrorValue* Value::createErrorValue(const std::string &in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
     {
+        return createErrorValue(in_value.c_str(), errorType, level);
+    }
+
+    ErrorValue* Value::createErrorValue(const char* in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
+    {
+        DCHECK(in_value);
+        if(!in_value){
+            return new ErrorValue("Create error invalid input argument!", errorType, level);
+        }
+
         return new ErrorValue(in_value, errorType, level);
     }
 
@@ -866,8 +876,8 @@ namespace common
 
     }
 
-    ErrorValue::ErrorValue()
-        : Value(TYPE_ERROR), description_(), errorType_(E_NONE), level_(common::logging::L_NONE)
+    ErrorValue::ErrorValue(const char* in_value, ErrorsType errorType, common::logging::LEVEL_LOG level)
+        : Value(TYPE_ERROR), description_(in_value), errorType_(errorType), level_(level)
     {
 
     }
@@ -908,14 +918,21 @@ namespace common
         return false;
     }
 
-    ErrorValue *ErrorValue::deepCopy() const
+    ErrorValue* ErrorValue::deepCopy() const
     {
         return createErrorValue(description_, errorType_, level_);
     }
 
     ErrorValueSPtr make_error_value(const std::string& in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
     {
-        ErrorValueSPtr er(Value::createErrorValue(in_value, errorType, level));
+        const char* ptr = in_value.c_str();
+        return make_error_value(ptr, errorType, level);
+    }
+
+    ErrorValueSPtr make_error_value(const char* in_value, Value::ErrorsType errorType, common::logging::LEVEL_LOG level)
+    {
+        ErrorValue* err = Value::createErrorValue(in_value, errorType, level);
+        ErrorValueSPtr er(err);
         return er;
     }
 }
