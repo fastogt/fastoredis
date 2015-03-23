@@ -9,7 +9,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        LuaShell(QWidget* parent = 0);
+        LuaShell(bool showAutoCompl, QWidget* parent = 0);
     };
 
     class RedisLuaShell
@@ -17,6 +17,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        RedisLuaShell(QWidget* parent = 0);
+        RedisLuaShell(bool showAutoCompl, QWidget* parent = 0);
     };
 }

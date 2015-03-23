@@ -58,14 +58,19 @@ namespace fastoredis
         }
     };
 
-    PythonShell::PythonShell(QWidget* parent)
-        : FastoEditorShell(PythonEngine::version(), parent)
+    PythonShell::PythonShell(bool showAutoCompl, QWidget* parent)
+        : FastoEditorShell(PythonEngine::version(), showAutoCompl, parent)
     {
         QsciLexerPython* lexer = new QsciLexerPython(this);
         setLexer(lexer);
 
         setAutoCompletionThreshold(1);
-        setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        if(showAutoCompletion_){
+            setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        }
+        else{
+            setAutoCompletionSource(QsciScintilla::AcsNone);
+        }
         setAutoCompletionCaseSensitivity(false);
         setIndentationsUseTabs(false);
 
@@ -73,8 +78,8 @@ namespace fastoredis
         setTabWidth(4);
     }
 
-    RedisPyShell::RedisPyShell(QWidget* parent)
-        : PythonShell(parent)
+    RedisPyShell::RedisPyShell(bool showAutoCompl, QWidget* parent)
+        : PythonShell(showAutoCompl, parent)
     {
         RedisPythonLexer* lexer = new RedisPythonLexer(this);
         setLexer(lexer);

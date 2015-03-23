@@ -11,8 +11,8 @@ namespace
 
 namespace fastoredis
 {
-    SsdbShell::SsdbShell(QWidget* parent)
-        : FastoEditorShell(common::convertFromString<QString>(SsdbLexer::version()), parent)
+    SsdbShell::SsdbShell(bool showAutoCompl, QWidget* parent)
+        : FastoEditorShell(common::convertFromString<QString>(SsdbLexer::version()), showAutoCompl, parent)
     {
         SsdbLexer* red = new SsdbLexer(this);
 
@@ -23,7 +23,12 @@ namespace fastoredis
         red->setPaper(paperColor);
 
         setAutoCompletionThreshold(1);
-        setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        if(showAutoCompletion_){
+            setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        }
+        else{
+            setAutoCompletionSource(QsciScintilla::AcsNone);
+        }
         setAutoCompletionCaseSensitivity(false);
 
         VERIFY(connect(this, &SsdbShell::customContextMenuRequested, this, &SsdbShell::showContextMenu));

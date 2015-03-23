@@ -2,6 +2,7 @@
 [Alexandr Topilski]
 - Redis clusters basic support
 - Redis clusters discovery
+- Ability to disable autocompletion
 
 0.7.1 / March 14, 2015
 [Alexandr Topilski]

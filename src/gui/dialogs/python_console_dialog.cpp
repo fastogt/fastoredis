@@ -8,6 +8,8 @@
 #include "shell/python_shell.h"
 #include "core/python_engine.h"
 
+#include "core/settings_manager.h"
+
 namespace fastoredis
 {
     namespace
@@ -15,10 +17,10 @@ namespace fastoredis
         FastoEditorShell* shellCreate()
         {
             if(PythonEngine::instance().hasModule("redis-py")){
-                return new RedisPyShell;
+                return new RedisPyShell(SettingsManager::instance().autoCompletion());
             }
             else{
-                return new PythonShell;
+                return new PythonShell(SettingsManager::instance().autoCompletion());
             }
         }
     }

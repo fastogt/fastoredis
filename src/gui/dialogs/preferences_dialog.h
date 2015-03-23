@@ -37,6 +37,7 @@ namespace fastoredis
 
         QGroupBox* generalBox_;
         QCheckBox* autoCheckUpdates_;
+        QCheckBox* autoComletionEnable_;
         QLabel* langLabel_;
         QComboBox* languagesComboBox_;
 

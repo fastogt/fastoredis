@@ -47,6 +47,8 @@ namespace fastoredis
         QVBoxLayout *generalLayout = new QVBoxLayout;
         autoCheckUpdates_ = new QCheckBox;
         generalLayout->addWidget(autoCheckUpdates_);
+        autoComletionEnable_ = new QCheckBox;
+        generalLayout->addWidget(autoComletionEnable_);
         generalLayout->addLayout(styleswLayout);
         generalLayout->addLayout(langLayout);
 
@@ -98,6 +100,7 @@ namespace fastoredis
     void PreferencesDialog::accept()
     {
         SettingsManager::instance().setAutoCheckUpdates(autoCheckUpdates_->isChecked());
+        SettingsManager::instance().setAutoCompletion(autoComletionEnable_->isChecked());
 
         QString newLang = translations::applyLanguage(languagesComboBox_->currentText());
         SettingsManager::instance().setCurrentLanguage(newLang);
@@ -119,6 +122,7 @@ namespace fastoredis
     void PreferencesDialog::syncWithSettings()
     {
         autoCheckUpdates_->setChecked(SettingsManager::instance().autoCheckUpdates());
+        autoComletionEnable_->setChecked(SettingsManager::instance().autoCompletion());
         languagesComboBox_->setCurrentText(SettingsManager::instance().currentLanguage());
         stylesComboBox_->setCurrentText(SettingsManager::instance().currentStyle());
         defaultViewComboBox_->setCurrentText(common::convertFromString<QString>(common::convertToString(SettingsManager::instance().defaultView())));
@@ -140,6 +144,7 @@ namespace fastoredis
 
         generalBox_->setTitle(tr("General settings"));
         autoCheckUpdates_->setText(tr("Automatically check for updates"));
+        autoComletionEnable_->setText(tr("Show autocompletion"));
         langLabel_->setText(tr("Language:"));
         stylesLabel_->setText(tr("Supported UI styles:"));
 

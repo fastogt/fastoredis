@@ -52,6 +52,9 @@ namespace fastoredis
         bool autoCheckUpdates() const;
         void setAutoCheckUpdates(bool isCheck);
 
+        bool autoCompletion() const;
+        void setAutoCompletion(bool enableAuto);
+
     private:
         void load();
         void save();
@@ -68,5 +71,6 @@ namespace fastoredis
         bool syncTabs_;
         QString loggingDir_;
         bool autoCheckUpdate_;
+        bool autoCompletion_;
     };
 }

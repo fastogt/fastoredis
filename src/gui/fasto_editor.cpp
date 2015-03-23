@@ -287,8 +287,8 @@ namespace fastoredis
         setText(result);
     }
 
-    FastoEditorShell::FastoEditorShell(const QString& version, QWidget* parent)
-        : FastoEditor(parent), version_(version)
+    FastoEditorShell::FastoEditorShell(const QString& version, bool showAutoCompl, QWidget* parent)
+        : FastoEditor(parent), version_(version), showAutoCompletion_(showAutoCompl)
     {
         VERIFY(connect(this, &FastoEditorShell::customContextMenuRequested, this, &FastoEditorShell::showContextMenu));
     }
@@ -300,12 +300,16 @@ namespace fastoredis
 
     void FastoEditorShell::showAutocompletion()
     {
-        autoCompleteFromAll();
+        if(showAutoCompletion_){
+            autoCompleteFromAll();
+        }
     }
 
     void FastoEditorShell::hideAutocompletion()
     {
-        cancelList();
+        if(showAutoCompletion_){
+            cancelList();
+        }
     }
 
     void FastoEditorShell::showContextMenu(const QPoint& pt)
@@ -317,13 +321,15 @@ namespace fastoredis
 
     void FastoEditorShell::keyPressEvent(QKeyEvent* keyEvent)
     {
-        if(isAutoCompleteShortcut(keyEvent)){
-            showAutocompletion();
-            return;
-        }
-        else if(isHideAutoCompleteShortcut(keyEvent)){
-            hideAutocompletion();
-            return;
+        if(showAutoCompletion_){
+            if(isAutoCompleteShortcut(keyEvent)){
+                showAutocompletion();
+                return;
+            }
+            else if(isHideAutoCompleteShortcut(keyEvent)){
+                hideAutocompletion();
+                return;
+            }
         }
 
         return FastoEditor::keyPressEvent(keyEvent);

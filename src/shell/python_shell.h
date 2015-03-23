@@ -9,7 +9,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        PythonShell(QWidget* parent = 0);
+        PythonShell(bool showAutoCompl, QWidget* parent = 0);
     };
 
     class RedisPyShell
@@ -17,6 +17,6 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        RedisPyShell(QWidget* parent = 0);
+        RedisPyShell(bool showAutoCompl, QWidget* parent = 0);
     };
 }

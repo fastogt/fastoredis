@@ -2,6 +2,8 @@
 
 #include "common/qt/convert_string.h"
 
+#include "core/settings_manager.h"
+
 #include "gui/gui_factory.h"
 #include "translations/global.h"
 
@@ -15,10 +17,10 @@ namespace fastoredis
         FastoEditorShell* shellCreate()
         {
             if(LuaEngine::instance().hasModule("redis-lua")){
-                return new RedisLuaShell;
+                return new RedisLuaShell((SettingsManager::instance().autoCompletion()));
             }
             else{
-                return new LuaShell;
+                return new LuaShell((SettingsManager::instance().autoCompletion()));
             }
         }
     }

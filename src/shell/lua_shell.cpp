@@ -58,14 +58,19 @@ namespace fastoredis
         }
     };
 
-    LuaShell::LuaShell(QWidget* parent)
-        : FastoEditorShell(LuaEngine::version(), parent)
+    LuaShell::LuaShell(bool showAutoCompl, QWidget* parent)
+        : FastoEditorShell(LuaEngine::version(), showAutoCompl, parent)
     {
         QsciLexerLua* lexer = new QsciLexerLua(this);
         setLexer(lexer);
 
         setAutoCompletionThreshold(1);
-        setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        if(showAutoCompletion_){
+            setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        }
+        else{
+            setAutoCompletionSource(QsciScintilla::AcsNone);
+        }
         setAutoCompletionCaseSensitivity(false);
         setIndentationsUseTabs(false);
 
@@ -73,8 +78,8 @@ namespace fastoredis
         setTabWidth(4);
     }
 
-    RedisLuaShell::RedisLuaShell(QWidget* parent)
-        : LuaShell(parent)
+    RedisLuaShell::RedisLuaShell(bool showAutoCompl, QWidget* parent)
+        : LuaShell(showAutoCompl, parent)
     {
         RedisLuaLexer* lexer = new RedisLuaLexer(this);
         setLexer(lexer);

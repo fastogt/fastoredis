@@ -9,7 +9,7 @@ namespace fastoredis
     {
         Q_OBJECT
     public:
-        RedisShell(QWidget* parent = 0);
+        RedisShell(bool showAutoCompl, QWidget* parent = 0);
 
         virtual void showAutocompletion();
     };

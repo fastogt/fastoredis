@@ -20,6 +20,7 @@
 #define SYNCTABS PREFIX"synctabs"
 #define LOGGINGDIR PREFIX"loggingdir"
 #define CHECKUPDATES PREFIX"checkupdates"
+#define AUTOCOMPLETION PREFIX"autocompletion"
 #define RCONNECTIONS PREFIX"rconnections"
 
 namespace
@@ -31,7 +32,7 @@ namespace
 namespace fastoredis
 {
     SettingsManager::SettingsManager()
-        : views_(), curStyle_(), curLanguage_(), connections_(), syncTabs_(), loggingDir_(), autoCheckUpdate_()
+        : views_(), curStyle_(), curLanguage_(), connections_(), syncTabs_(), loggingDir_(), autoCheckUpdate_(), autoCompletion_()
     {
        load();
     }
@@ -177,6 +178,16 @@ namespace fastoredis
         autoCheckUpdate_ = isCheck;
     }
 
+    bool SettingsManager::autoCompletion() const
+    {
+        return autoCompletion_;
+    }
+
+    void SettingsManager::setAutoCompletion(bool enableAuto)
+    {
+        autoCompletion_ = enableAuto;
+    }
+
     void SettingsManager::load()
     {
         QString inip = common::convertFromString<QString>(common::file_system::prepare_path(iniPath));
@@ -231,6 +242,7 @@ namespace fastoredis
         std::string dir = common::file_system::get_dir_path(iniPath);
         loggingDir_ = settings.value(LOGGINGDIR, common::convertFromString<QString>(dir)).toString();
         autoCheckUpdate_ = settings.value(CHECKUPDATES, true).toBool();
+        autoCompletion_ = settings.value(AUTOCOMPLETION, true).toBool();
     }
 
     void SettingsManager::save()
@@ -281,5 +293,6 @@ namespace fastoredis
         settings.setValue(SYNCTABS, syncTabs_);
         settings.setValue(LOGGINGDIR, loggingDir_);
         settings.setValue(CHECKUPDATES, autoCheckUpdate_);
+        settings.setValue(AUTOCOMPLETION, autoCompletion_);
     }
 }

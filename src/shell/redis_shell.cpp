@@ -11,8 +11,8 @@ namespace
 
 namespace fastoredis
 {
-    RedisShell::RedisShell(QWidget* parent)
-        : FastoEditorShell(common::convertFromString<QString>(RedisLexer::version()), parent)
+    RedisShell::RedisShell(bool showAutoCompl, QWidget* parent)
+        : FastoEditorShell(common::convertFromString<QString>(RedisLexer::version()), showAutoCompl, parent)
     {
         RedisLexer* red = new RedisLexer(this);
 
@@ -24,7 +24,12 @@ namespace fastoredis
         red->setPaper(paperColor);
 
         setAutoCompletionThreshold(1);
-        setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        if(showAutoCompletion_){
+            setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        }
+        else{
+            setAutoCompletionSource(QsciScintilla::AcsNone);
+        }
         setAutoCompletionCaseSensitivity(false);
 
         VERIFY(connect(this, &RedisShell::customContextMenuRequested, this, &RedisShell::showContextMenu));

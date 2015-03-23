@@ -86,10 +86,13 @@ namespace fastoredis
         void showContextMenu(const QPoint& pt);
 
     protected:
-        FastoEditorShell(const QString& version, QWidget *parent = 0);
+        FastoEditorShell(const QString& version, bool showAutoCompl, QWidget *parent = 0);
         void keyPressEvent(QKeyEvent* keyEvent);
 
     private:
         const QString version_;
+
+    protected:
+        const bool showAutoCompletion_;
     };
 }

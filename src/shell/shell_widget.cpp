@@ -13,6 +13,8 @@
 #include "common/qt/convert_string.h"
 #include "common/sprintf.h"
 
+#include "core/settings_manager.h"
+
 #include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
 #include "gui/icon_label.h"
@@ -166,15 +168,15 @@ namespace fastoredis
 
         connectionTypes type = server->type();
         if(type == REDIS){
-            input_ = new RedisShell;
+            input_ = new RedisShell(SettingsManager::instance().autoCompletion());
             setToolTip(tr("Based on redis-cli version: %1").arg(input_->version()));
         }
         else if(type == MEMCACHED){
-            input_ = new MemcachedShell;
+            input_ = new MemcachedShell(SettingsManager::instance().autoCompletion());
             setToolTip(tr("Based on libmemcached version: %1").arg(input_->version()));
         }
         else if(type == SSDB){
-            input_ = new SsdbShell;
+            input_ = new SsdbShell(SettingsManager::instance().autoCompletion());
             setToolTip(tr("Based on ssdb-cli version: %1").arg(input_->version()));
         }
         else{

@@ -11,8 +11,8 @@ namespace
 
 namespace fastoredis
 {
-    MemcachedShell::MemcachedShell(QWidget* parent)
-        : FastoEditorShell(common::convertFromString<QString>(MemcachedLexer::version()), parent)
+    MemcachedShell::MemcachedShell(bool showAutoCompl, QWidget* parent)
+        : FastoEditorShell(common::convertFromString<QString>(MemcachedLexer::version()), showAutoCompl, parent)
     {
         MemcachedLexer* red = new MemcachedLexer(this);
 
@@ -23,7 +23,12 @@ namespace fastoredis
         red->setPaper(paperColor);
 
         setAutoCompletionThreshold(1);
-        setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        if(showAutoCompletion_){
+            setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        }
+        else{
+            setAutoCompletionSource(QsciScintilla::AcsNone);
+        }
         setAutoCompletionCaseSensitivity(false);
 
         VERIFY(connect(this, &MemcachedShell::customContextMenuRequested, this, &MemcachedShell::showContextMenu));

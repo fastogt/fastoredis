@@ -17,7 +17,7 @@ namespace
     struct connectFunct
     {
         template<typename t1, typename t2>
-        bool operator()(const IServer *sender, t1 signal, const IServer *receiver, t2 member, Qt::ConnectionType type) const
+        bool operator()(const IServer* sender, t1 signal, const IServer* receiver, t2 member, Qt::ConnectionType type) const
         {
             return QObject::disconnect(sender, signal, receiver, member);
         }
@@ -27,7 +27,7 @@ namespace
     struct connectFunct<true>
     {
         template<typename t1, typename t2>
-        bool operator()(const IServer *sender, t1 signal, const IServer *receiver, t2 member, Qt::ConnectionType type) const
+        bool operator()(const IServer* sender, t1 signal, const IServer* receiver, t2 member, Qt::ConnectionType type) const
         {
             return QObject::connect(sender, signal, receiver, member, type);
         }
