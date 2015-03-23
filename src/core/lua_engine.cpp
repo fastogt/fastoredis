@@ -354,6 +354,8 @@ namespace fastoredis
         worker->moveToThread(thread);
 
         VERIFY(QObject::connect(thread, &QThread::started, worker, &LuaWorker::init));
+        VERIFY(QObject::connect(worker, &LuaWorker::destroyed, thread, &QThread::quit));
+        VERIFY(QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater));
         thread->start();
 
         return worker;

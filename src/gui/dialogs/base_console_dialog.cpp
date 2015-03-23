@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QInputDialog>
+#include <QKeyEvent>
 
 #include "common/qt/convert_string.h"
 #include "common/sprintf.h"
@@ -154,7 +155,9 @@ namespace fastoredis
 
         DCHECK(shell);
         shell_ = shell;
+        shell_->installEventFilter(this);
         output_ = new FastoEditor;
+        output_->installEventFilter(this);
         output_->setReadOnly(true);
 
         mainLayout->addWidget(shell_);
@@ -263,6 +266,21 @@ namespace fastoredis
             retranslateUi();
         }
         QDialog::changeEvent(e);
+    }
+
+    bool BaseConsoleDialog::eventFilter(QObject* object, QEvent* event)
+    {
+        if (object == output_ || object == shell_) {
+            if (event->type() == QEvent::KeyPress) {
+                QKeyEvent *keyEvent = (QKeyEvent *)event;
+                if (keyEvent->key() == Qt::Key_Escape) {
+                    reject();
+                    return true;
+                }
+            }
+        }
+
+        return QWidget::eventFilter(object, event);
     }
 
     void BaseConsoleDialog::retranslateUi()

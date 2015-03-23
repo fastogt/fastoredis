@@ -36,7 +36,8 @@ namespace fastoredis
         void openInfoServerDialog();
         void openPropertyServerDialog();
         void openHistoryServerDialog();
-        void closeConnection();
+        void closeServerConnection();
+        void closeClusterConnection();
 
         void backupServer();
         void importServer();
@@ -81,7 +82,8 @@ namespace fastoredis
         QAction* infoServerAction_;
         QAction* propertyServerAction_;
         QAction* historyServerAction_;
-        QAction* closeAction_;
+        QAction* closeServerAction_;
+        QAction* closeClusterAction_;
         QAction* importAction_;
         QAction* backupAction_;
         QAction* shutdownAction_;

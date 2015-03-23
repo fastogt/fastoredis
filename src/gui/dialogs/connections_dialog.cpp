@@ -72,11 +72,7 @@ namespace fastoredis
         QHBoxLayout *bottomLayout = new QHBoxLayout;
         bottomLayout->addWidget(buttonBox);
 
-        QHBoxLayout *toolBarLayout = new QHBoxLayout;
-
         QToolBar *savebar = new QToolBar;
-        savebar->setStyleSheet("QToolBar { border: 0px; }");
-        toolBarLayout->addWidget(savebar);
 
         QAction *addB = new QAction(GuiFactory::instance().loadIcon(), trAddConnection, savebar);
         typedef void(QAction::*trig)(bool);
@@ -95,9 +91,6 @@ namespace fastoredis
         QAction *editB = new QAction(GuiFactory::instance().editIcon(), trEditConnection, savebar);
         VERIFY(connect(editB, static_cast<trig>(&QAction::triggered), this, &ConnectionsDialog::edit));
         savebar->addAction(editB);
-
-        QSpacerItem *hSpacer = new QSpacerItem(300, 0, QSizePolicy::Expanding);
-        toolBarLayout->addSpacerItem(hSpacer);
 
         QVBoxLayout *firstColumnLayout = new QVBoxLayout;
         firstColumnLayout->addWidget(savebar);

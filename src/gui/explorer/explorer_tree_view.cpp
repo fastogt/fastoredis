@@ -48,8 +48,11 @@ namespace fastoredis
         historyServerAction_ = new QAction(this);
         VERIFY(connect(historyServerAction_, &QAction::triggered, this, &ExplorerTreeView::openHistoryServerDialog));
 
-        closeAction_ = new QAction(this);
-        VERIFY(connect(closeAction_, &QAction::triggered, this, &ExplorerTreeView::closeConnection));
+        closeServerAction_ = new QAction(this);
+        VERIFY(connect(closeServerAction_, &QAction::triggered, this, &ExplorerTreeView::closeServerConnection));
+
+        closeClusterAction_ = new QAction(this);
+        VERIFY(connect(closeClusterAction_, &QAction::triggered, this, &ExplorerTreeView::closeClusterConnection));
 
         importAction_ = new QAction(this);
         VERIFY(connect(importAction_, &QAction::triggered, this, &ExplorerTreeView::importServer));
@@ -168,7 +171,8 @@ namespace fastoredis
 
             if(node->type() == IExplorerTreeItem::eCluster){
                 QMenu menu(this);
-                menu.addAction(closeAction_);
+                closeClusterAction_->setEnabled(true);
+                menu.addAction(closeClusterAction_);
                 menu.exec(menuPoint);
             }
             else if(node->type() == IExplorerTreeItem::eServer){
@@ -189,8 +193,8 @@ namespace fastoredis
                 menu.addAction(propertyServerAction_);
 
                 menu.addAction(historyServerAction_);
-                closeAction_->setEnabled(!isClusterMember);
-                menu.addAction(closeAction_);
+                closeServerAction_->setEnabled(!isClusterMember);
+                menu.addAction(closeServerAction_);
 
                 bool isLocal = server->isLocalHost();
 
@@ -353,7 +357,7 @@ namespace fastoredis
         histDialog.exec();
     }
 
-    void ExplorerTreeView::closeConnection()
+    void ExplorerTreeView::closeServerConnection()
     {
         QModelIndex sel = selectedIndex();
         if(!sel.isValid()){
@@ -361,7 +365,7 @@ namespace fastoredis
         }
 
         ExplorerServerItem* snode = common::utils_qt::item<ExplorerServerItem*>(sel);
-        if(snode && snode->type() == IExplorerTreeItem::eServer){
+        if(snode){
             IServerSPtr server = snode->server();
             if(server){
                 removeServer(server);
@@ -371,6 +375,23 @@ namespace fastoredis
 
         ExplorerClusterItem* cnode = common::utils_qt::item<ExplorerClusterItem*>(sel);
         if(cnode && cnode->type() == IExplorerTreeItem::eCluster){
+            IClusterSPtr server = cnode->cluster();
+            if(server){
+                removeCluster(server);
+            }
+            return;
+        }
+    }
+
+    void ExplorerTreeView::closeClusterConnection()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerClusterItem* cnode = common::utils_qt::item<ExplorerClusterItem*>(sel);
+        if(cnode){
             IClusterSPtr server = cnode->cluster();
             if(server){
                 removeCluster(server);
@@ -697,7 +718,8 @@ namespace fastoredis
         infoServerAction_->setText(trInfo);
         propertyServerAction_->setText(trProperty);
         historyServerAction_->setText(trHistory);
-        closeAction_->setText(trClose);
+        closeServerAction_->setText(trClose);
+        closeClusterAction_->setText(trClose);
         backupAction_->setText(trBackup);
         importAction_->setText(trImport);
         shutdownAction_->setText(trShutdown);

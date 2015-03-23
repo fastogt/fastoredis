@@ -74,6 +74,7 @@ namespace fastoredis
         layout->addWidget(input_);       
         layout->addLayout(toolBarLayout);        
         layout->addWidget(output_);
+        layout->addWidget(buttonBox);
 
         setMinimumSize(QSize(width, height));
         setLayout(layout);
