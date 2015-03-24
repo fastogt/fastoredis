@@ -40,6 +40,10 @@ namespace
             return 2;
         return 1;
     }
+
+    //const QColor marginsBackgroundColor = QColor(73, 76, 78);
+    //const QColor caretForegroundColor = QColor("#FFFFFF");
+    //const QColor matchedBraceForegroundColor = QColor("#FF8861");
 }
 
 namespace fastoredis
@@ -52,11 +56,21 @@ namespace fastoredis
         setIndentationWidth(indentationWidth);
         setUtf8(true);
         setMarginWidth(1, 0);
+
+        //setCaretForegroundColor(caretForegroundColor);
+        //setMatchedBraceForegroundColor(matchedBraceForegroundColor); //1AB0A6
+        //setMatchedBraceBackgroundColor(marginsBackgroundColor);
+
         setContentsMargins(0, 0, 0, 0);
         setViewportMargins(3, 3, 3, 3);
         QFont ourFont = GuiFactory::instance().font();
         setMarginsFont(ourFont);
         setMarginLineNumbers(0, true);
+
+        // Margins colors
+        // line numbers margin
+        setMarginsBackgroundColor(QColor(Qt::lightGray));
+        setMarginsForegroundColor(QColor(Qt::gray));
 
         SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, ourFont.family().data());
         SendScintilla(QsciScintilla::SCI_SETHSCROLLBAR, 0);

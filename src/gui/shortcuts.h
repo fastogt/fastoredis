@@ -48,7 +48,11 @@ namespace fastoredis
     const FastoQKeySequence refreshKey(QKeySequence::Refresh);
     bool isRefreshShortcut(QKeyEvent* keyEvent);
 
+#ifdef OS_WIN
+    const FastoQKeySequence fullScreenKey(Qt::ControlModifier | Qt::ShiftModifier, Qt::Key_F11);
+#else
     const FastoQKeySequence fullScreenKey(QKeySequence::FullScreen);
+#endif
     bool isFullScreenShortcut(QKeyEvent* keyEvent);
 
     const FastoQKeySequence executeKey(Qt::ControlModifier, Qt::Key_Return);

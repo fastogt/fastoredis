@@ -7,7 +7,6 @@
 
 namespace
 {
-    const QColor paperColor(166, 190, 233);
     const QString redis_lua_commands[] =
     {
         "lrem", "pipeline", "setex", "zadd", //redis.Redis

@@ -4,11 +4,6 @@
 
 #include "gui/gui_factory.h"
 
-namespace
-{
-    const QColor paperColor(166, 190, 233);
-}
-
 namespace fastoredis
 {
     MemcachedShell::MemcachedShell(bool showAutoCompl, QWidget* parent)
@@ -20,7 +15,6 @@ namespace fastoredis
         registerImage(MemcachedLexer::HelpKeyword, GuiFactory::instance().messageBoxQuestionIcon().pixmap(QSize(64,64)));
 
         setLexer(red);
-        red->setPaper(paperColor);
 
         setAutoCompletionThreshold(1);
         if(showAutoCompletion_){
