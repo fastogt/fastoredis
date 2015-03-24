@@ -6,7 +6,7 @@
 
 namespace fastoredis
 {
-    const std::vector<QString> memcachedCommandsKeywords = {"quit",
+    static const QString memcachedCommandsKeywords[] = {"quit",
                                                             "verbosity", "version", "stats", "flush_all",
                                                             "delete", "decr", "incr", "prepend", "append", "replace",
                                                             "add", "set", "get"};

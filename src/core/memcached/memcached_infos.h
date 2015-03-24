@@ -29,41 +29,8 @@
 
 namespace fastoredis
 {
-    static const std::vector<std::string> memcachedHeaders =
-    {
-        MEMCACHED_COMMON_LABEL
-    };
-
-    static const std::vector<Field> memcachedCommonFields =
-    {
-        Field(MEMCACHED_PID_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_UPTIME_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_TIME_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_VERSION_LABEL, common::Value::TYPE_STRING),
-        Field(MEMCACHED_POINTER_SIZE_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_RUSAGE_USER_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_RUSAGE_SYSTEM_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_CURR_ITEMS_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_TOTAL_ITEMS_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_BYTES_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_CURR_CONNECTIONS_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_TOTAL_CONNECTIONS_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_CONNECTION_STRUCTURES_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_CMD_GET_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_CMD_SET_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_GET_HITS_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_GET_MISSES_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_EVICTIONS_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_BYTES_READ_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_BYTES_WRITTEN_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_LIMIT_MAXBYTES_LABEL, common::Value::TYPE_UINTEGER),
-        Field(MEMCACHED_THREADS_LABEL, common::Value::TYPE_UINTEGER)
-    };
-
-    static const std::vector<std::vector<Field> > memcachedFields =
-    {
-        memcachedCommonFields
-    };
+    extern const std::vector<std::string> memcachedHeaders;
+    extern const std::vector<std::vector<Field> > memcachedFields;
 
     class MemcachedServerInfo
             : public ServerInfo

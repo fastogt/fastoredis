@@ -12,24 +12,8 @@
 
 namespace fastoredis
 {
-    static const std::vector<std::string> SsdbHeaders =
-    {
-        SSDB_COMMON_LABEL
-    };
-
-    static const std::vector<Field> SsdbCommonFields =
-    {
-        Field(SSDB_VERSION_LABEL, common::Value::TYPE_STRING),
-        Field(SSDB_LINKS_LABEL, common::Value::TYPE_UINTEGER),
-        Field(SSDB_TOTAL_CALLS_LABEL, common::Value::TYPE_UINTEGER),
-        Field(SSDB_DBSIZE_LABEL, common::Value::TYPE_UINTEGER),
-        Field(SSDB_BINLOGS_LABEL, common::Value::TYPE_STRING)
-    };
-
-    static const std::vector<std::vector<Field> > SsdbFields =
-    {
-        SsdbCommonFields
-    };
+    extern const std::vector<std::string> SsdbHeaders;
+    extern const std::vector<std::vector<Field> > SsdbFields;
 
     class SsdbServerInfo
             : public ServerInfo

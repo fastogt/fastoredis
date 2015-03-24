@@ -3,6 +3,20 @@
 #include <ostream>
 #include <sstream>
 
+namespace
+{
+    using namespace fastoredis;
+
+    const std::vector<Field> SsdbCommonFields =
+    {
+        Field(SSDB_VERSION_LABEL, common::Value::TYPE_STRING),
+        Field(SSDB_LINKS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(SSDB_TOTAL_CALLS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(SSDB_DBSIZE_LABEL, common::Value::TYPE_UINTEGER),
+        Field(SSDB_BINLOGS_LABEL, common::Value::TYPE_STRING)
+    };
+}
+
 namespace fastoredis
 {   
     const std::vector<common::Value::Type> DBTraits<SSDB>::supportedTypes = {
@@ -16,6 +30,16 @@ namespace fastoredis
                                             common::Value::TYPE_ZSET,
                                             common::Value::TYPE_HASH
                                            };
+
+    const std::vector<std::string> SsdbHeaders =
+    {
+        SSDB_COMMON_LABEL
+    };
+
+    const std::vector<std::vector<Field> > SsdbFields =
+    {
+        SsdbCommonFields
+    };
 
     SsdbServerInfo::Common::Common()
     {

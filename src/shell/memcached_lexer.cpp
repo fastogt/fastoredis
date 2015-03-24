@@ -18,8 +18,8 @@ namespace fastoredis
     {
         for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
             QString val = *it;
-            for(std::vector<QString>::const_iterator jt = memcachedCommandsKeywords.begin(); jt != memcachedCommandsKeywords.end(); ++jt){
-                QString jval = *jt;
+            for(int i = 0; i < SIZEOFMASS(memcachedCommandsKeywords); ++i){
+                QString jval = memcachedCommandsKeywords[i];
                 if(jval.startsWith(val, Qt::CaseInsensitive) || (val == ALL_COMMANDS && context.size() == 1) ){
                     list.append(jval + "?1");
                 }
@@ -111,8 +111,8 @@ namespace fastoredis
 
     void MemcachedLexer::paintCommands(const QString& source, int start)
     {
-        for(std::vector<QString>::const_iterator it = memcachedCommandsKeywords.begin(); it != memcachedCommandsKeywords.end(); ++it){
-            QString word = (*it);
+        for(int i = 0; i < SIZEOFMASS(memcachedCommandsKeywords); ++i){
+            QString word = memcachedCommandsKeywords[i];
             int index = 0;
             int begin = 0;
             while( (begin = source.indexOf(word, index, Qt::CaseInsensitive)) != -1){

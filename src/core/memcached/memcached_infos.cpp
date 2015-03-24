@@ -3,16 +3,58 @@
 #include <ostream>
 #include <sstream>
 
+namespace
+{
+    using namespace fastoredis;
+
+    const std::vector<Field> memcachedCommonFields =
+    {
+        Field(MEMCACHED_PID_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_UPTIME_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_TIME_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_VERSION_LABEL, common::Value::TYPE_STRING),
+        Field(MEMCACHED_POINTER_SIZE_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_RUSAGE_USER_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_RUSAGE_SYSTEM_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_CURR_ITEMS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_TOTAL_ITEMS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_BYTES_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_CURR_CONNECTIONS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_TOTAL_CONNECTIONS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_CONNECTION_STRUCTURES_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_CMD_GET_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_CMD_SET_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_GET_HITS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_GET_MISSES_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_EVICTIONS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_BYTES_READ_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_BYTES_WRITTEN_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_LIMIT_MAXBYTES_LABEL, common::Value::TYPE_UINTEGER),
+        Field(MEMCACHED_THREADS_LABEL, common::Value::TYPE_UINTEGER)
+    };
+}
+
 namespace fastoredis
 {   
-    const std::vector<common::Value::Type> DBTraits<MEMCACHED>::supportedTypes = {
-                                            common::Value::TYPE_BOOLEAN,
-                                            common::Value::TYPE_INTEGER,
-                                            common::Value::TYPE_UINTEGER,
-                                            common::Value::TYPE_DOUBLE,
-                                            common::Value::TYPE_STRING,
-                                            common::Value::TYPE_ARRAY
-                                           };
+    const std::vector<common::Value::Type> DBTraits<MEMCACHED>::supportedTypes =
+    {
+        common::Value::TYPE_BOOLEAN,
+        common::Value::TYPE_INTEGER,
+        common::Value::TYPE_UINTEGER,
+        common::Value::TYPE_DOUBLE,
+        common::Value::TYPE_STRING,
+        common::Value::TYPE_ARRAY
+    };
+
+    const std::vector<std::string> memcachedHeaders =
+    {
+        MEMCACHED_COMMON_LABEL
+    };
+
+    const std::vector<std::vector<Field> > memcachedFields =
+    {
+        memcachedCommonFields
+    };
 
     MemcachedServerInfo::Common::Common()
     {

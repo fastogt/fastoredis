@@ -18,8 +18,8 @@ namespace fastoredis
     {
         for(QStringList::const_iterator it = context.begin(); it != context.end(); ++it){
             QString val = *it;
-            for(std::vector<QString>::const_iterator jt = ssdbCommandsKeywords.begin(); jt != ssdbCommandsKeywords.end(); ++jt){
-                QString jval = *jt;
+            for(int i = 0; i < SIZEOFMASS(ssdbCommandsKeywords); ++i){
+                QString jval = ssdbCommandsKeywords[i];
                 if(jval.startsWith(val, Qt::CaseInsensitive) || (val == ALL_COMMANDS && context.size() == 1) ){
                     list.append(jval + "?1");
                 }
@@ -111,8 +111,8 @@ namespace fastoredis
 
     void SsdbLexer::paintCommands(const QString& source, int start)
     {
-        for(std::vector<QString>::const_iterator it = ssdbCommandsKeywords.begin(); it != ssdbCommandsKeywords.end(); ++it){
-            QString word = (*it);
+        for(int i = 0; i < SIZEOFMASS(ssdbCommandsKeywords); ++i){
+            QString word = ssdbCommandsKeywords[i];
             int index = 0;
             int begin = 0;
             while( (begin = source.indexOf(word, index, Qt::CaseInsensitive)) != -1){

@@ -11,7 +11,7 @@ namespace fastoredis
     template<connectionTypes ct>
     struct DBTraits
     {
-        static const common::Value::Type supportedTypes[];
+        static const std::vector<common::Value::Type> supportedTypes;
     };
 
     struct NKey

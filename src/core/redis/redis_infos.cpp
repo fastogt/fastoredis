@@ -5,20 +5,150 @@
 
 #define MARKER "\n"
 
+namespace
+{
+    using namespace fastoredis;
+
+    const std::vector<Field> redisServerFields =
+    {
+        Field(REDIS_VERSION_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_GIT_SHA1_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_GIT_DIRTY_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_BUILD_ID_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_MODE_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_OS_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_ARCH_BITS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_MULTIPLEXING_API_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_GCC_VERSION_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_PROCESS_ID_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_RUN_ID_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_TCP_PORT_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_UPTIME_IN_SECONDS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_UPTIME_IN_DAYS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_HZ_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_LRU_CLOCK_LABEL, common::Value::TYPE_UINTEGER)
+    };
+
+    const std::vector<Field> redisClientFields =
+    {
+        Field(REDIS_CONNECTED_CLIENTS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_CLIENT_LONGEST_OUTPUT_LIST_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_CLIENT_BIGGEST_INPUT_BUF_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_BLOCKED_CLIENTS_LABEL, common::Value::TYPE_UINTEGER)
+    };
+
+    const std::vector<Field> redisMemoryFields =
+    {
+        Field(REDIS_USED_MEMORY_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_MEMORY_HUMAN_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_USED_MEMORY_RSS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_MEMORY_PEAK_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_MEMORY_PEAK_HUMAN_LABEL, common::Value::TYPE_STRING),
+        Field(REDIS_USED_MEMORY_LUA_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_MEM_FRAGMENTATION_RATIO_LABEL, common::Value::TYPE_DOUBLE),
+        Field(REDIS_MEM_ALLOCATOR_LABEL, common::Value::TYPE_STRING)
+    };
+
+    const std::vector<Field> redisPersistenceFields =
+    {
+       Field(REDIS_LOADING_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_RDB_CHANGES_SINCE_LAST_SAVE_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_RDB_DGSAVE_IN_PROGRESS_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_RDB_LAST_SAVE_TIME_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_RDB_LAST_DGSAVE_STATUS_LABEL, common::Value::TYPE_STRING),
+       Field(REDIS_RDB_LAST_DGSAVE_TIME_SEC_LABEL, common::Value::TYPE_INTEGER),
+       Field(REDIS_RDB_CURRENT_DGSAVE_TIME_SEC_LABEL, common::Value::TYPE_INTEGER),
+       Field(REDIS_AOF_ENABLED_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_AOF_REWRITE_IN_PROGRESS_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_AOF_REWRITE_SHEDULED_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_AOF_LAST_REWRITE_TIME_SEC_LABEL, common::Value::TYPE_INTEGER),
+       Field(REDIS_AOF_CURRENT_REWRITE_TIME_SEC_LABEL, common::Value::TYPE_INTEGER),
+       Field(REDIS_AOF_LAST_DGREWRITE_STATUS_LABEL, common::Value::TYPE_STRING),
+       Field(REDIS_AOF_LAST_WRITE_STATUS_LABEL, common::Value::TYPE_STRING)
+    };
+
+    const std::vector<Field> redisStatsFields =
+    {
+        Field(REDIS_TOTAL_CONNECTIONS_RECEIVED_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_TOTAL_COMMANDS_PROCESSED_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_INSTANTANEOUS_OPS_PER_SEC_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_REJECTED_CONNECTIONS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_SYNC_FULL_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_SYNC_PARTIAL_OK_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_SYNC_PARTIAL_ERR_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_EXPIRED_KEYS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_EVICTED_KEYS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_KEYSPACE_HITS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_KEYSPACE_MISSES_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_PUBSUB_CHANNELS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_PUBSUB_PATTERNS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_LATEST_FORK_USEC_LABEL, common::Value::TYPE_UINTEGER)
+    };
+
+    const std::vector<Field> redisReplicationFields =
+    {
+       Field(REDIS_ROLE_LABEL, common::Value::TYPE_STRING),
+       Field(REDIS_CONNECTED_SLAVES_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_MASTER_REPL_OFFSET_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_BACKLOG_ACTIVE_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_BACKLOG_SIZE_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_BACKLOG_FIRST_BYTE_OFFSET_LABEL, common::Value::TYPE_UINTEGER),
+       Field(REDIS_BACKLOG_HISTEN_LABEL, common::Value::TYPE_UINTEGER)
+    };
+
+    const std::vector<Field> redisCpuFields =
+    {
+        Field(REDIS_USED_CPU_SYS_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_CPU_USER_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_CPU_SYS_CHILDREN_LABEL, common::Value::TYPE_UINTEGER),
+        Field(REDIS_USED_CPU_USER_CHILDREN_LABEL, common::Value::TYPE_UINTEGER)
+    };
+
+    const std::vector<Field> redisKeySpaceFields =
+    {
+
+    };
+}
+
 namespace fastoredis
 {
-    const std::vector<common::Value::Type> DBTraits<REDIS>::supportedTypes = {
-                                            common::Value::TYPE_BOOLEAN,
-                                            common::Value::TYPE_INTEGER,
-                                            common::Value::TYPE_UINTEGER,
-                                            common::Value::TYPE_DOUBLE,
-                                            common::Value::TYPE_STRING,
+    const std::vector<common::Value::Type> DBTraits<REDIS>::supportedTypes =
+    {
+        common::Value::TYPE_BOOLEAN,
+        common::Value::TYPE_INTEGER,
+        common::Value::TYPE_UINTEGER,
+        common::Value::TYPE_DOUBLE,
+        common::Value::TYPE_STRING,
 
-                                            common::Value::TYPE_ARRAY,
-                                            common::Value::TYPE_SET,
-                                            common::Value::TYPE_ZSET,
-                                            common::Value::TYPE_HASH
-                                           };
+        common::Value::TYPE_ARRAY,
+        common::Value::TYPE_SET,
+        common::Value::TYPE_ZSET,
+        common::Value::TYPE_HASH
+    };
+
+    const std::vector<std::string> redisHeaders =
+    {
+        REDIS_SERVER_LABEL,
+        REDIS_CLIENTS_LABEL,
+        REDIS_MEMORY_LABEL,
+        REDIS_PERSISTENCE_LABEL,
+        REDIS_STATS_LABEL,
+        REDIS_REPLICATION_LABEL,
+        REDIS_CPU_LABEL,
+        REDIS_KEYSPACE_LABEL
+    };
+
+    const std::vector< std::vector<Field> > redisFields =
+    {
+        redisServerFields,
+        redisClientFields,
+        redisMemoryFields,
+        redisPersistenceFields,
+        redisStatsFields,
+        redisReplicationFields,
+        redisCpuFields,
+        redisKeySpaceFields
+    };
 
     RedisDiscoveryInfo::RedisDiscoveryInfo(serverTypes type, bool self)
         : ServerDiscoveryInfo(REDIS, type, self), hash_()
