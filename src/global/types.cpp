@@ -35,7 +35,7 @@ namespace common
     template<>
     fastoredis::supportedViews convertFromString(const std::string& from)
     {
-        for(int i = 0; i < fastoredis::viewsText.size(); ++i){
+        for(int i = 0; i < SIZEOFMASS(fastoredis::viewsText); ++i){
             if(from == fastoredis::viewsText[i]){
                 return static_cast<fastoredis::supportedViews>(i);
             }

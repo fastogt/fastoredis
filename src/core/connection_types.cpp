@@ -2,8 +2,8 @@
 
 namespace
 {
-    const std::vector<std::string> connnectionMode = { "Latency mode", "Slave mode", "Get RDB mode", "Pipe mode",  "Find big keys mode", "Stat mode", "Scan mode", "Intaractive mode" };
-    const std::vector<std::string> serverTypes = { "Master", "Slave" };
+    const std::string connnectionMode[] = { "Latency mode", "Slave mode", "Get RDB mode", "Pipe mode",  "Find big keys mode", "Stat mode", "Scan mode", "Intaractive mode" };
+    const std::string serverTypes[] = { "Master", "Slave" };
 }
 
 namespace common
@@ -11,7 +11,7 @@ namespace common
     template<>
     fastoredis::connectionTypes convertFromString(const std::string& text)
     {
-        for (uint32_t i = 0; i < fastoredis::connnectionType.size(); ++i){
+        for (uint32_t i = 0; i < SIZEOFMASS(fastoredis::connnectionType); ++i){
             if (text == fastoredis::connnectionType[i]){
                 return static_cast<fastoredis::connectionTypes>(i);
             }
@@ -28,7 +28,7 @@ namespace common
     template<>
     fastoredis::serverTypes convertFromString(const std::string& text)
     {
-        for (uint32_t i = 0; i < serverTypes.size(); ++i){
+        for (uint32_t i = 0; i < SIZEOFMASS(serverTypes); ++i){
             if (text == serverTypes[i]){
                 return static_cast<fastoredis::serverTypes>(i);
             }

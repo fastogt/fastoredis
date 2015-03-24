@@ -106,3 +106,9 @@ struct CompileAssert {
 #undef COMPILE_ASSERT
 #define COMPILE_ASSERT(expr, msg) \
   typedef CompileAssert<(bool(expr))> msg[bool(expr) ? 1 : -1]
+
+template <class T, unsigned N>
+constexpr unsigned sizeof_array(const T (&)[N])
+{
+     return N;
+}

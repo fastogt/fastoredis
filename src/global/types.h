@@ -12,7 +12,7 @@ namespace fastoredis
         Text
     };
 
-    static const std::vector<std::string> viewsText = { "Tree", "Table", "Text" };
+    static const std::string viewsText[] = { "Tree", "Table", "Text" };
 
     class Command
     {

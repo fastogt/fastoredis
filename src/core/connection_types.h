@@ -18,7 +18,7 @@ namespace fastoredis
         SLAVE
     };
 
-    static const std::vector<std::string> connnectionType = { "Unknown", "Redis", "Memcached", "Ssdb" };
+    static const std::string connnectionType[] = { "Unknown", "Redis", "Memcached", "Ssdb" };
 
     enum ConnectionMode
     {

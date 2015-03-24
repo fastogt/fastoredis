@@ -57,6 +57,23 @@ namespace fastoredis
         return ctrlShiftT;
     }*/
 
+    // global variables
+    const FastoQKeySequence openKey = FastoQKeySequence(QKeySequence::Open);
+    const FastoQKeySequence saveKey = FastoQKeySequence(QKeySequence::Save);
+    const FastoQKeySequence saveAsKey = FastoQKeySequence(QKeySequence::SaveAs);
+    const FastoQKeySequence quitKey = FastoQKeySequence(QKeySequence::Quit);
+    const FastoQKeySequence closeKey = FastoQKeySequence(QKeySequence::Close);
+    const FastoQKeySequence newTabKey = FastoQKeySequence(QKeySequence::AddTab);
+    const FastoQKeySequence nextTabKey = FastoQKeySequence(QKeySequence::NextChild);
+    const FastoQKeySequence prevTabKey = FastoQKeySequence(QKeySequence::PreviousChild);
+    const FastoQKeySequence refreshKey = FastoQKeySequence(QKeySequence::Refresh);
+#ifdef OS_MAC
+    const FastoQKeySequence fullScreenKey = FastoQKeySequence(QKeySequence::FullScreen);
+#else
+    const FastoQKeySequence fullScreenKey = FastoQKeySequence(Qt::ControlModifier | Qt::ShiftModifier, Qt::Key_F11);
+#endif
+    const FastoQKeySequence executeKey = FastoQKeySequence(Qt::ControlModifier, Qt::Key_Return);
+
     bool isOpenShortcut(QKeyEvent* keyEvent)
     {
         return openKey == keyEvent;

@@ -16,48 +16,34 @@ namespace fastoredis
 
     private:
         const QKeySequence::StandardKey skey_;
-
         const Qt::KeyboardModifiers mod_;
         const int key_;
     };
 
-    const FastoQKeySequence openKey(QKeySequence::Open);
+    // global variables
+    extern const FastoQKeySequence openKey;
+    extern const FastoQKeySequence saveKey;
+    extern const FastoQKeySequence saveAsKey;
+    extern const FastoQKeySequence quitKey;
+    extern const FastoQKeySequence closeKey;
+    extern const FastoQKeySequence newTabKey;
+    extern const FastoQKeySequence nextTabKey;
+    extern const FastoQKeySequence prevTabKey;
+    extern const FastoQKeySequence refreshKey;
+    extern const FastoQKeySequence fullScreenKey;
+    extern const FastoQKeySequence executeKey;
+
     bool isOpenShortcut(QKeyEvent* keyEvent);
-
-    const FastoQKeySequence saveKey(QKeySequence::Save);
     bool isSaveShortcut(QKeyEvent* keyEvent);
-
-    const FastoQKeySequence saveAsKey(QKeySequence::SaveAs);
     bool isSaveAsShortcut(QKeyEvent* keyEvent);
-
-    const FastoQKeySequence quitKey(QKeySequence::Quit);
     bool isQuitShortcut(QKeyEvent* keyEvent);
-
-    const FastoQKeySequence closeKey(QKeySequence::Close);
     bool isCloseShortcut(QKeyEvent* keyEvent);
-
-    const FastoQKeySequence newTabKey(QKeySequence::AddTab);
     bool isNewTabShortcut(QKeyEvent* keyEvent);
-
-    const FastoQKeySequence nextTabKey(QKeySequence::NextChild);
     bool isNextTabShortcut(QKeyEvent* keyEvent);
-
-    const FastoQKeySequence prevTabKey(QKeySequence::PreviousChild);
     bool isPreviousTabShortcut(QKeyEvent* keyEvent);
-
-    const FastoQKeySequence refreshKey(QKeySequence::Refresh);
     bool isRefreshShortcut(QKeyEvent* keyEvent);
-
-#ifdef OS_WIN
-    const FastoQKeySequence fullScreenKey(Qt::ControlModifier | Qt::ShiftModifier, Qt::Key_F11);
-#else
-    const FastoQKeySequence fullScreenKey(QKeySequence::FullScreen);
-#endif
     bool isFullScreenShortcut(QKeyEvent* keyEvent);
-
-    const FastoQKeySequence executeKey(Qt::ControlModifier, Qt::Key_Return);
     bool isExecuteScriptShortcut(QKeyEvent* keyEvent);
-
     bool isAutoCompleteShortcut(QKeyEvent* keyEvent);
     bool isHideAutoCompleteShortcut(QKeyEvent* keyEvent);
 }

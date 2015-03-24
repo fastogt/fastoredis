@@ -45,9 +45,8 @@ namespace fastoredis
         VERIFY(connect(decode, &QToolButton::clicked, this, &EncodeDecodeDialog::decode));
 
         decoders_ = new QComboBox;
-        std::vector<std::string> sup = supportedEDcoderTypes();
-        for(int i = 0; i < sup.size(); ++i){
-            decoders_->addItem(common::convertFromString<QString>(sup[i]));
+        for(int i = 0; i < SIZEOFMASS(EDecoderTypes); ++i){
+            decoders_->addItem(common::convertFromString<QString>(EDecoderTypes[i]));
         }
 
         QHBoxLayout* toolBarLayout = new QHBoxLayout;

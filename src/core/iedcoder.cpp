@@ -6,23 +6,18 @@
 #include "core/msgpack_edcoder.h"
 #include "core/html_edcoder.h"
 
-namespace
-{
-    const std::vector<std::string> EDcoderTypes = { "Base64", "GZip", "Hex", "MsgPack", "HtmlEscape" };
-}
-
 namespace common
 {
     std::string convertToString(fastoredis::EDTypes t)
     {
-        return EDcoderTypes[t];
+        return fastoredis::EDecoderTypes[t];
     }
 
     template<>
     fastoredis::EDTypes convertFromString(const std::string& text)
     {
-        for (uint32_t i = 0; i < EDcoderTypes.size(); ++i){
-            if (text == EDcoderTypes[i]){
+        for (uint32_t i = 0; i < SIZEOFMASS(fastoredis::EDecoderTypes); ++i){
+            if (text == fastoredis::EDecoderTypes[i]){
                 return static_cast<fastoredis::EDTypes>(i);
             }
         }
@@ -35,11 +30,6 @@ namespace common
 
 namespace fastoredis
 {
-    std::vector<std::string> supportedEDcoderTypes()
-    {
-        return EDcoderTypes;
-    }
-
     IEDcoder::IEDcoder(EDTypes type)
         : type_(type)
     {

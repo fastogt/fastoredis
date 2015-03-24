@@ -13,7 +13,7 @@ namespace fastoredis
         HtmlEsc
     };
 
-    std::vector<std::string> supportedEDcoderTypes();
+    const std::string EDecoderTypes[] = { "Base64", "GZip", "Hex", "MsgPack", "HtmlEscape" };
 
     class IEDcoder
     {
