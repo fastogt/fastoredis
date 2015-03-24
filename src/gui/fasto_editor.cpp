@@ -41,9 +41,15 @@ namespace
         return 1;
     }
 
-    //const QColor marginsBackgroundColor = QColor(73, 76, 78);
-    //const QColor caretForegroundColor = QColor("#FFFFFF");
-    //const QColor matchedBraceForegroundColor = QColor("#FF8861");
+    const QColor caretForegroundColor = QColor(QColor(Qt::black));
+    const QColor selectionBackgroundColor = QColor(QColor(Qt::blue));
+    const QColor selectionForegroundColor = QColor(QColor(Qt::white));
+
+    const QColor matchedBraceForegroundColor = QColor(190, 190, 190);
+    const QColor matchedBraceBackgroundColor = QColor(30, 36, 38);
+
+    const QColor marginsBackgroundColor = QColor(Qt::green);
+    const QColor marginsForegroundColor = QColor(Qt::white);
 }
 
 namespace fastoredis
@@ -57,9 +63,13 @@ namespace fastoredis
         setUtf8(true);
         setMarginWidth(1, 0);
 
-        //setCaretForegroundColor(caretForegroundColor);
-        //setMatchedBraceForegroundColor(matchedBraceForegroundColor); //1AB0A6
-        //setMatchedBraceBackgroundColor(marginsBackgroundColor);
+        setCaretForegroundColor(caretForegroundColor);
+
+        setMatchedBraceForegroundColor(matchedBraceForegroundColor);
+        setMatchedBraceBackgroundColor(matchedBraceBackgroundColor);
+
+        setSelectionBackgroundColor(selectionBackgroundColor);
+        setSelectionForegroundColor(selectionForegroundColor);
 
         setContentsMargins(0, 0, 0, 0);
         setViewportMargins(3, 3, 3, 3);
@@ -69,8 +79,8 @@ namespace fastoredis
 
         // Margins colors
         // line numbers margin
-        setMarginsBackgroundColor(QColor(Qt::lightGray));
-        setMarginsForegroundColor(QColor(Qt::gray));
+        setMarginsBackgroundColor(marginsBackgroundColor);
+        setMarginsForegroundColor(marginsForegroundColor);
 
         SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, ourFont.family().data());
         SendScintilla(QsciScintilla::SCI_SETHSCROLLBAR, 0);
