@@ -1229,6 +1229,16 @@ namespace fastoredis
                  * errors. */
                 anetKeepAlive(NULL, context->fd, REDIS_CLI_KEEPALIVE_INTERVAL);
 
+                /*struct timeval timeout;
+                timeout.tv_sec = 10;
+                timeout.tv_usec = 0;
+                int res = redisSetTimeout(context, timeout);
+                if(res == REDIS_ERR){
+                    char buff[512] = {0};
+                    common::SNPrintf(buff, sizeof(buff), "Redis connection set timeout failed error is: %s.", context->errstr);
+                    LOG_MSG(buff, common::logging::L_WARNING, true);
+                }*/
+
                 /* Do AUTH and select the right DB. */
                 common::ErrorValueSPtr er = cliAuth();
                 if (er){
@@ -1547,6 +1557,7 @@ namespace fastoredis
             }
 
             freeReplyObject(reply);
+
             return er;
         }
 
@@ -1606,13 +1617,14 @@ namespace fastoredis
                     }
                 }
 
-                /*if (config.pubsub_mode) {
-                    if (config.output != OUTPUT_RAW)
+                if (config.pubsub_mode) {
                     while (1) {
-                        if (cliReadReply(output_raw, out, er) != REDIS_OK)
-                            return REDIS_ERR;
+                        common::ErrorValueSPtr er = cliReadReply(out);
+                        if (er){
+                            return er;
+                        }
                     }
-                }*/
+                }
 
                 if (config.slave_mode) {
                     common::ErrorValueSPtr er = slaveMode(out);
