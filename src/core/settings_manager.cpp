@@ -148,6 +148,11 @@ namespace fastoredis
         return recentConnections_;
     }
 
+    void SettingsManager::clearRConnections()
+    {
+        recentConnections_.clear();
+    }
+
     bool SettingsManager::syncTabs() const
     {
         return syncTabs_;

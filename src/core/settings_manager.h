@@ -42,6 +42,7 @@ namespace fastoredis
         void addRConnection(const QString& connection);
         void removeRConnection(const QString& connection);
         QStringList recentConnections() const;
+        void clearRConnections();
 
         bool syncTabs() const;
         void setSyncTabs(bool sync);

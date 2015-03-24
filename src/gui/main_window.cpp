@@ -138,6 +138,12 @@ namespace fastoredis
             VERIFY(connect(recentConnectionsActs_[i], &QAction::triggered, this, &MainWindow::openRecentConnection));
             recentMenu->addAction(recentConnectionsActs_[i]);
         }
+
+        clearMenu_ = new QAction(this);
+        recentMenu->addSeparator();
+        VERIFY(connect(clearMenu_, &QAction::triggered, this, &MainWindow::clearRecentConnectionsMenu));
+        recentMenu->addAction(clearMenu_);
+
         fileMenu->addSeparator();
         fileMenu->addAction(exitAction_);
         updateRecentConnectionActions();
@@ -443,6 +449,7 @@ namespace fastoredis
         explorerAction_->setText(trExpTree);
         logsAction_->setText(trLogs);
         recentConnections_->setText(trRecentConnections);
+        clearMenu_->setText(trClearMenu);
         expDock_->setWindowTitle(trExpTree);
         logDock_->setWindowTitle(trLogs);
     }
@@ -463,7 +470,15 @@ namespace fastoredis
             recentConnectionsActs_[j]->setVisible(false);
         }
 
-        recentConnections_->setEnabled(numRecentFiles > 0);
+        bool isHaveItem = numRecentFiles > 0;
+        clearMenu_->setVisible(isHaveItem);
+        recentConnections_->setEnabled(isHaveItem);
+    }
+
+    void MainWindow::clearRecentConnectionsMenu()
+    {
+        SettingsManager::instance().clearRConnections();
+        updateRecentConnectionActions();
     }
 
     void MainWindow::createServer(IConnectionSettingsBaseSPtr settings)

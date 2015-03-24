@@ -4,6 +4,7 @@
 - Redis clusters discovery
 - Ability to disable autocompletion
 - Redis subscribe implementation
+- Clear recent connections action
 
 0.7.1 / March 14, 2015
 [Alexandr Topilski]

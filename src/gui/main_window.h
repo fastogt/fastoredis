@@ -62,6 +62,7 @@ namespace fastoredis
         void createStatusBar();
         void retranslateUi();
         void updateRecentConnectionActions();
+        void clearRecentConnectionsMenu();
         void createServer(IConnectionSettingsBaseSPtr settings);
         void createCluster(IClusterSettingsBaseSPtr settings);
 
@@ -82,6 +83,7 @@ namespace fastoredis
         QAction* explorerAction_;
         QAction* logsAction_;
         QAction* recentConnections_;
+        QAction* clearMenu_;
         QAction* recentConnectionsActs_[MaxRecentConnections];
 
         ExplorerTreeView* exp_;

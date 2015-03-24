@@ -76,6 +76,7 @@ namespace fastoredis
         extern const QString trLuaConsole;
         extern const QString trSaveAs;
         extern const QString trClearAll;
+        extern const QString trClearMenu;
         extern const QString trPrivateKey;
         extern const QString trOpenConsole;
         extern const QString trSetDefault;

@@ -61,7 +61,11 @@ namespace fastoredis
     const FastoQKeySequence openKey = FastoQKeySequence(QKeySequence::Open);
     const FastoQKeySequence saveKey = FastoQKeySequence(QKeySequence::Save);
     const FastoQKeySequence saveAsKey = FastoQKeySequence(QKeySequence::SaveAs);
+#ifdef OS_MAC
     const FastoQKeySequence quitKey = FastoQKeySequence(QKeySequence::Quit);
+#else
+    const FastoQKeySequence quitKey = FastoQKeySequence(Qt::ControlModifier, Qt::Key_Q);
+#endif
     const FastoQKeySequence closeKey = FastoQKeySequence(QKeySequence::Close);
     const FastoQKeySequence newTabKey = FastoQKeySequence(QKeySequence::AddTab);
     const FastoQKeySequence nextTabKey = FastoQKeySequence(QKeySequence::NextChild);
