@@ -6,7 +6,7 @@ namespace fastoredis
 {
     namespace translations
     {
-        const QString defLanguage = "System";
+        extern const QString defLanguage;
         QString applyLanguage(const QString& lang);
         QStringList supportedLanguages();
     }

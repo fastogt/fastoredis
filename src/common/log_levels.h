@@ -18,10 +18,9 @@ namespace common
             L_CRITICAL
         };
 
-        static const char* level_names[] = { "NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL" };
-
         inline const char* log_level_to_text(LEVEL_LOG lev)
         {
+            static const char* level_names[] = { "NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL" };
             return level_names[lev];
         }
     }

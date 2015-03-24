@@ -48,6 +48,8 @@ namespace fastoredis
 {
     namespace translations
     {
+        const QString defLanguage = "System";
+
         QString applyLanguage(const QString& lang)
         {
             QString langres = lang;

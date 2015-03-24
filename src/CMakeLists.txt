@@ -189,6 +189,7 @@ SET(HEADERS_TRANSLATIONS
 )
 SET(SOURCES_TRANSLATIONS
     translations/translations.cpp
+    translations/global.cpp
 )
 
 SET_DESKTOP_TARGET()

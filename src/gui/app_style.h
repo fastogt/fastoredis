@@ -6,7 +6,7 @@
 
 namespace fastoredis
 {
-    const QString defStyle = "Native";
+    extern const QString defStyle;
 
     void applyStyle(const QString& styleName);
     QStringList getSupportedStyles();

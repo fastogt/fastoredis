@@ -5,6 +5,8 @@
 
 namespace fastoredis
 {
+    const QString defStyle = "Native";
+
     void applyStyle(const QString& styleName)
     {
         if (styleName == defStyle) {
