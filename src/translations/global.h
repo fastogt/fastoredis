@@ -95,6 +95,8 @@ namespace fastoredis
         extern const QString trExitFullScreen;
         extern const QString trExecuteWithArgs;
         extern const QString trAuthDbUser;
+        extern const QString trEdit;
+        extern const QString trReportBug;
         extern const QString trCheckUpdate;
         extern const QString trCloseOtherTab;
 

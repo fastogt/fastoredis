@@ -42,6 +42,7 @@ namespace fastoredis
         void about();
         void openPreferences();
         void checkUpdate();
+        void reportBug();
         void enterLeaveFullScreen();
         void openPythonConsole();
         void openLuaConsole();
@@ -72,8 +73,9 @@ namespace fastoredis
         QAction* fullScreanAction_;
         QAction* windowAction_;
         QAction* aboutAction_;
+        QAction* reportBugAction_;
         QAction* fileAction_;
-        QAction* optionsAction_;
+        QAction* editAction_;
         QAction* checkUpdateAction_;
         QAction* toolsAction_;
         QAction* pythonConsoleAction_;

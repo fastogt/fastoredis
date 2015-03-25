@@ -95,6 +95,8 @@ namespace fastoredis
         const QString trExitFullScreen = QObject::tr("Exit Full Screen");
         const QString trExecuteWithArgs = QObject::tr("Execute with args");       
         const QString trAuthDbUser = QObject::tr("Auth. Database / User");
+        const QString trEdit = QObject::tr("Edit");
+        const QString trReportBug = QObject::tr("Report bug...");
         const QString trCheckUpdate = QObject::tr("Check for updates...");
         const QString trCloseOtherTab = QObject::tr("Close Other Tab");
 

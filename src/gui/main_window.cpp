@@ -152,14 +152,9 @@ namespace fastoredis
         preferencesAction_->setIcon(GuiFactory::instance().preferencesIcon());
         VERIFY(connect(preferencesAction_, &QAction::triggered, this, &MainWindow::openPreferences));
 
-        QMenu *optionsMenu = new QMenu(this);
-        optionsAction_ = menuBar()->addMenu(optionsMenu);
-
-        checkUpdateAction_ = new QAction(this);
-        VERIFY(connect(checkUpdateAction_, &QAction::triggered, this, &MainWindow::checkUpdate));
-
-        optionsMenu->addAction(checkUpdateAction_);
-        optionsMenu->addAction(preferencesAction_);
+        QMenu *editMenu = new QMenu(this);
+        editAction_ = menuBar()->addMenu(editMenu);
+        editMenu->addAction(preferencesAction_);
 
         //tools menu
         QMenu *tools = new QMenu(this);
@@ -195,6 +190,17 @@ namespace fastoredis
         VERIFY(connect(aboutAction_, &QAction::triggered, this, &MainWindow::about));
 
         helpAction_ = menuBar()->addMenu(helpMenu);
+
+        checkUpdateAction_ = new QAction(this);
+        VERIFY(connect(checkUpdateAction_, &QAction::triggered, this, &MainWindow::checkUpdate));
+
+        reportBugAction_ = new QAction(this);
+        VERIFY(connect(reportBugAction_, &QAction::triggered, this, &MainWindow::reportBug));
+
+        helpMenu->addAction(checkUpdateAction_);
+        helpMenu->addSeparator();
+        helpMenu->addAction(reportBugAction_);
+        helpMenu->addSeparator();
         helpMenu->addAction(aboutAction_);
 
         MainWidget *mainW = new MainWidget;
@@ -297,6 +303,11 @@ namespace fastoredis
         VERIFY(connect(th, &QThread::finished, cheker, &UpdateChecker::deleteLater));
         VERIFY(connect(th, &QThread::finished, th, &QThread::deleteLater));
         th->start();
+    }
+
+    void MainWindow::reportBug()
+    {
+        QDesktopServices::openUrl(QUrl(PROJECT_GITHUB_ISSUES));
     }
 
     void MainWindow::enterLeaveFullScreen()
@@ -441,9 +452,10 @@ namespace fastoredis
         encodeDecodeDialogAction_->setText(trEncodeDecode);
         preferencesAction_->setText(trPreferences);
         checkUpdateAction_->setText(trCheckUpdate);
-        optionsAction_->setText(trOptions);
+        editAction_->setText(trEdit);
         windowAction_->setText(trWindow);
         fullScreanAction_->setText(trEnterFullScreen);
+        reportBugAction_->setText(trReportBug);
         aboutAction_->setText(tr("About %1...").arg(PROJECT_NAME));
         helpAction_->setText(trHelp);
         explorerAction_->setText(trExpTree);
