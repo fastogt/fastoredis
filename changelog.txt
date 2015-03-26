@@ -5,7 +5,7 @@
 - Ability to disable autocompletion
 - Redis subscribe implementation
 - Clear recent connections action
-- Find panel for all editors
+- Find panel for all custom editors
 
 0.7.1 / March 14, 2015
 [Alexandr Topilski]

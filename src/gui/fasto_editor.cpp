@@ -130,9 +130,8 @@ namespace fastoredis
         else if (keyEvent->key() == Qt::Key_Return && isFocusScin && isShowFind) {
             goToNextElement();
         }
-        else{
-            QWidget::keyPressEvent(keyEvent);
-        }
+
+        QWidget::keyPressEvent(keyEvent);
     }
 
     bool FastoEditor::eventFilter(QObject* object, QEvent* event)

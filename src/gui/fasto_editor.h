@@ -111,7 +111,7 @@ namespace fastoredis
 
     protected:
         FastoEditorShell(const QString& version, bool showAutoCompl, QWidget *parent = 0);
-        void keyPressEvent(QKeyEvent* keyEvent);
+        virtual void keyPressEvent(QKeyEvent* keyEvent);
 
     private:
         const QString version_;

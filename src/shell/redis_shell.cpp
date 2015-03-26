@@ -32,8 +32,7 @@ namespace fastoredis
     void RedisShell::showAutocompletion()
     {
         int start, ignore;
-        QStringList context = scin_->apiContext(scin_->SendScintilla(QsciScintilla::SCI_GETCURRENTPOS), start,
-                ignore);
+        QStringList context = scin_->apiContext(scin_->SendScintilla(QsciScintilla::SCI_GETCURRENTPOS), start, ignore);
 
         if(context.empty()){
             // Generate the string representing the valid words to select from.
@@ -53,7 +52,8 @@ namespace fastoredis
             scin_->SendScintilla(QsciScintilla::SCI_AUTOCSETCHOOSESINGLE, scin_->autoCompletionShowSingle());
             scin_->SendScintilla(QsciScintilla::SCI_AUTOCSETSEPARATOR, '\x03');
 
-            QByteArray wlist_s;// = scin_->textAsBytes(wlist.join(QChar('\x03')));
+            QString text = wlist.join(QChar('\x03'));
+            QByteArray wlist_s = text.toUtf8();
             int last_len = 0;
             scin_->SendScintilla(QsciScintilla::SCI_AUTOCSHOW, last_len, ScintillaBytesConstData(wlist_s));
         }
