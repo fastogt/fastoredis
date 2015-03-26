@@ -1,6 +1,12 @@
 #include "gui/fasto_editor.h"
 
 #include <QMenu>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QToolButton>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QMessageBox>
 
 #include "common/qt/convert_string.h"
 #include "common/qt/utils_qt.h"
@@ -8,87 +14,54 @@
 #include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
 #include "gui/shortcuts.h"
+#include "gui/fasto_scintilla.h"
 
-namespace
-{
-    int getNumberOfDigits(int x)
-    {
-        if (x < 0) return getNumberOfDigits(-x) + 1;
-
-        if (x >= 10000) {
-            if (x >= 10000000) {
-                if (x >= 100000000) {
-                    if (x >= 1000000000)
-                        return 10;
-                    return 9;
-                }
-                return 8;
-            }
-            if (x >= 100000) {
-                if (x >= 1000000)
-                    return 7;
-                return 6;
-            }
-            return 5;
-        }
-        if (x >= 100) {
-            if (x >= 1000)
-                return 4;
-            return 3;
-        }
-        if (x >= 10)
-            return 2;
-        return 1;
-    }
-
-    const QColor caretForegroundColor = QColor(QColor(Qt::black));
-    const QColor selectionBackgroundColor = QColor(QColor(Qt::blue));
-    const QColor selectionForegroundColor = QColor(QColor(Qt::white));
-
-    const QColor matchedBraceForegroundColor = QColor(190, 190, 190);
-    const QColor matchedBraceBackgroundColor = QColor(30, 36, 38);
-
-    const QColor marginsBackgroundColor = QColor(Qt::green);
-    const QColor marginsForegroundColor = QColor(Qt::white);
-}
+#include "translations/global.h"
 
 namespace fastoredis
 {
     FastoEditor::FastoEditor(QWidget* parent)
-        : QsciScintilla(parent), lineNumberMarginWidth_(0)
+        : QWidget(parent), scin_(NULL)
     {
-        setAutoIndent(true);
-        setIndentationsUseTabs(false);
-        setIndentationWidth(indentationWidth);
-        setUtf8(true);
-        setMarginWidth(1, 0);
+        scin_ = new FastoScintilla;
 
-        setCaretForegroundColor(caretForegroundColor);
+        findPanel_ = new QFrame(this);
+        findLine_ = new QLineEdit(this);
+        close_ = new QToolButton(this);
+        next_ = new QPushButton(this);
+        prev_ = new QPushButton(this);
+        caseSensitive_ = new QCheckBox(this);
 
-        setMatchedBraceForegroundColor(matchedBraceForegroundColor);
-        setMatchedBraceBackgroundColor(matchedBraceBackgroundColor);
+        close_->setIcon(GuiFactory::instance().close16Icon());
+        close_->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        close_->setIconSize(QSize(16, 16));
+        findLine_->setAlignment(Qt::AlignLeft | Qt::AlignAbsolute);
 
-        setSelectionBackgroundColor(selectionBackgroundColor);
-        setSelectionForegroundColor(selectionForegroundColor);
+        QHBoxLayout *layout = new QHBoxLayout;
+        layout->setContentsMargins(6, 0, 6, 0);
+        layout->setSpacing(4);
+        layout->addWidget(close_);
+        layout->addWidget(findLine_);
+        layout->addWidget(next_);
+        layout->addWidget(prev_);
+        layout->addWidget(caseSensitive_);
 
-        setContentsMargins(0, 0, 0, 0);
-        setViewportMargins(3, 3, 3, 3);
-        QFont ourFont = GuiFactory::instance().font();
-        setMarginsFont(ourFont);
-        setMarginLineNumbers(0, true);
+        findPanel_->setFixedHeight(HeightFindPanel);
+        findPanel_->setLayout(layout);
 
-        // Margins colors
-        // line numbers margin
-        setMarginsBackgroundColor(marginsBackgroundColor);
-        setMarginsForegroundColor(marginsForegroundColor);
+        scin_->installEventFilter(this);
 
-        SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, ourFont.family().data());
-        SendScintilla(QsciScintilla::SCI_SETHSCROLLBAR, 0);
+        QVBoxLayout *mainL = new QVBoxLayout;
+        mainL->addWidget(scin_);
+        mainL->addWidget(findPanel_);
+        setLayout(mainL);
 
-        setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        VERIFY(connect(this, &FastoEditor::linesChanged, this, &FastoEditor::updateLineNumbersMarginWidth));
+        findPanel_->hide();
+
+        VERIFY(connect(close_, &QToolButton::clicked, findPanel_, &QFrame::hide));
+        VERIFY(connect(next_, &QPushButton::clicked, this, &FastoEditor::goToNextElement));
+        VERIFY(connect(prev_, &QPushButton::clicked, this, &FastoEditor::goToPrevElement));
+        retranslateUi();
     }
 
     FastoEditor::~FastoEditor()
@@ -96,51 +69,132 @@ namespace fastoredis
 
     }
 
-    void FastoEditor::updateLineNumbersMarginWidth()
+    void FastoEditor::registerImage(int id, const QPixmap &im)
     {
-        int numberOfDigits = getNumberOfDigits(lines());
+        scin_->registerImage(id, im);
+    }
 
-        int tw = textWidth(STYLE_LINENUMBER, "0");
-        lineNumberMarginWidth_ = numberOfDigits * tw + rowNumberWidth;
+    QString FastoEditor::text() const
+    {
+        return scin_->text();
+    }
 
-        // If line numbers margin already displayed, update its width
-        if (lineNumberMarginWidth()) {
-            setMarginWidth(0, lineNumberMarginWidth_);
-        }
+    QString FastoEditor::selectedText() const
+    {
+        return scin_->selectedText();
+    }
+
+    void FastoEditor::append(const QString &text)
+    {
+        scin_->append(text);
+    }
+
+    void FastoEditor::setReadOnly(bool ro)
+    {
+        scin_->setReadOnly(ro);
+    }
+
+    void FastoEditor::setText(const QString &text)
+    {
+        scin_->setText(text);
+    }
+
+    void FastoEditor::clear()
+    {
+        scin_->clear();
+    }
+
+    void FastoEditor::goToNextElement()
+    {
+        findElement(true);
+    }
+
+    void FastoEditor::goToPrevElement()
+    {
+        findElement(false);
     }
 
     void FastoEditor::keyPressEvent(QKeyEvent* keyEvent)
     {
-        if (keyEvent->key() == Qt::Key_F11) {
-            keyEvent->ignore();
-            showOrHideLinesNumbers();
-            return;
+        bool isFocusScin = scin_->isActiveWindow();
+        bool isShowFind = findPanel_->isVisible();
+
+        if (keyEvent->key() == Qt::Key_Escape && isFocusScin && isShowFind) {
+            findPanel_->hide();
+            scin_->setFocus();
+            keyEvent->accept();
         }
-
-        return QsciScintilla::keyPressEvent(keyEvent);
-    }
-
-    int FastoEditor::lineNumberMarginWidth() const
-    {
-        return marginWidth(0);
-    }
-
-    void FastoEditor::showOrHideLinesNumbers()
-    {
-        updateLineNumbersMarginWidth();
-        if (!lineNumberMarginWidth()) {
-            setMarginWidth(0, lineNumberMarginWidth_);
+        else if (keyEvent->key() == Qt::Key_Return && (keyEvent->modifiers() & Qt::ShiftModifier) && isFocusScin && isShowFind) {
+            goToPrevElement();
         }
-        else {
-            setMarginWidth(0, 0);
+        else if (keyEvent->key() == Qt::Key_Return && isFocusScin && isShowFind) {
+            goToNextElement();
+        }
+        else{
+            QWidget::keyPressEvent(keyEvent);
         }
     }
 
-    int FastoEditor::textWidth(int style, const QString& text)
+    bool FastoEditor::eventFilter(QObject* object, QEvent* event)
     {
-        const QByteArray utf8 = text.toUtf8();
-        const char *byteArray = utf8.constData();
-        return SendScintilla(SCI_TEXTWIDTH, style, byteArray);
+        if (object == scin_) {
+            if (event->type() == QEvent::KeyPress) {
+                QKeyEvent *keyEvent = (QKeyEvent *)event;
+                if (((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key() == Qt::Key_F)) {
+                    findPanel_->show();
+                    findLine_->setFocus();
+                    //findPanel_->selectAll();
+                    keyEvent->accept();
+                    return true;
+                }
+            }
+        }
+
+        return QWidget::eventFilter(object, event);
+    }
+
+    void FastoEditor::changeEvent(QEvent* e)
+    {
+        if(e->type() == QEvent::LanguageChange){
+            retranslateUi();
+        }
+
+        QWidget::changeEvent(e);
+    }
+
+    void FastoEditor::retranslateUi()
+    {
+        using namespace translations;
+        next_->setText(trNext);
+        prev_->setText(trPrevious);
+        caseSensitive_->setText(trMatchCase);
+    }
+
+    void FastoEditor::findElement(bool forward)
+    {
+        const QString &text = findLine_->text();
+        if (!text.isEmpty()) {
+            bool re = false;
+            bool wo = false;
+            bool looped = true;
+            int index = 0;
+            int line = 0;
+            scin_->getCursorPosition(&line, &index);
+
+            if (!forward){
+                index -= scin_->selectedText().length();
+            }
+
+            scin_->setCursorPosition(line, 0);
+            bool isFounded = scin_->findFirst(text, re, caseSensitive_->checkState() == Qt::Checked, wo, looped, forward, line, index);
+
+            if (isFounded) {
+                scin_->ensureCursorVisible();
+            }
+            else {
+                QMessageBox::warning(this, translations::trSearch, tr("The specified text was not found."));
+            }
+        }
     }
 
     FastoEditorOutput::FastoEditorOutput(const QString &delemitr, QWidget *parent)
@@ -325,20 +379,20 @@ namespace fastoredis
     void FastoEditorShell::showAutocompletion()
     {
         if(showAutoCompletion_){
-            autoCompleteFromAll();
+            scin_->autoCompleteFromAll();
         }
     }
 
     void FastoEditorShell::hideAutocompletion()
     {
         if(showAutoCompletion_){
-            cancelList();
+            scin_->cancelList();
         }
     }
 
     void FastoEditorShell::showContextMenu(const QPoint& pt)
     {
-        QMenu *menu = createStandardContextMenu();
+        QMenu *menu = scin_->createStandardContextMenu();
         menu->exec(mapToGlobal(pt));
         delete menu;
     }
@@ -356,6 +410,6 @@ namespace fastoredis
             }
         }
 
-        return FastoEditor::keyPressEvent(keyEvent);
+        FastoEditor::keyPressEvent(keyEvent);
     }
 }

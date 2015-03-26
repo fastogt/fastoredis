@@ -14,16 +14,16 @@ namespace fastoredis
         registerImage(SsdbLexer::Command, GuiFactory::instance().commandIcon(SSDB).pixmap(QSize(64,64)));
         registerImage(SsdbLexer::HelpKeyword, GuiFactory::instance().messageBoxQuestionIcon().pixmap(QSize(64,64)));
 
-        setLexer(red);
+        scin_->setLexer(red);
 
-        setAutoCompletionThreshold(1);
+        scin_->setAutoCompletionThreshold(1);
         if(showAutoCompletion_){
-            setAutoCompletionSource(QsciScintilla::AcsAPIs);
+            scin_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
         }
         else{
-            setAutoCompletionSource(QsciScintilla::AcsNone);
+            scin_->setAutoCompletionSource(QsciScintilla::AcsNone);
         }
-        setAutoCompletionCaseSensitivity(false);
+        scin_->setAutoCompletionCaseSensitivity(false);
 
         VERIFY(connect(this, &SsdbShell::customContextMenuRequested, this, &SsdbShell::showContextMenu));
     }
@@ -31,14 +31,14 @@ namespace fastoredis
     void SsdbShell::showAutocompletion()
     {
         int start, ignore;
-        QStringList context = apiContext(SendScintilla(SCI_GETCURRENTPOS), start,
+        QStringList context = scin_->apiContext(scin_->SendScintilla(QsciScintilla::SCI_GETCURRENTPOS), start,
                 ignore);
 
         if(context.empty()){
             // Generate the string representing the valid words to select from.
             QStringList wlist;
 
-            QsciAbstractAPIs *apis = lexer()->apis();
+            QsciAbstractAPIs *apis = scin_->lexer()->apis();
 
             if (apis){
                 apis->updateAutoCompletionList(QStringList() << ALL_COMMANDS, wlist);
@@ -49,15 +49,15 @@ namespace fastoredis
 
             wlist.sort();
 
-            SendScintilla(SCI_AUTOCSETCHOOSESINGLE, autoCompletionShowSingle());
-            SendScintilla(SCI_AUTOCSETSEPARATOR, '\x03');
+            scin_->SendScintilla(QsciScintilla::SCI_AUTOCSETCHOOSESINGLE, scin_->autoCompletionShowSingle());
+            scin_->SendScintilla(QsciScintilla::SCI_AUTOCSETSEPARATOR, '\x03');
 
-            ScintillaBytes wlist_s = textAsBytes(wlist.join(QChar('\x03')));
+            QByteArray wlist_s;// = scin_->textAsBytes(wlist.join(QChar('\x03')));
             int last_len = 0;
-            SendScintilla(SCI_AUTOCSHOW, last_len, ScintillaBytesConstData(wlist_s));
+            scin_->SendScintilla(QsciScintilla::SCI_AUTOCSHOW, last_len, ScintillaBytesConstData(wlist_s));
         }
         else{
-            autoCompleteFromAll();
+            scin_->autoCompleteFromAll();
         }
     }
 }

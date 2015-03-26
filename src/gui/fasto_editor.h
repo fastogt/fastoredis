@@ -1,8 +1,7 @@
 #pragma once
 
 #include <QModelIndex>
-
-#include <Qsci/qsciscintilla.h>
+#include <QWidget>
 
 #define JSON 0
 #define CSV 1
@@ -11,33 +10,58 @@
 #define MSGPACK 4
 #define GZIP 5
 
+class QLineEdit;
+class QToolButton;
+class QPushButton;
+class QCheckBox;
+class QsciScintilla;
+class QFrame;
+
 namespace fastoredis
 {
     class FastoEditor
-        : public QsciScintilla
+        : public QWidget
     {
         Q_OBJECT
     public:
         enum
         {
-            rowNumberWidth = 6,
-            indentationWidth = 4
+            HeightFindPanel = 40
         };
         FastoEditor(QWidget* parent = 0);
         virtual ~FastoEditor();
 
+        void registerImage(int id, const QPixmap &im);
+
+        QString text() const;
+        QString selectedText() const;
+
+    public Q_SLOTS:
+        void append(const QString &text);
+        void setReadOnly(bool ro);
+        void setText(const QString &text);
+        void clear();
+
     private Q_SLOTS:
-        void updateLineNumbersMarginWidth();
+        void goToNextElement();
+        void goToPrevElement();
 
     protected:
-        virtual void keyPressEvent(QKeyEvent* e);        
+        virtual void keyPressEvent(QKeyEvent* e);
+        virtual bool eventFilter(QObject* object, QEvent* event);
+        virtual void changeEvent(QEvent *);
+        QsciScintilla* scin_;
 
     private:
-        int lineNumberMarginWidth() const;
-        void showOrHideLinesNumbers();
-        int textWidth(int style, const QString& text);
+        void retranslateUi();
+        void findElement(bool forward);
 
-        int lineNumberMarginWidth_;
+        QFrame* findPanel_;
+        QLineEdit* findLine_;
+        QToolButton* close_;
+        QPushButton* next_;
+        QPushButton* prev_;
+        QCheckBox*  caseSensitive_;
     };
 
     class FastoEditorOutput

@@ -35,6 +35,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/create_dbkey_dialog.h
     gui/widgets/main_widget.h
     gui/main_tab_bar.h
+    gui/fasto_scintilla.h
     gui/fasto_editor.h
     gui/fasto_text_view.h
     gui/widgets/query_widget.h
@@ -85,6 +86,7 @@ SET(SOURCES_GUI
     gui/dialogs/create_dbkey_dialog.cpp
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
+    gui/fasto_scintilla.cpp
     gui/fasto_editor.cpp
     gui/fasto_text_view.cpp
     gui/widgets/query_widget.cpp
