@@ -29,7 +29,7 @@ namespace fastoredis
     }
 
     ConnectionListWidgetItemEx::ConnectionListWidgetItemEx(IConnectionSettingsBaseSPtr connection, serverTypes st)
-        : ConnectionListWidgetItem(connection), serverType_(st)
+        : ConnectionListWidgetItem(connection)
     {
         std::string sert = common::convertToString(st);
         setText(2, common::convertFromString<QString>(sert));

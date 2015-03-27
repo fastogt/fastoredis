@@ -5,7 +5,7 @@
 namespace fastoredis
 {
     IDatabase::IDatabase(IServerSPtr server, DataBaseInfoSPtr info)
-        : server_(server), info_(info)
+        : info_(info), server_(server)
     {
         DCHECK(server);
         DCHECK(info);

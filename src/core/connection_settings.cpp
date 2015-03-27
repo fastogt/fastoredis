@@ -27,7 +27,7 @@ namespace
 namespace fastoredis
 {
     IConnectionSettings::IConnectionSettings(const std::string& connectionName, connectionTypes type)
-        : connectionName_(connectionName), type_(type), logging_enabled_(false), msinterval_(60000)
+        : connectionName_(connectionName), logging_enabled_(false), type_(type), msinterval_(60000)
     {
 
     }

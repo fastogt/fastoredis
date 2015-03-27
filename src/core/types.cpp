@@ -20,7 +20,7 @@ namespace fastoredis
     }
 
     ServerDiscoveryInfo::ServerDiscoveryInfo(connectionTypes ctype, serverTypes type, bool self)
-        : host_(), name_(), ctype_(ctype), type_(type), self_(self)
+        : host_(), name_(), self_(self), type_(type), ctype_(ctype)
     {
 
     }
@@ -181,7 +181,7 @@ namespace fastoredis
     }
 
     CommandKey::CommandKey(const NKey& key, cmdtype type)
-        : key_(key), type_(type)
+        : type_(type), key_(key)
     {
 
     }

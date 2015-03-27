@@ -23,9 +23,6 @@ namespace fastoredis
     {
     public:
         ConnectionListWidgetItemEx(IConnectionSettingsBaseSPtr connection, serverTypes st);
-
-    private:
-        const serverTypes serverType_;
     };
 
     class ClusterConnectionListWidgetItem

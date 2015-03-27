@@ -245,7 +245,7 @@ namespace fastoredis
             if(!log_file_){
                 std::string path = settings_->loggingPath();
                 std::string dir = common::file_system::get_dir_path(path);
-                bool created = common::file_system::create_directory(dir, true);
+                common::file_system::create_directory(dir, true);
                 if(common::file_system::is_directory(dir) == SUCCESS){
                     common::file_system::Path p(path);
                     log_file_ = new common::file_system::File(p);

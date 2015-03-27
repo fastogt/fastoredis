@@ -262,6 +262,7 @@ namespace fastoredis
         }
 
         value_.reset(obj);
+        return true;
     }
 
     void CreateDbKeyDialog::retranslateUi()
