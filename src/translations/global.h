@@ -107,5 +107,6 @@ namespace fastoredis
         extern const QString trEncode;
         extern const QString trDecode;
         extern const QString trConnectionDiagnostic;
+        extern const QString trConnectionDiscovery;
     }
 }

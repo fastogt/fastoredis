@@ -72,7 +72,7 @@ namespace fastoredis
     {
         using namespace translations;
 
-        setWindowTitle(trConnectionDiagnostic);
+        setWindowTitle(trConnectionDiscovery);
         setWindowIcon(GuiFactory::instance().serverIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
