@@ -18,7 +18,7 @@ createPackage() {
         make apk_signed
 	make apk_signed_aligned
     else
-        cmake ../../ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DOS_ARCH=64 -DOPENSSL_USE_STATIC=1 -DPYTHON_ENABLED=1 -DPYTHON_USE_STATIC=1 -DCPACK_GENERATOR="$cpack_generator"
+        cmake ../../ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DOS_ARCH=64 -DOPENSSL_USE_STATIC=1 -DCPACK_GENERATOR="$cpack_generator"
         make install -j2
 		cpack -G "$cpack_generator"
     fi

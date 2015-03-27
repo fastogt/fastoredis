@@ -143,12 +143,6 @@ namespace fastoredis
 
         }
 
-        ExecuteScriptInfoRequest::ExecuteScriptInfoRequest(const std::string &path, const std::vector<std::string>& args, const error_type &er)
-            : base_class(er), path_(path), args_(args)
-        {
-
-        }
-
         LoadDatabasesInfoRequest::LoadDatabasesInfoRequest(const error_type &er)
             : base_class(er)
         {

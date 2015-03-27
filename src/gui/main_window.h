@@ -44,8 +44,6 @@ namespace fastoredis
         void checkUpdate();
         void reportBug();
         void enterLeaveFullScreen();
-        void openPythonConsole();
-        void openLuaConsole();
         void openEncodeDecodeDialog();
         void openRecentConnection();
 
@@ -78,8 +76,6 @@ namespace fastoredis
         QAction* editAction_;
         QAction* checkUpdateAction_;
         QAction* toolsAction_;
-        QAction* pythonConsoleAction_;
-        QAction* luaConsoleAction_;
         QAction* encodeDecodeDialogAction_;
         QAction* helpAction_;
         QAction* explorerAction_;

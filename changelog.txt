@@ -6,6 +6,7 @@
 - Redis subscribe implementation
 - Clear recent connections action
 - Find panel for all custom editors
+- Remove python/lua console dialog
 
 0.7.1 / March 14, 2015
 [Alexandr Topilski]

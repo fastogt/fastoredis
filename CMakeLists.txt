@@ -38,7 +38,6 @@ ENDIF(APPLE AND CMAKE_OSX_SYSROOT)
 ########################## Options #########################
 OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
 OPTION(USE_CXX_STANDART "Enable tests for ${PROJECT_NAME} project" ON)
-OPTION(PYTHON_ENABLED "Enable python suppotr" OFF)
 OPTION(QT_ENABLED "Enable Qt support" ON)
 OPTION(CPACK_SUPPORT "Enable package support" ON)
 OPTION(DEVELOPER_DYNAMIC_RUNTIME "Build with dynamic C++ runtime" ON)

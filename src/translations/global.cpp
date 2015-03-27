@@ -7,7 +7,6 @@ namespace fastoredis
     namespace translations
     {
         const QString trfilterForScripts = QObject::tr("Text Files (*.txt); All Files (*.*)");
-        const QString trfilterForPython = QObject::tr("Python Files (*.py); All Files (*.*)");
         const QString trfilterForAll = QObject::tr("All Files (*.*)");
         const QString trfilterForRdb = QObject::tr("Redis database files (*.rdb)");
 
@@ -72,8 +71,6 @@ namespace fastoredis
 
         const QString trMatchCase = QObject::tr("Match case");
         const QString trRawText = QObject::tr("Raw text");
-        const QString trPythonConsole = QObject::tr("Python console");
-        const QString trLuaConsole = QObject::tr("Lua console");
         const QString trSaveAs = QObject::tr("Save as");
         const QString trClearAll = QObject::tr("Clear All");
         const QString trClearMenu = QObject::tr("Clear Menu");

@@ -47,8 +47,6 @@ namespace fastoredis
         const QIcon& loggingIcon() const;
         const QIcon& discoveryIcon() const;
         const QIcon& commandIcon() const;
-        const QIcon& pythonIcon() const;
-        const QIcon& luaIcon() const;
         const QIcon& encodeDecodeIcon() const;
         const QIcon& preferencesIcon() const;
 

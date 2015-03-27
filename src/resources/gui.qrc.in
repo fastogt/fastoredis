@@ -47,8 +47,6 @@
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/scan_mode.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/rdb_mode.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/slave_mode.png</file>
-    <file>@PROJECT_NAME_LOWERCASE@/images/64x64/python.png</file>
-    <file>@PROJECT_NAME_LOWERCASE@/images/64x64/lua.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/encode_decode.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/preferences.png</file>
     <file>@PROJECT_NAME_LOWERCASE@/images/64x64/fail.png</file>

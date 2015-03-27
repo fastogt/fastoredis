@@ -26,8 +26,6 @@ namespace fastoredis
 
         typedef common::utils_qt::Event<EventsInfo::ExecuteInfoRequest, QEvent::User + 13> ExecuteRequestEvent;
 
-        typedef common::utils_qt::Event<EventsInfo::ExecuteScriptInfoRequest, QEvent::User + 14> ExecuteScriptRequestEvent; //python lua
-
         typedef common::utils_qt::Event<EventsInfo::LoadDatabasesInfoRequest, QEvent::User + 15> LoadDatabasesInfoRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::LoadDatabasesInfoResponce, QEvent::User + 16> LoadDatabasesInfoResponceEvent;
 

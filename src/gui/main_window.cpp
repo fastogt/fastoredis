@@ -23,8 +23,6 @@
 #include "gui/widgets/log_tab_widget.h"
 #include "gui/widgets/main_widget.h"
 #include "gui/explorer/explorer_tree_view.h"
-#include "gui/dialogs/python_console_dialog.h"
-#include "gui/dialogs/lua_console_dialog.h"
 #include "gui/dialogs/encode_decode_dialog.h"
 
 #include "core/servers_manager.h"
@@ -159,15 +157,6 @@ namespace fastoredis
         //tools menu
         QMenu *tools = new QMenu(this);
         toolsAction_ = menuBar()->addMenu(tools);
-        pythonConsoleAction_ = new QAction(this);
-        pythonConsoleAction_->setIcon(GuiFactory::instance().pythonIcon());
-        VERIFY(connect(pythonConsoleAction_, &QAction::triggered, this, &MainWindow::openPythonConsole));
-        tools->addAction(pythonConsoleAction_);
-
-        luaConsoleAction_ = new QAction(this);
-        luaConsoleAction_->setIcon(GuiFactory::instance().luaIcon());
-        VERIFY(connect(luaConsoleAction_, &QAction::triggered, this, &MainWindow::openLuaConsole));
-        tools->addAction(luaConsoleAction_);
 
         encodeDecodeDialogAction_ = new QAction(this);
         encodeDecodeDialogAction_->setIcon(GuiFactory::instance().encodeDecodeIcon());
@@ -323,18 +312,6 @@ namespace fastoredis
         }
     }
 
-    void MainWindow::openPythonConsole()
-    {
-        PythonConsoleDialog dlg(QString(), this);
-        dlg.exec();
-    }
-
-    void MainWindow::openLuaConsole()
-    {
-        LuaConsoleDialog dlg(QString(), this);
-        dlg.exec();
-    }
-
     void MainWindow::openEncodeDecodeDialog()
     {
         EncodeDecodeDialog dlg(this);
@@ -447,8 +424,6 @@ namespace fastoredis
         exitAction_->setText(trExit);
         fileAction_->setText(trFile);
         toolsAction_->setText(trTools);
-        pythonConsoleAction_->setText(trPythonConsole);
-        luaConsoleAction_->setText(trLuaConsole);
         encodeDecodeDialogAction_->setText(trEncodeDecode);
         preferencesAction_->setText(trPreferences);
         checkUpdateAction_->setText(trCheckUpdate);

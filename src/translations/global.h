@@ -7,7 +7,6 @@ namespace fastoredis
     namespace translations
     {
         extern const QString trfilterForScripts;
-        extern const QString trfilterForPython;
         extern const QString trfilterForAll;
         extern const QString trfilterForRdb;
 
@@ -72,8 +71,6 @@ namespace fastoredis
 
         extern const QString trMatchCase;
         extern const QString trRawText;
-        extern const QString trPythonConsole;
-        extern const QString trLuaConsole;
         extern const QString trSaveAs;
         extern const QString trClearAll;
         extern const QString trClearMenu;

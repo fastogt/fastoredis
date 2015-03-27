@@ -27,8 +27,6 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/cluster_dialog.h
     gui/dialogs/connection_diagnostic_dialog.h
     gui/dialogs/discovery_dialog.h
-    gui/dialogs/python_console_dialog.h
-    gui/dialogs/lua_console_dialog.h
     gui/dialogs/base_console_dialog.h
     gui/dialogs/encode_decode_dialog.h
     gui/dialogs/load_contentdb_dialog.h
@@ -78,8 +76,6 @@ SET(SOURCES_GUI
     gui/dialogs/info_server_dialog.cpp
     gui/dialogs/property_server_dialog.cpp
     gui/dialogs/history_server_dialog.cpp
-    gui/dialogs/python_console_dialog.cpp
-    gui/dialogs/lua_console_dialog.cpp
     gui/dialogs/base_console_dialog.cpp
     gui/dialogs/encode_decode_dialog.cpp
     gui/dialogs/load_contentdb_dialog.cpp
@@ -112,8 +108,6 @@ SET(HEADERS_CORE_TO_MOC
     core/idriver.h
     core/iserver.h
     core/servers_manager.h
-    core/python_engine.h
-    core/lua_engine.h
 )
 SET(HEADERS_CORE
     core/connection_types.h
@@ -148,8 +142,6 @@ SET(SOURCES_CORE
     core/servers_manager.cpp
     core/types.cpp
     core/ssh_info.cpp
-    core/python_engine.cpp
-    core/lua_engine.cpp
     core/scp_file_transfer.cpp
     core/iedcoder.cpp
     core/base64_edcoder.cpp
@@ -168,8 +160,6 @@ SET(HEADERS_SHELL_TO_MOC
     shell/memcached_lexer.h
     shell/ssdb_lexer.h
     shell/ssdb_shell.h
-    shell/python_shell.h
-    shell/lua_shell.h
 )
 SET(HEADERS_SHELL
 )
@@ -181,8 +171,6 @@ SET(SOURCES_SHELL
     shell/memcached_lexer.cpp
     shell/ssdb_lexer.cpp
     shell/ssdb_shell.cpp
-    shell/python_shell.cpp
-    shell/lua_shell.cpp
 )
 
 SET(HEADERS_TRANSLATIONS
@@ -291,14 +279,6 @@ SET(SOURCES_SSDB
     core/ssdb/ssdb_settings.cpp
 )
 
-ADD_SUBDIRECTORY(third-party/lua)
-INCLUDE_DIRECTORIES(third-party/lua/lua-5.3.0/src)
-
-IF(PYTHON_ENABLED)
-    ADD_SUBDIRECTORY(third-party/pytonqt)
-    INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIR} third-party/pytonqt/src)
-ENDIF(PYTHON_ENABLED)
-
 SET(HEADERS ${HEADERS} ${HEADERS_GLOBAL} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL} ${HEADERS_REDIS} ${HEADERS_MEMCACHED} ${HEADERS_SSDB} ${HEADERS_TRANSLATIONS})
 SET(SOURCES ${SOURCES} ${SOURCES_GLOBAL} ${SOURCES_GUI} ${SOURCES_CORE} ${SOURCES_SHELL} ${SOURCES_REDIS} ${SOURCES_MEMCACHED} ${SOURCES_SSDB} ${SOURCES_TRANSLATIONS})
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC} ${HEADERS_SHELL_TO_MOC} ${HEADERS_REDIS_TO_MOC} ${HEADERS_MEMCACHED_TO_MOC} ${HEADERS_SSDB_TO_MOC})
@@ -330,23 +310,16 @@ ELSE(GENERATE_TRANSLATIONS)
 ENDIF(GENERATE_TRANSLATIONS)
 
 SET(ALL_SOURCES ${ALL_SOURCES} ${HEADERS} ${HEADERS_TOMOC} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_SRCS})
-SET(ALL_LIBS ${ALL_LIBS} qscintilla2 common ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} ${OPENSSL_LIBRARIES} ${PYTHON_LIBRARY} ${ZLIB_LIBRARY})
+SET(ALL_LIBS ${ALL_LIBS} qscintilla2 common ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARY})
 IF(SASL_FOUND)
     SET(ALL_LIBS ${ALL_LIBS} ${SASL_LIBRARIES})
 ENDIF(SASL_FOUND)
 
-SET(OBJECT_LIBS ${OBJECT_LIBS} $<TARGET_OBJECTS:redis_cli> $<TARGET_OBJECTS:libssh2> $<TARGET_OBJECTS:libmemcached> $<TARGET_OBJECTS:ssd_cli> $<TARGET_OBJECTS:liblua>)
+SET(OBJECT_LIBS ${OBJECT_LIBS} $<TARGET_OBJECTS:redis_cli> $<TARGET_OBJECTS:libssh2> $<TARGET_OBJECTS:libmemcached> $<TARGET_OBJECTS:ssd_cli>)
 
 IF(OS_LINUX)
     SET(ALL_LIBS ${ALL_LIBS} pthread)
 ENDIF(OS_LINUX)
-
-IF(PYTHON_ENABLED)
-    SET(OBJECT_LIBS ${OBJECT_LIBS} $<TARGET_OBJECTS:pythonqt>)
-    IF(OS_LINUX)
-        SET(ALL_LIBS ${ALL_LIBS} dl util)
-    ENDIF(OS_LINUX)
-ENDIF(PYTHON_ENABLED)
 
 SET(EXE_SOURCES main.cpp ${RES_SRC} ${ICON_FILE} ${RESOURCE_OS} ${QM_FILES})
 
@@ -411,13 +384,6 @@ IF(OS_WINDOWS)
     FIND_RUNTIME_LIBRARY(SHARED_SASL_LIBRARY SHARED_SASL_NAMES)
     INSTALL(FILES ${SHARED_SASL_LIBRARY} DESTINATION ${LIB_INSTALL_DESTINATION} COMPONENT RUNTIME)
 
-IF(PYTHON_ENABLED)
-    #find runtime python
-    SET(SHARED_PYTHON_NAMES libpython2.7.dll)
-    FIND_RUNTIME_LIBRARY(SHARED_PYTHON_LIBRARY SHARED_PYTHON_NAMES)
-    INSTALL(FILES ${SHARED_PYTHON_LIBRARY} DESTINATION ${LIB_INSTALL_DESTINATION} COMPONENT RUNTIME)
-ENDIF(PYTHON_ENABLED)
-
 ELSEIF(OS_MACOSX)
     SET(BUNDLE_NAME ${MACOSX_BUNDLE_BUNDLE_NAME}.app)
     DEPLOY_QT_PLUGIN("platforms/qcocoa" ${QT_PLUGINS_DIR} ${BUNDLE_NAME}/Contents/plugins)
@@ -436,30 +402,10 @@ ELSEIF(OS_LINUX)
     SET(PLACE_WHERE_SEARCH ${QT_LIBS_DIR})
 ENDIF(OS_WINDOWS)
 
-IF(PYTHON_ENABLED)
-    GET_FILENAME_COMPONENT(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARY} PATH)
-	
-    IF(APPLE)
-        SET(PYTHON_INSTALL_DIR ${BUNDLE_NAME}/Contents/MacOS/lib)
-    ELSE()
-        SET(PYTHON_INSTALL_DIR ${TARGET_INSTALL_DESTINATION}/lib)
-    ENDIF(APPLE)
-
-    INSTALL(DIRECTORY ${PYTHON_LIBRARY_PATH}/python2.7 DESTINATION ${PYTHON_INSTALL_DIR} COMPONENT PYTHON_MODULES
-        FILES_MATCHING
-        PATTERN "*.py"
-        PATTERN "lib-dynload/*.so"
-        PATTERN "lib-dynload/*.pyd"
-        PATTERN ".pyc" EXCLUDE
-        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
-ENDIF(PYTHON_ENABLED)
-
 IF(OS_MACOSX)
     INSTALL(FILES ${QM_FILES} DESTINATION ${BUNDLE_NAME}/Contents/MacOS/translations COMPONENT TRANSLATIONS)
-    INSTALL(DIRECTORY DESTINATION ${BUNDLE_NAME}/Contents/MacOS/lua DIRECTORY_PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_WRITE GROUP_READ GROUP_EXECUTE)
 ELSE()
     INSTALL(FILES ${QM_FILES} DESTINATION ${TARGET_INSTALL_DESTINATION}/translations COMPONENT TRANSLATIONS)
-    INSTALL(DIRECTORY DESTINATION ${TARGET_INSTALL_DESTINATION}/lua DIRECTORY_PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_WRITE GROUP_READ GROUP_EXECUTE)
 ENDIF(OS_MACOSX)
 
 FOREACH(miscLib ${MISC_LIBS})
