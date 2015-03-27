@@ -10,7 +10,5 @@ namespace fastoredis
         Q_OBJECT
     public:
         MemcachedShell(bool showAutoCompl, QWidget* parent = 0);
-
-        virtual void showAutocompletion();
     };
 }

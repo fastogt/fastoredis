@@ -17,6 +17,9 @@ namespace fastoredis
 
         FastoScintilla(QWidget *parent = 0);
 
+        void setShowAutoCompletion(bool showA);
+        void setAllCommands(const QString& allCommands);
+
     private Q_SLOTS:
         void updateLineNumbersMarginWidth();
 
@@ -28,6 +31,12 @@ namespace fastoredis
         int textWidth(int style, const QString& text);
         void showOrHideLinesNumbers();
 
+        void showAutocompletion();
+        void hideAutocompletion();
+
         int lineNumberMarginWidth_;
+
+        bool showAutoCompletion_;
+        QString allCommands_;
     };
 }

@@ -36,6 +36,7 @@ namespace fastoredis
                 list.append(help + "?3");
             }
         }
+        NOOP();
     }
 
     QStringList RedisApi::callTips(const QStringList& context, int commas, QsciScintilla::CallTipsStyle style, QList<int>& shifts)

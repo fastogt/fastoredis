@@ -14,11 +14,12 @@ class QLineEdit;
 class QToolButton;
 class QPushButton;
 class QCheckBox;
-class QsciScintilla;
 class QFrame;
+class QsciLexer;
 
 namespace fastoredis
 {
+    class FastoScintilla;
     class FastoEditor
         : public QWidget
     {
@@ -47,10 +48,14 @@ namespace fastoredis
         void goToPrevElement();
 
     protected:
+        void setShowAutoCompletion(bool showA);
+        void setAllCommands(const QString& allCommands);
+        void setLexer(QsciLexer *lexer);
+
         virtual void keyPressEvent(QKeyEvent* e);
         virtual bool eventFilter(QObject* object, QEvent* event);
         virtual void changeEvent(QEvent *);
-        QsciScintilla* scin_;
+        FastoScintilla* scin_;
 
     private:
         void retranslateUi();
@@ -102,21 +107,13 @@ namespace fastoredis
     public:
         QString version() const;
 
-    public:
-        virtual void showAutocompletion();
-        virtual void hideAutocompletion();
-
     protected Q_SLOTS:
         void showContextMenu(const QPoint& pt);
 
     protected:
         FastoEditorShell(const QString& version, bool showAutoCompl, QWidget *parent = 0);
-        virtual void keyPressEvent(QKeyEvent* keyEvent);
 
     private:
         const QString version_;
-
-    protected:
-        const bool showAutoCompletion_;
     };
 }

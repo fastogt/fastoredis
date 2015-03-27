@@ -61,27 +61,14 @@ namespace fastoredis
         : FastoEditorShell(PythonEngine::version(), showAutoCompl, parent)
     {
         QsciLexerPython* lexer = new QsciLexerPython(this);
-        scin_->setLexer(lexer);
-
-        scin_->setAutoCompletionThreshold(1);
-        if(showAutoCompletion_){
-            scin_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
-        }
-        else{
-            scin_->setAutoCompletionSource(QsciScintilla::AcsNone);
-        }
-        scin_->setAutoCompletionCaseSensitivity(false);
-        scin_->setIndentationsUseTabs(false);
-
-        scin_->setIndentationWidth(4);
-        scin_->setTabWidth(4);
+        setLexer(lexer);
     }
 
     RedisPyShell::RedisPyShell(bool showAutoCompl, QWidget* parent)
         : PythonShell(showAutoCompl, parent)
     {
         RedisPythonLexer* lexer = new RedisPythonLexer(this);
-        scin_->setLexer(lexer);
+        setLexer(lexer);
     }
 }
 

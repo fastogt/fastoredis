@@ -25,12 +25,12 @@ namespace fastoredis
     {
         scin_ = new FastoScintilla;
 
-        findPanel_ = new QFrame(this);
-        findLine_ = new QLineEdit(this);
-        close_ = new QToolButton(this);
-        next_ = new QPushButton(this);
-        prev_ = new QPushButton(this);
-        caseSensitive_ = new QCheckBox(this);
+        findPanel_ = new QFrame;
+        findLine_ = new QLineEdit;
+        close_ = new QToolButton;
+        next_ = new QPushButton;
+        prev_ = new QPushButton;
+        caseSensitive_ = new QCheckBox;
 
         close_->setIcon(GuiFactory::instance().close16Icon());
         close_->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -114,11 +114,26 @@ namespace fastoredis
         findElement(false);
     }
 
+    void FastoEditor::setShowAutoCompletion(bool showA)
+    {
+        scin_->setShowAutoCompletion(showA);
+    }
+
+    void FastoEditor::setAllCommands(const QString& allCommands)
+    {
+        scin_->setAllCommands(allCommands);
+    }
+
+    void FastoEditor::setLexer(QsciLexer *lexer)
+    {
+        scin_->setLexer(lexer);
+        scin_->setAutoCompletionCaseSensitivity(false);
+    }
+
     void FastoEditor::keyPressEvent(QKeyEvent* keyEvent)
     {
         bool isFocusScin = scin_->isActiveWindow();
         bool isShowFind = findPanel_->isVisible();
-
         if (keyEvent->key() == Qt::Key_Escape && isFocusScin && isShowFind) {
             findPanel_->hide();
             scin_->setFocus();
@@ -365,8 +380,9 @@ namespace fastoredis
     }
 
     FastoEditorShell::FastoEditorShell(const QString& version, bool showAutoCompl, QWidget* parent)
-        : FastoEditor(parent), version_(version), showAutoCompletion_(showAutoCompl)
+        : FastoEditor(parent), version_(version)
     {
+        scin_->setShowAutoCompletion(showAutoCompl);
         VERIFY(connect(this, &FastoEditorShell::customContextMenuRequested, this, &FastoEditorShell::showContextMenu));
     }
 
@@ -375,40 +391,10 @@ namespace fastoredis
         return version_;
     }
 
-    void FastoEditorShell::showAutocompletion()
-    {
-        if(showAutoCompletion_){
-            scin_->autoCompleteFromAll();
-        }
-    }
-
-    void FastoEditorShell::hideAutocompletion()
-    {
-        if(showAutoCompletion_){
-            scin_->cancelList();
-        }
-    }
-
     void FastoEditorShell::showContextMenu(const QPoint& pt)
     {
         QMenu *menu = scin_->createStandardContextMenu();
         menu->exec(mapToGlobal(pt));
         delete menu;
-    }
-
-    void FastoEditorShell::keyPressEvent(QKeyEvent* keyEvent)
-    {
-        if(showAutoCompletion_){
-            if(isAutoCompleteShortcut(keyEvent)){
-                showAutocompletion();
-                return;
-            }
-            else if(isHideAutoCompleteShortcut(keyEvent)){
-                hideAutocompletion();
-                return;
-            }
-        }
-
-        FastoEditor::keyPressEvent(keyEvent);
     }
 }

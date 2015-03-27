@@ -61,27 +61,14 @@ namespace fastoredis
         : FastoEditorShell(LuaEngine::version(), showAutoCompl, parent)
     {
         QsciLexerLua* lexer = new QsciLexerLua(this);
-        scin_->setLexer(lexer);
-
-        scin_->setAutoCompletionThreshold(1);
-        if(showAutoCompletion_){
-            scin_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
-        }
-        else{
-            scin_->setAutoCompletionSource(QsciScintilla::AcsNone);
-        }
-        scin_->setAutoCompletionCaseSensitivity(false);
-        scin_->setIndentationsUseTabs(false);
-
-        scin_->setIndentationWidth(4);
-        scin_->setTabWidth(4);
+        setLexer(lexer);
     }
 
     RedisLuaShell::RedisLuaShell(bool showAutoCompl, QWidget* parent)
         : LuaShell(showAutoCompl, parent)
     {
         RedisLuaLexer* lexer = new RedisLuaLexer(this);
-        scin_->setLexer(lexer);
+        setLexer(lexer);
     }
 }
 

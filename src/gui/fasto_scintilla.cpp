@@ -2,7 +2,11 @@
 
 #include <QKeyEvent>
 
+#include <Qsci/qsciabstractapis.h>
+#include <Qsci/qscilexercustom.h>
+
 #include "gui/gui_factory.h"
+#include "gui/shortcuts.h"
 
 namespace
 {
@@ -50,7 +54,7 @@ namespace
 namespace fastoredis
 {
     FastoScintilla::FastoScintilla(QWidget *parent)
-        : QsciScintilla(parent), lineNumberMarginWidth_(0)
+        : QsciScintilla(parent), lineNumberMarginWidth_(0), showAutoCompletion_(false), allCommands_()
     {
         setAutoIndent(true);
         setIndentationsUseTabs(false);
@@ -85,6 +89,26 @@ namespace fastoredis
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
         VERIFY(connect(this, &FastoScintilla::linesChanged, this, &FastoScintilla::updateLineNumbersMarginWidth));
+
+        setAutoCompletionThreshold(1);
+        setAutoCompletionCaseSensitivity(false);
+        setAutoCompletionSource(QsciScintilla::AcsNone);
+    }
+
+    void FastoScintilla::setShowAutoCompletion(bool showA)
+    {
+        showAutoCompletion_ = showA;
+        if(showAutoCompletion_){
+            setAutoCompletionSource(QsciScintilla::AcsAPIs);
+        }
+        else{
+            setAutoCompletionSource(QsciScintilla::AcsNone);
+        }
+    }
+
+    void FastoScintilla::setAllCommands(const QString& allCommands)
+    {
+        allCommands_ = allCommands;
     }
 
     void FastoScintilla::updateLineNumbersMarginWidth()
@@ -108,7 +132,18 @@ namespace fastoredis
             return;
         }
 
-        return QsciScintilla::keyPressEvent(keyEvent);
+        if(showAutoCompletion_){
+            if(isAutoCompleteShortcut(keyEvent)){
+                showAutocompletion();
+                return;
+            }
+            else if(isHideAutoCompleteShortcut(keyEvent)){
+                hideAutocompletion();
+                return;
+            }
+        }
+
+        QsciScintilla::keyPressEvent(keyEvent);
     }
 
     int FastoScintilla::lineNumberMarginWidth() const
@@ -131,6 +166,47 @@ namespace fastoredis
         }
         else {
             setMarginWidth(0, 0);
+        }
+    }
+
+    void FastoScintilla::showAutocompletion()
+    {
+        if(showAutoCompletion_){
+            int start, ignore;
+            QStringList context = apiContext(SendScintilla(QsciScintilla::SCI_GETCURRENTPOS), start, ignore);
+
+            if(context.empty()){
+                // Generate the string representing the valid words to select from.
+                QStringList wlist;
+
+                QsciAbstractAPIs *apis = lexer()->apis();
+
+                if (apis){
+                    apis->updateAutoCompletionList(QStringList() << allCommands_, wlist);
+                }
+
+                if (wlist.isEmpty())
+                    return;
+
+                wlist.sort();
+
+                SendScintilla(QsciScintilla::SCI_AUTOCSETCHOOSESINGLE, autoCompletionShowSingle());
+                SendScintilla(QsciScintilla::SCI_AUTOCSETSEPARATOR, '\x03');
+
+                QByteArray wlist_s = textAsBytes(wlist.join(QChar('\x03')));
+                int last_len = 0;
+                SendScintilla(QsciScintilla::SCI_AUTOCSHOW, last_len, ScintillaBytesConstData(wlist_s));
+            }
+            else{
+                autoCompleteFromAPIs();
+            }
+        }
+    }
+
+    void FastoScintilla::hideAutocompletion()
+    {
+        if(showAutoCompletion_){
+            cancelList();
         }
     }
 }
