@@ -1,4 +1,4 @@
-0.7.2
+0.7.2 / March 28, 2015
 [Alexandr Topilski]
 - Redis clusters basic support
 - Redis clusters discovery
