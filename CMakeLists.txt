@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 #############################################################
-PROJECT("FastoRedis" VERSION 0.7.2.0 LANGUAGES CXX C)
+PROJECT("FastoRedis" VERSION 0.7.3.1 LANGUAGES CXX C)
 #################### Project Settings ####################
 #SET(PROJECT_NAME "FastoRedis" CACHE STRING "Project Name")
 SET(PROJECT_NAME_TITLE ${PROJECT_NAME} CACHE STRING "Title for ${PROJECT_NAME}")
@@ -12,7 +12,7 @@ SET(PROJECT_MAINTAINER_MAIL "atopilski@fastoredis.com" CACHE STRING "Internet ma
 SET(PROJECT_MAINTAINER_NAME "Alexandr Topilski" CACHE STRING "Name of ${PROJECT_NAME} mainteiner")
 SET(PROJECT_GITHUB_FORK "www.github.com/fasto/fastoredis" CACHE STRING "Git fork of ${PROJECT_NAME}")
 SET(PROJECT_GITHUB_ISSUES "www.github.com/fasto/fastoredis/issues" CACHE STRING "Git issue link for ${PROJECT_NAME}")
-SET(PROJECT_BUILD_TYPE "release") #alfa, beta, rc, release
+SET(PROJECT_BUILD_TYPE "alfa") #alfa, beta, rc, release
 ##########################################################
 
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
@@ -71,8 +71,10 @@ IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE DEBUG)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
+# If the user did not customize the install prefix,
+# set it to live under build so we don't inadvertently pollute /usr/local
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
+    SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "default install path" FORCE)
 ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 IF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
