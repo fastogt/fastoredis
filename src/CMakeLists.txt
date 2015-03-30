@@ -31,6 +31,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/encode_decode_dialog.h
     gui/dialogs/load_contentdb_dialog.h
     gui/dialogs/create_dbkey_dialog.h
+    gui/dialogs/view_keys_dialog.h
     gui/widgets/main_widget.h
     gui/main_tab_bar.h
     gui/fasto_scintilla.h
@@ -38,6 +39,7 @@ SET(HEADERS_GUI_TO_MOC
     gui/fasto_text_view.h
     gui/widgets/query_widget.h
     gui/widgets/output_widget.h
+    gui/keys_table_model.h
     gui/fasto_tree_view.h
     gui/fasto_common_model.h
     gui/fasto_table_view.h
@@ -80,12 +82,14 @@ SET(SOURCES_GUI
     gui/dialogs/encode_decode_dialog.cpp
     gui/dialogs/load_contentdb_dialog.cpp
     gui/dialogs/create_dbkey_dialog.cpp
+    gui/dialogs/view_keys_dialog.cpp
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
     gui/fasto_scintilla.cpp
     gui/fasto_editor.cpp
     gui/fasto_text_view.cpp
     gui/widgets/query_widget.cpp
+    gui/keys_table_model.cpp
     gui/widgets/output_widget.cpp
     gui/explorer/explorer_tree_view.cpp
     gui/explorer/explorer_tree_model.cpp
@@ -360,7 +364,6 @@ INSTALL(FILES ${CMAKE_SOURCE_DIR}/changelog.txt DESTINATION . COMPONENT LICENSE 
 INSTALL_QT(${PROJECT_NAME} ${LIB_INSTALL_DESTINATION})
 
 IF(OS_WINDOWS)
-    MESSAGE("QT_PLUGINS_DIR ${QT_PLUGINS_DIR}")
     DEPLOY_QT_PLUGIN("platforms/qwindows" ${QT_PLUGINS_DIR} ${LIB_INSTALL_DESTINATION})
     DEPLOY_QT_PLUGIN("imageformats/qgif" ${QT_PLUGINS_DIR} ${LIB_INSTALL_DESTINATION})
     SET(PLACE_WHERE_SEARCH ${QT_BINS_DIR})

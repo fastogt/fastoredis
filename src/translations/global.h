@@ -100,6 +100,7 @@ namespace fastoredis
         extern const QString trLoadAndExecuteFile;
         extern const QString trLoadContOfDataBases;
         extern const QString trCreateKey;
+        extern const QString trViewKeysDialog;
         extern const QString trEncodeDecode;
         extern const QString trEncode;
         extern const QString trDecode;

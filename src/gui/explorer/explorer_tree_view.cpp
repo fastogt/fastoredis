@@ -13,6 +13,7 @@
 #include "gui/dialogs/history_server_dialog.h"
 #include "gui/dialogs/load_contentdb_dialog.h"
 #include "gui/dialogs/create_dbkey_dialog.h"
+#include "gui/dialogs/view_keys_dialog.h"
 
 #include "common/qt/convert_string.h"
 
@@ -71,6 +72,9 @@ namespace fastoredis
 
         createKeyAction_ = new QAction(this);
         VERIFY(connect(createKeyAction_, &QAction::triggered, this, &ExplorerTreeView::createKey));
+
+        viewKeysAction_ = new QAction(this);
+        VERIFY(connect(viewKeysAction_, &QAction::triggered, this, &ExplorerTreeView::viewKeys));
 
         getValueAction_ = new QAction(this);
         VERIFY(connect(getValueAction_, &QAction::triggered, this, &ExplorerTreeView::getValue));
@@ -216,6 +220,10 @@ namespace fastoredis
 
                 menu.addAction(createKeyAction_);
                 createKeyAction_->setEnabled(isDefault);
+
+                if(isDefault){
+                    menu.addAction(viewKeysAction_);
+                }
 
                 menu.addAction(setDefaultDbAction_);
                 setDefaultDbAction_->setEnabled(!isDefault);
@@ -516,6 +524,20 @@ namespace fastoredis
         }
     }
 
+    void ExplorerTreeView::viewKeys()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerDatabaseItem* node = common::utils_qt::item<ExplorerDatabaseItem*>(sel);
+        if(node){
+            ViewKeysDialog diag(QString("View key in %1 database").arg(node->name()), node->db(), this);
+            diag.exec();
+        }
+    }
+
     void ExplorerTreeView::getValue()
     {
         QModelIndex sel = selectedIndex();
@@ -726,6 +748,7 @@ namespace fastoredis
 
         loadContentAction_->setText(trLoadContOfDataBases);
         createKeyAction_->setText(trCreateKey);
+        viewKeysAction_->setText(trViewKeysDialog);
         setDefaultDbAction_->setText(trSetDefault);
         getValueAction_->setText(trValue);
         deleteKeyAction_->setText(trDelete);

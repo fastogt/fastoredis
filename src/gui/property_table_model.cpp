@@ -103,7 +103,7 @@ namespace fastoredis
             }
         }
 
-        return TableModel::headerData(section,orientation,role);
+        return TableModel::headerData(section, orientation, role);
     }
 
     int PropertyTableModel::columnCount(const QModelIndex& parent) const

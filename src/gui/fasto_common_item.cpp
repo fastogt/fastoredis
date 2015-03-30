@@ -56,7 +56,7 @@ namespace fastoredis
         }
 
         if(!item->childrenCount()){
-            return QString("{ %1 %2 }").arg(item->key()).arg(item->value());
+            return QString("{ %1 : %2 }").arg(item->key()).arg(item->value());
         }
 
         QString value;
@@ -64,7 +64,7 @@ namespace fastoredis
             value += toJson(dynamic_cast<FastoCommonItem*>(item->child(i)));
         }
 
-        return QString("{ %1 %2 }").arg(item->key()).arg(value);
+        return QString("{ %1 : %2 }").arg(item->key()).arg(value);
     }
 
     QString toRaw(FastoCommonItem* item)
