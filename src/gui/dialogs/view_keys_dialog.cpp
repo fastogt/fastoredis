@@ -80,7 +80,7 @@ namespace fastoredis
 
         for(int i = 0; i < keys.size(); ++i){
             NKey key = keys[i];
-            keysModel_->addKey(key);
+            keysModel_->insertItem(new KeyTableItem(key));
         }
     }
 

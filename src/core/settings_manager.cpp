@@ -111,7 +111,7 @@ namespace fastoredis
     void SettingsManager::removeCluster(IClusterSettingsBaseSPtr cluster)
     {
         if(cluster){
-            ClusterSettingsContainerType::iterator it = std::find(clusters_.begin(),clusters_.end(),cluster);
+            ClusterSettingsContainerType::iterator it = std::find(clusters_.begin(), clusters_.end(), cluster);
             if (it != clusters_.end()) {
                 clusters_.erase(it);
             }

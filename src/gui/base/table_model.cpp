@@ -33,4 +33,46 @@ namespace fastoredis
         }
         return QModelIndex();
     }
+
+
+    void TableModel::insertItem(TableItem* child)
+    {
+        if(!child){
+            return;
+        }
+
+        beginInsertRows(QModelIndex(), data_.size(), data_.size());
+        data_.push_back(child);
+        endInsertRows();
+    }
+
+    void TableModel::removeItem(TableItem* child)
+    {
+        if(!child){
+            return;
+        }
+
+        int child_count = data_.size();
+        int index = -1;
+        for(int i = 0; i < child_count; ++i){
+            if(data_[i] == child){
+                index = i;
+                break;
+            }
+        }
+
+        if(index == -1){
+            return;
+        }
+
+        beginRemoveRows(QModelIndex(), index, child_count);
+            data_.erase(data_.begin() + index);
+            delete child;
+        endRemoveRows();
+    }
+
+    void TableModel::updateItem(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+    {
+        emit dataChanged(topLeft, bottomRight);
+    }
 }

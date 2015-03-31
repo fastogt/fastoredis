@@ -36,7 +36,6 @@ namespace fastoredis
 
         virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
-        void addItem(PropertyTableItem* item);
         void changeProperty(const PropertyType& pr);
 
     Q_SIGNALS:
