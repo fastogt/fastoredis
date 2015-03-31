@@ -113,7 +113,7 @@ namespace fastoredis
 
     void PropertyTableModel::addItem(PropertyTableItem* item)
     {
-        beginInsertRows(QModelIndex(), data_.size(), data_.size()+1 );
+        beginInsertRows(QModelIndex(), data_.size(), data_.size());
         data_.push_back(item);
         endInsertRows();
     }

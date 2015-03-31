@@ -18,8 +18,8 @@ namespace fastoredis
         setWindowIcon(GuiFactory::instance().icon(type_));
         setWindowTitle(title);
 
+        PropertyTableModel* mod = new PropertyTableModel(this);
         propertyes_table_ = new QTableView;
-        PropertyTableModel *mod = new PropertyTableModel(propertyes_table_);
         VERIFY(connect(mod, &PropertyTableModel::changedProperty, this, &PropertyServerDialog::changedProperty));
         propertyes_table_->setModel(mod);
 

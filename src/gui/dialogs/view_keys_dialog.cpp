@@ -42,8 +42,8 @@ namespace fastoredis
         VERIFY(connect(searchButton, &QPushButton::clicked, this, &ViewKeysDialog::search));
         searchLayout->addWidget(searchButton);
 
+        keysModel_ = new KeysTableModel(this);
         keysTable_ = new FastoTableView;
-        keysModel_ = new KeysTableModel;
         keysTable_->setModel(keysModel_);
 
         QDialogButtonBox* buttonBox = new QDialogButtonBox;

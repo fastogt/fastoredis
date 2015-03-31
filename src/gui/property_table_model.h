@@ -34,7 +34,8 @@ namespace fastoredis
         virtual Qt::ItemFlags flags(const QModelIndex& index) const;
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-        virtual int columnCount(const QModelIndex& parent) const;
+        virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
+
         void addItem(PropertyTableItem* item);
         void changeProperty(const PropertyType& pr);
 

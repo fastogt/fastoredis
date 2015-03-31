@@ -19,6 +19,11 @@ namespace fastoredis
         return common::convertFromString<QString>(key_.key_);
     }
 
+    QString KeyTableItem::typeText() const
+    {
+        return common::convertFromString<QString>(common::Value::toString(key_.type_));
+    }
+
     common::Value::Type KeyTableItem::type() const
     {
         return key_.type_;
@@ -62,7 +67,7 @@ namespace fastoredis
                 result = node->key();
             }
             else if (col == KeyTableItem::kType) {
-                result = common::convertFromString<QString>(common::Value::toString(node->type()));
+                result = node->typeText();
             }
         }
         return result;
@@ -93,7 +98,7 @@ namespace fastoredis
 
     void KeysTableModel::addKey(const NKey& key)
     {
-        beginInsertRows(QModelIndex(), data_.size(), data_.size()+1 );
+        beginInsertRows(QModelIndex(), data_.size(), data_.size());
         data_.push_back(new KeyTableItem(key));
         endInsertRows();
     }

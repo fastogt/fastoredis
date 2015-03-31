@@ -21,16 +21,16 @@ namespace fastoredis
         return sz;
     }
 
-
     QModelIndex TableModel::index(int row, int column, const QModelIndex& parent) const
     {
-        QModelIndex index;
-        if (hasIndex(row, column, parent)) {
-            TableItem *childItem = data_[row];
-            if (childItem) {
-                index = createIndex(row, column, childItem);
-            }
+        if (!hasIndex(row, column, parent)) {
+            return QModelIndex();
         }
-        return index;
+
+        TableItem *childItem = data_[row];
+        if (childItem) {
+            return createIndex(row, column, childItem);
+        }
+        return QModelIndex();
     }
 }

@@ -14,7 +14,7 @@ namespace fastoredis
         TableModel(QObject* parent = 0);
         virtual ~TableModel();
 
-        virtual int rowCount(const QModelIndex& parent) const;
+        virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
         virtual QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
 
     protected:

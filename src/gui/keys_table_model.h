@@ -19,6 +19,7 @@ namespace fastoredis
 
         KeyTableItem(const NKey& key);
         QString key() const;
+        QString typeText() const;
         common::Value::Type type() const;
 
     private:
