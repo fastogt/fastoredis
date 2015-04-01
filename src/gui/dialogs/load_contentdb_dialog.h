@@ -5,6 +5,7 @@
 #include "core/connection_types.h"
 
 class QLineEdit;
+class QSpinBox;
 
 namespace fastoredis
 {
@@ -16,7 +17,11 @@ namespace fastoredis
         enum
         {
             min_height = 120,
-            min_width = 240
+            min_width = 240,
+            min_key_on_page = 1,
+            max_key_on_page = 1000,
+            defaults_key = 100,
+            step_keys_on_page = defaults_key
         };
 
         explicit LoadContentDbDialog(const QString& title, connectionTypes type, QWidget* parent = 0);
@@ -28,7 +33,8 @@ namespace fastoredis
 
     private:
         const connectionTypes type_;
-        QLineEdit* countTextEdit_;
+
         QLineEdit* patternEdit_;
+        QSpinBox* countSpinEdit_;
     };
 }

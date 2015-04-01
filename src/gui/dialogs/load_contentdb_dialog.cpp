@@ -3,9 +3,9 @@
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 #include <QLineEdit>
-#include <QRegExpValidator>
 #include <QMessageBox>
 #include <QLabel>
+#include <QSpinBox>
 
 #include "gui/gui_factory.h"
 #include "translations/global.h"
@@ -27,12 +27,11 @@ namespace fastoredis
 
         QHBoxLayout* countLayout = new QHBoxLayout;
         countLayout->addWidget(new QLabel(tr("Keys count:")));
-        countTextEdit_ = new QLineEdit;
-        countTextEdit_->setFixedWidth(80);
-        QRegExp rx("\\d+");//(0-65554)
-        countTextEdit_->setValidator(new QRegExpValidator(rx, this));
-        countTextEdit_->setText(QString::number(100));
-        countLayout->addWidget(countTextEdit_);
+        countSpinEdit_ = new QSpinBox;
+        countSpinEdit_->setRange(min_key_on_page, max_key_on_page);
+        countSpinEdit_->setSingleStep(step_keys_on_page);
+        countSpinEdit_->setValue(defaults_key);
+        countLayout->addWidget(countSpinEdit_);
         mainLayout->addLayout(countLayout);
 
         QHBoxLayout* patternLayout = new QHBoxLayout;
@@ -51,7 +50,7 @@ namespace fastoredis
 
     uint32_t LoadContentDbDialog::count() const
     {
-        return countTextEdit_->text().toUInt();
+        return countSpinEdit_->value();
     }
 
     QString LoadContentDbDialog::pattern() const
@@ -65,14 +64,7 @@ namespace fastoredis
         QString pattern = patternEdit_->text();
         if(pattern.isEmpty()){
             QMessageBox::warning(this, trError, QObject::tr("Invalid pattern!"));
-            countTextEdit_->setFocus();
-            return;
-        }
-
-        uint32_t count = countTextEdit_->text().toUInt();
-        if(count == 0){
-            QMessageBox::warning(this, trError, QObject::tr("Invalid keys count!"));
-            countTextEdit_->setFocus();
+            countSpinEdit_->setFocus();
             return;
         }
 

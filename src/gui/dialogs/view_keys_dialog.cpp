@@ -5,6 +5,9 @@
 #include <QVBoxLayout>
 #include <QEvent>
 #include <QLineEdit>
+#include <QSpinBox>
+#include <QLabel>
+#include <QScrollBar>
 
 #include "common/qt/convert_string.h"
 
@@ -38,6 +41,16 @@ namespace fastoredis
         searchBox_ = new QLineEdit;
         searchLayout->addWidget(searchBox_);
 
+        countSpinEdit_ = new QSpinBox;
+        countSpinEdit_->setRange(min_key_on_page, max_key_on_page);
+        countSpinEdit_->setSingleStep(step_keys_on_page);
+        countSpinEdit_->setValue(defaults_key);
+
+        keyCountLabel_ = new QLabel;
+
+        searchLayout->addWidget(keyCountLabel_);
+        searchLayout->addWidget(countSpinEdit_);
+
         QPushButton* searchButton = new QPushButton(trSearch);
         VERIFY(connect(searchButton, &QPushButton::clicked, this, &ViewKeysDialog::search));
         searchLayout->addWidget(searchButton);
@@ -53,6 +66,9 @@ namespace fastoredis
         VERIFY(connect(buttonBox, &QDialogButtonBox::rejected, this, &ViewKeysDialog::reject));
         mainlayout->addLayout(searchLayout);
         mainlayout->addWidget(keysTable_);
+
+        pageScrollBox_ = new QScrollBar(Qt::Horizontal);
+        mainlayout->addWidget(pageScrollBox_);
         mainlayout->addWidget(buttonBox);
 
         setMinimumSize(QSize(min_width, min_height));
@@ -95,7 +111,7 @@ namespace fastoredis
             return;
         }
 
-        db_->loadContent(common::convertToString(pattern), max_key_on_page);
+        db_->loadContent(common::convertToString(pattern), countSpinEdit_->value());
     }
 
     void ViewKeysDialog::changeEvent(QEvent* e)
@@ -108,5 +124,7 @@ namespace fastoredis
 
     void ViewKeysDialog::retranslateUi()
     {
+        using namespace translations;
+        keyCountLabel_->setText(trKeyCountOnThePage);
     }
 }

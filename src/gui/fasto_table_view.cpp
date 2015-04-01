@@ -11,7 +11,7 @@ namespace fastoredis
         : QTableView(parent)
     {
         verticalHeader()->setDefaultAlignment(Qt::AlignLeft);
-        horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);\
+        horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSelectionBehavior(QAbstractItemView::SelectItems);
 

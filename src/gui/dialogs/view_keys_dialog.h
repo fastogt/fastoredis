@@ -5,6 +5,9 @@
 #include "core/events/events_info.h"
 
 class QLineEdit;
+class QSpinBox;
+class QLabel;
+class QScrollBar;
 
 namespace fastoredis
 {
@@ -20,7 +23,10 @@ namespace fastoredis
         {
             min_height = 200,
             min_width = 320,
-            max_key_on_page = 50
+            min_key_on_page = 1,
+            max_key_on_page = 100,
+            defaults_key = 10,
+            step_keys_on_page = defaults_key
         };
 
         explicit ViewKeysDialog(const QString& title, IDatabaseSPtr db, QWidget* parent = 0);
@@ -37,8 +43,12 @@ namespace fastoredis
         void retranslateUi();
 
         QLineEdit* searchBox_;
+        QLabel* keyCountLabel_;
+        QSpinBox* countSpinEdit_;
+
         FastoTableView* keysTable_;
         KeysTableModel* keysModel_;
+        QScrollBar* pageScrollBox_;
         IDatabaseSPtr db_;
     };
 }
