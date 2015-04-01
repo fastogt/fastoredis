@@ -111,12 +111,6 @@ namespace fastoredis
         return PropertyTableItem::eCountColumns;
     }
 
-    void PropertyTableModel::addItem(PropertyTableItem* item)
-    {
-        beginInsertRows(QModelIndex(), data_.size(), data_.size());
-        data_.push_back(item);
-        endInsertRows();
-    }
 
     void PropertyTableModel::changeProperty(const PropertyType& pr)
     {

@@ -17,6 +17,10 @@ namespace fastoredis
         virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
         virtual QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
 
+        virtual void insertItem(TableItem* child);
+        virtual void removeItem(TableItem* child);
+        virtual void updateItem(const QModelIndex& topLeft, const QModelIndex &bottomRight);
+
     protected:
         std::vector<TableItem*> data_;
     };

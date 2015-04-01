@@ -96,13 +96,6 @@ namespace fastoredis
         return KeyTableItem::kCountColumns;
     }
 
-    void KeysTableModel::addKey(const NKey& key)
-    {
-        beginInsertRows(QModelIndex(), data_.size(), data_.size());
-        data_.push_back(new KeyTableItem(key));
-        endInsertRows();
-    }
-
     void KeysTableModel::clear()
     {
         beginResetModel();
