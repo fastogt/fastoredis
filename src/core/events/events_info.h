@@ -189,12 +189,12 @@ namespace fastoredis
         {
             typedef EventInfoBase base_class;
             LoadDatabaseContentRequest(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys,
-                                       const std::string& cursor, const error_type &er = error_type());
+                                       uint32_t cursor, const error_type &er = error_type());
 
             DataBaseInfoSPtr inf_;
             std::string pattern_;
             uint32_t countKeys_;
-            std::string cursor_;
+            const uint32_t cursorIn_;
         };
 
         struct LoadDatabaseContentResponce
@@ -205,6 +205,7 @@ namespace fastoredis
             LoadDatabaseContentResponce(const base_class &request, const error_type &er = error_type());
 
             keys_cont_type keys_;
+            uint32_t cursorOut_;
         };
 
         struct SetDefaultDatabaseRequest

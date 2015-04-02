@@ -1,7 +1,7 @@
 0.7.3
 [Alexandr Topilski]
 - View keys dialog
-
+- Redis database size
 
 0.7.2 / March 28, 2015
 [Alexandr Topilski]

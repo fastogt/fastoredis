@@ -75,6 +75,7 @@ namespace fastoredis
         virtual QString name() const;
         virtual eType type() const;       
         bool isDefault() const;
+        size_t size() const;
 
         virtual IServerSPtr server() const;
         IDatabaseSPtr db() const;

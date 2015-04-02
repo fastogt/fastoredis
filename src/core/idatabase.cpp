@@ -36,9 +36,9 @@ namespace fastoredis
         return info_->name();
     }
 
-    void IDatabase::loadContent(const std::string& pattern, uint32_t countKeys)
+    void IDatabase::loadContent(const std::string& pattern, uint32_t countKeys, uint32_t cursor)
     {
-        server_->loadDatabaseContent(info_, pattern, countKeys);
+        server_->loadDatabaseContent(info_, pattern, countKeys, cursor);
     }
 
     void IDatabase::setDefault()

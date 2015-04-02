@@ -137,6 +137,7 @@ namespace fastoredis
         typedef std::vector<NKey> keys_cont_type;
         connectionTypes type() const;
         std::string name() const;
+        void setSize(size_t sz);
         size_t size() const;
 
         bool isDefault() const;

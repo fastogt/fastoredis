@@ -50,7 +50,7 @@ namespace fastoredis
         void connect();
         void disconnect();
         void loadDatabases();
-        void loadDatabaseContent(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys, const std::string& cursor = std::string());
+        void loadDatabaseContent(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys, uint32_t cursor);
         void setDefaultDb(DataBaseInfoSPtr inf);
         void execute(const QString& script);
         void executeCommand(DataBaseInfoSPtr inf, CommandKeySPtr cmd);

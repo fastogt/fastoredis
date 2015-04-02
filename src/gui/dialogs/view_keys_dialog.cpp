@@ -22,7 +22,7 @@
 namespace fastoredis
 {
     ViewKeysDialog::ViewKeysDialog(const QString &title, IDatabaseSPtr db, QWidget* parent)
-        : QDialog(parent), db_(db)
+        : QDialog(parent), db_(db), currentCursor_(0)
     {
         DCHECK(db_);
         if(db_){
@@ -89,6 +89,8 @@ namespace fastoredis
             return;
         }
 
+        currentCursor_ = res.cursorOut_;
+
         if(!keysModel_){
             return;
         }
@@ -112,7 +114,7 @@ namespace fastoredis
             return;
         }
 
-        db_->loadContent(common::convertToString(pattern), countSpinEdit_->value());
+        db_->loadContent(common::convertToString(pattern), countSpinEdit_->value(), currentCursor_);
     }
 
     void ViewKeysDialog::changeEvent(QEvent* e)

@@ -49,7 +49,7 @@ extern "C" {
 #define SET_KEY_ZSET_PATTERN_2ARGS_SS "ZADD %s %s"
 #define SET_KEY_HASH_PATTERN_2ARGS_SS "HMSET %s %s"
 
-#define GET_KEYS_PATTERN_2ARGS_SI "SCAN 0 MATCH %s COUNT %d"
+#define GET_KEYS_PATTERN_2ARGS_ISI "SCAN %d MATCH %s COUNT %d"
 
 #define GET_SERVER_TYPE "CLUSTER NODES"
 #define SHUTDOWN "shutdown"
@@ -2254,13 +2254,17 @@ namespace fastoredis
                                     else {
                                         res.databases_.push_back(dbInf);
                                     }
-                                }
+                                }                                
                             }
                         }
                     }
                     else{
                         res.databases_.push_back(currentDatabaseInfo_);
                     }
+
+                    long long sz = 0;
+                    er = impl_->getDbSize(sz);
+                    currentDatabaseInfo_->setSize(sz);
                 }
             }
     done:
@@ -2275,7 +2279,7 @@ namespace fastoredis
         notifyProgress(sender, 0);
             events::LoadDatabaseContentResponceEvent::value_type res(ev->value());
             char patternResult[1024] = {0};
-            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEYS_PATTERN_2ARGS_SI, res.pattern_, res.countKeys_);
+            common::SNPrintf(patternResult, sizeof(patternResult), GET_KEYS_PATTERN_2ARGS_ISI, res.cursorIn_, res.pattern_, res.countKeys_);
             FastoObjectIPtr root = FastoObject::createRoot(patternResult);
         notifyProgress(sender, 50);
             RedisCommand* cmd = createCommand(root, patternResult, common::Value::C_INNER);
@@ -2297,10 +2301,13 @@ namespace fastoredis
                         goto done;
                     }
 
-                    bool isok = arm->getString(0, &res.cursor_);
+                    std::string cursor;
+                    bool isok = arm->getString(0, &cursor);
                     if(!isok){
                        goto done;
                     }
+
+                    res.cursorOut_ = common::convertFromString<uint32_t>(cursor);
 
                     rchildrens = array->childrens();
                     if(!rchildrens.size()){
@@ -2358,7 +2365,9 @@ namespace fastoredis
                 res.setErrorInfo(er);
             }
             else{
-                currentDatabaseInfo_.reset(new RedisDataBaseInfo(res.inf_->name(), 0, true));
+                long long sz = 0;
+                er = impl_->getDbSize(sz);
+                currentDatabaseInfo_.reset(new RedisDataBaseInfo(res.inf_->name(), sz, true));
             }
         notifyProgress(sender, 75);
             reply(sender, new events::SetDefaultDatabaseResponceEvent(this, res));

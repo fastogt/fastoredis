@@ -155,6 +155,11 @@ namespace fastoredis
         return name_;
     }
 
+    void DataBaseInfo::setSize(size_t sz)
+    {
+        size_ = sz;
+    }
+
     size_t DataBaseInfo::size() const
     {
         return size_;

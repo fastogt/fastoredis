@@ -42,6 +42,7 @@ namespace fastoredis
     private:
         void retranslateUi();
 
+        uint32_t currentCursor_;
         QLineEdit* searchBox_;
         QLabel* keyCountLabel_;
         QSpinBox* countSpinEdit_;

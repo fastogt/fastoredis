@@ -125,6 +125,11 @@ namespace fastoredis
         return inf_->isDefault();
     }
 
+    size_t ExplorerDatabaseItem::size() const
+    {
+        return inf_->size();
+    }
+
     IServerSPtr ExplorerDatabaseItem::server() const
     {
         ExplorerServerItem* serv = dynamic_cast<ExplorerServerItem*>(parent_);
@@ -277,8 +282,8 @@ namespace fastoredis
         IExplorerTreeItem::eType t = node->type();
 
         if(role == Qt::ToolTipRole){
-            if(t == IExplorerTreeItem::eServer && node->server()){
-                IServerSPtr serv = node->server();
+            IServerSPtr serv = node->server();
+            if(t == IExplorerTreeItem::eServer && serv){
                 ServerDiscoveryInfoSPtr disc = serv->discoveryInfo();
                 if(disc){
                     QString dname = common::convertFromString<QString>(disc->name());
@@ -287,6 +292,12 @@ namespace fastoredis
                     return QString("<b>Name:</b> %1<br/>"
                                    "<b>Type:</b> %2<br/>"
                                    "<b>Host:</b> %3<br/>").arg(dname).arg(dtype).arg(dhost);
+                }
+            }
+            else if(t == IExplorerTreeItem::eDatabase){
+                ExplorerDatabaseItem* db = dynamic_cast<ExplorerDatabaseItem*>(node);
+                if(db && db->isDefault()){
+                    return QString("<b>Db size:</b> %1 keys<br/>").arg(db->size());
                 }
             }
         }
