@@ -270,6 +270,18 @@ namespace fastoredis
         return pref;
     }
 
+    const QIcon& GuiFactory::leftIcon() const
+    {
+        static QIcon left = qApp->style()->standardIcon(QStyle::SP_ArrowLeft);
+        return left;
+    }
+
+    const QIcon& GuiFactory::rightIcon() const
+    {
+        static QIcon right = qApp->style()->standardIcon(QStyle::SP_ArrowRight);
+        return right;
+    }
+
     const QIcon& GuiFactory::close16Icon() const
     {
         static QIcon close(":" PROJECT_NAME_LOWERCASE "/images/16x16/close.png");

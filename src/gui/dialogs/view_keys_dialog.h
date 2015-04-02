@@ -7,7 +7,6 @@
 class QLineEdit;
 class QSpinBox;
 class QLabel;
-class QScrollBar;
 
 namespace fastoredis
 {
@@ -36,6 +35,10 @@ namespace fastoredis
         void finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res);
         void search();
 
+        void searchLineChanged(const QString& text);
+        void leftPageClicked();
+        void rightPageClicked();
+
     protected:
         virtual void changeEvent(QEvent* );
 
@@ -49,7 +52,6 @@ namespace fastoredis
 
         FastoTableView* keysTable_;
         KeysTableModel* keysModel_;
-        QScrollBar* pageScrollBox_;
         IDatabaseSPtr db_;
     };
 }

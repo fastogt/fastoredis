@@ -8,6 +8,7 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QScrollBar>
+#include <QSplitter>
 
 #include "common/qt/convert_string.h"
 
@@ -16,8 +17,21 @@
 
 #include "gui/keys_table_model.h"
 #include "gui/fasto_table_view.h"
+#include "gui/gui_factory.h"
 
 #include "translations/global.h"
+
+namespace
+{
+    QPushButton *createButtonWithIcon(const QIcon &icon)
+    {
+        QPushButton *button = new QPushButton;
+        button->setIcon(icon);
+        button->setFixedSize(24, 24);
+        button->setFlat(true);
+        return button;
+    }
+}
 
 namespace fastoredis
 {
@@ -40,6 +54,7 @@ namespace fastoredis
         QHBoxLayout* searchLayout = new QHBoxLayout;
         searchBox_ = new QLineEdit;
         searchBox_->setText("*");
+        VERIFY(connect(searchBox_, &QLineEdit::textChanged, this, &ViewKeysDialog::searchLineChanged));
         searchLayout->addWidget(searchBox_);
 
         countSpinEdit_ = new QSpinBox;
@@ -68,8 +83,19 @@ namespace fastoredis
         mainlayout->addLayout(searchLayout);
         mainlayout->addWidget(keysTable_);
 
-        pageScrollBox_ = new QScrollBar(Qt::Horizontal);
-        mainlayout->addWidget(pageScrollBox_);
+        QPushButton* leftButton = createButtonWithIcon(GuiFactory::instance().leftIcon());
+        QPushButton* rightButton = createButtonWithIcon(GuiFactory::instance().rightIcon());
+        VERIFY(connect(leftButton, &QPushButton::clicked, this, &ViewKeysDialog::leftPageClicked));
+        VERIFY(connect(rightButton, &QPushButton::clicked, this, &ViewKeysDialog::rightPageClicked));
+        QHBoxLayout* pagingLayout = new QHBoxLayout;
+        QSplitter* splitter = new QSplitter;
+        splitter->setOrientation(Qt::Horizontal);
+        splitter->setContentsMargins(0, 0, 0, 0);
+        pagingLayout->addWidget(leftButton);
+        pagingLayout->addWidget(splitter);
+        pagingLayout->addWidget(rightButton);
+
+        mainlayout->addLayout(pagingLayout);
         mainlayout->addWidget(buttonBox);
 
         setMinimumSize(QSize(min_width, min_height));
@@ -115,6 +141,21 @@ namespace fastoredis
         }
 
         db_->loadContent(common::convertToString(pattern), countSpinEdit_->value(), currentCursor_);
+    }
+
+    void ViewKeysDialog::searchLineChanged(const QString& text)
+    {
+        currentCursor_ = 0;
+    }
+
+    void ViewKeysDialog::leftPageClicked()
+    {
+
+    }
+
+    void ViewKeysDialog::rightPageClicked()
+    {
+        search();
     }
 
     void ViewKeysDialog::changeEvent(QEvent* e)

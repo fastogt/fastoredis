@@ -50,6 +50,9 @@ namespace fastoredis
         const QIcon& encodeDecodeIcon() const;
         const QIcon& preferencesIcon() const;
 
+        const QIcon& leftIcon() const;
+        const QIcon& rightIcon() const;
+
         const QIcon& close16Icon() const;
 
         const QIcon& commandIcon(connectionTypes type) const;
