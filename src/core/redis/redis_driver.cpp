@@ -2291,12 +2291,24 @@ namespace fastoredis
                     if(!array){
                         goto done;
                     }
+
+                    common::ArrayValue* arm = array->array();
+                    if(!arm->getSize()){
+                        goto done;
+                    }
+
+                    bool isok = arm->getString(0, &res.cursor_);
+                    if(!isok){
+                       goto done;
+                    }
+
                     rchildrens = array->childrens();
                     if(!rchildrens.size()){
                         goto done;
                     }
 
-                    FastoObjectArray* arr = dynamic_cast<FastoObjectArray*>(rchildrens[0]);
+                    FastoObject* obj = rchildrens[0];
+                    FastoObjectArray* arr = dynamic_cast<FastoObjectArray*>(obj);
                     if(!arr){
                         goto done;
                     }

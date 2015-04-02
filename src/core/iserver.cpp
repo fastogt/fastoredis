@@ -192,9 +192,9 @@ namespace fastoredis
         notify(ev);
     }
 
-    void IServer::loadDatabaseContent(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys)
+    void IServer::loadDatabaseContent(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys, const std::string &cursor)
     {
-        EventsInfo::LoadDatabaseContentRequest req(inf, pattern, countKeys);
+        EventsInfo::LoadDatabaseContentRequest req(inf, pattern, countKeys, cursor);
         emit startedLoadDataBaseContent(req);
         QEvent *ev = new events::LoadDatabaseContentRequestEvent(this, req);
         notify(ev);

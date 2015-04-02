@@ -39,6 +39,7 @@ namespace fastoredis
 
         QHBoxLayout* searchLayout = new QHBoxLayout;
         searchBox_ = new QLineEdit;
+        searchBox_->setText("*");
         searchLayout->addWidget(searchBox_);
 
         countSpinEdit_ = new QSpinBox;

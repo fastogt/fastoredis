@@ -188,11 +188,13 @@ namespace fastoredis
                 : public EventInfoBase
         {
             typedef EventInfoBase base_class;
-            LoadDatabaseContentRequest(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys, const error_type &er = error_type());
+            LoadDatabaseContentRequest(DataBaseInfoSPtr inf, const std::string& pattern, uint32_t countKeys,
+                                       const std::string& cursor, const error_type &er = error_type());
 
             DataBaseInfoSPtr inf_;
             std::string pattern_;
             uint32_t countKeys_;
+            std::string cursor_;
         };
 
         struct LoadDatabaseContentResponce
