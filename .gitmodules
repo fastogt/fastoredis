@@ -1,3 +1,6 @@
 [submodule "src/third-party/cmp"]
 	path = src/third-party/cmp
 	url = https://github.com/camgunz/cmp.git
+[submodule "tests/gtest"]
+	path = tests/gtest
+	url = http://git.chromium.org/external/googletest.git
