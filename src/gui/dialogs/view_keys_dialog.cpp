@@ -44,7 +44,6 @@ namespace fastoredis
             VERIFY(connect(serv.get(), &IServer::startedLoadDataBaseContent, this, &ViewKeysDialog::startLoadDatabaseContent));
             VERIFY(connect(serv.get(), &IServer::finishedLoadDatabaseContent, this, &ViewKeysDialog::finishLoadDatabaseContent));
         }
-        using namespace translations;
 
         setWindowTitle(title);
 
@@ -67,9 +66,9 @@ namespace fastoredis
         searchLayout->addWidget(keyCountLabel_);
         searchLayout->addWidget(countSpinEdit_);
 
-        QPushButton* searchButton = new QPushButton(trSearch);
-        VERIFY(connect(searchButton, &QPushButton::clicked, this, &ViewKeysDialog::rightPageClicked));
-        searchLayout->addWidget(searchButton);
+        searchButton_ = new QPushButton;
+        VERIFY(connect(searchButton_, &QPushButton::clicked, this, &ViewKeysDialog::rightPageClicked));
+        searchLayout->addWidget(searchButton_);
 
         keysModel_ = new KeysTableModel(this);
         keysTable_ = new FastoTableView;
@@ -88,11 +87,21 @@ namespace fastoredis
         VERIFY(connect(leftButtonList_, &QPushButton::clicked, this, &ViewKeysDialog::leftPageClicked));
         VERIFY(connect(rightButtonList_, &QPushButton::clicked, this, &ViewKeysDialog::rightPageClicked));
         QHBoxLayout* pagingLayout = new QHBoxLayout;
-        QSplitter* splitter = new QSplitter;
-        splitter->setOrientation(Qt::Horizontal);
-        splitter->setContentsMargins(0, 0, 0, 0);
         pagingLayout->addWidget(leftButtonList_);
-        pagingLayout->addWidget(splitter);
+        DataBaseInfoSPtr inf = db_->info();
+        size_t sizeKey = inf->size();
+        currentKey_ = new QSpinBox;
+        currentKey_->setEnabled(false);
+        currentKey_->setValue(0);
+        currentKey_->setMinimum(0);
+        currentKey_->setMaximum(sizeKey);
+        countKey_ = new QSpinBox;
+        countKey_->setEnabled(false);
+        countKey_->setValue(sizeKey);
+        pagingLayout->addWidget(new QSplitter(Qt::Horizontal));
+        pagingLayout->addWidget(currentKey_);
+        pagingLayout->addWidget(countKey_);
+        pagingLayout->addWidget(new QSplitter(Qt::Horizontal));
         pagingLayout->addWidget(rightButtonList_);
 
         mainlayout->addLayout(pagingLayout);
@@ -100,6 +109,8 @@ namespace fastoredis
 
         setMinimumSize(QSize(min_width, min_height));
         setLayout(mainlayout);
+
+        updateControls();
         retranslateUi();
     }
 
@@ -118,6 +129,8 @@ namespace fastoredis
         if(cursorStack_.size() == curPos_){
             cursorStack_.push_back(res.cursorOut_);
         }
+
+        updateControls();
 
         if(!keysModel_){
             return;
@@ -162,6 +175,7 @@ namespace fastoredis
     {
         cursorStack_.clear();
         curPos_ = 0;
+        updateControls();
     }
 
     void ViewKeysDialog::leftPageClicked()
@@ -186,5 +200,21 @@ namespace fastoredis
     {
         using namespace translations;
         keyCountLabel_->setText(trKeyCountOnThePage);
+        searchButton_->setText(trSearch);
+    }
+
+    void ViewKeysDialog::updateControls()
+    {
+        bool isEmptyDb = keysCount() == 0;
+        bool isEndSearch = curPos_ ? (cursorStack_[curPos_] == 0) : false;
+
+        leftButtonList_->setEnabled(curPos_ > 0);
+        rightButtonList_->setEnabled(!isEmptyDb && !isEndSearch);
+        searchButton_->setEnabled(!isEmptyDb && !isEndSearch);
+    }
+
+    size_t ViewKeysDialog::keysCount() const
+    {
+        return countKey_->value();
     }
 }

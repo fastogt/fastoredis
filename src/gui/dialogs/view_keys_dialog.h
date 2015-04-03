@@ -44,6 +44,8 @@ namespace fastoredis
     private:
         void search(bool forward);
         void retranslateUi();
+        void updateControls();
+        size_t keysCount() const;
 
         std::vector<uint32_t> cursorStack_;
         uint32_t curPos_;
@@ -51,7 +53,10 @@ namespace fastoredis
         QLabel* keyCountLabel_;
         QSpinBox* countSpinEdit_;
 
+        QPushButton* searchButton_;
         QPushButton* leftButtonList_;
+        QSpinBox* currentKey_;
+        QSpinBox* countKey_;
         QPushButton* rightButtonList_;
         FastoTableView* keysTable_;
         KeysTableModel* keysModel_;
