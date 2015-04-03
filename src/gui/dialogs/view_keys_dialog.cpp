@@ -36,7 +36,7 @@ namespace
 namespace fastoredis
 {
     ViewKeysDialog::ViewKeysDialog(const QString &title, IDatabaseSPtr db, QWidget* parent)
-        : QDialog(parent), db_(db), currentCursor_(0)
+        : QDialog(parent), db_(db), cursorStack_(), curPos_(0)
     {
         DCHECK(db_);
         if(db_){
@@ -68,7 +68,7 @@ namespace fastoredis
         searchLayout->addWidget(countSpinEdit_);
 
         QPushButton* searchButton = new QPushButton(trSearch);
-        VERIFY(connect(searchButton, &QPushButton::clicked, this, &ViewKeysDialog::search));
+        VERIFY(connect(searchButton, &QPushButton::clicked, this, &ViewKeysDialog::rightPageClicked));
         searchLayout->addWidget(searchButton);
 
         keysModel_ = new KeysTableModel(this);
@@ -83,17 +83,17 @@ namespace fastoredis
         mainlayout->addLayout(searchLayout);
         mainlayout->addWidget(keysTable_);
 
-        QPushButton* leftButton = createButtonWithIcon(GuiFactory::instance().leftIcon());
-        QPushButton* rightButton = createButtonWithIcon(GuiFactory::instance().rightIcon());
-        VERIFY(connect(leftButton, &QPushButton::clicked, this, &ViewKeysDialog::leftPageClicked));
-        VERIFY(connect(rightButton, &QPushButton::clicked, this, &ViewKeysDialog::rightPageClicked));
+        leftButtonList_ = createButtonWithIcon(GuiFactory::instance().leftIcon());
+        rightButtonList_ = createButtonWithIcon(GuiFactory::instance().rightIcon());
+        VERIFY(connect(leftButtonList_, &QPushButton::clicked, this, &ViewKeysDialog::leftPageClicked));
+        VERIFY(connect(rightButtonList_, &QPushButton::clicked, this, &ViewKeysDialog::rightPageClicked));
         QHBoxLayout* pagingLayout = new QHBoxLayout;
         QSplitter* splitter = new QSplitter;
         splitter->setOrientation(Qt::Horizontal);
         splitter->setContentsMargins(0, 0, 0, 0);
-        pagingLayout->addWidget(leftButton);
+        pagingLayout->addWidget(leftButtonList_);
         pagingLayout->addWidget(splitter);
-        pagingLayout->addWidget(rightButton);
+        pagingLayout->addWidget(rightButtonList_);
 
         mainlayout->addLayout(pagingLayout);
         mainlayout->addWidget(buttonBox);
@@ -115,7 +115,9 @@ namespace fastoredis
             return;
         }
 
-        currentCursor_ = res.cursorOut_;
+        if(cursorStack_.size() == curPos_){
+            cursorStack_.push_back(res.cursorOut_);
+        }
 
         if(!keysModel_){
             return;
@@ -129,7 +131,7 @@ namespace fastoredis
         }
     }
 
-    void ViewKeysDialog::search()
+    void ViewKeysDialog::search(bool forward)
     {
         if(!db_){
             return;
@@ -140,22 +142,36 @@ namespace fastoredis
             return;
         }
 
-        db_->loadContent(common::convertToString(pattern), countSpinEdit_->value(), currentCursor_);
+        if(cursorStack_.empty()){
+            cursorStack_.push_back(0);
+        }
+
+        DCHECK(cursorStack_[0] == 0);
+        if(forward){
+            db_->loadContent(common::convertToString(pattern), countSpinEdit_->value(), cursorStack_[curPos_]);
+            ++curPos_;
+        }
+        else{
+            if(curPos_ > 0){
+                db_->loadContent(common::convertToString(pattern), countSpinEdit_->value(), cursorStack_[--curPos_]);
+            }
+        }
     }
 
     void ViewKeysDialog::searchLineChanged(const QString& text)
     {
-        currentCursor_ = 0;
+        cursorStack_.clear();
+        curPos_ = 0;
     }
 
     void ViewKeysDialog::leftPageClicked()
     {
-
+        search(false);
     }
 
     void ViewKeysDialog::rightPageClicked()
     {
-        search();
+        search(true);
     }
 
     void ViewKeysDialog::changeEvent(QEvent* e)

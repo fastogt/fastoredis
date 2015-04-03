@@ -33,7 +33,6 @@ namespace fastoredis
     private Q_SLOTS:
         void startLoadDatabaseContent(const EventsInfo::LoadDatabaseContentRequest& req);
         void finishLoadDatabaseContent(const EventsInfo::LoadDatabaseContentResponce& res);
-        void search();
 
         void searchLineChanged(const QString& text);
         void leftPageClicked();
@@ -43,13 +42,17 @@ namespace fastoredis
         virtual void changeEvent(QEvent* );
 
     private:
+        void search(bool forward);
         void retranslateUi();
 
-        uint32_t currentCursor_;
+        std::vector<uint32_t> cursorStack_;
+        uint32_t curPos_;
         QLineEdit* searchBox_;
         QLabel* keyCountLabel_;
         QSpinBox* countSpinEdit_;
 
+        QPushButton* leftButtonList_;
+        QPushButton* rightButtonList_;
         FastoTableView* keysTable_;
         KeysTableModel* keysModel_;
         IDatabaseSPtr db_;
