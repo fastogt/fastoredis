@@ -126,22 +126,28 @@ namespace fastoredis
             return;
         }
 
-        if(cursorStack_.size() == curPos_){
-            cursorStack_.push_back(res.cursorOut_);
-        }
-
-        updateControls();
-
         if(!keysModel_){
             return;
         }
 
         EventsInfo::LoadDatabaseContentResponce::keys_cont_type keys = res.keys_;
 
-        for(int i = 0; i < keys.size(); ++i){
+        size_t size = keys.size();
+        for(size_t i = 0; i < size; ++i){
             NKey key = keys[i];
             keysModel_->insertItem(new KeyTableItem(key));
         }
+
+        int curv = currentKey_->value();
+        if(cursorStack_.size() == curPos_){
+            cursorStack_.push_back(res.cursorOut_);
+            currentKey_->setValue(curv + size);
+        }
+        else{
+            currentKey_->setValue(curv - size);
+        }
+
+        updateControls();
     }
 
     void ViewKeysDialog::search(bool forward)
@@ -175,6 +181,7 @@ namespace fastoredis
     {
         cursorStack_.clear();
         curPos_ = 0;
+        currentKey_->setValue(0);
         updateControls();
     }
 
