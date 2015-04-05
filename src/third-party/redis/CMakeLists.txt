@@ -15,6 +15,7 @@ SET(HEADERS_REDIS
     src/zmalloc.h
     src/config.h
 
+    deps/hiredis/read.h
     deps/hiredis/fmacros.h
 )
 
@@ -26,6 +27,7 @@ SET(SOURCES_REDIS
 
     deps/hiredis/sds.c
     deps/hiredis/net.c
+    deps/hiredis/read.c
     deps/hiredis/hiredis.c
 )
 
