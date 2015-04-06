@@ -29,6 +29,7 @@ namespace fastoredis
         //sync methods
         void stopCurrentEvent();
         bool isConnected() const;
+        bool isAuthenticated() const;
 
         bool isSuperServer() const;
 

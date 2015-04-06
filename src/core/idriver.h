@@ -41,6 +41,7 @@ namespace fastoredis
 
         virtual void interrupt() = 0;
         virtual bool isConnected() const = 0;
+        virtual bool isAuthenticated() const = 0;
         virtual common::net::hostAndPort address() const = 0;
         virtual std::string version() const = 0;
         virtual std::string outputDelemitr() const = 0;        

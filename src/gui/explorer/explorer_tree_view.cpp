@@ -190,17 +190,18 @@ namespace fastoredis
 
                 IServerSPtr server = node->server();
                 bool isCon = server->isConnected();
+                bool isAuth = server->isAuthenticated();
 
                 bool isClusterMember = dynamic_cast<ExplorerClusterItem*>(node->parent()) != NULL;
 
-                loadDatabaseAction_->setEnabled(isCon);
+                loadDatabaseAction_->setEnabled(isAuth);
                 menu.addAction(loadDatabaseAction_);
-                infoServerAction_->setEnabled(isCon);
+                infoServerAction_->setEnabled(isAuth);
                 menu.addAction(infoServerAction_);
-                propertyServerAction_->setEnabled(isCon);
+                propertyServerAction_->setEnabled(isAuth);
                 menu.addAction(propertyServerAction_);
 
-                setServerPassword_->setEnabled(isCon);
+                setServerPassword_->setEnabled(isAuth);
                 menu.addAction(setServerPassword_);
 
                 menu.addAction(historyServerAction_);
@@ -213,7 +214,7 @@ namespace fastoredis
                 menu.addAction(importAction_);                
                 backupAction_->setEnabled(isCon && isLocal);
                 menu.addAction(backupAction_);
-                shutdownAction_->setEnabled(isCon);
+                shutdownAction_->setEnabled(isAuth);
                 menu.addAction(shutdownAction_);
 
                 menu.exec(menuPoint);

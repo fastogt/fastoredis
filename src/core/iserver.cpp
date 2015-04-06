@@ -89,6 +89,11 @@ namespace fastoredis
         return drv_->isConnected();
     }
 
+    bool IServer::isAuthenticated() const
+    {
+        return drv_->isAuthenticated();
+    }
+
     bool IServer::isSuperServer() const
     {
         return isSuperServer_;

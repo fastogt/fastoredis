@@ -335,7 +335,7 @@ namespace fastoredis
     struct RedisDriver::pimpl
     {
         pimpl()
-            : context(NULL), parent_(NULL)
+            : context(NULL), isAuth_(false), parent_(NULL)
         {
 
         }
@@ -349,7 +349,8 @@ namespace fastoredis
         }
 
         redisContext *context;
-        redisConfig config;        
+        redisConfig config;
+        bool isAuth_;
         SSHInfo sinfo_;
         RedisDriver* parent_;
 
@@ -1156,15 +1157,18 @@ namespace fastoredis
         common::ErrorValueSPtr cliAuth() WARN_UNUSED_RESULT
         {
             if (config.auth == NULL){
+                isAuth_ = true;
                 return common::ErrorValueSPtr();
             }
 
             redisReply *reply = static_cast<redisReply*>(redisCommand(context, "AUTH %s", config.auth));
             if (reply != NULL) {
+                isAuth_ = true;
                 freeReplyObject(reply);
                 return common::ErrorValueSPtr();
             }
 
+            isAuth_ = false;
             return cliPrintContextError();
         }
 
@@ -1347,6 +1351,9 @@ namespace fastoredis
                 case REDIS_REPLY_ERROR:
                 {
                     common::ErrorValue* val = common::Value::createErrorValue(r->str, common::ErrorValue::E_NONE, common::logging::L_WARNING);
+                    if(strcasestr(r->str, "NOAUTH")){ //"NOAUTH Authentication required."
+                        isAuth_ = false;
+                    }
                     obj = new FastoObject(out, val, config.mb_delim);
                     out->addChildren(obj);
                     break;
@@ -1779,6 +1786,15 @@ namespace fastoredis
         return impl_->context;
     }
 
+    bool RedisDriver::isAuthenticated() const
+    {
+        if(!impl_->context){
+            return false;
+        }
+
+        return impl_->isAuth_;
+    }
+
     void RedisDriver::customEvent(QEvent *event)
     {
         IDriver::customEvent(event);
@@ -2179,11 +2195,26 @@ namespace fastoredis
                         }
 
                         offset = n + 1;
-                        RedisCommand* cmd = createCommand(outRoot, stableCommand(command), common::Value::C_USER);
+                        std::string stabc = stableCommand(command);
+                        RedisCommand* cmd = createCommand(outRoot, stabc, common::Value::C_USER);
                         er = impl_->execute(cmd);
                         if(er){
                             res.setErrorInfo(er);
                             break;
+                        }
+                        else{
+                            std::string cmdcom = cmd->inputCmd();
+                            std::transform(cmdcom.begin(), cmdcom.end(), cmdcom.begin(), ::tolower);
+                            FastoObject::child_container_type rchildrens = cmd->childrens();
+                            if(cmdcom == "auth"){
+                                if(rchildrens.size() == 1){
+                                    FastoObject* obj = dynamic_cast<FastoObject*>(rchildrens[0]);
+                                    impl_->isAuth_ = obj && obj->toString() == "OK";
+                                }
+                                else{
+                                    impl_->isAuth_ = false;
+                                }
+                            }
                         }
                     }
                 }

@@ -21,6 +21,7 @@ namespace fastoredis
         virtual ~RedisDriver();
 
         virtual bool isConnected() const;
+        virtual bool isAuthenticated() const;
         virtual void interrupt();
         common::net::hostAndPort address() const;
         std::string version() const;

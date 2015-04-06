@@ -1346,6 +1346,11 @@ namespace fastoredis
         return impl_->isConnected();
     }
 
+    bool SsdbDriver::isAuthenticated() const
+    {
+        return impl_->isConnected();
+    }
+
     void SsdbDriver::interrupt()
     {
         impl_->config_.shutdown_ = 1;

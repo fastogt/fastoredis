@@ -651,6 +651,11 @@ namespace fastoredis
         return impl_->isConnected();
     }
 
+    bool MemcachedDriver::isAuthenticated() const
+    {
+        return impl_->isConnected();
+    }
+
     void MemcachedDriver::interrupt()
     {
         impl_->config_.shutdown_ = 1;
