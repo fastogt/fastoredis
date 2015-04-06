@@ -47,6 +47,7 @@ namespace fastoredis
         virtual void handleShutdownEvent(events::ShutDownRequestEvent* ev);
         virtual void handleBackupEvent(events::BackupRequestEvent* ev);
         virtual void handleExportEvent(events::ExportRequestEvent* ev);
+        virtual void handleChangePasswordEvent(events::ChangePasswordRequestEvent* ev);
 
         virtual common::ErrorValueSPtr commandDeleteImpl(CommandDeleteKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT;
         virtual common::ErrorValueSPtr commandLoadImpl(CommandLoadKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT;

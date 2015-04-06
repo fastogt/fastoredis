@@ -27,6 +27,7 @@ namespace fastoredis
         extern const QString trInfo;
         extern const QString trTools;
         extern const QString trProperty;
+        extern const QString trSetPassword;
         extern const QString trStop;
         extern const QString trError;
         extern const QString trLogs;
@@ -66,6 +67,7 @@ namespace fastoredis
         extern const QString trPrevious;
         extern const QString trLoading;
         extern const QString trTryToConnect;
+        extern const QString trTryToChangePassword;
         extern const QString trAddItem;
         extern const QString trRemoveItem;
 

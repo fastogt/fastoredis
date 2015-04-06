@@ -13,10 +13,29 @@ namespace fastoredis
 
     }
 
-    NDbValue::NDbValue(const NKey& key, const NValue& value)
-        : key_(key), value_(value)
+    NDbValue::NDbValue(const std::string& key, const std::string& value, common::Value::Type type)
+        : key_(key), value_(value), type_(type)
     {
+    }
 
+    NKey NDbValue::key() const
+    {
+        return NKey(key_, type_);
+    }
+
+    NValue NDbValue::value() const
+    {
+        return NValue(value_, type_);
+    }
+
+    std::string NDbValue::keyString() const
+    {
+        return key_;
+    }
+
+    std::string NDbValue::valueString() const
+    {
+        return value_;
     }
 
     ServerDiscoveryInfo::ServerDiscoveryInfo(connectionTypes ctype, serverTypes type, bool self)

@@ -53,6 +53,8 @@ extern "C" {
 
 #define GET_SERVER_TYPE "CLUSTER NODES"
 #define SHUTDOWN "shutdown"
+#define GET_PASSWORD "CONFIG get requirepass"
+#define SET_PASSWORD_1ARGS_S "CONFIG set requirepass %s"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 #define STAT_MODE_REQUEST "STAT"
 #define SCAN_MODE_REQUEST "SCAN"
@@ -1971,6 +1973,29 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
+    void RedisDriver::handleChangePasswordEvent(events::ChangePasswordRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::ChangePasswordRequestEvent::value_type res(ev->value());
+        notifyProgress(sender, 25);
+            char patternResult[1024] = {0};
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_PASSWORD_1ARGS_S, res.newPassword_);
+            FastoObjectIPtr root = FastoObject::createRoot(patternResult);
+            RedisCommand* cmd = createCommand(root, patternResult, common::Value::C_INNER);
+            common::ErrorValueSPtr er = impl_->execute(cmd);
+            if(er){
+                res.setErrorInfo(er);
+            }
+            else{
+
+            }
+
+        notifyProgress(sender, 75);
+            reply(sender, new events::ChangePasswordResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
     common::ErrorValueSPtr RedisDriver::interacteveMode(events::ProcessConfigArgsRequestEvent *ev)
     {
         QObject *sender = ev->sender();
@@ -2514,7 +2539,7 @@ namespace fastoredis
         events::ChangeDbValueResponceEvent::value_type res(ev->value());
 
         notifyProgress(sender, 50);
-        const std::string changeRequest = res.command_ + " " + res.newItem_.value_.value_;
+        const std::string changeRequest = res.command_ + " " + res.newItem_.valueString();
         FastoObjectIPtr root = FastoObject::createRoot(changeRequest);
         RedisCommand* cmd = createCommand(root, changeRequest, common::Value::C_INNER);
         common::ErrorValueSPtr er = impl_->execute(cmd);

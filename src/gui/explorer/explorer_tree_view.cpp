@@ -14,6 +14,7 @@
 #include "gui/dialogs/load_contentdb_dialog.h"
 #include "gui/dialogs/create_dbkey_dialog.h"
 #include "gui/dialogs/view_keys_dialog.h"
+#include "gui/dialogs/change_password_server_dialog.h"
 
 #include "common/qt/convert_string.h"
 
@@ -45,6 +46,9 @@ namespace fastoredis
 
         propertyServerAction_ = new QAction(this);
         VERIFY(connect(propertyServerAction_, &QAction::triggered, this, &ExplorerTreeView::openPropertyServerDialog));
+
+        setServerPassword_ = new QAction(this);
+        VERIFY(connect(setServerPassword_, &QAction::triggered, this, &ExplorerTreeView::openSetPasswordServerDialog));
 
         historyServerAction_ = new QAction(this);
         VERIFY(connect(historyServerAction_, &QAction::triggered, this, &ExplorerTreeView::openHistoryServerDialog));
@@ -196,6 +200,9 @@ namespace fastoredis
                 propertyServerAction_->setEnabled(isCon);
                 menu.addAction(propertyServerAction_);
 
+                setServerPassword_->setEnabled(isCon);
+                menu.addAction(setServerPassword_);
+
                 menu.addAction(historyServerAction_);
                 closeServerAction_->setEnabled(!isClusterMember);
                 menu.addAction(closeServerAction_);
@@ -338,6 +345,27 @@ namespace fastoredis
         VERIFY(connect(&infDialog, &PropertyServerDialog::changedProperty, server.get(), &IServer::changeProperty));
         VERIFY(connect(&infDialog, &PropertyServerDialog::showed, server.get(), &IServer::serverProperty));
         infDialog.exec();
+    }
+
+    void ExplorerTreeView::openSetPasswordServerDialog()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(!node){
+            return;
+        }
+
+        IServerSPtr server = node->server();
+        if(!server){
+            return;
+        }
+
+        ChangePasswordServerDialog pass(QString("Change password for %1 server").arg(node->name()), server, this);
+        pass.exec();
     }
 
     void ExplorerTreeView::openHistoryServerDialog()
@@ -739,6 +767,7 @@ namespace fastoredis
         loadDatabaseAction_->setText(trLoadDataBases);
         infoServerAction_->setText(trInfo);
         propertyServerAction_->setText(trProperty);
+        setServerPassword_->setText(trSetPassword);
         historyServerAction_->setText(trHistory);
         closeServerAction_->setText(trClose);
         closeClusterAction_->setText(trClose);

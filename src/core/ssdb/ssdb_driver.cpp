@@ -1674,37 +1674,7 @@ namespace fastoredis
         notifyProgress(sender, 100);
     }
 
-    void SsdbDriver::handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev)
-    {
-
-    }
-
-    void SsdbDriver::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev)
-    {
-
-    }
-
-    void SsdbDriver::handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev)
-    {
-
-    }
-
     void SsdbDriver::handleProcessCommandLineArgs(events::ProcessConfigArgsRequestEvent* ev)
-    {
-
-    }
-
-    void SsdbDriver::handleShutdownEvent(events::ShutDownRequestEvent* ev)
-    {
-
-    }
-
-    void SsdbDriver::handleBackupEvent(events::BackupRequestEvent* ev)
-    {
-
-    }
-
-    void SsdbDriver::handleExportEvent(events::ExportRequestEvent* ev)
     {
 
     }

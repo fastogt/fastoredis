@@ -67,7 +67,7 @@ namespace fastoredis
         using namespace translations;
 
         setWindowTitle(trConnectionDiagnostic);
-        setWindowIcon(GuiFactory::instance().serverIcon());
+        setWindowIcon(GuiFactory::instance().icon(connection->connectionType()));
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
         QVBoxLayout* mainLayout = new QVBoxLayout;

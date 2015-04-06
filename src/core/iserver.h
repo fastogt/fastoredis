@@ -57,6 +57,7 @@ namespace fastoredis
         void shutDown();
         void backupToPath(const QString& path);
         void exportFromPath(const QString& path);
+        void changePassword(const QString& oldPassword, const QString& newPassword);
 
     Q_SIGNALS: //only direct connections
         void startedConnect(const EventsInfo::ConnectInfoRequest& req);
@@ -73,6 +74,9 @@ namespace fastoredis
 
         void startedExport(const EventsInfo::ExportInfoRequest& req);
         void finishedExport(const EventsInfo::ExportInfoResponce& res);
+
+        void startedChangePassword(const EventsInfo::ChangePasswordRequest& req);
+        void finishedChangePassword(const EventsInfo::ChangePasswordResponce& res);
 
         void startedExecute(const EventsInfo::ExecuteInfoRequest& req);
 
@@ -142,6 +146,7 @@ namespace fastoredis
         virtual void handleShutdownEvent(events::ShutDownResponceEvent* ev);
         virtual void handleBackupEvent(events::BackupResponceEvent* ev);
         virtual void handleExportEvent(events::ExportResponceEvent* ev);
+        virtual void handleChangePasswordEvent(events::ChangePasswordResponceEvent* ev);
 
         // handle database events
         virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev);

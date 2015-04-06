@@ -3,6 +3,7 @@
 - View keys dialog
 - Redis database size
 - Update hiredis and redis-cli sources
+- Create Redis server password
 
 0.7.2 / March 28, 2015
 [Alexandr Topilski]

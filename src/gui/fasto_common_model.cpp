@@ -74,7 +74,7 @@ namespace fastoredis
                 if(newValue != node->value()){
                     const std::string key = common::convertToString(node->key());
                     const std::string value = common::convertToString(newValue);
-                    emit changedValue(NDbValue(NKey(key), NValue(value)), node->changeCommand());
+                    emit changedValue(NDbValue(key, value, node->type()), node->changeCommand());
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace fastoredis
         return FastoCommonItem::eCountColumns;
     }
 
-    void FastoCommonModel::changeValue(const NDbValue &value)
+    void FastoCommonModel::changeValue(const NDbValue& value)
     {
         QModelIndex ind = index(0, 0);
         if(!ind.isValid()){
@@ -139,8 +139,8 @@ namespace fastoredis
             return;
         }
 
-        const QString key = common::convertFromString<QString>(value.key_.key_);
-        const QString val = common::convertFromString<QString>(value.value_.value_);
+        const QString key = common::convertFromString<QString>(value.keyString());
+        const QString val = common::convertFromString<QString>(value.valueString());
 
         for(int i = 0; i < root->childrenCount(); ++i){
             FastoCommonItem* child = dynamic_cast<FastoCommonItem*>(root->child(i));

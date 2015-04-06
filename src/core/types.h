@@ -40,12 +40,21 @@ namespace fastoredis
         return lhs.value_ == rhs.value_ && lhs.type_ == rhs.type_;
     }
 
-    struct NDbValue
+    class NDbValue
     {
-        NDbValue(const NKey& key, const NValue& value);
+    public:
+        NDbValue(const std::string& key, const std::string& value, common::Value::Type type);
 
-        NKey key_;
-        NValue value_;
+        NKey key() const;
+        NValue value() const;
+
+        std::string keyString() const;
+        std::string valueString() const;
+
+    private:
+        std::string key_;
+        std::string value_;
+        common::Value::Type type_;
     };
 
     class ServerDiscoveryInfo

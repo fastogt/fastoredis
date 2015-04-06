@@ -77,6 +77,21 @@ namespace fastoredis
             ExportInfoResponce(const base_class &request, const error_type &er = error_type());
         };
 
+        struct ChangePasswordRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ChangePasswordRequest(const std::string& oldPassword, const std::string& newPassword, const error_type &er = error_type());
+            std::string oldPassword_;
+            std::string newPassword_;
+        };
+
+        struct ChangePasswordResponce
+                : ChangePasswordRequest
+        {
+            typedef ChangePasswordRequest base_class;
+            ChangePasswordResponce(const base_class& request, const error_type &er = error_type());
+        };
 
         struct ProcessConfigArgsInfoRequest
                 : public EventInfoBase

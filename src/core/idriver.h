@@ -66,14 +66,15 @@ namespace fastoredis
         virtual void handleDisconnectEvent(events::DisconnectRequestEvent* ev) = 0;
         virtual void handleExecuteEvent(events::ExecuteRequestEvent* ev) = 0;
         virtual void handleLoadServerInfoEvent(events::ServerInfoRequestEvent* ev) = 0;
-        virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev) = 0;
-        virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev) = 0;
-        virtual void handleShutdownEvent(events::ShutDownRequestEvent* ev) = 0;
-        virtual void handleBackupEvent(events::BackupRequestEvent* ev) = 0;
-        virtual void handleExportEvent(events::ExportRequestEvent* ev) = 0;
+        virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev);
+        virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev);
+        virtual void handleShutdownEvent(events::ShutDownRequestEvent* ev);
+        virtual void handleBackupEvent(events::BackupRequestEvent* ev);
+        virtual void handleExportEvent(events::ExportRequestEvent* ev);
+        virtual void handleChangePasswordEvent(events::ChangePasswordRequestEvent* ev);
 
         // handle database events
-        virtual void handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev) = 0;
+        virtual void handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev);
         virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoRequestEvent* ev) = 0;
         virtual void handleLoadDatabaseContentEvent(events::LoadDatabaseContentRequestEvent* ev) = 0;
         virtual void handleSetDefaultDatabaseEvent(events::SetDefaultDatabaseRequestEvent* ev) = 0;

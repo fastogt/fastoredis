@@ -43,13 +43,7 @@ namespace fastoredis
         virtual void handleExecuteEvent(events::ExecuteRequestEvent* ev);
         virtual void handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoRequestEvent* ev);
         virtual void handleLoadServerInfoEvent(events::ServerInfoRequestEvent* ev);
-        virtual void handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev);
-        virtual void handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev);
-        virtual void handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev);
         virtual void handleProcessCommandLineArgs(events::ProcessConfigArgsRequestEvent* ev);
-        virtual void handleShutdownEvent(events::ShutDownRequestEvent* ev);
-        virtual void handleBackupEvent(events::BackupRequestEvent* ev);
-        virtual void handleExportEvent(events::ExportRequestEvent* ev);
 
 // ============== commands =============//
         virtual common::ErrorValueSPtr commandDeleteImpl(CommandDeleteKey* command, std::string& cmdstring) const WARN_UNUSED_RESULT;

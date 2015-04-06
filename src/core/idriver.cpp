@@ -63,6 +63,26 @@ struct WinsockInit {
 
 namespace fastoredis
 {
+    namespace
+    {
+        void notifyProgressImpl(IDriver* sender, QObject *reciver, int value)
+        {
+            IDriver::reply(reciver, new events::ProgressResponceEvent(sender, events::ProgressResponceEvent::value_type(value)));
+        }
+
+        template<typename event_request_type, typename event_responce_type>
+        void replyNotImplementedYet(IDriver* sender, event_request_type* ev)
+        {
+            QObject* esender = ev->sender();
+            notifyProgressImpl(sender, esender, 0);
+            typename event_request_type::value_type res(ev->value());
+            common::ErrorValueSPtr er = common::make_error_value("Sorry, but now " PROJECT_NAME_TITLE " not supported this command.", common::ErrorValue::E_ERROR);
+            res.setErrorInfo(er);
+            IDriver::reply(esender, new event_responce_type(sender, res));
+            notifyProgressImpl(sender, esender, 100);
+        }
+    }
+
     IDriver::IDriver(IConnectionSettingsBaseSPtr settings)
         : settings_(settings), serverDiscInfo_(), thread_(NULL), timer_info_id_(0), log_file_(NULL)
     {
@@ -220,6 +240,10 @@ namespace fastoredis
             ExportRequestEvent *ev = static_cast<ExportRequestEvent*>(event);
             handleExportEvent(ev);
         }
+        else if (type == static_cast<QEvent::Type>(ChangePasswordRequestEvent::EventType)){
+            ChangePasswordRequestEvent *ev = static_cast<ChangePasswordRequestEvent*>(event);
+            handleChangePasswordEvent(ev);
+        }
         else if (type == static_cast<QEvent::Type>(LoadDatabaseContentRequestEvent::EventType)){
             LoadDatabaseContentRequestEvent *ev = static_cast<LoadDatabaseContentRequestEvent*>(event);
             handleLoadDatabaseContentEvent(ev);
@@ -280,7 +304,42 @@ namespace fastoredis
 
     void IDriver::notifyProgress(QObject *reciver, int value)
     {
-        reply(reciver, new events::ProgressResponceEvent(this, events::ProgressResponceEvent::value_type(value)));
+        notifyProgressImpl(this, reciver, value);
+    }
+
+    void IDriver::handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev)
+    {
+        replyNotImplementedYet<events::ServerPropertyInfoRequestEvent, events::ServerPropertyInfoResponceEvent>(this, ev);
+    }
+
+    void IDriver::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev)
+    {
+        replyNotImplementedYet<events::ChangeServerPropertyInfoRequestEvent, events::ChangeServerPropertyInfoResponceEvent>(this, ev);
+    }
+
+    void IDriver::handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev)
+    {
+        replyNotImplementedYet<events::ChangeDbValueRequestEvent, events::ChangeDbValueResponceEvent>(this, ev);
+    }
+
+    void IDriver::handleShutdownEvent(events::ShutDownRequestEvent* ev)
+    {
+        replyNotImplementedYet<events::ShutDownRequestEvent, events::ShutDownResponceEvent>(this, ev);
+    }
+
+    void IDriver::handleBackupEvent(events::BackupRequestEvent* ev)
+    {
+        replyNotImplementedYet<events::BackupRequestEvent, events::BackupResponceEvent>(this, ev);
+    }
+
+    void IDriver::handleExportEvent(events::ExportRequestEvent* ev)
+    {
+        replyNotImplementedYet<events::ExportRequestEvent, events::ExportResponceEvent>(this, ev);
+    }
+
+    void IDriver::handleChangePasswordEvent(events::ChangePasswordRequestEvent* ev)
+    {
+        replyNotImplementedYet<events::ChangePasswordRequestEvent, events::ChangePasswordResponceEvent>(this, ev);
     }
 
     IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text)

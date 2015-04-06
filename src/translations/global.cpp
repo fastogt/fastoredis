@@ -27,6 +27,7 @@ namespace fastoredis
         const QString trInfo = QObject::tr("Info");
         const QString trTools = QObject::tr("Tools");        
         const QString trProperty = QObject::tr("Property");
+        const QString trSetPassword = QObject::tr("Set password");
         const QString trStop = QObject::tr("Stop");
         const QString trError = QObject::tr("Error");
         const QString trLogs = QObject::tr("Logs");
@@ -66,6 +67,7 @@ namespace fastoredis
         const QString trPrevious = QObject::tr("Previous");
         const QString trLoading = QObject::tr("Loading...");
         const QString trTryToConnect = QObject::tr("Try to connect...");
+        const QString trTryToChangePassword = QObject::tr("Try to change password...");
         const QString trAddItem = QObject::tr("Add item");
         const QString trRemoveItem = QObject::tr("Remove item");
 

@@ -947,37 +947,7 @@ namespace fastoredis
 
     // ============== commands =============//
 
-    void MemcachedDriver::handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev)
-    {
-
-    }
-
-    void MemcachedDriver::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev)
-    {
-
-    }
-
-    void MemcachedDriver::handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev)
-    {
-
-    }
-
     void MemcachedDriver::handleProcessCommandLineArgs(events::ProcessConfigArgsRequestEvent* ev)
-    {
-
-    }
-
-    void MemcachedDriver::handleShutdownEvent(events::ShutDownRequestEvent* ev)
-    {
-
-    }
-
-    void MemcachedDriver::handleBackupEvent(events::BackupRequestEvent* ev)
-    {
-
-    }
-
-    void MemcachedDriver::handleExportEvent(events::ExportRequestEvent* ev)
     {
 
     }

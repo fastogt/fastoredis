@@ -248,6 +248,14 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::changePassword(const QString& oldPassword, const QString& newPassword)
+    {
+        EventsInfo::ChangePasswordRequest req(common::convertToString(oldPassword), common::convertToString(newPassword));
+        emit startedChangePassword(req);
+        QEvent *ev = new events::ChangePasswordRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::serverInfo()
     {
         EventsInfo::ServerInfoRequest req;
@@ -364,6 +372,10 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(ExportResponceEvent::EventType)){
             ExportResponceEvent *ev = static_cast<ExportResponceEvent*>(event);
             handleExportEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ChangePasswordResponceEvent::EventType)){
+            ChangePasswordResponceEvent *ev = static_cast<ChangePasswordResponceEvent*>(event);
+            handleChangePasswordEvent(ev);
         }
         else if (type == static_cast<QEvent::Type>(LoadDatabaseContentResponceEvent::EventType)){
             LoadDatabaseContentResponceEvent *ev = static_cast<LoadDatabaseContentResponceEvent*>(event);
@@ -484,6 +496,16 @@ namespace fastoredis
         emit finishedExport(v);
     }
 
+    void IServer::handleChangePasswordEvent(events::ChangePasswordResponceEvent* ev)
+    {
+        using namespace events;
+        ChangePasswordResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedChangePassword(v);
+    }
 
     void IServer::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev)
     {
