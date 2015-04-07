@@ -7,3 +7,6 @@
 [submodule "src/common"]
 	path = src/common
 	url = https://github.com/fasto/common.git
+[submodule "cmake"]
+	path = cmake
+	url = https://github.com/fasto/cmake.git
