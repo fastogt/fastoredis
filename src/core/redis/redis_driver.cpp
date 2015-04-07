@@ -1534,10 +1534,7 @@ namespace fastoredis
                 return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
             }
 
-            void *_reply;
-            redisReply *reply;
-            int output = 1;
-
+            void *_reply = NULL;
             if (redisGetReply(context, &_reply) != REDIS_OK) {
                 if (config.shutdown){
                     return common::make_error_value("Interrupted connect.", common::ErrorValue::E_INTERRUPTED);
@@ -1554,7 +1551,7 @@ namespace fastoredis
                 return cliPrintContextError(); /* avoid compiler warning */
             }
 
-            reply = static_cast<redisReply*>(_reply);
+            redisReply *reply = static_cast<redisReply*>(_reply);
             config.last_cmd_type = reply->type;
 
             if (config.cluster_mode && reply->type == REDIS_REPLY_ERROR &&
@@ -1562,8 +1559,6 @@ namespace fastoredis
             {
                 char *p = reply->str, *s;
                 int slot;
-
-                output = 0;
 
                 s = strchr(p,' ');      /* MOVED[S]3999 127.0.0.1:6381 */
                 p = strchr(s+1,' ');    /* MOVED[S]3999[P]127.0.0.1:6381 */
@@ -1579,19 +1574,17 @@ namespace fastoredis
                 FastoObject* child = new FastoObject(out, val, config.mb_delim);
                 out->addChildren(child);
                 config.cluster_reissue_command = 1;
+
+                freeReplyObject(reply);
+                return common::ErrorValueSPtr();
             }
 
-            common::ErrorValueSPtr er;
-            if (output) {
-                er = cliFormatReplyRaw(out, reply);
-            }
-
+            common::ErrorValueSPtr er = cliFormatReplyRaw(out, reply);
             freeReplyObject(reply);
-
             return er;
         }
 
-        common::ErrorValueSPtr cliSendCommand(FastoObject* out, int argc, char **argv, int repeat) WARN_UNUSED_RESULT
+        common::ErrorValueSPtr cliSendCommand(FastoObject* out, int argc, char **argv) WARN_UNUSED_RESULT
         {
             DCHECK(out);
             if(!out){
@@ -1599,8 +1592,6 @@ namespace fastoredis
             }
 
             char *command = argv[0];
-            size_t *argvlen;
-            //int output_raw = 0;
 
             if (!strcasecmp(command,"help") || !strcasecmp(command,"?")) {
                 return cliOutputHelp(out, --argc, ++argv);
@@ -1610,78 +1601,63 @@ namespace fastoredis
                 return common::make_error_value("Not connected", common::Value::E_ERROR);
             }
 
-            //output_raw = 0;
-            if (!strcasecmp(command,"info") ||
-                (argc == 2 && !strcasecmp(command,"cluster") &&
-                              (!strcasecmp(argv[1],"nodes") ||
-                               !strcasecmp(argv[1],"info"))) ||
-                (argc == 2 && !strcasecmp(command,"client") &&
-                               !strcasecmp(argv[1],"list")) ||
-                (argc == 3 && !strcasecmp(command,"latency") &&
-                               !strcasecmp(argv[1],"graph")) ||
-                (argc == 2 && !strcasecmp(command,"latency") &&
-                               !strcasecmp(argv[1],"doctor")))
-            {
-                //output_raw = 1;
-            }
-
             if (!strcasecmp(command,"shutdown")) config.shutdown = 1;
             if (!strcasecmp(command,"monitor")) config.monitor_mode = 1;
-            if (!strcasecmp(command,"subscribe") ||
-                !strcasecmp(command,"psubscribe")) config.pubsub_mode = 1;
-            if (!strcasecmp(command,"sync") ||
-                !strcasecmp(command,"psync")) config.slave_mode = 1;
+            if (!strcasecmp(command,"subscribe") || !strcasecmp(command,"psubscribe")) config.pubsub_mode = 1;
+            if (!strcasecmp(command,"sync") || !strcasecmp(command,"psync")) config.slave_mode = 1;
 
             /* Setup argument length */
-            argvlen = (size_t*)malloc(argc*sizeof(size_t));
-            for (int j = 0; j < argc; j++)
+            size_t* argvlen = (size_t*)malloc(argc * sizeof(size_t));
+            for (int j = 0; j < argc; j++){
                 argvlen[j] = sdslen(argv[j]);
+            }
 
-            while(repeat--) {
-                redisAppendCommandArgv(context,argc,(const char**)argv,argvlen);
-                while (config.monitor_mode) {
+            redisAppendCommandArgv(context, argc, (const char**)argv, argvlen);
+            while (config.monitor_mode) {
+                common::ErrorValueSPtr er = cliReadReply(out);
+                if (er){
+                    free(argvlen);
+                    return er;
+                }
+            }
+
+            if (config.pubsub_mode) {
+                while (1) {
                     common::ErrorValueSPtr er = cliReadReply(out);
                     if (er){
                         free(argvlen);
                         return er;
                     }
                 }
+            }
 
-                if (config.pubsub_mode) {
-                    while (1) {
-                        common::ErrorValueSPtr er = cliReadReply(out);
-                        if (er){
-                            return er;
-                        }
+            if (config.slave_mode) {
+                common::ErrorValueSPtr er = slaveMode(out);
+                config.slave_mode = 0;
+                free(argvlen);
+                return er;  /* Error = slaveMode lost connection to master */
+            }
+
+            common::ErrorValueSPtr er = cliReadReply(out);
+            if (er) {
+                free(argvlen);
+                return er;
+            }
+            else {
+                /* Store database number when SELECT was successfully executed. */
+                if (!strcasecmp(command, "select") && argc == 2) {
+                    config.dbnum = atoi(argv[1]);
+                }
+                else if (!strcasecmp(command, "auth") && argc == 2) {
+                    er = cliSelect();
+                    if(er){
+                        free(argvlen);
+                        return er;
                     }
                 }
-
-                if (config.slave_mode) {
-                    common::ErrorValueSPtr er = slaveMode(out);
-                    config.slave_mode = 0;
-                    free(argvlen);
-                    return er;  /* Error = slaveMode lost connection to master */
-                }
-
-                common::ErrorValueSPtr er = cliReadReply(out);
-                if (er) {
-                    free(argvlen);
-                    return er;
-                } else {
-                    /* Store database number when SELECT was successfully executed. */
-                    if (!strcasecmp(command,"select") && argc == 2) {
-                        config.dbnum = atoi(argv[1]);
-                    } else if (!strcasecmp(command,"auth") && argc == 2) {
-                        er = cliSelect();
-                        if(er){
-                            free(argvlen);
-                            return er;
-                        }
-                    }
-                }
-                if (config.interval){
-                    common::utils::usleep(config.interval);
-                }
+            }
+            if (config.interval){
+                common::utils::usleep(config.interval);
             }
 
             free(argvlen);
@@ -1692,11 +1668,13 @@ namespace fastoredis
         {
             //DCHECK(cmd);
             if(!cmd){
-                return common::make_error_value("Invalid input argument", common::ErrorValue::E_ERROR);
+                return common::make_error_value("Invalid input command", common::ErrorValue::E_ERROR);
             }
 
-            const std::string command = cmd->cmd()->inputCommand();
-            common::Value::CommandType type = cmd->cmd()->commandType();
+            common::CommandValue* cmdc = cmd->cmd();
+
+            const std::string command = cmdc->inputCommand();
+            common::Value::CommandType type = cmdc->commandType();
 
             if(command.empty()){
                 return common::make_error_value("Command empty", common::ErrorValue::E_ERROR);
@@ -1705,9 +1683,12 @@ namespace fastoredis
             LOG_COMMAND(Command(command, type));
 
             common::ErrorValueSPtr er;
-            if (command[0] != '\0') {
-                int argc;
-                sds *argv = sdssplitargs(command.c_str(), &argc);
+
+            const char* ccommand = common::utils::c_strornull(command);
+
+            if (ccommand) {
+                int argc = 0;
+                sds *argv = sdssplitargs(ccommand, &argc);
 
                 if (argv == NULL) {
                     common::StringValue *val = common::Value::createStringValue("Invalid argument(s)");
@@ -1716,53 +1697,20 @@ namespace fastoredis
                 }
                 else if (argc > 0)
                 {
-                    if (strcasecmp(argv[0], "quit") == 0 || strcasecmp(argv[0], "exit") == 0)
-                    {
+                    if (strcasecmp(argv[0], "quit") == 0 || strcasecmp(argv[0], "exit") == 0){
                         config.shutdown = 1;
                     }
                     else if (argc == 3 && !strcasecmp(argv[0], "connect")) {
                         config.hostip = argv[1];
                         config.hostport = atoi(argv[2]);
-                        er = cliConnect(1);
-                        if(er){
-                            return er;
-                        }
+                        sdsfreesplitres(argv, argc);
+                        return cliConnect(1);
                     }
                     else {
-                        int repeat, skipargs = 0;
-
-                        repeat = atoi(argv[0]);
-                        if (argc > 1 && repeat) {
-                            skipargs = 1;
-                        } else {
-                            repeat = 1;
-                        }
-
-                        while (1) {
-                            config.cluster_reissue_command = 0;
-                            er = cliSendCommand(cmd, argc-skipargs, argv+skipargs, repeat);
-                            if (er)
-                            {
-                                er = cliConnect(1);
-
-                                /* If we still cannot send the command print error.
-                                * We'll try to reconnect the next time. */
-                                er = cliSendCommand(cmd, argc-skipargs, argv+skipargs, repeat);
-                                if (er){
-                                    sdsfreesplitres(argv,argc);
-                                    return er;
-                                }
-                            }
-                            /* Issue the command again if we got redirected in cluster mode */
-                            if (config.cluster_mode && config.cluster_reissue_command) {
-                                er = cliConnect(1);
-                            } else {
-                                break;
-                            }
-                        }
+                        er = cliSendCommand(cmd, argc, argv);
                     }
                 }
-                sdsfreesplitres(argv,argc);
+                sdsfreesplitres(argv, argc);
             }
 
             return er;
