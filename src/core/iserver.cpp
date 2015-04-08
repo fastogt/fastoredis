@@ -261,6 +261,14 @@ namespace fastoredis
         notify(ev);
     }
 
+    void IServer::setMaxConnection(int maxCon)
+    {
+        EventsInfo::ChangeMaxConnectionRequest req(maxCon);
+        emit startedChangeMaxConnection(req);
+        QEvent *ev = new events::ChangeMaxConnectionRequestEvent(this, req);
+        notify(ev);
+    }
+
     void IServer::serverInfo()
     {
         EventsInfo::ServerInfoRequest req;
@@ -381,6 +389,10 @@ namespace fastoredis
         else if (type == static_cast<QEvent::Type>(ChangePasswordResponceEvent::EventType)){
             ChangePasswordResponceEvent *ev = static_cast<ChangePasswordResponceEvent*>(event);
             handleChangePasswordEvent(ev);
+        }
+        else if (type == static_cast<QEvent::Type>(ChangeMaxConnectionResponceEvent::EventType)){
+            ChangeMaxConnectionResponceEvent *ev = static_cast<ChangeMaxConnectionResponceEvent*>(event);
+            handleChangeMaxConnection(ev);
         }
         else if (type == static_cast<QEvent::Type>(LoadDatabaseContentResponceEvent::EventType)){
             LoadDatabaseContentResponceEvent *ev = static_cast<LoadDatabaseContentResponceEvent*>(event);
@@ -510,6 +522,17 @@ namespace fastoredis
             LOG_ERROR(er, true);
         }
         emit finishedChangePassword(v);
+    }
+
+    void IServer::handleChangeMaxConnection(events::ChangeMaxConnectionResponceEvent* ev)
+    {
+        using namespace events;
+        ChangeMaxConnectionResponceEvent::value_type v = ev->value();
+        common::ErrorValueSPtr er(v.errorInfo());
+        if(er && er->isError()){
+            LOG_ERROR(er, true);
+        }
+        emit finishedChangeMaxConnection(v);
     }
 
     void IServer::handleLoadDatabaseInfosEvent(events::LoadDatabasesInfoResponceEvent* ev)

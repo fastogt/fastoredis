@@ -78,7 +78,8 @@ namespace fastoredis
             typename event_request_type::value_type res(ev->value());
             common::ErrorValueSPtr er = common::make_error_value("Sorry, but now " PROJECT_NAME_TITLE " not supported this command.", common::ErrorValue::E_ERROR);
             res.setErrorInfo(er);
-            IDriver::reply(esender, new event_responce_type(sender, res));
+            event_responce_type* resp = new event_responce_type(sender, res);
+            IDriver::reply(esender, resp);
             notifyProgressImpl(sender, esender, 100);
         }
     }
@@ -244,6 +245,10 @@ namespace fastoredis
             ChangePasswordRequestEvent *ev = static_cast<ChangePasswordRequestEvent*>(event);
             handleChangePasswordEvent(ev);
         }
+        else if (type == static_cast<QEvent::Type>(ChangeMaxConnectionRequestEvent::EventType)){
+            ChangeMaxConnectionRequestEvent *ev = static_cast<ChangeMaxConnectionRequestEvent*>(event);
+            handleChangeMaxConnectionEvent(ev);
+        }
         else if (type == static_cast<QEvent::Type>(LoadDatabaseContentRequestEvent::EventType)){
             LoadDatabaseContentRequestEvent *ev = static_cast<LoadDatabaseContentRequestEvent*>(event);
             handleLoadDatabaseContentEvent(ev);
@@ -340,6 +345,11 @@ namespace fastoredis
     void IDriver::handleChangePasswordEvent(events::ChangePasswordRequestEvent* ev)
     {
         replyNotImplementedYet<events::ChangePasswordRequestEvent, events::ChangePasswordResponceEvent>(this, ev);
+    }
+
+    void IDriver::handleChangeMaxConnectionEvent(events::ChangeMaxConnectionRequestEvent* ev)
+    {
+        replyNotImplementedYet<events::ChangeMaxConnectionRequestEvent, events::ChangeMaxConnectionResponceEvent>(this, ev);
     }
 
     IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text)

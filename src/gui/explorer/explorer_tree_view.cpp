@@ -5,6 +5,7 @@
 #include <QHeaderView>
 #include <QAction>
 #include <QFileDialog>
+#include <QInputDialog>
 
 #include "gui/explorer/explorer_tree_model.h"
 
@@ -49,6 +50,9 @@ namespace fastoredis
 
         setServerPassword_ = new QAction(this);
         VERIFY(connect(setServerPassword_, &QAction::triggered, this, &ExplorerTreeView::openSetPasswordServerDialog));
+
+        setMaxClientConnection_ = new QAction(this);
+        VERIFY(connect(setMaxClientConnection_, &QAction::triggered, this, &ExplorerTreeView::openMaxClientSetDialog));
 
         historyServerAction_ = new QAction(this);
         VERIFY(connect(historyServerAction_, &QAction::triggered, this, &ExplorerTreeView::openHistoryServerDialog));
@@ -203,6 +207,9 @@ namespace fastoredis
 
                 setServerPassword_->setEnabled(isAuth);
                 menu.addAction(setServerPassword_);
+
+                setMaxClientConnection_->setEnabled(isAuth);
+                menu.addAction(setMaxClientConnection_);
 
                 menu.addAction(historyServerAction_);
                 closeServerAction_->setEnabled(!isClusterMember);
@@ -367,6 +374,31 @@ namespace fastoredis
 
         ChangePasswordServerDialog pass(QString("Change password for %1 server").arg(node->name()), server, this);
         pass.exec();
+    }
+
+    void ExplorerTreeView::openMaxClientSetDialog()
+    {
+        QModelIndex sel = selectedIndex();
+        if(!sel.isValid()){
+            return;
+        }
+
+        ExplorerServerItem *node = common::utils_qt::item<ExplorerServerItem*>(sel);
+        if(!node){
+            return;
+        }
+
+        IServerSPtr server = node->server();
+        if(!server){
+            return;
+        }
+
+        bool ok;
+        int maxcl = QInputDialog::getInt(this, tr("Set max connection on %1 server").arg(server->name()),
+                                             tr("Maximum connection:"), 10000, 1, INT32_MAX, 100, &ok);
+        if(ok){
+            server->setMaxConnection(maxcl);
+        }
     }
 
     void ExplorerTreeView::openHistoryServerDialog()
@@ -769,6 +801,7 @@ namespace fastoredis
         infoServerAction_->setText(trInfo);
         propertyServerAction_->setText(trProperty);
         setServerPassword_->setText(trSetPassword);
+        setMaxClientConnection_->setText(trSetMaxNumberOfClients);
         historyServerAction_->setText(trHistory);
         closeServerAction_->setText(trClose);
         closeClusterAction_->setText(trClose);

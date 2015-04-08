@@ -52,6 +52,7 @@ namespace fastoredis
         const QString trName = QObject::tr("Name");
         const QString trAddress = QObject::tr("Address");
         const QString trPassword = QObject::tr("Password");
+        const QString trSetMaxNumberOfClients = QObject::tr("Set maximum number of clients");
         const QString trHide = QObject::tr("Hide");
         const QString trShow = QObject::tr("Show");
         const QString trJson = QObject::tr("Json");

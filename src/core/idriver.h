@@ -73,6 +73,7 @@ namespace fastoredis
         virtual void handleBackupEvent(events::BackupRequestEvent* ev);
         virtual void handleExportEvent(events::ExportRequestEvent* ev);
         virtual void handleChangePasswordEvent(events::ChangePasswordRequestEvent* ev);
+        virtual void handleChangeMaxConnectionEvent(events::ChangeMaxConnectionRequestEvent* ev);
 
         // handle database events
         virtual void handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev);

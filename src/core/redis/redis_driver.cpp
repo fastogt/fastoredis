@@ -75,7 +75,8 @@ extern "C" {
 #define GET_SERVER_TYPE "CLUSTER NODES"
 #define SHUTDOWN "shutdown"
 #define GET_PASSWORD "CONFIG get requirepass"
-#define SET_PASSWORD_1ARGS_S "CONFIG set requirepass %s"
+#define SET_PASSWORD_1ARGS_S "CONFIG SET requirepass %s"
+#define SET_MAX_CONNECTIONS_1ARGS_I "CONFIG SET maxclients %d"
 #define GET_PROPERTY_SERVER "CONFIG GET *"
 #define STAT_MODE_REQUEST "STAT"
 #define SCAN_MODE_REQUEST "SCAN"
@@ -1972,12 +1973,29 @@ namespace fastoredis
             if(er){
                 res.setErrorInfo(er);
             }
-            else{
-
-            }
 
         notifyProgress(sender, 75);
             reply(sender, new events::ChangePasswordResponceEvent(this, res));
+        notifyProgress(sender, 100);
+    }
+
+    void RedisDriver::handleChangeMaxConnectionEvent(events::ChangeMaxConnectionRequestEvent* ev)
+    {
+        QObject *sender = ev->sender();
+        notifyProgress(sender, 0);
+            events::ChangeMaxConnectionRequestEvent::value_type res(ev->value());
+        notifyProgress(sender, 25);
+            char patternResult[1024] = {0};
+            common::SNPrintf(patternResult, sizeof(patternResult), SET_MAX_CONNECTIONS_1ARGS_I, res.maxConnection_);
+            FastoObjectIPtr root = FastoObject::createRoot(patternResult);
+            RedisCommand* cmd = createCommand(root, patternResult, common::Value::C_INNER);
+            common::ErrorValueSPtr er = impl_->execute(cmd);
+            if(er){
+                res.setErrorInfo(er);
+            }
+
+        notifyProgress(sender, 75);
+            reply(sender, new events::ChangeMaxConnectionResponceEvent(this, res));
         notifyProgress(sender, 100);
     }
 

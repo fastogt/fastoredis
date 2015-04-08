@@ -65,6 +65,9 @@ namespace fastoredis
         typedef common::utils_qt::Event<EventsInfo::ChangePasswordRequest, QEvent::User + 39> ChangePasswordRequestEvent;
         typedef common::utils_qt::Event<EventsInfo::ChangePasswordResponce, QEvent::User + 40> ChangePasswordResponceEvent;
 
+        typedef common::utils_qt::Event<EventsInfo::ChangeMaxConnectionRequest, QEvent::User + 41> ChangeMaxConnectionRequestEvent;
+        typedef common::utils_qt::Event<EventsInfo::ChangeMaxConnectionResponce, QEvent::User + 42> ChangeMaxConnectionResponceEvent;
+
         typedef common::utils_qt::Event<EventsInfo::ProgressInfoResponce, QEvent::User + 100> ProgressResponceEvent;
     }
 }

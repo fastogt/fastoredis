@@ -30,7 +30,7 @@ namespace fastoredis
                 : ConnectInfoRequest
         {
             typedef ConnectInfoRequest base_class;
-            ConnectInfoResponce(const base_class &request, const error_type &er = error_type());
+            ConnectInfoResponce(const base_class &request);
         };
 
         struct ShutDownInfoRequest
@@ -44,7 +44,7 @@ namespace fastoredis
                 : ShutDownInfoRequest
         {
             typedef ShutDownInfoRequest base_class;
-            ShutDownInfoResponce(const base_class &request, const error_type &er = error_type());
+            ShutDownInfoResponce(const base_class &request);
         };
 
         struct BackupInfoRequest
@@ -59,7 +59,7 @@ namespace fastoredis
                 : EventInfoBase
         {
             typedef EventInfoBase base_class;
-            BackupInfoResponce(const base_class &request, const error_type &er = error_type());
+            BackupInfoResponce(const base_class &request);
         };
 
         struct ExportInfoRequest
@@ -74,7 +74,7 @@ namespace fastoredis
                 : ExportInfoRequest
         {
             typedef ExportInfoRequest base_class;
-            ExportInfoResponce(const base_class &request, const error_type &er = error_type());
+            ExportInfoResponce(const base_class &request);
         };
 
         struct ChangePasswordRequest
@@ -90,7 +90,22 @@ namespace fastoredis
                 : ChangePasswordRequest
         {
             typedef ChangePasswordRequest base_class;
-            ChangePasswordResponce(const base_class& request, const error_type &er = error_type());
+            ChangePasswordResponce(const base_class& request);
+        };
+
+        struct ChangeMaxConnectionRequest
+                : public EventInfoBase
+        {
+            typedef EventInfoBase base_class;
+            ChangeMaxConnectionRequest(int maxConnection, const error_type &er = error_type());
+            int maxConnection_;
+        };
+
+        struct ChangeMaxConnectionResponce
+                : ChangeMaxConnectionRequest
+        {
+            typedef ChangeMaxConnectionRequest base_class;
+            ChangeMaxConnectionResponce(const base_class& request);
         };
 
         struct ProcessConfigArgsInfoRequest
@@ -104,7 +119,7 @@ namespace fastoredis
                 : ProcessConfigArgsInfoRequest
         {
             typedef ProcessConfigArgsInfoRequest base_class;
-            ProcessConfigArgsInfoResponce(const base_class &request, const error_type &er = error_type());
+            ProcessConfigArgsInfoResponce(const base_class &request);
         };
 
         struct DiscoveryInfoRequest
@@ -118,7 +133,7 @@ namespace fastoredis
                 : DiscoveryInfoRequest
         {
             typedef DiscoveryInfoRequest base_class;
-            DiscoveryInfoResponce(const base_class &request, const error_type &er = error_type());
+            DiscoveryInfoResponce(const base_class &request);
 
             ServerDiscoveryInfoSPtr info_;
         };
@@ -169,7 +184,7 @@ namespace fastoredis
                 : DisonnectInfoRequest
         {
             typedef DisonnectInfoRequest base_class;
-            DisConnectInfoResponce(const base_class &request, const error_type &er = error_type());
+            DisConnectInfoResponce(const base_class &request);
         };
 
         struct ExecuteInfoRequest
@@ -194,7 +209,7 @@ namespace fastoredis
         {
             typedef LoadDatabasesInfoRequest base_class;
             typedef std::vector<DataBaseInfoSPtr> database_info_cont_type;
-            LoadDatabasesInfoResponce(const base_class &request, const error_type &er = error_type());
+            LoadDatabasesInfoResponce(const base_class &request);
 
             database_info_cont_type databases_;
         };
@@ -217,7 +232,7 @@ namespace fastoredis
         {
             typedef LoadDatabaseContentRequest base_class;
             typedef std::vector<NKey> keys_cont_type;
-            LoadDatabaseContentResponce(const base_class &request, const error_type &er = error_type());
+            LoadDatabaseContentResponce(const base_class &request);
 
             keys_cont_type keys_;
             uint32_t cursorOut_;
@@ -236,7 +251,7 @@ namespace fastoredis
                 : SetDefaultDatabaseRequest
         {
             typedef SetDefaultDatabaseRequest base_class;
-            SetDefaultDatabaseResponce(const base_class &request, const error_type &er = error_type());
+            SetDefaultDatabaseResponce(const base_class &request);
         };
 
         struct ServerInfoRequest
@@ -250,7 +265,7 @@ namespace fastoredis
                 : ServerInfoRequest
         {
             typedef ServerInfoRequest base_class;
-            ServerInfoResponce(const base_class &request, const error_type &er = error_type());
+            ServerInfoResponce(const base_class &request);
             ~ServerInfoResponce();
 
             ServerInfoSPtr info() const;
@@ -272,7 +287,7 @@ namespace fastoredis
         {
             typedef ServerInfoHistoryRequest base_class;
             typedef std::vector<ServerInfoSnapShoot> infos_container_type;
-            ServerInfoHistoryResponce(const base_class &request, const error_type &er = error_type());
+            ServerInfoHistoryResponce(const base_class &request);
 
             infos_container_type infos() const;
             void setInfos(const infos_container_type& inf);
@@ -292,7 +307,7 @@ namespace fastoredis
                 : ServerPropertyInfoRequest
         {
             typedef ServerPropertyInfoRequest base_class;
-            ServerPropertyInfoResponce(const base_class &request, const error_type &er = error_type());
+            ServerPropertyInfoResponce(const base_class &request);
 
             ServerPropertyInfo info_;
         };
@@ -310,7 +325,7 @@ namespace fastoredis
                 : ChangeServerPropertyInfoRequest
         {
             typedef ChangeServerPropertyInfoRequest base_class;
-            ChangeServerPropertyInfoResponce(const base_class &request, const error_type &er = error_type());
+            ChangeServerPropertyInfoResponce(const base_class &request);
 
             bool isChange_;
         };
@@ -329,7 +344,7 @@ namespace fastoredis
                 : ChangeDbValueRequest
         {
             typedef ChangeDbValueRequest base_class;
-            ChangeDbValueResponce(const base_class &request, const error_type &er = error_type());
+            ChangeDbValueResponce(const base_class &request);
 
             bool isChange_;
         };
@@ -348,7 +363,7 @@ namespace fastoredis
                 : CommandRequest
         {
             typedef CommandRequest base_class;
-            CommandResponce(const base_class &request, const error_type &er = error_type());
+            CommandResponce(const base_class &request);
         };
 
         struct ProgressInfoResponce

@@ -28,6 +28,7 @@ namespace fastoredis
         extern const QString trTools;
         extern const QString trProperty;
         extern const QString trSetPassword;
+        extern const QString trSetMaxNumberOfClients;
         extern const QString trStop;
         extern const QString trError;
         extern const QString trLogs;

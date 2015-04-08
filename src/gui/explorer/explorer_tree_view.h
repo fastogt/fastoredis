@@ -36,6 +36,7 @@ namespace fastoredis
         void openInfoServerDialog();
         void openPropertyServerDialog();
         void openSetPasswordServerDialog();
+        void openMaxClientSetDialog();
         void openHistoryServerDialog();
         void closeServerConnection();
         void closeClusterConnection();
@@ -85,6 +86,7 @@ namespace fastoredis
         QAction* infoServerAction_;
         QAction* propertyServerAction_;
         QAction* setServerPassword_;
+        QAction* setMaxClientConnection_;
         QAction* historyServerAction_;
         QAction* closeServerAction_;
         QAction* closeClusterAction_;

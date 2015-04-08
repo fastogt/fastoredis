@@ -4,6 +4,7 @@
 - Redis database size
 - Update hiredis and redis-cli sources
 - Create Redis server password
+- Setup max connection on server
 
 0.7.2 / March 28, 2015
 [Alexandr Topilski]
