@@ -11,6 +11,7 @@
 
 #include "common/file_system.h"
 #include "common/time.h"
+#include "common/sprintf.h"
 
 namespace
 {
@@ -71,12 +72,16 @@ namespace fastoredis
         }
 
         template<typename event_request_type, typename event_responce_type>
-        void replyNotImplementedYet(IDriver* sender, event_request_type* ev)
+        void replyNotImplementedYet(IDriver* sender, event_request_type* ev, const char* eventCommandText)
         {
             QObject* esender = ev->sender();
             notifyProgressImpl(sender, esender, 0);
             typename event_request_type::value_type res(ev->value());
-            common::ErrorValueSPtr er = common::make_error_value("Sorry, but now " PROJECT_NAME_TITLE " not supported this command.", common::ErrorValue::E_ERROR);
+
+            char patternResult[1024] = {0};
+            common::SNPrintf(patternResult, sizeof(patternResult), "Sorry, but now " PROJECT_NAME_TITLE " not supported %s.", eventCommandText);
+
+            common::ErrorValueSPtr er = common::make_error_value(patternResult, common::ErrorValue::E_ERROR);
             res.setErrorInfo(er);
             event_responce_type* resp = new event_responce_type(sender, res);
             IDriver::reply(esender, resp);
@@ -314,42 +319,42 @@ namespace fastoredis
 
     void IDriver::handleLoadServerPropertyEvent(events::ServerPropertyInfoRequestEvent* ev)
     {
-        replyNotImplementedYet<events::ServerPropertyInfoRequestEvent, events::ServerPropertyInfoResponceEvent>(this, ev);
+        replyNotImplementedYet<events::ServerPropertyInfoRequestEvent, events::ServerPropertyInfoResponceEvent>(this, ev, "server property command");
     }
 
     void IDriver::handleServerPropertyChangeEvent(events::ChangeServerPropertyInfoRequestEvent* ev)
     {
-        replyNotImplementedYet<events::ChangeServerPropertyInfoRequestEvent, events::ChangeServerPropertyInfoResponceEvent>(this, ev);
+        replyNotImplementedYet<events::ChangeServerPropertyInfoRequestEvent, events::ChangeServerPropertyInfoResponceEvent>(this, ev, "change server property command");
     }
 
     void IDriver::handleDbValueChangeEvent(events::ChangeDbValueRequestEvent* ev)
     {
-        replyNotImplementedYet<events::ChangeDbValueRequestEvent, events::ChangeDbValueResponceEvent>(this, ev);
+        replyNotImplementedYet<events::ChangeDbValueRequestEvent, events::ChangeDbValueResponceEvent>(this, ev, "change dbvalue command");
     }
 
     void IDriver::handleShutdownEvent(events::ShutDownRequestEvent* ev)
     {
-        replyNotImplementedYet<events::ShutDownRequestEvent, events::ShutDownResponceEvent>(this, ev);
+        replyNotImplementedYet<events::ShutDownRequestEvent, events::ShutDownResponceEvent>(this, ev, "shutdown command");
     }
 
     void IDriver::handleBackupEvent(events::BackupRequestEvent* ev)
     {
-        replyNotImplementedYet<events::BackupRequestEvent, events::BackupResponceEvent>(this, ev);
+        replyNotImplementedYet<events::BackupRequestEvent, events::BackupResponceEvent>(this, ev, "backup server command");
     }
 
     void IDriver::handleExportEvent(events::ExportRequestEvent* ev)
     {
-        replyNotImplementedYet<events::ExportRequestEvent, events::ExportResponceEvent>(this, ev);
+        replyNotImplementedYet<events::ExportRequestEvent, events::ExportResponceEvent>(this, ev, "export server command");
     }
 
     void IDriver::handleChangePasswordEvent(events::ChangePasswordRequestEvent* ev)
     {
-        replyNotImplementedYet<events::ChangePasswordRequestEvent, events::ChangePasswordResponceEvent>(this, ev);
+        replyNotImplementedYet<events::ChangePasswordRequestEvent, events::ChangePasswordResponceEvent>(this, ev, "change password command");
     }
 
     void IDriver::handleChangeMaxConnectionEvent(events::ChangeMaxConnectionRequestEvent* ev)
     {
-        replyNotImplementedYet<events::ChangeMaxConnectionRequestEvent, events::ChangeMaxConnectionResponceEvent>(this, ev);
+        replyNotImplementedYet<events::ChangeMaxConnectionRequestEvent, events::ChangeMaxConnectionResponceEvent>(this, ev, "change maximum connection command");
     }
 
     IDriver::RootLocker::RootLocker(IDriver* parent, QObject *reciver, const std::string &text)
