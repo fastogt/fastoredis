@@ -5,7 +5,7 @@
 
 #include "common/macros.h"
 
-#include "common/qt/gui/shortcuts.h"
+#include "gui/shortcuts.h"
 
 #include "translations/global.h"
 
@@ -15,26 +15,26 @@ namespace fastoredis
         : QTabBar(parent)
     {
         newShellAction_ = new QAction(this);
-        newShellAction_->setShortcut(common::qt::newTabKey);
+        newShellAction_->setShortcut(newTabKey);
         VERIFY(connect(newShellAction_, &QAction::triggered, this , &MainTabBar::createdNewTab));
 
         nextTabAction_ = new QAction(this);
-        nextTabAction_->setShortcut(common::qt::nextTabKey);
+        nextTabAction_->setShortcut(nextTabKey);
         VERIFY(connect(nextTabAction_, &QAction::triggered, this , &MainTabBar::nextTab));
 
         prevTabAction_ = new QAction(this);
-        prevTabAction_->setShortcut(common::qt::prevTabKey);
+        prevTabAction_->setShortcut(prevTabKey);
         VERIFY(connect(prevTabAction_, &QAction::triggered, this , &MainTabBar::prevTab));
 
         reloadShellAction_ = new QAction(this);
-        reloadShellAction_->setShortcut(common::qt::refreshKey);
+        reloadShellAction_->setShortcut(refreshKey);
         VERIFY(connect(reloadShellAction_, &QAction::triggered, this , &MainTabBar::reloadedTab));
 
         duplicateShellAction_ = new QAction(this);
         VERIFY(connect(duplicateShellAction_, &QAction::triggered, this , &MainTabBar::duplicatedTab));
 
         closeShellAction_ = new QAction(this);
-        closeShellAction_->setShortcut(common::qt::closeKey);
+        closeShellAction_->setShortcut(closeKey);
         VERIFY(connect(closeShellAction_, &QAction::triggered, this , &MainTabBar::closedTab));
 
         closeOtherShellsAction_ = new QAction(this);

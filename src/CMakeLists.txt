@@ -47,6 +47,7 @@ SET(HEADERS_GUI
     gui/dialogs/connection_listwidget_items.h
     gui/gui_factory.h
     gui/fasto_common_item.h
+    gui/shortcuts.h
 )
 SET(SOURCES_GUI
     gui/main_window.cpp
@@ -86,6 +87,7 @@ SET(SOURCES_GUI
     gui/fasto_common_model.cpp
     gui/fasto_table_view.cpp
     gui/fasto_common_item.cpp
+    gui/shortcuts.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC

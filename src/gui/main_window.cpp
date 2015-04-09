@@ -14,8 +14,8 @@
 #include "common/net/socket_tcp.h"
 #include "common/qt/convert_string.h"
 #include "common/qt/gui/app_style.h"
-#include "common/qt/gui/shortcuts.h"
 
+#include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
 #include "gui/dialogs/about_dialog.h"
 #include "gui/dialogs/preferences_dialog.h"
@@ -117,12 +117,12 @@ namespace fastoredis
 
         openAction_ = new QAction(this);
         openAction_->setIcon(GuiFactory::instance().openIcon());
-        openAction_->setShortcut(common::qt::openKey);
+        openAction_->setShortcut(openKey);
         VERIFY(connect(openAction_, &QAction::triggered, this, &MainWindow::open));
 
         // Exit action
         exitAction_ = new QAction(this);
-        exitAction_->setShortcut(common::qt::quitKey);
+        exitAction_->setShortcut(quitKey);
         VERIFY(connect(exitAction_, &QAction::triggered, this, &MainWindow::close));
 
         // File menu
@@ -167,7 +167,7 @@ namespace fastoredis
         QMenu *window = new QMenu(this);
         windowAction_ = menuBar()->addMenu(window);
         fullScreanAction_ = new QAction(this);
-        fullScreanAction_->setShortcut(common::qt::fullScreenKey);
+        fullScreanAction_->setShortcut(fullScreenKey);
         VERIFY(connect(fullScreanAction_, &QAction::triggered, this, &MainWindow::enterLeaveFullScreen));
         window->addAction(fullScreanAction_);
 
