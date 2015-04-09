@@ -8,7 +8,7 @@
 namespace fastoredis
 {
     class FastoCommonItem
-            : public TreeItem
+            : public common::qt::TreeItem
     {
     public:
         enum eColumn

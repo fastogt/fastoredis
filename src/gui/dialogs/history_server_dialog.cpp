@@ -24,7 +24,7 @@ namespace fastoredis
         setWindowIcon(GuiFactory::instance().icon(type_));
         setWindowTitle(title);
 
-        graphWidget_ = new GraphWidget;
+        graphWidget_ = new common::qt::GraphWidget;
         settingsGraph_ = new QWidget;
         QHBoxLayout *mainL = new QHBoxLayout;
 
@@ -66,7 +66,7 @@ namespace fastoredis
         splitter->addWidget(graphWidget_);
         setLayout(mainL);
 
-        glassWidget_ = new GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new common::qt::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
     }
 
     void ServerHistoryDialog::startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest& req)
@@ -130,7 +130,7 @@ namespace fastoredis
         unsigned char serverIndex = serverInfoGroupsNames_->currentIndex();
         QVariant var = serverInfoFields_->itemData(index);
         unsigned char indexIn = qvariant_cast<unsigned char>(var);
-        GraphWidget::nodes_container_type nodes;
+        common::qt::GraphWidget::nodes_container_type nodes;
         for(EventsInfo::ServerInfoHistoryResponce::infos_container_type::iterator it = infos_.begin(); it != infos_.end(); ++it){
             EventsInfo::ServerInfoHistoryResponce::infos_container_type::value_type val = *it;
             if(!val.isValid()){

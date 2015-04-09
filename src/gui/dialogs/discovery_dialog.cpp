@@ -115,7 +115,7 @@ namespace fastoredis
         setFixedSize(QSize(fix_width, fix_height));
         setLayout(mainLayout);
 
-        glassWidget_ = new GlassWidget(GuiFactory::instance().pathToLoadingGif(), trTryToConnect, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new common::qt::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trTryToConnect, 0.5, QColor(111, 111, 100), this);
         testConnection(connection);
     }
 

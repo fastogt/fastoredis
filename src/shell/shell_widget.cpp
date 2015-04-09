@@ -152,7 +152,7 @@ namespace fastoredis
         savebar->addAction(stopAction);
 
         const ConnectionMode mode = IntaractiveMode;
-        connectionMode_ = new IconLabel(GuiFactory::instance().modeIcon(mode), common::convertFromString<QString>(common::convertToString(mode)), iconSize);
+        connectionMode_ = new common::qt::IconLabel(GuiFactory::instance().modeIcon(mode), common::convertFromString<QString>(common::convertToString(mode)), iconSize);
 
         hlayout->addWidget(savebar);
 

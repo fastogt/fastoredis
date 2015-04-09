@@ -7,7 +7,7 @@
 namespace fastoredis
 {
     class FastoCommonModel
-            : public TreeModel
+            : public common::qt::TreeModel
     {
         Q_OBJECT
     public:

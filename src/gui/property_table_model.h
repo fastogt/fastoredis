@@ -7,7 +7,7 @@
 namespace fastoredis
 {
     struct PropertyTableItem
-            : public TableItem
+            : public common::qt::TableItem
     {
         enum eColumn
         {
@@ -22,7 +22,7 @@ namespace fastoredis
     };
 
     class PropertyTableModel
-            : public TableModel
+            : public common::qt::TableModel
     {
         Q_OBJECT
     public:

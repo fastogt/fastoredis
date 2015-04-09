@@ -22,7 +22,7 @@
 
 namespace
 {
-    fastoredis::FastoCommonItem* createItem(fastoredis::TreeItem* parent, const QString& key, fastoredis::FastoObject* item)
+    fastoredis::FastoCommonItem* createItem(common::qt::TreeItem* parent, const QString& key, fastoredis::FastoObject* item)
     {
         const std::string value = item->toString();
         return new fastoredis::FastoCommonItem(key, common::convertFromString<QString>(value), item->type(), parent, item);
@@ -49,7 +49,7 @@ namespace fastoredis
         textView_->setModel(commonModel_);
         textView_->setReadOnly(true);
 
-        timeLabel_ = new IconLabel(GuiFactory::instance().timeIcon(), "0", QSize(32, 32));
+        timeLabel_ = new common::qt::IconLabel(GuiFactory::instance().timeIcon(), "0", QSize(32, 32));
 
         QVBoxLayout* mainL = new QVBoxLayout;
         QHBoxLayout* topL = new QHBoxLayout;

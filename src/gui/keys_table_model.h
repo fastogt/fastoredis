@@ -7,7 +7,7 @@
 namespace fastoredis
 {
     class KeyTableItem
-            : public TableItem
+            : public common::qt::TableItem
     {
     public:
         enum eColumn
@@ -27,7 +27,7 @@ namespace fastoredis
     };
 
     class KeysTableModel
-            : public TableModel
+            : public common::qt::TableModel
     {
         Q_OBJECT
     public:

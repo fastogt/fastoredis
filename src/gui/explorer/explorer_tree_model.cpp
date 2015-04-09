@@ -375,7 +375,7 @@ namespace fastoredis
     {
         ExplorerClusterItem* cl = findClusterItem(cluster);
         if(!cl){
-            TreeItem *parent = dynamic_cast<TreeItem*>(root_);
+            common::qt::TreeItem *parent = dynamic_cast<common::qt::TreeItem*>(root_);
             DCHECK(parent);
             if(!parent){
                 return;
@@ -388,7 +388,7 @@ namespace fastoredis
 
     void ExplorerTreeModel::removeCluster(IClusterSPtr cluster)
     {
-        TreeItem *par = dynamic_cast<TreeItem*>(root_);
+        common::qt::TreeItem *par = dynamic_cast<common::qt::TreeItem*>(root_);
         DCHECK(par);
         if(!par){
             return;
@@ -408,7 +408,7 @@ namespace fastoredis
 
         ExplorerServerItem *serv = findServerItem(server.get());
         if(!serv){
-            TreeItem *parent = dynamic_cast<TreeItem*>(root_);
+            common::qt::TreeItem *parent = dynamic_cast<common::qt::TreeItem*>(root_);
             DCHECK(parent);
             if(!parent){
                 return;
@@ -421,7 +421,7 @@ namespace fastoredis
 
     void ExplorerTreeModel::removeServer(IServerSPtr server)
     {
-        TreeItem *par = dynamic_cast<TreeItem*>(root_);
+        common::qt::TreeItem *par = dynamic_cast<common::qt::TreeItem*>(root_);
         DCHECK(par);
         if(!par){
             return;
@@ -540,7 +540,7 @@ namespace fastoredis
 
     ExplorerClusterItem* ExplorerTreeModel::findClusterItem(IClusterSPtr cl)
     {
-        TreeItem *parent = dynamic_cast<TreeItem*>(root_);
+        common::qt::TreeItem *parent = dynamic_cast<common::qt::TreeItem*>(root_);
         DCHECK(parent);
         if(!parent){
             return NULL;
@@ -557,7 +557,7 @@ namespace fastoredis
 
     ExplorerServerItem* ExplorerTreeModel::findServerItem(IServer* server) const
     {
-        TreeItem *parent = dynamic_cast<TreeItem*>(root_);
+        common::qt::TreeItem *parent = dynamic_cast<common::qt::TreeItem*>(root_);
         DCHECK(parent);
         if(!parent){
             return NULL;

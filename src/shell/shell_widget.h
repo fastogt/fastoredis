@@ -9,10 +9,17 @@ class QAction;
 class QProgressBar;
 class QToolButton;
 
+namespace common
+{
+    namespace qt
+    {
+        class IconLabel;
+    }
+}
+
 namespace fastoredis
 {
     class FastoEditorShell;
-    class IconLabel;
 
     class BaseShellWidget
             : public QWidget
@@ -71,7 +78,7 @@ namespace fastoredis
         FastoEditorShell* input_;
 
         QProgressBar* workProgressBar_;
-        IconLabel* connectionMode_;
+        common::qt::IconLabel* connectionMode_;
         QString filePath_;
     };
 }

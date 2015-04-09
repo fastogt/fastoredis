@@ -6,9 +6,16 @@
 
 class QTableView;
 
+namespace common
+{
+    namespace qt
+    {
+        class GlassWidget;
+    }
+}
+
 namespace fastoredis
 {
-    class GlassWidget;
     class PropertyServerDialog
             : public QDialog
     {
@@ -31,7 +38,7 @@ namespace fastoredis
         virtual void showEvent(QShowEvent *e);
 
     private:
-        GlassWidget *glassWidget_;
+        common::qt::GlassWidget *glassWidget_;
         QTableView *propertyes_table_;
         const connectionTypes type_;       
     };

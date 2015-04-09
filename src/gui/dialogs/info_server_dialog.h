@@ -10,9 +10,16 @@
 
 class QLabel;
 
+namespace common
+{
+    namespace qt
+    {
+        class GlassWidget;
+    }
+}
+
 namespace fastoredis
 {
-    class GlassWidget;
     class InfoServerDialog
             : public QDialog
     {
@@ -41,7 +48,7 @@ namespace fastoredis
         void updateText(const SsdbServerInfo& serv);
         QLabel* serverTextInfo_;
         QLabel* hardwareTextInfo_;
-        GlassWidget* glassWidget_;
+        common::qt::GlassWidget* glassWidget_;
         const connectionTypes type_;
     };
 }

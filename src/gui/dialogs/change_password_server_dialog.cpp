@@ -48,7 +48,7 @@ namespace fastoredis
         setLayout(mainLayout);
 
         using namespace translations;
-        glassWidget_ = new GlassWidget(GuiFactory::instance().pathToLoadingGif(), trTryToChangePassword, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new common::qt::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trTryToChangePassword, 0.5, QColor(111, 111, 100), this);
     }
 
     void ChangePasswordServerDialog::tryToCreatePassword()

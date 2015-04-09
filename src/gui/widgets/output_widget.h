@@ -7,13 +7,20 @@
 class QAction;
 class QPushButton;
 
+namespace common
+{
+    namespace qt
+    {
+        class IconLabel;
+    }
+}
+
 namespace fastoredis
 {
     class FastoTextView;
     class FastoTreeView;
     class FastoTableView;
     class FastoCommonModel;
-    class IconLabel;
 
     class OutputWidget
             : public QWidget
@@ -39,7 +46,7 @@ namespace fastoredis
     private:
         void syncWithSettings();
         void updateTimeLabel(const EventsInfo::EventInfoBase& evinfo);
-        IconLabel* timeLabel_;
+        common::qt::IconLabel* timeLabel_;
         QPushButton* treeButton_;
         QPushButton* tableButton_;
         QPushButton* textButton_;

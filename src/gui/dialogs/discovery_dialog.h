@@ -9,9 +9,16 @@ class QMovie;
 class QLabel;
 class QTreeWidget;
 
+namespace common
+{
+    namespace qt
+    {
+        class GlassWidget;
+    }
+}
+
 namespace fastoredis
 {
-    class GlassWidget;
     class DiscoveryConnection
             : public QObject
     {
@@ -54,7 +61,7 @@ namespace fastoredis
     private:
         void testConnection(IConnectionSettingsBaseSPtr connection);
 
-        GlassWidget *glassWidget_;
+        common::qt::GlassWidget *glassWidget_;
         QLabel* executeTimeLabel_;
         QLabel* statusLabel_;
         QTreeWidget* listWidget_;

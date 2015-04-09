@@ -8,7 +8,7 @@
 namespace fastoredis
 {
     struct IExplorerTreeItem
-            : public TreeItem
+            : public common::qt::TreeItem
     {
         enum eColumn
         {
@@ -115,7 +115,7 @@ namespace fastoredis
     };
 
     class ExplorerTreeModel
-            : public TreeModel
+            : public common::qt::TreeModel
     {
         Q_OBJECT
     public:
