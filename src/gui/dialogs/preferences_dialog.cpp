@@ -10,7 +10,8 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-#include "gui/app_style.h"
+#include "common/qt/gui/app_style.h"
+
 #include "gui/gui_factory.h"
 
 #include "translations/translations.h"
@@ -33,7 +34,7 @@ namespace fastoredis
         QHBoxLayout *styleswLayout = new QHBoxLayout;
         stylesLabel_ = new QLabel;
         stylesComboBox_ = new QComboBox;
-        stylesComboBox_->addItems(getSupportedStyles());
+        stylesComboBox_->addItems(common::qt::getSupportedStyles());
         styleswLayout->addWidget(stylesLabel_);
         styleswLayout->addWidget(stylesComboBox_);
 
@@ -105,7 +106,7 @@ namespace fastoredis
         QString newLang = translations::applyLanguage(languagesComboBox_->currentText());
         SettingsManager::instance().setCurrentLanguage(newLang);
 
-        applyStyle(stylesComboBox_->currentText());
+        common::qt::applyStyle(stylesComboBox_->currentText());
         SettingsManager::instance().setCurrentStyle(stylesComboBox_->currentText());
 
         const std::string defCombo = common::convertToString(defaultViewComboBox_->currentText());

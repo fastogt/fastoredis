@@ -15,7 +15,8 @@
 
 #include "core/settings_manager.h"
 
-#include "gui/shortcuts.h"
+#include "common/qt/gui/shortcuts.h"
+
 #include "gui/gui_factory.h"
 #include "common/qt/gui/icon_label.h"
 
@@ -143,7 +144,7 @@ namespace fastoredis
         savebar->addAction(disConnectAction_);
 
         executeAction_ = new QAction(GuiFactory::instance().executeIcon(), trExecute, savebar);
-        executeAction_->setShortcut(executeKey);
+        executeAction_->setShortcut(common::qt::executeKey);
         VERIFY(connect(executeAction_, &QAction::triggered, this, &BaseShellWidget::execute));
         savebar->addAction(executeAction_);
 

@@ -4,7 +4,7 @@
 
 #include "translations/translations.h"
 
-#include "gui/app_style.h"
+#include "common/qt/gui/app_style.h"
 
 #include "common/file_system.h"
 #include "common/qt/convert_string.h"
@@ -199,7 +199,7 @@ namespace fastoredis
         QSettings settings(inip, QSettings::IniFormat);
         DCHECK(settings.status() == QSettings::NoError);
 
-        curStyle_ = settings.value(STYLE, fastoredis::defStyle).toString();
+        curStyle_ = settings.value(STYLE, common::qt::defStyle).toString();
         curLanguage_ = settings.value(LANGUAGE, fastoredis::translations::defLanguage).toString();
 
         int view = settings.value(VIEW, fastoredis::Tree).toInt();

@@ -9,7 +9,6 @@ SET(SOURCES_GLOBAL
 
 SET(HEADERS_GUI_TO_MOC
     gui/main_window.h
-    gui/app_style.h
     gui/widgets/log_tab_widget.h
     gui/widgets/log_widget.h
     gui/widgets/commands_widget.h
@@ -27,7 +26,6 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/cluster_dialog.h
     gui/dialogs/connection_diagnostic_dialog.h
     gui/dialogs/discovery_dialog.h
-    gui/dialogs/base_console_dialog.h
     gui/dialogs/encode_decode_dialog.h
     gui/dialogs/load_contentdb_dialog.h
     gui/dialogs/create_dbkey_dialog.h
@@ -48,14 +46,11 @@ SET(HEADERS_GUI_TO_MOC
 SET(HEADERS_GUI
     gui/dialogs/connection_listwidget_items.h
     gui/gui_factory.h
-    gui/shortcuts.h
     gui/fasto_common_item.h
 )
 SET(SOURCES_GUI
     gui/main_window.cpp
-    gui/app_style.cpp
     gui/gui_factory.cpp
-    gui/shortcuts.cpp
     gui/widgets/log_tab_widget.cpp
     gui/widgets/log_widget.cpp
     gui/widgets/commands_widget.cpp
@@ -72,7 +67,6 @@ SET(SOURCES_GUI
     gui/dialogs/info_server_dialog.cpp
     gui/dialogs/property_server_dialog.cpp
     gui/dialogs/history_server_dialog.cpp
-    gui/dialogs/base_console_dialog.cpp
     gui/dialogs/encode_decode_dialog.cpp
     gui/dialogs/load_contentdb_dialog.cpp
     gui/dialogs/create_dbkey_dialog.cpp

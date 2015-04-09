@@ -6,7 +6,7 @@
 #include <Qsci/qscilexercustom.h>
 
 #include "gui/gui_factory.h"
-#include "gui/shortcuts.h"
+#include "common/qt/gui/shortcuts.h"
 
 namespace
 {
@@ -133,11 +133,11 @@ namespace fastoredis
         }
 
         if(showAutoCompletion_){
-            if(isAutoCompleteShortcut(keyEvent)){
+            if(common::qt::isAutoCompleteShortcut(keyEvent)){
                 showAutocompletion();
                 return;
             }
-            else if(isHideAutoCompleteShortcut(keyEvent)){
+            else if(common::qt::isHideAutoCompleteShortcut(keyEvent)){
                 hideAutocompletion();
                 return;
             }

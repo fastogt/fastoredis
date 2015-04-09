@@ -1,6 +1,7 @@
 #include "gui/widgets/main_widget.h"
 
-#include "gui/shortcuts.h"
+#include "common/qt/gui/shortcuts.h"
+
 #include "gui/main_tab_bar.h"
 #include "gui/gui_factory.h"
 #include "gui/widgets/query_widget.h"

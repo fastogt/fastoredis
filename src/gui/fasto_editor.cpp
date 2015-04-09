@@ -11,9 +11,10 @@
 #include "common/qt/convert_string.h"
 #include "common/qt/utils_qt.h"
 
+#include "common/qt/gui/shortcuts.h"
+
 #include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
-#include "gui/shortcuts.h"
 #include "gui/fasto_scintilla.h"
 
 #include "translations/global.h"
