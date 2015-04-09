@@ -17,7 +17,7 @@
 
 #include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
-#include "gui/icon_label.h"
+#include "common/qt/gui/icon_label.h"
 
 #include "translations/global.h"
 

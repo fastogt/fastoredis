@@ -8,7 +8,7 @@
 
 #include "core/iserver.h"
 
-#include "gui/glass_widget.h"
+#include "common/qt/gui/glass_widget.h"
 #include "gui/gui_factory.h"
 
 #include "translations/global.h"

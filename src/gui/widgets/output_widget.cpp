@@ -11,7 +11,7 @@
 #include "gui/fasto_common_item.h"
 
 #include "gui/gui_factory.h"
-#include "gui/icon_label.h"
+#include "common/qt/gui/icon_label.h"
 
 #include "core/settings_manager.h"
 #include "core/iserver.h"

@@ -3,7 +3,7 @@
 #include <QString>
 
 #include "common/value.h"
-#include "gui/base/tree_item.h"
+#include "common/qt/gui/base/tree_item.h"
 
 namespace fastoredis
 {

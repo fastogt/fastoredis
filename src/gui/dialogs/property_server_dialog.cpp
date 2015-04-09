@@ -4,7 +4,7 @@
 #include <QTableView>
 
 #include "gui/gui_factory.h"
-#include "gui/glass_widget.h"
+#include "common/qt/gui/glass_widget.h"
 #include "gui/property_table_model.h"
 
 #include "translations/global.h"

@@ -8,9 +8,9 @@
 #include "core/memcached/memcached_infos.h"
 #include "core/ssdb/ssdb_infos.h"
 
-#include "gui/base/graph_widget.h"
+#include "common/qt/gui/base/graph_widget.h"
 #include "gui/gui_factory.h"
-#include "gui/glass_widget.h"
+#include "common/qt/gui/glass_widget.h"
 
 #include "translations/global.h"
 

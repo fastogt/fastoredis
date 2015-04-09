@@ -44,19 +44,12 @@ SET(HEADERS_GUI_TO_MOC
     gui/fasto_tree_view.h
     gui/fasto_common_model.h
     gui/fasto_table_view.h
-    gui/icon_label.h
-    gui/glass_widget.h
-    gui/base/tree_model.h
-    gui/base/table_model.h
-    gui/base/graph_widget.h
 )
 SET(HEADERS_GUI
     gui/dialogs/connection_listwidget_items.h
     gui/gui_factory.h
     gui/shortcuts.h
     gui/fasto_common_item.h
-    gui/base/tree_item.h
-    gui/base/table_item.h
 )
 SET(SOURCES_GUI
     gui/main_window.cpp
@@ -99,13 +92,6 @@ SET(SOURCES_GUI
     gui/fasto_common_model.cpp
     gui/fasto_table_view.cpp
     gui/fasto_common_item.cpp
-    gui/icon_label.cpp
-    gui/glass_widget.cpp
-    gui/base/tree_model.cpp
-    gui/base/tree_item.cpp
-    gui/base/table_model.cpp
-    gui/base/table_item.cpp
-    gui/base/graph_widget.cpp
 )
 
 SET(HEADERS_CORE_TO_MOC
