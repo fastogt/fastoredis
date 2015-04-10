@@ -16,6 +16,7 @@ class QPushButton;
 class QCheckBox;
 class QFrame;
 class QsciLexer;
+class QMenu;
 
 namespace fastoredis
 {
@@ -49,18 +50,20 @@ namespace fastoredis
 
     protected:
         void setShowAutoCompletion(bool showA);
+        QMenu* createStandardContextMenu();
+
         void setAllCommands(const QString& allCommands);
         void setLexer(QsciLexer *lexer);
 
         virtual void keyPressEvent(QKeyEvent* e);
         virtual bool eventFilter(QObject* object, QEvent* event);
         virtual void changeEvent(QEvent *);
-        FastoScintilla* scin_;
 
     private:
         void retranslateUi();
         void findElement(bool forward);
 
+        FastoScintilla* scin_;
         QFrame* findPanel_;
         QLineEdit* findLine_;
         QToolButton* close_;

@@ -7,11 +7,10 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QMessageBox>
+#include <QKeyEvent>
 
 #include "common/qt/convert_string.h"
 #include "common/qt/utils_qt.h"
-
-#include "common/qt/gui/shortcuts.h"
 
 #include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
@@ -24,7 +23,7 @@ namespace fastoredis
     FastoEditor::FastoEditor(QWidget* parent)
         : QWidget(parent), scin_(NULL)
     {
-        scin_ = new FastoScintilla;
+        scin_ = new FastoScintilla(NULL, GuiFactory::instance().font());
 
         findPanel_ = new QFrame;
         findLine_ = new QLineEdit;
@@ -85,6 +84,16 @@ namespace fastoredis
         return scin_->selectedText();
     }
 
+    void FastoEditor::setShowAutoCompletion(bool showA)
+    {
+        scin_->setShowAutoCompletion(showA);
+    }
+
+    QMenu* FastoEditor::createStandardContextMenu()
+    {
+        return scin_->createStandardContextMenu();
+    }
+
     void FastoEditor::append(const QString &text)
     {
         scin_->append(text);
@@ -113,11 +122,6 @@ namespace fastoredis
     void FastoEditor::goToPrevElement()
     {
         findElement(false);
-    }
-
-    void FastoEditor::setShowAutoCompletion(bool showA)
-    {
-        scin_->setShowAutoCompletion(showA);
     }
 
     void FastoEditor::setAllCommands(const QString& allCommands)
@@ -383,7 +387,7 @@ namespace fastoredis
     FastoEditorShell::FastoEditorShell(const QString& version, bool showAutoCompl, QWidget* parent)
         : FastoEditor(parent), version_(version)
     {
-        scin_->setShowAutoCompletion(showAutoCompl);
+        setShowAutoCompletion(showAutoCompl);
         VERIFY(connect(this, &FastoEditorShell::customContextMenuRequested, this, &FastoEditorShell::showContextMenu));
     }
 
@@ -394,7 +398,7 @@ namespace fastoredis
 
     void FastoEditorShell::showContextMenu(const QPoint& pt)
     {
-        QMenu *menu = scin_->createStandardContextMenu();
+        QMenu *menu = createStandardContextMenu();
         menu->exec(mapToGlobal(pt));
         delete menu;
     }

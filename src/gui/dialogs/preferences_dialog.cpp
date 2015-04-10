@@ -14,7 +14,7 @@
 
 #include "gui/gui_factory.h"
 
-#include "translations/translations.h"
+#include "common/qt/translations/translations.h"
 
 #include "core/settings_manager.h"
 #include "core/servers_manager.h"
@@ -42,7 +42,7 @@ namespace fastoredis
         langLabel_ = new QLabel;
         langLayout->addWidget(langLabel_);
         languagesComboBox_  = new QComboBox;
-        languagesComboBox_->addItems(translations::supportedLanguages());
+        languagesComboBox_->addItems(common::qt::supportedLanguages());
         langLayout->addWidget(languagesComboBox_);
 
         QVBoxLayout *generalLayout = new QVBoxLayout;
@@ -103,7 +103,7 @@ namespace fastoredis
         SettingsManager::instance().setAutoCheckUpdates(autoCheckUpdates_->isChecked());
         SettingsManager::instance().setAutoCompletion(autoComletionEnable_->isChecked());
 
-        QString newLang = translations::applyLanguage(languagesComboBox_->currentText());
+        QString newLang = common::qt::applyLanguage(languagesComboBox_->currentText());
         SettingsManager::instance().setCurrentLanguage(newLang);
 
         common::qt::applyStyle(stylesComboBox_->currentText());

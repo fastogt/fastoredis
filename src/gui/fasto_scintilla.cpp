@@ -5,7 +5,8 @@
 #include <Qsci/qsciabstractapis.h>
 #include <Qsci/qscilexercustom.h>
 
-#include "gui/gui_factory.h"
+#include "common/macros.h"
+
 #include "gui/shortcuts.h"
 
 namespace
@@ -53,7 +54,7 @@ namespace
 
 namespace fastoredis
 {
-    FastoScintilla::FastoScintilla(QWidget *parent)
+    FastoScintilla::FastoScintilla(QWidget *parent, QFont font)
         : QsciScintilla(parent), lineNumberMarginWidth_(0), showAutoCompletion_(false), allCommands_()
     {
         setAutoIndent(true);
@@ -72,8 +73,7 @@ namespace fastoredis
 
         setContentsMargins(0, 0, 0, 0);
         setViewportMargins(3, 3, 3, 3);
-        QFont ourFont = GuiFactory::instance().font();
-        setMarginsFont(ourFont);
+        setMarginsFont(font);
         setMarginLineNumbers(0, true);
 
         // Margins colors
@@ -81,7 +81,7 @@ namespace fastoredis
         setMarginsBackgroundColor(marginsBackgroundColor);
         setMarginsForegroundColor(marginsForegroundColor);
 
-        SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, ourFont.family().data());
+        SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, font.family().data());
         SendScintilla(QsciScintilla::SCI_SETHSCROLLBAR, 0);
 
         setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);

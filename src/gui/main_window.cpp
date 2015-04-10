@@ -32,7 +32,7 @@
 
 #include "server_config_daemon/server_config.h"
 
-#include "translations/translations.h"
+#include "common/qt/translations/translations.h"
 #include "translations/global.h"
 
 namespace
@@ -107,7 +107,7 @@ namespace fastoredis
 #endif
         using namespace common;
         QString lang = SettingsManager::instance().currentLanguage();
-        QString newLang = fastoredis::translations::applyLanguage(lang);
+        QString newLang = common::qt::applyLanguage(lang);
         SettingsManager::instance().setCurrentLanguage(newLang);
 
         QString style = SettingsManager::instance().currentStyle();

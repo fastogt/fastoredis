@@ -147,11 +147,9 @@ SET(SOURCES_SHELL
 )
 
 SET(HEADERS_TRANSLATIONS
-    translations/translations.h
     translations/global.h
 )
 SET(SOURCES_TRANSLATIONS
-    translations/translations.cpp
     translations/global.cpp
 )
 

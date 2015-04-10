@@ -15,7 +15,7 @@ namespace fastoredis
             indentationWidth = 4
         };
 
-        FastoScintilla(QWidget *parent = 0);
+        FastoScintilla(QWidget *parent = 0, QFont font = QFont());
 
         void setShowAutoCompletion(bool showA);
         void setAllCommands(const QString& allCommands);
