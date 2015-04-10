@@ -27,7 +27,7 @@
 
 #include "core/servers_manager.h"
 #include "core/settings_manager.h"
-#include "core/logger.h"
+#include "common/qt/logger.h"
 #include "core/command_logger.h"
 
 #include "server_config_daemon/server_config.h"

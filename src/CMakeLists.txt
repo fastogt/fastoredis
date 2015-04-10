@@ -92,7 +92,6 @@ SET(SOURCES_GUI
 
 SET(HEADERS_CORE_TO_MOC
     core/command_logger.h
-    core/logger.h
     core/idriver.h
     core/iserver.h
     core/servers_manager.h
@@ -109,12 +108,6 @@ SET(HEADERS_CORE
     core/types.h
     core/ssh_info.h
     core/scp_file_transfer.h
-    core/iedcoder.h
-    core/base64_edcoder.h
-    core/hex_edcoder.h
-    core/html_edcoder.h
-    core/compress_edcoder.h
-    core/msgpack_edcoder.h
 )
 SET(SOURCES_CORE
     core/events/events_info.cpp
@@ -122,7 +115,6 @@ SET(SOURCES_CORE
     core/connection_types.cpp
     core/settings_manager.cpp
     core/connection_settings.cpp
-    core/logger.cpp
     core/idriver.cpp
     core/iserver.cpp
     core/icluster.cpp
@@ -131,12 +123,6 @@ SET(SOURCES_CORE
     core/types.cpp
     core/ssh_info.cpp
     core/scp_file_transfer.cpp
-    core/iedcoder.cpp
-    core/base64_edcoder.cpp
-    core/hex_edcoder.cpp
-    core/html_edcoder.cpp
-    core/compress_edcoder.cpp
-    core/msgpack_edcoder.cpp
     third-party/cmp/cmp.c
 )
 

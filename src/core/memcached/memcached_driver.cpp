@@ -9,8 +9,8 @@ extern "C" {
 
 #include "common/utils.h"
 #include "common/sprintf.h"
+#include "common/qt/logger.h"
 
-#include "core/logger.h"
 #include "core/command_logger.h"
 
 #include "core/memcached/memcached_config.h"

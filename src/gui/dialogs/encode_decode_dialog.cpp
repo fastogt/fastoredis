@@ -14,15 +14,10 @@
 #include "gui/gui_factory.h"
 #include "gui/fasto_editor.h"
 
-#include "core/iedcoder.h"
+#include "common/text_decoders/iedcoder.h"
 #include "common/qt/convert_string.h"
 
 #include "translations/global.h"
-
-namespace
-{
-
-}
 
 namespace fastoredis
 {
@@ -45,8 +40,8 @@ namespace fastoredis
         VERIFY(connect(decode, &QToolButton::clicked, this, &EncodeDecodeDialog::decode));
 
         decoders_ = new QComboBox;
-        for(int i = 0; i < SIZEOFMASS(EDecoderTypes); ++i){
-            decoders_->addItem(common::convertFromString<QString>(EDecoderTypes[i]));
+        for(int i = 0; i < SIZEOFMASS(common::EDecoderTypes); ++i){
+            decoders_->addItem(common::convertFromString<QString>(common::EDecoderTypes[i]));
         }
 
         QHBoxLayout* toolBarLayout = new QHBoxLayout;
@@ -115,7 +110,7 @@ namespace fastoredis
         output_->clear();
         QString decoderText = decoders_->currentText();
         std::string sdec = common::convertToString(decoderText);
-        IEDcoder* dec = IEDcoder::createEDCoder(sdec);
+        common::IEDcoder* dec = common::IEDcoder::createEDCoder(sdec);
 
         if(!dec){
             return;

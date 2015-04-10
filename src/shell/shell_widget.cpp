@@ -10,7 +10,9 @@
 #include <QTextStream>
 #include <QFileDialog>
 
+#include "common/qt/logger.h"
 #include "common/qt/convert_string.h"
+
 #include "common/sprintf.h"
 
 #include "core/settings_manager.h"
@@ -26,7 +28,7 @@
 #include "shell/memcached_shell.h"
 #include "shell/ssdb_shell.h"
 
-#include "core/logger.h"
+
 
 using namespace fastoredis::translations;
 
@@ -50,7 +52,7 @@ namespace
             SNPrintf(buff, sizeof(buff), PROJECT_NAME" can't read from %s:\n%s.", convertToString(filePath).c_str(),
                             convertToString(file.errorString()).c_str());
             ErrorValueSPtr er = common::make_error_value(buff, Value::E_ERROR);
-            fastoredis::LOG_ERROR(er, true);
+            LOG_ERROR(er, true);
             QMessageBox::critical(parent, trError,
                 QObject::tr(PROJECT_NAME" can't read from %1:\n%2.")
                     .arg(filePath)

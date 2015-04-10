@@ -2,9 +2,9 @@
 
 #include "common/qt/convert_string.h"
 
-#include "core/compress_edcoder.h"
-#include "core/msgpack_edcoder.h"
-#include "core/hex_edcoder.h"
+#include "common/text_decoders/compress_edcoder.h"
+#include "common/text_decoders/msgpack_edcoder.h"
+#include "common/text_decoders/hex_edcoder.h"
 
 namespace fastoredis
 {
@@ -96,7 +96,7 @@ namespace fastoredis
             std::string sval = common::convertToString(val);
 
             std::string hexstr;
-            HexEDcoder hex;
+            common::HexEDcoder hex;
             common::ErrorValueSPtr er = hex.encode(sval, hexstr);
             if(er){
                 return QString();
@@ -143,7 +143,7 @@ namespace fastoredis
             QString val = item->value();
             std::string sval = common::convertToString(val);
             std::string out;
-            CompressEDcoder enc;
+            common::CompressEDcoder enc;
             common::ErrorValueSPtr er = enc.decode(sval, out);
             if(er){
                 return QString();
@@ -170,14 +170,14 @@ namespace fastoredis
         if(!item->childrenCount()){
             std::string sval = common::convertToString(item->value());
 
-            HexEDcoder hex;
+            common::HexEDcoder hex;
             std::string hexstr;
             common::ErrorValueSPtr er = hex.decode(sval, hexstr);
             if(er){
                 return QString();
             }
 
-            MsgPackEDcoder msg;
+            common::MsgPackEDcoder msg;
             std::string upack;
             er = msg.decode(hexstr, upack);
             if(er){

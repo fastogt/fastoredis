@@ -1,7 +1,6 @@
 #include "core/memcached/memcached_server.h"
 
 #include "core/memcached/memcached_database.h"
-#include "core/logger.h"
 
 namespace fastoredis
 {

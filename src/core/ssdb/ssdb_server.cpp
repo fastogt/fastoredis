@@ -1,7 +1,6 @@
 #include "core/ssdb/ssdb_server.h"
 
 #include "core/ssdb/ssdb_database.h"
-#include "core/logger.h"
 
 namespace fastoredis
 {

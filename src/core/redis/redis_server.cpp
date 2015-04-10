@@ -1,7 +1,6 @@
 #include "core/redis/redis_server.h"
 
 #include "core/redis/redis_database.h"
-#include "core/logger.h"
 
 namespace fastoredis
 {

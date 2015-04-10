@@ -41,7 +41,7 @@ extern "C" {
 #include "common/string_util.h"
 #include "common/sprintf.h"
 
-#include "core/logger.h"
+#include "common/qt/logger.h"
 #include "core/command_logger.h"
 #include "core/redis/redis_infos.h"
 

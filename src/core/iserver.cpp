@@ -3,11 +3,11 @@
 #include <QApplication>
 
 #include "common/qt/convert_string.h"
+#include "common/qt/logger.h"
 #include "common/net/net.h"
 
 #include "core/idatabase.h"
 #include "core/idriver.h"
-#include "core/logger.h"
 
 namespace
 {
