@@ -10,25 +10,22 @@
 #include <QTextStream>
 #include <QFileDialog>
 
-#include "common/qt/logger.h"
-#include "common/qt/convert_string.h"
-
-#include "common/sprintf.h"
+#include "fasto/common/qt/logger.h"
+#include "fasto/common/qt/convert_string.h"
+#include "fasto/common/sprintf.h"
+#include "fasto/common/qt/gui/icon_label.h"
 
 #include "core/settings_manager.h"
 
 #include "gui/shortcuts.h"
 
 #include "gui/gui_factory.h"
-#include "common/qt/gui/icon_label.h"
 
 #include "translations/global.h"
 
 #include "shell/redis_shell.h"
 #include "shell/memcached_shell.h"
 #include "shell/ssdb_shell.h"
-
-
 
 using namespace fastoredis::translations;
 

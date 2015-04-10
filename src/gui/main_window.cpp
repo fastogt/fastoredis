@@ -11,9 +11,11 @@
 #include <QGestureEvent>
 #endif
 
-#include "common/net/socket_tcp.h"
-#include "common/qt/convert_string.h"
-#include "common/qt/gui/app_style.h"
+#include "fasto/common/net/socket_tcp.h"
+#include "fasto/common/qt/convert_string.h"
+#include "fasto/common/qt/gui/app_style.h"
+#include "fasto/common/qt/logger.h"
+#include "fasto/common/qt/translations/translations.h"
 
 #include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
@@ -27,12 +29,10 @@
 
 #include "core/servers_manager.h"
 #include "core/settings_manager.h"
-#include "common/qt/logger.h"
 #include "core/command_logger.h"
 
 #include "server_config_daemon/server_config.h"
 
-#include "common/qt/translations/translations.h"
 #include "translations/global.h"
 
 namespace

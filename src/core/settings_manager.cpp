@@ -2,13 +2,13 @@
 
 #include <QSettings>
 
-#include "common/qt/translations/translations.h"
+#include "fasto/common/qt/translations/translations.h"
 
-#include "common/qt/gui/app_style.h"
+#include "fasto/common/qt/gui/app_style.h"
 
-#include "common/file_system.h"
-#include "common/qt/convert_string.h"
-#include "common/utils.h"
+#include "fasto/common/file_system.h"
+#include "fasto/common/qt/convert_string.h"
+#include "fasto/common/utils.h"
 
 #define PREFIX "settings/"
 

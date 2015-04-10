@@ -2,7 +2,7 @@
 
 #include <QObject>
 
-#include "common/net/net.h"
+#include "fasto/common/net/net.h"
 
 #include "core/connection_settings.h"
 #include "core/events/events.h"

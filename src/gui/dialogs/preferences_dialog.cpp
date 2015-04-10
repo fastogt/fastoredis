@@ -10,16 +10,14 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-#include "common/qt/gui/app_style.h"
+#include "fasto/common/qt/gui/app_style.h"
+#include "fasto/common/qt/convert_string.h"
+#include "fasto/common/qt/translations/translations.h"
 
 #include "gui/gui_factory.h"
 
-#include "common/qt/translations/translations.h"
-
 #include "core/settings_manager.h"
 #include "core/servers_manager.h"
-
-#include "common/qt/convert_string.h"
 
 namespace fastoredis
 {

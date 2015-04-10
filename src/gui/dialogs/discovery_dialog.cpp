@@ -6,14 +6,14 @@
 #include <QLabel>
 #include <QTreeWidget>
 
-#include "common/time.h"
+#include "fasto/common/time.h"
+#include "fasto/common/qt/gui/glass_widget.h"
 
 #include "core/redis/redis_driver.h"
 #include "core/ssdb/ssdb_driver.h"
 #include "core/memcached/memcached_driver.h"
 
 #include "gui/gui_factory.h"
-#include "common/qt/gui/glass_widget.h"
 #include "gui/dialogs/connection_listwidget_items.h"
 
 #include "translations/global.h"

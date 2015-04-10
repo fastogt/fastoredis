@@ -11,14 +11,14 @@
 #include "gui/fasto_common_item.h"
 
 #include "gui/gui_factory.h"
-#include "common/qt/gui/icon_label.h"
+#include "fasto/common/qt/gui/icon_label.h"
 
 #include "core/settings_manager.h"
 #include "core/iserver.h"
 
-#include "common/qt/convert_string.h"
-#include "common/utf_string_conversions.h"
-#include "common/time.h"
+#include "fasto/common/qt/convert_string.h"
+#include "fasto/common/utf_string_conversions.h"
+#include "fasto/common/time.h"
 
 namespace
 {

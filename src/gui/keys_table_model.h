@@ -2,7 +2,7 @@
 
 #include "core/types.h"
 
-#include "common/qt/gui/base/table_model.h"
+#include "fasto/common/qt/gui/base/table_model.h"
 
 namespace fastoredis
 {

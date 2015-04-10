@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/qt/gui/base/table_model.h"
+#include "fasto/common/qt/gui/base/table_model.h"
 
 #include "core/types.h"
 

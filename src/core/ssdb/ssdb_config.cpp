@@ -1,9 +1,9 @@
 #include "core/ssdb/ssdb_config.h"
 
-#include "common/sprintf.h"
-#include "common/utils.h"
+#include "fasto/common/sprintf.h"
+#include "fasto/common/utils.h"
 
-#include "common/qt/logger.h"
+#include "fasto/common/qt/logger.h"
 
 namespace fastoredis
 {

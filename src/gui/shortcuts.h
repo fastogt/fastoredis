@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/qt/gui/shortcuts.h"
+#include "fasto/common/qt/gui/shortcuts.h"
 
 namespace fastoredis
 {

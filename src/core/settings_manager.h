@@ -4,7 +4,7 @@
 
 #include "global/types.h"
 
-#include "common/patterns/singleton_pattern.h"
+#include "fasto/common/patterns/singleton_pattern.h"
 
 #include "core/connection_settings.h"
 

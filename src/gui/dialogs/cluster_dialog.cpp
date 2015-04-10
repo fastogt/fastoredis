@@ -20,7 +20,7 @@
 #include "gui/dialogs/discovery_dialog.h"
 #include "gui/dialogs/connection_listwidget_items.h"
 
-#include "common/qt/convert_string.h"
+#include "fasto/common/qt/convert_string.h"
 
 #include "gui/gui_factory.h"
 

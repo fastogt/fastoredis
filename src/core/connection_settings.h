@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common/smart_ptr.h"
-#include "common/net/net.h"
+#include "fasto/common/smart_ptr.h"
+#include "fasto/common/net/net.h"
 
 #include "core/connection_types.h"
 #include "core/ssh_info.h"

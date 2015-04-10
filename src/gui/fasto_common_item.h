@@ -2,8 +2,8 @@
 
 #include <QString>
 
-#include "common/value.h"
-#include "common/qt/gui/base/tree_item.h"
+#include "fasto/common/value.h"
+#include "fasto/common/qt/gui/base/tree_item.h"
 
 namespace fastoredis
 {

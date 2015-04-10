@@ -9,9 +9,9 @@
 #include <QThread>
 #include <QApplication>
 
-#include "common/file_system.h"
-#include "common/time.h"
-#include "common/sprintf.h"
+#include "fasto/common/file_system.h"
+#include "fasto/common/time.h"
+#include "fasto/common/sprintf.h"
 
 namespace
 {

@@ -33,7 +33,6 @@ SET(HEADERS_GUI_TO_MOC
     gui/dialogs/change_password_server_dialog.h
     gui/widgets/main_widget.h
     gui/main_tab_bar.h
-    gui/fasto_scintilla.h
     gui/fasto_editor.h
     gui/fasto_text_view.h
     gui/widgets/query_widget.h
@@ -75,7 +74,6 @@ SET(SOURCES_GUI
     gui/dialogs/change_password_server_dialog.cpp
     gui/widgets/main_widget.cpp
     gui/main_tab_bar.cpp
-    gui/fasto_scintilla.cpp
     gui/fasto_editor.cpp
     gui/fasto_text_view.cpp
     gui/widgets/query_widget.cpp
@@ -168,12 +166,11 @@ ELSEIF(OS_LINUX)
     SET(PLATFORM_LIBRARIES)
 ENDIF(OS_WINDOWS)
 
-ADD_SUBDIRECTORY(common)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR} ${OPENSSL_INCLUDE_DIR})
 
+ADD_SUBDIRECTORY(fasto)
 ADD_SUBDIRECTORY(third-party/libssh2)
 ADD_SUBDIRECTORY(third-party/redis)
-ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
 
 #redis
 SET(HEADERS_REDIS_TO_MOC
@@ -258,7 +255,7 @@ QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 CONFIGURE_FILE("resources/gui.qrc.in" "${CMAKE_CURRENT_LIST_DIR}/resources/gui.qrc" @ONLY IMMEDIATE)
 SET(RESOURCES ${CMAKE_CURRENT_LIST_DIR}/resources/gui.qrc)
 QTX_ADD_RESOURCES(RES_SRC ${RESOURCES})
-SET(INCLUDE_DIRS ${INCLUDE_DIRS} third-party/redis/redis/src third-party/redis/redis/deps third-party/qscintilla/Qt4Qt5 third-party/memcached/src third-party/ssdb/src)
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} third-party/redis/redis/src third-party/redis/redis/deps fasto/third-party/qscintilla/Qt4Qt5 third-party/memcached/src third-party/ssdb/src)
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
 SOURCE_GROUP("Header Files" FILES ${HEADERS} ${HEADERS_TOMOC})
@@ -281,7 +278,7 @@ ELSE(GENERATE_TRANSLATIONS)
 ENDIF(GENERATE_TRANSLATIONS)
 
 SET(ALL_SOURCES ${ALL_SOURCES} ${HEADERS} ${HEADERS_TOMOC} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_SRCS})
-SET(ALL_LIBS ${ALL_LIBS} qscintilla2 common ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARY})
+SET(ALL_LIBS ${ALL_LIBS} fasto ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARY})
 IF(SASL_FOUND)
     SET(ALL_LIBS ${ALL_LIBS} ${SASL_LIBRARIES})
 ENDIF(SASL_FOUND)
@@ -397,7 +394,7 @@ IF(DEVELOPER_ENABLE_TESTS)
         global/global.cpp
     )
 
-    TARGET_LINK_LIBRARIES(unit_tests gtest gtest_main common)
+    TARGET_LINK_LIBRARIES(unit_tests gtest gtest_main fasto)
 
     ADD_TEST(NAME unit_tests COMMAND tests)
     SET_PROPERTY(TARGET unit_tests PROPERTY FOLDER "Unit tests")

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/qt/gui/base/tree_model.h"
+#include "fasto/common/qt/gui/base/tree_model.h"
 
 #include "core/iserver.h"
 #include "core/idatabase.h"

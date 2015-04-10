@@ -1,8 +1,8 @@
 #include "core/redis/redis_config.h"
 
-#include "common/utils.h"
+#include "fasto/common/utils.h"
 
-#include "common/qt/logger.h"
+#include "fasto/common/qt/logger.h"
 
 namespace fastoredis
 {

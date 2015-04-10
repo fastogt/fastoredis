@@ -2,7 +2,7 @@
 
 #include <QObject>
 
-#include "common/patterns/singleton_pattern.h"
+#include "fasto/common/patterns/singleton_pattern.h"
 
 #include "global/types.h"
 

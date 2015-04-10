@@ -1,7 +1,7 @@
 #include "gui/property_table_model.h"
 
-#include "common/qt/utils_qt.h"
-#include "common/qt/convert_string.h"
+#include "fasto/common/qt/utils_qt.h"
+#include "fasto/common/qt/convert_string.h"
 
 #include "translations/global.h"
 

@@ -3,8 +3,8 @@
 #include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
 
-#include "common/qt/utils_qt.h"
-#include "common/qt/convert_string.h"
+#include "fasto/common/qt/utils_qt.h"
+#include "fasto/common/qt/convert_string.h"
 #include "translations/global.h"
 
 namespace fastoredis

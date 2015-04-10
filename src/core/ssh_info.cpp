@@ -1,6 +1,6 @@
 #include "core/ssh_info.h"
 
-#include "common/convert2string.h"
+#include "fasto/common/convert2string.h"
 
 #define HOST "host"
 #define PORT "port"

@@ -9,12 +9,12 @@
 #include <QMessageBox>
 #include <QKeyEvent>
 
-#include "common/qt/convert_string.h"
-#include "common/qt/utils_qt.h"
+#include "fasto/common/qt/convert_string.h"
+#include "fasto/common/qt/utils_qt.h"
 
 #include "gui/fasto_common_item.h"
 #include "gui/gui_factory.h"
-#include "gui/fasto_scintilla.h"
+#include "fasto/qt/gui/fasto_scintilla.h"
 
 #include "translations/global.h"
 

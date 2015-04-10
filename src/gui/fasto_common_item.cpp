@@ -1,10 +1,10 @@
 #include "gui/fasto_common_item.h"
 
-#include "common/qt/convert_string.h"
+#include "fasto/common/qt/convert_string.h"
 
-#include "common/text_decoders/compress_edcoder.h"
-#include "common/text_decoders/msgpack_edcoder.h"
-#include "common/text_decoders/hex_edcoder.h"
+#include "fasto/common/text_decoders/compress_edcoder.h"
+#include "fasto/common/text_decoders/msgpack_edcoder.h"
+#include "fasto/common/text_decoders/hex_edcoder.h"
 
 namespace fastoredis
 {

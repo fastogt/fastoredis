@@ -4,7 +4,7 @@
 #include <QRadioButton>
 #include <QEvent>
 
-#include "common/macros.h"
+#include "fasto/common/macros.h"
 
 #include "translations/global.h"
 

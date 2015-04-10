@@ -1,6 +1,6 @@
 #include "gui/keys_table_model.h"
 
-#include "common/qt/utils_qt.h"
+#include "fasto/common/qt/utils_qt.h"
 
 #include "gui/gui_factory.h"
 

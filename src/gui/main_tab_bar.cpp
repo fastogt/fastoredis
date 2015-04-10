@@ -3,7 +3,7 @@
 #include <QMenu>
 #include <QEvent>
 
-#include "common/macros.h"
+#include "fasto/common/macros.h"
 
 #include "gui/shortcuts.h"
 
