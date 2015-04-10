@@ -123,7 +123,6 @@ SET(SOURCES_CORE
     core/types.cpp
     core/ssh_info.cpp
     core/scp_file_transfer.cpp
-    third-party/cmp/cmp.c
 )
 
 SET(HEADERS_SHELL_TO_MOC
