@@ -2,6 +2,13 @@ About FastoRedis
 ===============
 
 FastoRedis &mdash; is a crossplatform Redis, Memcached, SSDB management tool. <br />
+Windows:
+![](http://fastoredis.com/images/slider/win_slider.png)
+MacOS X:
+![](http://fastoredis.com/images/slider/mac_slider.png)
+Linux:
+![](http://fastoredis.com/images/slider/linux_slider.png)
+
 Visit our site: [www.fastoredis.com](http://www.fastoredis.com)
 
 Download
