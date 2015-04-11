@@ -1,6 +1,6 @@
 #include "gui/widgets/main_widget.h"
 
-#include "fasto/common/qt/gui/shortcuts.h"
+#include "gui/shortcuts.h"
 
 #include "gui/main_tab_bar.h"
 #include "gui/gui_factory.h"

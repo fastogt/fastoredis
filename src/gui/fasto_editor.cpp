@@ -23,7 +23,7 @@ namespace fastoredis
     FastoEditor::FastoEditor(QWidget* parent)
         : QWidget(parent), scin_(NULL)
     {
-        scin_ = new FastoScintilla(NULL, GuiFactory::instance().font());
+        scin_ = new fasto::qt::gui::FastoScintilla(NULL, GuiFactory::instance().font());
 
         findPanel_ = new QFrame;
         findLine_ = new QLineEdit;

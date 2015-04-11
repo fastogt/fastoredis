@@ -1,21 +1,21 @@
 #pragma once
 
-#include "fasto/common/qt/gui/shortcuts.h"
+#include "fasto/qt/gui/shortcuts.h"
 
 namespace fastoredis
 {
     // global variables
-    extern const common::qt::FastoQKeySequence openKey;
-    extern const common::qt::FastoQKeySequence saveKey;
-    extern const common::qt::FastoQKeySequence saveAsKey;
-    extern const common::qt::FastoQKeySequence quitKey;
-    extern const common::qt::FastoQKeySequence closeKey;
-    extern const common::qt::FastoQKeySequence newTabKey;
-    extern const common::qt::FastoQKeySequence nextTabKey;
-    extern const common::qt::FastoQKeySequence prevTabKey;
-    extern const common::qt::FastoQKeySequence refreshKey;
-    extern const common::qt::FastoQKeySequence fullScreenKey;
-    extern const common::qt::FastoQKeySequence executeKey;
+    extern const fasto::qt::gui::FastoQKeySequence openKey;
+    extern const fasto::qt::gui::FastoQKeySequence saveKey;
+    extern const fasto::qt::gui::FastoQKeySequence saveAsKey;
+    extern const fasto::qt::gui::FastoQKeySequence quitKey;
+    extern const fasto::qt::gui::FastoQKeySequence closeKey;
+    extern const fasto::qt::gui::FastoQKeySequence newTabKey;
+    extern const fasto::qt::gui::FastoQKeySequence nextTabKey;
+    extern const fasto::qt::gui::FastoQKeySequence prevTabKey;
+    extern const fasto::qt::gui::FastoQKeySequence refreshKey;
+    extern const fasto::qt::gui::FastoQKeySequence fullScreenKey;
+    extern const fasto::qt::gui::FastoQKeySequence executeKey;
 
     bool isOpenShortcut(QKeyEvent* keyEvent);
     bool isSaveShortcut(QKeyEvent* keyEvent);
@@ -28,6 +28,4 @@ namespace fastoredis
     bool isRefreshShortcut(QKeyEvent* keyEvent);
     bool isFullScreenShortcut(QKeyEvent* keyEvent);
     bool isExecuteScriptShortcut(QKeyEvent* keyEvent);
-    bool isAutoCompleteShortcut(QKeyEvent* keyEvent);
-    bool isHideAutoCompleteShortcut(QKeyEvent* keyEvent);
 }

@@ -18,9 +18,19 @@ class QFrame;
 class QsciLexer;
 class QMenu;
 
+namespace fasto
+{
+    namespace qt
+    {
+        namespace gui
+        {
+            class FastoScintilla;
+        }
+    }
+}
+
 namespace fastoredis
 {
-    class FastoScintilla;
     class FastoEditor
         : public QWidget
     {
@@ -63,7 +73,7 @@ namespace fastoredis
         void retranslateUi();
         void findElement(bool forward);
 
-        FastoScintilla* scin_;
+        fasto::qt::gui::FastoScintilla* scin_;
         QFrame* findPanel_;
         QLineEdit* findLine_;
         QToolButton* close_;

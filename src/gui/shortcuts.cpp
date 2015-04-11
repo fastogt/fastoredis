@@ -12,25 +12,25 @@ namespace fastoredis
     }*/
 
     // global variables
-    const common::qt::FastoQKeySequence openKey = common::qt::FastoQKeySequence(QKeySequence::Open);
-    const common::qt::FastoQKeySequence saveKey = common::qt::FastoQKeySequence(QKeySequence::Save);
-    const common::qt::FastoQKeySequence saveAsKey = common::qt::FastoQKeySequence(QKeySequence::SaveAs);
+    const fasto::qt::gui::FastoQKeySequence openKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::Open);
+    const fasto::qt::gui::FastoQKeySequence saveKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::Save);
+    const fasto::qt::gui::FastoQKeySequence saveAsKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::SaveAs);
 #ifdef OS_MAC
-    const common::qt::FastoQKeySequence quitKey = common::qt::FastoQKeySequence(QKeySequence::Quit);
+    const fasto::qt::gui::FastoQKeySequence quitKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::Quit);
 #else
-    const common::qt::FastoQKeySequence quitKey = common::qt::FastoQKeySequence(Qt::ControlModifier, Qt::Key_Q);
+    const fasto::qt::gui::FastoQKeySequence quitKey = fasto::qt::gui::FastoQKeySequence(Qt::ControlModifier, Qt::Key_Q);
 #endif
-    const common::qt::FastoQKeySequence closeKey = common::qt::FastoQKeySequence(QKeySequence::Close);
-    const common::qt::FastoQKeySequence newTabKey = common::qt::FastoQKeySequence(QKeySequence::AddTab);
-    const common::qt::FastoQKeySequence nextTabKey = common::qt::FastoQKeySequence(QKeySequence::NextChild);
-    const common::qt::FastoQKeySequence prevTabKey = common::qt::FastoQKeySequence(QKeySequence::PreviousChild);
-    const common::qt::FastoQKeySequence refreshKey = common::qt::FastoQKeySequence(QKeySequence::Refresh);
+    const fasto::qt::gui::FastoQKeySequence closeKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::Close);
+    const fasto::qt::gui::FastoQKeySequence newTabKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::AddTab);
+    const fasto::qt::gui::FastoQKeySequence nextTabKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::NextChild);
+    const fasto::qt::gui::FastoQKeySequence prevTabKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::PreviousChild);
+    const fasto::qt::gui::FastoQKeySequence refreshKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::Refresh);
 #ifdef OS_MAC
-    const common::qt::FastoQKeySequence fullScreenKey = common::qt::FastoQKeySequence(QKeySequence::FullScreen);
+    const fasto::qt::gui::FastoQKeySequence fullScreenKey = fasto::qt::gui::FastoQKeySequence(QKeySequence::FullScreen);
 #else
-    const common::qt::FastoQKeySequence fullScreenKey = common::qt::FastoQKeySequence(Qt::ControlModifier | Qt::ShiftModifier, Qt::Key_F11);
+    const fasto::qt::gui::FastoQKeySequence fullScreenKey = fasto::qt::gui::FastoQKeySequence(Qt::ControlModifier | Qt::ShiftModifier, Qt::Key_F11);
 #endif
-    const common::qt::FastoQKeySequence executeKey = common::qt::FastoQKeySequence(Qt::ControlModifier, Qt::Key_Return);
+    const fasto::qt::gui::FastoQKeySequence executeKey = fasto::qt::gui::FastoQKeySequence(Qt::ControlModifier, Qt::Key_Return);
 
     bool isOpenShortcut(QKeyEvent* keyEvent)
     {
@@ -97,14 +97,4 @@ namespace fastoredis
         return ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Slash)) ||
                ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::ShiftModifier) && (keyEvent->key() == Qt::Key_C));
     }*/
-
-    bool isAutoCompleteShortcut(QKeyEvent* keyEvent)
-    {
-        return (keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_Space);
-    }
-
-    bool isHideAutoCompleteShortcut(QKeyEvent* keyEvent)
-    {
-        return (keyEvent->key() == Qt::Key_Escape);
-    }
 }
