@@ -10,9 +10,9 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-#include "fasto/common/qt/gui/app_style.h"
+#include "fasto/qt/gui/app_style.h"
+#include "fasto/qt/translations/translations.h"
 #include "fasto/common/qt/convert_string.h"
-#include "fasto/common/qt/translations/translations.h"
 
 #include "gui/gui_factory.h"
 
@@ -32,7 +32,7 @@ namespace fastoredis
         QHBoxLayout *styleswLayout = new QHBoxLayout;
         stylesLabel_ = new QLabel;
         stylesComboBox_ = new QComboBox;
-        stylesComboBox_->addItems(common::qt::getSupportedStyles());
+        stylesComboBox_->addItems(fasto::qt::gui::getSupportedStyles());
         styleswLayout->addWidget(stylesLabel_);
         styleswLayout->addWidget(stylesComboBox_);
 
@@ -40,7 +40,7 @@ namespace fastoredis
         langLabel_ = new QLabel;
         langLayout->addWidget(langLabel_);
         languagesComboBox_  = new QComboBox;
-        languagesComboBox_->addItems(common::qt::supportedLanguages());
+        languagesComboBox_->addItems(fasto::qt::translations::supportedLanguages());
         langLayout->addWidget(languagesComboBox_);
 
         QVBoxLayout *generalLayout = new QVBoxLayout;
@@ -101,10 +101,10 @@ namespace fastoredis
         SettingsManager::instance().setAutoCheckUpdates(autoCheckUpdates_->isChecked());
         SettingsManager::instance().setAutoCompletion(autoComletionEnable_->isChecked());
 
-        QString newLang = common::qt::applyLanguage(languagesComboBox_->currentText());
+        QString newLang = fasto::qt::translations::applyLanguage(languagesComboBox_->currentText());
         SettingsManager::instance().setCurrentLanguage(newLang);
 
-        common::qt::applyStyle(stylesComboBox_->currentText());
+        fasto::qt::gui::applyStyle(stylesComboBox_->currentText());
         SettingsManager::instance().setCurrentStyle(stylesComboBox_->currentText());
 
         const std::string defCombo = common::convertToString(defaultViewComboBox_->currentText());

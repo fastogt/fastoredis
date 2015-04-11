@@ -11,11 +11,11 @@
 #include <QGestureEvent>
 #endif
 
-#include "fasto/common/net/socket_tcp.h"
-#include "fasto/common/qt/convert_string.h"
-#include "fasto/common/qt/gui/app_style.h"
+#include "fasto/qt/gui/app_style.h"
+#include "fasto/qt/translations/translations.h"
 #include "fasto/common/qt/logger.h"
-#include "fasto/common/qt/translations/translations.h"
+#include "fasto/common/qt/convert_string.h"
+#include "fasto/common/net/socket_tcp.h"
 
 #include "gui/shortcuts.h"
 #include "gui/gui_factory.h"
@@ -107,11 +107,11 @@ namespace fastoredis
 #endif
         using namespace common;
         QString lang = SettingsManager::instance().currentLanguage();
-        QString newLang = common::qt::applyLanguage(lang);
+        QString newLang = fasto::qt::translations::applyLanguage(lang);
         SettingsManager::instance().setCurrentLanguage(newLang);
 
         QString style = SettingsManager::instance().currentStyle();
-        common::qt::applyStyle(style);
+        fasto::qt::gui::applyStyle(style);
 
         setWindowTitle(PROJECT_NAME_TITLE " " PROJECT_VERSION);
 

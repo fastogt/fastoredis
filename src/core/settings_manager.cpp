@@ -2,9 +2,8 @@
 
 #include <QSettings>
 
-#include "fasto/common/qt/translations/translations.h"
-
-#include "fasto/common/qt/gui/app_style.h"
+#include "fasto/qt/translations/translations.h"
+#include "fasto/qt/gui/app_style.h"
 
 #include "fasto/common/file_system.h"
 #include "fasto/common/qt/convert_string.h"
@@ -199,8 +198,8 @@ namespace fastoredis
         QSettings settings(inip, QSettings::IniFormat);
         DCHECK(settings.status() == QSettings::NoError);
 
-        curStyle_ = settings.value(STYLE, common::qt::defStyle).toString();
-        curLanguage_ = settings.value(LANGUAGE, common::qt::defLanguage).toString();
+        curStyle_ = settings.value(STYLE, fasto::qt::gui::defStyle).toString();
+        curLanguage_ = settings.value(LANGUAGE, fasto::qt::translations::defLanguage).toString();
 
         int view = settings.value(VIEW, fastoredis::Tree).toInt();
         views_ = static_cast<supportedViews>(view);
