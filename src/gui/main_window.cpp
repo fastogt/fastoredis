@@ -13,7 +13,7 @@
 
 #include "fasto/qt/gui/app_style.h"
 #include "fasto/qt/translations/translations.h"
-#include "fasto/common/qt/logger.h"
+#include "fasto/qt/logger.h"
 #include "fasto/common/qt/convert_string.h"
 #include "fasto/common/net/socket_tcp.h"
 
@@ -212,7 +212,7 @@ namespace fastoredis
         addDockWidget(Qt::LeftDockWidgetArea, expDock_);
 
         LogTabWidget *log = new LogTabWidget(this);
-        VERIFY(connect(&Logger::instance(), &Logger::printed, log, &LogTabWidget::addLogMessage));
+        VERIFY(connect(&fasto::qt::Logger::instance(), &fasto::qt::Logger::printed, log, &LogTabWidget::addLogMessage));
         VERIFY(connect(&CommandLogger::instance(), &CommandLogger::printed, log, &LogTabWidget::addCommand));
         logDock_ = new QDockWidget(this);
         logsAction_ = logDock_->toggleViewAction();

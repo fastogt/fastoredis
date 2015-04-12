@@ -40,7 +40,7 @@ extern "C" {
 #include "fasto/common/file_system.h"
 #include "fasto/common/string_util.h"
 #include "fasto/common/sprintf.h"
-#include "fasto/common/qt/logger.h"
+#include "fasto/qt/logger.h"
 
 #include "core/command_logger.h"
 #include "core/redis/redis_infos.h"

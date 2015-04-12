@@ -9,7 +9,7 @@
 
 #include "third-party/libssh2/include/libssh2.h"
 
-#include "fasto/common/qt/logger.h"
+#include "fasto/qt/logger.h"
 
 namespace fastoredis
 {

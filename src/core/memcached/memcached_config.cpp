@@ -2,7 +2,7 @@
 
 #include "fasto/common/utils.h"
 
-#include "fasto/common/qt/logger.h"
+#include "fasto/qt/logger.h"
 
 namespace fastoredis
 {

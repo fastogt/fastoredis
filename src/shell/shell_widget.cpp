@@ -10,7 +10,7 @@
 #include <QTextStream>
 #include <QFileDialog>
 
-#include "fasto/common/qt/logger.h"
+#include "fasto/qt/logger.h"
 #include "fasto/common/qt/convert_string.h"
 #include "fasto/common/sprintf.h"
 #include "fasto/qt/gui/icon_label.h"

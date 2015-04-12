@@ -3,7 +3,7 @@
 #include <QApplication>
 
 #include "fasto/common/qt/convert_string.h"
-#include "fasto/common/qt/logger.h"
+#include "fasto/qt/logger.h"
 #include "fasto/common/net/net.h"
 
 #include "core/idatabase.h"

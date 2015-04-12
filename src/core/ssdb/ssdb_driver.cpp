@@ -6,7 +6,7 @@ extern "C" {
 
 #include "fasto/common/sprintf.h"
 #include "fasto/common/utils.h"
-#include "fasto/common/qt/logger.h"
+#include "fasto/qt/logger.h"
 
 #include "core/command_logger.h"
 
