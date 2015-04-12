@@ -4,7 +4,7 @@
 #include <QHBoxLayout>
 
 #include "gui/gui_factory.h"
-#include "fasto/common/qt/gui/glass_widget.h"
+#include "fasto/qt/gui/glass_widget.h"
 
 #include "translations/global.h"
 
@@ -140,7 +140,7 @@ namespace fastoredis
 
         setMinimumSize(QSize(min_height, min_width));
 
-        glassWidget_ = new common::qt::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new fasto::qt::gui::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
         if(type_ == REDIS){
             updateText(RedisServerInfo());
         }

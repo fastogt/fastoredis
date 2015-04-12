@@ -2,12 +2,12 @@
 
 #include "core/types.h"
 
-#include "fasto/common/qt/gui/base/table_model.h"
+#include "fasto/qt/gui/base/table_model.h"
 
 namespace fastoredis
 {
     class KeyTableItem
-            : public common::qt::TableItem
+            : public fasto::qt::gui::TableItem
     {
     public:
         enum eColumn
@@ -27,7 +27,7 @@ namespace fastoredis
     };
 
     class KeysTableModel
-            : public common::qt::TableModel
+            : public fasto::qt::gui::TableModel
     {
         Q_OBJECT
     public:

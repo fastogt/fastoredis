@@ -7,7 +7,7 @@
 #include <QTreeWidget>
 
 #include "fasto/common/time.h"
-#include "fasto/common/qt/gui/glass_widget.h"
+#include "fasto/qt/gui/glass_widget.h"
 
 #include "core/redis/redis_driver.h"
 #include "core/ssdb/ssdb_driver.h"
@@ -115,7 +115,7 @@ namespace fastoredis
         setFixedSize(QSize(fix_width, fix_height));
         setLayout(mainLayout);
 
-        glassWidget_ = new common::qt::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trTryToConnect, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new fasto::qt::gui::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trTryToConnect, 0.5, QColor(111, 111, 100), this);
         testConnection(connection);
     }
 

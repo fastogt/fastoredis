@@ -6,12 +6,15 @@ class QComboBox;
 
 #include "core/events/events_info.h"
 
-namespace common
+namespace fasto
 {
     namespace qt
     {
-        class GlassWidget;
-        class GraphWidget;
+        namespace gui
+        {
+            class GlassWidget;
+            class GraphWidget;
+        }
     }
 }
 
@@ -46,9 +49,9 @@ namespace fastoredis
         QComboBox* serverInfoGroupsNames_;
         QComboBox* serverInfoFields_;
 
-        common::qt::GraphWidget* graphWidget_;
+        fasto::qt::gui::GraphWidget* graphWidget_;
 
-        common::qt::GlassWidget* glassWidget_;
+        fasto::qt::gui::GlassWidget* glassWidget_;
         EventsInfo::ServerInfoHistoryResponce::infos_container_type infos_;
         const connectionTypes type_;
     };

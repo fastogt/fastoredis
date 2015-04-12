@@ -3,12 +3,12 @@
 #include <QString>
 
 #include "fasto/common/value.h"
-#include "fasto/common/qt/gui/base/tree_item.h"
+#include "fasto/qt/gui/base/tree_item.h"
 
 namespace fastoredis
 {
     class FastoCommonItem
-            : public common::qt::TreeItem
+            : public fasto::qt::gui::TreeItem
     {
     public:
         enum eColumn

@@ -13,7 +13,7 @@
 #include "fasto/common/qt/logger.h"
 #include "fasto/common/qt/convert_string.h"
 #include "fasto/common/sprintf.h"
-#include "fasto/common/qt/gui/icon_label.h"
+#include "fasto/qt/gui/icon_label.h"
 
 #include "core/settings_manager.h"
 
@@ -152,7 +152,7 @@ namespace fastoredis
         savebar->addAction(stopAction);
 
         const ConnectionMode mode = IntaractiveMode;
-        connectionMode_ = new common::qt::IconLabel(GuiFactory::instance().modeIcon(mode), common::convertFromString<QString>(common::convertToString(mode)), iconSize);
+        connectionMode_ = new fasto::qt::gui::IconLabel(GuiFactory::instance().modeIcon(mode), common::convertFromString<QString>(common::convertToString(mode)), iconSize);
 
         hlayout->addWidget(savebar);
 

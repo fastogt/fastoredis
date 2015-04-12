@@ -6,11 +6,14 @@
 
 class QTableView;
 
-namespace common
+namespace fasto
 {
     namespace qt
     {
-        class GlassWidget;
+        namespace gui
+        {
+            class GlassWidget;
+        }
     }
 }
 
@@ -38,7 +41,7 @@ namespace fastoredis
         virtual void showEvent(QShowEvent *e);
 
     private:
-        common::qt::GlassWidget *glassWidget_;
+        fasto::qt::gui::GlassWidget *glassWidget_;
         QTableView *propertyes_table_;
         const connectionTypes type_;       
     };

@@ -3,7 +3,7 @@
 #include <QHBoxLayout>
 #include <QTableView>
 
-#include "fasto/common/qt/gui/glass_widget.h"
+#include "fasto/qt/gui/glass_widget.h"
 
 #include "gui/gui_factory.h"
 #include "gui/property_table_model.h"
@@ -28,7 +28,7 @@ namespace fastoredis
         mainL->addWidget(propertyes_table_);
         setLayout(mainL);
 
-        glassWidget_ = new common::qt::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new fasto::qt::gui::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
     }
 
     void PropertyServerDialog::startServerProperty(const EventsInfo::ServerPropertyInfoRequest& req)

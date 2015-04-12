@@ -1,13 +1,13 @@
 #pragma once
 
-#include "fasto/common/qt/gui/base/tree_model.h"
+#include "fasto/qt/gui/base/tree_model.h"
 
 #include "core/types.h"
 
 namespace fastoredis
 {
     class FastoCommonModel
-            : public common::qt::TreeModel
+            : public fasto::qt::gui::TreeModel
     {
         Q_OBJECT
     public:

@@ -8,9 +8,9 @@
 #include "core/memcached/memcached_infos.h"
 #include "core/ssdb/ssdb_infos.h"
 
-#include "fasto/common/qt/gui/base/graph_widget.h"
+#include "fasto/qt/gui/base/graph_widget.h"
 #include "gui/gui_factory.h"
-#include "fasto/common/qt/gui/glass_widget.h"
+#include "fasto/qt/gui/glass_widget.h"
 
 #include "translations/global.h"
 
@@ -24,7 +24,7 @@ namespace fastoredis
         setWindowIcon(GuiFactory::instance().icon(type_));
         setWindowTitle(title);
 
-        graphWidget_ = new common::qt::GraphWidget;
+        graphWidget_ = new fasto::qt::gui::GraphWidget;
         settingsGraph_ = new QWidget;
         QHBoxLayout *mainL = new QHBoxLayout;
 
@@ -66,7 +66,7 @@ namespace fastoredis
         splitter->addWidget(graphWidget_);
         setLayout(mainL);
 
-        glassWidget_ = new common::qt::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new fasto::qt::gui::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trLoading, 0.5, QColor(111, 111, 100), this);
     }
 
     void ServerHistoryDialog::startLoadServerHistoryInfo(const EventsInfo::ServerInfoHistoryRequest& req)
@@ -130,7 +130,7 @@ namespace fastoredis
         unsigned char serverIndex = serverInfoGroupsNames_->currentIndex();
         QVariant var = serverInfoFields_->itemData(index);
         unsigned char indexIn = qvariant_cast<unsigned char>(var);
-        common::qt::GraphWidget::nodes_container_type nodes;
+        fasto::qt::gui::GraphWidget::nodes_container_type nodes;
         for(EventsInfo::ServerInfoHistoryResponce::infos_container_type::iterator it = infos_.begin(); it != infos_.end(); ++it){
             EventsInfo::ServerInfoHistoryResponce::infos_container_type::value_type val = *it;
             if(!val.isValid()){

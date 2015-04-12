@@ -8,7 +8,7 @@
 
 #include "core/iserver.h"
 
-#include "fasto/common/qt/gui/glass_widget.h"
+#include "fasto/qt/gui/glass_widget.h"
 #include "gui/gui_factory.h"
 
 #include "translations/global.h"
@@ -48,7 +48,7 @@ namespace fastoredis
         setLayout(mainLayout);
 
         using namespace translations;
-        glassWidget_ = new common::qt::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trTryToChangePassword, 0.5, QColor(111, 111, 100), this);
+        glassWidget_ = new fasto::qt::gui::GlassWidget(GuiFactory::instance().pathToLoadingGif(), trTryToChangePassword, 0.5, QColor(111, 111, 100), this);
     }
 
     void ChangePasswordServerDialog::tryToCreatePassword()

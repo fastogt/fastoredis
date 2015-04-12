@@ -1,13 +1,13 @@
 #pragma once
 
-#include "fasto/common/qt/gui/base/table_model.h"
+#include "fasto/qt/gui/base/table_model.h"
 
 #include "core/types.h"
 
 namespace fastoredis
 {
     struct PropertyTableItem
-            : public common::qt::TableItem
+            : public fasto::qt::gui::TableItem
     {
         enum eColumn
         {
@@ -22,7 +22,7 @@ namespace fastoredis
     };
 
     class PropertyTableModel
-            : public common::qt::TableModel
+            : public fasto::qt::gui::TableModel
     {
         Q_OBJECT
     public:

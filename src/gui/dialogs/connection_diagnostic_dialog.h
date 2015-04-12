@@ -7,11 +7,14 @@
 class QMovie;
 class QLabel;
 
-namespace common
+namespace fasto
 {
     namespace qt
     {
-        class GlassWidget;
+        namespace gui
+        {
+            class GlassWidget;
+        }
     }
 }
 
@@ -57,7 +60,7 @@ namespace fastoredis
 
     private:
         void testConnection(IConnectionSettingsBaseSPtr connection);
-        common::qt::GlassWidget *glassWidget_;
+        fasto::qt::gui::GlassWidget *glassWidget_;
         QLabel* executeTimeLabel_;
         QLabel* statusLabel_;
         QLabel* iconLabel_;

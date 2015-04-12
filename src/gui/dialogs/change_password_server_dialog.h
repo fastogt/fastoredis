@@ -6,11 +6,14 @@
 
 class QLineEdit;
 
-namespace common
+namespace fasto
 {
     namespace qt
     {
-        class GlassWidget;
+        namespace gui
+        {
+            class GlassWidget;
+        }
     }
 }
 
@@ -36,7 +39,7 @@ namespace fastoredis
 
     private:
         bool validateInput();
-        common::qt::GlassWidget *glassWidget_;
+        fasto::qt::gui::GlassWidget *glassWidget_;
         QLineEdit* passwordLineEdit_;
         QLineEdit* confPasswordLineEdit_;
         const IServerSPtr server_;

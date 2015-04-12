@@ -10,11 +10,14 @@
 
 class QLabel;
 
-namespace common
+namespace fasto
 {
     namespace qt
     {
-        class GlassWidget;
+        namespace gui
+        {
+            class GlassWidget;
+        }
     }
 }
 
@@ -48,7 +51,7 @@ namespace fastoredis
         void updateText(const SsdbServerInfo& serv);
         QLabel* serverTextInfo_;
         QLabel* hardwareTextInfo_;
-        common::qt::GlassWidget* glassWidget_;
+        fasto::qt::gui::GlassWidget* glassWidget_;
         const connectionTypes type_;
     };
 }

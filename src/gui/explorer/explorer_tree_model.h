@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fasto/common/qt/gui/base/tree_model.h"
+#include "fasto/qt/gui/base/tree_model.h"
 
 #include "core/iserver.h"
 #include "core/idatabase.h"
@@ -8,7 +8,7 @@
 namespace fastoredis
 {
     struct IExplorerTreeItem
-            : public common::qt::TreeItem
+            : public fasto::qt::gui::TreeItem
     {
         enum eColumn
         {
@@ -115,7 +115,7 @@ namespace fastoredis
     };
 
     class ExplorerTreeModel
-            : public common::qt::TreeModel
+            : public fasto::qt::gui::TreeModel
     {
         Q_OBJECT
     public:
