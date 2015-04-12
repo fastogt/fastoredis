@@ -2,7 +2,7 @@
 
 #include <QString>
 
-#include "fasto/common/value.h"
+#include "common/value.h"
 #include "fasto/qt/gui/base/tree_item.h"
 
 namespace fastoredis

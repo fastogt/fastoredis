@@ -16,9 +16,9 @@
 #include "core/settings_manager.h"
 #include "core/iserver.h"
 
-#include "fasto/common/qt/convert_string.h"
-#include "fasto/common/utf_string_conversions.h"
-#include "fasto/common/time.h"
+#include "common/qt/convert_string.h"
+#include "common/utf_string_conversions.h"
+#include "common/time.h"
 
 namespace
 {

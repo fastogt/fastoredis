@@ -14,8 +14,8 @@
 #include "gui/gui_factory.h"
 #include "gui/fasto_editor.h"
 
-#include "fasto/common/text_decoders/iedcoder.h"
-#include "fasto/common/qt/convert_string.h"
+#include "common/text_decoders/iedcoder.h"
+#include "common/qt/convert_string.h"
 
 #include "translations/global.h"
 

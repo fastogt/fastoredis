@@ -14,7 +14,7 @@
 #include <QGroupBox>
 #include <QEvent>
 
-#include "fasto/common/qt/convert_string.h"
+#include "common/qt/convert_string.h"
 
 #include "gui/gui_factory.h"
 #include "gui/dialogs/input_dialog.h"

@@ -5,8 +5,8 @@
 
 #include "core/connection_types.h"
 
-#include "fasto/common/value.h"
-#include "fasto/common/patterns/singleton_pattern.h"
+#include "common/value.h"
+#include "common/patterns/singleton_pattern.h"
 
 namespace fastoredis
 {

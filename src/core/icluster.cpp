@@ -1,6 +1,6 @@
 #include "core/icluster.h"
 
-#include "fasto/common/qt/convert_string.h"
+#include "common/qt/convert_string.h"
 
 #include "core/iserver.h"
 

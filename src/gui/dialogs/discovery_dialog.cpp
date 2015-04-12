@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <QTreeWidget>
 
-#include "fasto/common/time.h"
+#include "common/time.h"
 #include "fasto/qt/gui/glass_widget.h"
 
 #include "core/redis/redis_driver.h"

@@ -3,7 +3,7 @@
 #include <QMenu>
 #include <QHeaderView>
 
-#include "fasto/common/macros.h"
+#include "common/macros.h"
 
 namespace fastoredis
 {

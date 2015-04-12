@@ -17,7 +17,7 @@
 #include "gui/dialogs/view_keys_dialog.h"
 #include "gui/dialogs/change_password_server_dialog.h"
 
-#include "fasto/common/qt/convert_string.h"
+#include "common/qt/convert_string.h"
 
 #include "core/icluster.h"
 

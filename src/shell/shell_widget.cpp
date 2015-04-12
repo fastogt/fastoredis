@@ -11,8 +11,8 @@
 #include <QFileDialog>
 
 #include "fasto/qt/logger.h"
-#include "fasto/common/qt/convert_string.h"
-#include "fasto/common/sprintf.h"
+#include "common/qt/convert_string.h"
+#include "common/sprintf.h"
 #include "fasto/qt/gui/icon_label.h"
 
 #include "core/settings_manager.h"

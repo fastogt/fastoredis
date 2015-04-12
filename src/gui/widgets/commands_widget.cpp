@@ -8,7 +8,7 @@
 #include <QTextEdit>
 #include <QEvent>
 
-#include "fasto/common/qt/convert_string.h"
+#include "common/qt/convert_string.h"
 
 #include "translations/global.h"
 

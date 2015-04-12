@@ -2,7 +2,7 @@
 
 #include <QTabWidget>
 
-#include "fasto/common/log_levels.h"
+#include "common/log_levels.h"
 
 #include "global/types.h"
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/core_fwd.h"
-#include "fasto/common/qt/utils_qt.h"
+#include "common/qt/utils_qt.h"
 
 namespace fastoredis
 {

@@ -5,9 +5,9 @@
 #include "fasto/qt/translations/translations.h"
 #include "fasto/qt/gui/app_style.h"
 
-#include "fasto/common/file_system.h"
-#include "fasto/common/qt/convert_string.h"
-#include "fasto/common/utils.h"
+#include "common/file_system.h"
+#include "common/qt/convert_string.h"
+#include "common/utils.h"
 
 #define PREFIX "settings/"
 

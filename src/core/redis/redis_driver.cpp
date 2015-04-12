@@ -35,11 +35,11 @@ extern "C" {
 
 #include "third-party/redis/src/help.h"
 
-#include "fasto/common/time.h"
-#include "fasto/common/utils.h"
-#include "fasto/common/file_system.h"
-#include "fasto/common/string_util.h"
-#include "fasto/common/sprintf.h"
+#include "common/time.h"
+#include "common/utils.h"
+#include "common/file_system.h"
+#include "common/string_util.h"
+#include "common/sprintf.h"
 #include "fasto/qt/logger.h"
 
 #include "core/command_logger.h"

@@ -1,6 +1,6 @@
 #include "core/redis/redis_settings.h"
 
-#include "fasto/common/utils.h"
+#include "common/utils.h"
 
 namespace fastoredis
 {

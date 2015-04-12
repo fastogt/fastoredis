@@ -5,7 +5,7 @@
 class QTextEdit;
 class QAction;
 
-#include "fasto/common/log_levels.h"
+#include "common/log_levels.h"
 
 namespace fastoredis
 {

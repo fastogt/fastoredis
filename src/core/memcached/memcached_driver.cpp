@@ -7,8 +7,8 @@ extern "C" {
 #include "third-party/redis/deps/hiredis/sds.h"
 }
 
-#include "fasto/common/utils.h"
-#include "fasto/common/sprintf.h"
+#include "common/utils.h"
+#include "common/sprintf.h"
 #include "fasto/qt/logger.h"
 
 #include "core/command_logger.h"

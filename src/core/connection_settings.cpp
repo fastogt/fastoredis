@@ -2,10 +2,10 @@
 
 #include <sstream>
 
-#include "fasto/common/qt/convert_string.h"
-#include "fasto/common/utils.h"
-#include "fasto/common/net/net.h"
-#include "fasto/common/logger.h"
+#include "common/qt/convert_string.h"
+#include "common/utils.h"
+#include "common/net/net.h"
+#include "common/logger.h"
 
 #include "core/settings_manager.h"
 

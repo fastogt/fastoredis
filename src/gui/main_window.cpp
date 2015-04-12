@@ -14,8 +14,8 @@
 #include "fasto/qt/gui/app_style.h"
 #include "fasto/qt/translations/translations.h"
 #include "fasto/qt/logger.h"
-#include "fasto/common/qt/convert_string.h"
-#include "fasto/common/net/socket_tcp.h"
+#include "common/qt/convert_string.h"
+#include "common/net/socket_tcp.h"
 
 #include "gui/shortcuts.h"
 #include "gui/gui_factory.h"

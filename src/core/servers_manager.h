@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fasto/common/patterns/singleton_pattern.h"
+#include "common/patterns/singleton_pattern.h"
 
 #include "core/iserver.h"
 #include "core/connection_settings.h"

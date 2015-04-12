@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "fasto/common/types.h"
+#include "common/types.h"
 #include "global/global.h"
 #include "core/types.h"
 

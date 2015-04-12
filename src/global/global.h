@@ -1,7 +1,7 @@
 #pragma once
 
-#include "fasto/common/value.h"
-#include "fasto/common/convert2string.h"
+#include "common/value.h"
+#include "common/convert2string.h"
 
 namespace fastoredis
 {

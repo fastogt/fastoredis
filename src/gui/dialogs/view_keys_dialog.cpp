@@ -10,7 +10,7 @@
 #include <QScrollBar>
 #include <QSplitter>
 
-#include "fasto/common/qt/convert_string.h"
+#include "common/qt/convert_string.h"
 
 #include "core/iserver.h"
 #include "core/idatabase.h"

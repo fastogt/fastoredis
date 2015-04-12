@@ -5,7 +5,7 @@
 #include <QThread>
 #include <QLabel>
 
-#include "fasto/common/time.h"
+#include "common/time.h"
 
 #include "core/redis/redis_driver.h"
 #include "core/ssdb/ssdb_driver.h"

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "fasto/common/convert2string.h"
+#include "common/convert2string.h"
 
 #define REDIS_CLI_DEFAULT_PIPE_TIMEOUT 30 /* seconds */
 

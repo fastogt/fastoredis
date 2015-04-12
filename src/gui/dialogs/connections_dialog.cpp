@@ -10,7 +10,7 @@
 #include <QToolBar>
 #include <QAction>
 
-#include "fasto/common/qt/convert_string.h"
+#include "common/qt/convert_string.h"
 
 #include "core/settings_manager.h"
 #include "core/connection_settings.h"

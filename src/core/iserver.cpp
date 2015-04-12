@@ -2,9 +2,9 @@
 
 #include <QApplication>
 
-#include "fasto/common/qt/convert_string.h"
+#include "common/qt/convert_string.h"
 #include "fasto/qt/logger.h"
-#include "fasto/common/net/net.h"
+#include "common/net/net.h"
 
 #include "core/idatabase.h"
 #include "core/idriver.h"
