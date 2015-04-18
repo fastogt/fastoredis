@@ -1,4 +1,4 @@
-0.7.3
+0.7.3 / April 18, 2015
 [Alexandr Topilski]
 - View keys dialog
 - Redis database size
