@@ -21,6 +21,7 @@
 #define CHECKUPDATES PREFIX"checkupdates"
 #define AUTOCOMPLETION PREFIX"autocompletion"
 #define RCONNECTIONS PREFIX"rconnections"
+#define AUTOOPENCONSOLE PREFIX"autoopenconsole"
 
 namespace
 {
@@ -31,7 +32,7 @@ namespace
 namespace fastoredis
 {
     SettingsManager::SettingsManager()
-        : views_(), curStyle_(), curLanguage_(), connections_(), syncTabs_(), loggingDir_(), autoCheckUpdate_(), autoCompletion_()
+        : views_(), curStyle_(), curLanguage_(), connections_(), syncTabs_(), loggingDir_(), autoCheckUpdate_(), autoCompletion_(), autoOpenConsole_()
     {
        load();
     }
@@ -192,6 +193,16 @@ namespace fastoredis
         autoCompletion_ = enableAuto;
     }
 
+    bool SettingsManager::autoOpenConsole() const
+    {
+        return autoOpenConsole_;
+    }
+
+    void SettingsManager::setAutoOpenConsole(bool enableAuto)
+    {
+        autoOpenConsole_ = enableAuto;
+    }
+
     void SettingsManager::load()
     {
         QString inip = common::convertFromString<QString>(common::file_system::prepare_path(iniPath));
@@ -247,6 +258,7 @@ namespace fastoredis
         loggingDir_ = settings.value(LOGGINGDIR, common::convertFromString<QString>(dir)).toString();
         autoCheckUpdate_ = settings.value(CHECKUPDATES, true).toBool();
         autoCompletion_ = settings.value(AUTOCOMPLETION, true).toBool();
+        autoOpenConsole_ = settings.value(AUTOOPENCONSOLE, true).toBool();
     }
 
     void SettingsManager::save()
@@ -298,5 +310,6 @@ namespace fastoredis
         settings.setValue(LOGGINGDIR, loggingDir_);
         settings.setValue(CHECKUPDATES, autoCheckUpdate_);
         settings.setValue(AUTOCOMPLETION, autoCompletion_);
+        settings.setValue(AUTOOPENCONSOLE, autoOpenConsole_);
     }
 }

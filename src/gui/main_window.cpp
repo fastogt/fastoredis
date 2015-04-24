@@ -30,6 +30,7 @@
 #include "core/servers_manager.h"
 #include "core/settings_manager.h"
 #include "core/command_logger.h"
+#include "core/icluster.h"
 
 #include "server_config_daemon/server_config.h"
 
@@ -480,6 +481,12 @@ namespace fastoredis
         exp_->addServer(server);
         SettingsManager::instance().addRConnection(rcon);
         updateRecentConnectionActions();
+        if(SettingsManager::instance().autoOpenConsole()){
+            MainWidget* mwidg = qobject_cast<MainWidget*>(centralWidget());
+            if(mwidg){
+                mwidg->openConsole(server, "");
+            }
+        }
     }
 
     void MainWindow::createCluster(IClusterSettingsBaseSPtr settings)
@@ -500,6 +507,12 @@ namespace fastoredis
         }
 
         exp_->addCluster(cl);
+        if(SettingsManager::instance().autoOpenConsole()){
+            MainWidget* mwidg = qobject_cast<MainWidget*>(centralWidget());
+            if(mwidg){
+                mwidg->openConsole(cl->root(), "");
+            }
+        }
     }
 
     UpdateChecker::UpdateChecker(QObject* parent)

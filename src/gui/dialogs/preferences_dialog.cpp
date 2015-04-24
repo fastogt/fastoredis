@@ -48,6 +48,8 @@ namespace fastoredis
         generalLayout->addWidget(autoCheckUpdates_);
         autoComletionEnable_ = new QCheckBox;
         generalLayout->addWidget(autoComletionEnable_);
+        autoOpneConsole_ = new QCheckBox;
+        generalLayout->addWidget(autoOpneConsole_);
         generalLayout->addLayout(styleswLayout);
         generalLayout->addLayout(langLayout);
 
@@ -114,6 +116,7 @@ namespace fastoredis
         ServersManager::instance().setSyncServers(syncTabs_->isChecked());
         SettingsManager::instance().setSyncTabs(syncTabs_->isChecked());
         SettingsManager::instance().setLoggingDirectory(logDirPath_->text());
+        SettingsManager::instance().setAutoOpenConsole(autoOpneConsole_->isChecked());
 
         return QDialog::accept();
     }
@@ -127,6 +130,7 @@ namespace fastoredis
         defaultViewComboBox_->setCurrentText(common::convertFromString<QString>(common::convertToString(SettingsManager::instance().defaultView())));
         syncTabs_->setChecked(SettingsManager::instance().syncTabs());
         logDirPath_->setText(SettingsManager::instance().loggingDirectory());
+        autoOpneConsole_->setChecked(SettingsManager::instance().autoOpenConsole());
     }
 
     void PreferencesDialog::changeEvent(QEvent* e)
@@ -144,6 +148,7 @@ namespace fastoredis
         generalBox_->setTitle(tr("General settings"));
         autoCheckUpdates_->setText(tr("Automatically check for updates"));
         autoComletionEnable_->setText(tr("Show autocompletion"));
+        autoOpneConsole_->setText(tr("Automatically open console"));
         langLabel_->setText(tr("Language:"));
         stylesLabel_->setText(tr("Supported UI styles:"));
 

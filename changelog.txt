@@ -1,3 +1,6 @@
+0.7.4
+- Auto open console preference 
+
 0.7.3 / April 18, 2015
 [Alexandr Topilski]
 - View keys dialog

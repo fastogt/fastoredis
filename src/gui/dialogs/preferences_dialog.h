@@ -50,5 +50,6 @@ namespace fastoredis
         QCheckBox* syncTabs_;
         QLabel* logDirLabel_;
         QLineEdit* logDirPath_;
+        QCheckBox* autoOpneConsole_;
     };
 }

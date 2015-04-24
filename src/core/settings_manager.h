@@ -56,6 +56,9 @@ namespace fastoredis
         bool autoCompletion() const;
         void setAutoCompletion(bool enableAuto);
 
+        bool autoOpenConsole() const;
+        void setAutoOpenConsole(bool enableAuto);
+
     private:
         void load();
         void save();
@@ -73,5 +76,6 @@ namespace fastoredis
         QString loggingDir_;
         bool autoCheckUpdate_;
         bool autoCompletion_;
+        bool autoOpenConsole_;
     };
 }
