@@ -16,6 +16,7 @@
 #include "fasto/qt/gui/icon_label.h"
 
 #include "core/settings_manager.h"
+#include "core/iserver.h"
 
 #include "gui/shortcuts.h"
 
@@ -104,6 +105,9 @@ namespace fastoredis
         VERIFY(connect(server_.get(), &IServer::startedExecute, this, &BaseShellWidget::startedExecute));
         VERIFY(connect(server_.get(), &IServer::progressChanged, this, &BaseShellWidget::progressChange));
 
+        VERIFY(connect(server_.get(), &IServer::startedSetDefaultDatabase, this, &BaseShellWidget::startSetDefaultDatabase));
+        VERIFY(connect(server_.get(), &IServer::finishedSetDefaultDatabase, this, &BaseShellWidget::finishSetDefaultDatabase));
+
         VERIFY(connect(server_.get(), &IServer::enteredMode, this, &BaseShellWidget::enterMode));
         VERIFY(connect(server_.get(), &IServer::leavedMode, this, &BaseShellWidget::leaveMode));
 
@@ -154,6 +158,8 @@ namespace fastoredis
         const ConnectionMode mode = IntaractiveMode;
         connectionMode_ = new fasto::qt::gui::IconLabel(GuiFactory::instance().modeIcon(mode), common::convertFromString<QString>(common::convertToString(mode)), iconSize);
 
+        dbName_ = new fasto::qt::gui::IconLabel(GuiFactory::instance().databaseIcon(), "Calculate...", iconSize);
+
         hlayout->addWidget(savebar);
 
         QSplitter *splitter = new QSplitter;
@@ -162,6 +168,7 @@ namespace fastoredis
         splitter->setContentsMargins(0, 0, 0, 0);
         hlayout->addWidget(splitter);
 
+        hlayout->addWidget(dbName_);
         hlayout->addWidget(connectionMode_);
         workProgressBar_ = new QProgressBar;
         hlayout->addWidget(workProgressBar_);
@@ -191,6 +198,7 @@ namespace fastoredis
         setLayout(mainlayout);
 
         syncConnectionActions();
+        updateDefaultDatabase(server_->currentDatabaseInfo());
     }
 
     BaseShellWidget::~BaseShellWidget()
@@ -303,6 +311,28 @@ namespace fastoredis
         syncConnectionActions();
     }
 
+    void BaseShellWidget::startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req)
+    {
+
+    }
+
+    void BaseShellWidget::finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res)
+    {
+        common::ErrorValueSPtr er = res.errorInfo();
+        if(er && er->isError()){
+            return;
+        }
+
+        IServer *serv = qobject_cast<IServer *>(sender());
+        DCHECK(serv);
+        if(!serv){
+            return;
+        }
+
+        DataBaseInfoSPtr db = res.inf_;
+        updateDefaultDatabase(db);
+    }
+
     void BaseShellWidget::progressChange(const EventsInfo::ProgressInfoResponce& res)
     {
         workProgressBar_->setValue(res.progress_);
@@ -319,6 +349,12 @@ namespace fastoredis
     void BaseShellWidget::leaveMode(const EventsInfo::LeaveModeInfo& res)
     {
 
+    }
+
+    void BaseShellWidget::updateDefaultDatabase(DataBaseInfoSPtr dbs)
+    {
+        std::string name = dbs->name();
+        dbName_->setText(common::convertFromString<QString>(name));
     }
 
     void BaseShellWidget::syncConnectionActions()

@@ -1,4 +1,5 @@
 0.7.4
+- Display db name in console
 - Auto open console preference 
 
 0.7.3 / April 18, 2015

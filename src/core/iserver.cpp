@@ -124,6 +124,11 @@ namespace fastoredis
         return drv_->serverDiscoveryInfo();
     }
 
+    DataBaseInfoSPtr IServer::currentDatabaseInfo() const
+    {
+        return drv_->currentDatabaseInfo();
+    }
+
     QString IServer::address() const
     {
         std::string shost = common::convertToString(drv_->address());

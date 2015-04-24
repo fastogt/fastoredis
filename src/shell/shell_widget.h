@@ -62,6 +62,9 @@ namespace fastoredis
         void startDisconnect(const EventsInfo::DisonnectInfoRequest& req);
         void finishDisconnect(const EventsInfo::DisConnectInfoResponce& res);
 
+        void startSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseRequest& req);
+        void finishSetDefaultDatabase(const EventsInfo::SetDefaultDatabaseResponce& res);
+
         void progressChange(const EventsInfo::ProgressInfoResponce& res);
 
         void enterMode(const EventsInfo::EnterModeInfo& res);
@@ -69,6 +72,7 @@ namespace fastoredis
 
     private:
         void syncConnectionActions();
+        void updateDefaultDatabase(DataBaseInfoSPtr dbs);
 
         const IServerSPtr server_;
         QAction* executeAction_;
@@ -82,6 +86,7 @@ namespace fastoredis
 
         QProgressBar* workProgressBar_;
         fasto::qt::gui::IconLabel* connectionMode_;
+        fasto::qt::gui::IconLabel* dbName_;
         QString filePath_;
     };
 }
