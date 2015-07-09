@@ -523,24 +523,24 @@ namespace fastoredis
 
     void UpdateChecker::routine()
     {
-        common::net::SocketTcp s(SITE_URL, SERV_PORT);
+        common::net::ClientSocketTcp s(SITE_URL, SERV_PORT);
         bool res = s.connect();
         if(!res){
             emit versionAvailibled(res, QString());
             return;
         }
 
-        res = s.write(common::convertFromString<common::buffer_type>(GET_VERSION));
+        res = s.write(GET_VERSION, sizeof(GET_VERSION));
         if(!res){
             emit versionAvailibled(res, QString());
             s.close();
             return;
         }
 
-        common::buffer_type version;
+        char version[128] = {0};
         res = s.read(version, 128);
 
-        QString vers = common::convertFromString<QString>(common::convertToString(version));
+        QString vers = common::convertFromString<QString>(version);
         emit versionAvailibled(res, vers);
 
         s.close();
