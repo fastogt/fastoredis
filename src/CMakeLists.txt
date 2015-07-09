@@ -334,7 +334,7 @@ IF(OS_WINDOWS)
     SET(PLACE_WHERE_SEARCH ${QT_BINS_DIR})
 
     #find runtime zlib
-    SET(SHARED_ZLIB_NAMES z.dll zlib.dll zdll.dll zlib1.dll zlibd.dll zlibd1.dll)
+    SET(SHARED_ZLIB_NAMES zlib1.dll z.dll zlib.dll zdll.dll zlibd.dll zlibd1.dll)
     FIND_RUNTIME_LIBRARY(SHARED_ZLIB_LIBRARY SHARED_ZLIB_NAMES)
     INSTALL(FILES ${SHARED_ZLIB_LIBRARY} DESTINATION ${LIB_INSTALL_DESTINATION} COMPONENT RUNTIME)
 
