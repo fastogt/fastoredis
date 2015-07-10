@@ -23,9 +23,9 @@ createPackage() {
 		cpack -G "$cpack_generator"
     fi
     
-    if [ "$cpack_generator" = 'DEB' ]; then
-        sh ./fixup_deb.sh
-    fi
+#    if [ "$cpack_generator" = 'DEB' ]; then
+#        sh ./fixup_deb.sh
+#    fi
     cd ../
 }
 
