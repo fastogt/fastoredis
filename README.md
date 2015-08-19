@@ -107,3 +107,7 @@ Executable will be placed to: target/debug/app/out
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fasto/fastoredis/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fastogt/fastoredis/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
