@@ -16,7 +16,7 @@ Download
 ========
 
 You can download compiled version (for Mac OS X, Windows, FreeBSD and Linux) from our site:<br />
-[www.fastonosql.com](http://www.fastonosql.com)
+[www.fastoredis.com](http://www.fastoredis.com)
 
 <!-- https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8 -->
 
