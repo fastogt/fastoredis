@@ -1,5 +1,6 @@
 About FastoRedis
 ===============
+[![Join the chat at https://gitter.im/fastogt/fastonosql](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fastogt/fastonosql?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 FastoRedis (fork of [FastoNoSQL](http://www.fastonosql.com)) — is a cross-platform open source Redis management tool (i.e. Admin GUI). <br />
 
