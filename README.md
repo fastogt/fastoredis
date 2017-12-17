@@ -5,11 +5,11 @@ About FastoRedis
 FastoRedis (fork of [FastoNoSQL](http://www.fastonosql.com)) — is a cross-platform open source Redis management tool (i.e. Admin GUI). <br />
 
 <h3>Windows:</h3>
-<img src="http://fastoredis.com/images/slider/win_slider.png">
+<img src="https://fastoredis.com/images/redis/main_windows.png">
 <h3>MacOS X:</h3>
-<img src="http://fastoredis.com/images/redis/redis_labs.jpg">
+<img src="https://fastoredis.com/images/redis/redis_labs.jpg">
 <h3>Linux:</h3>
-<img src="http://fastoredis.com/images/slider/linux_slider.png">
+<img src="https://fastoredis.com/images/slider/main_linux.png">
 
 Visit our site: [www.fastoredis.com](http://www.fastoredis.com)
 
