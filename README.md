@@ -11,7 +11,7 @@ FastoRedis (fork of [FastoNoSQL](http://www.fastonosql.com)) — is a cross-plat
 <h3>Linux:</h3>
 <img src="https://fastoredis.com/images/redis/main_linux.png">
 
-Visit our site: [www.fastoredis.com](http://www.fastoredis.com)
+Visit our site: [fastoredis.com](http://fastoredis.com)
 
 Download
 ========
